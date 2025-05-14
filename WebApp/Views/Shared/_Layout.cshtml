@@ -11,8 +11,8 @@
     @* jquery *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script type="text/javascript" src="~/lib/jqueryui/jquery-ui.min.js" asp-append-version="true"></script>
-            <script type="text/javascript" src="~/lib/jquery-confirm/jquery-confirm.min.css"></script>
+    <script type="text/javascript" src="~/lib/jqueryui/jquery-ui.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/lib/jquery-confirm/jquery-confirm.min.css"></script>
 
     <script type="text/javascript" src="~/lib/jquery-confirm/jquery-confirm.min.js"></script>
 
@@ -121,12 +121,13 @@
                                 <li><a class="dropdown-item" href="#">Report B</a></li>
                             </ul>
                         </li>
+
                     </ul>
 
 
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">[ admin - THOÁT ]</a>
+                            <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">[ admin - THOÁT ]</a>
                         </li>
                     </ul>
                 </div>
