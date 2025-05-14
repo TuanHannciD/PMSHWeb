@@ -15,17 +15,30 @@
             <script type="text/javascript" src="~/lib/jquery-confirm/jquery-confirm.min.css"></script>
 
     <script type="text/javascript" src="~/lib/jquery-confirm/jquery-confirm.min.js"></script>
-
+    <link href="~/lib/node_modules/devextreme/dist/css/dx.common.css" rel="stylesheet" />
+    <link href="~/lib/node_modules/devextreme/dist/css/dx.light.css" rel="stylesheet" />
+    <link href="~/lib/node_modules/@@devexpress/analytics-core/dist/css/dx-analytics.common.css" rel="stylesheet" />
+    <link href="~/lib/node_modules/@@devexpress/analytics-core/dist/css/dx-analytics.light.css" rel="stylesheet" />
+    <link href="~/lib/node_modules/devexpress-reporting/dist/css/dx-webdocumentviewer.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     @* tomlect *@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
     @* devextreme *@
-    <script src="https://cdn3.devexpress.com/jslib/23.1.4/js/dx.all.js"></script>
+@*     <script src="https://cdn3.devexpress.com/jslib/23.1.4/js/dx.all.js"></script> *@
     <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.4/css/dx.material.blue.light.css" />
 
     @* font-anesome *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script asp-append-version="true" src="~/lib/node_modules/jquery/dist/jquery.js"></script>
+    <script asp-append-version="true" src="~/lib/node_modules/jquery-ui-dist/jquery-ui.js"></script>
+    <script asp-append-version="true" src="~/lib/node_modules/knockout/build/output/knockout-latest.js"></script>
+    <script src="~/lib/devextreme/dist/js/dx.all.js"></script>
+    <script asp-append-version="true" src="~/lib/node_modules/@@devexpress/analytics-core/dist/js/dx-analytics-core.min.js"></script>
+    <script asp-append-version="true" src="~/lib/node_modules/devexpress-reporting/dist/js/dx-webdocumentviewer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.2.4/js/pdfExporter.js"></script>
     <style>
         .navbar-custom {
             background-color: #3b9ac6;
@@ -117,8 +130,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" >Report </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="BookingSource">Booking Sourde</a></li>
-                                <li><a class="dropdown-item" href="#">Report B</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="ReservationSummaryReport">Reservation Summary Report</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="GroupReservationReport">Group Reservation Report</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="GuestStayOverReport">Guest Stay Over Report</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="GuestStayReport">Guest Stay Report</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="TraceReport">Trace Report</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="BookingSource">Booking Source</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="ReportNationalityStatistics">Report Nationality Statistics</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="RatecodebyDateReport">Ratecode by Date Report</a></li>
+
                             </ul>
                         </li>
                     </ul>
