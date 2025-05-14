@@ -1,0 +1,59 @@
+﻿using BaseBusiness.BO;
+using BaseBusiness.Model;
+using BaseBusiness.util;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using User.Services.Interfaces;
+
+namespace User.Controllers
+{
+    public class UserController : Controller
+    {
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<UserController> _logger;
+        private readonly IMemoryCache _cache;
+        private readonly IUserService _iUserService;
+        public UserController(ILogger<UserController> logger,
+             IMemoryCache cache, IConfiguration configuration, IUserService UserService)
+        {
+            _cache = cache;
+            _logger = logger;
+            _configuration = configuration;
+            _iUserService = UserService;
+        }
+        public IActionResult Index()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Login()
+        {
+            try
+            {
+                string loginName = Request.Form["LoginName"].ToString();
+                string password = Request.Form["Password"].ToString();
+                var result = _iUserService.Login(loginName,password);
+                if (result.ID != 0) {
+                    return Json(new { code = 0, msg = "Successfully" });
+                }
+                else
+                {
+                    return Json(new { code = -1, msg = "The username or password is incorrect. Please try again." });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+    }
+}
