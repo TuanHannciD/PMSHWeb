@@ -195,7 +195,7 @@ namespace Report.Controllers
             // return PartialView("_ReportViewerPartial", report);
         }
         [HttpGet]
-        public IActionResult TestReport(DateTime fromDate, DateTime toDate)
+        public IActionResult BookingSourceData(DateTime fromDate, DateTime toDate)
         {
             //XtraReport report = new OneSPMSh.Report.Report1();
             try

@@ -4,21 +4,18 @@ using Profile.Controllers;
 using Report.Controllers;
 using Report.Services.Implements;
 using Report.Services.Interfaces;
-<<<<<<< HEAD
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
 using DevExpress.CodeParser;
 using Microsoft.Extensions.FileProviders;
-=======
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
 
->>>>>>> 44193e9798010239eb32edb11666e31c6a27ad97
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ProfileController).Assembly));
 builder.Services.AddControllersWithViews()
