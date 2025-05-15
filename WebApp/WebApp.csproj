@@ -16,4 +16,8 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="DevExpress.AspNetCore.Reporting" Version="22.2.3" />
+  </ItemGroup>
+
 </Project>

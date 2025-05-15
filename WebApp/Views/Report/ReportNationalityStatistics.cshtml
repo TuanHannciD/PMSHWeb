@@ -1,0 +1,304 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var roomClassList = ViewBag.RoomClassList;
+    var departmentList = ViewBag.DepartmentList;
+    var report = ViewBag.ReportName as XtraReport;
+}
+
+
+<style>
+    .filter_wrapper {
+        background-color: #ececec;
+        margin: 0px 8px 14px 8px;
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+</style>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<div style="display:flex;margin: 12px;text-align:center">
+    <i class="fa-solid fa-arrow-left" style="padding-top:5px;margin-right:4px" onclick="window.location.href='@Url.Action("Index", "Home")'"></i>
+    <div style="font-size:18px"><b>Report/Report Nationality Statistics</b></div>
+</div>
+<div class="button_wrapper row">
+    <button id="btnPrint" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6"><i class="fa-solid fa-eye"></i>View</button>
+    <button id="btnExportExcel" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6">
+        <i class="fa-solid fa-file-excel"></i>  Excel
+    </button>
+    <button id="btnExportPdf" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6">
+        <i class="fa-solid fa-file-pdf"></i>  PDF
+    </button>
+</div>
+<div class="filter_wrapper row">
+
+    <div class="form-group row col-md-3  mb-3">
+        <label class="col-md-5 col-form-label text-right">From Date</label>
+        <div class="col-md-7">
+            <input class="form-control" type="date" id="fromDate" name="fromDate" style="width: 100%;" />
+        </div>
+    </div>
+    <div class="form-group row col-md-3  mb-3">
+        <label class="col-md-5 col-form-label text-right">To Date</label>
+
+        <div class="col-md-7">
+            <input class="form-control" style="width: 100%;" id="toDate" name="toDate" type="date" />
+        </div>
+    </div>
+    <div class="form-group row col-md-6  mb-3">
+        <label class="col-md-2 col-form-label text-right">Include</label>
+        <div class="col-md-10 d-flex align-items-center flex-wrap">
+            <div class="form-check mr-3">
+                <input class="form-check-input" type="checkbox" id="Reservation" name="Reservation" value="Option1" checked>
+                <label class="form-check-label" for="includeOption1">Reservation</label>
+            </div>
+            <div class="form-check mr-3">
+                <input class="form-check-input" type="checkbox" id="CheckedOut" name="CheckedOut" value="Option2" checked>
+                <label class="form-check-label" for="includeOption2">Checked Out</label>
+            </div>
+            <div class="form-check mr-3">
+                <input class="form-check-input" type="checkbox" id="CheckedIn" name="includeOptions" value="Option3">
+                <label class="form-check-label" for="includeOption3">Checked In</label>
+            </div>
+            <div class="form-check mr-3">
+                <input class="form-check-input" type="checkbox" id="Cancellation" name="includeOptions" value="Option3" checked>
+                <label class="form-check-label" for="includeOption3">Cancellation</label>
+            </div>
+            <div class="form-check mr-3">
+                <input class="form-check-input" type="checkbox" id="WaitList" name="includeOptions" value="Option3" checked>
+                <label class="form-check-label" for="includeOption3">Wait List</label>
+            </div>
+            <div class="form-check mr-3">
+                <input class="form-check-input" type="checkbox" id="Blockcode" name="includeOptions" value="Option3" checked>
+                <label class="form-check-label" for="includeOption3">No Show</label>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group row col-md-3 mt-3 mb-3">
+        <label class="col-md-4 col-form-label text-right">Sort Order</label>
+        <div class="col-md-8">
+            <select class="form-control" id="sortOrder" name="sortOrder">
+                <option>Profit / Loss</option>
+                <option>Bed Night</option>
+                <option>Arrivals</option>
+                <option>Duration Of Statay</option>
+                <option>Country Code</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+@* <div id="reportViewerContainer" class="mt-3">
+    <!-- Report viewer will be injected here -->
+</div> *@
+<div id="gridContainer" class="gridContainer"></div>
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+        const today = new Date();
+
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Lấy ngày cuối cùng của tháng
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
+
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        // Gán giá trị cho input date
+        document.getElementById('fromDate').value = formattedFirstDay;
+        document.getElementById('toDate').value = formattedLastDay;
+
+
+
+    });
+            $("#btnPrint").click(function () {
+        $("#loadingSpinner").show();
+
+        // Xử lý sortOrder
+        let sortOder = 0;
+        let selectedOption = $("#sortOrder").val();
+
+        if (selectedOption === "Profit / Loss") {
+            sortOder = 0;
+        } else if (selectedOption === "Bed Night") {
+            sortOder = 1;
+        } else if (selectedOption === "Arrivals") {
+            sortOder = 2;
+        } else if (selectedOption === "Duration Of Statay") {
+            sortOder = 3;
+        } else if (selectedOption === "Country Code") {
+            sortOder = 4;
+        }
+
+        // Ghép status theo checkbox
+        let statusList = [];
+
+        if ($("#Reservation").is(":checked")) {
+            statusList.push("0", "5");
+        }
+        if ($("#CheckedIn").is(":checked")) {
+            statusList.push("1", "6");
+        }
+        if ($("#CheckedOut").is(":checked")) {
+            statusList.push("2");
+        }
+        if ($("#Cancellation").is(":checked")) {
+            statusList.push("3");
+        }
+        if ($("#WaitList").is(":checked")) {
+            statusList.push("4");
+        }
+        if ($("#NoShow").is(":checked")) {
+            statusList.push("7");
+        }
+
+        // Ghép status thành chuỗi 'x','y','z'
+        let statusParam = statusList.join("','");
+
+        $.ajax({
+            url: '/Report/NationalityStatistics',
+            type: 'GET',
+            data: {
+                fromDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                status: statusParam,
+                sortOder: sortOder
+            },
+            traditional: true,
+              crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                // $("#reportViewerContainer").html(result);
+                // $("#loadingSpinner").hide();
+                     console.log(result);
+                initializeDataGrid(result);
+                    $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+      function initializeDataGrid(data) {
+          var columnWidth = 120; // Độ rộng muốn đặt cho tất cả các cột
+
+          $("#gridContainer").dxDataGrid({
+              dataSource: data,  // Dữ liệu từ server
+              columns: [
+                  { dataField: "nationality", caption: "Code", width: columnWidth },
+                  { dataField: "description", caption: "Description", width: columnWidth },
+                  { dataField: "arrAdult", caption: "Arrival Adults", width: columnWidth, dataType: "number", format: "#,##0"},
+                  { dataField: "arrChild", caption: "Arr Child", width: columnWidth , dataType: "number", format: "#,##0"},
+                  { dataField: "arrChild1", caption: "Arr Child 1", width: columnWidth , dataType: "number", format: "#,##0"},
+                  { dataField: "arrChild2", caption: "Arr Child 2", width: columnWidth , dataType: "number", format: "#,##0"},
+                   { dataField: "arrTotal", caption: "Arrival Total", width: columnWidth, dataType: "number", format: "#,##0" },
+                  { dataField: "arrPercen", caption: "Arrival %", width: columnWidth },
+                   { dataField: "nightAdult", caption: "Bed Ni Adults", width: columnWidth , dataType: "number", format: "#,##0"},
+                  { dataField: "nightChild", caption: "Bed Ni. Child", width: columnWidth, dataType: "number", format: "#,##0" },
+                  { dataField: "nightChild1", caption: "Bed Ni. Child1", width: columnWidth, dataType: "number", format: "#,##0"},
+                  { dataField: "nightChild2", caption: "Bed Ni. Child2", width: columnWidth, dataType: "number", format: "#,##0" },
+                  { dataField: "nightTotal", caption: "Bed Ni. Total", width: columnWidth , dataType: "number", format: "#,##0"},
+                  { dataField: "bedNightPercen", caption: "Bed Ni. (%)", width: columnWidth },
+                  { dataField: "roomNightPercen", caption: "Room Night", width: columnWidth , dataType: "number", format: "#,##0"},
+                   { dataField: "stayDur", caption: "Stay Duration", width: columnWidth, dataType: "number", format: "#,##0" },
+                  { dataField: "pystayDur", caption: " PY Stay Duration", width: columnWidth },
+                  { dataField: "arrPreYear", caption: "Arr Prev Year", width: columnWidth, dataType: "number", format: "#,##0"},
+                 { dataField: "nightPreYear", caption: "Night Prev Year", width: columnWidth, dataType: "number", format: "#,##0" },
+                 { dataField: "roomNightPreYear", caption: "BN Prev Year", width: columnWidth , dataType: "number", format: "#,##0"},
+                 { dataField: "roomNightPreYPercen", caption: "BN Prev Year (%)", width: columnWidth },
+                 { dataField: "profitLoss", caption: "BN P/L", width: columnWidth, dataType: "number", format: "#,##0" },
+                 { dataField: "profitLossPercen", caption: "BN P/L(%)", width: columnWidth },
+              ],
+              paging: { pageSize: 10 },
+              scrolling: {
+                  rowRenderingMode: 'virtual',
+              },
+              pager: {
+                  visible: true,
+                  allowedPageSizes: [5, 10, 'all'],
+                  showPageSizeSelector: true,
+                  showInfo: true,
+                  showNavigationButtons: true,
+              },
+              selection: {
+                  mode: "multiple",
+                  showCheckBoxesMode: "none"
+              },
+
+              showBorders: true,
+              onRowClick: function(e) {
+                  console.log("ID được click:", e.data.id);
+              }
+
+          });
+      }
+          $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        grid.exportToExcel(false); // false: xuất toàn bộ, không chỉ hàng được chọn
+    });
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>
