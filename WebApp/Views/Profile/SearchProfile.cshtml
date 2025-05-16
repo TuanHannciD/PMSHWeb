@@ -168,13 +168,14 @@
     <div style="font-size:18px"><b>Profile/Search Profile</b></div>
 </div> *@
 <div class="content_wrapper row">
-    <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;">
+    <div class="filter_wrapper col-md-2 mui-card mb-3" style="border: 1px solid #005f87;height:auto">
         <div>
             <!-- Icon thu gọn -->
-            <div class="filter-header" onclick="toggleFilter()">
-                <span>Filter</span>
-                <span id="toggle-icon" style="float: right; cursor: pointer;">&#9660;</span> <!-- ▼ -->
+            <div class="filter-header">
+                <i class="fa-solid fa-filter" style="cursor: pointer;" onclick="toggleFilter()"></i>
+                <span style="cursor: pointer;">Filter</span>
             </div>
+
             <hr class="mui-divider" />
 
             <div id="filter-body">
@@ -223,110 +224,29 @@
                         <label><input type="checkbox" name="type" checked>Sale in charge</label>
                     </div>
                 </div>
-                <button class="mui-button mui-button-new">Tìm chuyến bay</button>
+                <button class="mui-button mui-button-new mb-3" onclick="getAllProfiles();" style="width:100%">Search</button>
             </div>
         </div>
     </div>
 
     <div class="function_wrapper col-md-10">
         <div class="button-group mb-3 mui-card">
-            <button><i class="fas fa-plus"></i> New</button>
+            <button onclick="window.location.href='@Url.Action("Index", "Profile")'"><i class="fas fa-plus"></i> New</button>
             <button><i class="fas fa-eraser"></i> Clear</button>
             <button><i class="fas fa-cog"></i> Option</button>
             <button><i class="fas fa-clock"></i> Future</button>
-            <button><i class="fas fa-file-excel"></i> Excel</button>
+            <button onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
         </div>
 
 
-        <div class="mui-card" >
+        <div class="mui-card mb-3" >
             <div class="mt-1">Profile list</div>
             <div id="gridContainer" class="mt-2"></div>
         </div>
         
     </div>
 </div>
-@* <div class="mt-4" style="margin: 0px 24px;display:none">
-    <div class="mui-card row button_wrapper">
-        <button type="button" class="mui-button mui-button-new col-lg-1 mb-3 mt-3 col-col-6" onclick="window.location.href='@Url.Action("Index", "Profile")'"><i class="fa-solid fa-folder-plus"></i>New</button>
-        <button type="button" class="mui-button mui-button-edit col-lg-1 mb-3 mt-3 col-col-6" onclick="editProfile();"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
-        <button type="button" class="mui-button mui-button-delete col-lg-1 mb-3 mt-3 col-sm-6" onclick="DeleteProfile();"><i class="fa-solid fa-pen-to-square"></i>Delete</button>
-        <button type="button" class="mui-button mui-button-clear col-lg-1 mb-3 mt-3"><i class="fa-solid fa-rotate"></i>Clear</button>
-        <button type="button" class="mui-button mui-button-edit col-lg-1 mb-3 mt-3" onclick="ReservationProfile();"><i class="fa-solid fa-file-import"></i>Resv</button>
-        <button type="button" class="mui-button mui-button-edit col-lg-1 mb-3 mt-3"><i class="fa-solid fa-gears"></i>Option</button>
-        <button type="button" class="mui-button mui-button-edit col-lg-1 mb-3 mt-3">Future</button>
-        <button type="button" class="mui-button mui-button-edit col-lg-1 mb-3 mt-3"><i class="fa-solid fa-repeat"></i>Merge</button>
-        <button type="button" class="mui-button mui-button-edit col-lg-1 mb-3 mt-3"><i class="fa-solid fa-file-excel"></i>Excel</button>
-    </div>
-    <hr class="mui-divider">
-    <div class="mui-card row button_wrapper">
-        <div class="form-group row col-md-3 mb-1 mt-1">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right">View By</label>
-            <div class="col-md-7">
-                <select type="text" class="form-select" id="txtType">
-                    <option value="0">Travel Agent</option>
-                    <option value="1">Company</option>
-                    <option value="2">Source</option>
-                    <option value="3">Individual</option>
-                    <option value="4">Group</option>
-                    <option value="4">Contact</option>
-                    <option value="6" selected>View All</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right">Name</label>
-            <div class="col-md-7">
-                <input type="text" class="form-control" id="txtAccount" oninput="getAllProfiles()">
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right">Key word</label>
-            <div class="col-md-7">
-                <input type="text" class="form-control" id="txtKeyword" oninput="getAllProfiles()">
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right">First</label>
-            <div class="col-md-7">
-                <input type="text" class="form-control" id="txtFirstName" oninput="getAllProfiles()">
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right" oninput="getAllProfiles()">Code</label>
-            <div class="col-md-7">
-                <input type="text" class="form-control" id="txtCode">
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right">City</label>
-            <div class="col-md-7">
-                <select type="text" class="form-select" id="txtCity">
-                </select>
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right">Property</label>
-            <div class="col-md-7">
-                <select type="text" class="form-select" disabled>
-                    <option value="value">PMSh The Arena</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group row col-md-3 mb-1 mt-1" ">
-            <label for="inputPassword" class="col-md-5 col-form-label text-right" style="display:none">Property</label>
 
-            <div class="col-md-7 d-flex align-items-center">
-                <input type="checkbox" class="form-check-input" id="saleInCharge">
-                <label for="saleInCharge" class="form-check-label ms-2">Sale In Charge</label>
-            </div>
-        </div>
-    </div>
-    <hr class="mui-divider">
-    <div class="mui-card row button_wrapper">
-        <div id="gridContainer"></div>
-    </div>
-</div>
- *@
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="modalEdit">
     <div class="modal-dialog modal-fullscreen">
@@ -991,6 +911,9 @@
     </div>
 </div>
 
+
+
+
 <script>
     $(document).ready(async function () {
         await setSelect2();
@@ -1015,14 +938,11 @@
 
     function toggleFilter() {
         const filterBody = document.getElementById("filter-body");
-        const icon = document.getElementById("toggle-icon");
 
         if (isCollapsed) {
             filterBody.style.display = "block";
-            icon.innerHTML = "&#9660;"; // ▼
         } else {
             filterBody.style.display = "none";
-            icon.innerHTML = "&#9654;"; // ▶
         }
 
         isCollapsed = !isCollapsed;
@@ -1191,12 +1111,7 @@
     }
 
 
-    $('#txtType').on('change', function () {
-        getAllProfiles(); // Cập nhật danh sách theo city
-    });
-    $('#txtCity').on('change', function () {
-        getAllProfiles(); // Cập nhật danh sách theo city
-    });
+
 
     function editProfile(){
         var grid = $("#gridContainer").dxDataGrid("instance");
