@@ -109,6 +109,27 @@
                 vertical-align: middle;
                 margin-left: 5px;
             }
+        /* Hiển thị menu cấp 2 khi hover */
+        .dropdown-submenu {
+            position: relative;
+        }
+
+            .dropdown-submenu > .dropdown-menu {
+                top: 0;
+                left: 100%;
+                margin-top: -1px;
+                display: none;
+                position: absolute;
+            }
+
+            .dropdown-submenu:hover > .dropdown-menu {
+                display: block;
+            }
+
+        .dropdown-menu {
+            z-index: 1000;
+        }
+
     </style>
 </head>
 <body>
@@ -136,25 +157,49 @@
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" >Report </a>
+                            <a class="nav-link dropdown-toggle" href="#" role="button">Report</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="ReservationSummaryReport">Reservation Summary Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="GroupReservationReport">Group Reservation Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="GuestStayOverReport">Guest Stay Over Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="GuestStayReport">Guest Stay Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="TraceReport">Trace Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="BookingSource">Booking Source</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="ReportNationalityStatistics">Report Nationality Statistics</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="RatecodebyDateReport">Ratecode by Date Report</a></li>
+                                <!-- Nhóm 1: Reservation Reports -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">Accounting Reports</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="ReportNationalityStatistics">Report Nationality Statistics</a></li>
+                                    </ul>
+                                </li>
 
+                                <!-- Nhóm 2: Guest Reports -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">Sale/Reservation Reports</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="ReservationSummaryReport">Reservation Summary Report</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="GroupReservationReport">Group Reservation Report</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="GuestStayOverReport">Guest Stay Over Report</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="GuestStayReport">Guest Stay Report</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="TraceReport">Trace Report</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Nhóm 3: Statistic Reports -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">Other Reports</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="BookingSource">Booking Source</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="RatecodebyDateReport">Ratecode by Date Report</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
+<<<<<<< HEAD
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#">Reservation</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a></li>
                             </ul>
                         </li>
+=======
+
+
+>>>>>>> 9d66ff8073d4ccd35a138c67345184b5d55ce004
                     </ul>
 
 

@@ -39,6 +39,8 @@ namespace Report.Controllers
 
         public IActionResult BookingSource()
         {
+            List<RateCodeModel> list = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
+            ViewBag.RateCodeList = list;
             return View();
 
         }
