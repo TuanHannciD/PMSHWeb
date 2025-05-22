@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DevExpress.XtraReports.UI;
+using System.Globalization;
 
 namespace Report.Controllers
 {
@@ -373,6 +374,54 @@ namespace Report.Controllers
 
             //     return PartialView("_ReportViewerPartial", report);
         }
+        [HttpGet]
+        public IActionResult OTAsMonthlyReport(string fromDate, string Number, string type, string currencyID)
+       {
+            try
+            {
+                var startDate = DateTime.ParseExact(fromDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var months = Enumerable.Range(0, 4)
+                                       .Select(i => startDate.AddMonths(i))
+                                       .ToList();
+
+                DataTable dataTable = _iReportService.OTAMonthlyReport(fromDate, Number, type, currencyID);
+
+                var result = dataTable.AsEnumerable().Select(d => new
+                {
+                    ProfileID = d["ProfileID"]?.ToString() ?? "",
+                    GuestNo = d["GuestNo"]?.ToString() ?? "",
+                    GuestName = d["GuestName"]?.ToString() ?? "",
+                    City = d["City"]?.ToString() ?? "",
+                    CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+
+                    // Tạo dynamic theo tháng
+                    RoomRevenue = months.Select(m => new
+                    {
+                        Month = m.ToString("MMM-yyyy"),
+                        Value = d[$"RR_{m.ToString("MMM", CultureInfo.InvariantCulture)}"]?.ToString() ?? ""
+                    }),
+                    RoomNights = months.Select(m => new
+                    {
+                        Month = m.ToString("MMM-yyyy"),
+                        Value = d[$"RN_{m.ToString("MMM", CultureInfo.InvariantCulture)}"]?.ToString() ?? ""
+                    })
+                }).ToList();
+
+                // Trả về thêm tiêu đề tháng để JS dùng
+                var monthHeaders = months.Select(m => m.ToString("MMM-yyyy")).ToList();
+
+                return Json(new
+                {
+                    Data = result,
+                    MonthHeaders = monthHeaders
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
         [HttpGet]
         public IActionResult TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly)
         {

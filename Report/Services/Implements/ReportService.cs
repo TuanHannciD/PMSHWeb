@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BaseBusiness.util;
+using System.Globalization;
 namespace Report.Services.Implements
 {
     public class ReportService : IReportService
@@ -55,6 +56,36 @@ namespace Report.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReturnGuest", param);
+            return myTable;
+        }
+        public DataTable OTAMonthlyReport(string fromDate, string Number, string type, string currencyID)
+        {
+            DateTime fromDateParsed;
+            string toDate = fromDate;
+
+            if (DateTime.TryParseExact(fromDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out fromDateParsed))
+            {
+                // Cộng thêm 4 tháng
+                DateTime toDateParsed = fromDateParsed.AddMonths(4);
+
+                // Lấy ngày cuối cùng của tháng
+                int lastDay = DateTime.DaysInMonth(toDateParsed.Year, toDateParsed.Month);
+                DateTime lastDateOfMonth = new DateTime(toDateParsed.Year, toDateParsed.Month, lastDay);
+
+                // Chuyển sang chuỗi theo định dạng cần thiết
+                toDate = lastDateOfMonth.ToString("yyyy-MM-dd");
+            }
+            SqlParameter[] param = new SqlParameter[]
+            {
+          new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+        new SqlParameter("@ProfileID",0),
+        new SqlParameter("@CurrencyID", currencyID),
+                new SqlParameter("@Type", type),
+                 new SqlParameter("@Number", Number),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptRevenue_MonthlyByHolderReport", param);
             return myTable;
         }
         public  DataTable ReportNationalityStatistics(DateTime fromDate, DateTime toDate, string status, string sortOder)

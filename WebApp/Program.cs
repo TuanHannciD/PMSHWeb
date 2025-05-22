@@ -50,6 +50,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 var env = builder.Environment;
+app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "node_modules")),

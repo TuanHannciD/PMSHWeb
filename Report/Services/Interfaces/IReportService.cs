@@ -19,5 +19,6 @@ namespace Report.Services.Interfaces
         DataTable TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly);
         DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode);
          DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode);
+        DataTable OTAMonthlyReport(string fromDate, string Number, string type, string currencyID);
     }
 }
