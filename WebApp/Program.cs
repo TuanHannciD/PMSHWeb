@@ -11,6 +11,11 @@ using Microsoft.Extensions.FileProviders;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
+using Reservation.Controllers;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using WebApp.Commons.Containts;
+using Reservation.Services.Interfaces;
+using Reservation.Services.Implements;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +27,8 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ReportController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(UserController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ReservationController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -36,7 +43,24 @@ builder.Services.ConfigureReportingServices(configurator => {
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IReportService, ReportService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IReservationService, ReservationService>();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+               .AddCookie(options =>
+               {
+                   options.ExpireTimeSpan = TimeSpan.FromMinutes(AppConstants.EXPIRE_TIME);
+                   options.Cookie.IsEssential = true;
+                   options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
+                   options.Cookie.Path = "/";
+                   options.LoginPath = "/User/Index";
+                   options.LoginPath = "/User/Index";
+                   options.Cookie.HttpOnly = true;
+                   options.Cookie.SameSite = SameSiteMode.Lax;
+               });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
 var app = builder.Build();
@@ -57,7 +81,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

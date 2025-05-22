@@ -9,6 +9,7 @@ namespace User.Services.Interfaces
 {
     public interface IUserService
     {
+
         UsersModel Login(string LoginName, string Password);
     }
 }

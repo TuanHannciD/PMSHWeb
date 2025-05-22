@@ -26,13 +26,19 @@ namespace Profile.Controllers
             _logger = logger;
             _configuration = configuration;
         }
+        
         public IActionResult Index()
         {
             return View();
         }
 
         #region common
-        //get all city
+        /// <summary>
+        /// get all city
+        /// </summary>
+        /// <param ></param>
+        /// <returns>list city model</returns>
+
         [HttpGet]
         public async Task<IActionResult> GetAllCity()
         {
@@ -259,7 +265,131 @@ namespace Profile.Controllers
 
         }
 
+        //get all membertype
+        [HttpGet]
+        public async Task<IActionResult> GetAllMemberType()
+        {
+            List<MemberTypeModel> list = new List<MemberTypeModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<MemberTypeModel>(MemberTypeBO.Instance.FindAll()).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
 
+            return Json(list);
+
+        }
+        //get all agent
+        [HttpGet]
+        public async Task<IActionResult> GetAllAgent()
+        {
+            List<ProfileModel> list = new List<ProfileModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll()).Where(x => x.Type == 1).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            return Json(list);
+
+        }
+
+        //get all company
+        [HttpGet]
+        public async Task<IActionResult> GetAllCompany()
+        {
+            List<ProfileModel> list = new List<ProfileModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll()).Where(x => x.Type == 2).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            return Json(list);
+
+        }
+
+        //get all contact
+        [HttpGet]
+        public async Task<IActionResult> GetAllContact()
+        {
+            List<ProfileModel> list = new List<ProfileModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll()).Where(x => x.Type == 5).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            return Json(list);
+
+        }
+
+        //get all profile individual
+        [HttpGet]
+        public async Task<IActionResult> GetAllProfileIndividual()
+        {
+            List<ProfileModel> list = new List<ProfileModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll()).Where(x => x.Type == 0).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            return Json(list);
+
+        }
+
+        //get all roomtype
+        [HttpGet]
+        public async Task<IActionResult> GetAllRoomType()
+        {
+            List<RoomTypeModel> list = new List<RoomTypeModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll()).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            return Json(list);
+
+        }
+
+
+        //get all room by room type
+        [HttpGet]
+        public async Task<IActionResult> GetRoomByRoomType(int roomTypeID)
+        {
+            List<RoomModel> list = new List<RoomModel>();
+            try
+            {
+                list = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll()).Where(room => roomTypeID == 0 || room.RoomTypeID == roomTypeID).ToList();
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            return Json(list);
+
+        }
         #endregion
 
         #region SearchProfile

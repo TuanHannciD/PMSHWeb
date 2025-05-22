@@ -1,0 +1,929 @@
+﻿<link href="~/css/new_reservation.css" rel="stylesheet" />
+<div class="body">
+    <div class="container">
+        <!-- Part 1: Personal, Address, Agent in one row -->
+        <div class="top-row">
+            <!-- Personal Information Section -->
+            <div class="section">
+                <div class="row me-1">
+                    <label class="col-md-3">Name</label>
+                    <select class="col-md-9" id="txtName">
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">First name</label>
+                    <input class="col-md-9" type="text" id="txtFirstName">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Title</label>
+                    <select class="col-md-9" id="txtTitle">
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Phone</label>
+                    <input class="col-md-9" type="text" id="txtPhone">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Email</label>
+                    <input class="col-md-9" type="email" id="txtEmail">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Identity Card</label>
+                    <input class="col-md-9" type="text" id="txtIdentityCard">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Passport</label>
+                    <input class="col-md-9" type="text" id="txtPassport">
+                </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="section">
+                <div class="row me-1">
+                    <label class="col-md-3">Address</label>
+                    <input class="col-md-9" type="text" id="txtAddress">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Date of Birth</label>
+                    <input class="col-md-9"  type="date" value="1900-01-01" id="txtDob">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Nationality</label>
+                    <select class="col-md-9" id="txtNationality" >
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">City</label>
+                    <select class="col-md-9" id="txtCity">
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">VIP</label>
+                    <select class="col-md-9" id="txtVIP">
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Mem. Type</label>
+                    <select class="col-md-9" id="txtMemberType">
+                        <option>VIP</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Card No.</label>
+                    <input class="col-md-9" type="text" id="txtCardNo">
+                </div>
+            </div>
+
+            <!-- Agent Section -->
+            <div class="section">
+                <div class="row me-1">
+                    <label class="col-md-3">Agent</label>
+                    <select class="col-md-9" id="txtAgent">
+                        <option>Company</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Company</label>
+                    <select class="col-md-9" id="txtCompany">
+                        <option>Company</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Group Code</label>
+                    <input class="col-md-9" type="text">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Contact</label>
+                    <select class="col-md-9" id="txtContact">
+                        <option>Company</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Con. Phone</label>
+                    <input class="col-md-9" type="text">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Pref. Room</label>
+                    <input class="col-md-9" type="text">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Last Stay</label>
+                    <label class="col-md-9">1</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Part 2: Only text for More Fields and Property -->
+        <div class="middle-row" style="display: flex; align-items: center;">
+            <div style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; padding: 4px; background-color: #D3D3D3; border: 1px solid #A9A9A9;">
+                More Fields
+            </div>
+            <div style="flex: 1; text-align: center;color:#9F0010;font-size:20px;font-weight:600">
+                Property : Pmsh The Arena
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Part 3: Arrival, Res. Type, and Specials -->
+        <div class="third-row">
+            <!-- Arrival Section -->
+            <div class="section">
+                <div class="row me-1">
+                    
+                    <label class="col-md-3">Arrival</label>
+                    <input type="date" id="arrival" class="col-md-5">
+                    <button class="col-md-1" onclick="changeDate('arrival', -1)">-</button>
+                    <button class="col-md-1" onclick="changeDate('arrival', 1)">+</button>
+                    <span class="col-md-2" style="font-size:12px;color:#9F0010" id="arrival-day"></span>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Nights</label>
+                    <input type="text" id="nights" class="col-md-9" readonly>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Departure</label>
+                    <input type="date" id="departure" class="col-md-5">
+                    <button class="col-md-1" onclick="changeDate('departure', -1)">-</button>
+                    <button class="col-md-1" onclick="changeDate('departure', 1)">+</button>
+                    <span class="col-md-2" style="font-size:12px;color:#9F0010" id="departure-day"></span>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Adults</label>
+                    <input type="number" value="2" class="small-input col-md-3" id="adults">
+                    <label class="col-md-1">C</label>
+                    <input type="number" value="0" class="small-input col-md-1">
+                    <label class="col-md-1">C1</label>
+                    <input type="number" value="0" class="small-input col-md-1">
+                    <label class="col-md-1">C2</label>
+                    <input type="number" value="0" class="small-input col-md-1">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">No. of Room</label>
+                    <input class="col-md-7" type="number" id="numRooms" value="1" min="1">
+                    <button class="col-md-1" onclick="decreaseRooms()">-</button>
+                    <button class="col-md-1" onclick="increaseRooms()">+</button>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Room Type</label>
+                    <select class="col-md-4" id="txtRoomType">
+                    </select>
+                    <label class="col-md-2">RTC</label>
+                    <select class="col-md-3" id="txtRTC">
+                    </select>
+                </div>
+
+                <div class="row me-1">
+                    <label class="col-md-3">Room</label>
+                    <select class="col-md-5" id="roomSelect">
+                        <option>RTC</option>
+                    </select>
+                    <label class="col-md-1">RN</label>
+                    <select class="col-md-3">
+                        <option>RTC</option>
+                    </select>
+                </div>
+
+                <div class="row me-1">
+                    <label class="col-md-3">Rate Code</label>
+                    <select class="col-md-9" id="txtRateCode">
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Currency</label>
+                    <select class="col-md-9">
+                        <option>RTC</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Rate</label>
+                    <input class="col-md-3" type="number" value="0.00">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Packages</label>
+                    <select class="col-md-9">
+                        <option>net</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label  class="col-md-3">Allotment</label>
+                    <select  class="col-md-9">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Disc. Amt</label>
+                    <input type="number" value="0.00" class="col-md-3">
+                    <label class="col-md-1">%</label>
+                    <input type="number" value="0.00" class="col-md-5">
+                </div>
+                <div class="row me-1">
+                    <label  class="col-md-3">Reason</label>
+                    <select class="col-md-9">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Res. Type Section -->
+            <div class="section">
+                <div class="row me-1">
+                    <label class="col-md-3">Res. Type</label>
+                    <select  class="col-md-9">
+                        <option>Market</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Market</label>
+                    <select class="col-md-9">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Source</label>
+                    <select class="col-md-9">
+                        <option>Source</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Sale</label>
+                    <select class="col-md-9">
+                        <option>Sale</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Payment</label>
+                    <select class="col-md-9">
+                        <option>Payment</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">CRS No</label>
+                    <input class="col-md-9" type="text">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Booker</label>
+                    <select class="col-md-9">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">ETA</label>
+                    <input class="col-md-3" type="time" value="06:00">
+                    <label class="col-md-2">ETD</label>
+                    <input class="col-md-4" type="time" value="12:00">
+                </div>
+
+                <div class="row me-1">
+                    <label class="col-md-3">Rate</label>
+                    <div class="col-md-5 row">
+                        <div class="row col-md-12">
+                            <input type="number" value="0" class="highlighted col-md-9">
+                            <span class="col-md-3">+</span>
+                        </div>
+                        <div class="row col-md-12">
+                            <input type="number" style="font-size:12px" value="0" class="highlighted col-md-9">
+                            <span class="col-md-3" style="font-size:12px">net</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 row" style="text-align:center;justify-content:center">
+                        <span style="font-size:12px;color:red;padding-top:8px">Rate amount
+                            after discount
+                        </span>
+                    </div>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Total</label>
+                    <div class="col-md-5 row">
+                        <div class="row col-md-12">
+                            <input type="number" value="0" class="highlighted col-md-9">
+                            <span class="col-md-3">+</span>
+                        </div>
+                        <div class="row col-md-12">
+                            <input type="number" style="font-size:12px" value="0" class="highlighted col-md-9">
+                            <span class="col-md-3" style="font-size:12px">net</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specials Section -->
+            <div class="section ">
+                <div class="row me-1">
+                    <label class="col-md-3">Specials</label>
+                    <select class="col-md-9">
+                        <option>Specials</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Promotions</label>
+                    <select class="col-md-9">
+                        <option>Promotions</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Item .Inv</label>
+                    <select class="col-md-9">
+                        <option>Promotions</option>
+                    </select>
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Folio Bal</label>
+                    <input class="col-md-4" type="number" value="0.00">
+                    <label class="col-md-1" style="font-size:12px;color:red;">$</label>
+                    <input class="col-md-3" type="number" value="0.00">
+                    <label class="col-md-1" style="font-size:12px;color:red;">VND</label>
+                </div>
+                <div class="row me-1">
+                    <label  class="col-md-3">Set Color</label>
+                    <input  class="col-md-9" type="color">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">Print Rate</label>
+                    <input class="col-md-1" type="checkbox">
+                    <label class="col-md-3">Video C/Out</label>
+                    <input class="col-md-1" type="checkbox">
+                </div>
+                <div class="row me-1">
+                    <label class="col-md-3">No Post</label>
+                    <input class="col-md-1" type="checkbox">
+                    <label class="col-md-3">Confirmation</label>
+                    <input class="col-md-1" type="checkbox">
+                </div>
+
+                <div class="row me-1">
+                    <label class="col-md-3">Comments</label>
+                    <textarea rows="3"class="specials-section col-md-9"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(async function () {
+        // Chờ tất cả các hàm AJAX hoàn thành
+        await Promise.all([
+            getAllProfileIndividual(),
+            getAllTitle(),
+            getAllNationality(),
+            getAllCity(),
+            getAllVIP(),
+            getAllMemberType(),
+            getAllAgent(),
+            getAllCompany(),
+            getAllContact(),
+            getAllRoomType(),
+            getAllRoomByRoomTypeID(0),
+        ]);
+    });
+    // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Hàm lấy tên thứ của ngày bằng tiếng Anh
+    function getDayName(date) {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[date.getDay()];
+    }
+
+    // Hàm tính số đêm
+    function calculateNights() {
+        const arrival = new Date(document.getElementById('arrival').value);
+        const departure = new Date(document.getElementById('departure').value);
+        if (arrival && departure) {
+            const diffTime = departure - arrival;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('nights').value = diffDays >= 0 ? diffDays : 0;
+        }
+    }
+
+    // Hàm cập nhật ngày và thứ
+    function updateDates() {
+        const arrivalInput = document.getElementById('arrival');
+        const departureInput = document.getElementById('departure');
+        const arrivalDay = document.getElementById('arrival-day');
+        const departureDay = document.getElementById('departure-day');
+
+        const arrivalDate = new Date(arrivalInput.value);
+        const departureDate = new Date(departureInput.value);
+
+        if (arrivalDate) {
+            arrivalDay.textContent = getDayName(arrivalDate);
+        }
+        if (departureDate) {
+            departureDay.textContent = getDayName(departureDate);
+        }
+        calculateNights();
+    }
+
+    // Hàm thay đổi ngày khi nhấn nút + hoặc -
+    function changeDate(field, delta) {
+        const input = document.getElementById(field);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
+        const currentDate = new Date(input.value || today);
+        const arrivalDate = new Date(document.getElementById('arrival').value);
+
+        // Kiểm tra nếu giảm ngày và ngày hiện tại nhỏ hơn ngày hôm nay
+        if (delta < 0) {
+            const newDate = new Date(currentDate);
+            newDate.setDate(currentDate.getDate() + delta);
+            if (newDate < today) {
+                return; // Không cho phép giảm ngày nếu nhỏ hơn hôm nay
+            }
+            // Nếu giảm departure, đảm bảo không nhỏ hơn hoặc bằng arrival
+            if (field === 'departure' && newDate <= arrivalDate) {
+                return; // Không cho phép giảm departure nếu nhỏ hơn hoặc bằng arrival
+            }
+        }
+
+        // Cập nhật ngày
+        currentDate.setDate(currentDate.getDate() + delta);
+        input.value = formatDate(currentDate);
+
+        // Nếu thay đổi arrival, cập nhật departure để giữ số đêm cố định
+        if (field === 'arrival') {
+            const nights = parseInt(document.getElementById('nights').value) || 1;
+            const departureDate = new Date(currentDate);
+            departureDate.setDate(currentDate.getDate() + nights);
+            // Đảm bảo departure lớn hơn arrival
+            if (departureDate <= currentDate) {
+                departureDate.setDate(currentDate.getDate() + 1);
+            }
+            document.getElementById('departure').value = formatDate(departureDate);
+        }
+
+        // Nếu thay đổi departure, đảm bảo departure lớn hơn arrival
+        if (field === 'departure') {
+            if (currentDate <= arrivalDate) {
+                const newDeparture = new Date(arrivalDate);
+                newDeparture.setDate(arrivalDate.getDate() + 1);
+                document.getElementById('departure').value = formatDate(newDeparture);
+            }
+        }
+
+        updateDates();
+    }
+
+    // Khởi tạo ngày mặc định
+    window.onload = function() {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        document.getElementById('arrival').value = formatDate(today);
+        document.getElementById('departure').value = formatDate(tomorrow);
+        updateDates();
+    };
+
+    // Lắng nghe sự kiện thay đổi ngày
+    document.getElementById('arrival').addEventListener('change', function() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const arrivalDate = new Date(this.value);
+        if (arrivalDate < today) {
+            this.value = formatDate(today); // Đặt lại ngày hôm nay nếu nhỏ hơn
+        }
+        // Cập nhật departure để giữ số đêm cố định
+        const nights = parseInt(document.getElementById('nights').value) || 1;
+        const newDeparture = new Date(this.value);
+        newDeparture.setDate(newDeparture.getDate() + nights);
+        // Đảm bảo departure lớn hơn arrival
+        if (newDeparture <= arrivalDate) {
+            newDeparture.setDate(arrivalDate.getDate() + 1);
+        }
+        document.getElementById('departure').value = formatDate(newDeparture);
+        updateDates();
+    });
+
+    document.getElementById('departure').addEventListener('change', function() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const departureDate = new Date(this.value);
+        const arrivalDate = new Date(document.getElementById('arrival').value);
+        // Đảm bảo departure không nhỏ hơn ngày hiện tại và lớn hơn arrival
+        if (departureDate <= arrivalDate || departureDate < today) {
+            const newDeparture = new Date(arrivalDate > today ? arrivalDate : today);
+            newDeparture.setDate(newDeparture.getDate() + 1);
+            this.value = formatDate(newDeparture);
+        }
+        updateDates();
+    });
+
+    const numRoomsInput = document.getElementById('numRooms');
+    const roomSelect = document.getElementById('roomSelect');
+
+    // Hàm kiểm tra và cập nhật trạng thái select
+    function updateRoomSelect() {
+        if (parseInt(numRoomsInput.value) > 1) {
+            roomSelect.disabled = true;
+        } else {
+            roomSelect.disabled = false;
+        }
+    }
+
+    // Hàm giảm số phòng
+    function decreaseRooms() {
+        let value = parseInt(numRoomsInput.value);
+        if (value > 1) {
+            numRoomsInput.value = value - 1;
+            updateRoomSelect();
+        }
+    }
+
+    // Hàm tăng số phòng
+    function increaseRooms() {
+        let value = parseInt(numRoomsInput.value);
+        numRoomsInput.value = value + 1;
+        updateRoomSelect();
+    }
+
+    // Xác thực khi nhập trực tiếp vào input
+    numRoomsInput.addEventListener('input', function() {
+        if (numRoomsInput.value < 1 || isNaN(numRoomsInput.value)) {
+            numRoomsInput.value = 1;
+        }
+        updateRoomSelect();
+    });
+
+    // Khởi tạo trạng thái ban đầu
+    updateRoomSelect();
+    async function getAllTitle() {
+        return $.ajax({
+            url: '/Profile/GetAllTitle',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtTitle').empty();
+                var html = `<option value='0'>Please select title</option>`
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.name}</option>`
+                    });
+
+                }
+                $('#txtTitle').append(html);
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+
+    async function getAllNationality() {
+        return $.ajax({
+            url: '/Profile/GetAllNationality',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtNationality').empty();
+                var html = `<option value='0'>Please select Nationality</option>`;
+                
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.name}</option>`
+                    });
+                }
+                $('#txtNationality').append(html);
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+
+    async function getAllCity() {
+        return $.ajax({
+            url: '/Profile/GetAllCity',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtCity').empty();
+                var html = `<option value='0'>Please select City</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.name}'>${item.name}</option>`
+                    });
+                }
+                $('#txtCity').append(html);
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    
+    async function getAllVIP() {
+        return $.ajax({
+            url: '/Profile/GetAllVIP',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtVIP').empty();
+                var html = `<option value='0'>Please select VIP</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.name}</option>`
+                    });
+                }
+                $('#txtVIP').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    async function getAllMemberType() {
+        return $.ajax({
+            url: '/Profile/GetAllMemberType',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtMemberType').empty();
+                var html = `<option value='0'>Please select Member Type</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.name}</option>`
+                    });
+                }
+                $('#txtMemberType').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+
+    async function getAllAgent() {
+        return $.ajax({
+            url: '/Profile/GetAllAgent',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtAgent').empty();
+                var html = `<option value='0'>Please select Agent</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.account}</option>`
+                    });
+                }
+                $('#txtAgent').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    async function getAllCompany() {
+        return $.ajax({
+            url: '/Profile/GetAllCompany',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtCompany').empty();
+                var html = `<option value='0'>Please select Company</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.account}</option>`
+                    });
+                }
+                $('#txtCompany').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    async function getAllContact() {
+        return $.ajax({
+            url: '/Profile/GetAllContact',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtContact').empty();
+                var html = `<option value='0'>Please select Contact</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.account}</option>`
+                    });
+                }
+                $('#txtContact').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+
+    async function getAllProfileIndividual() {
+        return $.ajax({
+            url: '/Profile/GetAllProfileIndividual',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtName').empty();
+                var html = `<option value='0'>Please select Profile Individual</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.account}</option>`
+                    });
+                }
+                $('#txtName').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+
+    async function getAllRoomType() {
+        return $.ajax({
+            url: '/Profile/GetAllRoomType',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtRoomType').empty();
+                $('#txtRTC').empty();
+                var html = `<option value='0'>RoomType</option>`;
+                var htmlRTC = `<option value='0'>RTC</option>`;
+                console.log(result);
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.id}'>${item.code} - ${item.name}</option>`;
+                         htmlRTC += `<option value='${item.id}'>${item.code} - ${item.name}</option>`
+                    });
+                }
+                $('#txtRoomType').append(html);
+                $('#txtRTC').append(htmlRTC);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+
+    async function getAllRoomByRoomTypeID(roomTypeID) {
+        return $.ajax({
+            url: '/Profile/GetRoomByRoomType',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{roomTypeID : roomTypeID},
+            success: function (result) {
+                $('#roomSelect').empty();
+                var html = `<option value='0'>Room</option>`;
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.roomNo}'>${item.roomName}</option>`;
+                    });
+                }
+                $('#roomSelect').append(html);
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    $('#txtName').on('change', function() {
+        let selectedValue = $(this).val();
+        if(selectedValue != 0){
+            $.ajax({
+            url: '/Profile/GetProfileByID',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{id : selectedValue},
+            success: function (result) {
+                $('#txtFirstName').val(result.profile.firstname);
+                $('#txtTitle').val(result.profile.titleID);
+                $('#txtPhone').val(result.profile.handPhone);
+                $('#txtEmail').val(result.profile.email);
+                $('#txtIdentityCard').val(result.profile.identityCard);
+                $('#txtPassport').val(result.profile.passPort);
+                $('#txtAddress').val(result.profile.address);
+                $('#txtNationality').val(result.profile.nationalityID);
+                $('#txtCity').val(result.profile.city);
+                console.log(result.profile);
+                $('#txtVIP').val(result.profile.vipid);
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+        }
+    });
+    $('#txtAgent').on('change', function() {
+        let selectedValue = $(this).val();
+        if(selectedValue != 0){
+            $.ajax({
+            url: '/Profile/GetProfileByID',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{id : selectedValue},
+            success: function (result) {
+                $('#txtCompany').val(0);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+        }
+    });
+    $('#txtCompany').on('change', function() {
+        let selectedValue = $(this).val();
+        if(selectedValue != 0){
+            $.ajax({
+            url: '/Profile/GetProfileByID',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{id : selectedValue},
+            success: function (result) {
+                $('#txtAgent').val(0);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+        }
+    });
+    function getRateCode() {
+        return $.ajax({
+            url: '/Reservation/GetRateCode',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                arrivalDate:$('#arrival').val(),
+                departure:$('#departure').val(),
+                adults:$('#adults').val(),
+                roomType:$('#txtRoomType').val()
+            },
+            success: function (result) {
+                $('#txtRateCode').empty();
+                var html = `<option value='0'>Rate code</option>`;
+                console.log(result);
+                if (result.length > 0) {
+                    result.forEach(item => {
+                        html += `<option value='${item.rateCodeID}'>${item.rateCode} - ${item.amountAfterTax}</option>`;
+                    });
+                }
+                $('#txtRateCode').append(html);
+
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    $('#txtRoomType').on('change', function() {
+        let selectedValue = $(this).val();
+        $('#txtRTC').val(selectedValue);
+        getAllRoomByRoomTypeID(selectedValue);
+        getRateCode();
+    });
+</script>

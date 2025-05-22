@@ -1,0 +1,40 @@
+﻿.input-container {
+    position: relative;
+    margin: 20px;
+    width: 300px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 6px 10px; /* Reduced padding to make input shorter */
+    font-size: 14px; /* Reduced font-size for smaller height */
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0;
+    outline: none;
+    transition: border-bottom-color 0.3s;
+}
+
+    .input-field:focus {
+        border-bottom-color: #007bff;
+    }
+
+.input-label {
+    position: absolute;
+    left: 10px;
+    top: 7px; /* Adjusted to align with shorter input */
+    font-size: 14px; /* Match input font-size */
+    color: #999;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.input-field:focus + .input-label,
+.input-field:not(:placeholder-shown) + .input-label {
+    top: -18px; /* Slightly adjusted for better spacing */
+    left: 5px;
+    font-size: 11px; /* Slightly smaller to match proportions */
+    color: #007bff;
+    background: #fff;
+    padding: 0 5px;
+}

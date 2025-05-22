@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Profile\Profile.csproj" />
     <ProjectReference Include="..\Report\Report.csproj" />
+    <ProjectReference Include="..\Reservation\Reservation.csproj" />
     <ProjectReference Include="..\User\User.csproj" />
   </ItemGroup>
 
