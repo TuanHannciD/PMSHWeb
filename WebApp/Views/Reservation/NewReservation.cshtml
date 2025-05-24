@@ -1,6 +1,15 @@
 ﻿<link href="~/css/new_reservation.css" rel="stylesheet" />
 <div class="body">
+   
     <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>New Reservation</div>
+            <div class="button-group mb-1">
+                <button  class="mui-button mui-button-new"><i class="fas fa-plus"></i> New</button>
+                <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
+                <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
         <!-- Part 1: Personal, Address, Agent in one row -->
         <div class="top-row">
             <!-- Personal Information Section -->
