@@ -213,13 +213,13 @@
         <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
                <div  class="d-flex align-items-center" id="bookingSource" style="display:none !important;">
             <!-- From Date -->
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center me-3">
                 <label style="width: 100px;">From Date:</label>
                 <input style ="width: 130px;" type="date" id="fromDate" name="fromDate" class="form-control" />
             </div>
 
             <!-- To Date -->
-            <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center me-3">
                 <label style="width: 80px;">To Date:</label>
                 <input style="width: 130px;" type="date" id="toDate" name="toDate" class="form-control" />
             </div>
@@ -227,19 +227,19 @@
 
               <div  class="d-flex align-items-center" id="ratecodebyDateReport" style="display:none !important;">
             <!-- From Date -->
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center me-3">
                 <label style="width: 100px;">From Date:</label>
                 <input style ="width: 130px;" type="date" id="fromDaterc" name="fromDate" class="form-control" />
             </div>
 
             <!-- To Date -->
-            <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center me-3">
                 <label style="width: 80px;">To Date:</label>
                 <input style="width: 130px;" type="date" id="toDaterc" name="toDate" class="form-control" />
             </div>
     
             <!-- Ratecode -->
-            <div class="d-flex align-items-center" id="ratecodeWrapper">
+                    <div class="d-flex align-items-center me-3" id="ratecodeWrapper">
                 <label style="width: 100px;">Rate Code:</label>
                 <select style="width: 150px;" class="form-control" id="ratecode" name="ratecode">
                     <option value="">ALL</option>
@@ -252,12 +252,12 @@
             </div>
 
               <div id="monthlyReport" style="display:none !important;">
-    <div class="d-flex align-items-center mb-2">
-        <label style="width: 80px;">Month:</label>
+    <div class="d-flex align-items-center mb-2 me-3">
+        <label style="width: 60px;">Month:</label>
         <input style="width: 130px;" type="date" id="toDateMonth" name="toDate" class="form-control" />
     </div>
 
-    <div class="d-flex align-items-center mb-2">
+    <div class="d-flex align-items-center mb-2 me-3">
         <label style="width: 100px;">Profile type:</label>
         <div class="form-check me-3">
                             <input class="form-check-input" type="checkbox" id="profileTravelAgents" name="profileType" value="TravelAgents" checked>
@@ -269,12 +269,12 @@
         </div>
     </div>
 
-    <div class="d-flex align-items-center mb-2">
+                    <div class="d-flex align-items-center mb-2 me-3">
         <label style="width: 115px;">Room Night ≥</label>
                         <input style="width: 130px;" type="text" id="roomNight" name="roomNight" class="form-control"  />
     </div>
                     <div class="d-flex align-items-center mb-2">
-                        <label style="width: 115px;">View Vy ≥</label>
+                        <label style="width: 70px;">View Vy</label>
                         <input style="width: 130px;" type="text" id="viewBy" name="viewBy" class="form-control" value="VND" readonly />
                     </div>
 </div>
@@ -288,7 +288,7 @@
        </div>
 
         <div class="mui-card">
-            <div class="mt-1" id="reportTitle"></div>
+            <div style="font-size: 23px;" class="mt-1" id="reportTitle"></div>
             <div id="gridContainer" class="mt-2"></div>
         </div>
 
@@ -460,6 +460,15 @@
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
+                 summary: {
+                totalItems: [
+                    { column: "rnActual", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                    { column: "busmixActual", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                    { column: "adrActual", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                    { column: "revForcast", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                    { column: "revmixForcast", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                ]
+            },
             onRowClick: function (e) {
                 console.log("Clicked ID:", e.data.id);
             }
@@ -468,19 +477,19 @@
 
     // GRID CHO RATECODE BY DATE
     function initializeRatecodeGrid(data) {
-        const columnWidth = 180;
+
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-                { dataField: "rateCode", caption: "Rate Code", width: columnWidth-30 },
-                { dataField: "descripton", caption: "Description", width: columnWidth+120 },
-                { dataField: "fromDate", caption: "From Date", width: columnWidth-60, dataType: "date", format: "dd/MM/yyyy" },
-                { dataField: "toDate", caption: "To Date", width: columnWidth-60, dataType: "date", format: "dd/MM/yyyy" },
-                { dataField: "code", caption: "Package", width: columnWidth-50 },
-                { dataField: "rate", caption: "Rate", width: columnWidth-50, dataType: "number", format: "#,##0" },
-                { dataField: "roomTypeCode", caption: "Room Type", width: columnWidth-100 },
-                { dataField: "currencyID", caption: "Currency", width: columnWidth -100},
-            ],
+                  { dataField: "rateCode", caption: "Rate Code", width: "10%" },
+                { dataField: "descripton", caption: "Description", width: "20%" },
+                { dataField: "fromDate", caption: "From Date", dataType: "date", format: "dd/MM/yyyy", width: "10%" },
+                { dataField: "toDate", caption: "To Date", dataType: "date", format: "dd/MM/yyyy", width: "10%" },
+                { dataField: "code", caption: "Package", width: "10%" },
+                { dataField: "rate", caption: "Rate", dataType: "number", format: "#,##0", width: "10%" },
+                { dataField: "roomTypeCode", caption: "Room Type", width: "15%" },
+                { dataField: "currencyID", caption: "Currency", width: "15%"},
+                ],
             paging: { pageSize: 25 },
             scrolling: { rowRenderingMode: 'virtual' },
             pager: {
@@ -492,74 +501,119 @@
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
+                           summary: {
+                    totalItems: [
+                            { column: "rate", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                       
+                    ]
+                },
             onRowClick: function (e) {
                 console.log("Clicked ID:", e.data.id);
             }
         });
     }
-  function initializeOTAsMonthly(response) {
-    const data = response.data;
-    const monthHeaders = response.monthHeaders; // 4 tháng từ server
+     function initializeOTAsMonthly(response) {
+        const data = response.data;
+        const monthHeaders = response.monthHeaders;
+        const columnWidth = 180;
 
-    const columnWidth = 180;
+        const columns = [
+            {
+                caption: "Holder",
+                columns: [
+                    { dataField: "guestNo", caption: "Acc.No", width: columnWidth },
+                    { dataField: "guestName", caption: "Account", width: columnWidth + 250 }
+                ]
+            }
+        ];
 
-    const columns = [
-        {
-            caption: "Holder",
-            columns: [
-                { dataField: "guestNo", caption: "Acc.No", width: columnWidth },
-                { dataField: "guestName", caption: "Account", width: columnWidth +250}
-            ]
-        }
-    ];
+        const totalItems = [];
 
-    // Duyệt qua từng tháng để tạo cột tương ứng
         for (let i = 0; i < monthHeaders.length; i++) {
-        columns.push({
-            caption: monthHeaders[i],
-            columns: [
-                {
-                    caption: "Room night",
-                    calculateCellValue: function (rowData) {
-                        return Array.isArray(rowData.roomNights) && rowData.roomNights[i]
-                            ? rowData.roomNights[i].value
-                            : "";
+            const nightColumnName = `roomNight_${i}`;
+            const revenueColumnName = `roomRevenue_${i}`;
+
+            columns.push({
+                caption: monthHeaders[i],
+                columns: [
+                    {
+                        name: nightColumnName,
+                        caption: "Room night",
+                        calculateCellValue: function (rowData) {
+                            return Array.isArray(rowData.roomNights) && rowData.roomNights[i]
+                                ? rowData.roomNights[i].value
+                                : 0;
+                        },
+                            width: columnWidth - 60
                     },
-                    width: columnWidth-100
-                },
-                {
-                    caption: "Room revenue",
-                    calculateCellValue: function (rowData) {
-                        return Array.isArray(rowData.roomRevenue) && rowData.roomRevenue[i]
-                            ? rowData.roomRevenue[i].value
-                            : "";
-                    },
-                        width: columnWidth-100
+                    {
+                        name: revenueColumnName,
+                        caption: "Room revenue",
+                        calculateCellValue: function (rowData) {
+                            return Array.isArray(rowData.roomRevenue) && rowData.roomRevenue[i]
+                                ? rowData.roomRevenue[i].value
+                                : 0;
+                        },
+                        width: columnWidth - 60
+                    }
+                ]
+            });
+
+            // Thêm hàng tổng cho Room night
+            totalItems.push({
+                name: nightColumnName,
+                summaryType: "custom",
+                customizeText: function (e) {
+                    return "Tổng: " + e.value.toLocaleString();
                 }
-            ]
+            });
+
+            // Thêm hàng tổng cho Room revenue
+            totalItems.push({
+                name: revenueColumnName,
+                summaryType: "custom",
+                customizeText: function (e) {
+                    return "Tổng: " + e.value.toLocaleString('vi-VN') + " đ";
+                }
+            });
+        }
+
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            columns: columns,
+            paging: { pageSize: 25 },
+            scrolling: { rowRenderingMode: 'virtual' },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            showBorders: true,
+            summary: {
+                totalItems: totalItems
+            },
+            onCustomSummaryCalculate: function (e) {
+                if (e.summaryProcess === "start") {
+                    e.totalValue = 0;
+                }
+                if (e.summaryProcess === "calculate") {
+                    const index = parseInt(e.name.split("_")[1]); // lấy chỉ số tháng
+                    const isRevenue = e.name.startsWith("roomRevenue");
+                    const value = isRevenue
+                        ? (e.value.roomRevenue?.[index]?.value || 0)
+                        : (e.value.roomNights?.[index]?.value || 0);
+                    e.totalValue += value;
+                }
+            },
+            onRowClick: function (e) {
+                console.log("Clicked ID:", e.data.ProfileID);
+            }
         });
     }
 
-
-    $("#gridContainer").dxDataGrid({
-        dataSource: data,
-        columns: columns,
-        paging: { pageSize: 25 },
-        scrolling: { rowRenderingMode: 'virtual' },
-        pager: {
-            visible: true,
-            allowedPageSizes: [25, 50, 'all'],
-            showPageSizeSelector: true,
-            showInfo: true,
-            showNavigationButtons: true
-        },
-        selection: { mode: "multiple", showCheckBoxesMode: "none" },
-        showBorders: true,
-        onRowClick: function (e) {
-            console.log("Clicked ID:", e.data.ProfileID);
-        }
-    });
-}
 
 
       $("#btnExportExcel").click(function () {
