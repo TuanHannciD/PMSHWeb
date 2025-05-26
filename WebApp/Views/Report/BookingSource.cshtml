@@ -72,6 +72,8 @@
             color: white !important;
             font-weight: bold;
             border-right: 1px solid #ddd !important;
+            text-align: center !important;
+            
         }
 
         #gridContainer .dx-datagrid-rowsview td,
@@ -442,12 +444,12 @@
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-                { dataField: "source", caption: "Source", width: columnWidth },
-                { dataField: "rnActual", caption: "RNActual", width: columnWidth, dataType: "number", format: "#,##0" },
-                { dataField: "busmixActual", caption: "BUSMIXActual", width: columnWidth, dataType: "number", format: "#,##0" },
-                { dataField: "adrActual", caption: "ADRActual", width: columnWidth, dataType: "number", format: "#,##0" },
-                { dataField: "revForcast", caption: "REVForcast", width: columnWidth, dataType: "number", format: "#,##0" },
-                { dataField: "revmixForcast", caption: "REVMIXForcast", width: columnWidth, dataType: "number", format: "#,##0" },
+               { dataField: "source", caption: "Source", width: "17%" },
+            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
+            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
+            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
+            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
+            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
             ],
             paging: { pageSize: 25 },
             scrolling: { rowRenderingMode: 'virtual' },
@@ -462,11 +464,11 @@
             showBorders: true,
                  summary: {
                 totalItems: [
-                    { column: "rnActual", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
-                    { column: "busmixActual", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
-                    { column: "revForcast", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
-                    { column: "revmixForcast", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                        { column: "rnActual", summaryType: "sum", displayFormat: "Tổng cộng: {0}", valueFormat: "#,##0" },
+                        { column: "busmixActual", summaryType: "sum", displayFormat: "Tổng cộng: {0}", valueFormat: "#,##0" },
+                    { column: "adrActual", summaryType: "sum", displayFormat: "Tổng cộng: {0}", valueFormat: "#,##0" },
+                        { column: "revForcast", summaryType: "sum", displayFormat: "Tổng cộng: {0}", valueFormat: "#,##0" },
+                        { column: "revmixForcast", summaryType: "sum", displayFormat: "Tổng cộng: {0}", valueFormat: "#,##0" },
                 ]
             },
             onRowClick: function (e) {
@@ -483,10 +485,10 @@
             columns: [
                   { dataField: "rateCode", caption: "Rate Code", width: "10%" },
                 { dataField: "descripton", caption: "Description", width: "20%" },
-                { dataField: "fromDate", caption: "From Date", dataType: "date", format: "dd/MM/yyyy", width: "10%" },
-                { dataField: "toDate", caption: "To Date", dataType: "date", format: "dd/MM/yyyy", width: "10%" },
+                { dataField: "fromDate", caption: "From Date", dataType: "date", format: "dd/MM/yyyy", width: "15%" },
+                { dataField: "toDate", caption: "To Date", dataType: "date", format: "dd/MM/yyyy", width: "15%" },
                 { dataField: "code", caption: "Package", width: "10%" },
-                { dataField: "rate", caption: "Rate", dataType: "number", format: "#,##0", width: "10%" },
+                { dataField: "rate", caption: "Rate", dataType: "number", format: "#,##0", width: "20%" },
                 { dataField: "roomTypeCode", caption: "Room Type", width: "15%" },
                 { dataField: "currencyID", caption: "Currency", width: "15%"},
                 ],
@@ -503,7 +505,7 @@
             showBorders: true,
                            summary: {
                     totalItems: [
-                            { column: "rate", summaryType: "sum", displayFormat: "Tổng: {0}", valueFormat: "#,##0" },
+                            { column: "rate", summaryType: "sum", displayFormat: "Tổng cộng: {0}", valueFormat: "#,##0" },
                        
                     ]
                 },
