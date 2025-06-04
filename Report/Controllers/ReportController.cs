@@ -37,7 +37,6 @@ namespace Report.Controllers
         {
             return View();
         }
-
         public IActionResult BookingSource()
         {
             List<RateCodeModel> list = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
@@ -77,6 +76,16 @@ namespace Report.Controllers
         public IActionResult ReportNationalityStatistics()
         {
 
+            return View();
+
+        }
+        public IActionResult OtherReport()
+        {
+            return View();
+
+        }
+        public IActionResult FreeUpgradeReport()
+        {
             return View();
 
         }
@@ -227,6 +236,11 @@ namespace Report.Controllers
 
             //return PartialView("_ReportViewerPartial", report);
         }
+        public ActionResult RenderDailyBreakfastDetail()
+        {
+            return PartialView("ReservationSummaryReport"); // Tên file cshtml
+        }
+
         [HttpGet]
         public IActionResult ReservationSummary(DateTime fromDate, DateTime toDate)
         {
@@ -448,11 +462,147 @@ namespace Report.Controllers
             return PartialView("_ReportViewerPartial", report);
         }
 
+        [HttpGet]
+        public IActionResult DailyPickupReport(DateTime fromDate, DateTime toDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.DailyPickupReport(fromDate, toDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  No = !string.IsNullOrEmpty(d["No"].ToString()) ? d["No"] : "",
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  GuestName = !string.IsNullOrEmpty(d["GuestName"].ToString()) ? d["GuestName"] : "",
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  NoOfNight = !string.IsNullOrEmpty(d["NoOfNight"].ToString()) ? d["NoOfNight"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  RateAfterTax = !string.IsNullOrEmpty(d["RateAfterTax"].ToString()) ? d["RateAfterTax"] : "",
+                                  Total = !string.IsNullOrEmpty(d["Total"].ToString()) ? d["Total"] : "",
+                                  MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult DailyBreakfastDetail(DateTime fromDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.DailyBreakfastDetail(fromDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  No = !string.IsNullOrEmpty(d["No"].ToString()) ? d["No"] : "",
+                                  Title = !string.IsNullOrEmpty(d["Title"].ToString()) ? d["Title"] : "",
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  GuestName = !string.IsNullOrEmpty(d["GuestName"].ToString()) ? d["GuestName"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  ProfileIndividualID = !string.IsNullOrEmpty(d["ProfileIndividualID"].ToString()) ? d["ProfileIndividualID"] : "",
+                                  Price = !string.IsNullOrEmpty(d["Price"].ToString()) ? d["Price"] : "",
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  Person = !string.IsNullOrEmpty(d["Person"].ToString()) ? d["Person"] : "",
+                                  Package = !string.IsNullOrEmpty(d["Package"].ToString()) ? d["Package"] : "",
+                                  National = !string.IsNullOrEmpty(d["National"].ToString()) ? d["National"] : "",
+                                  MainGuest = !string.IsNullOrEmpty(d["MainGuest"].ToString()) ? d["MainGuest"] : "",
+                            
+
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+        [HttpGet]
+        public IActionResult FreeUpgradeReportData(DateTime fromDate, DateTime toDate,string viewBy,string status)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                status = status ?? "";
+                DataTable dataTable = _iReportService.FreeUpgradeReport(fromDate, toDate, viewBy, status);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  LastName = !string.IsNullOrEmpty(d["LastName"].ToString()) ? d["LastName"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  ReservationHolder = !string.IsNullOrEmpty(d["ReservationHolder"].ToString()) ? d["ReservationHolder"] : "",
+                                  RTC = !string.IsNullOrEmpty(d["RTC"].ToString()) ? d["RTC"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  UpgradeBy = !string.IsNullOrEmpty(d["UpgradeBy"].ToString()) ? d["UpgradeBy"] : "",
+                                  UpgradeWhy = !string.IsNullOrEmpty(d["UpgradeWhy"].ToString()) ? d["UpgradeWhy"] : "",
 
 
 
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
 
+            // Không cần gán parameter
+            //report.RequestParameters = false;
 
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult LoadReport(string reportName,string title)
+        {
+           
+            switch (reportName)
+            {
+                case "RatecodebyDateReport":
+                    List<RateCodeModel> list = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
+                    ViewBag.RateCodeList = list;
+                    break;
+                case "FixChargeReport":
+                    List<TransactionsModel> listts = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
+                    ViewBag.TransactionsList = listts;
+                    break;
+            }
+            ViewBag.ReportTitle = title;
+            // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng
+            return PartialView(reportName, title);
+        }
 
 
 
@@ -524,5 +674,5 @@ namespace Report.Controllers
 
 
     }
-
+    
 }

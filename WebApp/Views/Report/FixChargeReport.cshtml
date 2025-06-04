@@ -4,15 +4,13 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
+    var transactionsList = ViewBag.TransactionsList;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -61,6 +59,17 @@
                 <label style="width: 80px;">To Date:</label>
                 <input style="width: 130px;" type="date" id="toDate" name="toDate" class="form-control" />
             </div>
+             <div class="d-flex align-items-center me-3">
+                <label style="width: 80px;">Rate Code</label>
+                <div style="width: 130px;">
+            <select class="form-control" id="ratecode" name="selectType1">
+                <option value="">ALL</option>
+                        @foreach (var item in transactionsList)
+                        {
+                        <option value="@item.RateCode">@item.RateCode - @item.Descripton</option>
+                        }
+            </select>
+        </div>
         </div>
     </div>
     <div class=" mb-3 ">

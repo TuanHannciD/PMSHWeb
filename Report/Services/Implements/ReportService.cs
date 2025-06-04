@@ -167,5 +167,40 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptGroupReservationReport", param);
             return myTable;
         }
+        public DataTable DailyPickupReport(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@Year", fromDate),
+                new SqlParameter("@YearTo", toDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDailyPickup", param);
+            return myTable;
+        }
+        public DataTable DailyBreakfastDetail(DateTime fromDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@ViewDate", fromDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDailyBreakfastDetail", param);
+            return myTable;
+        }
+        public DataTable FreeUpgradeReport(DateTime fromDate, DateTime toDate, string viewBy, string status)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+                        new SqlParameter("@ToDate", toDate),
+                        new SqlParameter("@Status", status),
+                        new SqlParameter("@ViewBy", viewBy),
+                                          new SqlParameter("@Type", "0"),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFreeUpgradeReport", param);
+            return myTable;
+        }
     }
 }

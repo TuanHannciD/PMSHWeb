@@ -4,15 +4,11 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
 }
-
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -50,16 +46,35 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
         <div class="d-flex align-items-center">
-            <!-- From Date -->
+
             <div class="d-flex align-items-center me-3">
                 <label style="width: 100px;">From Date:</label>
                 <input style="width: 130px;" type="date" id="fromDate" name="fromDate" class="form-control" />
             </div>
-
-            <!-- To Date -->
             <div class="d-flex align-items-center me-3">
                 <label style="width: 80px;">To Date:</label>
-                <input style="width: 130px;" type="date" id="toDate" name="toDate" class="form-control" />
+                <input style="width: 130px;" type="date" id="toDate" name="fromDate" class="form-control" />
+            </div>
+            <div class="d-flex align-items-center me-3">
+                <label style="width: 80px;">View By:</label>
+                <div style="width: 120px;">
+                    <select class="form-control" id="viewBy" name="selectType1">
+                        <option value="0">Arrival Date</option>
+                        <option value="1">Departure Date</option>
+                        <option value="2">Stay Over</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex align-items-center me-3">
+                <label style="width: 60px;">Status:</label>
+                <div style="width: 100px;">
+                    <select class="form-control" id="status" name="selectType1">
+                        <option value="">All</option>
+                        <option value="0,5">Reservation</option>
+                        <option value="1,6">In-House</option>
+                        <option value="2">Checked-Out</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -77,6 +92,7 @@
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
+
 <script>
     function formatDate(date) {
         let year = date.getFullYear();
@@ -86,7 +102,7 @@
     }
 
     $(document).ready(function () {
-         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+            document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -106,43 +122,49 @@
 
 
     });
-    $("#btnPrint").click(function () {
-        $("#loadingSpinner").show();
-        $.ajax({
-            url: '/Report/BookingSourceData',
-            type: 'GET',
-            data: {
-                fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
-            },
-            traditional: true,
-              crossDomain: false,
-                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
+         $("#btnPrint").click(function () {
+            $("#loadingSpinner").show();
+            $.ajax({
+                url: '/Report/FreeUpgradeReportData',
+                type: 'GET',
+                data: {
+                  fromDate: $("#fromDate").val(),
+                   toDate: $("#toDate").val(),
+                   viewBy: $("#viewBy").val(),
+                   status: $("#status").val()
+                },
+               traditional: true,
+               crossDomain: false,
+               headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+               success: function (result) {
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                    initializeFreeUpgradeReportGrid(result);
                     $("#loadingSpinner").hide();
-            },
-            error: function () {
-                alert("Không thể tải báo cáo.");
-                $("#loadingSpinner").hide();
-            }
+               },
+                error: function () {
+                    alert("Không thể tải báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
         });
-    });
-
-    function initializeBookingSourceGrid(data) {
+           function initializeFreeUpgradeReportGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+               { dataField: "confirmationNo", caption: "Conf.", width: columnWidth-100 },
+                   { dataField: "roomNo", caption: "Ro.No", width: columnWidth -50},
+            { dataField: "lastName", caption: "Name", width: columnWidth },
+            { dataField: "reservationHolder", caption: "Reservation Holder", width: columnWidth+100 },
+            { dataField: "arrivalDate", caption: "Arr.", width: columnWidth-30, dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "departureDate", caption: "Dep.", width:columnWidth-30,dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "roomType", caption: "Ro.Type", width: columnWidth-30 },
+                  { dataField: "rtc", caption: "Ro.Type Charge", width: columnWidth-30},
+                   { dataField: "rateCode", caption: "Rate Code", width:columnWidth-30 },
+                           { dataField: "upgradeBy", caption: "Approvaled By", width: columnWidth -30},
+                   { dataField: "upgradeWhy", caption: "Note", width: columnWidth -30},
             ],
             paging: { pageSize: 25 },
             scrolling: { rowRenderingMode: 'virtual' },
@@ -154,22 +176,13 @@
                 showNavigationButtons: true,
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true,
-                 summary: {
-                totalItems: [
-                        { column: "rnActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                ]
-            }
+            showBorders: true
+          
         });
     }
 
 
-
-    $("#btnExportExcel").click(function () {
+     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");
         var selectedReport='@ViewBag.ReportTitle';
         if (!selectedReport) {

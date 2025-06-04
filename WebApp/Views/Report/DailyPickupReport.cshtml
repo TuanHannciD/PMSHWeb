@@ -12,7 +12,7 @@
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+   /*      background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -86,7 +86,7 @@
     }
 
     $(document).ready(function () {
-         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+              document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -106,10 +106,10 @@
 
 
     });
-    $("#btnPrint").click(function () {
+            $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/DailyPickupReport',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
@@ -122,7 +122,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                initializeDailyPickupReport(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -131,45 +131,51 @@
             }
         });
     });
+     function initializeDailyPickupReport(data) {
+          const columnWidth = 180;
+          $("#gridContainer").dxDataGrid({
+              dataSource: data,
+              columns: [
+                 { dataField: "no", caption: "No", width: columnWidth-130 },
+              { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-100, dataType: "number", format: "#,##0" },
+              { dataField: "guestName", caption: "GuestName", width: columnWidth+80 },
+                      { dataField: "company", caption: "Company", width: columnWidth +200 },
+                  { dataField: "arrivalDate", caption: "Check in", width: columnWidth-50, dataType: "date", format: "dd/MM/yyyy" },
+                  { dataField: "departureDate", caption: "Check out", width: columnWidth-50, dataType: "date", format: "dd/MM/yyyy" },
+               { dataField: "noOfRoom", caption: "Rooms", width:  columnWidth-80, dataType: "number", format: "#,##0" },
+                               { dataField: "noOfNight", caption: "Rnts", width: columnWidth-80, dataType: "number", format: "#,##0" },
+                        { dataField: "roomType", caption: "R.Type", width: columnWidth-80 },
+              { dataField: "rateAfterTax", caption: "Rate", width: columnWidth-80, dataType: "number", format: "#,##0" },
+                              { dataField: "total", caption: "Total", width:columnWidth, dataType: "number", format: "#,##0" },
+              { dataField: "marketCode", caption: "M.Code", width: columnWidth-80},
+                  { dataField: "rateCode", caption: "R.Code", width: columnWidth-80 },
+                  //  { dataField: "createdBy", caption: "C.By", width: "20%"},
+                  // { dataField: "createdDate", caption: "C.Date", width: "20%", dataType: "date", format: "dd/MM/yyyy" }
+              ],
+              paging: { pageSize: 25 },
+              scrolling: { rowRenderingMode: 'virtual' },
+              pager: {
+                  visible: true,
+                  allowedPageSizes: [25, 50, 'all'],
+                  showPageSizeSelector: true,
+                  showInfo: true,
+                  showNavigationButtons: true,
+              },
+              selection: { mode: "multiple", showCheckBoxesMode: "none" },
+              showBorders: true,
+                   summary: {
+                  totalItems: [
+                              { column: "noOfRoom", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" , width: columnWidth},
+                              { column: "noOfNight", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0", width: columnWidth },
+                          { column: "total", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0", width: columnWidth },
 
-    function initializeBookingSourceGrid(data) {
-        const columnWidth = 180;
-        $("#gridContainer").dxDataGrid({
-            dataSource: data,
-            columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
-            ],
-            paging: { pageSize: 25 },
-            scrolling: { rowRenderingMode: 'virtual' },
-            pager: {
-                visible: true,
-                allowedPageSizes: [25, 50, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true,
-            },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true,
-                 summary: {
-                totalItems: [
-                        { column: "rnActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                ]
-            }
-        });
-    }
+                  ]
+              }
+          });
+      }
 
 
-
-    $("#btnExportExcel").click(function () {
+     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");
         var selectedReport='@ViewBag.ReportTitle';
         if (!selectedReport) {
@@ -194,7 +200,6 @@
             });
         });
     });
-
 
     // Nút xuất PDF
        $("#btnExportPdf").click(function () {

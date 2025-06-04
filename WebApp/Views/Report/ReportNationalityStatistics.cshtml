@@ -12,8 +12,8 @@
 
 <style>
     .filter_wrapper {
-        background-color: #ececec;
-        margin: 0px 8px 14px 8px;
+    /*     background-color: #ececec; */
+      /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
     }
@@ -47,88 +47,33 @@
         }
 
 </style>
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-</div>
-<div style="display:flex;margin: 12px;text-align:center">
-    <i class="fa-solid fa-arrow-left" style="padding-top:5px;margin-right:4px" onclick="window.location.href='@Url.Action("Index", "Home")'"></i>
-    <div style="font-size:18px"><b>Report/Report Nationality Statistics</b></div>
-</div>
-<div class="button_wrapper row">
-    <button id="btnPrint" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6"><i class="fa-solid fa-eye"></i>View</button>
-    <button id="btnExportExcel" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6">
-        <i class="fa-solid fa-file-excel"></i>  Excel
-    </button>
-    <button id="btnExportPdf" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6">
-        <i class="fa-solid fa-file-pdf"></i>  PDF
-    </button>
-</div>
-<div class="filter_wrapper row">
+    <div class="sticky-header bg-white p-2 shadow-sm z-3">
+        <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
+            <div class="d-flex align-items-center">
+                <!-- From Date -->
+                <div class="d-flex align-items-center me-3">
+                    <label style="width: 100px;">From Date:</label>
+                    <input style="width: 130px;" type="date" id="fromDate" name="fromDate" class="form-control" />
+                </div>
 
-    <div class="form-group row col-md-3  mb-3">
-        <label class="col-md-5 col-form-label text-right">From Date</label>
-        <div class="col-md-7">
-            <input class="form-control" type="date" id="fromDate" name="fromDate" style="width: 100%;" />
+                <!-- To Date -->
+                <div class="d-flex align-items-center me-3">
+                    <label style="width: 80px;">To Date:</label>
+                    <input style="width: 130px;" type="date" id="toDate" name="toDate" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class=" mb-3 ">
+            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
         </div>
     </div>
-    <div class="form-group row col-md-3  mb-3">
-        <label class="col-md-5 col-form-label text-right">To Date</label>
 
-        <div class="col-md-7">
-            <input class="form-control" style="width: 100%;" id="toDate" name="toDate" type="date" />
-        </div>
+    <div class="mui-card">
+        <div style="font-size: 23px;" class="mt-1" id="reportTitle"></div>
+        <div id="gridContainer" class="mt-2"></div>
     </div>
-    <div class="form-group row col-md-6  mb-3">
-        <label class="col-md-2 col-form-label text-right">Include</label>
-        <div class="col-md-10 d-flex align-items-center flex-wrap">
-            <div class="form-check mr-3">
-                <input class="form-check-input" type="checkbox" id="Reservation" name="Reservation" value="Option1" checked>
-                <label class="form-check-label" for="includeOption1">Reservation</label>
-            </div>
-            <div class="form-check mr-3">
-                <input class="form-check-input" type="checkbox" id="CheckedOut" name="CheckedOut" value="Option2" checked>
-                <label class="form-check-label" for="includeOption2">Checked Out</label>
-            </div>
-            <div class="form-check mr-3">
-                <input class="form-check-input" type="checkbox" id="CheckedIn" name="includeOptions" value="Option3">
-                <label class="form-check-label" for="includeOption3">Checked In</label>
-            </div>
-            <div class="form-check mr-3">
-                <input class="form-check-input" type="checkbox" id="Cancellation" name="includeOptions" value="Option3" checked>
-                <label class="form-check-label" for="includeOption3">Cancellation</label>
-            </div>
-            <div class="form-check mr-3">
-                <input class="form-check-input" type="checkbox" id="WaitList" name="includeOptions" value="Option3" checked>
-                <label class="form-check-label" for="includeOption3">Wait List</label>
-            </div>
-            <div class="form-check mr-3">
-                <input class="form-check-input" type="checkbox" id="Blockcode" name="includeOptions" value="Option3" checked>
-                <label class="form-check-label" for="includeOption3">No Show</label>
-            </div>
-
-        </div>
-    </div>
-    <div class="form-group row col-md-3 mt-3 mb-3">
-        <label class="col-md-4 col-form-label text-right">Sort Order</label>
-        <div class="col-md-8">
-            <select class="form-control" id="sortOrder" name="sortOrder">
-                <option>Profit / Loss</option>
-                <option>Bed Night</option>
-                <option>Arrivals</option>
-                <option>Duration Of Statay</option>
-                <option>Country Code</option>
-            </select>
-        </div>
-    </div>
-</div>
-
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-</div>
-@* <div id="reportViewerContainer" class="mt-3">
-    <!-- Report viewer will be injected here -->
-</div> *@
-<div id="gridContainer" class="gridContainer"></div>
 <script>
     function formatDate(date) {
         let year = date.getFullYear();
@@ -138,6 +83,7 @@
     }
 
     $(document).ready(function () {
+              document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -233,7 +179,7 @@
               dataSource: data,  // Dữ liệu từ server
               columns: [
                   { dataField: "nationality", caption: "Code", width: columnWidth },
-                  { dataField: "description", caption: "Description", width: columnWidth },
+                  { dataField: "description", caption: "Description", width: columnWidth +180},
                   { dataField: "arrAdult", caption: "Arrival Adults", width: columnWidth, dataType: "number", format: "#,##0"},
                   { dataField: "arrChild", caption: "Arr Child", width: columnWidth , dataType: "number", format: "#,##0"},
                   { dataField: "arrChild1", caption: "Arr Child 1", width: columnWidth , dataType: "number", format: "#,##0"},
@@ -245,16 +191,16 @@
                   { dataField: "nightChild1", caption: "Bed Ni. Child1", width: columnWidth, dataType: "number", format: "#,##0"},
                   { dataField: "nightChild2", caption: "Bed Ni. Child2", width: columnWidth, dataType: "number", format: "#,##0" },
                   { dataField: "nightTotal", caption: "Bed Ni. Total", width: columnWidth , dataType: "number", format: "#,##0"},
-                  { dataField: "bedNightPercen", caption: "Bed Ni. (%)", width: columnWidth },
+                  { dataField: "bedNightPercen", caption: "Bed Ni. (%)", width: columnWidth , dataType: "number", format: "#,##0" },
                   { dataField: "roomNightPercen", caption: "Room Night", width: columnWidth , dataType: "number", format: "#,##0"},
                    { dataField: "stayDur", caption: "Stay Duration", width: columnWidth, dataType: "number", format: "#,##0" },
-                  { dataField: "pystayDur", caption: " PY Stay Duration", width: columnWidth },
+                  { dataField: "pystayDur", caption: " PY Stay Duration", width: columnWidth, dataType: "number", format: "#,##0"  },
                   { dataField: "arrPreYear", caption: "Arr Prev Year", width: columnWidth, dataType: "number", format: "#,##0"},
                  { dataField: "nightPreYear", caption: "Night Prev Year", width: columnWidth, dataType: "number", format: "#,##0" },
                  { dataField: "roomNightPreYear", caption: "BN Prev Year", width: columnWidth , dataType: "number", format: "#,##0"},
-                 { dataField: "roomNightPreYPercen", caption: "BN Prev Year (%)", width: columnWidth },
+                 { dataField: "roomNightPreYPercen", caption: "BN Prev Year (%)", width: columnWidth , dataType: "number", format: "#,##0" },
                  { dataField: "profitLoss", caption: "BN P/L", width: columnWidth, dataType: "number", format: "#,##0" },
-                 { dataField: "profitLossPercen", caption: "BN P/L(%)", width: columnWidth },
+                 { dataField: "profitLossPercen", caption: "BN P/L(%)", width: columnWidth , dataType: "number", format: "#,##0" },
               ],
               paging: { pageSize: 10 },
               scrolling: {
@@ -273,16 +219,62 @@
               },
 
               showBorders: true,
-              onRowClick: function(e) {
-                  console.log("ID được click:", e.data.id);
-              }
+                summary: {
+                    totalItems: [
+                            { column: "arrAdult", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "arrChild", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "arrChild1", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "arrChild2", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "arrTotal", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "arrPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "nightAdult", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "nightChild", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "nightChild1", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "nightChild2", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "nightTotal", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "bedNightPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                              { column: "roomNightPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "stayDur", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "pystayDur", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                               { column: "arrPreYear", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "nightPreYear", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "roomNightPreYear", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "roomNightPreYPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "profitLoss", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
+                            { column: "profitLossPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },                           
+
+                    ]
+                },
 
           });
       }
-          $("#btnExportExcel").click(function () {
+
+     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");
-        grid.exportToExcel(false); // false: xuất toàn bộ, không chỉ hàng được chọn
+        var selectedReport='@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // Đặt tên file theo selectedReport
+            let fileName =selectedReport + ".xlsx";
+
+            // Ghi file
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
     });
+
 
     // Nút xuất PDF
        $("#btnExportPdf").click(function () {

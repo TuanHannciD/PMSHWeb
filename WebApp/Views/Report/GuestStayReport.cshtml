@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var report = ViewBag.ReportName as XtraReport;
+    Layout = null;
 }
 
 <style>
@@ -159,10 +160,7 @@
                 showCheckBoxesMode: "none"
             },
 
-            showBorders: true,
-            onRowClick: function(e) {
-                console.log("ID được click:", e.data.id);
-            }
+            showBorders: true
 
         });
     }
