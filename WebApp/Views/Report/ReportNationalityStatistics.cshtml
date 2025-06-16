@@ -46,23 +46,28 @@
             color: white !important;
         }
 
+    .dx-datagrid .dx-row {
+        min-height: 24px !important; /* Giá trị mặc định thường là 36px */
+        height: 24px !important;
+        font-size: 12px !important; /* Nhỏ lại để vừa kích thước mới */
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
 </style>
     <div class="sticky-header bg-white p-2 shadow-sm z-3">
-        <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
-            <div class="d-flex align-items-center">
-                <!-- From Date -->
-                <div class="d-flex align-items-center me-3">
-                    <label style="width: 100px;">From Date:</label>
-                    <input style="width: 130px;" type="date" id="fromDate" name="fromDate" class="form-control" />
-                </div>
-
-                <!-- To Date -->
-                <div class="d-flex align-items-center me-3">
-                    <label style="width: 80px;">To Date:</label>
-                    <input style="width: 130px;" type="date" id="toDate" name="toDate" class="form-control" />
-                </div>
-            </div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <!-- From Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
+
+        <!-- To Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0" >To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+    </div>
         <div class=" mb-3 ">
             <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
             <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
@@ -71,7 +76,7 @@
     </div>
 
     <div class="mui-card">
-        <div style="font-size: 23px;" class="mt-1" id="reportTitle"></div>
+        <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
         <div id="gridContainer" class="mt-2"></div>
     </div>
 <script>
@@ -179,7 +184,7 @@
               dataSource: data,  // Dữ liệu từ server
               columns: [
                   { dataField: "nationality", caption: "Code", width: columnWidth },
-                  { dataField: "description", caption: "Description", width: columnWidth +180},
+                  { dataField: "description", caption: "Description", width: columnWidth +160},
                   { dataField: "arrAdult", caption: "Arrival Adults", width: columnWidth, dataType: "number", format: "#,##0"},
                   { dataField: "arrChild", caption: "Arr Child", width: columnWidth , dataType: "number", format: "#,##0"},
                   { dataField: "arrChild1", caption: "Arr Child 1", width: columnWidth , dataType: "number", format: "#,##0"},
@@ -203,15 +208,24 @@
                  { dataField: "profitLossPercen", caption: "BN P/L(%)", width: columnWidth , dataType: "number", format: "#,##0" },
               ],
               paging: { pageSize: 10 },
-              scrolling: {
-                  rowRenderingMode: 'virtual',
-              },
+               scrolling:  {   
+                   mode: 'virtual',
+               useNative: true,
+               showScrollbar: "always"
+               },
               pager: {
                   visible: true,
                   allowedPageSizes: [5, 10, 'all'],
                   showPageSizeSelector: true,
                   showInfo: true,
                   showNavigationButtons: true,
+              },
+              filterRow: {
+                 visible: true,
+                 applyFilter: "auto"
+              },
+              headerFilter: {
+                  visible: true
               },
               selection: {
                   mode: "multiple",
@@ -221,27 +235,32 @@
               showBorders: true,
                 summary: {
                     totalItems: [
-                            { column: "arrAdult", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "arrChild", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "arrChild1", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "arrChild2", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "arrTotal", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "arrPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "nightAdult", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "nightChild", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "nightChild1", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "nightChild2", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "nightTotal", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "bedNightPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                              { column: "roomNightPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "stayDur", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "pystayDur", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                               { column: "arrPreYear", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "nightPreYear", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "roomNightPreYear", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "roomNightPreYPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "profitLoss", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-                            { column: "profitLossPercen", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },                           
+                            {
+        column: "nationality",
+        summaryType: "custom",
+        displayFormat: "Total"
+    },
+                            { column: "arrAdult", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "arrChild", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "arrChild1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "arrChild2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "arrTotal", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "arrPercen", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "nightAdult", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "nightChild", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "nightChild1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "nightChild2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "nightTotal", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "bedNightPercen", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                              { column: "roomNightPercen", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "stayDur", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "pystayDur", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                               { column: "arrPreYear", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "nightPreYear", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "roomNightPreYear", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "roomNightPreYPercen", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "profitLoss", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                            { column: "profitLossPercen", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },                           
 
                     ]
                 },

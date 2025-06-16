@@ -12,7 +12,7 @@
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -46,11 +46,16 @@
             color: white !important;
         }
 
+tr.custom > td {
+    font-weight: bold;
+    font-size: 18px;
+    background-color: #f0f0f0;
+}
 </style>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
@@ -107,7 +112,7 @@
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/RevenueDetailData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
@@ -120,7 +125,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+            const processedData = preparRevenueDetailData(result);
+                initializeRevenueDetailGrid(processedData);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -129,18 +135,59 @@
             }
         });
     });
+              function preparRevenueDetailData(data) {
+        const groupedData = {};
 
-    function initializeBookingSourceGrid(data) {
+        // Nhóm dữ liệu theo groupCode
+        data.forEach(item => {
+            const key = item.groupCode;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+        });
+
+        const finalData = [];
+
+        Object.entries(groupedData).forEach(([groupCode, records]) => {
+            // Tính tổng amount của nhóm
+            const totalAmount = records.reduce((sum, record) => sum + (record.amount || 0), 0);
+
+            // Dòng tiêu đề hiển thị groupCode ở cột description và tổng ở cột amount
+            const titleRow = {
+                description: `${groupCode}`,
+                amount: totalAmount,
+                isTitle: true,
+                cssClass: "custom",
+            };
+            finalData.push(titleRow);
+
+            // Thêm các record
+            finalData.push(...records);
+        });
+
+        return finalData;
+    }
+
+
+
+     function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
+
+    function average(arr, field) {
+        const valid = arr.filter(x => x[field] != null);
+        if (valid.length === 0) return 0;
+        return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
+    }
+    function initializeRevenueDetailGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+               { dataField: "description", caption: "Description", width: columnWidth },
+            { dataField: "totalUSD", caption: "Amount", width:columnWidth-40, dataType: "number", format: "#,##0" },
+            { dataField: "totalSVCUSD", caption: "SVC", width: columnWidth-40, dataType: "number", format: "#,##0" },
+            { dataField: "totalVATUSD", caption: "VAT", width: columnWidth-40, dataType: "number", format: "#,##0" },
+            { dataField: "amount", caption: "Total Amount", width:columnWidth-40, dataType: "number", format: "#,##0" },
             ],
             paging: { pageSize: 25 },
              scrolling:  {
@@ -162,22 +209,26 @@
                headerFilter: {
                   visible: true
               },
+                 summary: {
+                    totalItems: [
+                            {column: "description", summaryType: "custom",displayFormat: "Total"},
+                            { column: "amount", summaryType: "sum",customizeText: function (e) {
+                return Math.round(e.value).toLocaleString('vi-VN', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+            }},
+                    ]
+                },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-                 summary: {
-                totalItems: [
-                     {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                ]
-            }
+            onRowPrepared: function (e) {
+    if (e.rowType === "data" && e.data?.cssClass) {
+        e.rowElement.addClass(e.data.cssClass);
+    }
+}
+
+           
         });
     }
 

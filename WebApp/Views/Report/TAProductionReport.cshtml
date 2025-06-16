@@ -4,15 +4,14 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
+    var zoneList = ViewBag.ZoneList;
+    var rtList = ViewBag.RoomTypeList;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -50,15 +49,69 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1">Profile Type</label>
+                <!-- Row 1 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="arrival" name="includeOptions" value="1" checked>
+                    <label class="form-check-label" for="arrival">Travel Agents</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="2">
+                    <label class="form-check-label" for="cancel">Company</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="0">
+                    <label class="form-check-label" for="cancel">Profile Ind</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="3">
+                    <label class="form-check-label" for="cancel">Individuals</label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">View By:</label>
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+
+                <option value="VND">VND</option>
+                <option value="USD">USD</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Sorting:</label>
+            <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
+                <option value="0">Ascending</option>
+                <option value="1">Descending</option>
+                <option value="0">Account Name</option>
+                <option value="1">Total Turnover</option>
+                <option value="0">Room Sales</option>
+                <option value="0">F&B Turnover</option>
+                <option value="0">Even Turnover</option>
+                <option value="1">Micell.Turnover</option>
+                <option value="1">Room Night</option>
+                <option value="1">Bed Night</option>
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Night ≥</label>
+            <input style="width: 130px;" type="text" id="roomNight" name="roomNight" class="form-control form-control-sm w-auto" />
         </div>
     </div>
     <div class=" mb-3 ">
@@ -104,14 +157,23 @@
 
 
     });
+
     $("#btnPrint").click(function () {
+
+            var statusValues = $("input[name='includeOptions']:checked")
+        .map(function () {
+            return $(this).val();
+        }).get().join(',');
+
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/TAProductionReportData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
+                   type: statusValues,
+                   currency: $("#viewBy").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -120,7 +182,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                initializTAProductionReportGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -130,54 +192,56 @@
         });
     });
 
-    function initializeBookingSourceGrid(data) {
+    function initializTAProductionReportGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+               { dataField: "guestNo", caption: "Acc.No", width: columnWidth-50 },
+            { dataField: "guestName", caption: "Account", width: columnWidth+40 },
+            { dataField: "roomSales", caption: "Room Sales", width: columnWidth-70, dataType: "number", format: "#,##0" },,
+            { dataField: "roomNight", caption: "RN", width: columnWidth-100 , dataType: "number", format: "#,##0" },
+            { dataField: "rsvPersonInCharge", caption: "P.In Charge", width: columnWidth-70},
             ],
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+      scrolling:  {
+         mode: 'virtual',
+        useNative: true,
+       showScrollbar: "always"
+    },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
                 showNavigationButtons: true,
-            },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true,
-                 summary: {
-                totalItems: [
-                     {
-                    column: "marketCode",
+            },       summary: {
+            totalItems: [
+                {
+                    column: "guestNo",
                     summaryType: "custom",
                     displayFormat: "Total"
                 },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                ]
-            }
+                 { column: "roomSales", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                { column: "roomNight", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+
+            ]
+        },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+    },
+            showBorders: true,
+                    onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data?.cssClass) {
+            e.rowElement.addClass(e.data.cssClass);
+        }
+    }
+
         });
     }
 

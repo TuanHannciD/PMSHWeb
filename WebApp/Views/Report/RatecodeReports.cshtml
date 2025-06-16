@@ -4,15 +4,14 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
+    var zoneList = ViewBag.ZoneList;
+    var rateCode = ViewBag.RateCodeList;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -50,16 +49,44 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
-        <div class="d-flex align-items-center">
-            <label class="me-2 mb-0">From Date:</label>
-            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Month:</label>
+            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
-            <label class="me-2 mb-0">To Date:</label>
-            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in zoneList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
         </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Rate Code:</label>
+            <select id="rate" name="rate" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                @foreach (var item in rateCode)
+                {
+                    <option value="@item.RateCode">@item.RateCode</option>
+                }
+            </select>
+
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">View By:</label>
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+
+                <option value="VND">VND</option>
+                <option value="USD">USD</option>
+            </select>
+        </div>
+
+
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -76,11 +103,12 @@
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <script>
+
     function formatDate(date) {
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}-${day}`;
+        return `${year}-${month}`;
     }
 
     $(document).ready(function () {
@@ -104,14 +132,19 @@
 
 
     });
+    $(".include-option").on("change", function () {
+        $(".include-option").not(this).prop("checked", false);
+    });
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/RatecodeReportsData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
+                        zone: $("#zone").val(),
+                                  rate: $("#rate").val(),
+                              viewBy:  $("#viewBy").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -120,7 +153,9 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                  
+           initializeRatecodeReportsGrid(result);
+
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -130,54 +165,116 @@
         });
     });
 
-    function initializeBookingSourceGrid(data) {
+        function initializeRatecodeReportsGrid(data) {
         const columnWidth = 180;
+
+        const columns = [
+            { dataField: "RateCode", caption: "Rate Code", width: columnWidth - 70 },
+            { dataField: "Row", caption: "Row", width: columnWidth - 70 }
+        ];
+
+        const fromDateStr = $("#fromDate").val(); // yyyy-MM-dd
+        const fromDateObj = new Date(fromDateStr);
+
+        const fieldOrder = [];
+
+
+            const startMonth = fromDateObj.getMonth() + 1;
+            for (let i = startMonth; i <= 12; i++) {
+                fieldOrder.push(i.toString());
+            }
+            for (let i = 1; i < startMonth; i++) {
+                fieldOrder.push(i.toString());
+            }
+        
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        for (let i of fieldOrder) {
+            const fieldName = `${i}`;
+            const hasData = data.some(item => item[fieldName] != null && item[fieldName] !== "");
+
+            if (hasData) {
+                let displayName = fieldName;
+                    const monthIndex = parseInt(fieldName) - 1;
+                    if (monthIndex >= 0 && monthIndex < 12) {
+                        displayName = monthNames[monthIndex];
+                    }
+
+                columns.push({
+                    dataField: fieldName,
+                    caption: displayName,
+                    width: columnWidth - 80,
+                    dataType: "number",
+                    format: "#,##0"
+                });
+            }
+        }
+
+        const existingFields = new Set(columns.map(c => c.dataField));
+
+        const underscoreFields = new Set();
+        data.forEach(item => {
+            Object.keys(item).forEach(key => {
+                if (/^\d+_$/.test(key) && !existingFields.has(key)) {
+                    underscoreFields.add(key);
+                }
+            });
+        });
+
+        for (let fieldName of underscoreFields) {
+            const hasData = data.some(item => item[fieldName] != null && item[fieldName] !== "");
+
+            if (hasData) {
+                let displayName = fieldName.replace("_", "");
+                if (displayName.length === 3) {
+                    displayName = displayName.substring(0, 2);
+                }
+
+                columns.push({
+                    dataField: fieldName,
+                    caption: displayName,
+                    width: columnWidth - 80,
+                    dataType: "number",
+                    format: "#,##0"
+                });
+            }
+        }
+
         $("#gridContainer").dxDataGrid({
             dataSource: data,
-            columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
-            ],
+            columns: columns,
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+            scrolling: {
+                mode: 'virtual',
+                useNative: true,
+                showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true,
+                showNavigationButtons: true
             },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
             showBorders: true,
-                 summary: {
-                totalItems: [
-                     {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                ]
-            }
+                onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data?.cssClass) {
+            e.rowElement.addClass(e.data.cssClass);
+        }
+    }
         });
     }
 

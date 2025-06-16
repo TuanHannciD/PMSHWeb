@@ -23,5 +23,24 @@ namespace Report.Services.Interfaces
         DataTable DailyPickupReport(DateTime fromDate, DateTime toDate);
         DataTable DailyBreakfastDetail(DateTime fromDate);
         DataTable FreeUpgradeReport(DateTime fromDate, DateTime toDate, string viewBy, string status);
+        DataTable FixChargeReport(DateTime fromDate, DateTime toDate, string trancode, string status);
+        DataTable ReveunueByData(DateTime fromDate, DateTime toDate, string reservation, string roomType, string zone, string viewBy, string sortOrder);
+        DataTable DepartureExtendedReport(DateTime fromDate);
+        DataTable RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone);
+        DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate);
+        DataTable ReservationStatisticsReport(DateTime fromDate);
+        DataTable  ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder, string noOfRoom);
+        DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass);
+        DataTable ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType, string zone, string viewBy, string market);
+        DataTable ProductActivityData(DateTime fromDate, DateTime toDate, string type, string currency);
+        DataTable NationalStatisticsData(DateTime fromDate, DateTime toDate, string roomtype, string viewBy);
+        DataTable SalesinChargeReportsForm1Data(DateTime fromDate, string viewBy);
+        DataTable SalesinChargeActivityData(DateTime fromDate, DateTime toDate, string type, string currency);
+        DataTable RevenueDetailData(DateTime fromDate, DateTime toDate);
+        DataTable RevenueSummaryData(DateTime fromDate, DateTime toDate);
+        DataTable TAProductionReportData(DateTime fromDate, DateTime toDate, string type, string currency);
+        DataTable LeadtimeReportsData(DateTime fromDate, DateTime toDate, string zone, string isDaily, string day, string daysNames);
+        DataTable RatecodeReportsData(DateTime fromDate, DateTime toDate, string zone, string rate, string viewby, string day, string daysNames);
+        DataTable AnnualRoomOccupancyData(DateTime fromDate, DateTime toDate, string zone, string day, string daysNames);
     }
 }

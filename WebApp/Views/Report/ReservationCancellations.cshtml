@@ -4,15 +4,13 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
+    var comList = ViewBag.ComList;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -50,16 +48,41 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
-
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Cancle Reason:</label>
+            <select id="commnet" name="commnet" class="form-control form-control-sm "  style="width :100px"> 
+                <option value="">ALL</option>
+                @foreach (var item in comList)
+                {
+                    <option value="@item.Code">@item.Code-@item.Description</option>
+                }
+            </select>
+
+        </div>
+        <div class="d-flex flex-column">
+  
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1">Include</label>
+                <!-- Row 1 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="arrival" name="includeOptions" value="0" checked>
+                    <label class="form-check-label" for="arrival">Arrival</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="1">
+                    <label class="form-check-label" for="cancel">Cancel Date</label>
+                </div>
+            </div>
+        </div>
+
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -106,12 +129,15 @@
     });
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
+            let typeDate = $("input[name='includeOptions']:checked").attr("id") === "arrival" ? 0 : 1;
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/ReservationCancellationsReport',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
+                 toDate: $("#toDate").val(),
+                  commnet: $("#commnet").val(),
+                    typeDate: typeDate
             },
             traditional: true,
               crossDomain: false,
@@ -120,7 +146,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                initializeReservationCancellationsGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -130,24 +156,31 @@
         });
     });
 
-    function initializeBookingSourceGrid(data) {
+    function initializeReservationCancellationsGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+            { dataField: "name", caption: "Name", width: columnWidth-30  },
+            { dataField: "group", caption: "Group", width: columnWidth-80 },
+            { dataField: "company", caption: "Reservtion Holder",  width: columnWidth+70 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "noOfNight", caption: "Nts",  width: columnWidth-80, dataType: "number", format: "#,##0" },
+             { dataField: "departureDate", caption: "Dep.Date",  width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
+              { dataField: "rate", caption: "Rate",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
+               { dataField: "roomType", caption: "Ro.Type",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
+                { dataField: "noOfRoom", caption: "NoOfRm",  width: columnWidth-80, dataType: "number", format: "#,##0" },
+                 { dataField: "reservationTypeCode", caption: "Resv.type",  width: columnWidth-50 },
+                  { dataField: "cancellationDate", caption: "Cancel.Date",  width: columnWidth-80 ,dataType: "date", format: "dd/MM/yyyy" },
+                        { dataField: "cancelBy", caption: "CancelBy",  width: columnWidth-80 },
+                            { dataField: "description", caption: "Reason",  width: columnWidth-70 },
             ],
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+            scrolling:  {
+                 mode: 'virtual',
+                  useNative: true,
+                 showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -156,28 +189,15 @@
                 showNavigationButtons: true,
             },
              filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
+               visible: true,
+               applyFilter: "auto"
+             },
+             headerFilter: {
                   visible: true
               },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-                 summary: {
-                totalItems: [
-                     {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                ]
-            }
+              
         });
     }
 

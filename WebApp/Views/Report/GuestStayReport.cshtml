@@ -145,9 +145,11 @@
                 { dataField: "telephone", caption: "Telephone", width: columnWidth },
             ],
             paging: { pageSize: 10 },
-            scrolling: {
-                rowRenderingMode: 'virtual',
-            },
+            scrolling:  {
+                 mode: 'virtual',
+                 useNative: true,
+                showScrollbar: "always"
+           },
             pager: {
                 visible: true,
                 allowedPageSizes: [5, 10, 'all'],
@@ -159,7 +161,13 @@
                 mode: "multiple",
                 showCheckBoxesMode: "none"
             },
-
+               filterRow: {
+                 visible: true,
+                applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
             showBorders: true
 
         });

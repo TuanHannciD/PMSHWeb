@@ -206,40 +206,127 @@
             color: #000000 !important;
             border-radius: 4px;
         }
+
+    .dx-datagrid .dx-row {
+        min-height: 24px !important; /* Giá trị mặc định thường là 36px */
+        height: 24px !important;
+        font-size: 12px !important; /* Nhỏ lại để vừa kích thước mới */
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+
+    .zone-title {
+        font-weight: bold;
+        font-size: 18px;
+        background-color: #f0f0f0;
+    }
+
+    tr.custom > td {
+        font-weight: bold;
+        font-size: 18px;
+        background-color: #f0f0f0;
+    }
+/*     .dx-header-row > td[role="columnheader"]> div.dx-datagrid-text-content {  
+      font-size: 17px;  
+      font-weight: bold;  
+    }   */
 </style>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <div class="content_wrapper row">
-    <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;">
+    <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;height: fit-content;">
 
 
         <div class="filter-header" onclick="toggleFilter()">
-            <span>Other Report</span>
+            <span> Sale and forecast</span>
             <span id="toggle-icon" style="float: right; cursor: pointer;">&#9660;</span> <!-- ▼ -->
         </div>
         <hr class="mui-divider" />
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">
+@*             <li class="list-group-item">
                 <a style="color:black" id="BookingSource" class="text-decoration-none report-link" data-report="BookingSource" data-title="Booking Source">Booking Source</a>
+            </li> *@
+            <li class="list-group-item">
+                <a style="color:black" id="ReservationSummaryReport" class="text-decoration-none report-link" data-report="ReservationSummaryReport" data-title="Reservation Summary Report">Reservation Summary Report</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="RatecodebyDateReport" class="text-decoration-none report-link" data-report="RatecodebyDateReport" data-title="Ratecode by Date Report">Ratecode by Date Report</a>
+                <a style="color:black" id="RevenueByReport" class="text-decoration-none report-link" data-report="RevenueByReport" data-title="Revenue By Report">Revenue By Report</a>
             </li>
+           @*  <li class="list-group-item">
+                <a style="color:black" id="RatecodebyDateReport" class="text-decoration-none report-link" data-report="RatecodebyDateReport" data-title="Ratecode by Date Report">Ratecode by Date Report</a>
+            </li> *@
             <li class="list-group-item">
                 <a style="color:black" id="OTAsMonthlyReport" class="text-decoration-none report-link" data-report="OTAsMonthlyReport" data-title="OTAs Monthly Report">OTAs Monthly Report</a>
             </li>
-            <li class="list-group-item">
+@*             <li class="list-group-item">
                 <a style="color:black" id="DailyPickupReport" class="text-decoration-none report-link" data-report="DailyPickupReport" data-title="Daily Pickup Report">Daily Pickup Report</a>
-            </li>
-            <li class="list-group-item">
+            </li> *@
+    @*         <li class="list-group-item">
                 <a style="color:black" id="ReportNationalityStatistics" class="text-decoration-none report-link" data-report="ReportNationalityStatistics" data-title="Report Nationality Statistics">Report Nationality Statistics</a>
-            </li>
-            <li class="list-group-item">
+            </li> *@
+      @*       <li class="list-group-item">
                 <a style="color:black" id="DailyBreakfastDetail" class="text-decoration-none report-link" data-report="DailyBreakfastDetail" data-title="Daily Breakfast Detail">Daily Breakfast Detail</a>
+            </li> *@
+@*             <li class="list-group-item">
+                <a style="color:black" id="FreeUpgradeReport" class="text-decoration-none report-link" data-report="FreeUpgradeReport" data-title="Free Upgrade Report">Free Upgrade Report</a>
+            </li> *@
+@*              <li class="list-group-item">
+                <a style="color:black" id="FixChargeReport" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="Fix Charge Report">Fix Charge Report</a>
+            </li> *@
+      @*       <li class="list-group-item">
+                <a style="color:black" id="DepartureExtended" class="text-decoration-none report-link" data-report="DepartureExtended" data-title="Departure Extended">Departure Extended</a>
+            </li> *@
+            <li class="list-group-item">
+                <a style="color:black" id="RoomOccupancy" class="text-decoration-none report-link" data-report="RoomOccupancy" data-title="Room Occupancy">Room Occupancy</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="FreeUpgradeReport" class="text-decoration-none report-link" data-report="FreeUpgradeReport" data-title="Free Upgrade Report">Free Upgrade Report</a>
+                <a style="color:black" id="ReservationCancellations" class="text-decoration-none report-link" data-report="ReservationCancellations" data-title="Reservation Cancellations">Reservation Cancellations</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="ReservationStatistics" class="text-decoration-none report-link" data-report="ReservationStatistics" data-title="Reservation Statistics">Reservation Statistics</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="ReservationbyCompany" class="text-decoration-none report-link" data-report="ReservationbyCompany" data-title="Reservation by Company">Reservation by Company</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="NoShowReport" class="text-decoration-none report-link" data-report="NoShowReport" data-title="No Show Report">No Show Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="ReservationSummary" class="text-decoration-none report-link" data-report="ReservationSummary" data-title="Reservation Summary">Reservation Summary</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="ProductActivity" class="text-decoration-none report-link" data-report="ProductActivity" data-title="Product Activity">Product Activity</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="NationalStatistics" class="text-decoration-none report-link" data-report="NationalStatistics" data-title="National Statistics">National Statistics</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="SalesinChargeReportsForm" class="text-decoration-none report-link" data-report="SalesinChargeReportsForm" data-title="Sales in Charge Reports Form">Sales in Charge Reports Form</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="SalesinChargeActivity" class="text-decoration-none report-link" data-report="SalesinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="RevenueDetail" class="text-decoration-none report-link" data-report="RevenueDetail" data-title="Revenue Detail">Revenue Detail</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="RevenueSummary" class="text-decoration-none report-link" data-report="RevenueSummary" data-title="Revenue Summary">Revenue Summary</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="TAProductionReport" class="text-decoration-none report-link" data-report="TAProductionReport" data-title="TA Production Report">TA Production Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="LeadtimeReports" class="text-decoration-none report-link" data-report="LeadtimeReports" data-title="Leadtime Reports">Leadtime Reports</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="RatecodeReports" class="text-decoration-none report-link" data-report="RatecodeReports" data-title="Ratecode Reports">Ratecode Reports</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" id="AnnualRoomOccupancy" class="text-decoration-none report-link" data-report="AnnualRoomOccupancy" data-title="Annual Room Occupancy">Annual Room Occupancy</a>
+            </li>
+              <li class="list-group-item">
+                <a style="color:black" id="GuestMarketReport" class="text-decoration-none report-link" data-report="GuestMarketReport" data-title="Guest Market Report">Guest Market Report</a>
             </li>
         </ul>
 
@@ -345,7 +432,7 @@
         <div id="reportContainer"></div>
 
         @*         <div class="mui-card">
-            <div style="font-size: 23px;" class="mt-1" id="reportTitle"></div>
+            <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
             <div id="reportContainer" class="mt-2"></div>
         </div> *@
 
@@ -369,53 +456,62 @@
     //     return `${year}-${month}`;
     // }
 
-    $(document).ready(function () {
+   $(document).ready(function () {
+    let reportLoadedFromUrl = false;
 
-        // ✅ Bắt sự kiện click
-        $(document).on('click', '.report-link', function (e) {
-            e.preventDefault();
-            $(".report-link").removeClass("active");
-            $(this).addClass("active");
+    // ✅ Hàm load báo cáo
+    function loadReport(reportName, title) {
+        $.ajax({
+            url: '/Report/LoadReport',
+            type: 'GET',
+            data: { reportName: reportName, title: title },
+            success: function (result) {
+                $('#reportContainer').html(result);
 
-            var reportName = $(this).data('report'); // Lấy tên báo cáo
-            var title = $(this).data('title'); // Lấy tiêu đề báo cáo
-
-            loadReport(reportName, title);
+                // Thực thi script nếu có
+                $(result).filter('script').each(function () {
+                    $.globalEval(this.text || this.textContent || this.innerHTML || '');
+                });
+            },
+            error: function () {
+                alert('Lỗi khi tải báo cáo!');
+            }
         });
+    }
 
-        // ✅ Hàm load báo cáo
-        function loadReport(reportName, title) {
-            $.ajax({
-                url: '/Report/LoadReport',
-                type: 'GET',
-                data: { reportName: reportName, title: title },
-                success: function (result) {
-                    $('#reportContainer').html(result);
+    // ✅ Bắt sự kiện click (chặn nếu đang trong phase tự động)
+    $(document).on('click', '.report-link', function (e) {
+        e.preventDefault();
 
-                    // Thực thi script nếu có
-                    $(result).filter('script').each(function () {
-                        $.globalEval(this.text || this.textContent || this.innerHTML || '');
-                    });
-                },
-                error: function () {
-                    alert('Lỗi khi tải báo cáo!');
-                }
-            });
+        if (reportLoadedFromUrl) {
+            reportLoadedFromUrl = false; // reset để các lần click sau hoạt động
+            return; // không làm gì khi đang trong trạng thái tự động load
         }
 
-        // ✅ Tự động load nếu có name trên URL (ví dụ: ?name=BookingSource)
-        const urlParams = new URLSearchParams(window.location.search);
-        const reportName = urlParams.get('name');
+        $(".report-link").removeClass("active");
+        $(this).addClass("active");
 
-        if (reportName) {
-            // Tìm element tương ứng để set active + lấy title nếu có
-            const $link = $('.report-link[data-report="' + reportName + '"]');
-            const title = $link.data('title') || reportName;
+        var reportName = $(this).data('report');
+        var title = $(this).data('title');
 
-            $link.addClass("active");
-            loadReport(reportName, title);
-        }
+        loadReport(reportName, title);
     });
+
+    // ✅ Load từ URL nếu có ?name=...
+    const urlParams = new URLSearchParams(window.location.search);
+    const reportName = urlParams.get('name');
+
+    if (reportName) {
+        const $link = $('.report-link[data-report="' + reportName + '"]');
+        const title = $link.data('title') || reportName;
+
+        $link.addClass("active");
+
+        reportLoadedFromUrl = true; // set cờ tránh xử lý click sau đó
+        loadReport(reportName, title);
+    }
+});
+
 
 
     //     const today = new Date();

@@ -4,15 +4,14 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
+    var zoneList = ViewBag.ZoneList;
+    var rtList = ViewBag.RoomTypeList;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -50,15 +49,68 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Reservation:</label>
+            <select id="reservation" name="reservation" class="form-control form-control-sm w-auto">
+                <option value="0">All Reservation</option>
+                <option value="1">Reservation with Block</option>
+                <option value="2">Reservation with Travel Agent</option>
+                <option value="3">Reservation with Company</option>
+                <option value="4">Reservation with Individual</option>
+                <option value="5">Reservation with Member</option>
+                <option value="6">Reservation with VIP</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Type:</label>
+            <select id="roomType" name="roomType" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                @foreach (var item in rtList)
+                {
+                    <option value="@item.ID">@item.Code</option>
+                }
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                    @foreach (var item in zoneList)
+                    {
+                        <option value="@item.ID">@item.Code</option>
+                    }
+            </select>
+      
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">View By:</label>
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+               
+                <option value="VND">VND</option>
+                <option value="USD">USD</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Sort Order:</label>
+            <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
+                <option value="0">Alphabetical</option>
+                <option value="1">Folio No</option>
+                <option value="2">Arrival Date</option>
+                <option value="3">Departure Date</option>
+            </select>
         </div>
     </div>
     <div class=" mb-3 ">
@@ -107,11 +159,16 @@
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/ReveunueByData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
+                  reservation: $("#reservation").val(),
+                roomType: $("#roomType").val(),
+                  zone: $("#zone").val(),
+                     viewBy: $("#viewBy").val(),
+                  sortOrder: $("#sortOrder").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -120,7 +177,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                initializReveunueByGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -130,24 +187,30 @@
         });
     });
 
-    function initializeBookingSourceGrid(data) {
+    function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+               { dataField: "folioID", caption: "Folio No", width: columnWidth-70 },
+            { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-80 },
+            { dataField: "guestName", caption: "Name", width: columnWidth },
+            { dataField: "reservationHolder", caption: "Resv.Holder", width: columnWidth},
+            { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-50, dataType: "number", format: "#,##0" },
+            { dataField: "fbrevenue", caption: "FBRevenue", width: columnWidth-50 , dataType: "number", format: "#,##0"},
+            { dataField: "otherRevenue", caption: "Other Revenue", width: columnWidth-50, dataType: "number", format: "#,##0" },
+               { dataField: "totalRevenue", caption: "Total Revenue", width:columnWidth-50, dataType: "number", format: "#,##0" },
+            { dataField: "currency", caption: "Curr", width: columnWidth-70 },
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
+              { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
+                { dataField: "status", caption: "Status", width:columnWidth-60 }
             ],
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+      scrolling:  {
+         mode: 'virtual',
+        useNative: true,
+       showScrollbar: "always"
+    },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -155,27 +218,27 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+    },
             showBorders: true,
                  summary: {
                 totalItems: [
-                     {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        {
+        column: "folioID",
+        summaryType: "custom",
+        displayFormat: "Total"
+    },
+                        { column: "roomRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "fbrevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "otherRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "totalRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                      
                 ]
             }
         });

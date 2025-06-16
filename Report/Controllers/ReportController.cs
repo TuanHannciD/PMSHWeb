@@ -14,6 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DevExpress.XtraReports.UI;
 using System.Globalization;
+using DevExpress.XtraRichEdit.Import.Doc;
+using System.Security.Policy;
 
 namespace Report.Controllers
 {
@@ -545,6 +547,128 @@ namespace Report.Controllers
 
             //     return PartialView("_ReportViewerPartial", report);
         }
+
+        [HttpGet]
+        public IActionResult DepartureExtendedReport(DateTime fromDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.DepartureExtendedReport(fromDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["Room No."].ToString()) ? d["Room No."] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["Arrival Date"].ToString()) ? d["Arrival Date"] : "",
+                                  OriginalDepDate = !string.IsNullOrEmpty(d["Original Dep. Date"].ToString()) ? d["Original Dep. Date"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["Departure Date"].ToString()) ? d["Departure Date"] : "",
+                                  Nts = !string.IsNullOrEmpty(d["Nts."].ToString()) ? d["Nts."] : "",
+                                  Cur = !string.IsNullOrEmpty(d["Cur."].ToString()) ? d["Cur."] : "",
+                                  Prs = !string.IsNullOrEmpty(d["Prs."].ToString()) ? d["Prs."] : "",
+                                  Rms = !string.IsNullOrEmpty(d["Rms."].ToString()) ? d["Rms."] : "",
+                                  Balance = !string.IsNullOrEmpty(d["Balance"].ToString()) ? d["Balance"] : "",
+                                  ResvHolder = !string.IsNullOrEmpty(d["Resv. Holder"].ToString()) ? d["Resv. Holder"] : "",
+                                  ResvStatus = !string.IsNullOrEmpty(d["Resv. Status"].ToString()) ? d["Resv. Status"] : "",
+                                  DepartureTime = !string.IsNullOrEmpty(d["DepartureTime"].ToString()) ? d["DepartureTime"] : "",
+  
+
+
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult FixChargeReportData(DateTime fromDate ,DateTime toDate,string trancode,string status)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                trancode = string.IsNullOrWhiteSpace(trancode) ? "" : trancode;
+                var items = status.Split(',')
+                                .Where(s => !string.IsNullOrWhiteSpace(s))
+                                .Select(s => s.Trim())
+                                .ToList();
+
+                if (items.Count == 0)
+                    return BadRequest("Status is empty.");
+
+                var formattedList = new List<string>();
+
+                for (int i = 0; i < items.Count; i++)
+                {
+                    string value = items[i];
+
+                    // Nếu chỉ có 1 phần tử
+                    if (items.Count == 1)
+                    {
+                        formattedList.Add(value);
+                    }
+                    // Nếu là phần tử đầu tiên và danh sách có nhiều phần tử
+                    else if (i == 0)
+                    {
+                        formattedList.Add($"{value}'");
+                    }
+                    // Nếu là phần tử cuối cùng
+                    else if (i == items.Count - 1)
+                    {
+                        formattedList.Add($"'{value}");
+                    }
+                    // Các phần tử ở giữa
+                    else
+                    {
+                        formattedList.Add($"'{value}'");
+                    }
+                }
+
+                string formattedStatus = string.Join(",", formattedList);
+                DataTable dataTable = _iReportService.FixChargeReport(fromDate, toDate, trancode, formattedStatus);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ConfNo = !string.IsNullOrEmpty(d["ConfNo"].ToString()) ? d["ConfNo"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  GuestName = !string.IsNullOrEmpty(d["GuestName"].ToString()) ? d["GuestName"] : "",
+                                  Arr = !string.IsNullOrEmpty(d["Arr"].ToString()) ? d["Arr"] : "",
+                                  Dep = !string.IsNullOrEmpty(d["Dep"].ToString()) ? d["Dep"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  Nbr = !string.IsNullOrEmpty(d["Nbr"].ToString()) ? d["Nbr"] : "",
+                                  AmountNet = !string.IsNullOrEmpty(d["AmountNet"].ToString()) ? d["AmountNet"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  Curr = !string.IsNullOrEmpty(d["Curr"].ToString()) ? d["Curr"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  ReservationHolder = !string.IsNullOrEmpty(d["ReservationHolder"].ToString()) ? d["ReservationHolder"] : "",
+                                  BeginDate = !string.IsNullOrEmpty(d["BeginDate"].ToString()) ? d["BeginDate"] : "",
+                                  EndDate = !string.IsNullOrEmpty(d["EndDate"].ToString()) ? d["EndDate"] : "",
+
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
         [HttpGet]
         public IActionResult FreeUpgradeReportData(DateTime fromDate, DateTime toDate,string viewBy,string status)
         {
@@ -585,6 +709,985 @@ namespace Report.Controllers
 
             //     return PartialView("_ReportViewerPartial", report);
         }
+
+        [HttpGet]
+        public IActionResult ReveunueByData(DateTime fromDate, DateTime toDate, string reservation, string roomType, string zone, string viewBy, string sortOrder)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                roomType = roomType ?? "";
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.ReveunueByData(fromDate, toDate, reservation, roomType, zone, viewBy, sortOrder);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  FolioID = !string.IsNullOrEmpty(d["FolioID"].ToString()) ? d["FolioID"] : "",
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  GuestName = !string.IsNullOrEmpty(d["GuestName"].ToString()) ? d["GuestName"] : "",
+                                  ReservationHolder = !string.IsNullOrEmpty(d["ReservationHolder"].ToString()) ? d["ReservationHolder"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  Currency = !string.IsNullOrEmpty(d["Currency"].ToString()) ? d["Currency"] : "",
+                                  RoomRevenue = !string.IsNullOrEmpty(d["RoomRevenue"].ToString()) ? d["RoomRevenue"] : "",
+                                  FBRevenue = !string.IsNullOrEmpty(d["FBRevenue"].ToString()) ? d["FBRevenue"] : "",
+                                  OtherRevenue = !string.IsNullOrEmpty(d["OtherRevenue"].ToString()) ? d["OtherRevenue"] : "",
+                                  TotalRevenue = !string.IsNullOrEmpty(d["TotalRevenue"].ToString()) ? d["TotalRevenue"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+        [HttpGet]
+        public IActionResult RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.RoomOccupancyReport(fromDate, toDate, zone);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Fair = !string.IsNullOrEmpty(d["Fair"].ToString()) ? d["Fair"] : "",
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  VacRo = !string.IsNullOrEmpty(d["Vac Ro"].ToString()) ? d["Vac Ro"] : "",
+                                  ResRo = !string.IsNullOrEmpty(d["Res Ro"].ToString()) ? d["Res Ro"] : "",
+                                  NonDeductRo = !string.IsNullOrEmpty(d["Non Deduct Ro"].ToString()) ? d["Non Deduct Ro"] : "",
+                                  AltRo = !string.IsNullOrEmpty(d["Alt Ro"].ToString()) ? d["Alt Ro"] : "",
+                                  TotaRo1 = !string.IsNullOrEmpty(d["Tota Ro1"].ToString()) ? d["Tota Ro1"] : "",
+                                  ARo = !string.IsNullOrEmpty(d["A Ro"].ToString()) ? d["A Ro"] : "",
+                                  DepRo = !string.IsNullOrEmpty(d["Dep Ro"].ToString()) ? d["Dep Ro"] : "",
+                                  OOO = !string.IsNullOrEmpty(d["OOO"].ToString()) ? d["OOO"] : "",
+                                  TotaRo2 = !string.IsNullOrEmpty(d["Tota Ro2"].ToString()) ? d["Tota Ro2"] : "",
+                                  PT = !string.IsNullOrEmpty(d["%"].ToString()) ? d["%"] : "",
+                                  MonthDisplay = !string.IsNullOrEmpty(d["MonthDisplay"].ToString()) ? d["MonthDisplay"] : "",
+                                  MonthGroup = !string.IsNullOrEmpty(d["MonthGroup"].ToString()) ? d["MonthGroup"] : "",
+                                  DOW = !string.IsNullOrEmpty(d["DOW"].ToString()) ? d["DOW"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                commnet = commnet ?? "";
+                DataTable dataTable = _iReportService.ReservationCancellationsReport(fromDate, toDate, commnet, typeDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Group = !string.IsNullOrEmpty(d["Group"].ToString()) ? d["Group"] : "",
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  NoOfNight = !string.IsNullOrEmpty(d["NoOfNight"].ToString()) ? d["NoOfNight"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  Rate = !string.IsNullOrEmpty(d["Rate"].ToString()) ? d["Rate"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  ReservationTypeCode = !string.IsNullOrEmpty(d["ReservationTypeCode"].ToString()) ? d["ReservationTypeCode"] : "",
+                                  ReservationBy = !string.IsNullOrEmpty(d["ReservationBy"].ToString()) ? d["ReservationBy"] : "",
+                                  CancellationDate = !string.IsNullOrEmpty(d["CancellationDate"].ToString()) ? d["CancellationDate"] : "",
+                                  CancelBy = !string.IsNullOrEmpty(d["CancelBy"].ToString()) ? d["CancelBy"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : ""
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult ReservationStatisticsReport(DateTime fromDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.ReservationStatisticsReport(fromDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  MarketCode = !string.IsNullOrEmpty(d["Market Code"].ToString()) ? d["Market Code"] : "",
+                                  NoOfRooms = !string.IsNullOrEmpty(d["No. Of Rooms"].ToString()) ? d["No. Of Rooms"] : "",
+                                  RoomRevenue = !string.IsNullOrEmpty(d["Room Revenue"].ToString()) ? d["Room Revenue"] : "",
+                                  FBRevenue = !string.IsNullOrEmpty(d["F&B Revenue"].ToString()) ? d["F&B Revenue"] : "",
+                                  MISCRevenue = !string.IsNullOrEmpty(d["MISC Revenue"].ToString()) ? d["MISC Revenue"] : "",
+                                  Occ = !string.IsNullOrEmpty(d["% Occ"].ToString()) ? d["% Occ"] : "",
+                                  NoofGuest = !string.IsNullOrEmpty(d["No. of Guest"].ToString()) ? d["No. of Guest"] : "",
+                                  MultiOccpc = !string.IsNullOrEmpty(d["% Multi Occ"].ToString()) ? d["% Multi Occ"] : "",
+                                  MultiOcc = !string.IsNullOrEmpty(d["Multi Occ"].ToString()) ? d["Multi Occ"] : "",
+                                  SingleOcc = !string.IsNullOrEmpty(d["Single Occ"].ToString()) ? d["Single Occ"] : "",
+                                
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder,string noOfRoom)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                roomClass = roomClass ?? "";
+                roomType = roomType ?? "";
+                noOfRoom = noOfRoom ?? "";
+                DataTable dataTable = _iReportService.ReservationbyCompanyReport(fromDate, toDate, roomClass, roomType, searchCrip, sortOrder, noOfRoom);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  Account = !string.IsNullOrEmpty(d["Account"].ToString()) ? d["Account"] : "",
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  Agent = !string.IsNullOrEmpty(d["Agent"].ToString()) ? d["Agent"] : "",
+                                  Source = !string.IsNullOrEmpty(d["Source"].ToString()) ? d["Source"] : "",
+                                  Group = !string.IsNullOrEmpty(d["Group"].ToString()) ? d["Group"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  NoOfAdult = !string.IsNullOrEmpty(d["NoOfAdult"].ToString()) ? d["NoOfAdult"] : "",
+                                  NoOfChild = !string.IsNullOrEmpty(d["NoOfChild"].ToString()) ? d["NoOfChild"] : "",
+                                  NoOfChild1 = !string.IsNullOrEmpty(d["NoOfChild1"].ToString()) ? d["NoOfChild1"] : "",
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  NoOfNight = !string.IsNullOrEmpty(d["NoOfNight"].ToString()) ? d["NoOfNight"] : "",
+
+                                  ReservationTypeCode = !string.IsNullOrEmpty(d["ReservationTypeCode"].ToString()) ? d["ReservationTypeCode"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+                                  SourceCode = !string.IsNullOrEmpty(d["SourceCode"].ToString()) ? d["SourceCode"] : "",
+                                  LoginName = !string.IsNullOrEmpty(d["LoginName"].ToString()) ? d["LoginName"] : "",
+
+                                  CreateDate = !string.IsNullOrEmpty(d["CreateDate"].ToString()) ? d["CreateDate"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  Rate = !string.IsNullOrEmpty(d["Rate"].ToString()) ? d["Rate"] : "",
+                                  Packages = !string.IsNullOrEmpty(d["Packages"].ToString()) ? d["Packages"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+
+        [HttpGet]
+        public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.NoShowReportData(fromDate, toDate, roomClass);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  LastName = !string.IsNullOrEmpty(d["LastName"].ToString()) ? d["LastName"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  Agent = !string.IsNullOrEmpty(d["Agent"].ToString()) ? d["Agent"] : "",
+                                  Source = !string.IsNullOrEmpty(d["Source"].ToString()) ? d["Source"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  BusinessBlockCode = !string.IsNullOrEmpty(d["BusinessBlockCode"].ToString()) ? d["BusinessBlockCode"] : "",
+                                  MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+
+                                  PaymentMethod = !string.IsNullOrEmpty(d["PaymentMethod"].ToString()) ? d["PaymentMethod"] : "",
+                                  ReservationTypeCode = !string.IsNullOrEmpty(d["ReservationTypeCode"].ToString()) ? d["ReservationTypeCode"] : "",
+                                  CreditCardNo = !string.IsNullOrEmpty(d["CreditCardNo"].ToString()) ? d["CreditCardNo"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  ExpirationDate = !string.IsNullOrEmpty(d["ExpirationDate"].ToString()) ? d["ExpirationDate"] : "",
+                                  RateAmount = !string.IsNullOrEmpty(d["RateAmount"].ToString()) ? d["RateAmount"] : "",
+
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  NoOfNight = !string.IsNullOrEmpty(d["NoOfNight"].ToString()) ? d["NoOfNight"] : "",
+                                  TotalAmount = !string.IsNullOrEmpty(d["TotalAmount"].ToString()) ? d["TotalAmount"] : "",
+                                  DepositPaid = !string.IsNullOrEmpty(d["DepositPaid"].ToString()) ? d["DepositPaid"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType,string zone,string viewBy,string market)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                zone = zone ?? "";
+                roomType = roomType ?? "";
+                market = market ?? "";
+                DataTable dataTable = _iReportService.ReservationSummaryData(fromDate, toDate, roomType, zone, viewBy, market);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RsvSummaryDate = !string.IsNullOrEmpty(d["RsvSummaryDate"].ToString()) ? d["RsvSummaryDate"] : "",
+                                  WeekDate = !string.IsNullOrEmpty(d["WeekDate"].ToString()) ? d["WeekDate"] : "",
+                                  TotalOccRms = !string.IsNullOrEmpty(d["TotalOccRms"].ToString()) ? d["TotalOccRms"] : "",
+                                  IndRms = !string.IsNullOrEmpty(d["IndRms"].ToString()) ? d["IndRms"] : "",
+                                  BlkRmsPU = !string.IsNullOrEmpty(d["BlkRmsPU"].ToString()) ? d["BlkRmsPU"] : "",
+                                  BlkRmsNotPU = !string.IsNullOrEmpty(d["BlkRmsNotPU"].ToString()) ? d["BlkRmsNotPU"] : "",
+                                  TotalAvailable = !string.IsNullOrEmpty(d["TotalAvailable"].ToString()) ? d["TotalAvailable"] : "",
+                                  OccPer = !string.IsNullOrEmpty(d["OccPer"].ToString()) ? d["OccPer"] : "",
+                                  RoomRevenue = !string.IsNullOrEmpty(d["RoomRevenue"].ToString()) ? d["RoomRevenue"] : "",
+                                  GrpRevenue = !string.IsNullOrEmpty(d["GrpRevenue"].ToString()) ? d["GrpRevenue"] : "",
+                                  IndRevenue = !string.IsNullOrEmpty(d["IndRevenue"].ToString()) ? d["IndRevenue"] : "",
+
+                                  AvrRate = !string.IsNullOrEmpty(d["AvrRate"].ToString()) ? d["AvrRate"] : "",
+                                  ArrRms = !string.IsNullOrEmpty(d["ArrRms"].ToString()) ? d["ArrRms"] : "",
+                                  CHArrRms = !string.IsNullOrEmpty(d["CHArrRms"].ToString()) ? d["CHArrRms"] : "",
+                                  DepRms = !string.IsNullOrEmpty(d["DepRms"].ToString()) ? d["DepRms"] : "",
+                                  BlkDepRms = !string.IsNullOrEmpty(d["BlkDepRms"].ToString()) ? d["BlkDepRms"] : "",
+                                  CHDepRms = !string.IsNullOrEmpty(d["CHDepRms"].ToString()) ? d["CHDepRms"] : "",
+
+                                  OOORms = !string.IsNullOrEmpty(d["OOORms"].ToString()) ? d["OOORms"] : "",
+                                  Adl = !string.IsNullOrEmpty(d["Adl"].ToString()) ? d["Adl"] : "",
+                                  Chl = !string.IsNullOrEmpty(d["Chl"].ToString()) ? d["Chl"] : "",
+                                  Chl1 = !string.IsNullOrEmpty(d["Chl1"].ToString()) ? d["Chl1"] : "",
+
+
+                                  Chl2 = !string.IsNullOrEmpty(d["Chl2"].ToString()) ? d["Chl2"] : "",
+                                  TotPer = !string.IsNullOrEmpty(d["TotPer"].ToString()) ? d["TotPer"] : "",
+                                  ArrPrs = !string.IsNullOrEmpty(d["ArrPrs"].ToString()) ? d["ArrPrs"] : "",
+                                  DepPrs = !string.IsNullOrEmpty(d["DepPrs"].ToString()) ? d["DepPrs"] : "",
+                                  MonthDisplay = !string.IsNullOrEmpty(d["MonthDisplay"].ToString()) ? d["MonthDisplay"] : "",
+                                  MonthGroup = !string.IsNullOrEmpty(d["MonthGroup"].ToString()) ? d["MonthGroup"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+
+        [HttpGet]
+        public IActionResult ProductActivityData(DateTime fromDate, DateTime toDate, string type, string currency)
+        {
+            try
+            {
+                List<object> finalResult = new List<object>();
+
+                // Tách chuỗi "1,2,0,3" thành mảng
+                var typeList = type.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var t in typeList)
+                {
+                    DataTable dataTable = _iReportService.ProductActivityData(fromDate, toDate, t.Trim(), currency);
+
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      ProfileID = d["ProfileID"]?.ToString() ?? "",
+                                      GuestNo = d["GuestNo"]?.ToString() ?? "",
+                                      GuestName = d["GuestName"]?.ToString() ?? "",
+                                      City = d["City"]?.ToString() ?? "",
+                                      CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                      TotalTurnover = d["TotalTurnover"]?.ToString() ?? "",
+                                      RoomPackage = d["RoomPackage"]?.ToString() ?? "",
+                                      RoomSales = d["RoomSales"]?.ToString() ?? "",
+                                      FBTurnover = d["FBTurnover"]?.ToString() ?? "",
+                                      EventTurnover = d["EventTurnover"]?.ToString() ?? "",
+                                      MicelliousTurnover = d["MicelliousTurnover"]?.ToString() ?? "",
+                                      TaxService = d["TaxService"]?.ToString() ?? "",
+                                      TotalAdult = d["TotalAdult"]?.ToString() ?? "",
+                                      TotalChild = d["TotalChild"]?.ToString() ?? "",
+                                      TotalChild1 = d["TotalChild1"]?.ToString() ?? "",
+                                      TotalChild2 = d["TotalChild2"]?.ToString() ?? "",
+                                      BedNightAC = d["BedNightAC"]?.ToString() ?? "",
+                                      BedNightAll = d["BedNightAll"]?.ToString() ?? "",
+                                      RoomNight = d["RoomNight"]?.ToString() ?? "",
+                                      AmountAvg = d["AmountAvg"]?.ToString() ?? "",
+                                  }).ToList();
+
+                    finalResult.AddRange(result);
+                }
+
+                return Json(finalResult);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult SalesinChargeActivityData(DateTime fromDate, DateTime toDate, string type, string currency)
+        {
+            try
+            {
+                List<object> finalResult = new List<object>();
+
+                // Tách chuỗi "1,2,0,3" thành mảng
+                var typeList = type.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var t in typeList)
+                {
+                    DataTable dataTable = _iReportService.SalesinChargeActivityData(fromDate, toDate, t.Trim(), currency);
+
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      ProfileID = d["ProfileID"]?.ToString() ?? "",
+                                      GuestNo = d["GuestNo"]?.ToString() ?? "",
+                                      GuestName = d["GuestName"]?.ToString() ?? "",
+                                      City = d["City"]?.ToString() ?? "",
+                                      CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                      SaleInCharge = d["SaleInCharge"]?.ToString() ?? "",
+                                      TotalTurnover = d["TotalTurnover"]?.ToString() ?? "",
+                                      RoomSales = d["RoomSales"]?.ToString() ?? "",
+                                      TaxService = d["TaxService"]?.ToString() ?? "",
+                                      TotalAdult = d["TotalAdult"]?.ToString() ?? "",
+                                      TotalChild = d["TotalChild"]?.ToString() ?? "",
+                                      TotalChild1 = d["TotalChild1"]?.ToString() ?? "",
+                                      TotalChild2 = d["TotalChild2"]?.ToString() ?? "",
+                                      BedNightAC = d["BedNightAC"]?.ToString() ?? "",
+                                      BedNightAll = d["BedNightAll"]?.ToString() ?? "",
+                                      RoomNight = d["RoomNight"]?.ToString() ?? "",
+                                      AmountAvg = d["AmountAvg"]?.ToString() ?? "",
+                                  }).ToList();
+
+                    finalResult.AddRange(result);
+                }
+
+                return Json(finalResult);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult TAProductionReportData(DateTime fromDate, DateTime toDate, string type, string currency)
+        {
+            try
+            {
+                List<object> finalResult = new List<object>();
+
+                // Tách chuỗi "1,2,0,3" thành mảng
+                var typeList = type.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var t in typeList)
+                {
+                    DataTable dataTable = _iReportService.TAProductionReportData(fromDate, toDate, t.Trim(), currency);
+
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      ProfileID = d["ProfileID"]?.ToString() ?? "",
+                                      GuestNo = d["GuestNo"]?.ToString() ?? "",
+                                      GuestName = d["GuestName"]?.ToString() ?? "",
+                                      City = d["City"]?.ToString() ?? "",
+                                      CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                      TotalTurnover = d["TotalTurnover"]?.ToString() ?? "",
+                                      RoomPackage = d["RoomPackage"]?.ToString() ?? "",
+                                      RoomSales = d["RoomSales"]?.ToString() ?? "",
+                                      FBTurnover = d["FBTurnover"]?.ToString() ?? "",
+                                      EventTurnover = d["EventTurnover"]?.ToString() ?? "",
+                                      MicelliousTurnover = d["MicelliousTurnover"]?.ToString() ?? "",
+                                      TaxService = d["TaxService"]?.ToString() ?? "",
+                                      TotalAdult = d["TotalAdult"]?.ToString() ?? "",
+                                      TotalChild = d["TotalChild"]?.ToString() ?? "",
+                                      TotalChild1 = d["TotalChild1"]?.ToString() ?? "",
+                                      TotalChild2 = d["TotalChild2"]?.ToString() ?? "",
+                                      BedNightAC = d["BedNightAC"]?.ToString() ?? "",
+                                      BedNightAll = d["BedNightAll"]?.ToString() ?? "",
+                                      RoomNight = d["RoomNight"]?.ToString() ?? "",
+                                      AmountAvg = d["AmountAvg"]?.ToString() ?? "",
+                                      RsvPersonInCharge = d["RsvPersonInCharge"]?.ToString() ?? "",
+                                  }).ToList();
+
+                    finalResult.AddRange(result);
+                }
+
+                return Json(finalResult);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult NationalStatisticsData(DateTime fromDate, DateTime toDate, int zone, string viewBy)
+        {
+            try
+            {
+                // Lấy tất cả các loại phòng trong khu vực Zone theo ZoneID
+                List<RoomTypeModel> roomTypesInZone = PropertyUtils
+                    .ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll())
+                    .Where(rt => rt.ZoneID == zone)
+                    .ToList();
+
+                // Lấy mã khu vực (zone)
+                string zonecode = string.Join(",", roomTypesInZone.Select(rt => rt.ID.ToString()));
+
+                // Lấy dữ liệu báo cáo
+                DataTable dataTable = _iReportService.NationalStatisticsData(fromDate, toDate, zonecode, viewBy);
+
+                // Tính tổng giá trị Sum1 trong tất cả các bản ghi
+                decimal totalSum1 = 0;
+                var dataList = (from d in dataTable.AsEnumerable()
+                                let sum1Value = !string.IsNullOrEmpty(d["Sum1"].ToString()) ? Convert.ToDecimal(d["Sum1"]) : 0
+                                select new
+                                {
+                                    National = !string.IsNullOrEmpty(d["National"].ToString()) ? d["National"] : "",
+                                    MonthArrival = !string.IsNullOrEmpty(d["MonthArrival"].ToString()) ? d["MonthArrival"] : "",
+                                    YearArrival = !string.IsNullOrEmpty(d["YearArrival"].ToString()) ? d["YearArrival"] : "",
+                                    Sum1 = sum1Value,
+                                    Zone1 = d["1"]?.ToString() ?? "",
+                                    Zone2 = d["2"]?.ToString() ?? "",
+                                    Zone3 = d["3"]?.ToString() ?? "",
+                                    Zone4 = d["4"]?.ToString() ?? "",
+                                    Zone5 = d["5"]?.ToString() ?? "",
+                                    Zone6 = d["6"]?.ToString() ?? "",
+                                    Zone7 = d["7"]?.ToString() ?? "",
+                                    Zone8 = d["8"]?.ToString() ?? "",
+                                    Zone9 = d["9"]?.ToString() ?? "",
+                                    Zone10 = d["10"]?.ToString() ?? "",
+                                    Zone11 = d["11"]?.ToString() ?? "",
+                                    Zone12 = d["12"]?.ToString() ?? "",
+                                    Zone13 = d["13"]?.ToString() ?? "",
+                                    Zone14 = d["14"]?.ToString() ?? "",
+                                    Zone15 = d["15"]?.ToString() ?? "",
+                                    Zone16 = d["16"]?.ToString() ?? "",
+                                    Zone17 = d["17"]?.ToString() ?? "",
+                                    Zone18 = d["18"]?.ToString() ?? "",
+                                    Zone19 = d["19"]?.ToString() ?? "",
+                                    Zone20 = d["20"]?.ToString() ?? "",
+                                    Zone21 = d["21"]?.ToString() ?? "",
+                                    Zone22 = d["22"]?.ToString() ?? "",
+                                    Zone23 = d["23"]?.ToString() ?? "",
+                                    Zone24 = d["24"]?.ToString() ?? "",
+                                    Zone25 = d["25"]?.ToString() ?? "",
+                                    Zone26 = d["26"]?.ToString() ?? "",
+                                    Zone27 = d["27"]?.ToString() ?? "",
+                                    Zone28 = d["28"]?.ToString() ?? "",
+                                    Zone29 = d["29"]?.ToString() ?? "",
+                                    Zone30 = d["30"]?.ToString() ?? "",
+                                    Zone31 = d["31"]?.ToString() ?? "",
+                                }).ToList();
+
+                // Tính tổng Sum1
+                totalSum1 = dataList.Sum(x => x.Sum1);
+
+                // Thêm cột Percentage cho tất cả các bản ghi
+                var result = dataList.Select(item => new
+                {
+                    item.National,
+                    item.MonthArrival,
+                    item.YearArrival,
+                    item.Sum1,
+                    Percentage = totalSum1 > 0 ? (item.Sum1 / totalSum1) * 100 : 0, // Tính tỷ lệ phần trăm cho tất cả
+                    item.Zone1,
+                    item.Zone2,
+                    item.Zone3,
+                    item.Zone4,
+                    item.Zone5,
+                    item.Zone6,
+                    item.Zone7,
+                    item.Zone8,
+                    item.Zone9,
+                    item.Zone10,
+                    item.Zone11,
+                    item.Zone12,
+                    item.Zone13,
+                    item.Zone14,
+                    item.Zone15,
+                    item.Zone16,
+                    item.Zone17,
+                    item.Zone18,
+                    item.Zone19,
+                    item.Zone20,
+                    item.Zone21,
+                    item.Zone22,
+                    item.Zone23,
+                    item.Zone24,
+                    item.Zone25,
+                    item.Zone26,
+                    item.Zone27,
+                    item.Zone28,
+                    item.Zone29,
+                    item.Zone30,
+                    item.Zone31
+                }).ToList();
+
+                // Trả về kết quả dạng JSON
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                // Trả về thông báo lỗi nếu có lỗi
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult SalesinChargeReportsForm1Data(DateTime fromDate, string viewBy)
+        {
+            try
+            {
+
+                    DataTable dataTable = _iReportService.SalesinChargeReportsForm1Data(fromDate , viewBy);
+
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      SaleInCharge = d["SaleInCharge"]?.ToString() ?? "",
+                                      SaleInChargeGroup = d["SaleInChargeGroup"]?.ToString() ?? "",
+                                      Zone = d["Zone"]?.ToString() ?? "",
+                                      T1 = d["T1"]?.ToString() ?? "",
+                                      T2 = d["T2"]?.ToString() ?? "",
+                                      T3 = d["T3"]?.ToString() ?? "",
+                                      T4 = d["T4"]?.ToString() ?? "",
+                                      T5 = d["T5"]?.ToString() ?? "",
+                                      T6 = d["T6"]?.ToString() ?? "",
+                                      T7 = d["T7"]?.ToString() ?? "",
+                                      T8 = d["T8"]?.ToString() ?? "",
+                                      T9 = d["T9"]?.ToString() ?? "",
+                                      T10 = d["T10"]?.ToString() ?? "",
+                                      T11 = d["T11"]?.ToString() ?? "",
+                                      T12 = d["T12"]?.ToString() ?? "",
+                                      Q1 = d["Q1"]?.ToString() ?? "",
+                                      Q2 = d["Q2"]?.ToString() ?? "",
+                                      Q3 = d["Q3"]?.ToString() ?? "",
+                                      Q4 = d["Q4"]?.ToString() ?? "",
+                                      Total = d["Total"]?.ToString() ?? ""
+
+                                  }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult RevenueDetailData(DateTime fromDate, DateTime toDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.RevenueDetailData(fromDate, toDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Seq = !string.IsNullOrEmpty(d["Seq"].ToString()) ? d["Seq"] : "",
+                                  ProfitCode = !string.IsNullOrEmpty(d["ProfitCode"].ToString()) ? d["ProfitCode"] : "",
+                                  GroupCode = !string.IsNullOrEmpty(d["GroupCode"].ToString()) ? d["GroupCode"] : "",
+                                  GroupDescription = !string.IsNullOrEmpty(d["GroupDescription"].ToString()) ? d["GroupDescription"] : "",
+                                  SubgroupCode = !string.IsNullOrEmpty(d["SubgroupCode"].ToString()) ? d["SubgroupCode"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  AmountMater = !string.IsNullOrEmpty(d["AmountMater"].ToString()) ? d["AmountMater"] : "",
+                                  CurrencyMaster = !string.IsNullOrEmpty(d["CurrencyMaster"].ToString()) ? d["CurrencyMaster"] : "",
+                                  TotalUSD = !string.IsNullOrEmpty(d["TotalUSD"].ToString()) ? d["TotalUSD"] : "",
+                                  TotalSVCUSD = !string.IsNullOrEmpty(d["TotalSVCUSD"].ToString()) ? d["TotalSVCUSD"] : "",
+
+                                  TotalVATUSD = !string.IsNullOrEmpty(d["TotalVATUSD"].ToString()) ? d["TotalVATUSD"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  SubGroupDescription = !string.IsNullOrEmpty(d["SubGroupDescription"].ToString()) ? d["SubGroupDescription"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult RevenueSummaryData(DateTime fromDate, DateTime toDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.RevenueSummaryData(fromDate, toDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Seq = !string.IsNullOrEmpty(d["Seq"].ToString()) ? d["Seq"] : "",
+                                  ProfitCode = !string.IsNullOrEmpty(d["ProfitCode"].ToString()) ? d["ProfitCode"] : "",
+                                  GroupCode = !string.IsNullOrEmpty(d["GroupCode"].ToString()) ? d["GroupCode"] : "",
+                                  GroupDescription = !string.IsNullOrEmpty(d["GroupDescription"].ToString()) ? d["GroupDescription"] : "",
+                                  SubgroupCode = !string.IsNullOrEmpty(d["SubgroupCode"].ToString()) ? d["SubgroupCode"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  AmountMater = !string.IsNullOrEmpty(d["AmountMater"].ToString()) ? d["AmountMater"] : "",
+                                  CurrencyMaster = !string.IsNullOrEmpty(d["CurrencyMaster"].ToString()) ? d["CurrencyMaster"] : "",
+                                  TotalUSD = !string.IsNullOrEmpty(d["TotalUSD"].ToString()) ? d["TotalUSD"] : "",
+                                  TotalVND = !string.IsNullOrEmpty(d["TotalVND"].ToString()) ? d["TotalVND"] : "",
+
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  SubGroupDescription = !string.IsNullOrEmpty(d["SubGroupDescription"].ToString()) ? d["SubGroupDescription"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult LeadtimeReportsData(DateTime fromDate, string zone, string typeDate)
+        {
+            try
+            {
+                DateTime toDate = fromDate.AddDays(30); // Tự động tính ngày kết thúc
+
+                List<string> columnNames = new List<string>();
+                List<string> isnullExpressions = new List<string>();
+
+                if (typeDate == "1")
+                {
+                    // Dạng từng ngày [dM]
+                    for (int i = 0; i < 31; i++)
+                    {
+                        DateTime currentDate = fromDate.AddDays(i);
+                        string day = currentDate.Day.ToString();       // Không format "00" để tránh lỗi 017
+                        string month = currentDate.Month.ToString();   // Không thêm số 0
+
+                        string column = $"[{day}{month}]";
+                        string expression = $"'{day}' = ISNULL({column}, 0)";
+
+                        columnNames.Add(column);
+                        isnullExpressions.Add(expression);
+                    }
+                }
+                else if (typeDate == "0")
+                {
+                    // Dạng theo tháng [M]
+                    for (int i = 0; i < 12; i++)
+                    {
+                        DateTime currentMonth = fromDate.AddMonths(i);
+                        int month = currentMonth.Month;
+
+                        string column = $"[{month}]";
+                        string expression = $"'{i + 1}' = ISNULL({column}, 0)";
+
+                        columnNames.Add(column);
+                        isnullExpressions.Add(expression);
+                    }
+                }
+
+                string columnsString = string.Join(",", columnNames);
+                string expressionString = string.Join(",", isnullExpressions);
+
+                // Gọi service
+                DataTable dataTable = _iReportService.LeadtimeReportsData(
+                    fromDate, toDate, zone, typeDate, columnsString, expressionString
+                );
+
+                // Xử lý dữ liệu trả về
+                var result = dataTable.AsEnumerable().Select(d =>
+                {
+                    var item = new Dictionary<string, object>
+                    {
+                        ["MarketCode"] = d["MarketCode"]?.ToString() ?? "",
+                        ["MarketName"] = d["MarketName"]?.ToString() ?? "",
+                        ["MarketType"] = d["MarketType"]?.ToString() ?? ""
+                    };
+
+                    // Thêm các cột động
+                    var dynamicColumns = dataTable.Columns.Cast<DataColumn>()
+                        .Select(c => c.ColumnName)
+                        .Where(c => c != "MarketCode" && c != "MarketName" && c != "MarketType")
+                        .Distinct();
+
+                    // Xác định giá trị đầu tiên từ dynamicColumns (sau khi loại bỏ [] nếu có)
+                    string firstCol = dynamicColumns.FirstOrDefault();
+                    string firstKey = firstCol?.Trim('[', ']');  // bỏ [] nếu có
+
+                    foreach (var col in dynamicColumns)
+                    {
+                        var value = d[col];
+                        if (value != DBNull.Value)
+                        {
+                            string rawKey = col.StartsWith("[") ? col.Trim('[', ']') : col;
+                            string key = rawKey;
+
+                            // Nếu key dài đúng 3 ký tự và toàn số, thì thay bằng giá trị đầu tiên + "_"
+                            if (rawKey.Length == 3 && rawKey.All(char.IsDigit))
+                            {
+                                key = $"{firstKey}_";
+                            }
+
+                            // Nếu key đã tồn tại thì thêm "_" cho đến khi không trùng
+                            while (item.ContainsKey(key))
+                            {
+                                key += "_";
+                            }
+
+                            item[key] = value;
+                        }
+                    }
+
+
+
+                    return item;
+                }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+
+
+        [HttpGet]
+        public IActionResult RatecodeReportsData(DateTime fromDate, string zone,string rate,string viewBy)
+        {
+            try
+            {
+                zone = zone ?? "";
+                rate = rate ?? "";
+                DateTime toDate = fromDate.AddMonths(11); // Tự động tính ngày kết thúc
+
+                List<string> columnNames = new List<string>();
+                List<string> isnullExpressions = new List<string>();
+
+                    // Dạng theo tháng [M]
+                    for (int i = 0; i < 12; i++)
+                    {
+                        DateTime currentMonth = fromDate.AddMonths(i);
+                        int month = currentMonth.Month;
+
+                        string column = $"[{month}]";
+                        string expression = $"'{i + 1}' = ISNULL({column}, 0)";
+
+                        columnNames.Add(column);
+                        isnullExpressions.Add(expression);
+                    }
+                
+
+                string columnsString = string.Join(",", columnNames);
+                string expressionString = string.Join(",", isnullExpressions);
+
+                // Gọi service
+                DataTable dataTable = _iReportService.RatecodeReportsData(fromDate, toDate, zone, rate, viewBy, columnsString, expressionString);
+
+                // Xử lý dữ liệu trả về
+                var result = dataTable.AsEnumerable().Select(d =>
+                {
+                    var item = new Dictionary<string, object>
+                    {
+                        ["RateCode"] = d["RateCode"]?.ToString() ?? "",
+                        ["Row"] = d["Row"]?.ToString() ?? "",
+                    };
+
+                    // Thêm các cột động
+                    var dynamicColumns = dataTable.Columns.Cast<DataColumn>()
+                        .Select(c => c.ColumnName)
+                        .Where(c => c != "RateCode" && c != "Row")
+                        .Distinct();
+
+                    // Xác định giá trị đầu tiên từ dynamicColumns (sau khi loại bỏ [] nếu có)
+                    string firstCol = dynamicColumns.FirstOrDefault();
+                    string firstKey = firstCol?.Trim('[', ']');  // bỏ [] nếu có
+
+                    foreach (var col in dynamicColumns)
+                    {
+                        var value = d[col];
+                        if (value != DBNull.Value)
+                        {
+                            string rawKey = col.StartsWith("[") ? col.Trim('[', ']') : col;
+                            string key = rawKey;
+
+                            // Nếu key dài đúng 3 ký tự và toàn số, thì thay bằng giá trị đầu tiên + "_"
+                            if (rawKey.Length == 3 && rawKey.All(char.IsDigit))
+                            {
+                                key = $"{firstKey}_";
+                            }
+
+                            // Nếu key đã tồn tại thì thêm "_" cho đến khi không trùng
+                            while (item.ContainsKey(key))
+                            {
+                                key += "_";
+                            }
+
+                            item[key] = value;
+                        }
+                    }
+
+
+
+                    return item;
+                }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AnnualRoomOccupancyData(DateTime fromDate, string zone)
+        {
+            try
+            {
+                zone = zone ?? "";
+                DateTime toDate = fromDate.AddMonths(11); // Tự động tính ngày kết thúc
+
+                List<string> columnNames = new List<string>();
+                List<string> isnullExpressions = new List<string>();
+
+                // Dạng theo tháng [M]
+                for (int i = 0; i < 12; i++)
+                {
+                    DateTime currentMonth = fromDate.AddMonths(i);
+                    int month = currentMonth.Month;
+
+                    string column = $"[{month}]";
+                    string expression = $"'{i + 1}' = ISNULL({column}, 0)";
+
+                    columnNames.Add(column);
+                    isnullExpressions.Add(expression);
+                }
+
+
+                string columnsString = string.Join(",", columnNames);
+                string expressionString = string.Join(",", isnullExpressions);
+
+                // Gọi service
+                DataTable dataTable = _iReportService.AnnualRoomOccupancyData(fromDate, toDate, zone,columnsString, expressionString);
+
+                // Xử lý dữ liệu trả về
+                var result = dataTable.AsEnumerable().Select(d =>
+                {
+                    var item = new Dictionary<string, object>
+                    {
+                        ["day"] = d["day"]?.ToString() ?? "",
+                    };
+
+                    // Thêm các cột động
+                    var dynamicColumns = dataTable.Columns.Cast<DataColumn>()
+                        .Select(c => c.ColumnName)
+                        .Where(c => c != "day")
+                        .Distinct();
+
+                    // Xác định giá trị đầu tiên từ dynamicColumns (sau khi loại bỏ [] nếu có)
+                    string firstCol = dynamicColumns.FirstOrDefault();
+                    string firstKey = firstCol?.Trim('[', ']');  // bỏ [] nếu có
+
+                    foreach (var col in dynamicColumns)
+                    {
+                        var value = d[col];
+                        if (value != DBNull.Value)
+                        {
+                            string rawKey = col.StartsWith("[") ? col.Trim('[', ']') : col;
+                            string key = rawKey;
+
+
+                            item[key] = value;
+                        }
+                    }
+
+
+
+                    return item;
+                }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
         public IActionResult LoadReport(string reportName,string title)
         {
            
@@ -598,6 +1701,31 @@ namespace Report.Controllers
                     List<TransactionsModel> listts = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
                     ViewBag.TransactionsList = listts;
                     break;
+                case "RevenueByReport":
+                case "ReservationbyCompany":
+                case "RoomOccupancy":
+                case "NoShowReport":
+                case "LeadtimeReports":
+                case "RatecodeReports":
+                case "AnnualRoomOccupancy":
+                case "NationalStatistics":
+                case "ReservationSummary":
+                    List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+                    ViewBag.ZoneList = listzo;
+                    List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+                    ViewBag.RoomTypeList = listrt;
+                    List<RoomClassModel> listrl = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
+                    ViewBag.RoomClassList = listrl;
+                    List<MarketModel> listmk = PropertyUtils.ConvertToList<MarketModel>(MarketBO.Instance.FindAll());
+                    ViewBag.MarketList = listmk;
+                    List<RateCodeModel> listrc = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
+                    ViewBag.RateCodeList = listrc;
+                    break;
+                case "ReservationCancellations":
+                    List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
+                    ViewBag.ComList = listcm;
+                    break;
+              ;
             }
             ViewBag.ReportTitle = title;
             // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng

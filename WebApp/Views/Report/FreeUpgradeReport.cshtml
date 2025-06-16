@@ -44,31 +44,30 @@
 
 </style>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
-        <div class="d-flex align-items-center">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
 
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 100px;">From Date:</label>
-                <input style="width: 130px;" type="date" id="fromDate" name="fromDate" class="form-control" />
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
             </div>
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 80px;">To Date:</label>
-                <input style="width: 130px;" type="date" id="toDate" name="fromDate" class="form-control" />
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input style="width: 130px;" type="date" id="toDate" name="fromDate" class="form-control form-control-sm w-auto" />
             </div>
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 80px;">View By:</label>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">View By:</label>
                 <div style="width: 120px;">
-                    <select class="form-control" id="viewBy" name="selectType1">
+                <select class="form-control form-control-sm w-auto" id="viewBy" name="selectType1">
                         <option value="0">Arrival Date</option>
                         <option value="1">Departure Date</option>
                         <option value="2">Stay Over</option>
                     </select>
                 </div>
             </div>
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 60px;">Status:</label>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Status:</label>
                 <div style="width: 100px;">
-                    <select class="form-control" id="status" name="selectType1">
+                <select class="form-control form-control-sm w-auto"  id="status" name="selectType1">
                         <option value="">All</option>
                         <option value="0,5">Reservation</option>
                         <option value="1,6">In-House</option>
@@ -76,7 +75,6 @@
                     </select>
                 </div>
             </div>
-        </div>
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -86,7 +84,7 @@
 </div>
 
 <div class="mui-card">
-    <div style="font-size: 23px;" class="mt-1" id="reportTitle"></div>
+    <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -158,16 +156,20 @@
                    { dataField: "roomNo", caption: "Ro.No", width: columnWidth -50},
             { dataField: "lastName", caption: "Name", width: columnWidth },
             { dataField: "reservationHolder", caption: "Reservation Holder", width: columnWidth+100 },
-            { dataField: "arrivalDate", caption: "Arr.", width: columnWidth-30, dataType: "date",format: "dd/MM/yyyy" },
-            { dataField: "departureDate", caption: "Dep.", width:columnWidth-30,dataType: "date",format: "dd/MM/yyyy" },
-            { dataField: "roomType", caption: "Ro.Type", width: columnWidth-30 },
-                  { dataField: "rtc", caption: "Ro.Type Charge", width: columnWidth-30},
-                   { dataField: "rateCode", caption: "Rate Code", width:columnWidth-30 },
-                           { dataField: "upgradeBy", caption: "Approvaled By", width: columnWidth -30},
-                   { dataField: "upgradeWhy", caption: "Note", width: columnWidth -30},
+            { dataField: "arrivalDate", caption: "Arr.", width: columnWidth-50, dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "departureDate", caption: "Dep.", width:columnWidth-50,dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "roomType", caption: "Ro.Type", width: columnWidth-40 },
+                  { dataField: "rtc", caption: "Ro.Type Charge", width: columnWidth-40},
+                   { dataField: "rateCode", caption: "Rate Code", width:columnWidth-40 },
+                           { dataField: "upgradeBy", caption: "Approvaled By", width: columnWidth -40},
+                   { dataField: "upgradeWhy", caption: "Note", width: columnWidth -40},
             ],
             paging: { pageSize: 25 },
-            scrolling: { rowRenderingMode: 'virtual' },
+             scrolling:  {
+                  mode: 'virtual',
+                 useNative: true,
+                showScrollbar: "always"
+             },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -175,6 +177,13 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
+             filterRow: {
+                  visible: true,
+                 applyFilter: "auto"
+              },
+               headerFilter: {
+                  visible: true
+              },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true
           

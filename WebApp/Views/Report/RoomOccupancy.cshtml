@@ -4,15 +4,13 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
-    var report = ViewBag.ReportName as XtraReport;
+    var zoneList = ViewBag.ZoneList;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -50,15 +48,25 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
+        <!-- To Date --> 
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="form-control form-control-sm" style="width :100px">
+                @foreach (var item in zoneList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
         </div>
     </div>
     <div class=" mb-3 ">
@@ -107,11 +115,12 @@
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/RoomOccupancyReport',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
+                   zone: $("#zone").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -120,7 +129,9 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+    const processedData = prepareRoomOccupancyData(result);
+    initializeRoomOccupancyGrid(processedData);
+
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -129,18 +140,75 @@
             }
         });
     });
+    function prepareRoomOccupancyData(data) {
+        const groupedData = {};
 
-    function initializeBookingSourceGrid(data) {
+        // Group by MonthDisplay
+        data.forEach(item => {
+            const key = item.monthDisplay;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+        });
+
+        const finalData = [];
+
+        Object.entries(groupedData).forEach(([month, records]) => {
+            finalData.push(...records);
+
+            const totalRow = {
+                fair: "TOTAL",
+                dow:records[0].monthDisplay,
+                date: null,
+                monthDisplay: month,
+                vacRo: sum(records, 'vacRo'),
+                resRo: sum(records, 'resRo'),
+                nonDeductRo: sum(records, 'nonDeductRo'),
+                altRo: sum(records, 'altRo'),
+                totaRo1: sum(records, 'totaRo1'),
+                aRo: sum(records, 'aRo'),
+                depRo: sum(records, 'depRo'),
+                ooo: sum(records, 'ooo'),
+                totaRo2: sum(records, 'totaRo2'),
+                pt: average(records, 'pt'),
+                cssClass: "custom"
+                isTotal: true // Để phân biệt dòng tổng
+            };
+
+            finalData.push(totalRow);
+        });
+
+        return finalData;
+    }
+
+    // Helper functions
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
+
+    function average(arr, field) {
+        const valid = arr.filter(x => x[field] != null);
+        if (valid.length === 0) return 0;
+        return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
+    }
+
+    function initializeRoomOccupancyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+               { dataField: "fair", caption: "Fair", width:columnWidth-100},
+                 { dataField: "dow", caption: "Dow", width:columnWidth-50},
+            { dataField: "date", caption: "Date", width: columnWidth-70 ,dataType: "date",format: "dd/MM/yyyy"  },
+            { dataField: "vacRo", caption: "VacRo", width: columnWidth-80 , dataType: "number", format: "#,##0" },
+            { dataField: "resRo", caption: "ResRo",width: columnWidth-80 , dataType: "number", format: "#,##0" },
+            { dataField: "nonDeductRo", caption: "NonDeductRo",width: columnWidth-80, dataType: "number", format: "#,##0" },
+            { dataField: "altRo", caption: "AltRo", width:columnWidth-80, dataType: "number", format: "#,##0" },
+             { dataField: "totaRo1", caption: "TotaRo1",width: columnWidth-80 , dataType: "number", format: "#,##0" },
+            { dataField: "aRo", caption: "ARo",width: columnWidth-80, dataType: "number", format: "#,##0" },
+            { dataField: "depRo", caption: "DepRo", width:columnWidth-80, dataType: "number", format: "#,##0" },
+                      { dataField: "ooo", caption: "OOO",width: columnWidth-80 , dataType: "number", format: "#,##0" },
+                           { dataField: "totaRo2", caption: "TotaRo2",width: columnWidth-80 , dataType: "number", format: "#,##0" },
+            { dataField: "pt", caption: "%",width: columnWidth-80, dataType: "number", format: "#,##0" },
             ],
             paging: { pageSize: 25 },
              scrolling:  {
@@ -163,21 +231,12 @@
                   visible: true
               },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true,
-                 summary: {
-                totalItems: [
-                     {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                ]
-            }
+              showBorders: true,                  onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data?.cssClass) {
+            e.rowElement.addClass(e.data.cssClass);
+        }
+    }
+        
         });
     }
 

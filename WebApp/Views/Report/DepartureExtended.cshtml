@@ -4,15 +4,13 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomClassList = ViewBag.RoomClassList;
-    var departmentList = ViewBag.DepartmentList;
     var report = ViewBag.ReportName as XtraReport;
 }
 
 
 <style>
     .filter_wrapper {
-    /*     background-color: #ececec; */
+        /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
@@ -53,12 +51,6 @@
         <div class="d-flex align-items-center">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-        </div>
-
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
-            <label class="me-2 mb-0">To Date:</label>
-            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
     </div>
     <div class=" mb-3 ">
@@ -107,11 +99,10 @@
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/BookingSourceData',
+            url: '/Report/DepartureExtendedReport',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -120,7 +111,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBookingSourceGrid(result);
+                initializeDepartureExtendedGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -130,24 +121,31 @@
         });
     });
 
-    function initializeBookingSourceGrid(data) {
+    function initializeDepartureExtendedGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "source", caption: "Source", width: "17%" },
-            { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-            { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-            { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
+               { dataField: "roomNo", caption: "RoomNo", width: columnWidth -80},
+            { dataField: "name", caption: "Name", width: columnWidth  },
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "originalDepDate", caption: "Ori.DepDate",  width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "nts", caption: "Nts",  width: columnWidth-80, dataType: "number", format: "#,##0" },
+             { dataField: "cur", caption: "Cur",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
+              { dataField: "prs", caption: "Prs",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
+               { dataField: "rms", caption: "Rms",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
+                { dataField: "balance", caption: "Balance",  width: columnWidth-80, dataType: "number", format: "#,##0" },
+                 { dataField: "resvHolder", caption: "Resv.Holder",  width: columnWidth-80 },
+                  { dataField: "resvStatus", caption: "Resv.Status",  width: columnWidth-80 },
+                        { dataField: "departureTime", caption: "Dep.Time",  width: columnWidth-80, dataType: "date", format: "dd/MM/yyyy" },
             ],
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+            scrolling:  {
+                 mode: 'virtual',
+                  useNative: true,
+                 showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -156,26 +154,26 @@
                 showNavigationButtons: true,
             },
              filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
+               visible: true,
+               applyFilter: "auto"
+             },
+             headerFilter: {
                   visible: true
               },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
                  summary: {
                 totalItems: [
-                     {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                        { column: "source", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "busmixActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "adrActual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "revmixForcast", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        {
+        column: "roomNo",
+        summaryType: "custom",
+        displayFormat: "Total"
+    },
+                        { column: "nts", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "cur", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "prs", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "rms", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "balance", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 ]
             }
         });
