@@ -1,6 +1,7 @@
 ﻿@using DevExpress.XtraReports.UI
 @{
     ViewBag.Title = ViewBag.ReportHeader ?? "Revenue Report";
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
 }
 
 <style>
@@ -76,7 +77,7 @@
     <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
 </div>
 
-
+@section Scripts {
     <script>
         function formatDate(date) {
             let year = date.getFullYear();
@@ -182,4 +183,4 @@
             });
         });
     </script>
-
+}
