@@ -46,11 +46,12 @@
         }
 
 </style>
+<div class="text-center" id="pageTitle" style="font-size: 20px">Annual Room Occupancy</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">From Month:</label>
+            <label class="me-2 mb-0">Month:</label>
             <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
@@ -77,7 +78,7 @@
 </div>
 
 <div class="mui-card">
-    <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
+@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -154,7 +155,7 @@
         const fromMonth = fromDate.getMonth(); // 0-based
 
         const columns = [
-            { dataField: "day", caption: "Day", width: columnWidth - 80 }
+            { dataField: "day", caption: "Day", width: columnWidth - 100 }
         ];
 
         // Danh sách ánh xạ: fieldName (1..12) -> actual month (0..11)
@@ -178,7 +179,8 @@
             columns.push({
                 dataField: fieldName,
                 caption: caption,
-                width: columnWidth - 80,
+                width: columnWidth - 90,
+                    encodeHtml: false,
                 calculateCellValue: function (rowData) {
                     const day = parseInt(rowData.day);
                     if (!day || isNaN(day)) return "";
@@ -187,9 +189,12 @@
                     const weekday = weekdayNames[date.getDay()];
                     const value = rowData[fieldName];
 
-                    return value !== undefined && value !== null && value !== ""
-                        ? `${weekday} - ${value}`
-                        : "";
+                     if (value === undefined || value === null || value === "") return "";
+
+                return `<div style="display: flex; justify-content: space-between;">
+                            <span>${weekday}</span>
+                            <span>${value}</span>
+                        </div>`;
                 }
             });
         }
