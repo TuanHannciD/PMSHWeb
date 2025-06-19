@@ -474,5 +474,64 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptAnnualRoomOccupancy", param);
             return myTable;
         }
+
+        public DataTable RoomMovesData(DateTime fromDate, DateTime toDate)
+        {
+        
+           SqlParameter[] param = new SqlParameter[]
+            {
+             new SqlParameter("@FromDate", fromDate),
+             new SqlParameter("@ToDate", toDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptRoomMoves", param);
+            return myTable;
+        }
+        public DataTable DepositTransferredAtCheckIn(DateTime fromDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@dtpFromDate", fromDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepositTransferredAtCheckIn", param);
+            return myTable;
+        }
+        public DataTable RoomDiscrepancy(int Sleep, int Skip, int Person)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            new SqlParameter("@Sleep", Sleep),
+            new SqlParameter("@Skip", Skip),
+            new SqlParameter("@Person", Person)
+            };
+
+            return DataTableHelper.getTableData("spRptRoomDescrepancy", parameters);
+        }
+
+        public DataTable DepositLedger(DateTime fromDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@BusinessDate", SqlDbType.Date) { Value = fromDate.Date }
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepositLedger", param);
+            return myTable;
+        }
+        public DataTable RevenueReports(DateTime fromDate, int type)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+            new SqlParameter("@dtpFromDate", fromDate),
+            new SqlParameter("@Type", type)
+            };
+
+            return DataTableHelper.getTableData("spRptRevenue", param);
+        }
+
+
+
+
     }
 }

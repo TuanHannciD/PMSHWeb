@@ -1,0 +1,183 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    ViewBag.Title = ViewBag.ReportHeader ?? "Revenue Report";
+}
+
+<style>
+    .filter_wrapper {
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .radio_wrapper {
+        margin: 8px 0 8px 14px;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+</style>
+
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+        <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="radio_wrapper">
+            <label class="me-2">Type:</label>
+            <label class="me-2"><input type="radio" name="reportType" value="0" checked /> Revenue</label>
+            <label class="me-2"><input type="radio" name="reportType" value="1" /> Payment</label>
+            <label class="me-2"><input type="radio" name="reportType" value="2" /> NonRevenue</label>
+            <label><input type="radio" name="reportType" value="3" /> All</label>
+        </div>
+
+
+    </div>
+
+    <div class="button_wrapper">
+        <button id="btnPrint" class="mui-button mui-button-new" style="border-radius: 4px; background-color: #3b9ac6;">
+            <i class="fa-solid fa-eye"></i> View
+        </button>
+        <button id="btnExportExcel" class="mui-button mui-button-new" style="border-radius: 4px; background-color: #3b9ac6;">
+            <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button id="btnExportPdf" class="mui-button mui-button-new" style="border-radius: 4px; background-color: #3b9ac6;">
+            <i class="fas fa-eraser"></i> PDF
+        </button>
+    </div>
+</div>
+
+<div class="mui-card">
+    <div style="font-size: 20px;" class="mt-1" id="reportTitle">@ViewBag.ReportTitle</div>
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+</div>
+
+@section Scripts {
+    <script>
+            function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        $(document).ready(function () {
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            $('#fromDate').val(formatDate(firstDayOfMonth));
+
+        });
+
+        $("#btnPrint").click(function () {
+            $("#loadingSpinner").show();
+
+            const fromDate = $("#fromDate").val();
+            const reportType = $("input[name='reportType']:checked").val();
+
+            $.ajax({
+                url: '/Report/RevenueReports',
+                type: 'GET',
+                data: {
+                    fromDate: fromDate,
+                    type: reportType
+                },
+                success: function (result) {
+                    console.log(result);
+                    initializeGrid(result);
+                    $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không thể tải báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+        });
+
+        function initializeGrid(data) {
+            $("#gridContainer").dxDataGrid({
+                dataSource: data,
+                columns: [
+                    { dataField: "transactionCode", caption: "Code", width: 90 },
+                    { dataField: "transactionName", caption: "Description", width: 220 },
+                    { dataField: "currencyID", caption: "Curr", width: 70 },
+                    { dataField: "groupDescription", caption: "Group", width: 120 },
+                    { dataField: "subGroupDescription", caption: "Sub Group", width: 160 },
+                    { dataField: "amount", caption: "Amount", format: "#,##0.##", width: 120 }
+                ],
+                paging: { pageSize: 25 },
+                pager: {
+                    visible: true,
+                    showPageSizeSelector: true,
+                    showInfo: true
+                },
+                filterRow: { visible: true, applyFilter: "auto" },
+                headerFilter: { visible: true },
+                summary: {
+                    totalItems: [
+                        {
+                            column: "amount",
+                            summaryType: "sum",
+                            displayFormat: "{0}",
+                            valueFormat: "#,##0.00"
+                        }
+                    ]
+                },
+                showBorders: true
+            });
+        }
+
+        $("#btnExportExcel").click(function () {
+            const grid = $("#gridContainer").dxDataGrid("instance");
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Revenue Report");
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "RevenueReport.xlsx");
+                });
+            });
+        });
+
+        $("#btnExportPdf").click(function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            DevExpress.pdfExporter.exportDataGrid({
+                jsPDFDocument: doc,
+                component: $("#gridContainer").dxDataGrid("instance"),
+                autoTableOptions: {
+                    styles: { cellPadding: 2, fontSize: 8 },
+                    margin: { top: 20 }
+                }
+            }).then(() => {
+                doc.save("RevenueReport.pdf");
+            });
+        });
+    </script>
+}

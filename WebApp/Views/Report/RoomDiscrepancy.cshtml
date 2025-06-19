@@ -1,0 +1,198 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var roomClassList = ViewBag.RoomClassList;
+    var departmentList = ViewBag.DepartmentList;
+    var report = ViewBag.ReportName as XtraReport;
+}
+
+<style>
+    .filter_wrapper {
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+</style>
+
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Status:</label>
+            <div class="form-check me-2">
+                <input class="form-check-input" type="checkbox" id="statusSleep" value="Sleep" checked>
+                <label class="form-check-label" for="statusSleep">Sleep</label>
+            </div>
+            <div class="form-check me-2">
+                <input class="form-check-input" type="checkbox" id="statusSkip" value="Skip" checked>
+                <label class="form-check-label" for="statusSkip">Skip</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="statusPerson" value="Person" checked>
+                <label class="form-check-label" for="statusPerson">Person</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new">
+            <i class="fa-solid fa-eye"></i> View
+        </button>
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button">
+            <i class="fas fa-eraser"></i> PDF
+        </button>
+    </div>
+</div>
+
+<div class="mui-card">
+    <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+
+        $("#btnPrint").click(function () {
+        $("#loadingSpinner").show();
+
+        const sleep = $("#statusSleep").is(":checked") ? 1 : 0;
+        const skip = $("#statusSkip").is(":checked") ? 1 : 0;
+        const person = $("#statusPerson").is(":checked") ? 1 : 0;
+
+
+        $.ajax({
+            url: '/Report/RoomDiscrepancy',
+            type: 'GET',
+            data: {
+                Sleep: sleep,
+                Skip: skip,
+                Person: person
+            },
+            success: function (result) {
+                console.log(result);
+                initializeGrid(result);
+                $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải dữ liệu.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+        function initializeGrid(data) {
+        const columnWidth = 140;
+
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+                columns: [
+                    { dataField: "roomNo", caption: "Room No" },
+                    { dataField: "roomType", caption: "Room Type" },
+                    { dataField: "roomStatus", caption: "Room Status" },
+                    { dataField: "hkStatus", caption: "HK Status" },
+                    { dataField: "foStatus", caption: "FO Status" },         
+                    { dataField: "foPersons", caption: "FO Persons" },
+                    { dataField: "hkPersons", caption: "HK Persons" },
+                    { dataField: "sleepOrSkip", caption: "Occupancy Discrepant Reason" },
+                    { dataField: "personDiscrepancy", caption: "Person Discrepancy" }
+                     ],
+            paging: { pageSize: 25 },
+            scrolling: {
+                mode: 'virtual',
+                useNative: true,
+                showScrollbar: "always"
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            showBorders: true,
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            }
+        });
+    }
+
+
+
+     $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport='@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // Đặt tên file theo selectedReport
+            let fileName =selectedReport + ".xlsx";
+
+            // Ghi file
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>

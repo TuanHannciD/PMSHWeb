@@ -1,0 +1,194 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+}
+
+<style>
+    .filter_wrapper {
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+</style>
+
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <button style="border-radius: 4px; margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px; margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px; margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+</div>
+
+<div class="mui-card">
+    <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        $('#fromDate').val(formatDate(firstDayOfMonth));
+        $('#toDate').val(formatDate(lastDayOfMonth));
+    });
+
+
+    $("#btnPrint").click(function () {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Report/DepositTransferredAtCheckIn',
+            type: 'GET',
+            data: {
+                fromDate: $("#fromDate").val(),
+            },
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log(result); 
+                initializeDepositGrid(result);
+                $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+
+    function initializeDepositGrid(data) {
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            columns: [
+                { dataField: "name", caption: "Name", width: 150 },
+                { dataField: "roomNo", caption: "Room No", width: 100 },
+                { dataField: "paidOn", caption: "Paid On", width: 120 ,dataType: "date",format: "dd/MM/yyyy" },
+                { dataField: "depositRsq", caption: "Deposit Requested", width: 160, dataType: "number", format: "#,##0.00" },
+                { dataField: "depositPayment", caption: "Deposit Payment", width: 160, dataType: "number", format: "#,##0.00" },
+                { dataField: "currencyMaster", caption: "Currency Master", width: 120 },
+                { dataField: "departureDate", caption: "Departure Date", width: 170 ,dataType: "date",format: "dd/MM/yyyy" }
+            ],
+            
+            paging: { pageSize: 25 },
+            scrolling: {
+                mode: 'virtual',
+                useNative: true,
+                showScrollbar: "always"
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            summary: {
+                totalItems: [
+                    {
+                        column: "name",
+                        summaryType: "custom",
+                        name: "grandTotalText",
+                        displayFormat: "Grand Total"
+                    },
+                    {
+                        column: "depositRsq",
+                        summaryType: "sum",
+                        displayFormat: "{0}",
+                        valueFormat: "#,##0.00"
+                    },
+                    {
+                        column: "depositPayment",
+                        summaryType: "sum",
+                        displayFormat: "{0}",
+                        valueFormat: "#,##0.00"
+                    }
+                ],
+               
+            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            showBorders: true
+        });
+    }
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport = '@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            let fileName = selectedReport + ".xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+    $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>

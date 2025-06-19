@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Report.Services.Interfaces
 {
@@ -12,7 +13,6 @@ namespace Report.Services.Interfaces
         DataTable GetBookingSourceData(DateTime fromDate, DateTime toDate);
         DataTable GroupReservation(DateTime fromDate, DateTime toDate, string NoOfRoom);
         DataTable GuestStayOver(DateTime fromDate, DateTime toDate);
-
         DataTable GuestStay(string noofName, string stayno, string stayand);
         DataTable ReportNationalityStatistics(DateTime fromDate, DateTime toDate, string status, string sortOder);
         DataTable ReservationSummaryReport(DateTime fromDate, DateTime toDate);
@@ -29,7 +29,7 @@ namespace Report.Services.Interfaces
         DataTable RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone);
         DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate);
         DataTable ReservationStatisticsReport(DateTime fromDate);
-        DataTable  ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder, string noOfRoom);
+        DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder, string noOfRoom);
         DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass);
         DataTable ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType, string zone, string viewBy, string market);
         DataTable ProductActivityData(DateTime fromDate, DateTime toDate, string type, string currency);
@@ -42,5 +42,10 @@ namespace Report.Services.Interfaces
         DataTable LeadtimeReportsData(DateTime fromDate, DateTime toDate, string zone, string isDaily, string day, string daysNames);
         DataTable RatecodeReportsData(DateTime fromDate, DateTime toDate, string zone, string rate, string viewby, string day, string daysNames);
         DataTable AnnualRoomOccupancyData(DateTime fromDate, DateTime toDate, string zone, string day, string daysNames);
+        DataTable RoomMovesData(DateTime fromDate, DateTime toDate);
+        DataTable DepositTransferredAtCheckIn(DateTime fromDate);
+        DataTable RoomDiscrepancy(int Sleep = 0, int Skip = 0, int Person = 0);
+        DataTable DepositLedger(DateTime fromDate);
+        DataTable RevenueReports(DateTime fromDate, int type);
     }
 }
