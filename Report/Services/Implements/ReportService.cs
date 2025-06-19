@@ -24,6 +24,18 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptBookingSource", param);
             return myTable;
         }
+        public DataTable BlacklistReporteData(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                  new SqlParameter("@Type", "0"),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptBlacklistReport", param);
+            return myTable;
+        }
         public  DataTable GroupReservation(DateTime fromDate, DateTime toDate, string NoOfRoom)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -104,6 +116,20 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptNationalCompareStatistics", param);
             return myTable;
         }
+
+        public DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                 new SqlParameter("@Area", viewBy),
+                new SqlParameter("@AlertCode", altercode),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptAlerts", param);
+            return myTable;
+        }
         public  DataTable ReservationSummaryReport(DateTime fromDate, DateTime toDate)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -165,7 +191,7 @@ namespace Report.Services.Implements
                             new SqlParameter("@RoomTypeID", zonecode),
             };
 
-            DataTable myTable = DataTableHelper.getTableData("spRptGroupReservationReport", param);
+            DataTable myTable = DataTableHelper.getTableData("spRptMarketReportFolio", param);
             return myTable;
         }
         public DataTable DailyPickupReport(DateTime fromDate, DateTime toDate)

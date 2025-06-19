@@ -49,6 +49,7 @@
         background-color: #f1f1f1; /* Có thể thay đổi màu nền */
     }
 </style>
+<div class="text-center" id="reportTitle" style="font-size: 20px">NationalStatistics</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
@@ -92,7 +93,7 @@
 </div>
 
 <div class="mui-card">
-    <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
+@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -186,6 +187,7 @@
                 national: "TOTAL",
                 monthArrival: month,
                 yearArrival: year,
+                cssClass: "custom",
             };
 
             for (let i = 1; i <= 31; i++) {
@@ -203,7 +205,7 @@
 
     // Helper functions
     function sum(arr, field) {
-        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+        return arr.reduce((total, item) => total + Number(item[field] || 0), 0);
     }
 
     function average(arr, field) {

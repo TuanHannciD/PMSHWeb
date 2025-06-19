@@ -42,5 +42,7 @@ namespace Report.Services.Interfaces
         DataTable LeadtimeReportsData(DateTime fromDate, DateTime toDate, string zone, string isDaily, string day, string daysNames);
         DataTable RatecodeReportsData(DateTime fromDate, DateTime toDate, string zone, string rate, string viewby, string day, string daysNames);
         DataTable AnnualRoomOccupancyData(DateTime fromDate, DateTime toDate, string zone, string day, string daysNames);
+        DataTable BlacklistReporteData(DateTime fromDate, DateTime toDate);
+        DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode);
     }
 }

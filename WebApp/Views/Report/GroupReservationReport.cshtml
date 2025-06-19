@@ -9,8 +9,8 @@
 
 <style>
     .filter_wrapper {
-        background-color: #ececec;
-        margin: 0px 8px 14px 8px;
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
     }
@@ -43,53 +43,46 @@
             color: white !important;
         }
 
+    .header-row {
+        font-weight: bold;
+        background-color: #f1f1f1; /* Có thể thay đổi màu nền */
+    }
 </style>
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-</div>
-<div style="display:flex;margin: 12px;text-align:center">
-    <i class="fa-solid fa-arrow-left" style="padding-top:5px;margin-right:4px" onclick="window.location.href='@Url.Action("Index", "Home")'"></i>
-    <div style="font-size:18px"><b>Report/Group Reservation Report</b></div>
-</div>
-<div class="button_wrapper row">
-    <button id="btnPrint" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6"><i class="fa-solid fa-eye"></i>View</button>
-    <button id="btnExportExcel" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6">
-        <i class="fa-solid fa-file-excel"></i>  Excel
-    </button>
-    <button id="btnExportPdf" type="button" class="btn btn-primary col-lg-1 mb-4 col-col-6">
-        <i class="fa-solid fa-file-pdf"></i>  PDF
-    </button>
-</div>
-<div class="filter_wrapper row">
+<div class="text-center" id="pageTitle" style="font-size: 20px">Group Reservation Report</div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
 
-    <div class="form-group row col-md-3  mb-3">
-        <label class="col-md-5 col-form-label text-right">From Date</label>
-        <div class="col-md-7">
-            <input class="form-control" type="date" id="fromDate" name="fromDate" style="width: 100%;" />
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+        </div>
+
+        <!-- To Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">No Of Room:</label>
+         
+                <input id="noofRoom" type="text" class="form-control form-control-sm w-auto">
+         
         </div>
     </div>
-    <div class="form-group row col-md-3  mb-3">
-        <label class="col-md-5 col-form-label text-right">To Date</label>
-
-        <div class="col-md-7">
-            <input class="form-control" style="width: 100%;" id="toDate" name="toDate" type="date" />
-        </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
-
-    <div class="form-group row col-md-3 mb-3 ">
-        <label for="inputPassword" class="col-md-5 col-form-label text-right"><b>No Of Room</b></label>
-        <div class="col-md-7">
-            <input id="noofRoom" type="text" class="form-control">
-        </div>
-    </div>
+</div>
+<div class="mui-card">
+@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
-@* <div id="reportViewerContainer" class="mt-3">
-    <!-- Report viewer will be injected here -->
-</div> *@
-<div id="gridContainer" class="gridContainer"></div>
 <script>
     function formatDate(date) {
         let year = date.getFullYear();
@@ -149,20 +142,20 @@
         $("#gridContainer").dxDataGrid({
             dataSource: data,  // Dữ liệu từ server
             columns: [
-                { dataField: "confirmationNo", caption: "ConfirmationNo", width: columnWidth },
-                { dataField: "crsNo", caption: "CRSNo", width: columnWidth },
-                { dataField: "groupCode", caption: "GroupCode", width: columnWidth },
-                { dataField: "reservationTypeCode", caption: "ReservationTypeCode", width: columnWidth },
-                { dataField: "arrivalDate", caption: "ArrivalDate", width: columnWidth  ,dataType: "date",format: "dd/MM/yyyy"},
-                { dataField: "departureDate", caption: "DepartureDate", width: columnWidth  ,dataType: "date",format: "dd/MM/yyyy"},
-                 { dataField: "totalRoom", caption: "TotalRoom", width: columnWidth },
-                { dataField: "nights", caption: "Nights", width: columnWidth },
-                { dataField: "reservationHolder", caption: "ReservationHolder", width: columnWidth },
-                { dataField: "saleInCharge", caption: "SaleInCharge", width: columnWidth },
-                { dataField: "roomNight", caption: "RoomNight", width: columnWidth },
-                { dataField: "persons", caption: "Persons", width: columnWidth },
-                { dataField: "roomOccupancy", caption: "RoomOccupancy", width: columnWidth },
-                { dataField: "personRoom", caption: "PersonRoom", width: columnWidth },
+                { dataField: "confirmationNo", caption: "Con.No", width: columnWidth-60 },
+                { dataField: "crsNo", caption: "CRSNo", width: columnWidth -60},
+                { dataField: "groupCode", caption: "Group Name", width: columnWidth -50},
+                { dataField: "reservationTypeCode", caption: "Res. Status", width: columnWidth -30},
+                { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-40  ,dataType: "date",format: "dd/MM/yyyy"},
+                { dataField: "departureDate", caption: "Dep.Date", width: columnWidth -40 ,dataType: "date",format: "dd/MM/yyyy"},
+                 { dataField: "totalRoom", caption: "Nbr", width: columnWidth-60 , dataType: "number", format: "#,##0"},
+                { dataField: "nights", caption: "Nights", width: columnWidth -60, dataType: "number", format: "#,##0"},
+                { dataField: "reservationHolder", caption: "Reservation Holder", width: columnWidth+40 },
+                { dataField: "saleInCharge", caption: "Sale In Charge", width: columnWidth-40 },
+                { dataField: "roomNight", caption: "Room Night", width: columnWidth -40, dataType: "number", format: "#,##0"},
+                { dataField: "persons", caption: "Persons", width: columnWidth -60, dataType: "number", format: "#,##0"},
+                { dataField: "roomOccupancy", caption: "Rm-Occu", width: columnWidth-60, format: { type: "fixedPoint", precision: 2 } },
+                { dataField: "personRoom", caption: "Pers-Room", width: columnWidth -60, format: { type: "fixedPoint", precision: 2 }},
             ],
             paging: { pageSize: 10 },
                scrolling:  {
@@ -188,6 +181,21 @@
                headerFilter: {
                   visible: true
               },
+              summary: {
+                    totalItems: [
+                                                              {
+                    column: "confirmationNo",
+                    summaryType: "custom",
+                    displayFormat: "Total"
+                },
+                        { column: "totalRoom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "nights", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "roomNight", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "persons", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "roomOccupancy", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
+                        { column: "personRoom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" }
+                    ]
+              },
             showBorders: true,
             onRowClick: function(e) {
                 console.log("ID được click:", e.data.id);
@@ -195,26 +203,48 @@
 
         });
     }
-      $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");
-        grid.exportToExcel(false); // false: xuất toàn bộ, không chỉ hàng được chọn
-    });
+    $("#btnExportExcel").click(function () {
+          const grid = $("#gridContainer").dxDataGrid("instance");
+          var selectedReport='@ViewBag.ReportTitle';
+          if (!selectedReport) {
+              alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+              return;
+          }
 
-    // Nút xuất PDF
-       $("#btnExportPdf").click(function () {
-        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+          const workbook = new ExcelJS.Workbook();
+          const worksheet = workbook.addWorksheet("Sheet 1");
 
-        const doc = new jsPDF();
+          DevExpress.excelExporter.exportDataGrid({
+              component: grid,
+              worksheet: worksheet,
+              autoFilterEnabled: true
+          }).then(function () {
+              // Đặt tên file theo selectedReport
+              let fileName =selectedReport + ".xlsx";
 
-        DevExpress.pdfExporter.exportDataGrid({
-            jsPDFDocument: doc,
-            component: $("#gridContainer").dxDataGrid("instance"),
-            autoTableOptions: {
-                styles: { cellPadding: 2, fontSize: 8 },
-                margin: { top: 20 }
-            }
-        }).then(() => {
-            doc.save("BaoCao.pdf");
-        });
-    });
+              // Ghi file
+              workbook.xlsx.writeBuffer().then(function (buffer) {
+                  saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+              });
+          });
+      });
+
+
+      // Nút xuất PDF
+         $("#btnExportPdf").click(function () {
+          const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+          const doc = new jsPDF();
+
+          DevExpress.pdfExporter.exportDataGrid({
+              jsPDFDocument: doc,
+              component: $("#gridContainer").dxDataGrid("instance"),
+              autoTableOptions: {
+                  styles: { cellPadding: 2, fontSize: 8 },
+                  margin: { top: 20 }
+              }
+          }).then(() => {
+              doc.save("BaoCao.pdf");
+          });
+      });
 </script>

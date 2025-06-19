@@ -47,6 +47,7 @@
         }
 
 </style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
@@ -54,7 +55,7 @@
             <label class="me-2 mb-0">Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
-        <div class="d-flex align-items-center me-3">
+        <div style="display:none !important" class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Currency:</label>
             <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
                 <option value="VND">VND</option>
@@ -72,7 +73,7 @@
 </div>
 
 <div class="mui-card">
-    <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
+@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -149,7 +150,7 @@
 
         Object.entries(groupedData).forEach(([month, records]) => {
             const titleRow = {
-           saleInCharge: `Zone : ${records[0].zone}`,
+           saleInCharge: `S.In Charge : ${records[0].zone}`,
            isTitle: true ,
     cssClass: "custom"
           };
@@ -179,6 +180,7 @@
         q3: sum(records, 'q3'),
         q4: sum(records, 'q4'),
                total: sum(records, 'total'),
+                cssClass: "custom",
                 isTotal: true // Để phân biệt dòng tổng
             };
 

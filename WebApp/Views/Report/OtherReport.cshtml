@@ -201,7 +201,7 @@
         .report-link:focus,
         .report-link.active {
             background-color: #e6f7ff;
-            font-size: 1.1em;
+/*             font-size: 1.1em; */
             font-weight: bold;
             color: #000000 !important;
             border-radius: 4px;
@@ -238,12 +238,12 @@
     <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;height: fit-content;">
 
 
-        <div class="filter-header" onclick="toggleFilter()">
+        <div class="filter-header" >
             <span> Sale and forecast</span>
             <span id="toggle-icon" style="float: right; cursor: pointer;">&#9660;</span> <!-- ▼ -->
         </div>
         <hr class="mui-divider" />
-        <ul class="list-group list-group-flush">
+        <ul id="report-list" class="list-group list-group-flush">
 @*             <li class="list-group-item">
                 <a style="color:black" id="BookingSource" class="text-decoration-none report-link" data-report="BookingSource" data-title="Booking Source">Booking Source</a>
             </li> *@
@@ -329,6 +329,89 @@
                 <a style="color:black" id="GuestMarketReport" class="text-decoration-none report-link" data-report="GuestMarketReport" data-title="Guest Market Report">Guest Market Report</a>
             </li>
         </ul>
+        <div class="filter-header">
+            <span>Report for reservation</span>
+            <span id="toggle-icon" style="float: right; cursor: pointer;">&#9660;</span> <!-- ▼ -->
+        </div>
+        <hr class="mui-divider" />
+        <ul class="list-group list-group-flush" id="reservation-report-list">
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="GroupReservationReport" data-title="Group Reservation Report">Group Reservation Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="BlacklistReport" data-title="Blacklist Report">Blacklist Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="LeadtimeReports" data-title="Leadtime Reports">Leadtime Reports</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="SalesinChargeReportsForm" data-title="Sales in Charge Reports">Sales in Charge Reports</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="SalesinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationSummaryReport" data-title="Reservation Summary Report">Reservation Summary Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="TAProductionReport" data-title="TA Production Report">TA Production Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="NoShowReport" data-title="No Show Report">No Show Report</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationSummary" data-title="Reservation Summary">Reservation Summary</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="ReservationRateCheck" data-title="Reservation Rate Check">Reservation Rate Check</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="Alerts" data-title="Alerts">Alerts</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="ArrivalsAndCheckInToday" data-title="Arrivals and Check In Today">Arrivals and Check In Today</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="ArrivalsDetail" data-title="Arrivals Detail">Arrivals Detail</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="ArrivalDetailGroupByHolders" data-title="Arrival Detail Group by Holders">Arrival Detail Group by Holders</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationbyCompany" data-title="Reservation by Company">Reservation by Company</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="ReservationPreblocked" data-title="Reservation Preblocked">Reservation Preblocked</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationStatistics" data-title="Reservation Statistics">Reservation Statistics</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationCancellations" data-title="Reservation Cancellations">Reservation Cancellations</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="RoomOccupancy" data-title="Room Occupancy">Room Occupancy</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="Transportation" data-title="Transportation">Transportation</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="DepartureIndividualGroup" data-title="Departure Individual and Group">Departure Individual and Group</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="DepartureReports" data-title="Departure Reports">Departure Reports</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="RoomDiscrepancy" data-title="Room Discrepancy">Room Discrepancy</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:red" class="text-decoration-none report-link" data-report="VacantRoom" data-title="Vacant Room">Vacant Room</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="DepartureExtended" data-title="Departure Extended">Departure Extended</a>
+            </li>
+        </ul>
+
 
     </div>
 
@@ -458,7 +541,13 @@
 
    $(document).ready(function () {
     let reportLoadedFromUrl = false;
+         $('#toggle-icon').click(function () {
+                $('#report-list').slideToggle(); // Hiển thị/ẩn danh sách với hiệu ứng
 
+                // Đổi biểu tượng toggle
+                const currentIcon = $(this).html();
+                $(this).html(currentIcon === '▼' ? '▶' : '▼');
+            });
     // ✅ Hàm load báo cáo
     function loadReport(reportName, title) {
         $.ajax({
@@ -513,492 +602,4 @@
 });
 
 
-
-    //     const today = new Date();
-
-    //     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    //     // Lấy ngày cuối cùng của tháng
-    //     const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-    //     // Định dạng theo local time
-    //     const formattedFirstDay = formatDate(firstDayOfMonth);
-    //     const formattedLastDay = formatDate(lastDayOfMonth);
-    //     console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-    //     console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-    //     // Gán giá trị cho input date
-    //     document.getElementById('fromDate').value = formattedFirstDay;
-    //     document.getElementById('toDate').value = formattedLastDay;
-    //     document.getElementById('fromDaterc').value = formattedFirstDay;
-    //     document.getElementById('toDaterc').value = formattedLastDay;
-    //        document.getElementById('fromDatedlbf').value = formattedLastDay;
-    //                    document.getElementById('fromDatedl').value = formattedFirstDay;
-    //             document.getElementById('toDatedl').value = formattedLastDay;
-    //                 document.getElementById('toDateMonth').value = formattedFirstDay;
-    //       let selectedReport = "BookingSource";
-
-    // $(".report-link").click(function () {
-    //     // Bỏ active từ tất cả, thêm vào report được chọn
-    //     $(".report-link").removeClass("active");
-    //     $(this).addClass("active");
-
-    //     // Lưu loại report
-    //     selectedReport = $(this).data("report");
-    //     console.log("Selected report:", selectedReport);
-
-    //     // Ẩn/hiện RateCode dropdown theo report
-    //      if (selectedReport === "RatecodebyDateReport") {
-    //         $("#ratecodebyDateReport").removeClass("hidden-important").css("display", "flex");
-    //       } else {
-    //         $("#ratecodebyDateReport").addClass("hidden-important");
-    //       }
-
-    //    if (selectedReport === "BookingSource") {
-    //      $("#bookingSource").removeClass("hidden-important").css("display", "flex"); // hoặc "block"
-    //    } else {
-    //      $("#bookingSource").addClass("hidden-important");
-    //    }
-
-    //    if (selectedReport === "OTAsMonthlyReport") {
-    //       $("#monthlyReport").removeClass("hidden-important").css("display", "flex"); // hoặc "block"
-    //    } else {
-    //       $("#monthlyReport").addClass("hidden-important");
-    //    }
-
-    //    if (selectedReport === "DailyPickupReport") {
-    //      $("#dailypickupReport").removeClass("hidden-important").css("display", "flex"); // hoặc "block"
-    //    } else {
-    //       $("#dailypickupReport").addClass("hidden-important");
-    //    }
-
-    //      if (selectedReport === "DailyBreakfastDetail") {
-    //         $("#dailyBreakfastDetail").removeClass("hidden-important").css("display", "flex"); // hoặc "block"
-    //      } else {
-    //          $("#dailyBreakfastDetail").addClass("hidden-important");
-    //      }
-
-    //     var reportTitle = $(this).data("title");
-    //     $("#reportTitle").text(reportTitle);
-    //     $("#btnPrint").click();
-    // });
-
-
-    //  $("#btnPrint").click(function () {
-    //     $("#loadingSpinner").show();
-
-    //     const fromDate = $("#fromDate").val();
-    //     const toDate = $("#toDate").val();
-
-    //     if (selectedReport === "BookingSource") {
-    //         $.ajax({
-    //             url: '/Report/BookingSourceData',
-    //             type: 'GET',
-    //             dataType: 'json',
-    //             data: { fromDate, toDate },
-    //             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-    //             success: function (result) {
-    //                 initializeBookingSourceGrid(result);
-    //                 $("#loadingSpinner").hide();
-    //             },
-    //             error: function (xhr) {
-    //                 handleAjaxError(xhr);
-    //             }
-    //         });
-    //     }
-    //     else if (selectedReport === "RatecodebyDateReport") {
-    //         $.ajax({
-    //             url: '/Report/RatecodebyDate',
-    //             type: 'GET',
-    //             dataType: 'json',
-    //             data: {
-    //                 fromDate:$("#fromDaterc").val(),
-    //                 toDate:$("#toDaterc").val(),
-    //                 ratecode: $("#ratecode").val() || "" // nếu có ratecode
-    //             },
-    //             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-    //             success: function (result) {
-    //                 initializeRatecodeGrid(result);
-    //                 $("#loadingSpinner").hide();
-    //             },
-    //             error: function (xhr) {
-    //                 handleAjaxError(xhr);
-    //             }
-    //         });
-    //     }
-    //     else if (selectedReport === "DailyPickupReport") {
-    //         $.ajax({
-    //             url: '/Report/DailyPickupReport',
-    //             type: 'GET',
-    //             dataType: 'json',
-    //             data: {
-    //                 fromDate:$("#fromDatedl").val(),
-    //                 toDate:$("#toDatedl").val()
-    //             },
-    //             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-    //             success: function (result) {
-    //                 console.log(result);
-    //                 initializeDailyPickupReport(result);
-    //                 $("#loadingSpinner").hide();
-    //             },
-    //             error: function (xhr) {
-    //                 handleAjaxError(xhr);
-    //             }
-    //         });
-    //     }
-    //      else if (selectedReport === "DailyBreakfastDetail") {
-    //          $.ajax({
-    //                     url: '/Report/DailyBreakfastDetail',
-    //                 type: 'GET',
-    //                 dataType: 'json',
-    //                 data: {
-    //                         fromDate:$("#fromDatedlbf").val(),
-    //                 },
-    //                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-    //                 success: function (result) {
-    //                     console.log(result);
-    //                         initializeDailyBreakfastDetail(result);
-    //                     $("#loadingSpinner").hide();
-    //                 },
-    //                 error: function (xhr) {
-    //                     handleAjaxError(xhr);
-    //                 }
-    //          });
-    //       }
-    //      else if (selectedReport === "OTAsMonthlyReport") {
-    //         let type = 0;
-    //         const isTravelAgentsChecked = $("#profileTravelAgents").is(":checked");
-    //         const isCompanyChecked = $("#profileCompany").is(":checked");
-
-    //         if (isTravelAgentsChecked && isCompanyChecked) {
-    //           type = 2;
-    //         } else if (isTravelAgentsChecked || isCompanyChecked) {
-    //           type = 1;
-    //         }
-    //         $.ajax({
-    //             url: '/Report/OTAsMonthlyReport',
-    //             type: 'GET',
-    //             dataType: 'json',
-    //             data: {
-    //                 fromDate:$("#toDateMonth").val(),
-    //                 number: $("#roomNight").val() ,
-    //                 type: type,
-    //                 currencyID:$("#viewBy").val() ,
-    //             },
-    //             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-    //             success: function (result) {
-    //                 console.log(result);
-    //                 initializeOTAsMonthly(result);
-    //                 $("#loadingSpinner").hide();
-    //             },
-    //             error: function (xhr) {
-    //                 handleAjaxError(xhr);
-    //             }
-    //         });
-    //      }
-    // });
-
-
-    //  function initializeDailyPickupReport(data) {
-    //     const columnWidth = 180;
-    //     $("#gridContainer").dxDataGrid({
-    //         dataSource: data,
-    //         columns: [
-    //            { dataField: "no", caption: "No", width: "17%" },
-    //         { dataField: "confirmationNo", caption: "Conf.No", width: "25%", dataType: "number", format: "#,##0" },
-    //         { dataField: "guestName", caption: "GuestName", width: "45%" },
-    //                 { dataField: "company", caption: "Company", width: "45%" },
-    //             { dataField: "arrivalDate", caption: "Check in", width: "30%", dataType: "date", format: "dd/MM/yyyy" },
-    //             { dataField: "departureDate", caption: "Check out", width: "30%", dataType: "date", format: "dd/MM/yyyy" },
-    //          { dataField: "noOfRoom", caption: "Rooms", width: "35%", dataType: "number", format: "#,##0" },
-    //                          { dataField: "noOfNight", caption: "Rnts", width: "35%", dataType: "number", format: "#,##0" },
-    //                   { dataField: "roomType", caption: "R.Type", width: "20%" },
-    //         { dataField: "rateAfterTax", caption: "Rate", width: "27%", dataType: "number", format: "#,##0" },
-    //                         { dataField: "total", caption: "Total", width: "35%", dataType: "number", format: "#,##0" },
-    //         { dataField: "marketCode", caption: "M.Code", width: "23%" },
-    //             { dataField: "rateCode", caption: "R.Code", width: "22%" },
-    //             //  { dataField: "createdBy", caption: "C.By", width: "20%"},
-    //             // { dataField: "createdDate", caption: "C.Date", width: "20%", dataType: "date", format: "dd/MM/yyyy" }
-    //         ],
-    //         paging: { pageSize: 25 },
-    //         scrolling: { rowRenderingMode: 'virtual' },
-    //         pager: {
-    //             visible: true,
-    //             allowedPageSizes: [25, 50, 'all'],
-    //             showPageSizeSelector: true,
-    //             showInfo: true,
-    //             showNavigationButtons: true,
-    //         },
-    //         selection: { mode: "multiple", showCheckBoxesMode: "none" },
-    //         showBorders: true,
-    //              summary: {
-    //             totalItems: [
-    //                         { column: "noOfRoom", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //                         { column: "noOfNight", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //                     { column: "total", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-
-    //             ]
-    //         },
-    //         onRowClick: function (e) {
-    //             console.log("Clicked ID:", e.data.id);
-    //         }
-    //     });
-    // }
-    //     function initializeDailyBreakfastDetail(data) {
-    //         const columnWidth = 180;
-    //         $("#gridContainer").dxDataGrid({
-    //             dataSource: data,
-    //             columns: [
-    //                { dataField: "no", caption: "No", width: "17%" },
-    //                 { dataField: "guestName", caption: "GuestName", width: "45%" },
-    //                 { dataField: "title", caption: "Title", width: "35%" },
-    //                       { dataField: "mainGuest", caption: "MainGuest", width: "35%"},
-    //                     { dataField: "arrivalDate", caption: "Arr.Date", width: "30%", dataType: "date", format: "dd/MM/yyyy" },
-    //                     { dataField: "departureDate", caption: "Dep.Date", width: "30%", dataType: "date", format: "dd/MM/yyyy" },
-    //                                      { dataField: "roomNo", caption: "RoomNo", width: "35%" },
-    //                               { dataField: "person", caption: "Person", width: "20%" },
-    //                 //  { dataField: "createdBy", caption: "C.By", width: "20%"},
-    //                 // { dataField: "createdDate", caption: "C.Date", width: "20%", dataType: "date", format: "dd/MM/yyyy" }
-    //             ],
-    //             paging: { pageSize: 25 },
-    //             scrolling: { rowRenderingMode: 'virtual' },
-    //             pager: {
-    //                 visible: true,
-    //                 allowedPageSizes: [25, 50, 'all'],
-    //                 showPageSizeSelector: true,
-    //                 showInfo: true,
-    //                 showNavigationButtons: true,
-    //             },
-    //             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-    //             showBorders: true,
-
-    //             onRowClick: function (e) {
-    //                 console.log("Clicked ID:", e.data.id);
-    //             }
-    //         });
-    //     }
-    // function initializeBookingSourceGrid(data) {
-    //     const columnWidth = 180;
-    //     $("#gridContainer").dxDataGrid({
-    //         dataSource: data,
-    //         columns: [
-    //            { dataField: "source", caption: "Source", width: "17%" },
-    //         { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
-    //         { dataField: "busmixActual", caption: "BUSMIXActual", width: "17%", dataType: "number", format: "#,##0" },
-    //         { dataField: "adrActual", caption: "ADRActual", width: "16%", dataType: "number", format: "#,##0" },
-    //         { dataField: "revForcast", caption: "REVForcast", width: "17%", dataType: "number", format: "#,##0" },
-    //         { dataField: "revmixForcast", caption: "REVMIXForcast", width: "17%", dataType: "number", format: "#,##0" }
-    //         ],
-    //         paging: { pageSize: 25 },
-    //         scrolling: { rowRenderingMode: 'virtual' },
-    //         pager: {
-    //             visible: true,
-    //             allowedPageSizes: [25, 50, 'all'],
-    //             showPageSizeSelector: true,
-    //             showInfo: true,
-    //             showNavigationButtons: true,
-    //         },
-    //         selection: { mode: "multiple", showCheckBoxesMode: "none" },
-    //         showBorders: true,
-    //              summary: {
-    //             totalItems: [
-    //                     { column: "rnActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //                     { column: "busmixActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //                 { column: "adrActual", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //                     { column: "revForcast", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //                     { column: "revmixForcast", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-    //             ]
-    //         },
-    //         onRowClick: function (e) {
-    //             console.log("Clicked ID:", e.data.id);
-    //         }
-    //     });
-    // }
-
-    // // GRID CHO RATECODE BY DATE
-    // function initializeRatecodeGrid(data) {
-
-    //     $("#gridContainer").dxDataGrid({
-    //         dataSource: data,
-    //         columns: [
-    //               { dataField: "rateCode", caption: "Rate Code", width: "10%" },
-    //             { dataField: "descripton", caption: "Description", width: "20%" },
-    //             { dataField: "fromDate", caption: "From Date", dataType: "date", format: "dd/MM/yyyy", width: "15%" },
-    //             { dataField: "toDate", caption: "To Date", dataType: "date", format: "dd/MM/yyyy", width: "15%" },
-    //             { dataField: "code", caption: "Package", width: "10%" },
-    //             { dataField: "rate", caption: "Rate", dataType: "number", format: "#,##0", width: "20%" },
-    //             { dataField: "roomTypeCode", caption: "Room Type", width: "15%" },
-    //             { dataField: "currencyID", caption: "Currency", width: "15%"},
-    //             ],
-    //         paging: { pageSize: 25 },
-    //         scrolling: { rowRenderingMode: 'virtual' },
-    //         pager: {
-    //             visible: true,
-    //             allowedPageSizes: [25, 50, 'all'],
-    //             showPageSizeSelector: true,
-    //             showInfo: true,
-    //             showNavigationButtons: true,
-    //         },
-    //         selection: { mode: "multiple", showCheckBoxesMode: "none" },
-    //         showBorders: true,
-    //                        summary: {
-    //                 totalItems: [
-    //                         { column: "rate", summaryType: "sum", displayFormat: "Total: {0}", valueFormat: "#,##0" },
-
-    //                 ]
-    //             },
-    //         onRowClick: function (e) {
-    //             console.log("Clicked ID:", e.data.id);
-    //         }
-    //     });
-    // }
-    //  function initializeOTAsMonthly(response) {
-    //     const data = response.data;
-    //     const monthHeaders = response.monthHeaders;
-    //     const columnWidth = 180;
-
-    //     const columns = [
-    //         {
-    //             caption: "Holder",
-    //             columns: [
-    //                 { dataField: "guestNo", caption: "Acc.No", width: columnWidth },
-    //                 { dataField: "guestName", caption: "Account", width: columnWidth + 250 }
-    //             ]
-    //         }
-    //     ];
-
-    //     const totalItems = [];
-
-    //     for (let i = 0; i < monthHeaders.length; i++) {
-    //         const nightColumnName = `roomNight_${i}`;
-    //         const revenueColumnName = `roomRevenue_${i}`;
-
-    //         columns.push({
-    //             caption: monthHeaders[i],
-    //             columns: [
-    //                 {
-    //                     name: nightColumnName,
-    //                     caption: "Room night",
-    //                     calculateCellValue: function (rowData) {
-    //                         return Array.isArray(rowData.roomNights) && rowData.roomNights[i]
-    //                             ? rowData.roomNights[i].value
-    //                             : 0;
-    //                     },
-    //                         width: columnWidth - 60
-    //                 },
-    //                 {
-    //                     name: revenueColumnName,
-    //                     caption: "Room revenue",
-    //                     calculateCellValue: function (rowData) {
-    //                         return Array.isArray(rowData.roomRevenue) && rowData.roomRevenue[i]
-    //                             ? rowData.roomRevenue[i].value
-    //                             : 0;
-    //                     },
-    //                     width: columnWidth - 60
-    //                 }
-    //             ]
-    //         });
-
-    //         // Thêm hàng tổng cho Room night
-    //         totalItems.push({
-    //             name: nightColumnName,
-    //             summaryType: "custom",
-    //             customizeText: function (e) {
-    //                 return "Tổng: " + e.value.toLocaleString();
-    //             }
-    //         });
-
-    //         // Thêm hàng tổng cho Room revenue
-    //         totalItems.push({
-    //             name: revenueColumnName,
-    //             summaryType: "custom",
-    //             customizeText: function (e) {
-    //                 return "Tổng: " + e.value.toLocaleString('vi-VN') + " đ";
-    //             }
-    //         });
-    //     }
-
-    //     $("#gridContainer").dxDataGrid({
-    //         dataSource: data,
-    //         columns: columns,
-    //         paging: { pageSize: 25 },
-    //         scrolling: { rowRenderingMode: 'virtual' },
-    //         pager: {
-    //             visible: true,
-    //             allowedPageSizes: [25, 50, 'all'],
-    //             showPageSizeSelector: true,
-    //             showInfo: true,
-    //             showNavigationButtons: true
-    //         },
-    //         selection: { mode: "multiple", showCheckBoxesMode: "none" },
-    //         showBorders: true,
-    //         summary: {
-    //             totalItems: totalItems
-    //         },
-    //         onCustomSummaryCalculate: function (e) {
-    //             if (e.summaryProcess === "start") {
-    //                 e.totalValue = 0;
-    //             }
-    //             if (e.summaryProcess === "calculate") {
-    //                 const index = parseInt(e.name.split("_")[1]); // lấy chỉ số tháng
-    //                 const isRevenue = e.name.startsWith("roomRevenue");
-    //                 const value = isRevenue
-    //                     ? (e.value.roomRevenue?.[index]?.value || 0)
-    //                     : (e.value.roomNights?.[index]?.value || 0);
-    //                 e.totalValue += value;
-    //             }
-    //         },
-    //         onRowClick: function (e) {
-    //             console.log("Clicked ID:", e.data.ProfileID);
-    //         }
-    //     });
-    // }
-
-
-
-    //  $("#btnExportExcel").click(function () {
-    //     const grid = $("#gridContainer").dxDataGrid("instance");
-
-    //     if (!selectedReport) {
-    //         alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
-    //         return;
-    //     }
-
-    //     const workbook = new ExcelJS.Workbook();
-    //     const worksheet = workbook.addWorksheet("Sheet 1");
-
-    //     DevExpress.excelExporter.exportDataGrid({
-    //         component: grid,
-    //         worksheet: worksheet,
-    //         autoFilterEnabled: true
-    //     }).then(function () {
-    //         // Đặt tên file theo selectedReport
-    //         let fileName = selectedReport + ".xlsx";
-
-    //         // Ghi file
-    //         workbook.xlsx.writeBuffer().then(function (buffer) {
-    //             saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
-    //         });
-    //     });
-    // });
-
-
-    // // Nút xuất PDF
-    // $("#btnExportPdf").click(function () {
-    //     const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
-
-    //     const doc = new jsPDF();
-
-    //     DevExpress.pdfExporter.exportDataGrid({
-    //         jsPDFDocument: doc,
-    //         component: $("#gridContainer").dxDataGrid("instance"),
-    //         autoTableOptions: {
-    //             styles: { cellPadding: 2, fontSize: 8 },
-    //             margin: { top: 20 }
-    //         }
-    //     }).then(() => {
-    //         doc.save("BaoCao.pdf");
-    //     });
-    // });
-
-
-    // });
 </script>
