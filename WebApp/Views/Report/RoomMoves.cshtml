@@ -38,7 +38,7 @@
             color: white !important;
         }
 </style>
-
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="d-flex align-items-center me-3">
@@ -82,6 +82,7 @@
 
         $('#fromDate').val(formatDate(firstDayOfMonth));
         $('#toDate').val(formatDate(lastDayOfMonth));
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
     });
 
     $('#btnPrint').click(function () {
@@ -106,41 +107,43 @@
         });
     });
 
-    function initializeDataGrid(data) {
-      
-    const columnWidth = 200;
-
-    $('#gridContainer').dxDataGrid({
-        dataSource: data,
-        columns: [
-            { dataField: "name", caption: "Name", width: columnWidth },
-            { dataField: "oldRoom", caption: "Old Room", width: columnWidth-50, dataType: "number", format: "#,##0" },
-            { dataField: "oldRoomType", caption: "Old Room Type", width: columnWidth },
-            { dataField: "oldHKStatus", caption: "Old HK Status", width: columnWidth },
-            { dataField: "newRoom", caption: "New Room", width: columnWidth-50, dataType: "number", format: "#,##0" },
-            { dataField: "newRoomType", caption: "New Room Type", width: columnWidth },
-            { dataField: "newHKStatus", caption: "New HK Status", width: columnWidth },
-            { dataField: "user", caption: "User", width: columnWidth },
-            {
-                dataField: "moveDate",
-                caption: "Move Date",
-                width: columnWidth,    
-            },
-            { dataField: "reason", caption: "Reason", width: columnWidth }
-        ],
-            paging: { pageSize: 10 },
-            scrolling: {
-                mode: 'virtual',
-                useNative: true,
-                showScrollbar: "always"
+        function initializeDataGrid(data) {
+        $('#gridContainer').dxDataGrid({
+            dataSource: data,
+            columns: [
+                { dataField: "name", caption: "Name", width: 260 },
+                { dataField: "oldRoom", caption: "Old Room", width: 130, dataType: "number", format: "#,##0" },
+                { dataField: "oldRoomType", caption: "Old Room Type", width: 140 },
+                { dataField: "oldHKStatus", caption: "Status", width: 150 },
+                { dataField: "newRoom", caption: "New Room", width: 120, dataType: "number", format: "#,##0" },
+                { dataField: "newRoomType", caption: "New Room Type", width: 150 },
+                { dataField: "newHKStatus", caption: "Status", width: 150 },
+                { dataField: "user", caption: "User", width: 100 },
+                { dataField: "moveDate", caption: "Date", width: 120, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "reason", caption: "Reason", width: 200,
+                    cellTemplate: function (container, options) {
+                    container.append($("<div>").text(options.text).css({
+                    "white-space": "normal",
+                    "word-wrap": "break-word",
+                    "line-height": "1.2"
+            }));
+        } }
+            ],
+            paging: {
+                pageSize: 25
             },
             pager: {
                 visible: true,
-                allowedPageSizes: [5, 10, 'all'],
+                allowedPageSizes: [25, 50, "all"],
                 showPageSizeSelector: true,
                 showInfo: true,
                 showNavigationButtons: true
             },
+            // scrolling: {
+            //     mode: 'virtual',
+            //     useNative: true,
+            //     showScrollbar: "always"
+            // },
             selection: {
                 mode: "multiple",
                 showCheckBoxesMode: "none"
@@ -155,6 +158,7 @@
             showBorders: true
         });
     }
+
 
     $('#btnExportExcel').click(function () {
         const grid = $('#gridContainer').dxDataGrid('instance');

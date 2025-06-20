@@ -48,7 +48,7 @@ namespace Report.Services.Interfaces
         DataTable RoomDiscrepancy(int Sleep = 0, int Skip = 0, int Person = 0);
         DataTable DepositLedger(DateTime fromDate);
         DataTable RevenueReports(DateTime fromDate, int type);
- 
+
         DataTable BlacklistReporteData(DateTime fromDate, DateTime toDate);
         DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode);
         DataTable ArrivalsandCheckInTodayData(string roomClass, string roomtype, string paymethod, string vip, string viewBy, string pseudo, string chkviponly, int disRoomSharer, string nopost);
