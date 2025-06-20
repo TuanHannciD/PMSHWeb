@@ -51,6 +51,6 @@ namespace Report.Services.Interfaces
 
         DataTable BlacklistReporteData(DateTime fromDate, DateTime toDate);
         DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode);
- 
+        DataTable ArrivalsandCheckInTodayData(string roomClass, string roomtype, string paymethod, string vip, string viewBy, string pseudo, string chkviponly, int disRoomSharer, string nopost);
     }
 }

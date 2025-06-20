@@ -165,6 +165,32 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptGuestsInHouseTrace", param);
             return myTable;
         }
+
+
+        public DataTable ArrivalsandCheckInTodayData(string roomClass, string roomtype, string paymethod, string vip, string viewBy, string pseudo, string chkviponly, int disRoomSharer, string nopost)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomClass", roomClass),
+                new SqlParameter("@RoomType", roomtype),
+                new SqlParameter("@Payment", paymethod),
+                       new SqlParameter("@VIP",vip),
+                           new SqlParameter("@SortOrder",viewBy),
+
+                                new SqlParameter("@Pseudo", pseudo),
+  
+                       new SqlParameter("@ChkVIPOnly",chkviponly),
+                       new SqlParameter("@BusinessDate", DateTime.Now.Date),
+
+
+                               new SqlParameter("@DisRoomSharer", disRoomSharer),
+                       new SqlParameter("@NoPost",nopost),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptArrivalAndCheckedInToday", param);
+            return myTable;
+        }
+
         public  DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode)
         {
             SqlParameter[] param = new SqlParameter[]

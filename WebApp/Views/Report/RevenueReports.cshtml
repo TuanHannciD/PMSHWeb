@@ -1,6 +1,7 @@
 ﻿@using DevExpress.XtraReports.UI
 @{
     ViewBag.Title = ViewBag.ReportHeader ?? "Revenue Report";
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
 }
 
 <style>
@@ -70,6 +71,7 @@
     <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
 </div>
 
+<<<<<<< HEAD
 <script>
     function formatDate(date) {
         let year = date.getFullYear();
@@ -85,6 +87,23 @@
         $('#fromDate').val(formattedFirstDay);
         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
     });
+=======
+@section Scripts {
+    <script>
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        $(document).ready(function () {
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            console.log('date');
+            console.log(firstDayOfMonth);
+            $('#fromDate').val(formatDate(firstDayOfMonth));
+>>>>>>> bf420140ee1b3bdb5b8113c488aff436709d9d44
 
     $("#btnPrint").click(function () {
         $("#loadingSpinner").show();

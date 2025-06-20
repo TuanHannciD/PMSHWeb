@@ -1674,7 +1674,58 @@ namespace Report.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)
+        {
+            try
+            {
+                roomClass = roomClass ?? "";
+                roomtype = roomtype ?? "";
+                paymethod = paymethod ?? "";
+                vip = vip ?? "";
+                viewBy = viewBy ?? "";
+                pseudo = pseudo ?? "";
+                chkviponly = chkviponly ?? "";
+                nopost = nopost ?? "";
+                DataTable dataTable = _iReportService.ArrivalsandCheckInTodayData(roomClass, roomtype, paymethod, vip, viewBy, pseudo, chkviponly, disRoomSharer, nopost);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  VIP = !string.IsNullOrEmpty(d["VIP"].ToString()) ? d["VIP"] : "",
+                                  ReservationStatus = !string.IsNullOrEmpty(d["ReservationStatus"].ToString()) ? d["ReservationStatus"] : "",
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  Agent = !string.IsNullOrEmpty(d["Agent"].ToString()) ? d["Agent"] :"",
 
+                                  BusinessBlockCode = !string.IsNullOrEmpty(d["BusinessBlockCode"].ToString()) ? d["BusinessBlockCode"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+
+                                  ETA = !string.IsNullOrEmpty(d["ETA"].ToString()) ? d["ETA"] : "",
+                                  ETD = !string.IsNullOrEmpty(d["ETD"].ToString()) ? d["ETD"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+
+                                  NoOfAdult = !string.IsNullOrEmpty(d["NoOfAdult"].ToString()) ? d["NoOfAdult"] : "",
+                                  NoOfChild = !string.IsNullOrEmpty(d["NoOfChild"].ToString()) ? d["NoOfChild"] : "",
+                                  NoOfChild1 = !string.IsNullOrEmpty(d["NoOfChild1"].ToString()) ? d["NoOfChild1"] : "",
+                                  NoOfChild2 = !string.IsNullOrEmpty(d["NoOfChild2"].ToString()) ? d["NoOfChild2"] : "",
+                                  RoomClassCode = !string.IsNullOrEmpty(d["RoomClassCode"].ToString()) ? d["RoomClassCode"] : "",
+
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  PaymentMethod = !string.IsNullOrEmpty(d["PaymentMethod"].ToString()) ? d["PaymentMethod"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  Rate = !string.IsNullOrEmpty(d["Rate"].ToString()) ? d["Rate"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
 
 
 
@@ -1969,12 +2020,14 @@ namespace Report.Controllers
                 case "RoomMoves":
 
                 case "NoShowReport":
+                case "RevenueReports":
                 case "GuestMarketReport":
                 case "LeadtimeReports":
                 case "RatecodeReports":
                 case "AnnualRoomOccupancy":
                 case "NationalStatistics":
                 case "ReservationSummary":
+                case "ArrivalsAndCheckInToday":
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
@@ -1985,6 +2038,15 @@ namespace Report.Controllers
                     ViewBag.MarketList = listmk;
                     List<RateCodeModel> listrc = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
                     ViewBag.RateCodeList = listrc;
+                    List<ARPaymentModel> listarpm = PropertyUtils
+                    .ConvertToList<ARPaymentModel>(ARPaymentBO.Instance.FindAll())
+                    .GroupBy(x => x.TransactionCode)
+                    .Select(g => g.First())
+                    .ToList();
+                    ViewBag.ARPaymentList = listarpm;
+
+                    List<VIPModel> listvip = PropertyUtils.ConvertToList<VIPModel>(VIPBO.Instance.FindAll());
+                    ViewBag.VIPList = listvip;
                     break;
                 case "ReservationCancellations":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
