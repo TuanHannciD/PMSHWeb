@@ -33,11 +33,13 @@
         color: white !important;
     }
 
-        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+    #gridContainer .dx-datagrid-rowsview .dx-selection * {
             color: white !important;
-        }
-</style>
+    }
 
+
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px">@ViewBag.ReportTitle</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="d-flex align-items-center">
@@ -104,13 +106,13 @@
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-                { dataField: "name", caption: "Name", width: 150 },
+                { dataField: "name", caption: "Name", width: 200 },
                 { dataField: "roomNo", caption: "Room No", width: 100 },
                 { dataField: "paidOn", caption: "Paid On", width: 120 ,dataType: "date",format: "dd/MM/yyyy" },
-                { dataField: "depositRsq", caption: "Deposit Requested", width: 160, dataType: "number", format: "#,##0.00" },
-                { dataField: "depositPayment", caption: "Deposit Payment", width: 160, dataType: "number", format: "#,##0.00" },
-                { dataField: "currencyMaster", caption: "Currency Master", width: 120 },
-                { dataField: "departureDate", caption: "Departure Date", width: 170 ,dataType: "date",format: "dd/MM/yyyy" }
+                { dataField: "depositRsq", caption: "Deposit Requested", width: 160, dataType: "number", format: "#,##0" },
+                { dataField: "depositPayment", caption: "Deposit Paid", width: 160, dataType: "number", format: "#,##0" },
+                { dataField: "currencyMaster", caption: "Currency", width: 110 },
+                { dataField: "departureDate", caption: "Departure Date", width: 150 ,dataType: "date",format: "dd/MM/yyyy" }
             ],
             
             paging: { pageSize: 25 },
@@ -138,13 +140,13 @@
                         column: "depositRsq",
                         summaryType: "sum",
                         displayFormat: "{0}",
-                        valueFormat: "#,##0.00"
+                        valueFormat: "#,##0"
                     },
                     {
                         column: "depositPayment",
                         summaryType: "sum",
                         displayFormat: "{0}",
-                        valueFormat: "#,##0.00"
+                        valueFormat: "#,##0"
                     }
                 ],
                

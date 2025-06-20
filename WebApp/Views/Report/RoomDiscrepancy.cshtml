@@ -40,6 +40,7 @@
             color: white !important;
         }
 </style>
+<div class="text-center" id="reportTitle" style="font-size: 20px">@ViewBag.ReportTitle</div>
 
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
@@ -90,8 +91,7 @@
         const sleep = $("#statusSleep").is(":checked") ? 1 : 0;
         const skip = $("#statusSkip").is(":checked") ? 1 : 0;
         const person = $("#statusPerson").is(":checked") ? 1 : 0;
-
-
+        
         $.ajax({
             url: '/Report/RoomDiscrepancy',
             type: 'GET',
@@ -117,22 +117,22 @@
         $("#gridContainer").dxDataGrid({
             dataSource: data,
                 columns: [
-                    { dataField: "roomNo", caption: "Room No" },
-                    { dataField: "roomType", caption: "Room Type" },
-                    { dataField: "roomStatus", caption: "Room Status" },
-                    { dataField: "hkStatus", caption: "HK Status" },
-                    { dataField: "foStatus", caption: "FO Status" },         
-                    { dataField: "foPersons", caption: "FO Persons" },
-                    { dataField: "hkPersons", caption: "HK Persons" },
-                    { dataField: "sleepOrSkip", caption: "Occupancy Discrepant Reason" },
-                    { dataField: "personDiscrepancy", caption: "Person Discrepancy" }
+                    { dataField: "roomNo", caption: "RoomNo", width: 100 },
+                    { dataField: "roomType", caption: "Room Type", width: 100 },
+                    { dataField: "roomStatus", caption: "Room Status", width: 150 },
+                    { dataField: "hkStatus", caption: "Hsk Status", width: 100 },
+                    { dataField: "foStatus", caption: "FO Status" , width: 100},
+                    { dataField: "foPersons", caption: "FO Persons", width: 100 },
+                    { dataField: "hkPersons", caption: "HK Persons" , width: 100},
+                    { dataField: "sleepOrSkip", caption: "Occupancy Discrepant Reason" , width: 200},
+                    { dataField: "personDiscrepancy", caption: "Person Discrepancy Reason", width: 200 }
                      ],
             paging: { pageSize: 25 },
-            scrolling: {
-                mode: 'virtual',
-                useNative: true,
-                showScrollbar: "always"
-            },
+            // scrolling: {
+            //     mode: 'virtual',
+            //     useNative: true,
+            //     showScrollbar: "always"
+            // },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],

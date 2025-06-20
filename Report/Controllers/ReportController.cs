@@ -1628,6 +1628,7 @@ namespace Report.Controllers
                                   Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
                                   ConfirmNo = !string.IsNullOrEmpty(d["ConfirmNo"].ToString()) ? d["ConfirmNo"] : "",
                                   Arrival = !string.IsNullOrEmpty(d["Arrival"].ToString()) ? d["Arrival"] : "",
+                                  Departure = !string.IsNullOrEmpty(d["Departure"].ToString()) ? d["Departure"] : "",
                                   Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
                                   ReservationTypeCode = !string.IsNullOrEmpty(d["ReservationTypeCode"].ToString()) ? d["ReservationTypeCode"] : "",
                                   RsvStatus = !string.IsNullOrEmpty(d["RsvStatus"].ToString()) ? d["RsvStatus"] : "",
@@ -1655,10 +1656,14 @@ namespace Report.Controllers
                               {
                                   TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
                                   TransactionName = !string.IsNullOrEmpty(d["TransactionName"].ToString()) ? d["TransactionName"] : "",
-                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
-                                  GroupDescription = !string.IsNullOrEmpty(d["GroupDescription"].ToString()) ? d["GroupDescription"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",           
                                   SubGroupDescription = !string.IsNullOrEmpty(d["SubGroupDescription"].ToString()) ? d["SubGroupDescription"] : "",
-                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? Convert.ToDecimal(d["Amount"]) : 0
+                                  AmountBeForeTax = !string.IsNullOrEmpty(d["AmountBeForeTax"].ToString()) ? Convert.ToDecimal(d["AmountBeForeTax"]) : 0,
+                                  AmountGross = !string.IsNullOrEmpty(d["AmountGross"].ToString()) ? Convert.ToDecimal(d["AmountGross"]) : 0,
+                                  AmountBeforeTaxM = !string.IsNullOrEmpty(d["AmountBeforeTaxM"].ToString()) ? Convert.ToDecimal(d["AmountBeforeTaxM"]) : 0,
+                                  AmountGrossM = !string.IsNullOrEmpty(d["AmountGrossM"].ToString()) ? Convert.ToDecimal(d["AmountGrossM"]) : 0,
+                                  AmountBeforeTaxY = !string.IsNullOrEmpty(d["AmountBeforeTaxY"].ToString()) ? Convert.ToDecimal(d["AmountBeforeTaxY"]) : 0,
+                                  AmountGrossY = !string.IsNullOrEmpty(d["AmountGrossY"].ToString()) ? Convert.ToDecimal(d["AmountGrossY"]) : 0
                               }).ToList();
 
                 return Json(result);

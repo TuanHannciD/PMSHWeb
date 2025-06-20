@@ -37,7 +37,7 @@
             color: white !important;
         }
 </style>
-
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="d-flex align-items-center">
@@ -73,7 +73,7 @@
         const today = new Date();
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         $('#fromDate').val(formatDate(firstDayOfMonth));
-     
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
     });
 
 
@@ -103,25 +103,25 @@
             dataSource: data,
             columns: [
                 { dataField: "name", caption: "Name", width: 180 },
-                { dataField: "confirmNo", caption: "ConfirmNo", width: 90 },
-                { dataField: "arrival", caption: "Arrival", width: 100 },
-                { dataField: "departure", caption: "Departure", width: 130},
+                { dataField: "confirmNo", caption: "Conf.No", width: 100 },
+                { dataField: "arrival", caption: "Arr.", width: 100 },
+                { dataField: "departure", caption: "Dep.", width: 100},
                 { dataField: "room", caption: "Room", width: 90 },
-                { dataField: "reservationTypeCode", caption: "ReservationTypeCode", width: 150 },
-                { dataField: "rsvStatus", caption: "RsvStatus", width: 110  },
-                { dataField: "lastPaid", caption: "LastPaid", width: 90  },
-                { dataField: "depositBalance", caption: "DepositBalance", width: 130  },
-                { dataField: "currencyID", caption: "CurrencyID", width: 100  }
+                { dataField: "reservationTypeCode", caption: "Resv.type", width: 150 },
+                { dataField: "rsvStatus", caption: "Status", width: 110  },
+                { dataField: "lastPaid", caption: "LastPaid", width: 100  },
+                { dataField: "depositBalance", caption: "DepositBalance", width: 150, dataType: "number", format: "#,##0"  },
+                { dataField: "currencyID", caption: "Curr.", width: 80  }
 
 
             ],
 
             paging: { pageSize: 25 },
-            scrolling: {
-                mode: 'virtual',
-                useNative: true,
-                showScrollbar: "always"
-            },
+            // scrolling: {
+            //     mode: 'virtual',
+            //     useNative: true,
+            //     showScrollbar: "always"
+            // },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -141,7 +141,7 @@
                         column: "depositBalance",
                         summaryType: "sum",
                         displayFormat: "{0}",
-                        valueFormat: "#,##0.00"
+                        valueFormat: "#,##0"
                     }
                 ],
 
