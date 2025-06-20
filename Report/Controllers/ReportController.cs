@@ -2015,6 +2015,7 @@ namespace Report.Controllers
                 case "RoomMoves":
 
                 case "NoShowReport":
+                case "RevenueReports":
                 case "GuestMarketReport":
                 case "LeadtimeReports":
                 case "RatecodeReports":
