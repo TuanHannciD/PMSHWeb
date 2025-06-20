@@ -226,6 +226,15 @@
         font-size: 18px;
         background-color: #f0f0f0;
     }
+    .report-list-scrollable {
+    max-height: 300px; /* hoặc bạn chọn chiều cao phù hợp */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+    .report-list-scrollable {
+        scroll-behavior: smooth;
+    }
 /*     .dx-header-row > td[role="columnheader"]> div.dx-datagrid-text-content {  
       font-size: 17px;  
       font-weight: bold;  
@@ -236,14 +245,16 @@
 </div>
 <div class="content_wrapper row">
     <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;height: fit-content;">
+        <div class="px-2 py-1">
+            <input type="text" class="form-control form-control-sm" id="report-search" placeholder="Search...">
+        </div>
 
-
-        <div class="filter-header" >
-            <span> Sale and forecast</span>
-            <span id="toggle-icon" style="float: right; cursor: pointer;">&#9660;</span> <!-- ▼ -->
+        <div class="filter-header" id="header-sale">
+            <span>Sale and forecast</span>
+            <i id="icon-sale" class="fas fa-chevron-right"></i>
         </div>
         <hr class="mui-divider" />
-        <ul id="report-list" class="list-group list-group-flush">
+        <ul id="report-list" class="list-group list-group-flush  report-list-scrollable" style="display: none;">
 @*             <li class="list-group-item">
                 <a style="color:black" id="BookingSource" class="text-decoration-none report-link" data-report="BookingSource" data-title="Booking Source">Booking Source</a>
             </li> *@
@@ -302,7 +313,7 @@
                 <a style="color:black" id="NationalStatistics" class="text-decoration-none report-link" data-report="NationalStatistics" data-title="National Statistics">National Statistics</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="SalesinChargeReportsForm" class="text-decoration-none report-link" data-report="SalesinChargeReportsForm" data-title="Sales in Charge Reports Form">Sales in Charge Reports Form</a>
+                <a style="color:black" id="SalesinChargeReportsForm" class="text-decoration-none report-link" data-report="SalesinChargeReportsForm" data-title="Sales in Charge Report ">Sales in Charge Reports </a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" id="SalesinChargeActivity" class="text-decoration-none report-link" data-report="SalesinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
@@ -317,10 +328,10 @@
                 <a style="color:black" id="TAProductionReport" class="text-decoration-none report-link" data-report="TAProductionReport" data-title="TA Production Report">TA Production Report</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="LeadtimeReports" class="text-decoration-none report-link" data-report="LeadtimeReports" data-title="Leadtime Reports">Leadtime Reports</a>
+                <a style="color:black" id="LeadtimeReports" class="text-decoration-none report-link" data-report="LeadtimeReports" data-title="Leadtime Report">Leadtime Reports</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="RatecodeReports" class="text-decoration-none report-link" data-report="RatecodeReports" data-title="Ratecode Reports">Ratecode Reports</a>
+                <a style="color:black" id="RatecodeReports" class="text-decoration-none report-link" data-report="RatecodeReports" data-title="Ratecode Report">Ratecode Reports</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" id="AnnualRoomOccupancy" class="text-decoration-none report-link" data-report="AnnualRoomOccupancy" data-title="Annual Room Occupancy">Annual Room Occupancy</a>
@@ -339,15 +350,16 @@
                 <a style="color:black" id="DepositLedger" class="text-decoration-none report-link" data-report="DepositLedger" data-title="Deposit Ledger">Deposit Ledger</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="RevenueReports" class="text-decoration-none report-link" data-report="RevenueReports" data-title="Revenue Reports">Revenue Reports</a>
+                <a style="color:black" id="RevenueReports" class="text-decoration-none report-link" data-report="RevenueReports" data-title="Revenue Report">Revenue Reports</a>
             </li>
         </ul>
-        <div class="filter-header">
-            <span>Report for reservation</span>
-            <span id="toggle-icon" style="float: right; cursor: pointer;">&#9660;</span> <!-- ▼ -->
+
+        <div class="filter-header" id="header-reservation">
+            <span>Report reservation</span>
+            <i id="icon-reservation" class="fas fa-chevron-right"></i>
         </div>
         <hr class="mui-divider" />
-        <ul class="list-group list-group-flush" id="reservation-report-list">
+        <ul id="reservation-report-list" class="list-group list-group-flush  report-list-scrollable" style="display: none;">
             <li class="list-group-item">
                 <a style="color:black" class="text-decoration-none report-link" data-report="GroupReservationReport" data-title="Group Reservation Report">Group Reservation Report</a>
             </li>
@@ -382,7 +394,7 @@
                 <a style="color:black" class="text-decoration-none report-link" data-report="Alerts" data-title="Alerts">Alerts</a>
             </li>
             <li class="list-group-item">
-                <a style="color:red" class="text-decoration-none report-link" data-report="ArrivalsAndCheckInToday" data-title="Arrivals and Check In Today">Arrivals and Check In Today</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="ArrivalsAndCheckInToday" data-title="Arrivals and Check In Today">Arrivals and Check In Today</a>
             </li>
             <li class="list-group-item">
                 <a style="color:red" class="text-decoration-none report-link" data-report="ArrivalsDetail" data-title="Arrivals Detail">Arrivals Detail</a>
@@ -425,112 +437,55 @@
             </li>
         </ul>
 
+        <div class="filter-header" id="header-nightaudit">
+            <span>Night Audit</span>
+            <i id="icon-nightaudit" class="fas fa-chevron-right"></i>
+        </div>
+        <hr class="mui-divider" />
+        <ul id="night-audit-report-list" class="list-group list-group-flush  report-list-scrollable" style="display: none;">
+            <!-- Đã có -->
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="CashierAudit" data-title="Cashier Audit">Cashier Audit</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="CashierSummary" data-title="Cashier Summary">Cashier Summary</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="GuestTrialBalance" data-title="Guest Trial Balance">Guest Trial Balance</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="FixCharge Report">FixCharge Report</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DepositRequestLogReport" data-title="Deposit Request Log Report">Deposit Request Log Report</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="RevenueSpa" data-title="Revenue Spa">Revenue Spa</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="RevenueReports" data-title="Revenue Reports">Revenue Reports</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueSummary" data-title="Revenue Summary">Revenue Summary</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="TransferARReports" data-title="Transfer AR Reports">Transfer AR Reports</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositTransferredAtCheckIn" data-title="Deposit Transferred at Check In">Deposit Transferred at Check In</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="TrialBalance" data-title="Trial Balance">Trial Balance</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DepositActivity" data-title="Deposit Activity">Deposit Activity</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositLedger" data-title="Deposit Ledger">Deposit Ledger</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DailyMinibarReport" data-title="Daily Minibar Report">Daily Minibar Report</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="GuestLedger" data-title="Guest Ledger">Guest Ledger</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueBy" data-title="Revenue By">Revenue By</a></li>
+
+            <!-- Chưa có -->
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="CancellationJournal" data-title="Cancellation Journal">Cancellation Journal</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RatecodeReports" data-title="Ratecode Report">Ratecode Reports</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="PostingJournalInvoicing" data-title="Posting Journal Invoicing">Posting Journal Invoicing</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="ReservationPreblocked" data-title="Reservation Preblocked">Reservation Preblocked</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DetailCheckOut" data-title="Detail Check Out">Detail Check Out</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="ArticleByRooms" data-title="Article by Rooms">Article by Rooms</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="JournalByCashierArticle" data-title="Journal by Cashier & Article">Journal by Cashier & Article</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="OccupancyByPerson" data-title="Occupancy by Person">Occupancy by Person</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="SummaryByArticle" data-title="Summary by Article">Summary by Article</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="IncurringDepositCollection" data-title="Incurring Deposit Collection">Incurring Deposit Collection</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="IncurringDepositPaymentPlan" data-title="Incurring Deposit Payment Plan">Incurring Deposit Payment Plan</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="IncurringDepositReturn" data-title="Incurring Deposit Return">Incurring Deposit Return</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="IncurringDepositSummary" data-title="Incurring Deposit Summary">Incurring Deposit Summary</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="RoomStatistics" data-title="Room Statistics">Room Statistics</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DailyRevenueReports" data-title="Daily Revenue Reports">Daily Revenue Reports</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DailyRevenueReportsNew" data-title="Daily Revenue Reports New">Daily Revenue Reports New</a></li>
+            <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DailyRevenueReportsV2" data-title="Daily Revenue Reports (V2)">Daily Revenue Reports (V2)</a></li>
+        </ul>
 
     </div>
 
     <div class="function_wrapper col-md-10">
-        @*      <div class="sticky-header bg-white p-2 shadow-sm z-3">s
-        <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
-               <div  class="d-flex align-items-center" id="bookingSource" style="display:none !important;">
-            <!-- From Date -->
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 100px;">From Date:</label>
-                <input style ="width: 130px;" type="date" id="fromDate" name="fromDate" class="form-control" />
-            </div>
-
-            <!-- To Date -->
-                    <div class="d-flex align-items-center me-3">
-                <label style="width: 80px;">To Date:</label>
-                <input style="width: 130px;" type="date" id="toDate" name="toDate" class="form-control" />
-            </div>
-            </div>
-
-              <div  class="d-flex align-items-center" id="ratecodebyDateReport" style="display:none !important;">
-            <!-- From Date -->
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 100px;">From Date:</label>
-                <input style ="width: 130px;" type="date" id="fromDaterc" name="fromDate" class="form-control" />
-            </div>
-
-            <!-- To Date -->
-                    <div class="d-flex align-items-center me-3">
-                <label style="width: 80px;">To Date:</label>
-                <input style="width: 130px;" type="date" id="toDaterc" name="toDate" class="form-control" />
-            </div>
-
-            <!-- Ratecode -->
-                    <div class="d-flex align-items-center me-3" id="ratecodeWrapper">
-                <label style="width: 100px;">Rate Code:</label>
-                <select style="width: 150px;" class="form-control" id="ratecode" name="ratecode">
-                    <option value="">ALL</option>
-                    @foreach (var item in rateCodeList)
-                    {
-                        <option value="@item.RateCode">@item.RateCode - @item.Descripton</option>
-                    }
-                </select>
-            </div>
-            </div>
-
-              <div id="monthlyReport" style="display:none !important;">
-    <div class="d-flex align-items-center mb-2 me-3">
-        <label style="width: 60px;">Month:</label>
-        <input style="width: 130px;" type="date" id="toDateMonth" name="toDate" class="form-control" />
-    </div>
-
-    <div class="d-flex align-items-center mb-2 me-3">
-        <label style="width: 100px;">Profile type:</label>
-        <div class="form-check me-3">
-                            <input class="form-check-input" type="checkbox" id="profileTravelAgents" name="profileType" value="TravelAgents" checked>
-            <label class="form-check-label" for="profileTravelAgents">Travel Agents</label>
-        </div>
-        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="profileCompany" name="profileType" value="Company" checked>
-            <label class="form-check-label" for="profileCompany">Company</label>
-        </div>
-    </div>
-
-                    <div class="d-flex align-items-center mb-2 me-3">
-        <label style="width: 115px;">Room Night ≥</label>
-                        <input style="width: 130px;" type="text" id="roomNight" name="roomNight" class="form-control"  />
-    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <label style="width: 70px;">View Vy</label>
-                        <input style="width: 130px;" type="text" id="viewBy" name="viewBy" class="form-control" value="VND" readonly />
-                    </div>
-</div>
-            <div  class="d-flex align-items-center" id="dailypickupReport" style="display:none !important;">
-            <!-- From Date -->
-            <div class="d-flex align-items-center me-3">
-                <label style="width: 100px;">From Date:</label>
-                <input style ="width: 130px;" type="date" id="fromDatedl" name="fromDate" class="form-control" />
-            </div>
-
-            <!-- To Date -->
-                    <div class="d-flex align-items-center me-3">
-                <label style="width: 80px;">To Date:</label>
-                <input style="width: 130px;" type="date" id="toDatedl" name="toDate" class="form-control" />
-            </div>
-            </div>
-                <div class="d-flex align-items-center" id="dailyBreakfastDetail" style="display:none !important;">
-                    <!-- From Date -->
-                    <div class="d-flex align-items-center me-3">
-                        <label style="width: 100px;">Date:</label>
-                        <input style="width: 130px;" type="date" id="fromDatedlbf" name="fromDate" class="form-control" />
-                    </div>               
-                </div>
-        </div>
-        <div class=" mb-3 ">
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-        </div>
-       </div> *@
+     
         <div id="reportContainer"></div>
-
-        @*         <div class="mui-card">
-            <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div>
-            <div id="reportContainer" class="mt-2"></div>
-        </div> *@
 
     </div>
 
@@ -538,30 +493,97 @@
 
 <script>
 
-    // function formatDate(date) {
-    //     let year = date.getFullYear();
-    //     let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-    //     let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-    //     return `${year}-${month}-${day}`;
-    // }
-
-    //   function formatMonth(date) {
-    //     let year = date.getFullYear();
-    //     let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-    //     let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-    //     return `${year}-${month}`;
-    // }
+   
 
    $(document).ready(function () {
-    let reportLoadedFromUrl = false;
-         $('#toggle-icon').click(function () {
-                $('#report-list').slideToggle(); // Hiển thị/ẩn danh sách với hiệu ứng
 
-                // Đổi biểu tượng toggle
-                const currentIcon = $(this).html();
-                $(this).html(currentIcon === '▼' ? '▶' : '▼');
-            });
-    // ✅ Hàm load báo cáo
+       $('#header-sale').click(function () {
+        const reportList = $('#report-list');
+        const reservationList = $('#reservation-report-list');
+        const iconSale = $('#icon-sale');
+        const iconReservation = $('#icon-reservation');
+              const iconNight = $('#icon-nightaudit');
+        const isReportVisible = reportList.is(':visible');
+              const nightAuditList = $('#night-audit-report-list');
+        if (isReportVisible) {
+            reportList.slideUp();
+            iconSale.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+        } else {
+            reportList.slideDown();
+            iconSale.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+
+            reservationList.slideUp();
+            iconReservation.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+
+                 nightAuditList.slideUp();
+                iconNight.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+        }
+    });
+
+    $('#header-reservation').click(function () {
+        const reportList = $('#report-list');
+        const reservationList = $('#reservation-report-list');
+        const iconSale = $('#icon-sale');
+              const nightAuditList = $('#night-audit-report-list');
+        const iconReservation = $('#icon-reservation');
+        const iconNight = $('#icon-nightaudit');
+        const isReservationVisible = reservationList.is(':visible');
+
+        if (isReservationVisible) {
+            reservationList.slideUp();
+            iconReservation.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+        } else {
+            reservationList.slideDown();
+            iconReservation.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+
+            reportList.slideUp();
+            iconSale.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+
+            nightAuditList.slideUp();
+            iconNight.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+        }
+    });
+
+        $('#header-nightaudit').click(function () {
+        const nightAuditList = $('#night-audit-report-list');
+        const saleList = $('#report-list');
+        const reservationList = $('#reservation-report-list');
+
+        const iconNight = $('#icon-nightaudit');
+        const iconSale = $('#icon-sale');
+        const iconReservation = $('#icon-reservation');
+
+        const isNightVisible = nightAuditList.is(':visible');
+
+        if (isNightVisible) {
+            nightAuditList.slideUp();
+            iconNight.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+        } else {
+            nightAuditList.slideDown();
+            iconNight.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+
+            saleList.slideUp();
+            iconSale.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+
+            reservationList.slideUp();
+            iconReservation.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+        }
+    });
+
+    $('#report-search').on('keyup', function () {
+        const searchText = $(this).val().toLowerCase();
+
+        // Lọc tất cả report trong cả 3 danh sách
+        $('.report-list-scrollable li').each(function () {
+            const title = $(this).text().toLowerCase();
+            if (title.includes(searchText)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+
     function loadReport(reportName, title) {
         $.ajax({
             url: '/Report/LoadReport',
@@ -585,10 +607,6 @@
     $(document).on('click', '.report-link', function (e) {
         e.preventDefault();
 
-        if (reportLoadedFromUrl) {
-            reportLoadedFromUrl = false; // reset để các lần click sau hoạt động
-            return; // không làm gì khi đang trong trạng thái tự động load
-        }
 
         $(".report-link").removeClass("active");
         $(this).addClass("active");
@@ -608,8 +626,6 @@
         const title = $link.data('title') || reportName;
 
         $link.addClass("active");
-
-        reportLoadedFromUrl = true; // set cờ tránh xử lý click sau đó
         loadReport(reportName, title);
     }
 });

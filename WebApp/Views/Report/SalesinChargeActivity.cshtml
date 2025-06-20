@@ -94,20 +94,23 @@
                 <option value="USD">USD</option>
             </select>
         </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">View By:</label>
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+
+                <option value="0">Ascending</option>
+                <option value="1">Descending</option>
+            </select>
+        </div>
 
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Sorting:</label>
             <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
-                <option value="0">Ascending</option>
-                <option value="1">Descending</option>
-                <option value="0">Account Name</option>
-                <option value="1">Total Turnover</option>
-                <option value="0">Room Sales</option>
-                <option value="0">F&B Turnover</option>
-                <option value="0">Even Turnover</option>
-                <option value="1">Micell.Turnover</option>
-                <option value="1">Room Night</option>
-                <option value="1">Bed Night</option>
+                <option value="2">Account Name</option>
+                <option value="3">Total Turnover</option>
+                <option value="4">Room Sales</option>
+                <option value="8">Room Night</option>
+                <option value="9">Bed Night</option>
             </select>
         </div>
         <div class="d-flex align-items-center me-3">
@@ -182,9 +185,50 @@
             success: function (result) {
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
-                     console.log(result);
-                                      const processedData = preparSalesinChargeActivityData(result);
-                initializProductActivityGrid(processedData);
+                       // 1. Lọc theo roomNight (>=)
+            const roomNightFilter = parseInt($("#roomNight").val());
+            const filteredResult = isNaN(roomNightFilter)
+                ? result
+                : result.filter(item => (item.roomNight || 0) >= roomNightFilter);
+
+            // 2. Nhóm theo saleInCharge
+            const processedData = preparSalesinChargeActivityData(filteredResult);
+
+            // 3. Sắp xếp theo lựa chọn
+            const sortDirection = $("#viewBy").val(); // 0 = Asc, 1 = Desc
+            const sortFieldCode = $("#sortOrder").val(); // field ID từ dropdown
+
+            const sortFieldMap = {
+                2: "guestName",        // Account Name
+                3: "totalTurnover",    // Total Turnover
+                4: "roomSales",        // Room Sales
+                8: "roomNight",        // Room Night
+                9: "bedNightAll"       // Bed Night
+            };
+
+            const sortField = sortFieldMap[sortFieldCode];
+
+            if (sortField) {
+                processedData.sort((a, b) => {
+                    // Giữ nguyên dòng tiêu đề và tổng
+                    if (a.isTitle || a.isTotal) return -1;
+                    if (b.isTitle || b.isTotal) return 1;
+
+                    const aVal = a[sortField] ?? 0;
+                    const bVal = b[sortField] ?? 0;
+
+                    if (typeof aVal === "string") {
+                        return sortDirection === "0"
+                            ? aVal.localeCompare(bVal)
+                            : bVal.localeCompare(aVal);
+                    } else {
+                        return sortDirection === "0"
+                            ? aVal - bVal
+                            : bVal - aVal;
+                    }
+                });
+            }
+                    initializProductActivityGrid(processedData);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -258,8 +302,8 @@
                { dataField: "guestNo", caption: "Acc.No", width: columnWidth-40 },
             { dataField: "guestName", caption: "Account", width: columnWidth },
             { dataField: "city", caption: "City", width: columnWidth-80},
-            { dataField: "totalTurnover", caption: "Total Account", width: columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "roomSales", caption: "Room Sales", width: columnWidth-70, dataType: "number", format: "#,##0" },,
+            { dataField: "totalTurnover", caption: "Total Account", width: columnWidth-50, dataType: "number", format: "#,##0" },
+            { dataField: "roomSales", caption: "Room Sales", width: columnWidth-60, dataType: "number", format: "#,##0" },,
               { dataField: "taxService", caption: "Tax & SC", width: columnWidth-70, dataType: "number", format: "#,##0" },
 
                { dataField: "totalAdult", caption: "A", width: columnWidth-100, dataType: "number", format: "#,##0" },
