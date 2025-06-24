@@ -374,6 +374,17 @@ namespace Report.Controllers
                                   Persons = !string.IsNullOrEmpty(d["Persons"].ToString()) ? d["Persons"] : "",
                                   RoomOccupancy = !string.IsNullOrEmpty(d["RoomOccupancy"].ToString()) ? d["RoomOccupancy"] : "",
                                   PersonRoom = !string.IsNullOrEmpty(d["PersonRoom"].ToString()) ? d["PersonRoom"] : "",
+
+                                  MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+                                  SourceCode = !string.IsNullOrEmpty(d["SourceCode"].ToString()) ? d["SourceCode"] : "",
+                                  ReservationDate = !string.IsNullOrEmpty(d["ReservationDate"].ToString()) ? d["ReservationDate"] : "",
+                                  Price = !string.IsNullOrEmpty(d["Price"].ToString()) ? d["Price"] : "",
+                                  AmountBeforTax = !string.IsNullOrEmpty(d["AmountBeforTax"].ToString()) ? d["AmountBeforTax"] : "",
+                                  AmountAfterTax = !string.IsNullOrEmpty(d["AmountAfterTax"].ToString()) ? d["AmountAfterTax"] : "",
+
+                                  CurrencyID = !string.IsNullOrEmpty(d["Price"].ToString()) ? d["Price"] : "",
+                                  OptionDate = !string.IsNullOrEmpty(d["OptionDate"].ToString()) ? d["OptionDate"] : "",
+                                  OptionDateDesc = !string.IsNullOrEmpty(d["OptionDateDesc"].ToString()) ? d["OptionDateDesc"] : "",
                               }).ToList();
                 return Json(result);
             }
