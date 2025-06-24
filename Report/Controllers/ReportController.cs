@@ -1684,6 +1684,139 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+        [HttpGet]
+        public IActionResult PostingJournalInvoicing(DateTime fromDate, DateTime toDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.PostingJournalInvoicing(fromDate, toDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
+                                  FolioNo = !string.IsNullOrEmpty(d["FolioNo"].ToString()) ? d["FolioNo"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  DebitUSD = !string.IsNullOrEmpty(d["DebitUSD"].ToString()) ? d["DebitUSD"] : "",
+                                  DebitVND = !string.IsNullOrEmpty(d["DebitVND"].ToString()) ? d["DebitVND"] : "",
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  CashierNo = !string.IsNullOrEmpty(d["CashierNo"].ToString()) ? d["CashierNo"] : "",                                
+                              }).ToList();
+
+                Console.WriteLine("So dong: " + result.Count);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult CancellationJournal(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+
+                var transactionCodeList = "1002','1015','1016','1017','1018','1021','1022','1023','1024','1025','1026','2121','2122','2123','2124','2125','2219','2220','2221','2222','2223','1950','2019','2020','2021','2022','2023','2024','2025','2119','2120','2413','2414','2415','2416','2417','2513','2514','2515','2516','2517','2224','2225','2319','2320','2321','2322','2323','2324','2325','2613','2614','2615','2616','2617','2713','2714','2715','2716','2717', '3107','3108','3109','3213','3215','3216','3217','3218','3219','3220','3013','3015','3016','3017','3018','3019','3020','3021','3105','3106','3221','3317','3318','3319','3320','3322','3417','3418','3419','3420','3421','3517','3518','3519','3520','3521','3617','3618','3619','3620','3621','4006','4007','4008','4009','4010','4104','4105','4106','4108','4203','4204','4303','4304','4403','4404','4502','4507','4509','4511','4513','4516','4517','4519','4521','4523','4541','4542','4543','6008','6009','6010','6011','6014";
+                              
+                var data = _iReportService.CancellationJournal(fromDate, toDate, transactionCodeList);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  Time = !string.IsNullOrEmpty(d["Time"].ToString()) ? d["Time"] : "",
+                                  CashierNo = !string.IsNullOrEmpty(d["CashierNo"].ToString()) ? d["CashierNo"] : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
+                                  FolioNo = !string.IsNullOrEmpty(d["FolioNo"].ToString()) ? d["FolioNo"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  DebitUSD = !string.IsNullOrEmpty(d["DebitUSD"].ToString()) ? d["DebitUSD"] : "",
+                                  DebitVND = !string.IsNullOrEmpty(d["DebitVND"].ToString()) ? d["DebitVND"] : "",
+                                  Reference = !string.IsNullOrEmpty(d["Reference"].ToString()) ? d["Reference"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating cancellation journal report: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        public IActionResult TrialBalance(DateTime dtpDate, string currency)
+        {
+            try
+            {          
+                var data = _iReportService.TrialBalance(dtpDate, currency);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  BoldField = !string.IsNullOrEmpty(d["BoldField"].ToString()) ? d["BoldField"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",                                 
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating cancellation journal report: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        public IActionResult ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance,
+                                              int fixRate, int package, int dcReason, string sort,
+                                              int showFixCharge, int showAlerts)
+        {
+            try
+            {
+                var data = _iReportService.ReservationRateCheck(date, status, ind, pseudo, variance,
+                                                                    fixRate, package, dcReason, sort, showFixCharge, showAlerts);
+
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {                             
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Arrival = !string.IsNullOrEmpty(d["Arrival"].ToString()) ? d["Arrival"] : "",
+                                  Departure = !string.IsNullOrEmpty(d["Departure"].ToString()) ? d["Departure"] : "",
+                                  Nts = !string.IsNullOrEmpty(d["Nts."].ToString()) ? d["Nts."] : "",
+                                  Adl = !string.IsNullOrEmpty(d["Adl."].ToString()) ? d["Adl."] : "",
+                                  Chl = !string.IsNullOrEmpty(d["Chl."].ToString()) ? d["Chl."] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["Rate Code"].ToString()) ? d["Rate Code"] : "",
+                                  RateCodeAmt = !string.IsNullOrEmpty(d["Rate Code Amt."].ToString()) ? d["Rate Code Amt."] : "",
+                                  RateAmt = !string.IsNullOrEmpty(d["Rate Amt."].ToString()) ? d["Rate Amt."] : "",
+                                  Variance = !string.IsNullOrEmpty(d["Variance"].ToString()) ? d["Variance"] : "",
+                                  PayMth = !string.IsNullOrEmpty(d["Pay Mth."].ToString()) ? d["Pay Mth."] : "",
+                                  ResvStatus = !string.IsNullOrEmpty(d["Resv. Status"].ToString()) ? d["Resv. Status"] : "",
+                                  FixedRate = !string.IsNullOrEmpty(d["Fixed Rate"].ToString()) ? d["Fixed Rate"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["Room No."].ToString()) ? d["Room No."] : "",
+                                  Holder = !string.IsNullOrEmpty(d["Holder"].ToString()) ? d["Holder"] : "",
+                                  MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+                                  Cur = !string.IsNullOrEmpty(d["Cur."].ToString()) ? d["Cur."] : "",
+                                  ReservationPacketes =  !string.IsNullOrEmpty(d["Reservation Packages"].ToString()) ? d["Reservation Packages"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
+
+
+
 
         [HttpGet]
         public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)

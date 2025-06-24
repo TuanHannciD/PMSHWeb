@@ -36,7 +36,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptBlacklistReport", param);
             return myTable;
         }
-        public  DataTable GroupReservation(DateTime fromDate, DateTime toDate, string NoOfRoom)
+        public DataTable GroupReservation(DateTime fromDate, DateTime toDate, string NoOfRoom)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -48,7 +48,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptGroupReservationReport", param);
             return myTable;
         }
-        public  DataTable GuestStayOver(DateTime fromDate, DateTime toDate)
+        public DataTable GuestStayOver(DateTime fromDate, DateTime toDate)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -59,7 +59,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spGuestStayOver_New", param);
             return myTable;
         }
-        public  DataTable GuestStay(string noofName, string stayno, string stayand)
+        public DataTable GuestStay(string noofName, string stayno, string stayand)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -101,7 +101,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptRevenue_MonthlyByHolderReport", param);
             return myTable;
         }
-        public  DataTable ReportNationalityStatistics(DateTime fromDate, DateTime toDate, string status, string sortOder)
+        public DataTable ReportNationalityStatistics(DateTime fromDate, DateTime toDate, string status, string sortOder)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -130,7 +130,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptAlerts", param);
             return myTable;
         }
-        public  DataTable ReservationSummaryReport(DateTime fromDate, DateTime toDate)
+        public DataTable ReservationSummaryReport(DateTime fromDate, DateTime toDate)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -141,7 +141,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptSummaryReservation", param);
             return myTable;
         }
-        public  DataTable TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly)
+        public DataTable TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -178,7 +178,7 @@ namespace Report.Services.Implements
                            new SqlParameter("@SortOrder",viewBy),
 
                                 new SqlParameter("@Pseudo", pseudo),
-  
+
                        new SqlParameter("@ChkVIPOnly",chkviponly),
                        new SqlParameter("@BusinessDate", DateTime.Now.Date),
 
@@ -191,7 +191,7 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public  DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode)
+        public DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -205,7 +205,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptRevenue_RateCodeByDateReport", param);
             return myTable;
         }
-        public  DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode)
+        public DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode)
         {
             DateTime firstDate = new DateTime(DateTime.Now.Year, 1, 1);
             SqlParameter[] param = new SqlParameter[]
@@ -296,7 +296,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptDepartureExtended", param);
             return myTable;
         }
-        public DataTable RoomOccupancyReport(DateTime fromDate ,DateTime toDate, string zone)
+        public DataTable RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -309,7 +309,7 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet,string typeDate)
+        public DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -334,7 +334,7 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder,string noOfRoom)
+        public DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder, string noOfRoom)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -480,7 +480,7 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptRevenue_HolderProductionReport", param);
             return myTable;
         }
-        public DataTable LeadtimeReportsData(DateTime fromDate, DateTime toDate, string zone,string isDaily,string day,string daysNames)
+        public DataTable LeadtimeReportsData(DateTime fromDate, DateTime toDate, string zone, string isDaily, string day, string daysNames)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -529,12 +529,12 @@ namespace Report.Services.Implements
 
         public DataTable RoomMovesData(DateTime fromDate, DateTime toDate)
         {
-        
-           SqlParameter[] param = new SqlParameter[]
-            {
+
+            SqlParameter[] param = new SqlParameter[]
+             {
              new SqlParameter("@FromDate", fromDate),
              new SqlParameter("@ToDate", toDate),
-            };
+             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptRoomMoves", param);
             return myTable;
@@ -553,9 +553,9 @@ namespace Report.Services.Implements
         {
             SqlParameter[] parameters = new SqlParameter[]
             {
-            new SqlParameter("@Sleep", Sleep),
-            new SqlParameter("@Skip", Skip),
-            new SqlParameter("@Person", Person)
+                new SqlParameter("@Sleep", Sleep),
+                new SqlParameter("@Skip", Skip),
+                new SqlParameter("@Person", Person)
             };
 
             return DataTableHelper.getTableData("spRptRoomDescrepancy", parameters);
@@ -575,15 +575,70 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-            new SqlParameter("@dtpFromDate", fromDate),
-            new SqlParameter("@Type", type)
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@Type", type)
             };
 
             return DataTableHelper.getTableData("spRptRevenue", param);
         }
+        public DataTable PostingJournalInvoicing(DateTime fromDate, DateTime toDate)
+        {
 
+            SqlParameter[] param = new SqlParameter[]
+             {
+                 new SqlParameter("@FromDate", fromDate),
+                 new SqlParameter("@ToDate", toDate),
+             };
 
+            DataTable myTable = DataTableHelper.getTableData("spRptPostingJournal", param);
+            return myTable;
+        }
+        public DataTable CancellationJournal(DateTime fromDate, DateTime toDate, string transactionCodeList)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+            new SqlParameter("@FromDate", fromDate),
+            new SqlParameter("@ToDate", toDate),
+            new SqlParameter("@TransactionCodeList", transactionCodeList),
+            };
 
+            return DataTableHelper.getTableData("spRptCancellationJournal", param);
+        }
+
+        public DataTable TrialBalance(DateTime dtpDate, string currency)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+            new SqlParameter("@dtpDate", dtpDate),
+            new SqlParameter("@Currency", currency),
+
+            };
+
+            return DataTableHelper.getTableData("spRptTrialBalance", param);
+
+        }
+        public DataTable ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance,
+                                      int fixRate, int package, int dcReason, string sort,
+                                      int showFixCharge, int showAlerts)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@date", date),
+                new SqlParameter("@status", status),
+                new SqlParameter("@ind", ind),
+                new SqlParameter("@pseudo", pseudo),
+                new SqlParameter("@variance", variance),
+                new SqlParameter("@fixRate", fixRate),
+                new SqlParameter("@package", package), 
+                new SqlParameter("@dcReason", dcReason),
+                new SqlParameter("@sort", sort),
+                new SqlParameter("@showFixCharge", showFixCharge),
+                new SqlParameter("@showAlerts", showAlerts),
+             };
+
+            return DataTableHelper.getTableData("spRptReservationRateCodeCheck", param);
+        }
 
     }
+
 }

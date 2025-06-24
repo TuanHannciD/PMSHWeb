@@ -42,15 +42,19 @@ namespace Report.Services.Interfaces
         DataTable LeadtimeReportsData(DateTime fromDate, DateTime toDate, string zone, string isDaily, string day, string daysNames);
         DataTable RatecodeReportsData(DateTime fromDate, DateTime toDate, string zone, string rate, string viewby, string day, string daysNames);
         DataTable AnnualRoomOccupancyData(DateTime fromDate, DateTime toDate, string zone, string day, string daysNames);
- 
         DataTable RoomMovesData(DateTime fromDate, DateTime toDate);
         DataTable DepositTransferredAtCheckIn(DateTime fromDate);
         DataTable RoomDiscrepancy(int Sleep = 0, int Skip = 0, int Person = 0);
         DataTable DepositLedger(DateTime fromDate);
         DataTable RevenueReports(DateTime fromDate, int type);
-
         DataTable BlacklistReporteData(DateTime fromDate, DateTime toDate);
         DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode);
         DataTable ArrivalsandCheckInTodayData(string roomClass, string roomtype, string paymethod, string vip, string viewBy, string pseudo, string chkviponly, int disRoomSharer, string nopost);
+        DataTable PostingJournalInvoicing(DateTime fromDate, DateTime toDate);
+        DataTable CancellationJournal(DateTime fromDate, DateTime toDate, string transactionCodeList);
+        DataTable TrialBalance(DateTime dtpDate, string currency);
+        DataTable ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance, int fixRate, int package, int dcReason, string sort, int showFixCharge, int showAlerts);
+
+
     }
 }
