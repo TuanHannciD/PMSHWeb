@@ -96,7 +96,7 @@
 
         </div>
 
-        <div class="d-flex align-items-center me-3">
+        <div style="display:none!important" class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Currency:</label>
             <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
 
@@ -207,11 +207,16 @@
         const finalData = [];
 
         Object.entries(groupedData).forEach(([month, records]) => {
+             finalData.push({
+            weekDate: records[0].monthDisplay,
+            isTitle: true,
+            cssClass: "custom" // Nếu cần CSS riêng cho tiêu đề
+        });
             finalData.push(...records);
 
             const totalRow = {
                 rsvSummaryDate: "MONTHLY TOTAL",
-                weekDate:records[0].monthDisplay,
+                weekDate:"",
                 totalOccRms: sum(records, 'totalOccRms'),
                 indRms: sum(records, 'indRms'),
                 blkRmsPU: sum(records, 'blkRmsPU'),

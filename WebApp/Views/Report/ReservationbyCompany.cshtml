@@ -84,7 +84,7 @@
 
         </div>
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">No of Roon:</label>
+            <label class="me-2 mb-0">No of Room:</label>
             <input id="noOfRoom" name="noOfRoom" class="form-control form-control-sm w-auto"  />
         </div>
 
@@ -303,16 +303,17 @@
              { dataField: "noOfNight", caption: "Nst", width:  columnWidth-100, dataType: "number", format: "#,##0" },
 
               { dataField: "reservationTypeCode", caption: "Res.Type", width:  columnWidth-30 },
-             { dataField: "roomType", caption: "Room Type", width: columnWidth-70 },
-            { dataField: "marketCode", caption: "Ma.Code", width: columnWidth-70},
-            { dataField: "sourceCode", caption: "S.Code", width:  columnWidth-70 },
+             { dataField: "roomType", caption: "Room Type", width: columnWidth-60 },
+            { dataField: "marketCode", caption: "Mct.Code", width: columnWidth-60},
+                        { dataField: "", caption: "C/H", width: columnWidth-60},
+            { dataField: "sourceCode", caption: "Src.Code", width:  columnWidth-50 },
              { dataField: "loginName", caption: "User", width:  columnWidth-70 },
 
                { dataField: "createDate", caption: "Made On", width:  columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
              { dataField: "rateCode", caption: "Rate Code", width: columnWidth-70},
-            { dataField: "rate", caption: "Rate", width: columnWidth-70, dataType: "number", format: "#,##0" },
+            { dataField: "rate", caption: "Rate Amt.", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "packages", caption: "Packages", width:  columnWidth-70 },
-             { dataField: "currencyID", caption: "Cur", width:  columnWidth-90 }
+             { dataField: "currencyID", caption: "Crr.", width:  columnWidth-90 }
             ],
             paging: { pageSize: 25 },
              scrolling:  {

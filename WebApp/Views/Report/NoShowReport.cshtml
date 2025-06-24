@@ -148,7 +148,7 @@
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             columns: [
-               { dataField: "confirmationNo", caption: "Conf.No", width:columnWidth-100},
+               { dataField: "confirmationNo", caption: "Conf.No", width:columnWidth-80},
                  { dataField: "roomNo", caption: "RoomNo", width:columnWidth-70},
             { dataField: "lastName", caption: "Guest Name", width: columnWidth+120  },
             {
@@ -162,14 +162,14 @@
                 { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
             { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-70 , dataType: "date", format: "dd/MM/yyyy" },
             { dataField: "roomType", caption: "R.Type", width: columnWidth-80  },
-            { dataField: "businessBlockCode", caption: "Block Code",width: columnWidth-80 },
-            { dataField: "marketCode", caption: "Mrk.Code",width: columnWidth-80 },
+            { dataField: "businessBlockCode", caption: "Block Code",width: columnWidth-60 },
+            { dataField: "marketCode", caption: "MrkCode",width: columnWidth-70 },
             { dataField: "paymentMethod", caption: "Pay mth", width:columnWidth-80 },
              { dataField: "reservationTypeCode", caption: "Rsv.Type",width: columnWidth },
             { dataField: "creditCardNo", caption: "CC no",width: columnWidth-80 },
-            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-80 },
+            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-60 },
              { dataField: "expirationDate", caption: "Exp.Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
-             { dataField: "rateAmount", caption: "Rate Amount",width: columnWidth-80 , dataType: "number", format: "#,##0" },
+             { dataField: "rateAmount", caption: "Rate Amount",width: columnWidth-60 , dataType: "number", format: "#,##0" },
             { dataField: "noOfRoom", caption: "Rms",width: columnWidth-80 , dataType: "number", format: "#,##0" },
             { dataField: "noOfNight", caption: "Nts",width: columnWidth-80, dataType: "number", format: "#,##0" },
              { dataField: "totalAmount", caption: "Revenue",width: columnWidth-50 , dataType: "number", format: "#,##0" },
