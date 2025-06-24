@@ -280,7 +280,11 @@
 </div>
 <div class="content_wrapper row">
     <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;height: fit-content;">
-        <div class="px-2 py-1">
+        <div class="text-center fw-bold py-2" style="font-size: 1.25rem; color: #005f87; border-bottom: 1px solid #ccc;">
+            REPORT
+        </div>
+
+        <div class=" py-1">
             <input type="text" class="form-control form-control-sm" id="report-search" placeholder="Search...">
         </div>
 
@@ -605,19 +609,59 @@
         }
     });
 
-    $('#report-search').on('keyup', function () {
-        const searchText = $(this).val().toLowerCase();
+           function removeVietnameseTones(str) {
+            return str.normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                      .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+                      .toLowerCase();
+        }
 
-        // Lọc tất cả report trong cả 3 danh sách
-        $('.report-list-scrollable li').each(function () {
-            const title = $(this).text().toLowerCase();
-            if (title.includes(searchText)) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
+        $('#report-search').on('keyup', function () {
+            const searchText = removeVietnameseTones($(this).val().trim());
+
+            // Danh sách cần duyệt
+            const reportGroups = [
+                {
+                    ul: '#report-list',
+                    icon: '#icon-sale'
+                },
+                {
+                    ul: '#reservation-report-list',
+                    icon: '#icon-reservation'
+                },
+                {
+                    ul: '#night-audit-report-list',
+                    icon: '#icon-nightaudit'
+                }
+            ];
+
+            reportGroups.forEach(group => {
+                let matchFound = false;
+
+                $(group.ul + ' li').each(function () {
+                    const itemText = removeVietnameseTones($(this).text());
+                    if (itemText.includes(searchText)) {
+                        $(this).show();
+                        matchFound = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Mở danh sách nếu có kết quả
+                if (searchText.length > 0 && matchFound) {
+                    if (!$(group.ul).is(':visible')) {
+                        $(group.ul).slideDown();
+                        $(group.icon).removeClass('fa-chevron-right').addClass('fa-chevron-down');
+                    }
+                    } else if (searchText.length === 0) {
+                    // Ẩn danh sách và hiển thị lại tất cả các mục
+                    $(group.ul).slideUp();
+                    $(group.ul + ' li').show(); // reset lại hiển thị
+                    $(group.icon).removeClass('fa-chevron-down').addClass('fa-chevron-right');
+                }
+            });
         });
-    });
 
     function loadReport(reportName, title) {
         $.ajax({
