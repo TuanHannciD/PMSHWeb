@@ -277,9 +277,9 @@ namespace Report.Services.Implements
                         new SqlParameter("@ToDate", toDate),
                         new SqlParameter("@Searchby", reservation),
                         new SqlParameter("@RoomType", roomType),
-                         new SqlParameter("@Zone", zone),
+                        new SqlParameter("@Zone", zone),
                         new SqlParameter("@ViewBy", viewBy),
-                          new SqlParameter("@ViewRate", "1"),
+                        new SqlParameter("@ViewRate", "1"),
                         new SqlParameter("@SortOrder", sortOrder)
             };
 
@@ -597,9 +597,9 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-            new SqlParameter("@FromDate", fromDate),
-            new SqlParameter("@ToDate", toDate),
-            new SqlParameter("@TransactionCodeList", transactionCodeList),
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@TransactionCodeList", transactionCodeList),
             };
 
             return DataTableHelper.getTableData("spRptCancellationJournal", param);
@@ -609,8 +609,8 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-            new SqlParameter("@dtpDate", dtpDate),
-            new SqlParameter("@Currency", currency),
+                new SqlParameter("@dtpDate", dtpDate),
+                new SqlParameter("@Currency", currency),
 
             };
 
@@ -638,6 +638,36 @@ namespace Report.Services.Implements
 
             return DataTableHelper.getTableData("spRptReservationRateCodeCheck", param);
         }
+        public DataTable GuestLedger(DateTime date, string statusList)
+        {        
+            string trimmed = statusList.Trim('\''); 
+            string formattedStatus = $"{trimmed.Replace("'", "'")}";
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Date", date),
+                new SqlParameter("@Status", formattedStatus),
+            };
+            return DataTableHelper.getTableData("spRptGuestLedger", param);
+        }
+        public DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@RoomTypeID", roomTypeID)
+            };
+
+            return DataTableHelper.getTableData("spRptOccupancyByPerson", param);
+        }
+
+
+
+
+
+
+
 
     }
 

@@ -54,6 +54,8 @@ namespace Report.Services.Interfaces
         DataTable CancellationJournal(DateTime fromDate, DateTime toDate, string transactionCodeList);
         DataTable TrialBalance(DateTime dtpDate, string currency);
         DataTable ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance, int fixRate, int package, int dcReason, string sort, int showFixCharge, int showAlerts);
+        DataTable GuestLedger(DateTime date, string statusList);
+        DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID);
 
 
     }

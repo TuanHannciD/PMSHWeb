@@ -11,6 +11,7 @@ using BaseBusiness.Model;
 using BaseBusiness.util;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Import.Doc;
+using DevExpress.XtraRichEdit.Import.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -1814,8 +1815,70 @@ namespace Report.Controllers
                 return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
             }
         }
+        [HttpGet]
+        public IActionResult GuestLedger(DateTime date, string statusList)
+        {
+            try
+            {
+                var data = _iReportService.GuestLedger(date, statusList);
 
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  Reservation = !string.IsNullOrEmpty(d["Reservation"].ToString()) ? d["Reservation"] : "",
+                                  LastName = !string.IsNullOrEmpty(d["LastName"].ToString()) ? d["LastName"] : "",
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  FolioID = !string.IsNullOrEmpty(d["FolioID"].ToString()) ? d["FolioID"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                     
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        public IActionResult OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID)
+        {
+            try
+            {
+                DataTable dt = _iReportService.OccupancybyPerson(fromDate, toDate, roomTypeID);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  DayOfWeek = !string.IsNullOrEmpty(d["DayOfWeek"].ToString()) ? d["DayOfWeek"] : "",
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  VacRo = !string.IsNullOrEmpty(d["VacRo"].ToString()) ? d["VacRo"] : "",
+                                  ResRo = !string.IsNullOrEmpty(d["ResRo"].ToString()) ? d["ResRo"] : "",
+                                  IndPax = !string.IsNullOrEmpty(d["IndPax"].ToString()) ? d["IndPax"] : "",
+                                  GrpPax = !string.IsNullOrEmpty(d["GrpPax"].ToString()) ? d["GrpPax"] : "",
+                                  TotalPax1 = !string.IsNullOrEmpty(d["TotalPax1"].ToString()) ? d["TotalPax1"] : "",
+                                  ArrPax = !string.IsNullOrEmpty(d["ArrPax"].ToString()) ? d["ArrPax"] : "",
+                                  DepPax = !string.IsNullOrEmpty(d["DepPax"].ToString()) ? d["DepPax"] : "",
+                                  WaitPax = !string.IsNullOrEmpty(d["WaitPax"].ToString()) ? d["WaitPax"] : "",
+                                  OOORo = !string.IsNullOrEmpty(d["OOORo"].ToString()) ? d["OOORo"] : "",
+                                  TotalPax2 = !string.IsNullOrEmpty(d["TotalPax2"].ToString()) ? d["TotalPax2"] : "",
+                                  Phantram = !string.IsNullOrEmpty(d["%"].ToString()) ? d["%"] : "",
+                                  AccomOrPerson = !string.IsNullOrEmpty(d["Accom/Person"].ToString()) ? d["Accom/Person"] : "",
+                                  Accommodation = !string.IsNullOrEmpty(d["Accommodation"].ToString()) ? d["Accommodation"] : "",
+                                  FAndB = !string.IsNullOrEmpty(d["F&B"].ToString()) ? d["F&B"] : "",
+                                  Total = !string.IsNullOrEmpty(d["Total"].ToString()) ? d["Total"] : "",
 
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
 
 
         [HttpGet]
@@ -1841,15 +1904,12 @@ namespace Report.Controllers
                                   ReservationStatus = !string.IsNullOrEmpty(d["ReservationStatus"].ToString()) ? d["ReservationStatus"] : "",
                                   Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
                                   Agent = !string.IsNullOrEmpty(d["Agent"].ToString()) ? d["Agent"] :"",
-
                                   BusinessBlockCode = !string.IsNullOrEmpty(d["BusinessBlockCode"].ToString()) ? d["BusinessBlockCode"] : "",
                                   ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
-
                                   ETA = !string.IsNullOrEmpty(d["ETA"].ToString()) ? d["ETA"] : "",
                                   ETD = !string.IsNullOrEmpty(d["ETD"].ToString()) ? d["ETD"] : "",
                                   DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
                                   RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
-
                                   NoOfAdult = !string.IsNullOrEmpty(d["NoOfAdult"].ToString()) ? d["NoOfAdult"] : "",
                                   NoOfChild = !string.IsNullOrEmpty(d["NoOfChild"].ToString()) ? d["NoOfChild"] : "",
                                   NoOfChild1 = !string.IsNullOrEmpty(d["NoOfChild1"].ToString()) ? d["NoOfChild1"] : "",
@@ -2161,8 +2221,8 @@ namespace Report.Controllers
                 case "RevenueByReport":
                 case "ReservationbyCompany":
                 case "RoomOccupancy":
-                case "RoomMoves":
-
+                case "RoomMoves":            
+                case "OccupancyByPerson":
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":
