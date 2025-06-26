@@ -128,7 +128,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/NationalStatisticsData',
@@ -217,7 +217,7 @@
     function initializeRoomOccupancyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "national", caption: "National", width:columnWidth},            
              { dataField: "zone1", caption: "1", width: columnWidth - 100, dataType: "number", format: "#,##0" },

@@ -104,7 +104,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/PostingJournalInvoicing',
@@ -187,7 +187,7 @@
        function initializeRoomOccupancyGrid(data) {
         const columnWidth = 150;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                 { dataField: "room", caption: "Room", width: columnWidth - 50 },
                 { dataField: "folioNo", caption: "FolioNo", width: columnWidth - 40 },

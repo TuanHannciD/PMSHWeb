@@ -189,7 +189,7 @@
 
 
     });
-             $("#btnPrint").click(function () {
+             $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
 
         // Xử lý sortOrder

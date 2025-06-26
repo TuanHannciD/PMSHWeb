@@ -128,7 +128,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/AlertsData',
@@ -159,7 +159,7 @@
     function initializeBlacklistReportGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
         { dataField: "confirmationNo", caption: "Conf.No",width: columnWidth-60 },
         { dataField: "roomNo", caption: "Room No",  width: columnWidth-80  },

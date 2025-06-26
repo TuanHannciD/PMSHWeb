@@ -157,7 +157,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/ReveunueByData',
@@ -191,7 +191,7 @@
     function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "folioID", caption: "Folio No", width: columnWidth-70 },
             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-80 },

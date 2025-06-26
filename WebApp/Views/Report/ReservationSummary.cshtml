@@ -164,7 +164,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/ReservationSummaryData',
@@ -283,7 +283,7 @@
     function initializReservationSummaryGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "rsvSummaryDate", caption: "Date", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy"},
             { dataField: "weekDate", caption: "Week Date", width: columnWidth-80 },

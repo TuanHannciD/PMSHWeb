@@ -120,7 +120,7 @@
 
 
     });
-         $("#btnPrint").click(function () {
+         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
                 url: '/Report/FreeUpgradeReportData',
@@ -150,7 +150,7 @@
            function initializeFreeUpgradeReportGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "confirmationNo", caption: "Conf.", width: columnWidth-100 },
                    { dataField: "roomNo", caption: "Ro.No", width: columnWidth -50},

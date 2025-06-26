@@ -57,6 +57,6 @@ namespace Report.Services.Interfaces
         DataTable GuestLedger(DateTime date, string statusList);
         DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID);
 
-
+        DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked);
     }
 }

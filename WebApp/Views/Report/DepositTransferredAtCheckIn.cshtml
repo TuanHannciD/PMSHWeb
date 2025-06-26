@@ -81,7 +81,7 @@
     });
 
 
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/DepositTransferredAtCheckIn',
@@ -104,7 +104,7 @@
 
     function initializeDepositGrid(data) {
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                 { dataField: "name", caption: "Name", width: 200 },
                 { dataField: "roomNo", caption: "Room No", width: 100 },

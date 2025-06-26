@@ -1060,6 +1060,70 @@ namespace Report.Controllers
             //     return PartialView("_ReportViewerPartial", report);
         }
 
+
+        [HttpGet]
+        public IActionResult ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype,string pseudo,string chkviponly,string individual,string blockcode,string preblocked)
+        {
+            roomClass = roomClass ?? "";
+            roomtype = roomtype ?? "";
+            pseudo = pseudo ?? "";
+            chkviponly = chkviponly ?? "";
+            individual = individual ?? "";
+            blockcode = blockcode ?? "";
+            preblocked = preblocked ?? "";
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.ReservationPreblockedyData(fromDate, toDate, roomClass, roomtype, pseudo, chkviponly, individual, blockcode, preblocked);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  VIP = !string.IsNullOrEmpty(d["VIP"].ToString()) ? d["VIP"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+
+                                  ETA = !string.IsNullOrEmpty(d["ETA"].ToString()) ? d["ETA"] : "",
+                                  ETD = !string.IsNullOrEmpty(d["ETD"].ToString()) ? d["ETD"] : "",
+
+                                  NoOfAdult = !string.IsNullOrEmpty(d["NoOfAdult"].ToString()) ? d["NoOfAdult"] : "",
+                                  NoOfChild = !string.IsNullOrEmpty(d["NoOfChild"].ToString()) ? d["NoOfChild"] : "",
+                                  NoOfChild1 = !string.IsNullOrEmpty(d["NoOfChild1"].ToString()) ? d["NoOfChild1"] : "",
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  NoOfNight = !string.IsNullOrEmpty(d["NoOfNight"].ToString()) ? d["NoOfNight"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+
+
+                                  HKStatusID = !string.IsNullOrEmpty(d["HKStatusID"].ToString()) ? d["HKStatusID"] : "",
+                                  FOStatus = !string.IsNullOrEmpty(d["FOStatus"].ToString()) ? d["FOStatus"] : "",
+
+                                  Rate = !string.IsNullOrEmpty(d["Rate"].ToString()) ? d["Rate"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  DepositReceivedMaster = !string.IsNullOrEmpty(d["DepositReceivedMaster"].ToString()) ? d["DepositReceivedMaster"] : "",
+                                  DepositRsqMaster = !string.IsNullOrEmpty(d["DepositRsqMaster"].ToString()) ? d["DepositRsqMaster"] : "",
+                                  ResType = !string.IsNullOrEmpty(d["ResType"].ToString()) ? d["ResType"] : "",
+
+                                  Company = !string.IsNullOrEmpty(d["Company"].ToString()) ? d["Company"] : "",
+                                  Agent = !string.IsNullOrEmpty(d["Agent"].ToString()) ? d["Agent"] : "",
+                                  Source = !string.IsNullOrEmpty(d["Source"].ToString()) ? d["Source"] : "",
+                                  BusinessBlockCode = !string.IsNullOrEmpty(d["BusinessBlockCode"].ToString()) ? d["BusinessBlockCode"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
         [HttpGet]
         public IActionResult ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType,string zone,string viewBy,string market)
         {
@@ -1921,6 +1985,10 @@ namespace Report.Controllers
                                   RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
                                   Rate = !string.IsNullOrEmpty(d["Rate"].ToString()) ? d["Rate"] : "",
                                   CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+
+                                  Comment = !string.IsNullOrEmpty(d["Comment"].ToString()) ? d["Comment"] : "",
+                                  ItemInventory = !string.IsNullOrEmpty(d["ItemInventory"].ToString()) ? d["ItemInventory"] : "",
+                                  Specials = !string.IsNullOrEmpty(d["Specials"].ToString()) ? d["Specials"] : "",
                               }).ToList();
 
                 return Json(result);
@@ -2221,8 +2289,8 @@ namespace Report.Controllers
                 case "RevenueByReport":
                 case "ReservationbyCompany":
                 case "RoomOccupancy":
-                case "RoomMoves":            
-                case "OccupancyByPerson":
+                case "RoomMoves":
+
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":

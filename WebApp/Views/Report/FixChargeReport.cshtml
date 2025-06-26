@@ -149,7 +149,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         var statusValues = $("input[name='includeOptions']:checked")
         .map(function () {
@@ -185,7 +185,7 @@
     function initializFixChargeReportGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "confNo", caption: "Conf.No", width:columnWidth-80 },
             { dataField: "roomNo", caption: "R.No", width: columnWidth-60},

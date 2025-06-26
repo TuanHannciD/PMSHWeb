@@ -110,7 +110,7 @@
 
 
         });
-        $("#btnPrint").click(function () {
+        $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
                 url: '/Report/RevenueSummaryData',
@@ -189,7 +189,7 @@
         function initializeRevenueSummaryGrid(data) {
             const columnWidth = 180;
             $("#gridContainer").dxDataGrid({
-                dataSource: data,
+        dataSource: data, allowColumnResizing: true,
                 columns: [
                    { dataField: "subGroupDescription", caption: "", width: columnWidth },
                         { dataField: "totalVND", caption: "VND", width:columnWidth, dataType: "number", format: "#,##0" },

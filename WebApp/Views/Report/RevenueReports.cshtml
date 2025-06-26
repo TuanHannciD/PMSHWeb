@@ -72,56 +72,49 @@
 </div>
 
 
+<<<<<<< HEAD
+@section Scripts {
+=======
+>>>>>>> b4d04d7a727099f06b1b641d5a5740b10c36ecb1
+    <script>
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
-
-<script>
-    function formatDate(date) {
-        let year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
-    $(document).ready(function () {
-        const today = new Date();
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        $('#fromDate').val(formatDate(firstDayOfMonth));
-
-        $("#btnPrint").click(function () {
-            $("#loadingSpinner").show();
+        $(document).ready(function () {
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            $('#fromDate').val(formatDate(firstDayOfMonth));
+<<<<<<< HEAD
+           }
+    $("#btnPrint").click(function () {
+        $("#loadingSpinner").show();
+=======
             document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
 
-            $.ajax({
-                url: '/Report/RevenueReports',
-                type: 'GET',
-                data: {
-                    fromDate: $("#fromDate").val(),
-                    type: $("input[name='reportType']:checked").val()
-                },
-                success: function (result) {
-                    const data = prepareRevenueData(result);
-                    initializeGrid(data);
-                    $("#loadingSpinner").hide();
-                },
-                error: function () {
-                    alert("Không thể tải báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
-        });
+            $("#btnPrint").click(function () {
+                $("#loadingSpinner").show();
+>>>>>>> b4d04d7a727099f06b1b641d5a5740b10c36ecb1
 
-        $("#btnExportExcel").click(function () {
-            const grid = $("#gridContainer").dxDataGrid("instance");
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet("Revenue Report");
-
-            DevExpress.excelExporter.exportDataGrid({
-                component: grid,
-                worksheet: worksheet,
-                autoFilterEnabled: true
-            }).then(function () {
-                workbook.xlsx.writeBuffer().then(function (buffer) {
-                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "RevenueReport.xlsx");
+                $.ajax({
+                    url: '/Report/RevenueReports',
+                    type: 'GET',
+                    data: {
+                        fromDate: $("#fromDate").val(),
+                        type: $("input[name='reportType']:checked").val()
+                    },
+                    success: function (result) {
+                        const data = prepareRevenueData(result);
+                        initializeGrid(data);
+                        $("#loadingSpinner").hide();
+                    },
+                    error: function () {
+                        alert("Không thể tải báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
                 });
             });
         });
@@ -153,6 +146,12 @@
             if (!grouped[key]) grouped[key] = [];
             grouped[key].push(item);
         });
+<<<<<<< HEAD
+    });
+</script>
+}
+=======
+=======
 
         Object.entries(grouped).forEach(([groupName, items]) => {
             const groupHeader = {
@@ -208,50 +207,56 @@
     function sum(arr, field) {
         return arr.reduce((total, item) => total + (item[field] || 0), 0);
     }
-
-    function initializeGrid(data) {
-        $("#gridContainer").dxDataGrid({
-            dataSource: data,
-            showBorders: true,
-            rowAlternationEnabled: true,
-            columns: [
-                { dataField: "transactionCode", caption: "Code", width: 150 },
-                { dataField: "transactionName", caption: "Description", width: 250 },
-                { dataField: "currencyID", caption: "Curr", width: 80 },
-                { dataField: "subGroupDescription", caption: "Sub Group", width: 160 },
-                { dataField: "amountBeForeTax", caption: "AmountBeforeTax", format: "#,##0", width: 160 },
-                { dataField: "amountGross", caption: "AmountGross", format: "#,##0", width: 160 },
-                { dataField: "amountBeforeTaxM", caption: "AmountBeforeTaxM", format: "#,##0", width: 160 },
-                { dataField: "amountGrossM", caption: "AmountGrossM", format: "#,##0", width: 160 },
-                { dataField: "amountBeforeTaxY", caption: "AmountBeforeTaxY", format: "#,##0", width: 160 },
-                { dataField: "amountGrossY", caption: "AmountGrossY", format: "#,##0", width: 160 }
-            ],
-            onRowPrepared: function (e) {
-                if (e.rowType === "data") {
-                    if (e.data?.cssClass === "group-header") {
-                        e.rowElement.css({ 'font-weight': 'bold', 'background-color': '#e3f2fd' });
-                    } else if (e.data?.cssClass === "subtotal") {
-                        e.rowElement.css({ 'font-weight': 'bold', 'background-color': '#f1f8e9' });
-                    } else if (e.data?.cssClass === "grandtotal") {
-                        e.rowElement.css({ 'font-weight': 'bold', 'background-color': '#ffe0b2' });
+        function initializeGrid(data) {
+            $("#gridContainer").dxDataGrid({
+                dataSource: data,
+                showBorders: true,
+                rowAlternationEnabled: true,
+                columns: [
+                    { dataField: "transactionCode", caption: "Code", width: 150 },
+                    { dataField: "transactionName", caption: "Description", width: 250 },
+                    { dataField: "currencyID", caption: "Curr", width: 80 },
+                    { dataField: "subGroupDescription", caption: "Sub Group", width: 160 },
+                    { dataField: "amountBeForeTax", caption: "AmountBeforeTax", format: "#,##0", width: 160 },
+                    { dataField: "amountGross", caption: "AmountGross", format: "#,##0", width: 160 },
+                    { dataField: "amountBeforeTaxM", caption: "AmountBeforeTaxM", format: "#,##0", width: 160 },
+                    { dataField: "amountGrossM", caption: "AmountGrossM", format: "#,##0", width: 160 },
+                    { dataField: "amountBeforeTaxY", caption: "AmountBeforeTaxY", format: "#,##0", width: 160 },
+                    { dataField: "amountGrossY", caption: "AmountGrossY", format: "#,##0", width: 160 }
+                ],
+                onRowPrepared: function (e) {
+                    if (e.rowType === "data") {
+                        if (e.data?.cssClass === "group-header") {
+                            e.rowElement.css({
+                                'font-weight': 'bold',
+                                'background-color': '#e3f2fd'
+                            });
+                        } else if (e.data?.cssClass === "subtotal") {
+                            e.rowElement.css({
+                                'font-weight': 'bold',
+                                'background-color': '#f1f8e9'
+                            });
+                        } else if (e.data?.cssClass === "grandtotal") {
+                            e.rowElement.css({
+                                'font-weight': 'bold',
+                                'background-color': '#ffe0b2'
+                            });
+                        }
                     }
-                }
-            },
-            paging: { pageSize: 25 },
-            pager: {
-                visible: true,
-                allowedPageSizes: [25, 50, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true,
-            },
-            filterRow: { visible: true, applyFilter: "auto" },
-            headerFilter: { visible: true }
-        });
-    }
-</script>
-
-
+                },
+                paging: { pageSize: 25 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [25, 50, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true,
+                },
+                filterRow: { visible: true, applyFilter: "auto" },
+                headerFilter: { visible: true }
+            });
+        }
+        }
 
 
         

@@ -113,7 +113,7 @@
 
 
     });
-         $("#btnPrint").click(function () {
+         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
                  url: '/Report/GuestStayOver',
@@ -141,7 +141,7 @@
         var columnWidth = 120; // Độ rộng muốn đặt cho tất cả các cột
 
         $("#gridContainer").dxDataGrid({
-            dataSource: data,  // Dữ liệu từ server
+    dataSource: data, allowColumnResizing: true,  // Dữ liệu từ server
             columns: [
                 { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth },
                 { dataField: "lastname", caption: "Guest", width: columnWidth },

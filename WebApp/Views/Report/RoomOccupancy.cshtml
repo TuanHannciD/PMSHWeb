@@ -113,7 +113,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/RoomOccupancyReport',
@@ -195,7 +195,7 @@
     function initializeRoomOccupancyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "fair", caption: "Fair", width:columnWidth-100},
                  { dataField: "dow", caption: "Dow", width:columnWidth-50},

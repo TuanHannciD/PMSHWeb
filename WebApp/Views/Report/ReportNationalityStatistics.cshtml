@@ -109,7 +109,7 @@
 
 
     });
-            $("#btnPrint").click(function () {
+            $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
 
         // Xử lý sortOrder
@@ -182,7 +182,7 @@
           var columnWidth = 120; // Độ rộng muốn đặt cho tất cả các cột
 
           $("#gridContainer").dxDataGrid({
-              dataSource: data,  // Dữ liệu từ server
+      dataSource: data, allowColumnResizing: true,  // Dữ liệu từ server
               columns: [
                   { dataField: "nationality", caption: "Code", width: columnWidth },
                   { dataField: "description", caption: "Description", width: columnWidth +160},

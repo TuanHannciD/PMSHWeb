@@ -136,7 +136,7 @@
     $(".include-option").on("change", function () {
         $(".include-option").not(this).prop("checked", false);
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/RatecodeReportsData',
@@ -244,7 +244,7 @@
         }
 
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: columns,
             paging: { pageSize: 25 },
             scrolling: {

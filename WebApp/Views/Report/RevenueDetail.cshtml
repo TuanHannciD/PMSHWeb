@@ -110,7 +110,7 @@ tr.custom > td {
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/RevenueDetailData',
@@ -182,7 +182,7 @@ tr.custom > td {
     function initializeRevenueDetailGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "description", caption: "Description", width: columnWidth },
             { dataField: "totalUSD", caption: "Amount", width:columnWidth-40, dataType: "number", format: "#,##0" },

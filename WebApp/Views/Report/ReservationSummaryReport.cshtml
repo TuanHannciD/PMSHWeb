@@ -100,7 +100,7 @@
 
  
     });
-         $("#btnPrint").click(function () {
+       $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
                  url: '/Report/ReservationSummary',
@@ -128,7 +128,7 @@
           var columnWidth = 400; // Độ rộng muốn đặt cho tất cả các cột
 
           $("#gridContainer").dxDataGrid({
-              dataSource: data,  // Dữ liệu từ server
+      dataSource: data, allowColumnResizing: true,  // Dữ liệu từ server
               columns: [
                   { dataField: "byBookingCode", caption: "By Booking Code", width: columnWidth , dataType: "number", format: "#,##0"},
                   { dataField: "byRoom", caption: "By Room", width: columnWidth, dataType: "number", format: "#,##0" },
