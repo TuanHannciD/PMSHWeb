@@ -297,7 +297,7 @@
     function initializProductActivityGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "guestNo", caption: "Acc.No", width: columnWidth-40 },
             { dataField: "guestName", caption: "Account", width: columnWidth },

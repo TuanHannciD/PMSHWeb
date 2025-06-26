@@ -204,7 +204,7 @@
     function initializSalesinChargeReportsForm1Grid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "saleInCharge", caption: "S.In Charge", width: columnWidth-40},
             { dataField: "saleInChargeGroup", caption: "S.In Charge Group", width: columnWidth-80 },

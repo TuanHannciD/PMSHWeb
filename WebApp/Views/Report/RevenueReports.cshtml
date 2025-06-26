@@ -72,10 +72,9 @@
 </div>
 
 
-<<<<<<< HEAD
 @section Scripts {
-=======
->>>>>>> b4d04d7a727099f06b1b641d5a5740b10c36ecb1
+
+
     <script>
         function formatDate(date) {
             let year = date.getFullYear();
@@ -88,16 +87,13 @@
             const today = new Date();
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             $('#fromDate').val(formatDate(firstDayOfMonth));
-<<<<<<< HEAD
+
            }
-    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
-        $("#loadingSpinner").show();
-=======
-            document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+
 
             $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
                 $("#loadingSpinner").show();
->>>>>>> b4d04d7a727099f06b1b641d5a5740b10c36ecb1
+
 
                 $.ajax({
                     url: '/Report/RevenueReports',
@@ -129,11 +125,10 @@
             if (!grouped[key]) grouped[key] = [];
             grouped[key].push(item);
         });
-<<<<<<< HEAD
+
     });
 </script>
-}
-=======
+
 
         // Tạo Subtotal cho từng nhóm
         Object.entries(grouped).forEach(([groupName, items]) => {
@@ -200,7 +195,7 @@
 
         function initializeGrid(data) {
             $("#gridContainer").dxDataGrid({
-                dataSource: data,
+        dataSource: data, allowColumnResizing: true,
                 showBorders: true,
                 rowAlternationEnabled: true,
                 columns: [

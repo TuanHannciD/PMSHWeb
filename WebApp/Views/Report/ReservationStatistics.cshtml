@@ -119,7 +119,7 @@
     function initializeReservationStatisticsGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "marketCode", caption: "Market Code", width: columnWidth -70},
             { dataField: "noOfRooms", caption: "No.Of Rooms", width: columnWidth-60, dataType: "number", format: "#,##0" },

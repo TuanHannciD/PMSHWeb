@@ -279,7 +279,7 @@
     function initializeReservationbyCompanyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "roomNo", caption: "RoomNo", width: columnWidth -70},
 

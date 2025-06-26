@@ -191,7 +191,7 @@
     function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "folioID", caption: "Folio No", width: columnWidth-70 },
             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-80 },

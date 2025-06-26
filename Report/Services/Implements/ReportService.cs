@@ -191,6 +191,27 @@ namespace Report.Services.Implements
             return myTable;
         }
 
+        public DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomClass", roomClass),
+                new SqlParameter("@RoomType", roomtype),
+                             new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+
+                               new SqlParameter("@PseudoRooms", pseudo),
+                new SqlParameter("@VIPOnly", chkviponly),
+                             new SqlParameter("@Individual", individual),
+                new SqlParameter("@BlockCode", blockcode),
+                   new SqlParameter("@PreblockedOnly", preblocked),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptReservationPreblocked", param);
+            return myTable;
+        }
+
+
         public DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode)
         {
             SqlParameter[] param = new SqlParameter[]

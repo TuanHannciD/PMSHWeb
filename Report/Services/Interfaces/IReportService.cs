@@ -55,6 +55,6 @@ namespace Report.Services.Interfaces
         DataTable TrialBalance(DateTime dtpDate, string currency);
         DataTable ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance, int fixRate, int package, int dcReason, string sort, int showFixCharge, int showAlerts);
 
-
+        DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked);
     }
 }

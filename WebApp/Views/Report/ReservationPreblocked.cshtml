@@ -4,7 +4,7 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var zoneList = ViewBag.ZoneList;
+    var roomclassList = ViewBag.RoomClassList;
     var rtList = ViewBag.RoomTypeList;
 }
 
@@ -49,7 +49,6 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <!-- From Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
@@ -60,60 +59,64 @@
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <div class="d-flex flex-column">
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Class:</label>
+            <select id="roomClass" name="roomClass" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in roomclassList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Type:</label>
+            <select id="roomtype" name="roomtype" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in rtList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
+        </div>
+
+        <div class="d-flex flex-column me-3">
 
             <div class="d-flex flex-wrap gap-2">
-                <label class="mb-1">Profile Type</label>
+                <label class="mb-1">Include</label>
                 <!-- Row 1 -->
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="arrival" name="includeOptions" value="1" checked>
-                    <label class="form-check-label" for="arrival">Travel Agents</label>
+                    <input class="form-check-input" type="checkbox" id="pseudo" name="includeOptions" value="1">
+                    <label class="form-check-label" for="reservation">Pseudo Rooms</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="2">
-                    <label class="form-check-label" for="cancel">Company</label>
+                    <input class="form-check-input" type="checkbox" id="chkviponly" name="includeOptions" value="1">
+                    <label class="form-check-label" for="chkviponly">Vip Only</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="0">
-                    <label class="form-check-label" for="cancel">Profile Ind</label>
+                    <input class="form-check-input" type="checkbox" id="individual" name="includeOptions" value="1">
+                    <label class="form-check-label" for="checkedIn">Individual</label>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="blockcode" name="includeOptions" value="1">
+                    <label class="form-check-label" for="cancellation">Block Code</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="3">
-                    <label class="form-check-label" for="cancel">Individuals</label>
+                    <input class="form-check-input" type="checkbox" id="preblocked" name="includeOptions" value="1">
+                    <label class="form-check-label" for="waitList">Preblocked Only</label>
                 </div>
+
             </div>
         </div>
 
 
 
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">View By:</label>
-            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
 
-                <option value="VND">VND</option>
-                <option value="USD">USD</option>
-            </select>
-        </div>
 
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Sorting:</label>
-            <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
-                <option value="0">Ascending</option>
-                <option value="1">Descending</option>
-                <option value="0">Account Name</option>
-                <option value="1">Total Turnover</option>
-                <option value="0">Room Sales</option>
-                <option value="0">F&B Turnover</option>
-                <option value="0">Even Turnover</option>
-                <option value="1">Micell.Turnover</option>
-                <option value="1">Room Night</option>
-                <option value="1">Bed Night</option>
-            </select>
-        </div>
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Room Night ≥</label>
-            <input style="width: 130px;" type="text" id="roomNight" name="roomNight" class="form-control form-control-sm w-auto" />
-        </div>
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -123,7 +126,7 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -138,6 +141,7 @@
     }
 
     $(document).ready(function () {
+    
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -158,23 +162,21 @@
 
 
     });
-
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
-
-            var statusValues = $("input[name='includeOptions']:checked")
-        .map(function () {
-            return $(this).val();
-        }).get().join(',');
-
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/TAProductionReportData',
+            url: '/Report/ReservationPreblockedyData',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
-                   type: statusValues,
-                   currency: $("#viewBy").val(),
+                               fromDate: $("#fromDate").val(),
+                     toDate: $("#toDate").val(),
+                  roomClass: $("#roomClass").val(),
+                   roomtype: $("#roomtype").val(),
+                       pseudo: $("#pseudo").is(":checked") ? "1" : "",
+    chkviponly: $("#chkviponly").is(":checked") ? "1" : "",
+    individual: $("#individual").is(":checked") ? "1" : "",
+    blockcode: $("#blockcode").is(":checked") ? "1" : "",
+    preblocked: $("#preblocked").is(":checked") ? "1" : ""
             },
             traditional: true,
               crossDomain: false,
@@ -183,7 +185,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializTAProductionReportGrid(result);
+                initializReservationPreblockedyGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -193,16 +195,56 @@
         });
     });
 
-    function initializTAProductionReportGrid(data) {
+
+
+    function initializReservationPreblockedyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
+            allowColumnResizing: true,
+          columnResizingMode: "widget",
             columns: [
-               { dataField: "guestNo", caption: "Acc.No", width: columnWidth-50 },
-            { dataField: "guestName", caption: "Account", width: columnWidth+40 },
-            { dataField: "roomSales", caption: "Room Sales", width: columnWidth-70, dataType: "number", format: "#,##0" },,
-            { dataField: "roomNight", caption: "RN", width: columnWidth-100 , dataType: "number", format: "#,##0" },
-            { dataField: "rsvPersonInCharge", caption: "P.In Charge", width: columnWidth-70},
+               { dataField: "roomNo", caption: "Room No", width: columnWidth-70},
+            { dataField: "name", caption: "Name", width: columnWidth},
+                        { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
+                     
+                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
+            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+
+
+            { dataField: "noOfAdult", caption: "Adl.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "noOfChild", caption: "Chl.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+              { dataField: "noOfChild1", caption: "Chl1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+             { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+             { dataField: "noOfNight", caption: "Nts.", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+             { dataField: "hKStatusID", caption: "HK Status", width: columnWidth-70},
+
+               { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
+
+            { dataField: "fOStatus", caption: "Status", width: columnWidth-70},
+                { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+
+                    { dataField: "rate", caption: "Rate Amount", width:columnWidth-50,dataType: "number",
+    format: {
+        type: "fixedPoint",
+        precision: 2
+    },
+    customizeText: function (e) {
+        return `${e.valueText}`;
+    } },
+                                 { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
+
+                                    { dataField: "", caption: "C/H",  width:columnWidth-70 },
+                  { dataField: "depositReceivedMaster", caption: "Deposit Curr.Recelved ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
+                      { dataField: "depositRsqMaster", caption: "Deposit Curr.Requested ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
+
+                                     { dataField: "resType", caption: "Res Type", width:columnWidth-70 },
+            { dataField: "agent", caption: "Agent", width: columnWidth},
+            { dataField: "company", caption: "Company", width: columnWidth},
+             { dataField: "source", caption: "Source", width: columnWidth},
+            { dataField: "businessBlockCode", caption: "Block Code", width: columnWidth-70 },
             ],
             paging: { pageSize: 25 },
       scrolling:  {
@@ -216,18 +258,7 @@
                 showPageSizeSelector: true,
                 showInfo: true,
                 showNavigationButtons: true,
-            },       summary: {
-            totalItems: [
-                {
-                    column: "guestNo",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                 { column: "roomSales", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "roomNight", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-
-            ]
-        },
+            },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
                 filterRow: {
          visible: true,
@@ -235,9 +266,38 @@
     },
     headerFilter: {
         visible: true
+        },summary: {
+        totalItems: [
+               {
+                    column: "roomNo", // hoặc bất kỳ cột nào bạn muốn đếm
+                    summaryType: "count",
+                    displayFormat: "Total Room: {0}", // thêm {0} để hiển thị số lượng
+                    valueFormat: "#,##0" // tuỳ chọn: định dạng số nếu cần
+                },
+
+            {
+                column: "noOfAdult",
+                summaryType: "sum",
+                displayFormat: "Total: {0}",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "noOfChild",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "noOfChild1",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            }
+        ]
     },
+
             showBorders: true,
-                    onRowPrepared: function (e) {
+                            onRowPrepared: function (e) {
         if (e.rowType === "data" && e.data?.cssClass) {
             e.rowElement.addClass(e.data.cssClass);
         }

@@ -152,7 +152,7 @@
         </div>
 
 
-        <div style="display:none!important" class="d-flex align-items-center me-3">
+        <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Sort Order:</label>
             <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
 
@@ -277,22 +277,59 @@
     function initializArrivalsandCheckInTodayGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "roomNo", caption: "Room No", width: columnWidth-70},
             { dataField: "name", caption: "Name", width: columnWidth},
-            { dataField: "Stay On", caption: "Stay On", width: columnWidth +50},
+             { dataField: "roomClassCode", caption: "Room Class",dataType: "number", format: "#,##0"  },
+              {
+                caption: "Stay On",
+                width: columnWidth + 50,
+                    cssClass: "wrap-cell",
+                cellTemplate: function(container, options) {
+                    const itemInventory = options.data.itemInventory;
+                    const specials = options.data.specials;
+                    const roomClassCode = options.data.roomClassCode ?? "";
+                    const comments = options.data.comment;
+
+                    // Kiểm tra trạng thái checkbox
+                    const showComments = $("#commnets").is(":checked");
+
+                    // Dòng 1: ItemInventory và Specials
+                    let topLineParts = [];
+                    if (itemInventory) {
+                        topLineParts.push(`<b>ItemInventory:</b> ${itemInventory}`);
+                    }
+                    if (specials) {
+                        topLineParts.push(`<b>Specials:</b> ${specials}`);
+                    }
+                    const topLine = topLineParts.length > 0 ? `<div>${topLineParts.join(" | ")}</div>` : "";
+
+                    // Dòng 2: RoomClassCode
+                    const roomClassLine = `<div>${roomClassCode}</div>`;
+
+                    // Dòng 3: Comments nếu được chọn
+                    let commentsLine = "";
+                    if (showComments && comments) {
+                        commentsLine = `<div><b>Res.Comments:</b> ${comments}</div>`;
+                    }
+
+                    // Gắn vào container
+                    container.html(`${topLine}${roomClassLine}${commentsLine}`);
+                }
+            },
+
             { dataField: "reservationStatus", caption: "Status", width: columnWidth-70},
             { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
             { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
             { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
 
                                { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eTA", caption: "ETA", width: columnWidth-70 },
+                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "eTD", caption: "ETD", width: columnWidth-70 },
+               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
 
-               { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
+               { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
             { dataField: "noOfAdult", caption: "A.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
             { dataField: "noOfChild", caption: "C.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
               { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
@@ -319,6 +356,19 @@
                 showNavigationButtons: true,
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                summary: {
+        totalItems: [
+                     { column: "name",summaryType: "custom", displayFormat: "Total Arrived Room" },
+            { column: "roomClassCode", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+
+            { column: "roomType",summaryType: "custom", displayFormat: "Total" },
+            { column: "noOfAdult", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+            { column: "noOfChild", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+            { column: "noOfChild1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+            { column: "noOfChild2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+            { column: "noOfRoom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        ]
+    },
                 filterRow: {
          visible: true,
         applyFilter: "auto"

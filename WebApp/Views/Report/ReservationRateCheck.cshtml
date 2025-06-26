@@ -280,7 +280,7 @@
     function initializeNoShowReportDataGrid(data) {
         
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                          
                 { dataField: "confirmationNo", caption: "Conf. No.", width: 110 },

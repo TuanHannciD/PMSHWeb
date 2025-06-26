@@ -100,7 +100,7 @@
 
     function initializeDepositGrid(data) {
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                 { dataField: "name", caption: "Name", width: 180 },
                 { dataField: "confirmNo", caption: "Conf.No", width: 100 },

@@ -133,7 +133,7 @@
      function initializeDailyPickupReport(data) {
           const columnWidth = 180;
           $("#gridContainer").dxDataGrid({
-              dataSource: data,
+      dataSource: data, allowColumnResizing: true,
               columns: [
                  { dataField: "no", caption: "No", width: columnWidth-130 },
               { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-100, dataType: "number", format: "#,##0" },

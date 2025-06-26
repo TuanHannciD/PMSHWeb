@@ -134,7 +134,7 @@
     function initializeBookingSourceGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "source", caption: "Source", width: "17%" },
             { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },

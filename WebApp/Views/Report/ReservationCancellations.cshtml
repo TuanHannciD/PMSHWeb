@@ -160,7 +160,7 @@
     function initializeReservationCancellationsGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+    dataSource: data, allowColumnResizing: true,
             columns: [
             { dataField: "name", caption: "Name", width: columnWidth-30  },
             { dataField: "group", caption: "Group", width: columnWidth-80 },
