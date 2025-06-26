@@ -136,7 +136,7 @@
     $(".include-option").on("change", function () {
         $(".include-option").not(this).prop("checked", false);
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/RatecodeReportsData',

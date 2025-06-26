@@ -119,7 +119,7 @@
 
 
     });
-            $("#btnPrint").click(function () {
+            $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
                     let type = 0;
             const isTravelAgentsChecked = $("#profileTravelAgents").is(":checked");

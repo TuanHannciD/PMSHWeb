@@ -235,7 +235,7 @@
         }
     });
 
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         const status = $("#reservationStatusBox").dxTagBox("instance").option("value");
         const requestData = {

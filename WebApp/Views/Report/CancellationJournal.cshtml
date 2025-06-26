@@ -103,7 +103,7 @@
 
     });
            
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/CancellationJournal',

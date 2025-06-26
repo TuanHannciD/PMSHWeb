@@ -64,7 +64,7 @@
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">No Of Room:</label>
+            <label class="me-2 mb-0">Nbr. of Room min:</label>
          
                 <input id="noofRoom" type="text" class="form-control form-control-sm w-auto">
          
@@ -111,7 +111,7 @@
 
 
     });
-         $("#btnPrint").click(function () {
+         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
                  url: '/Report/GroupReservation',
@@ -138,13 +138,16 @@
         });
             function initializeDataGrid(data) {
         var columnWidth = 160; // Độ rộng muốn đặt cho tất cả các cột
+            var minRoom = parseInt($("#noofRoom").val()) || 0;
 
+    // Lọc dữ liệu theo điều kiện totalRoom >= minRoom
+    var filteredData = data.filter(item => (parseInt(item.totalRoom) || 0) >= minRoom);
         $("#gridContainer").dxDataGrid({
-            dataSource: data,  // Dữ liệu từ server
+            dataSource: filteredData,  // Dữ liệu từ server
             columns: [
                 { dataField: "confirmationNo", caption: "Con.No", width: columnWidth-60 },
-                { dataField: "crsNo", caption: "CRSNo", width: columnWidth -60},
-                { dataField: "groupCode", caption: "Group Name", width: columnWidth -50},
+                { dataField: "crsNo", caption: "CRS.No", width: columnWidth -60},
+                { dataField: "groupCode", caption: "Group Name", width: columnWidth -30},
                 { dataField: "reservationTypeCode", caption: "Res. Status", width: columnWidth -30},
                 { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-50  ,dataType: "date",format: "dd/MM/yyyy"},
                 { dataField: "departureDate", caption: "Dep.Date", width: columnWidth -50 ,dataType: "date",format: "dd/MM/yyyy"},
@@ -161,8 +164,8 @@
                        { dataField: "sourceCode", caption: "Source", width: columnWidth -60},
                        { dataField: "reservationDate", caption: "Res.Date", width: columnWidth -50 ,dataType: "date",format: "dd/MM/yyyy"},
                        { dataField: "price", caption: "Price", width: columnWidth -60 , dataType: "number", format: "#,##0"},
-                       { dataField: "amountBeforTax", caption: "A.Before Tax", width: columnWidth -50 , dataType: "number", format: "#,##0"},
-                       { dataField: "amountAfterTax", caption: "A.After Tax", width: columnWidth -50 , dataType: "number", format: "#,##0"},
+                       { dataField: "amountBeforTax", caption: "A.Before Tax", width: columnWidth -30 , dataType: "number", format: "#,##0"},
+                       { dataField: "amountAfterTax", caption: "A.After Tax", width: columnWidth -30 , dataType: "number", format: "#,##0"},
                        { dataField: "currencyID", caption: "Curr", width: columnWidth -60},
                         { dataField: "optionDate", caption: "Option Date", width: columnWidth -50 ,dataType: "date",format: "dd/MM/yyyy"},
                         { dataField: "optionDateDesc", caption: "Option Date Desc", width: columnWidth -50}
@@ -203,7 +206,9 @@
                         { column: "roomNight", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                         { column: "persons", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                         { column: "roomOccupancy", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
-                        { column: "personRoom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" }
+                        { column: "personRoom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
+                              { column: "amountBeforTax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
+                        { column: "amountAfterTax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" }
                     ]
               },
             showBorders: true,

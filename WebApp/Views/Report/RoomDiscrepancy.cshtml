@@ -85,7 +85,7 @@
 
 <script>
 
-        $("#btnPrint").click(function () {
+        $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
 
         const sleep = $("#statusSleep").is(":checked") ? 1 : 0;

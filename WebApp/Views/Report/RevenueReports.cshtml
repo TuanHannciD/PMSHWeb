@@ -90,12 +90,12 @@
             $('#fromDate').val(formatDate(firstDayOfMonth));
 <<<<<<< HEAD
            }
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
 =======
             document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
 
-            $("#btnPrint").click(function () {
+            $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
                 $("#loadingSpinner").show();
 >>>>>>> b4d04d7a727099f06b1b641d5a5740b10c36ecb1
 

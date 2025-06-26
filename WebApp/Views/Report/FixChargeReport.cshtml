@@ -149,7 +149,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         var statusValues = $("input[name='includeOptions']:checked")
         .map(function () {

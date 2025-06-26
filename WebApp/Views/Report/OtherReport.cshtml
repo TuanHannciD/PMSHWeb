@@ -682,31 +682,32 @@
         });
     }
 
-    // ✅ Bắt sự kiện click (chặn nếu đang trong phase tự động)
-    $(document).on('click', '.report-link', function (e) {
-        e.preventDefault();
+        $(document).on('click', '.report-link', function (e) {
+            e.preventDefault();
 
+            $(".report-link").removeClass("active");
+            $(this).addClass("active");
 
-        $(".report-link").removeClass("active");
-        $(this).addClass("active");
+            var reportName = $(this).data('report');
+            var title = $(this).data('title');
 
-        var reportName = $(this).data('report');
-        var title = $(this).data('title');
+            loadReport(reportName, title);
+        });
 
-        loadReport(reportName, title);
-    });
+        // ✅ Load từ URL nếu có ?name=...
+        const urlParams = new URLSearchParams(window.location.search);
+        const reportName = urlParams.get('name');
 
-    // ✅ Load từ URL nếu có ?name=...
-    const urlParams = new URLSearchParams(window.location.search);
-    const reportName = urlParams.get('name');
+        if (reportName) {
+            const $link = $('.report-link[data-report="' + reportName + '"]');
+            const title = $link.data('title') || reportName;
 
-    if (reportName) {
-        const $link = $('.report-link[data-report="' + reportName + '"]');
-        const title = $link.data('title') || reportName;
-
-        $link.addClass("active");
-        loadReport(reportName, title);
-    }
+            // ❗ Chỉ gọi nếu chưa click (chưa có link active)
+            if (!$('.report-link.active').length) {
+                $link.addClass("active");
+                loadReport(reportName, title);
+            }
+        }
 });
 
 

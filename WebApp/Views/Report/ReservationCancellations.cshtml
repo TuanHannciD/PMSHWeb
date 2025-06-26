@@ -128,7 +128,7 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
             let typeDate = $("input[name='includeOptions']:checked").attr("id") === "arrival" ? 0 : 1;
         $.ajax({
