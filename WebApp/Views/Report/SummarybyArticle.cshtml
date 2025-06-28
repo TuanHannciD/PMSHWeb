@@ -1,0 +1,378 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+}
+
+<style>
+    .filter_wrapper {
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+</style>
+
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Show:</label>
+            <select id="show" class="form-control form-control-sm w-auto">
+                <option value="NotDeletedItems">Not Deleted Items</option>
+                <option value="DeletedItems">Deleted Items</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <button id="btnPrint" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;">
+            <i class="fa-solid fa-eye"></i> View
+        </button>
+        <button id="btnExportExcel" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;">
+            <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button id="btnExportPdf" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;">
+            <i class="fas fa-eraser"></i> PDF
+        </button>
+    </div>
+</div>
+
+<div class="mui-card">
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        $('#fromDate').val(formatDate(firstDay));
+        $('#toDate').val(formatDate(lastDay));
+    });
+
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Report/SummarybyArticle',
+            type: 'GET',
+            data: {
+                fromDate: $('#fromDate').val(),
+                toDate: $('#toDate').val(),
+                show: $("#show").val()
+            },
+            headers: {
+                "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+            },
+            success: function (result) {
+                const data = prepareRevenueData(result);
+                initializeDataGrid(data);
+                $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+          function calculateAmount(price, quantity) {
+        return (parseFloat(price) || 0) * (parseFloat(quantity) || 0);
+    }
+
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (parseFloat(item[field]) || 0), 0);
+    }
+
+        function calculateTotalAmount(arr, priceField, quantityField) {
+        return arr.reduce((total, item) => {
+            const price = parseFloat(item[priceField]) || 0;
+            const qty = parseFloat(item[quantityField]) || 0;
+            return total + price * qty;
+        }, 0);
+    }
+
+
+
+        function prepareRevenueData(data) {
+        const grouped = {};
+        const result = [];
+
+        data.forEach(item => {
+            const groupKey = item.transactionGroup || "Unknown";
+            const subGroupKey = item.transactionSubGroup || "Sub Unknown";
+            const codeKey = item.transactionCode || "Code";
+
+            if (!grouped[groupKey]) grouped[groupKey] = {};
+            if (!grouped[groupKey][subGroupKey]) grouped[groupKey][subGroupKey] = {};
+            if (!grouped[groupKey][subGroupKey][codeKey]) grouped[groupKey][subGroupKey][codeKey] = {
+                header: {
+                    transactionCode: codeKey,
+                    articleDescription: item.trnsDescription || item.description || "",
+                    quantity: "",
+                    price: "",
+                    amountBeforeTax: "",
+                    amount: "",
+                    userName: "",
+                    cssClass: "code-header"
+                },
+                details: []
+            };
+
+            //  Custom dòng chi tiết:
+            const detailItem = {
+                ...item,
+                transactionCode: item.articleCode || "", // dùng mã sản phẩm
+                articleDescription: `${subGroupKey} - ${item.articleDescription || item.description || ""}` // thêm nhóm con vào mô tả
+            };
+
+            grouped[groupKey][subGroupKey][codeKey].details.push(detailItem);
+        });
+
+             Object.entries(grouped)
+            .sort(([a], [b]) => {
+                if (a === "Food and Beverage") return -1;
+                if (b === "Food and Beverage") return 1;
+                return a.localeCompare(b);
+            })
+            .forEach(([groupName, subGroups]) => {
+                result.push({
+                    transactionCode: groupName,
+                    articleDescription: "",
+                    quantity: "",
+                    price: "",
+                    amountBeforeTax: "",
+                    amount: "",
+                    userName: "",
+                    cssClass: "group-header"
+                });
+
+
+            Object.entries(subGroups).forEach(([subGroupName, codes]) => {
+                result.push({
+                    transactionCode: subGroupName,
+                    articleDescription: "",
+                    quantity: "",
+                    price: "",
+                    amountBeforeTax: "",
+                    amount: "",
+                    userName: "",
+                    cssClass: "subgroup-header"
+                });
+
+                Object.entries(codes).forEach(([code, codeObj]) => {
+                    result.push({
+                        transactionCode: codeObj.header.transactionCode,
+                        articleDescription: codeObj.header.articleDescription,
+                        quantity: "",
+                        price: "",
+                        amountBeforeTax: "",
+                        amount: "",
+                        userName: "",
+                        cssClass: "code-header"
+                    });
+                        const mergedByArticle = {};
+                        const clean = str => parseFloat((str || "").toString().replace(/,/g, "")) || 0;
+
+                        codeObj.details.forEach(item => {
+                        const key = item.articleCode;
+                        const itemQty = clean(item.quantity);
+                        const itemPrice = clean(item.price);
+                        const itemBeforeTax = clean(item.amountBeforeTax);
+
+                        if (!mergedByArticle[key]) {
+                            mergedByArticle[key] = {
+                                ...item,
+                                quantity: itemQty,
+                                price: itemPrice,
+                                amountBeforeTax: itemBeforeTax,
+                                amount: itemQty * itemPrice
+                            };
+                        } else {
+                            mergedByArticle[key].quantity += itemQty;
+                            mergedByArticle[key].amountBeforeTax += itemBeforeTax;
+                            mergedByArticle[key].amount = mergedByArticle[key].quantity * mergedByArticle[key].price;
+                        }
+                    });
+                        const mergedItems = Object.values(mergedByArticle);
+                         result.push(...mergedItems);
+             
+
+                
+
+                    //  Total theo từng mã
+                        result.push({
+                        transactionCode: `Total (${codeObj.header.articleDescription})`,
+                        articleDescription: "",
+                        quantity: sum(mergedItems, "quantity"),
+                        price: "",
+                        amountBeforeTax: sum(mergedItems, "amountBeforeTax"),
+                        amount: calculateTotalAmount(mergedItems, "price", "quantity"),
+                        userName: "",
+                        cssClass: "subtotal"
+                         });
+                });
+
+                //  SubTotal theo nhóm con
+                const subGroupItems = Object.values(codes).flatMap(code => code.details);
+                result.push({
+                    transactionCode: `Sub Total (${subGroupName})`,
+                    articleDescription: "",
+                    quantity: sum(subGroupItems, "quantity"),
+                    price: "",
+                    amountBeforeTax: sum(subGroupItems, "amountBeforeTax"),
+                    amount: calculateTotalAmount(subGroupItems, "price", "quantity"),
+                    userName: "",
+                    cssClass: "subtotal"
+                });
+            });
+
+            // Grand Total theo nhóm lớn
+            const groupItems = Object.values(subGroups).flatMap(sub => Object.values(sub).flatMap(code => code.details));
+            result.push({
+                transactionCode: `Grand Total (${groupName})`,
+                articleDescription: "",
+                quantity: sum(groupItems, "quantity"),
+                price: "",
+                amountBeforeTax: sum(groupItems, "amountBeforeTax"),
+                amount: calculateTotalAmount(groupItems, "price", "quantity"),
+                userName: "",
+                cssClass: "grandtotal"
+            });
+                
+        });
+        const allDetails = Object.values(grouped)
+                 .flatMap(subGroups =>
+                    Object.values(subGroups).flatMap(codes =>
+                        Object.values(codes).flatMap(codeObj => codeObj.details)
+                    )
+                );
+
+                result.push({
+                transactionCode: `Grand Total `,
+                articleDescription: "",
+                quantity: sum(allDetails, "quantity"),
+                price: "",
+                amountBeforeTax: sum(allDetails, "amountBeforeTax"),
+                amount: calculateTotalAmount(allDetails, "price", "quantity"),
+
+                userName: "",
+                cssClass: "grandtotal"
+              });
+
+        return result;
+    }
+
+    function initializeDataGrid(data) {
+        $('#gridContainer').dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            showBorders: true,
+            rowAlternationEnabled: true,
+            columns: [
+                { dataField: "transactionCode", caption: "Code", width: 260 },
+                { dataField: "articleDescription", caption: "Description", width: 300 },
+                { dataField: "quantity", caption: "Qty.", width: 90 },
+                { dataField: "price", caption: "Price", width: 150 },
+                { dataField: "amountBeforeTax", caption: "Amount++", width: 120, format: "#,##0" },
+                { dataField: "amount", caption: "Amount Net", width: 150, format: "#,##0" },
+                { dataField: "userName", caption: "User", width: 100 }
+            ],
+            paging: {
+                pageSize: 25
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, "all"],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
+                onRowPrepared: function (e) {
+            if (e.rowType === "data") {
+                const css = e.data?.cssClass;
+                if (css === "group-header") {
+                    e.rowElement.css({ 'font-weight': 'bold' });
+                } else if (css === "subgroup-header") {
+                    e.rowElement.css({ 'font-style': 'italic'});
+                } else if (css === "code-header") {
+                    e.rowElement.css({ 'padding-left': '20px', 'font-weight': 'bold' });
+                } else if (css === "subtotal") {
+                    e.rowElement.css({ 'font-weight': 'bold' });
+                } else if (css === "grandtotal") {
+                    e.rowElement.css({ 'font-weight': 'bold' });
+                }
+        }
+    }
+
+
+        });
+    }
+
+    $('#btnExportExcel').click(function () {
+        const grid = $('#gridContainer').dxDataGrid('instance');
+        grid.exportToExcel(false);
+    });
+
+    $('#btnExportPdf').click(function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $('#gridContainer').dxDataGrid('instance'),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("SummaryByArticle.pdf");
+        });
+    });
+</script>

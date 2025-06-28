@@ -1942,7 +1942,61 @@ namespace Report.Controllers
             {
                 return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
             }
+        }     
+        [HttpGet]
+        public IActionResult SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted)
+        {
+            try
+            {
+                DataTable dt = _iReportService.SummarybyArticle(fromDate, toDate, transaction, article, cashierNo, roomClass, room, orderBy, netDisp, isShowDeleted);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
+                                  TrnsDescription = !string.IsNullOrEmpty(d["TrnsDescription"].ToString()) ? d["TrnsDescription"] : "",
+                                  ArticleCode = !string.IsNullOrEmpty(d["ArticleCode"].ToString()) ? d["ArticleCode"] : "",
+                                  ArticleDescription = !string.IsNullOrEmpty(d["ArticleDescription"].ToString()) ? d["ArticleDescription"] : "",
+                                  Price = !string.IsNullOrEmpty(d["Price"].ToString()) ? d["Price"] : "",
+                                  AmountBeforeTax = !string.IsNullOrEmpty(d["AmountBeforeTax"].ToString()) ? d["AmountBeforeTax"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  TransactionSubGroup = !string.IsNullOrEmpty(d["TransactionSubGroup"].ToString()) ? d["TransactionSubGroup"] : "",
+                                  TransactionGroup = !string.IsNullOrEmpty(d["TransactionGroup"].ToString()) ? d["TransactionGroup"] : "",
+                                  Quantity = !string.IsNullOrEmpty(d["Quantity"].ToString()) ? d["Quantity"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
         }
+        [HttpGet]
+        public IActionResult ManagerReport(DateTime businessDate, string currency)
+        {
+            try
+            {
+                DataTable dt = _iReportService.ManagerReport(businessDate, currency);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  ItemName = !string.IsNullOrEmpty(d["ItemName"].ToString()) ? d["ItemName"] : "",
+                                  CurrentDay = !string.IsNullOrEmpty(d["CurrentDay"].ToString()) ? d["CurrentDay"] : "",
+                                  CurrentMonth = !string.IsNullOrEmpty(d["CurrentMonth"].ToString()) ? d["CurrentMonth"] : "",
+                                  CurrentYear = !string.IsNullOrEmpty(d["CurrentYear"].ToString()) ? d["CurrentYear"] : "",
+                                  LastDay = !string.IsNullOrEmpty(d["LastDay"].ToString()) ? d["LastDay"] : "",
+                                  LastMonth = !string.IsNullOrEmpty(d["LastMonth"].ToString()) ? d["LastMonth"] : "",
+                                  LastYear = !string.IsNullOrEmpty(d["LastYear"].ToString()) ? d["LastYear"] : "",                                
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
+
+
 
 
         [HttpGet]
@@ -2290,7 +2344,7 @@ namespace Report.Controllers
                 case "ReservationbyCompany":
                 case "RoomOccupancy":
                 case "RoomMoves":
-
+                case "OccupancyByPerson":
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":

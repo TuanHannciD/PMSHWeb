@@ -56,7 +56,8 @@ namespace Report.Services.Interfaces
         DataTable ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance, int fixRate, int package, int dcReason, string sort, int showFixCharge, int showAlerts);
         DataTable GuestLedger(DateTime date, string statusList);
         DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID);
-
         DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked);
+        DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
+        DataTable ManagerReport(DateTime businessDate, string currency);
     }
 }

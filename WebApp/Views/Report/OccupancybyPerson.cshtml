@@ -189,28 +189,39 @@
                 visible: true
             },
             showBorders: true,
-            summary: {
-            totalItems: [
-                        {
+              summary: {
+    totalItems: [
+        {
             column: "date",
             summaryType: "custom",
-            displayFormat: "Grand Total"
-            },                   
-                        { column: "resRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "indPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "grpPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "totalPax1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "arrPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "depPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "waitPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "oooRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "totalPax2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-
-                ]
+            displayFormat: "Grand Total",
+            name: "custom"
+        },
+        { column: "resRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "indPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "grpPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "totalPax1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "arrPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "depPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "waitPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "oooRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "totalPax2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
+    ],
+    calculateCustomSummary: function (options) {
+        if (options.name === "custom") {
+            if (options.summaryProcess === "start") {
+                options.totalValue = 0;
+            } else if (options.summaryProcess === "calculate") {
+                if (options.value) {
+                    options.totalValue += 1;
+                }
             }
-        });
+        }
     }
+}
 
+    });
+    }
 
 
     $("#btnExportExcel").click(function () {

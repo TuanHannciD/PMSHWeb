@@ -682,6 +682,49 @@ namespace Report.Services.Implements
 
             return DataTableHelper.getTableData("spRptOccupancyByPerson", param);
         }
+        public DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                new SqlParameter("@Transaction", ""), 
+                new SqlParameter("@Article", ""),    
+                new SqlParameter("@CashierNo", ""),   
+                new SqlParameter("@RoomClass", ""),   
+                new SqlParameter("@Room", ""),        
+                new SqlParameter("@OrderBy", ""),     
+                new SqlParameter("@NetDisp", "NET"),  
+                new SqlParameter("@IsShowDeleted", isShowDeleted)
+            };
+
+            return DataTableHelper.getTableData("spRptJournalByArticle", param);
+        }
+        public DataTable ManagerReport(DateTime businessDate, string currency)
+        {
+            // Tính toán các tham số liên quan
+            DateTime currentBusinessDate = businessDate.AddDays(1);
+            DateTime lastBusinessDate = businessDate.AddYears(-1);
+            DateTime tomorrow = currentBusinessDate;
+            DateTime tomorrowLastYear = tomorrow.AddYears(-1);
+            DateTime firstDateYear = new DateTime(businessDate.Year, 1, 1);
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@BusinessDate", businessDate),
+                new SqlParameter("@CurrentBusinessDate", currentBusinessDate),
+                new SqlParameter("@LastBusinessDate", lastBusinessDate),
+                new SqlParameter("@Tomorrow", tomorrow),
+                new SqlParameter("@TomorrowLastYear", tomorrowLastYear),
+                new SqlParameter("@FirstDateYEAR", firstDateYear),
+                new SqlParameter("@Currency", currency)
+            };
+
+            return DataTableHelper.getTableData("spRptManagerReport", param);
+        }
+
+
 
 
 
