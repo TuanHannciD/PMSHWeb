@@ -65,6 +65,9 @@ namespace Report.Services.Interfaces
 
         DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
         DataTable ManagerReport(DateTime businessDate, string currency);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0a527efac0fbcd4072052334c4184ff6c6b44cf9
     }
 }
