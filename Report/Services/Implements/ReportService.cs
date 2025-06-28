@@ -358,9 +358,9 @@ namespace Report.Services.Implements
                         new SqlParameter("@ToDate", toDate),
                         new SqlParameter("@Searchby", reservation),
                         new SqlParameter("@RoomType", roomType),
-                         new SqlParameter("@Zone", zone),
+                        new SqlParameter("@Zone", zone),
                         new SqlParameter("@ViewBy", viewBy),
-                          new SqlParameter("@ViewRate", "1"),
+                        new SqlParameter("@ViewRate", "1"),
                         new SqlParameter("@SortOrder", sortOrder)
             };
 
@@ -678,9 +678,9 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-            new SqlParameter("@FromDate", fromDate),
-            new SqlParameter("@ToDate", toDate),
-            new SqlParameter("@TransactionCodeList", transactionCodeList),
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@TransactionCodeList", transactionCodeList),
             };
 
             return DataTableHelper.getTableData("spRptCancellationJournal", param);
@@ -690,8 +690,8 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-            new SqlParameter("@dtpDate", dtpDate),
-            new SqlParameter("@Currency", currency),
+                new SqlParameter("@dtpDate", dtpDate),
+                new SqlParameter("@Currency", currency),
 
             };
 
@@ -719,6 +719,79 @@ namespace Report.Services.Implements
 
             return DataTableHelper.getTableData("spRptReservationRateCodeCheck", param);
         }
+        public DataTable GuestLedger(DateTime date, string statusList)
+        {        
+            string trimmed = statusList.Trim('\''); 
+            string formattedStatus = $"{trimmed.Replace("'", "'")}";
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Date", date),
+                new SqlParameter("@Status", formattedStatus),
+            };
+            return DataTableHelper.getTableData("spRptGuestLedger", param);
+        }
+        public DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@RoomTypeID", roomTypeID)
+            };
+
+            return DataTableHelper.getTableData("spRptOccupancyByPerson", param);
+        }
+        public DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                new SqlParameter("@Transaction", ""), 
+                new SqlParameter("@Article", ""),    
+                new SqlParameter("@CashierNo", ""),   
+                new SqlParameter("@RoomClass", ""),   
+                new SqlParameter("@Room", ""),        
+                new SqlParameter("@OrderBy", ""),     
+                new SqlParameter("@NetDisp", "NET"),  
+                new SqlParameter("@IsShowDeleted", isShowDeleted)
+            };
+
+            return DataTableHelper.getTableData("spRptJournalByArticle", param);
+        }
+        public DataTable ManagerReport(DateTime businessDate, string currency)
+        {
+            // Tính toán các tham số liên quan
+            DateTime currentBusinessDate = businessDate.AddDays(1);
+            DateTime lastBusinessDate = businessDate.AddYears(-1);
+            DateTime tomorrow = currentBusinessDate;
+            DateTime tomorrowLastYear = tomorrow.AddYears(-1);
+            DateTime firstDateYear = new DateTime(businessDate.Year, 1, 1);
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@BusinessDate", businessDate),
+                new SqlParameter("@CurrentBusinessDate", currentBusinessDate),
+                new SqlParameter("@LastBusinessDate", lastBusinessDate),
+                new SqlParameter("@Tomorrow", tomorrow),
+                new SqlParameter("@TomorrowLastYear", tomorrowLastYear),
+                new SqlParameter("@FirstDateYEAR", firstDateYear),
+                new SqlParameter("@Currency", currency)
+            };
+
+            return DataTableHelper.getTableData("spRptManagerReport", param);
+        }
+
+
+
+
+
+
+
+
+
 
     }
 

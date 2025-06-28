@@ -1,7 +1,7 @@
 ﻿@using DevExpress.XtraReports.UI
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var zoneList = ViewBag.ZoneList;
+
 }
 
 <style>
@@ -72,9 +72,6 @@
 </div>
 
 
-@section Scripts {
-
-
     <script>
         function formatDate(date) {
             let year = date.getFullYear();
@@ -88,12 +85,10 @@
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             $('#fromDate').val(formatDate(firstDayOfMonth));
 
-           }
+            document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
 
-
-            $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+            $("#btnPrint").click(function () {
                 $("#loadingSpinner").show();
-
 
                 $.ajax({
                     url: '/Report/RevenueReports',
@@ -113,81 +108,84 @@
                     }
                 });
             });
+
+            $("#btnExportPdf").click(function () {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                DevExpress.pdfExporter.exportDataGrid({
+                    jsPDFDocument: doc,
+                    component: $("#gridContainer").dxDataGrid("instance"),
+                    autoTableOptions: {
+                        styles: { cellPadding: 2, fontSize: 8 },
+                        margin: { top: 20 }
+                    }
+                }).then(() => {
+                    doc.save("RevenueReport.pdf");
+                });
+            });
         });
 
-                function prepareRevenueData(data) {
-        const grouped = {};
-        const result = [];
+        function prepareRevenueData(data) {
+            const grouped = {};
+            const result = [];
 
-        // Nhóm theo subGroupDescription
-        data.forEach(item => {
-            const key = item.subGroupDescription || "Unknown";
-            if (!grouped[key]) grouped[key] = [];
-            grouped[key].push(item);
-        });
+            data.forEach(item => {
+                const key = item.subGroupDescription || "Unknown";
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(item);
+            });
 
-    });
-</script>
+            Object.entries(grouped).forEach(([groupName, items]) => {
+                const groupHeader = {
+                    transactionCode: groupName,
+                    transactionName: "",
+                    currencyID: "",
+                    subGroupDescription: "",
+                    amountBeForeTax: "",
+                    amountGross: "",
+                    amountBeforeTaxM: "",
+                    amountGrossM: "",
+                    amountBeforeTaxY: "",
+                    amountGrossY: "",
+                    cssClass: "group-header"
+                };
+                result.push(groupHeader);
+                result.push(...items);
 
+                const subtotalRow = {
+                    transactionCode: "",
+                    transactionName: "Sub Total:",
+                    currencyID: "VND",
+                    subGroupDescription: "",
+                    amountBeForeTax: sum(items, "amountBeForeTax"),
+                    amountGross: sum(items, "amountGross"),
+                    amountBeforeTaxM: sum(items, "amountBeforeTaxM"),
+                    amountGrossM: sum(items, "amountGrossM"),
+                    amountBeforeTaxY: sum(items, "amountBeforeTaxY"),
+                    amountGrossY: sum(items, "amountGrossY"),
+                    cssClass: "subtotal"
+                };
+                result.push(subtotalRow);
+            });
 
-        // Tạo Subtotal cho từng nhóm
-        Object.entries(grouped).forEach(([groupName, items]) => {
-             const groupHeader = {
-            transactionCode: groupName,
-            transactionName: "",
-            currencyID: "",
-            subGroupDescription: "",
-            amountBeForeTax: "",
-            amountGross: "",
-            amountBeforeTaxM: "",
-            amountGrossM: "",
-            amountBeforeTaxY: "",
-            amountGrossY: "",
-            cssClass: "group-header"
-            };
-             result.push(groupHeader);
-
-       
-            result.push(...items);
-
-            const subtotalRow = {
-                transactionCode: "",
-                transactionName: "Sub Total:",
+            const grandTotalRow = {
+                transactionCode: "Grand Total:",
+                transactionName: "",
                 currencyID: "VND",
                 subGroupDescription: "",
-                amountBeForeTax: sum(items, "amountBeForeTax"),
-                amountGross: sum(items, "amountGross"),
-                amountBeforeTaxM: sum(items, "amountBeforeTaxM"),
-                amountGrossM: sum(items, "amountGrossM"),
-                amountBeforeTaxY: sum(items, "amountBeforeTaxY"),
-                amountGrossY: sum(items, "amountGrossY"),
-                cssClass: "subtotal"
+                amountBeForeTax: sum(data, "amountBeForeTax"),
+                amountGross: sum(data, "amountGross"),
+                amountBeforeTaxM: sum(data, "amountBeforeTaxM"),
+                amountGrossM: sum(data, "amountGrossM"),
+                amountBeforeTaxY: sum(data, "amountBeforeTaxY"),
+                amountGrossY: sum(data, "amountGrossY"),
+                cssClass: "grandtotal"
             };
 
-            result.push(subtotalRow);
-        });
-
-        // Grand Total
-        const grandTotalRow = {
-            transactionCode: "Grand Total:",
-            transactionName: "",
-            currencyID: "VND",
-            subGroupDescription: "",
-            amountBeForeTax: sum(data, "amountBeForeTax"),
-            amountGross: sum(data, "amountGross"),
-            amountBeforeTaxM: sum(data, "amountBeforeTaxM"),
-            amountGrossM: sum(data, "amountGrossM"),
-            amountBeforeTaxY: sum(data, "amountBeforeTaxY"),
-            amountGrossY: sum(data, "amountGrossY"),
-            cssClass: "grandtotal"
-        };
-
-        result.push(grandTotalRow);
-
-        return result;
-    }
-
-
+            result.push(grandTotalRow);
+            return result;
+        }
 
         function sum(arr, field) {
             return arr.reduce((total, item) => total + (item[field] || 0), 0);
@@ -195,20 +193,19 @@
 
         function initializeGrid(data) {
             $("#gridContainer").dxDataGrid({
-        dataSource: data, allowColumnResizing: true,
+                dataSource: data,
                 showBorders: true,
                 rowAlternationEnabled: true,
                 columns: [
                     { dataField: "transactionCode", caption: "Code", width: 150 },
                     { dataField: "transactionName", caption: "Description", width: 250 },
-                    { dataField: "currencyID", caption: "Curr", width: 80 },
-                    { dataField: "subGroupDescription", caption: "Sub Group", width: 160 },
-                    { dataField: "amountBeForeTax", caption: "AmountBeforeTax", format: "#,##0", width: 160 },
-                    { dataField: "amountGross", caption: "AmountGross", format: "#,##0", width: 160 },
-                    { dataField: "amountBeforeTaxM", caption: "AmountBeforeTaxM", format: "#,##0", width: 160 },
-                    { dataField: "amountGrossM", caption: "AmountGrossM", format: "#,##0", width: 160 },
-                    { dataField: "amountBeforeTaxY", caption: "AmountBeforeTaxY", format: "#,##0", width: 160 },
-                    { dataField: "amountGrossY", caption: "AmountGrossY", format: "#,##0", width: 160 }
+                    { dataField: "currencyID", caption: "Curr", width: 80 },             
+                    { dataField: "amountBeForeTax", caption: "DAY Net", format: "#,##0", width: 160 },
+                    { dataField: "amountGross", caption: "DAY Gross", format: "#,##0", width: 160 },
+                    { dataField: "amountBeforeTaxM", caption: "MONTH Net", format: "#,##0", width: 160 },
+                    { dataField: "amountGrossM", caption: "MONTH Gross", format: "#,##0", width: 160 },
+                    { dataField: "amountBeforeTaxY", caption: "YEAR Net", format: "#,##0", width: 160 },
+                    { dataField: "amountGrossY", caption: "YEAR Gross", format: "#,##0", width: 160 }
                 ],
                 onRowPrepared: function (e) {
                     if (e.rowType === "data") {
@@ -236,44 +233,11 @@
                     allowedPageSizes: [25, 50, 'all'],
                     showPageSizeSelector: true,
                     showInfo: true,
-                    showNavigationButtons: true,
+                    showNavigationButtons: true
                 },
                 filterRow: { visible: true, applyFilter: "auto" },
                 headerFilter: { visible: true }
             });
         }
-
-        $("#btnExportExcel").click(function () {
-            const grid = $("#gridContainer").dxDataGrid("instance");
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet("Revenue Report");
-
-            DevExpress.excelExporter.exportDataGrid({
-                component: grid,
-                worksheet: worksheet,
-                autoFilterEnabled: true
-            }).then(function () {
-                workbook.xlsx.writeBuffer().then(function (buffer) {
-                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "RevenueReport.xlsx");
-                });
-            });
-        });
-
-        $("#btnExportPdf").click(function () {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            DevExpress.pdfExporter.exportDataGrid({
-                jsPDFDocument: doc,
-                component: $("#gridContainer").dxDataGrid("instance"),
-                autoTableOptions: {
-                    styles: { cellPadding: 2, fontSize: 8 },
-                    margin: { top: 20 }
-                }
-            }).then(() => {
-                doc.save("RevenueReport.pdf");
-            });
-        });
     </script>
 
->>>>>>> b4d04d7a727099f06b1b641d5a5740b10c36ecb1

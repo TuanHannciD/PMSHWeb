@@ -4,7 +4,7 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var rtList = ViewBag.RoomClassList;
+    var rtList = ViewBag.RoomTypeList; 
 }
 
 
@@ -45,7 +45,7 @@
         }
 
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px">NoShowReport</div>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
@@ -54,22 +54,21 @@
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <!-- To Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
-        <div class="d-flex align-items-center">
-            <label class="me-2 mb-0">Room Class:</label>
-            <select id="zone" name="roomClass" class="form-control form-control-sm w-auto">
-                <option value="">ALL</option>
-                @foreach (var item in rtList)
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Type:</label>
+            <select id="roomTypeID" name="roomTypeID" class="form-control form-control-sm w-auto">
+                @foreach (var item in rtList ?? Enumerable.Empty<object>())
                 {
-                    <option value="@item.ID">@item.Description</option>
+                    <option value="@item.ID">@item.Code</option>
                 }
             </select>
-
         </div>
+
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -79,7 +78,7 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -114,15 +113,15 @@
 
 
     });
-    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+    $("#btnPrint").click(function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/NoShowReportData',
+            url: '/Report/OccupancybyPerson',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
-                roomClass: $("#roomClass").val(),
+                toDate: $("#toDate").val(),           
+                roomTypeID: $("#roomTypeID").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -131,8 +130,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                    initializeNoShowReportDataGrid(result);
-
+                initializReveunueByGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -141,46 +139,40 @@
             }
         });
     });
- 
 
-    function initializeNoShowReportDataGrid(data) {
-        const columnWidth = 180;
+    function initializReveunueByGrid(data) {
+       
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+            dataSource: data,
+            allowColumnResizing: true,
             columns: [
-               { dataField: "confirmationNo", caption: "Conf.No", width:columnWidth-80},
-                 { dataField: "roomNo", caption: "RoomNo", width:columnWidth-70},
-            { dataField: "lastName", caption: "Guest Name", width: columnWidth+120  },
-            {
-                  caption: "Company/Travel Agent/Source",
-                 width: columnWidth+120,
-                  dataType: "string",
-                  calculateCellValue: function (data) {
-                        return data.company || data.agent || data.source || "";
-                  }
-            },
-                { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
-            { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-70 , dataType: "date", format: "dd/MM/yyyy" },
-            { dataField: "roomType", caption: "R.Type", width: columnWidth-80  },
-            { dataField: "businessBlockCode", caption: "Block Code",width: columnWidth-60 },
-            { dataField: "marketCode", caption: "MrkCode",width: columnWidth-70 },
-            { dataField: "paymentMethod", caption: "Pay mth", width:columnWidth-80 },
-             { dataField: "reservationTypeCode", caption: "Rsv.Type",width: columnWidth },
-            { dataField: "creditCardNo", caption: "CC no",width: columnWidth-80 },
-            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-60 },
-             { dataField: "expirationDate", caption: "Exp.Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
-             { dataField: "rateAmount", caption: "Rate Amount",width: columnWidth-60 , dataType: "number", format: "#,##0" },
-            { dataField: "noOfRoom", caption: "Rms",width: columnWidth-80 , dataType: "number", format: "#,##0" },
-            { dataField: "noOfNight", caption: "Nts",width: columnWidth-80, dataType: "number", format: "#,##0" },
-             { dataField: "totalAmount", caption: "Revenue",width: columnWidth-50 , dataType: "number", format: "#,##0" },
-            { dataField: "depositPaid", caption: "DepositPaid",width: columnWidth-50, dataType: "number", format: "#,##0" },
+            { dataField: "rateCode", caption: "RateCode", width: 150 },
+            { dataField: "dayOfWeek", caption: "Conf.No",   width: 100 },
+            { dataField: "date", caption: "Date", width: 100, dataType: "date",format: "dd/MM/yyyy"  },
+            { dataField: "vacRo", caption: "VacRo", width: 100},
+            { dataField: "resRo", caption: "ResRo", width: 100, dataType: "number", format: "#,##0" },
+            { dataField: "indPax", caption: "IndPax",   width: 100 , dataType: "number", format: "#,##0"},
+            { dataField: "grpPax", caption: "GrpPax",   width: 100, dataType: "number", format: "#,##0" },
+            { dataField: "totalPax1", caption: "TotalPax1",   width: 120, dataType: "number", format: "#,##0" },
+            { dataField: "arrPax", caption: "ArrPax",   width: 100, dataType: "number", format: "#,##0" },
+            { dataField: "depPax", caption: "DepPax",   width: 100, dataType: "number", format: "#,##0"},
+            { dataField: "waitPax", caption: "WaitPax",   width: 100, dataType: "number", format: "#,##0" },
+            { dataField: "oooRo", caption: "OOORo",   width: 100, dataType: "number", format: "#,##0"},
+            { dataField: "totalPax2", caption: "TotalPax2",   width: 100, dataType: "number", format: "#,##0" },
+            { dataField: "phantram", caption: "%",   width: 100 },
+            { dataField: "accomOrPerson", caption: "AccomOrPerson",   width: 150 },
+            { dataField: "accommodation", caption: "Accommodation",   width: 150 },
+            { dataField: "fAndB", caption: "FAndB",   width: 100 },
+            { dataField: "total", caption: "Total",   width: 100 },
+
             ],
+           
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+    //   scrolling:  {
+    //      mode: 'virtual',
+    //     useNative: true,
+    //    showScrollbar: "always"
+    // },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -188,19 +180,48 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true
-
-        });
+            filterRow: {
+            visible: true,
+            applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+            showBorders: true,
+              summary: {
+    totalItems: [
+        {
+            column: "date",
+            summaryType: "custom",
+            displayFormat: "Grand Total",
+            name: "custom"
+        },
+        { column: "resRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "indPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "grpPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "totalPax1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "arrPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "depPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "waitPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "oooRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+        { column: "totalPax2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
+    ],
+    calculateCustomSummary: function (options) {
+        if (options.name === "custom") {
+            if (options.summaryProcess === "start") {
+                options.totalValue = 0;
+            } else if (options.summaryProcess === "calculate") {
+                if (options.value) {
+                    options.totalValue += 1;
+                }
+            }
+        }
     }
+}
 
+    });
+    }
 
 
     $("#btnExportExcel").click(function () {
