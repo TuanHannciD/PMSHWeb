@@ -57,14 +57,14 @@ namespace Report.Services.Interfaces
         DataTable GuestLedger(DateTime date, string statusList);
         DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID);
         DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked);
-<<<<<<< HEAD
+
         DataTable TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy, int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP);
         DataTable DepartureIndividualAndGroupData(DateTime fromDate);
         DataTable BookingSummaryByStatusData(DateTime fromDate, DateTime toDate);
         DataTable VacantRoomData(string roomClass, string roomtype, string FromRoom, string ToRoom, string OrderByRoomNo, string OrderByHKPStatus, string OrderByFOStatus, string HKPStatus, string FOStatus, string IsGroupByRoomClass);
-=======
+
         DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
         DataTable ManagerReport(DateTime businessDate, string currency);
->>>>>>> 4ff005f6fa21938b041480f5abc64f714a674711
+
     }
 }
