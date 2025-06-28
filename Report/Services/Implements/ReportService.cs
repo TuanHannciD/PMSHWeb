@@ -71,23 +71,14 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptReturnGuest", param);
             return myTable;
         }
-        public DataTable OTAMonthlyReport(string fromDate, string Number, string type, string currencyID)
+        public DataTable OTAMonthlyReport(DateTime fromDate, string Number, string type, string currencyID)
         {
-            DateTime fromDateParsed;
-            string toDate = fromDate;
+            DateTime toDateParsed = fromDate.AddMonths(3);
 
-            if (DateTime.TryParseExact(fromDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out fromDateParsed))
-            {
-                // Cộng thêm 4 tháng
-                DateTime toDateParsed = fromDateParsed.AddMonths(4);
+            // Lấy ngày cuối cùng của tháng
+            int lastDay = DateTime.DaysInMonth(toDateParsed.Year, toDateParsed.Month);
+            DateTime toDate = new DateTime(toDateParsed.Year, toDateParsed.Month, lastDay);
 
-                // Lấy ngày cuối cùng của tháng
-                int lastDay = DateTime.DaysInMonth(toDateParsed.Year, toDateParsed.Month);
-                DateTime lastDateOfMonth = new DateTime(toDateParsed.Year, toDateParsed.Month, lastDay);
-
-                // Chuyển sang chuỗi theo định dạng cần thiết
-                toDate = lastDateOfMonth.ToString("yyyy-MM-dd");
-            }
             SqlParameter[] param = new SqlParameter[]
             {
           new SqlParameter("@FromDate", fromDate),
@@ -212,6 +203,28 @@ namespace Report.Services.Implements
         }
 
 
+        public DataTable TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy, int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+
+                             new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+
+                               new SqlParameter("@cboviewBy", viewBy),
+                new SqlParameter("@TransportType", transportType),
+                             new SqlParameter("@ResvStatus", reservationStatus),
+                new SqlParameter("@ByGuestName", sortByGuestName),
+                   new SqlParameter("@ByRoom", sortByRoom),
+                                   new SqlParameter("@ByTime", sortByTime),
+                   new SqlParameter("@ByVIP", sortByVIP),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptTransportation", param);
+            return myTable;
+        }
+
+
         public DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -226,6 +239,53 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptRevenue_RateCodeByDateReport", param);
             return myTable;
         }
+
+        public DataTable DepartureIndividualAndGroupData(DateTime fromDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@DepartureDate", fromDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepartureIndividualAndGroup", param);
+            return myTable;
+        }
+
+        public DataTable BookingSummaryByStatusData(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("sp_GetReservationStatusSummary_ByDate", param);
+            return myTable;
+        }
+
+        public DataTable VacantRoomData(string roomClass, string roomtype, string FromRoom, string ToRoom, string OrderByRoomNo, string OrderByHKPStatus, string OrderByFOStatus, string HKPStatus, string FOStatus, string IsGroupByRoomClass)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@RoomClassID", roomClass),
+                new SqlParameter("@RoomTypeID", roomtype),
+                  new SqlParameter("@FromRoom", FromRoom),
+                new SqlParameter("@ToRoom", ToRoom),
+
+                   new SqlParameter("@OrderByRoomNo", OrderByRoomNo),
+                new SqlParameter("@OrderByHKPStatus", OrderByHKPStatus),
+                  new SqlParameter("@OrderByFOStatus", OrderByFOStatus),
+                new SqlParameter("@HKPStatus", HKPStatus),
+
+                     new SqlParameter("@FOStatus", FOStatus),
+                new SqlParameter("@IsGroupByRoomClass", IsGroupByRoomClass),
+                       new SqlParameter("@BusinessDate", DateTime.Now),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptVacantRoom", param);
+            return myTable;
+        }
+
         public DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode)
         {
             DateTime firstDate = new DateTime(DateTime.Now.Year, 1, 1);

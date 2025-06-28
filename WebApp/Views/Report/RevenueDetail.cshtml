@@ -126,8 +126,8 @@ tr.custom > td {
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-            const processedData = preparRevenueDetailData(result);
-                initializeRevenueDetailGrid(processedData);
+             const { data: preparedData, grandTotalAmount } = preparRevenueDetailData(result);
+    initializeRevenueDetailGrid(preparedData, grandTotalAmount);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -136,38 +136,38 @@ tr.custom > td {
             }
         });
     });
-              function preparRevenueDetailData(data) {
+       function preparRevenueDetailData(data) {
         const groupedData = {};
-
-        // Nhóm dữ liệu theo groupCode
-        data.forEach(item => {
-            const key = item.groupCode;
-            if (!groupedData[key]) groupedData[key] = [];
-            groupedData[key].push(item);
-        });
-
         const finalData = [];
 
-        Object.entries(groupedData).forEach(([groupCode, records]) => {
-            // Tính tổng amount của nhóm
-            const totalAmount = records.reduce((sum, record) => sum + (record.amount || 0), 0);
+        let grandTotalAmount = 0;
 
-            // Dòng tiêu đề hiển thị groupCode ở cột description và tổng ở cột amount
-            const titleRow = {
+        Object.entries(
+            data.reduce((acc, item) => {
+                const key = item.groupCode;
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(item);
+                return acc;
+            }, groupedData)
+        ).forEach(([groupCode, records]) => {
+            const totalAmount = sum(records, 'amount');
+            grandTotalAmount += totalAmount;
+
+            finalData.push({
                 description: `${groupCode}`,
                 amount: totalAmount,
                 isTitle: true,
-                cssClass: "custom",
-            };
-            finalData.push(titleRow);
+                cssClass: "custom"
+            });
 
-            // Thêm các record
             finalData.push(...records);
         });
 
-        return finalData;
+        return {
+            data: finalData,
+            grandTotalAmount // → gán riêng để truyền qua grid
+        };
     }
-
 
 
      function sum(arr, field) {
@@ -179,61 +179,47 @@ tr.custom > td {
         if (valid.length === 0) return 0;
         return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
     }
-    function initializeRevenueDetailGrid(data) {
+       function initializeRevenueDetailGrid(data, grandTotalAmount) {
         const columnWidth = 180;
+
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+            dataSource: data,
+            allowColumnResizing: true,
             columns: [
-               { dataField: "description", caption: "Description", width: columnWidth },
-            { dataField: "totalUSD", caption: "Amount", width:columnWidth-40, dataType: "number", format: "#,##0" },
-            { dataField: "totalSVCUSD", caption: "SVC", width: columnWidth-40, dataType: "number", format: "#,##0" },
-            { dataField: "totalVATUSD", caption: "VAT", width: columnWidth-40, dataType: "number", format: "#,##0" },
-            { dataField: "amount", caption: "Total Amount", width:columnWidth-40, dataType: "number", format: "#,##0" },
+                { dataField: "description", caption: "Description", width: columnWidth },
+                { dataField: "totalUSD", caption: "Amount", width: columnWidth - 40, dataType: "number", format: "#,##0" },
+                { dataField: "totalSVCUSD", caption: "SVC", width: columnWidth - 40, dataType: "number", format: "#,##0" },
+                { dataField: "totalVATUSD", caption: "VAT", width: columnWidth - 40, dataType: "number", format: "#,##0" },
+                { dataField: "amount", caption: "Total Amount", width: columnWidth - 40, dataType: "number", format: "#,##0" },
             ],
-            paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
-            pager: {
-                visible: true,
-                allowedPageSizes: [25, 50, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true,
+            summary: {
+                totalItems: [
+                    {
+                        column: "description",
+                        summaryType: "custom",
+                        displayFormat: "Grand Total"
+                    },
+                    {
+                        column: "amount",
+                        summaryType: "custom",
+                        name: "amount",
+                        customizeText: function () {
+                            return grandTotalAmount.toLocaleString("vi-VN", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            });
+                        }
+                    }
+                ]
             },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
-                 summary: {
-                    totalItems: [
-                            {column: "description", summaryType: "custom",displayFormat: "Total"},
-                            { column: "amount", summaryType: "sum",customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            }},
-                    ]
-                },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
             onRowPrepared: function (e) {
-    if (e.rowType === "data" && e.data?.cssClass) {
-        e.rowElement.addClass(e.data.cssClass);
-    }
-}
-
-           
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            }
         });
     }
-
-
 
     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");

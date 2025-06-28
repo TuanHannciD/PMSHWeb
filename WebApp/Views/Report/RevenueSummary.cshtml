@@ -126,8 +126,9 @@
                     // $("#reportViewerContainer").html(result);
                     // $("#loadingSpinner").hide();
                          console.log(result);
-                const processedData = preparRevenueSummaryData(result);
-                    initializeRevenueSummaryGrid(processedData);
+                const processed = preparRevenueSummaryData(result);
+    initializeRevenueSummaryGrid(processed.data, processed.grandTotalVND, processed.grandTotalUSD);
+
                         $("#loadingSpinner").hide();
                 },
                 error: function () {
@@ -137,44 +138,52 @@
             });
         });
                   function preparRevenueSummaryData(data) {
-            const groupedData = {};
+        const groupedData = {};
+        const finalData = [];
 
-            // Nhóm dữ liệu theo groupCode
-            data.forEach(item => {
-                const key = item.groupCode;
-                if (!groupedData[key]) groupedData[key] = [];
-                groupedData[key].push(item);
+        let grandTotalVND = 0;
+        let grandTotalUSD = 0;
+
+        // Nhóm dữ liệu theo groupCode
+        data.forEach(item => {
+            const key = item.groupCode;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+        });
+
+        Object.entries(groupedData).forEach(([groupCode, records]) => {
+            // Tổng từng nhóm
+            const totalVND = sum(records, 'totalVND');
+            const totalUSD = sum(records, 'totalUSD');
+
+            finalData.push({
+                subGroupDescription: `${groupCode}`,
+                isTitle: true,
+                cssClass: "custom"
             });
 
-            const finalData = [];
+            finalData.push(...records);
 
-            Object.entries(groupedData).forEach(([groupCode, records]) => {
-                // Tính tổng amount của nhóm
-                const totalAmount = records.reduce((sum, record) => sum + (record.totalVND || 0), 0);
+            const totalRow = {
+                subGroupDescription: "TOTAL",
+                totalVND: totalVND,
+                totalUSD: totalUSD,
+                isTotal: true,
+                cssClass: "custom"
+            };
+            finalData.push(totalRow);
 
-                // Dòng tiêu đề hiển thị groupCode ở cột description và tổng ở cột amount
-                const titleRow = {
-                    subGroupDescription: `${groupCode}`,
-                    isTitle: true,
-                    cssClass: "custom",
-                };
-                finalData.push(titleRow);
+            // Cộng vào Grand Total
+            grandTotalVND += totalVND;
+            grandTotalUSD += totalUSD;
+        });
 
-                // Thêm các record
-                finalData.push(...records);
-                   const totalRow = {
-                    subGroupDescription: "TOTAL",
-                    totalVND: sum(records, 'totalVND'),
-                    totalUSD: sum(records, 'totalUSD'),
-                    isTotal: true // Để phân biệt dòng tổng
-                };
-
-                finalData.push(totalRow);
-            });
-
-            return finalData;
-        }
-
+        return {
+            data: finalData,
+            grandTotalVND,
+            grandTotalUSD
+        };
+    }
 
 
          function sum(arr, field) {
@@ -186,64 +195,57 @@
             if (valid.length === 0) return 0;
             return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
         }
-        function initializeRevenueSummaryGrid(data) {
-            const columnWidth = 180;
-            $("#gridContainer").dxDataGrid({
-        dataSource: data, allowColumnResizing: true,
-                columns: [
-                   { dataField: "subGroupDescription", caption: "", width: columnWidth },
-                        { dataField: "totalVND", caption: "VND", width:columnWidth, dataType: "number", format: "#,##0" },
-                { dataField: "totalUSD", caption: "USD", width:columnWidth, dataType: "number", format: "#,##0" },
+     function initializeRevenueSummaryGrid(data, grandTotalVND, grandTotalUSD) {
+        const columnWidth = 180;
 
-                ],
-                paging: { pageSize: 25 },
-                 scrolling:  {
-                       mode: 'virtual',
-                   useNative: true,
-                   showScrollbar: "always"
-                   },
-                pager: {
-                    visible: true,
-                    allowedPageSizes: [25, 50, 'all'],
-                    showPageSizeSelector: true,
-                    showInfo: true,
-                    showNavigationButtons: true,
-                },
-                 filterRow: {
-                     visible: true,
-                     applyFilter: "auto"
-                  },
-                   headerFilter: {
-                      visible: true
-                  },
-                     summary: {
-                        totalItems: [
-                                {column: "subGroupDescription", summaryType: "custom",displayFormat: "Grand Total"},
-                                { column: "totalVND", summaryType: "sum",customizeText: function (e) {
-                    return Math.round(e.value).toLocaleString('vi-VN', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    });
-                }},
-                     { column: "totalUSD", summaryType: "sum",customizeText: function (e) {
-                    return Math.round(e.value).toLocaleString('vi-VN', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    });
-                }},
-                        ]
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            columns: [
+                { dataField: "subGroupDescription", caption: "", width: columnWidth },
+                { dataField: "totalVND", caption: "VND", width: columnWidth, dataType: "number", format: "#,##0" },
+                { dataField: "totalUSD", caption: "USD", width: columnWidth, dataType: "number", format: "#,##0" },
+            ],
+            summary: {
+                totalItems: [
+                    {
+                        column: "subGroupDescription",
+                        summaryType: "custom",
+                        displayFormat: "Grand Total"
                     },
-                selection: { mode: "multiple", showCheckBoxesMode: "none" },
-                showBorders: true,
-                onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data?.cssClass) {
-            e.rowElement.addClass(e.data.cssClass);
-        }
+                    {
+                        column: "totalVND",
+                        summaryType: "custom",
+                        name: "grandVND",
+                        customizeText: function () {
+                            return Math.round(grandTotalVND).toLocaleString('vi-VN', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            });
+                        }
+                    },
+                    {
+                        column: "totalUSD",
+                        summaryType: "custom",
+                        name: "grandUSD",
+                        customizeText: function () {
+                            return Math.round(grandTotalUSD).toLocaleString('vi-VN', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            });
+                        }
+                    }
+                ]
+            },
+            showBorders: true,
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            }
+        });
     }
-
-
-            });
-        }
 
 
 

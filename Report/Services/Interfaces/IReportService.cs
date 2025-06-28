@@ -19,7 +19,7 @@ namespace Report.Services.Interfaces
         DataTable TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly);
         DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode);
          DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode);
-        DataTable OTAMonthlyReport(string fromDate, string Number, string type, string currencyID);
+        DataTable OTAMonthlyReport(DateTime fromDate, string Number, string type, string currencyID);
         DataTable DailyPickupReport(DateTime fromDate, DateTime toDate);
         DataTable DailyBreakfastDetail(DateTime fromDate);
         DataTable FreeUpgradeReport(DateTime fromDate, DateTime toDate, string viewBy, string status);
@@ -56,5 +56,9 @@ namespace Report.Services.Interfaces
         DataTable ReservationRateCheck(DateTime date, string status, int ind, int pseudo, int variance, int fixRate, int package, int dcReason, string sort, int showFixCharge, int showAlerts);
 
         DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked);
+        DataTable TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy, int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP);
+        DataTable DepartureIndividualAndGroupData(DateTime fromDate);
+        DataTable BookingSummaryByStatusData(DateTime fromDate, DateTime toDate);
+        DataTable VacantRoomData(string roomClass, string roomtype, string FromRoom, string ToRoom, string OrderByRoomNo, string OrderByHKPStatus, string OrderByFOStatus, string HKPStatus, string FOStatus, string IsGroupByRoomClass);
     }
 }

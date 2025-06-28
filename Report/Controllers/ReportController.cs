@@ -480,12 +480,15 @@ namespace Report.Controllers
             //     return PartialView("_ReportViewerPartial", report);
         }
         [HttpGet]
-        public IActionResult OTAsMonthlyReport(string fromDate, string Number, string type, string currencyID)
-       {
+        public IActionResult OTAsMonthlyReport(DateTime fromDate, string Number, string type, string currencyID)
+        {
             try
             {
-                var startDate = DateTime.ParseExact(fromDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                var months = Enumerable.Range(0, 4)
+                // Không cần ParseExact vì fromDate đã là DateTime
+                var startDate = fromDate;
+
+                // Tạo danh sách 4 tháng liên tiếp
+                var months = Enumerable.Range(0, 3)
                                        .Select(i => startDate.AddMonths(i))
                                        .ToList();
 
@@ -499,7 +502,6 @@ namespace Report.Controllers
                     City = d["City"]?.ToString() ?? "",
                     CurrencyID = d["CurrencyID"]?.ToString() ?? "",
 
-                    // Tạo dynamic theo tháng
                     RoomRevenue = months.Select(m => new
                     {
                         Month = m.ToString("MMM-yyyy"),
@@ -512,7 +514,6 @@ namespace Report.Controllers
                     })
                 }).ToList();
 
-                // Trả về thêm tiêu đề tháng để JS dùng
                 var monthHeaders = months.Select(m => m.ToString("MMM-yyyy")).ToList();
 
                 return Json(new
@@ -664,6 +665,42 @@ namespace Report.Controllers
 
 
 
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult DepartureIndividualAndGroupData(DateTime fromDate)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DataTable dataTable = _iReportService.DepartureIndividualAndGroupData(fromDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  VIP = !string.IsNullOrEmpty(d["VIP"].ToString()) ? d["VIP"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  NoOfRoom = !string.IsNullOrEmpty(d["NoOfRoom"].ToString()) ? d["NoOfRoom"] : "",
+                                  NoOfAdult = !string.IsNullOrEmpty(d["NoOfAdult"].ToString()) ? d["NoOfAdult"] : "",
+                                  NoOfChild = !string.IsNullOrEmpty(d["NoOfChild"].ToString()) ? d["NoOfChild"] : "",
+                                  NoOfChild1 = !string.IsNullOrEmpty(d["NoOfChild1"].ToString()) ? d["NoOfChild1"] : "",
+                                  NoOfNight = !string.IsNullOrEmpty(d["NoOfNight"].ToString()) ? d["NoOfNight"] : "",
+                                  Group = !string.IsNullOrEmpty(d["Group"].ToString()) ? d["Group"] : "",
                               }).ToList();
                 return Json(result);
             }
@@ -1365,6 +1402,45 @@ namespace Report.Controllers
             }
         }
         [HttpGet]
+        public IActionResult TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy,int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP)
+        {
+            try
+            {
+
+                DataTable dataTable = _iReportService.TransportationData(fromDate, toDate, transportType, viewBy, reservationStatus, sortByGuestName, sortByRoom, sortByTime, sortByVIP);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  DateTime = d["DateTime"]?.ToString() ?? "",
+                                  GuestName = d["Guest Name"]?.ToString() ?? "",
+                                  StationCode = d["Station Code"]?.ToString() ?? "",
+                                  CarrierCode = d["Carrier Code"]?.ToString() ?? "",
+                                  TransportCode = d["Transport Number"]?.ToString() ?? "",
+                                  Adults = d["Adults"]?.ToString() ?? "",
+                                  Children = d["Children"]?.ToString() ?? "",
+                                  Children1 = d["Children 1"]?.ToString() ?? "",
+                                  Children2 = d["Children 2"]?.ToString() ?? "",
+                                  ResvStatus = d["Resv Status"]?.ToString() ?? "",
+
+                                  TransportDate = d["TransportDate"]?.ToString() ?? "",
+                                  Room = d["Room"]?.ToString() ?? "",
+                                  vip = d["VIP"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "",
+                                  TransportName = d["TransportName"]?.ToString() ?? "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
         public IActionResult NationalStatisticsData(DateTime fromDate, DateTime toDate, int zone, string viewBy)
         {
             try
@@ -1781,6 +1857,70 @@ namespace Report.Controllers
             //report.RequestParameters = false;
 
             //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult BookingSummaryByStatusData(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+
+                var data = _iReportService.BookingSummaryByStatusData(fromDate, toDate);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  StatusName = !string.IsNullOrEmpty(d["StatusName"].ToString()) ? d["StatusName"] : "",
+                                  Total = !string.IsNullOrEmpty(d["Total"].ToString()) ? d["Total"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating cancellation journal report: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult VacantRoomData(string roomClass, string roomtype,string FromRoom,string ToRoom,string OrderByRoomNo,string OrderByHKPStatus,string OrderByFOStatus,string HKPStatus,string FOStatus,string IsGroupByRoomClass)
+        {
+            roomClass = roomClass ?? "";
+            roomtype = roomtype ?? "";
+            FromRoom = FromRoom ?? "";
+            ToRoom = ToRoom ?? "";
+            try
+            {
+
+                var data = _iReportService.VacantRoomData(roomClass, roomtype, FromRoom, ToRoom, OrderByRoomNo, OrderByHKPStatus, OrderByFOStatus, HKPStatus, FOStatus,IsGroupByRoomClass);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  FOStatus = !string.IsNullOrEmpty(d["FOStatus"].ToString()) ? d["FOStatus"] : "",
+
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  ArrDate = !string.IsNullOrEmpty(d["Arr.Date"].ToString()) ? d["Arr.Date"] : "",
+                                  DepDate = !string.IsNullOrEmpty(d["Dep.Date"].ToString()) ? d["Dep.Date"] : "",
+
+                                  ResvStatus = !string.IsNullOrEmpty(d["Resv. Status"].ToString()) ? d["Resv. Status"] : "",
+                                  Adl = !string.IsNullOrEmpty(d["Adl"].ToString()) ? d["Adl"] : "",
+                                  Chld = !string.IsNullOrEmpty(d["Chld"].ToString()) ? d["Chld"] : "",
+
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  NextBlock = !string.IsNullOrEmpty(d["NextBlock"].ToString()) ? d["NextBlock"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating cancellation journal report: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -2227,6 +2367,8 @@ namespace Report.Controllers
                     ViewBag.TransactionsList = listts;
                     break;
                 case "RevenueByReport":
+                case "VacantRoom":
+                case "Transportation":
                 case "ReservationbyCompany":
                 case "RoomOccupancy":
                 case "RoomMoves":
@@ -2259,6 +2401,8 @@ namespace Report.Controllers
 
                     List<VIPModel> listvip = PropertyUtils.ConvertToList<VIPModel>(VIPBO.Instance.FindAll());
                     ViewBag.VIPList = listvip;
+                    List<TransportTypeModel> listtrantt = PropertyUtils.ConvertToList<TransportTypeModel>(TransportTypeBO.Instance.FindAll());
+                    ViewBag.TransportTypeList = listtrantt;
                     break;
                 case "ReservationCancellations":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());

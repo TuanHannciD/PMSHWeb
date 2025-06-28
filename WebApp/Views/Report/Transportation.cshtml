@@ -4,8 +4,7 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var roomclassList = ViewBag.RoomClassList;
-    var rtList = ViewBag.RoomTypeList;
+    var listtrantt = ViewBag.TransportTypeList;
 }
 
 
@@ -60,10 +59,10 @@
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Room Class:</label>
-            <select id="roomClass" name="roomClass" class="form-control form-control-sm " style="width :100px">
-                <option value="">ALL</option>
-                @foreach (var item in roomclassList)
+            <label class="me-2 mb-0">Transport Type:</label>
+            <select id="transportType" name="transportType" class="form-control form-control-sm " style="width :100px">
+                <option value="ALL">ALL</option>
+                @foreach (var item in listtrantt)
                 {
                     <option value="@item.Code">@item.Code</option>
                 }
@@ -71,49 +70,35 @@
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Room Type:</label>
-            <select id="roomtype" name="roomtype" class="form-control form-control-sm " style="width :100px">
-                <option value="">ALL</option>
-                @foreach (var item in rtList)
-                {
-                    <option value="@item.Code">@item.Code</option>
-                }
+            <label class="me-2 mb-0">View By:</label>
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+                <option value="0">Both</option>
+                <option value="1">Pickup</option>
+                <option value="2">Drop off</option>
             </select>
-
         </div>
 
-        <div class="d-flex flex-column me-3">
-
-            <div class="d-flex flex-wrap gap-2">
-                <label class="mb-1">Include</label>
-                <!-- Row 1 -->
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="pseudo" name="includeOptions" value="1">
-                    <label class="form-check-label" for="reservation">Pseudo Rooms</label>
-                </div>
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="chkviponly" name="includeOptions" value="1">
-                    <label class="form-check-label" for="chkviponly">Vip Only</label>
-                </div>
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="individual" name="includeOptions" value="1">
-                    <label class="form-check-label" for="checkedIn">Individual</label>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="blockcode" name="includeOptions" value="1">
-                    <label class="form-check-label" for="cancellation">Block Code</label>
-                </div>
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="preblocked" name="includeOptions" value="1">
-                    <label class="form-check-label" for="waitList">Preblocked Only</label>
-                </div>
-
-            </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Reservation Status:</label>
+            <select id="reservationStatus" name="reservationStatus" class="form-control form-control-sm w-auto">
+                <option value="11">ALL</option>
+                <option value="0">Reservation</option>
+                <option value="1">Checked In</option>
+                <option value="5">Due In</option>
+                <option value="6">Due Out</option>
+            </select>
         </div>
 
 
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Sort Order:</label>
+            <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
+                <option value="guestName">Guest Name</option>
+                <option value="room">Room</option>
+                <option value="time">Time</option>
+                <option value="vip">VIP</option>
+            </select>
+        </div>
 
 
 
@@ -141,7 +126,43 @@
     }
 
     $(document).ready(function () {
-    
+
+          const allOptions = $('#reservationStatus option').clone();
+
+    const optionMap = {
+        "0": ["11", "0", "1", "5", "6"], // Both
+        "1": ["0", "5"],                // Pickup
+        "2": ["1", "6"]                 // Drop off
+    };
+
+    $('#viewBy').on('change', function () {
+        const selected = $(this).val();
+
+        const grid = $("#gridContainer").dxDataGrid("instance");
+
+    if (selected === "2") {
+        // Drop off
+        grid.columnOption("dateTime", "caption", "Drop Off Date/Time");
+    } else {
+        // Pickup hoặc Both
+        grid.columnOption("dateTime", "caption", "Pick Up Date/Time");
+    }
+
+
+        const allowed = optionMap[selected];
+
+        $('#reservationStatus').empty();
+
+        allOptions.each(function () {
+            if (allowed.includes($(this).val())) {
+                $('#reservationStatus').append($(this));
+            }
+        });
+
+        // (tùy chọn) Reset về option đầu tiên phù hợp
+        $('#reservationStatus').val(allowed[0]);
+    });
+
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -164,19 +185,26 @@
     });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
+          const selectedSort = $("#sortOrder").val();
+
+        // Gán giá trị 1 cho lựa chọn, 0 cho cái còn lại
+        const sortByGuestName = selectedSort === "guestName" ? 1 : 0;
+        const sortByRoom = selectedSort === "room" ? 1 : 0;
+        const sortByTime = selectedSort === "time" ? 1 : 0;
+        const sortByVIP = selectedSort === "vip" ? 1 : 0;
         $.ajax({
-            url: '/Report/ReservationPreblockedyData',
+            url: '/Report/TransportationData',
             type: 'GET',
             data: {
                                fromDate: $("#fromDate").val(),
                      toDate: $("#toDate").val(),
-                  roomClass: $("#roomClass").val(),
-                   roomtype: $("#roomtype").val(),
-                       pseudo: $("#pseudo").is(":checked") ? "1" : "",
-    chkviponly: $("#chkviponly").is(":checked") ? "0" : "",
-    individual: $("#individual").is(":checked") ? "0" : "",
-    blockcode: $("#blockcode").is(":checked") ? "0" : "",
-    preblocked: $("#preblocked").is(":checked") ? "0" : ""
+                  transportType: $("#transportType").val(),
+                   viewBy: $("#viewBy").val(),
+                    reservationStatus: $("#reservationStatus").val(),
+                       sortByGuestName: sortByGuestName,
+            sortByRoom: sortByRoom,
+            sortByTime: sortByTime,
+            sortByVIP: sortByVIP
             },
             traditional: true,
               crossDomain: false,
@@ -185,7 +213,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializReservationPreblockedyGrid(result);
+                    const processedData =   prepareTransportationDataGroup(result);
+                initializTransportationGrid(processedData);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -194,57 +223,104 @@
             }
         });
     });
+       function prepareTransportationDataGroup(data) {
+
+        const groupedData = {};
+
+        const typeOrder = {
+        "PickUp": 1,
+        "DropOff": 2,
+        "Both": 3
+    };
+
+    // 👉 Sắp xếp theo: typeOrder → transportName → pickupTime
+    data.sort((a, b) => {
+        const orderA = typeOrder[a.type] || 99;
+        const orderB = typeOrder[b.type] || 99;
+
+        if (orderA !== orderB) return orderA - orderB;
+
+        const transportCompare = (a.transportName || '').localeCompare(b.transportName || '');
+        if (transportCompare !== 0) return transportCompare;
+
+        const timeA = new Date(a.pickupTime || a.dateTime || 0);
+        const timeB = new Date(b.pickupTime || b.dateTime || 0);
+        return timeA - timeB;
+    });
+
+        // 👉 Nhóm theo Type + TransportName
+        data.forEach(item => {
+            const key = `${item.type}||${item.transportName}`;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+        });
+
+        const finalData = [];
+
+        // 👉 Lặp lại theo đúng thứ tự đã sort
+        Object.entries(groupedData).forEach(([key, records]) => {
+            const [type, transportName] = key.split("||");
+              // Xác định nhãn cho từng loại
+    const dateTimeLabel =
+        type === "PickUp"
+            ? "Pick Up Date/Time"
+            : type === "DropOff"
+                ? "Drop off Date/Time"
+                : "Transport Date/Time";
+
+    const transportDateLabel =
+        type === "PickUp"
+            ? "Arr.Date"
+            : type === "DropOff"
+                ? "Dep.Date"
+                : "Date";
+            const titleRow = {
+                guestName: `Transport Type: ${type} - ${transportName}`,
+                dateTime: dateTimeLabel,
+                transportDate: transportDateLabel,
+                isTitle: true,
+                cssClass: "custom"
+            };
+
+            finalData.push(titleRow);
+            finalData.push(...records);
+        });
+
+        return finalData;
+    }
 
 
-
-    function initializReservationPreblockedyGrid(data) {
+    function initializTransportationGrid(data) {
         const columnWidth = 180;
+            const viewBy = $("#viewBy").val();
+
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
             allowColumnResizing: true,
           columnResizingMode: "widget",
             columns: [
-               { dataField: "roomNo", caption: "Room No", width: columnWidth-70},
-            { dataField: "name", caption: "Name", width: columnWidth},
-                        { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
-                     
-                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
-            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+               { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-70},
+            { dataField: "guestName", caption: "Guest Name", width: columnWidth},
+
+               { dataField: "dateTime",  caption: "", width: columnWidth-40,  dataType: "date", format: "dd/MM/yyyy"},
+                                         { dataField: "stationCode", caption: "Station Code", width: columnWidth-50 },
+                                              { dataField: "carrierCode", caption: "Carrier Code", width: columnWidth-50 },
+               { dataField: "transportCode", caption: "Trans. Code", width: columnWidth-50 },
 
 
-            { dataField: "noOfAdult", caption: "Adl.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfChild", caption: "Chl.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-              { dataField: "noOfChild1", caption: "Chl1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "noOfNight", caption: "Nts.", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "hKStatusID", caption: "HK Status", width: columnWidth-70},
+            { dataField: "adults", caption: "A",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "children", caption: "C", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+              { dataField: "children1", caption: "C1", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+             { dataField: "children2", caption: "C2", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+             { dataField: "transportDate", caption: "", width:columnWidth-80 ,  dataType: "date", format: "dd/MM/yyyy"},
+             { dataField: "resvStatus", caption: "Status", width: columnWidth-70},
 
-               { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
+               { dataField: "room", caption: "Room ", width:columnWidth-70 },
 
-            { dataField: "fOStatus", caption: "Status", width: columnWidth-70},
-                { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+            { dataField: "vip", caption: "VIP", width: columnWidth-70},
+                { dataField: "description", caption: "Description", width:columnWidth}
 
-                    { dataField: "rate", caption: "Rate Amount", width:columnWidth-50,dataType: "number",
-    format: {
-        type: "fixedPoint",
-        precision: 2
-    },
-    customizeText: function (e) {
-        return `${e.valueText}`;
-    } },
-                                 { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
-
-                                    { dataField: "", caption: "C/H",  width:columnWidth-70 },
-                  { dataField: "depositReceivedMaster", caption: "Deposit Curr.Recelved ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
-                      { dataField: "depositRsqMaster", caption: "Deposit Curr.Requested ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
-
-                                     { dataField: "resType", caption: "Res Type", width:columnWidth-70 },
-            { dataField: "agent", caption: "Agent", width: columnWidth},
-            { dataField: "company", caption: "Company", width: columnWidth},
-             { dataField: "source", caption: "Source", width: columnWidth},
-            { dataField: "businessBlockCode", caption: "Block Code", width: columnWidth-70 },
+                              
             ],
             paging: { pageSize: 25 },
       scrolling:  {
@@ -266,35 +342,8 @@
     },
     headerFilter: {
         visible: true
-        },summary: {
-        totalItems: [
-               {
-                    column: "roomNo", // hoặc bất kỳ cột nào bạn muốn đếm
-                    summaryType: "count",
-                    displayFormat: "Total Room: {0}", // thêm {0} để hiển thị số lượng
-                    valueFormat: "#,##0" // tuỳ chọn: định dạng số nếu cần
-                },
-
-            {
-                column: "noOfAdult",
-                summaryType: "sum",
-                displayFormat: "Total: {0}",
-                valueFormat: "#,##0"
-            },
-            {
-                column: "noOfChild",
-                summaryType: "sum",
-                displayFormat: "{0}",
-                valueFormat: "#,##0"
-            },
-            {
-                column: "noOfChild1",
-                summaryType: "sum",
-                displayFormat: "{0}",
-                valueFormat: "#,##0"
-            }
-        ]
-    },
+        }
+        ,
 
             showBorders: true,
                             onRowPrepared: function (e) {

@@ -4,8 +4,8 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var alertList = ViewBag.ALertList;
-
+    var roomclassList = ViewBag.RoomClassList;
+    var rtList = ViewBag.RoomTypeList;
 }
 
 
@@ -49,41 +49,76 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <!-- From Date -->
-        <div class="d-flex align-items-center">
-            <label class="me-2 mb-0">From Date:</label>
-            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-        </div>
 
-        <!-- To Date -->
-        <div class="d-flex align-items-center">
-            <label class="me-2 mb-0">To Date:</label>
-            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-        </div>
-         <div  class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Alter Area:</label>
-            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
-
-                <option value="0">All Area</option>
-                <option value="1">Reservation</option>
-                <option value="2">Check-In</option>
-                <option value="3">Check-Out</option>
-                <option value="4">Billing</option>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Class:</label>
+            <select id="roomClass" name="roomClass" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in roomclassList)
+                {
+                    <option value="@item.ID">@item.Code</option>
+                }
             </select>
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Alter Code</label>
-
-            <select class="form-select form-select-sm w-auto" style="max-width: 100px;" id="altercode" name="altercode">
+            <label class="me-2 mb-0">Room Type:</label>
+            <select id="roomtype" name="roomtype" class="form-control form-control-sm " style="width :100px">
                 <option value="">ALL</option>
-                @foreach (var item in alertList)
+                @foreach (var item in rtList)
                 {
-                    <option value="@item.ID">@item.Code - @item.Description</option>
+                    <option value="@item.ID">@item.Code</option>
                 }
             </select>
 
         </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Room</label>
+            <input style="width: 130px;" type="text" id="fromRoom" name="fromRoom" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Room</label>
+            <input style="width: 130px;" type="text" id="toRoom" name="toRoom" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">HKP Status:</label>
+            <select id="hkpStatus" name="hkpStatus" class="form-control form-control-sm w-auto">
+                <option value="0">All</option>
+                <option value="1">Clean</option>
+                <option value="2">Dirty</option>
+                <option value="3">Pickup</option>
+                <option value="4">Inspected</option>
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Sort Order:</label>
+            <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
+                <option value="roomnoby">By Room No</option>
+                <option value="hkpstatusby">By HKP Status</option>
+                <option value="fostatusby">By FOStatus</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">FO Status:</label>
+            <select id="foStatus" name="foStatus" class="form-control form-control-sm w-auto">
+                <option value="9">ALL</option>
+                <option value="4">Vacant</option>
+                <option value="1">Occupied</option>
+            </select>
+        </div>
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <!-- Row 1 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="arrival" name="includeOptions" value="1" >
+                    <label class="form-check-label" for="arrival">Group By Room Class</label>
+                </div>
+            </div>
+        </div>
+
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -108,6 +143,7 @@
     }
 
     $(document).ready(function () {
+
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -129,15 +165,28 @@
 
     });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+            const orderBy = $("#sortOrder").val(); // dùng chung id nên cần đổi lại nếu có 3 dropdown trùng id
+
+    // Xác định thứ tự sắp xếp
+    let orderByRoomNo = 0, orderByHKPStatus = 0, orderByFOStatus = 0;
+    if (orderBy === "roomnoby") orderByRoomNo = 1;
+    if (orderBy === "hkpstatusby") orderByHKPStatus = 1;
+    if (orderBy === "fostatusby") orderByFOStatus = 1;
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/AlertsData',
+            url: '/Report/VacantRoomData',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),
-                                viewBy: $("#viewBy").val(),
-                altercode: $("#altercode").val(),
+                  roomClass: $("#roomClass").val(),
+                   roomtype: $("#roomtype").val(),
+                     FromRoom: $("#fromRoom").val(),
+                    ToRoom: $("#toRoom").val(),
+                    OrderByRoomNo: orderByRoomNo,
+                    OrderByHKPStatus: orderByHKPStatus,
+                    OrderByFOStatus: orderByFOStatus,
+                    HKPStatus: $("#hkpStatus").val(), // bạn cần thêm id="hkpStatus" cho select HKP Status
+                    FOStatus: $("#foStatus").val(),   // bạn cần thêm id="foStatus" cho select FO Status
+                    IsGroupByRoomClass: $("#arrival").is(":checked") ? 1 : 0
             },
             traditional: true,
               crossDomain: false,
@@ -146,7 +195,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeBlacklistReportGrid(result);
+                initializVacantRoomGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -156,31 +205,36 @@
         });
     });
 
-    function initializeBlacklistReportGrid(data) {
+
+
+    function initializVacantRoomGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
+            allowColumnResizing: true,
+          columnResizingMode: "widget",
             columns: [
-        { dataField: "confirmationNo", caption: "Conf.No",width: columnWidth-60 },
-        { dataField: "roomNo", caption: "Room No",  width: columnWidth-80  },
+               { dataField: "roomNo", caption: "Room Number", width: columnWidth-50},
+            { dataField: "code", caption: "Room Type", width: columnWidth-60},
+                        { dataField: "foStatus", caption: "FOStatus", width: columnWidth-60 },
+                         { dataField: "status", caption: "Status", width: columnWidth-60 },
+                                 { dataField: "name", caption: "Name", width: columnWidth-60 },
+            { dataField: "arrDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+            { dataField: "depDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+               { dataField: "resvStatus", caption: "Resv.Status", width: columnWidth-50 },
 
-        { dataField: "guestName", caption: "Name", width: columnWidth },
-                      { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                        { dataField: "roomType", caption: "Room Type", width: columnWidth-60},
 
+            { dataField: "adl", caption: "Adlts",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "chld", caption: "Chld", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
 
-            { dataField: "alertArea", caption: "Alert Area", width: columnWidth-60},
-            { dataField: "alertCode", caption: "Alert Code", width: columnWidth-60 },
-            { dataField: "alertDescription", caption: "Alert Description",width: columnWidth +50},
-            { dataField: "status", caption: "Status",  width: columnWidth-60  }
+             { dataField: "nextBlock", caption: "NextBlock", width: columnWidth-50},
             ],
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+      scrolling:  {
+         mode: 'virtual',
+        useNative: true,
+       showScrollbar: "always"
+    },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -188,15 +242,38 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+        },summary: {
+        totalItems: [
+             {column: "resvStatus", summaryType: "custom",displayFormat: "Grand Total"},
+
+            {
+                column: "adl",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "chld",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            }
+        ]
+    },
+
+            showBorders: true,
+                            onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data?.cssClass) {
+            e.rowElement.addClass(e.data.cssClass);
+        }
+    }
 
         });
     }
