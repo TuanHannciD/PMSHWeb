@@ -140,39 +140,32 @@
         });
     });
 
-    function initializReveunueByGrid(data) {
-       
+            function initializReveunueByGrid(data) {
+        console.log("Dữ liệu đầu vào:", data); // Gỡ lỗi dữ liệu
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             allowColumnResizing: true,
             columns: [
-            { dataField: "rateCode", caption: "RateCode", width: 150 },
-            { dataField: "dayOfWeek", caption: "Conf.No",   width: 100 },
-            { dataField: "date", caption: "Date", width: 100, dataType: "date",format: "dd/MM/yyyy"  },
-            { dataField: "vacRo", caption: "VacRo", width: 100},
-            { dataField: "resRo", caption: "ResRo", width: 100, dataType: "number", format: "#,##0" },
-            { dataField: "indPax", caption: "IndPax",   width: 100 , dataType: "number", format: "#,##0"},
-            { dataField: "grpPax", caption: "GrpPax",   width: 100, dataType: "number", format: "#,##0" },
-            { dataField: "totalPax1", caption: "TotalPax1",   width: 120, dataType: "number", format: "#,##0" },
-            { dataField: "arrPax", caption: "ArrPax",   width: 100, dataType: "number", format: "#,##0" },
-            { dataField: "depPax", caption: "DepPax",   width: 100, dataType: "number", format: "#,##0"},
-            { dataField: "waitPax", caption: "WaitPax",   width: 100, dataType: "number", format: "#,##0" },
-            { dataField: "oooRo", caption: "OOORo",   width: 100, dataType: "number", format: "#,##0"},
-            { dataField: "totalPax2", caption: "TotalPax2",   width: 100, dataType: "number", format: "#,##0" },
-            { dataField: "phantram", caption: "%",   width: 100 },
-            { dataField: "accomOrPerson", caption: "AccomOrPerson",   width: 150 },
-            { dataField: "accommodation", caption: "Accommodation",   width: 150 },
-            { dataField: "fAndB", caption: "FAndB",   width: 100 },
-            { dataField: "total", caption: "Total",   width: 100 },
-
+                { dataField: "rateCode", caption: "RateCode", width: 150 },
+                { dataField: "dayOfWeek", caption: "Conf.No", width: 100 },
+                { dataField: "date", caption: "Date", width: 100, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "vacRo", caption: "VacRo", width: 100 },
+                { dataField: "resRo", caption: "ResRo", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "indPax", caption: "IndPax", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "grpPax", caption: "GrpPax", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "totalPax1", caption: "TotalPax1", width: 120, dataType: "number", format: "#,##0" },
+                { dataField: "arrPax", caption: "ArrPax", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "depPax", caption: "DepPax", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "waitPax", caption: "WaitPax", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "oooRo", caption: "OOORo", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "totalPax2", caption: "TotalPax2", width: 100, dataType: "number", format: "#,##0" },
+                { dataField: "phantram", caption: "%", width: 100 },
+                { dataField: "accomOrPerson", caption: "AccomOrPerson", width: 150 },
+                { dataField: "accommodation", caption: "Accommodation", width: 150 },
+                { dataField: "fAndB", caption: "FAndB", width: 100 },
+                { dataField: "total", caption: "Total", width: 100 },
             ],
-           
             paging: { pageSize: 25 },
-    //   scrolling:  {
-    //      mode: 'virtual',
-    //     useNative: true,
-    //    showScrollbar: "always"
-    // },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -181,46 +174,28 @@
                 showNavigationButtons: true,
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            filterRow: {
-            visible: true,
-            applyFilter: "auto"
-            },
-            headerFilter: {
-                visible: true
-            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
             showBorders: true,
-              summary: {
-    totalItems: [
-        {
-            column: "date",
-            summaryType: "custom",
-            displayFormat: "Grand Total",
-            name: "custom"
-        },
-        { column: "resRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "indPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "grpPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "totalPax1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "arrPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "depPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "waitPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "oooRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "totalPax2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
-    ],
-    calculateCustomSummary: function (options) {
-        if (options.name === "custom") {
-            if (options.summaryProcess === "start") {
-                options.totalValue = 0;
-            } else if (options.summaryProcess === "calculate") {
-                if (options.value) {
-                    options.totalValue += 1;
-                }
-            }
-        }
-    }
-}
-
-    });
+            summary: {
+                totalItems: [
+                    {
+                        column: "date",
+                        summaryType: "custom",
+                        displayFormat: "Grand Total",                     
+                    },
+                        { column: "resRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "indPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "grpPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "totalPax1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "arrPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "depPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "waitPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "oooRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                        { column: "totalPax2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
+                ]
+            }          
+        });
     }
 
 

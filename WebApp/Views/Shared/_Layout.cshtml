@@ -158,7 +158,22 @@
                             <a class="nav-link dropdown-toggle" href="#">Profile</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a></li>
-                              @*   <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index">New profile</a></li> *@
+                                <li><a class="dropdown-item" asp-area="" asp-controller="profile" asp-action="index">new profile</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#">Profile</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="profile" asp-action="index">new profile</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#">Reservation</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a></li>
+                                @*   <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index">New profile</a></li> *@
                             </ul>
                         </li>
 
