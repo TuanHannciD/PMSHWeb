@@ -45,7 +45,7 @@
         }
 
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px">GuestMarketReport</div>
+<div class="text-center" id="reportTitle" style="font-size: 20px">Guest Market Report</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
@@ -134,8 +134,8 @@
                 },
                 success: function (result) {
                                      console.log(result);
-    const processedData = preparGuestMarketData(result);
-                initializGuestMarkeGrid(processedData);
+    const processed = preparGuestMarketData(result);
+    initializGuestMarkeGrid(processed.data, processed.grandTotal);
                     $("#loadingSpinner").hide();
                 },
                 error: function () {
@@ -144,63 +144,80 @@
                 }
             });
         });
-                 function preparGuestMarketData(data) {
-            const groupedData = {};
 
-            // Nhóm dữ liệu theo groupCode
-            data.forEach(item => {
-                const key = item.marketType;
-                if (!groupedData[key]) groupedData[key] = [];
-                groupedData[key].push(item);
+                  function preparGuestMarketData(data) {
+        const groupedData = {};
+        const finalData = [];
+
+        // Tổng toàn bộ (chỉ tính các record, không tính title/total dòng nhóm)
+        const grandTotal = {
+            d_Persons: 0, d_Room: 0, _D_Occ: 0, d_Accom: 0, d_TotalAccom: 0,
+            m_Persons: 0, m_Room: 0, _M_Occ: 0, m_Accom: 0, m_TotalAccom: 0,
+            y_Persons: 0, y_Room: 0, _Y_Occ: 0, y_Accom: 0, y_TotalAccom: 0
+        };
+
+        data.forEach(item => {
+            const key = item.marketType;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+
+            // Cộng luôn Grand Total (chỉ cộng dữ liệu thực tế)
+            grandTotal.d_Persons += item.d_Persons || 0;
+            grandTotal.d_Room += item.d_Room || 0;
+            grandTotal._D_Occ += item._D_Occ || 0;
+            grandTotal.d_Accom += item.d_Accom || 0;
+            grandTotal.d_TotalAccom += item.d_TotalAccom || 0;
+
+            grandTotal.m_Persons += item.m_Persons || 0;
+            grandTotal.m_Room += item.m_Room || 0;
+            grandTotal._M_Occ += item._M_Occ || 0;
+            grandTotal.m_Accom += item.m_Accom || 0;
+            grandTotal.m_TotalAccom += item.m_TotalAccom || 0;
+
+            grandTotal.y_Persons += item.y_Persons || 0;
+            grandTotal.y_Room += item.y_Room || 0;
+            grandTotal._Y_Occ += item._Y_Occ || 0;
+            grandTotal.y_Accom += item.y_Accom || 0;
+            grandTotal.y_TotalAccom += item.y_TotalAccom || 0;
+        });
+
+        Object.entries(groupedData).forEach(([marketType, records]) => {
+            finalData.push({
+                code: `${marketType}`,
+                isTitle: true,
+                cssClass: "custom"
             });
 
-            const finalData = [];
+            finalData.push(...records);
 
-            Object.entries(groupedData).forEach(([marketType, records]) => {
-                // Tính tổng amount của nhóm
+            finalData.push({
+                code: "TOTAL",
+                description: records[0].description,
+                d_Persons: sum(records, 'd_Persons'),
+                d_Room: sum(records, 'd_Room'),
+                _D_Occ: sum(records, '_D_Occ'),
+                d_Accom: sum(records, 'd_Accom'),
+                d_TotalAccom: sum(records, 'd_TotalAccom'),
 
-                // Dòng tiêu đề hiển thị groupCode ở cột description và tổng ở cột amount
-                const titleRow = {
-                    code: `${marketType}`,
-                    isTitle: true,
-                    cssClass: "custom",
-                };
-                finalData.push(titleRow);
-                finalData.push(...records);
+                m_Persons: sum(records, 'm_Persons'),
+                m_Room: sum(records, 'm_Room'),
+                _M_Occ: sum(records, '_M_Occ'),
+                m_Accom: sum(records, 'm_Accom'),
+                m_TotalAccom: sum(records, 'm_TotalAccom'),
 
-                  const totalRow = {
-                    code: "TOTAL",
-                    description: records[0].description,
-                    d_Persons: sum(records, 'd_Persons'),
-                    d_Room: sum(records, 'd_Room'),
-                    _D_Occ: sum(records, '_D_Occ'),
-                    d_Accom: sum(records, 'd_Accom'),
-                    d_TotalAccom: sum(records, 'd_TotalAccom'),
+                y_Persons: sum(records, 'y_Persons'),
+                y_Room: sum(records, 'y_Room'),
+                _Y_Occ: sum(records, '_Y_Occ'),
+                y_Accom: sum(records, 'y_Accom'),
+                y_TotalAccom: sum(records, 'y_TotalAccom'),
 
-                    m_Persons: sum(records, 'm_Persons'),
-                    m_Room: sum(records, 'm_Room'),
-                    _M_Occ: sum(records, '_M_Occ'),
-                    m_Accom: sum(records, 'm_Accom'),
-                    m_TotalAccom: sum(records, 'm_TotalAccom'),
-
-                    y_Persons: sum(records, 'y_Persons'),
-                    y_Room: sum(records, 'y_Room'),
-                    _Y_Occ: sum(records, '_Y_Occ'),
-                    y_Accom: sum(records, 'y_Accom'),
-                    y_TotalAccom: sum(records, 'y_TotalAccom'),
-
-                    isTotal: true,
-                    cssClass: "custom" // Để phân biệt dòng tổng
-                };
-
-            finalData.push(totalRow);
-                // Thêm các record
-   
+                isTotal: true,
+                cssClass: "custom"
             });
+        });
 
-            return finalData;
-        }
-
+        return { data: finalData, grandTotal };
+    }
 
 
          function sum(arr, field) {
@@ -212,7 +229,7 @@
             if (valid.length === 0) return 0;
             return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
         }
-          function initializGuestMarkeGrid(data) {
+    function initializGuestMarkeGrid(data, grandTotal) {
         const columnWidth = 180;
 
         // Lấy ngày từ input
@@ -290,29 +307,93 @@
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-            summary: {
-                totalItems: [
-                                         {
+          summary: {
+            totalItems: [
+                {
                     column: "description",
                     summaryType: "custom",
-                    displayFormat: "Total"
+                    displayFormat: "Grand Total"
                 },
-                    { column: "d_Persons", summaryType: "sum", displayFormat: " {0}", valueFormat: "#,##0" },
-                    { column: "d_Room", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "d_Accom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
-                    { column: "d_TotalAccom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
-
-                    { column: "m_Persons", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "m_Room", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "m_Accom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
-                    { column: "m_TotalAccom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
-
-                    { column: "y_Persons", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "y_Room", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    { column: "y_Accom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" },
-                    { column: "y_TotalAccom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0.00" }
-                ]
-            },
+                {
+                    column: "d_Persons",
+                    summaryType: "custom",
+                    name: "d_Persons",
+                    customizeText: () => grandTotal.d_Persons.toLocaleString("vi-VN")
+                },
+                {
+                    column: "d_Room",
+                    summaryType: "custom",
+                    name: "d_Room",
+                    customizeText: () => grandTotal.d_Room.toLocaleString("vi-VN")
+                },
+                 {
+                    column: "_D_Occ",
+                    summaryType: "custom",
+                    name: "_D_Occ",
+                    customizeText: () => grandTotal._D_Occ.toLocaleString("vi-VN")
+                },
+                {
+                    column: "d_Accom",
+                    summaryType: "custom",
+                    name: "d_Accom",
+                    customizeText: () => grandTotal.d_Accom.toLocaleString("vi-VN", { minimumFractionDigits: 2 })
+                },
+                {
+                    column: "d_TotalAccom",
+                    summaryType: "custom",
+                    name: "d_TotalAccom",
+                    customizeText: () => grandTotal.d_TotalAccom.toLocaleString("vi-VN", { minimumFractionDigits: 2 })
+                },
+                {
+                    column: "m_Persons",
+                    summaryType: "custom",
+                    name: "m_Persons",
+                    customizeText: () => grandTotal.m_Persons.toLocaleString("vi-VN")
+                },
+                {
+                    column: "m_Room",
+                    summaryType: "custom",
+                    name: "m_Room",
+                    customizeText: () => grandTotal.m_Room.toLocaleString("vi-VN")
+                },
+                {
+                    column: "m_Accom",
+                    summaryType: "custom",
+                    name: "m_Accom",
+                    customizeText: () => grandTotal.m_Accom.toLocaleString("vi-VN", { minimumFractionDigits: 2 })
+                },
+                {
+                    column: "m_TotalAccom",
+                    summaryType: "custom",
+                    name: "m_TotalAccom",
+                    customizeText: () => grandTotal.m_TotalAccom.toLocaleString("vi-VN", { minimumFractionDigits: 2 })
+                },
+                {
+                    column: "y_Persons",
+                    summaryType: "custom",
+                    name: "y_Persons",
+                    customizeText: () => grandTotal.y_Persons.toLocaleString("vi-VN")
+                },
+                {
+                    column: "y_Room",
+                    summaryType: "custom",
+                    name: "y_Room",
+                    customizeText: () => grandTotal.y_Room.toLocaleString("vi-VN")
+                },
+                {
+                    column: "y_Accom",
+                    summaryType: "custom",
+                    name: "y_Accom",
+                    customizeText: () => grandTotal.y_Accom.toLocaleString("vi-VN", { minimumFractionDigits: 2 })
+                },
+                {
+                    column: "y_TotalAccom",
+                    summaryType: "custom",
+                    name: "y_TotalAccom",
+                    customizeText: () => grandTotal.y_TotalAccom.toLocaleString("vi-VN", { minimumFractionDigits: 2 })
+                }
+            ]
+        },
             onRowPrepared: function (e) {
                 if (e.rowType === "data" && e.data?.cssClass) {
                     e.rowElement.addClass(e.data.cssClass);

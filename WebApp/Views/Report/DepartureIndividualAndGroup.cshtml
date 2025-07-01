@@ -134,7 +134,7 @@
 
         // Nhóm theo trường 'group'
         data.forEach(item => {
-            const groupKey = item.group || "No Group";
+            const groupKey = item.group || "";
             if (!grouped[groupKey]) grouped[groupKey] = [];
             grouped[groupKey].push(item);
         });
@@ -152,7 +152,7 @@
 
             // 👉 Group Total
             const groupTotal = {
-                roomNo: "Group Total",
+                name: "Group Total",
                 isTotal: true,
                 cssClass: "group-total",
                 noOfRoom: sum(records, "noOfRoom"),

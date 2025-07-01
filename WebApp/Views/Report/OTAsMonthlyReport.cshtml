@@ -120,25 +120,24 @@
 
     });
             $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
-        $("#loadingSpinner").show();
-                    let type = 0;
-            const isTravelAgentsChecked = $("#profileTravelAgents").is(":checked");
-            const isCompanyChecked = $("#profileCompany").is(":checked");
-
-            if (isTravelAgentsChecked && isCompanyChecked) {
-              type = 2;
-            } else if (isTravelAgentsChecked || isCompanyChecked) {
-              type = 1;
+                $("#loadingSpinner").show();
+                    let typeArr = [];
+            if ($("#profileTravelAgents").is(":checked")) {
+                typeArr.push("1");
             }
+            if ($("#profileCompany").is(":checked")) {
+                typeArr.push("2");
+            }
+
         $.ajax({
             url: '/Report/OTAsMonthlyReport',
             type: 'GET',
             data: {
                 fromDate: $("#toDateMonth").val(),
-                number: $("#roomNight").val() ,
-                type: type,
-                currencyID:$("#viewBy").val() 
-            },
+                number: $("#roomNight").val(),
+                type: typeArr.join(","),
+                    currencyID:$("#viewBy").val() 
+                },
             traditional: true,
               crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },

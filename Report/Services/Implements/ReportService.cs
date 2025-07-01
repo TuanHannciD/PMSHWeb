@@ -108,6 +108,75 @@ namespace Report.Services.Implements
             return myTable;
         }
 
+        public DataTable ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+            string   pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+        new SqlParameter("@RoomClass", roomClass),
+        new SqlParameter("@RoomType", roomtype),
+                 new SqlParameter("@Market", market),
+                new SqlParameter("@RateCode", rateCode),
+                    new SqlParameter("@Source", source),
+              new SqlParameter("@Pseudo", pseudo),
+                  new SqlParameter("@CheckedInToday", checkedInToday),
+
+                         new SqlParameter("@Cancellations", cancellations),
+                  new SqlParameter("@VIP", vip),
+                          new SqlParameter("@SortOrder", sortOrder),
+                         new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
+
+                                  new SqlParameter("@SearchCriteria", searchCriteria),
+                  new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
+                          new SqlParameter("@ZeroRateOnly", zeroRateOnly),
+
+                                 new SqlParameter("@DisRoomSharer", disRoomSharer),
+                          new SqlParameter("@ChkVIPOnly", viponlycheck),
+                              new SqlParameter("@NoPost", noPost),
+            };
+
+
+            DataTable myTable = DataTableHelper.getTableData("spRptArrivalDetailed", param);
+            return myTable;
+        }
+
+        public DataTable ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+          string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+        new SqlParameter("@RoomClass", roomClass),
+        new SqlParameter("@RoomType", roomtype),
+                 new SqlParameter("@Market", market),
+                new SqlParameter("@RateCode", rateCode),
+                    new SqlParameter("@Source", source),
+              new SqlParameter("@Pseudo", pseudo),
+                  new SqlParameter("@CheckedInToday", checkedInToday),
+
+                         new SqlParameter("@Cancellations", cancellations),
+                  new SqlParameter("@VIP", vip),
+                          new SqlParameter("@SortOrder", sortOrder),
+                         new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
+
+                                  new SqlParameter("@SearchCriteria", searchCriteria),
+                  new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
+                          new SqlParameter("@ZeroRateOnly", zeroRateOnly),
+
+                                 new SqlParameter("@DisRoomSharer", disRoomSharer),
+                          new SqlParameter("@ChkVIPOnly", viponlycheck),
+                              new SqlParameter("@NoPost", noPost),
+            };
+
+
+            DataTable myTable = DataTableHelper.getTableData("spRptArrivalDetailed", param);
+            return myTable;
+        }
+
+
         public DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode)
         {
             SqlParameter[] param = new SqlParameter[]
