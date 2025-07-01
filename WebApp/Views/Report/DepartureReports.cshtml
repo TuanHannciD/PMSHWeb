@@ -1,0 +1,576 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var roomclassList = ViewBag.RoomClassList;
+    var rtList = ViewBag.RoomTypeList;
+    var listzo = ViewBag.ZoneList;
+    var vipList = ViewBag.VIPList;
+    var listrc = ViewBag.RateCodeList;
+    var listpmtr = ViewBag.TransactionsList;
+    var listbnbl = ViewBag.BusinessBlockList;
+}
+
+
+<style>
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <!-- From Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+      
+
+    
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Class:</label>
+            <select id="roomClass" name="roomClass" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in roomclassList)
+                {
+                        <option value="@item.Code">@item.Code-@item.Description</option>
+                }
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room Type:</label>
+            <select id="roomtype" name="roomtype" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in rtList)
+                {
+                        <option value="@item.Code">@item.Code-@item.Description</option>
+                }
+            </select>
+
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Pay Method:</label>
+            <select id="paymethod" name="paymethod" class="form-control form-control-sm " style="width: 100px;">
+                <option value="">ALL</option>
+                @foreach (var item in listpmtr)
+                {
+                        <option value="@item.Code">@item.Code-@item.Description</option>
+                }
+            </select>
+
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Block:</label>
+            <select id="block" name="block" class="form-control form-control-sm " style="width: 100px;">
+                <option value="">ALL</option>
+                @foreach (var item in listbnbl)
+                {
+                    <option value="@item.Code">@item.Code-@item.Name</option>
+                }
+            </select>
+
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Rate Code:</label>
+            <select id="rateCode" name="rateCode" class="form-control form-control-sm " style="width: 100px;">
+                <option value="">ALL</option>
+                @foreach (var item in listrc)
+                {
+                        <option value="@item.RateCode">@item.RateCode-@item.Descripton</option>
+                }
+            </select>
+
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="form-control form-control-sm " style="width: 100px;">
+                <option value="">ALL</option>
+                @foreach (var item in listzo)
+                {
+                        <option value="@item.Code">@item.Code-@item.Description</option>
+                }
+            </select>
+
+        </div>
+        <div class="d-flex align-items-center me-3" id="vipContainer">
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="viponlycheck" name="viponlycheck" >
+                <label class="form-check-label" for="viponlycheck">Vip Only</label>
+            </div>
+
+            <!-- Select sẽ được ẩn/hiện tùy theo checkbox -->
+            <select id="vip" name="vip" class="form-control form-control-sm" style="width: 100px; display: none;">
+                <option value="">ALL</option>
+                @foreach (var item in vipList)
+                {
+                        <option value="@item.Code">@item.Description</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1">Check Only:</label>
+                <!-- Row 1 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="latecheckoutonly" name="checkeOptions" value="1" >
+                    <label class="form-check-label" for="arrival">Late Cheked Out Only</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="earlydepartureonly" name="checkeOptions" value="1" >
+                    <label class="form-check-label" for="arrival">Early Departure Rooms Only</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1">Profile Type:</label>
+                <!-- Row 1 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="travelagents" name="profiletypeOptions" value="111" >
+                    <label class="form-check-label" for="arrival">Travel Agents</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="company" name="profiletypeOptions" value="111">
+                    <label class="form-check-label" for="cancel">Company</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="source" name="profiletypeOptions" value="111">
+                    <label class="form-check-label" for="cancel">Source</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="individuals" name="profiletypeOptions" value="111">
+                    <label class="form-check-label" for="cancel">Individuals</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="group" name="profiletypeOptions" value="111">
+                    <label class="form-check-label" for="cancel">Group</label>
+                </div>
+            </div>
+        </div>
+       
+
+        <div class="d-flex flex-column me-3">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1">Include :</label>
+                <!-- Row 1 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="pseudo" name="includeOptions" value="1">
+                    <label class="form-check-label" for="pseudoRooms">Pseudo Rooms</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="dueout" name="includeOptions" value="1">
+                    <label id="dateInfoText" class="form-check-label" for="checkedInToday">Due Out</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="checkout" name="includeOptions" value="1">
+                    <label class="form-check-label" for="cancellations">Checked Out</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="specials" name="includeOptions" value="1">
+                    <label class="form-check-label" for="zeroRateOnly">Specials</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="sharesnames" name="includeOptions" value="1">
+                    <label class="form-check-label" for="zeroRateOnly">Shares names</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="disRoomSharer" name="includeOptions" value="1" checked>
+                    <label class="form-check-label" for="disRoomSharer">Display Room Sharer </label>
+                </div>
+
+            </div>
+        </div>
+
+
+        
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Sort Order :</label>
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+
+                <option value="0">Alphabetical</option>
+                <option value="1">Room No</option>
+                <option value="2">VIP</option>
+                <option value="3">Company Name</option>
+                <option value="4">Agent Name</option>
+                <option value="5">Source Name</option>
+                <option value="6">Group Name</option>
+            </select>
+        </div>
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+</div>
+
+<div class="mui-card">
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+    
+
+         $('#viponlycheck').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#vip').show();
+            } else {
+                $('#vip').hide();
+                $('#vip').val(''); 
+            }
+        });
+
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        const today = new Date();
+
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Lấy ngày cuối cùng của tháng
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
+
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        // Gán giá trị cho input date
+        document.getElementById('fromDate').value = formattedFirstDay;
+        document.getElementById('toDate').value = formattedLastDay;
+
+
+
+    });
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Report/DepartureReportsData',
+            type: 'GET',
+            data: {
+                     fromDate: $("#fromDate").val(),
+                     toDate: $("#toDate").val(),
+                  roomClass: $("#roomClass").val(),
+                   roomtype: $("#roomtype").val(),
+                      paymethod: $("#paymethod").val(),
+                    rateCode: $("#rateCode").val(),
+                     block: $("#block").val(),
+                       zone: $("#zone").val(),
+                  vip: $("#vip").val(),
+
+                     sortOrder: $("#viewBy").val(),
+                lateCheckOut: $("#latecheckoutonly").is(":checked") ? "1" : "",
+                earlyDep: $("#earlydepartureonly").is(":checked") ? "1" : "",
+                    agents: $("#travelagents").is(":checked") ? "1" : "",
+                    company: $("#company").is(":checked") ? "1" : "",
+                    source: $("#source").is(":checked") ? "1" : "",
+                    individuals: $("#individuals").is(":checked") ? "1" : "",
+                    group: $("#group").is(":checked") ? "1" : "",
+
+                pseudo: $("#pseudo").is(":checked") ? "111" : "",
+                dueout: $("#dueout").is(":checked") ? "111" : "",
+                    checkout: $("#checkout").is(":checked") ? "111" : "",
+                    disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" : "",
+                    specials: $("#specials").is(":checked") ? "1" : "",
+
+
+            },
+            traditional: true,
+              crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                // $("#reportViewerContainer").html(result);
+                // $("#loadingSpinner").hide();
+                     console.log(result);
+              const processed = prepareArrivalsGroupedData(result);
+    initializArrivalsDetailedGrid(processed);
+                    $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+        function prepareArrivalsGroupedData(data) {
+        const groupedData = {};
+        const finalData = [];
+
+        // Gom nhóm theo arrivalDate
+        data.forEach(item => {
+            const key = item.arrivalDate || "";
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+        });
+
+        // Sắp xếp key theo thứ tự ngày tăng dần
+        const sortedKeys = Object.keys(groupedData).sort((a, b) => {
+            // Chuyển string về Date để so sánh
+            const dateA = new Date(a);
+            const dateB = new Date(b);
+            return dateA - dateB;
+        });
+
+        // Duyệt theo key đã sắp xếp
+        sortedKeys.forEach(arrivalDate => {
+            const records = groupedData[arrivalDate];
+            const formattedDate = new Date(arrivalDate).toLocaleDateString('vi-VN');
+            // Thêm dòng tiêu đề nhóm
+             finalData.push({
+                roomNo: `Arrival Date`, 
+                 confirmationNo: formattedDate,                 
+                isTitle: true,
+                cssClass: "custom"
+            });
+            // Thêm các dòng chi tiết
+            finalData.push(...records);
+        });
+
+        return finalData;
+    }
+
+
+
+    function initializArrivalsDetailedGrid(data) {
+        const columnWidth = 180;
+        $("#gridContainer").dxDataGrid({
+    dataSource: data, allowColumnResizing: true,
+            columns: [
+               { dataField: "roomNo", caption: "Room No", width: columnWidth-50},
+            { dataField: "name", caption: "Name", width: columnWidth},
+             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth  },
+               {
+      caption: "Stay No",
+      width: columnWidth + 50,
+      cssClass: "wrap-cell",
+      cellTemplate: function (container, options) {
+        const data = options.data;
+          if (data.isTitle) {
+            container.html(""); // hoặc container.empty();
+            return;
+        }
+        // Kiểm tra các checkbox
+        const showPrintRate = $("#printRate").is(":checked");
+        const showFixedCharge = $("#fixCharges").is(":checked");
+        const showPackages = $("#packages").is(":checked");
+        const showPaymentMethod = $("#paymentMethod").is(":checked");
+        const showRouting = $("#routingInstruction").is(":checked");
+        const showShareName = $("#sharesNames").is(":checked");
+        const showAccompany = $("#accompanying").is(":checked");
+        const showItemInventory = $("#itemsInventorys").is(":checked");
+        const showSpecials = $("#specials").is(":checked");
+        const showComments = $("#commnets").is(":checked");
+        const showProfileNote = $("#profileNote").is(":checked");
+
+        let htmlParts = [];
+
+        if (showItemInventory && data.itemInventory)
+          htmlParts.push(`<div class="wrap-line"><b>ItemInventory:</b> ${data.itemInventory}</div>`);
+
+        if (showSpecials && data.specials)
+          htmlParts.push(`<div class="wrap-line"><b>Specials:</b> ${data.specials}</div>`);
+
+             htmlParts.push(`<div class="wrap-line"><b></b> ${data.prevStays}</div>`);
+
+        if (showPrintRate && data.printRate)
+          htmlParts.push(`<div class="wrap-line"><b>Print Rate:</b> ${data.printRate}</div>`);
+
+        if (showFixedCharge && data.fixedCharge)
+          htmlParts.push(`<div class="wrap-line"><b>Fixed Charge:</b> ${data.fixedCharge}</div>`);
+
+        if (showPackages && data.packages)
+          htmlParts.push(`<div class="wrap-line"><b>Packages:</b> ${data.packages}</div>`);
+
+        if (showPaymentMethod && data.paymentMethod)
+          htmlParts.push(`<div class="wrap-line"><b>Payment Method:</b> ${data.paymentMethod}</div>`);
+
+        if (showRouting && data.routingTransaction)
+          htmlParts.push(`<div class="wrap-line"><b>Routing:</b> ${data.routingTransaction}</div>`);
+
+        if (showShareName && data.shareRoomName)
+          htmlParts.push(`<div class="wrap-line"><b>Share Name:</b> ${data.shareRoomName}</div>`);
+
+        if (showAccompany && data.accompanyName)
+          htmlParts.push(`<div class="wrap-line"><b>Accompanying:</b> ${data.accompanyName}</div>`);
+
+        if (showComments && data.comment)
+          htmlParts.push(`<div class="wrap-line"><b>Res. Comments:</b> ${data.comment}</div>`);
+
+        if (showProfileNote && data.party)
+          htmlParts.push(`<div class="wrap-line"><b>Profile Note:</b> ${data.party}</div>`);
+
+        container.html(htmlParts.join(""));
+      }
+    },
+
+
+            { dataField: "roomClassID", caption: "Rns", width: columnWidth-70},
+            { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
+             { dataField: "lastRoom", caption: "LastRoom", width: columnWidth-80 },
+            { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
+            { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
+
+                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
+            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+
+               { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
+                     { dataField: "pickupTransportType", caption: "Trans.Type", width:columnWidth-70 },
+            { dataField: "noOfAdult", caption: "A.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "noOfChild", caption: "C.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+              { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+                { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
+                       { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+                             { caption: "Mkt.Code", dataField: "MarketCode", width: columnWidth-70},
+                           { dataField: "packages", caption: "Packages", width: columnWidth-70},
+                              { dataField: "sourceCode", caption: "Source Code", width: columnWidth-70},
+                                     { dataField: "status", caption: "Status", width: columnWidth-70},
+
+
+                    { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
+                               { dataField: "creditCardNo", caption: "Credit Card No.", width: columnWidth-30},
+
+               { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+            { dataField: "rate", caption: "Rate Amount",  width:columnWidth-70,dataType: "number", format: "#,##0" },
+             { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
+                  { dataField: "expirationDate", caption: "Exp.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+                    { dataField: "", caption: "Deposit Received",  width:columnWidth-70 },
+
+            ],
+            paging: { pageSize: 25 },
+      scrolling:  {
+         mode: 'virtual',
+        useNative: true,
+       showScrollbar: "always"
+    },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+    },
+            showBorders: true,
+                            onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data?.cssClass) {
+            e.rowElement.addClass(e.data.cssClass);
+        }
+    }
+
+        });
+    }
+
+
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport='@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // Đặt tên file theo selectedReport
+            let fileName =selectedReport + ".xlsx";
+
+            // Ghi file
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>

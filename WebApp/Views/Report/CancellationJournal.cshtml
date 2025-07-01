@@ -131,7 +131,7 @@
             }
         });
     });
-            function prepareRoomOccupancyData(data) {
+     function prepareRoomOccupancyData(data) {
             const groupedByCode = {};
 
         // Nhóm theo 'code'
@@ -158,7 +158,7 @@
                 debitVND:sum(records, 'debitVND'),
                 reference:"",
                 cssClass: "custom",
-                
+
                 isTotal: true
             };
 
@@ -167,6 +167,12 @@
 
         return finalData;
     }
+
+    // Helper function tính tổng
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
+
     // Helper functions
     function sum(arr, field) {
         return arr.reduce((total, item) => total + (item[field] || 0), 0);

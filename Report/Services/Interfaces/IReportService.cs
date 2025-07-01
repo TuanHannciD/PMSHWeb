@@ -65,6 +65,18 @@ namespace Report.Services.Interfaces
 
         DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
         DataTable ManagerReport(DateTime businessDate, string currency);
+<<<<<<< HEAD
         DataTable CashierSummary(DateTime dtpFromDate, string cboType);
     } 
+=======
+<<<<<<< HEAD
+        DataTable ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+            string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate);
+        DataTable ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+         string  pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate);
+=======
+>>>>>>> f2706383c67b62686a7317f40027fabd3f6f4b47
+
+    }
+>>>>>>> 35a38a23a5c9d3501a567fae6893766be9fd5ffb
 }

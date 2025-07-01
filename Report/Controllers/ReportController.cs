@@ -486,17 +486,23 @@ namespace Report.Controllers
         {
             try
             {
-                // Không cần ParseExact vì fromDate đã là DateTime
                 var startDate = fromDate;
+                var months = Enumerable.Range(0, 3).Select(i => startDate.AddMonths(i)).ToList();
 
-                // Tạo danh sách 4 tháng liên tiếp
-                var months = Enumerable.Range(0, 3)
-                                       .Select(i => startDate.AddMonths(i))
-                                       .ToList();
+                // Tách type string thành list
+                var typeList = type.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                DataTable dataTable = _iReportService.OTAMonthlyReport(fromDate, Number, type, currencyID);
+                List<DataRow> allRows = new List<DataRow>();
 
-                var result = dataTable.AsEnumerable().Select(d => new
+                foreach (var t in typeList)
+                {
+                    // Gọi service cho từng loại type riêng biệt
+                    var dt = _iReportService.OTAMonthlyReport(fromDate, Number, t.Trim(), currencyID);
+                    allRows.AddRange(dt.AsEnumerable());
+                }
+
+                // Gộp kết quả vào danh sách duy nhất
+                var result = allRows.Select(d => new
                 {
                     ProfileID = d["ProfileID"]?.ToString() ?? "",
                     GuestNo = d["GuestNo"]?.ToString() ?? "",
@@ -529,6 +535,7 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+
 
         [HttpGet]
         public IActionResult TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly)
@@ -2053,7 +2060,7 @@ namespace Report.Controllers
             }
         }
         [HttpGet]
-        public IActionResult OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID)
+        public IActionResult OccupancybyPersonData(DateTime fromDate, DateTime toDate, int roomTypeID)
         {
             try
             {
@@ -2087,7 +2094,221 @@ namespace Report.Controllers
             {
                 return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
             }
-        }     
+        }
+
+        [HttpGet]
+        public IActionResult ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass,string roomtype,string market,string rateCode,string source, string vip,string viponlycheck,string noPost, int sortOrder,
+            string  pseudo,string checkedInToday,string cancellations,string zeroRateOnly,int  disRoomSharer,int searchCriteria,int ckhArrivalDate)
+        {
+            roomClass = roomClass ?? "";
+            roomtype = roomtype ?? "";
+            market = market ?? "";
+            rateCode = rateCode ?? "";
+            source = source ?? "";
+            pseudo = pseudo ?? "";
+            vip = vip ?? "";
+            viponlycheck = viponlycheck ?? "";
+            noPost = noPost ?? "";
+            checkedInToday = checkedInToday ?? "";
+            cancellations = cancellations ?? "";
+            zeroRateOnly = zeroRateOnly ?? "";
+            try
+            {
+                DataTable dt = _iReportService.ArrivalsDetailedData(
+    fromDate,
+    toDate,
+    roomClass,
+    roomtype,
+    market,
+    rateCode,
+    source,
+    vip,
+    viponlycheck,
+    noPost,
+    sortOrder,
+    pseudo,
+    checkedInToday,
+    cancellations,
+    zeroRateOnly,
+    disRoomSharer,
+    searchCriteria,
+    ckhArrivalDate
+);
+
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  Company = d["Company"]?.ToString() ?? "",
+                                  Agent = d["Agent"]?.ToString() ?? "",
+                                  Source = d["Source"]?.ToString() ?? "",
+                                  BusinessBlockCode = d["BusinessBlockCode"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  RoomClassID = d["RoomClassID"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  ETA = d["ETA"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  PickupCarrierCode = d["PickupCarrierCode"]?.ToString() ?? "",
+                                  PickupTransportType = d["PickupTransportType"]?.ToString() ?? "",
+                                  NoOfAdult = d["NoOfAdult"]?.ToString() ?? "",
+                                  NoOfChild = d["NoOfChild"]?.ToString() ?? "",
+                                  NoOfChild1 = d["NoOfChild1"]?.ToString() ?? "",
+                                  NoOfChild2 = d["NoOfChild2"]?.ToString() ?? "",
+                                  NoOfRoom = d["NoOfRoom"]?.ToString() ?? "",
+                                  MarketCode = d["MarketCode"]?.ToString() ?? "",
+                                  SourceCode = d["SourceCode"]?.ToString() ?? "",
+                                  ReservationTypeCode = d["ReservationTypeCode"]?.ToString() ?? "",
+                                  Status = d["Status"]?.ToString() ?? "",
+                                  RateCode = d["RateCode"]?.ToString() ?? "",
+                                  Rate = d["Rate"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  PaymentMethod = d["PaymentMethod"]?.ToString() ?? "",
+                                  CreditCardNo = d["CreditCardNo"]?.ToString() ?? "",
+                                  ExpirationDate = d["ExpirationDate"]?.ToString() ?? "",
+                                  AmountMaster = d["AmountMaster"]?.ToString() ?? "",
+                                  CurrencyMaster = d["CurrencyMaster"]?.ToString() ?? "",
+                                  ProfileID = d["ProfileID"]?.ToString() ?? "",
+                                  NoPost = d["NoPost"]?.ToString() ?? "",
+                                  IsPseudo = d["IsPseudo"]?.ToString() ?? "",
+                                  ShareRoomName = d["ShareRoomName"]?.ToString() ?? "",
+                                  AccompanyName = d["AccompanyName"]?.ToString() ?? "",
+                                  ItemInventory = d["ItemInventory"]?.ToString() ?? "",
+                                  FixedCharge = d["FixedCharge"]?.ToString() ?? "",
+                                  Specials = d["Specials"]?.ToString() ?? "",
+                                  Packages = d["Packages"]?.ToString() ?? "",
+                                  VIP = d["VIP"]?.ToString() ?? "",
+                                  EmployeeID = d["EmployeeID"]?.ToString() ?? "",
+                                  RoutingTransaction = d["RoutingTransaction"]?.ToString() ?? "",
+                                  RoutingToProfile = d["RoutingToProfile"]?.ToString() ?? "",
+                                  Party = d["Party"]?.ToString() ?? "",
+                                  Comment = d["Comment"]?.ToString() ?? "",
+                                  PrintRate = d["PrintRate"]?.ToString() ?? "",
+                                  MemberType = d["MemberType"]?.ToString() ?? "",
+                                  MemberNo = d["MemberNo"]?.ToString() ?? "",
+                                  PrevStays = d["PrevStays"]?.ToString() ?? "",
+                                  LastRoom = d["LastRoom"]?.ToString() ?? "",
+                                  ReservationHolder = d["ReservationHolder"]?.ToString() ?? "",
+                                  GroupCode = d["GroupCode"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+            string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
+        {
+            roomClass = roomClass ?? "";
+            roomtype = roomtype ?? "";
+            market = market ?? "";
+            rateCode = rateCode ?? "";
+            source = source ?? "";
+            pseudo = pseudo ?? "";
+            vip = vip ?? "";
+            viponlycheck = viponlycheck ?? "";
+            noPost = noPost ?? "";
+            checkedInToday = checkedInToday ?? "";
+            cancellations = cancellations ?? "";
+            zeroRateOnly = zeroRateOnly ?? "";
+            try
+            {
+                DataTable dt = _iReportService.ArrivalDetailGroupbyHoldersData(
+    fromDate,
+    toDate,
+    roomClass,
+    roomtype,
+    market,
+    rateCode,
+    source,
+    vip,
+    viponlycheck,
+    noPost,
+    sortOrder,
+    pseudo,
+    checkedInToday,
+    cancellations,
+    zeroRateOnly,
+    disRoomSharer,
+    searchCriteria,
+    ckhArrivalDate
+);
+
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  Company = d["Company"]?.ToString() ?? "",
+                                  Agent = d["Agent"]?.ToString() ?? "",
+                                  Source = d["Source"]?.ToString() ?? "",
+                                  BusinessBlockCode = d["BusinessBlockCode"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  RoomClassID = d["RoomClassID"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  ETA = d["ETA"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  PickupCarrierCode = d["PickupCarrierCode"]?.ToString() ?? "",
+                                  PickupTransportType = d["PickupTransportType"]?.ToString() ?? "",
+                                  NoOfAdult = d["NoOfAdult"]?.ToString() ?? "",
+                                  NoOfChild = d["NoOfChild"]?.ToString() ?? "",
+                                  NoOfChild1 = d["NoOfChild1"]?.ToString() ?? "",
+                                  NoOfChild2 = d["NoOfChild2"]?.ToString() ?? "",
+                                  NoOfRoom = d["NoOfRoom"]?.ToString() ?? "",
+                                  MarketCode = d["MarketCode"]?.ToString() ?? "",
+                                  SourceCode = d["SourceCode"]?.ToString() ?? "",
+                                  ReservationTypeCode = d["ReservationTypeCode"]?.ToString() ?? "",
+                                  Status = d["Status"]?.ToString() ?? "",
+                                  RateCode = d["RateCode"]?.ToString() ?? "",
+                                  Rate = d["Rate"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  PaymentMethod = d["PaymentMethod"]?.ToString() ?? "",
+                                  CreditCardNo = d["CreditCardNo"]?.ToString() ?? "",
+                                  ExpirationDate = d["ExpirationDate"]?.ToString() ?? "",
+                                  AmountMaster = d["AmountMaster"]?.ToString() ?? "",
+                                  CurrencyMaster = d["CurrencyMaster"]?.ToString() ?? "",
+                                  ProfileID = d["ProfileID"]?.ToString() ?? "",
+                                  NoPost = d["NoPost"]?.ToString() ?? "",
+                                  IsPseudo = d["IsPseudo"]?.ToString() ?? "",
+                                  ShareRoomName = d["ShareRoomName"]?.ToString() ?? "",
+                                  AccompanyName = d["AccompanyName"]?.ToString() ?? "",
+                                  ItemInventory = d["ItemInventory"]?.ToString() ?? "",
+                                  FixedCharge = d["FixedCharge"]?.ToString() ?? "",
+                                  Specials = d["Specials"]?.ToString() ?? "",
+                                  Packages = d["Packages"]?.ToString() ?? "",
+                                  VIP = d["VIP"]?.ToString() ?? "",
+                                  EmployeeID = d["EmployeeID"]?.ToString() ?? "",
+                                  RoutingTransaction = d["RoutingTransaction"]?.ToString() ?? "",
+                                  RoutingToProfile = d["RoutingToProfile"]?.ToString() ?? "",
+                                  Party = d["Party"]?.ToString() ?? "",
+                                  Comment = d["Comment"]?.ToString() ?? "",
+                                  PrintRate = d["PrintRate"]?.ToString() ?? "",
+                                  MemberType = d["MemberType"]?.ToString() ?? "",
+                                  MemberNo = d["MemberNo"]?.ToString() ?? "",
+                                  PrevStays = d["PrevStays"]?.ToString() ?? "",
+                                  LastRoom = d["LastRoom"]?.ToString() ?? "",
+                                  ReservationHolder = d["ReservationHolder"]?.ToString() ?? "",
+                                  GroupCode = d["GroupCode"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+
         [HttpGet]
         public IActionResult SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted)
         {
@@ -2509,6 +2730,10 @@ namespace Report.Controllers
                     ViewBag.TransactionsList = listts;
                     break;
                 case "RevenueByReport":
+                case "DepartureReports":
+                case "ArrivalsDetailed":
+                case "ArrivalDetailGroupbyHolders":
+                case "ReservationPreblocked":
                 case "VacantRoom":
                 case "Transportation":
                 case "ReservationbyCompany":
@@ -2534,6 +2759,18 @@ namespace Report.Controllers
                     ViewBag.MarketList = listmk;
                     List<RateCodeModel> listrc = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
                     ViewBag.RateCodeList = listrc;
+
+                    List<SourceModel> listsrc = PropertyUtils.ConvertToList<SourceModel>(SourceBO.Instance.FindAll());
+                    ViewBag.SourceList = listsrc;
+
+                    List<TransactionsModel> listpmtr = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
+
+                    ViewBag.TransactionsList = listpmtr;
+
+                    List<BusinessBlockModel> listbnbl = PropertyUtils.ConvertToList<BusinessBlockModel>(BusinessBlockBO.Instance.FindAll());
+
+                    ViewBag.BusinessBlockList = listbnbl;
+
                     List<ARPaymentModel> listarpm = PropertyUtils
                     .ConvertToList<ARPaymentModel>(ARPaymentBO.Instance.FindAll())
                     .GroupBy(x => x.TransactionCode)
