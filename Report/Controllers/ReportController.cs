@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using DevExpress.CodeParser;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Import.Doc;
 using DevExpress.XtraRichEdit.Import.Html;
@@ -1802,6 +1803,10 @@ namespace Report.Controllers
         {
             try
             {
+                if (fromDate < new DateTime(1753, 1, 1))
+                {
+                    fromDate = DateTime.Today;
+                }
                 DataTable dataTable = _iReportService.RevenueReports(fromDate, type);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
@@ -2132,12 +2137,35 @@ namespace Report.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+                return Json(new { error = ex.Message });
             }
         }
-
-
-
+        [HttpGet]
+        public IActionResult CashierSummary(DateTime dtpFromDate, string cboType)
+        {
+            try
+            {
+                DataTable dt = _iReportService.CashierSummary(dtpFromDate, cboType);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  CashierNo = !string.IsNullOrEmpty(d["CashierNo"].ToString()) ? d["CashierNo"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  LoginTime = !string.IsNullOrEmpty(d["LoginTime"].ToString()) ? d["LoginTime"] : "",
+                                  LogoutTime = !string.IsNullOrEmpty(d["LogoutTime"].ToString()) ? d["LogoutTime"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  AmountMaster = !string.IsNullOrEmpty(d["AmountMaster"].ToString()) ? d["AmountMaster"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
 
         [HttpGet]
         public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)

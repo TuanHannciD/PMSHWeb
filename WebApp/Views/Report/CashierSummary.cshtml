@@ -1,0 +1,444 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+}
+
+
+<style>
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+   
+    /* Tổng theo transaction */
+    .dx-data-row.trn-total-row {
+        background-color: #fff3cd !important;
+        font-weight: bold !important;
+        font-style: italic;
+        color: #000 !important;
+    }
+
+    /* Tổng theo cashier */
+    .dx-data-row.cashier-total-row {
+        background-color: #d1ecf1 !important;
+        font-weight: bold !important;
+        color: #000 !important;
+    }
+
+    /* Grand total */
+    .dx-data-row.grandtotal-row {
+        background-color: #f8d7da !important;
+        font-weight: bold !important;
+        font-style: italic;
+        color: #000 !important;
+    }
+
+    /* Dòng "Summary Total" */
+    .dx-data-row.summarytotal {
+        background-color: #f0f0f0 !important;
+        font-weight: bold !important;
+        font-style: italic;
+        color: #000 !important;
+    }
+
+    /* Từng transaction trong summary */
+    .dx-data-row.summary-total {
+        background-color: #c3e6cb !important;
+        font-weight: bold !important;
+        color: #000 !important;
+    }
+
+
+
+
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <!-- From Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Date:</label>
+            <input type="date" id="dtpFromDate" name="dtpFromDate" class="form-control form-control-sm w-auto" />
+        </div>      
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Reservation:</label>
+            <select id="cboType" name="cboType" class="form-control form-control-sm w-auto">
+                <option value="0">Close Shift</option>
+                <option value="1">Open Shift</option>
+                <option value="2">Close And Open Shift</option>
+            </select>
+        </div>    
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+</div>
+
+<div class="mui-card">
+    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        // Gán giá trị cho input date
+        document.getElementById('dtpFromDate').value = formattedFirstDay;
+       
+
+
+
+    });
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Report/CashierSummary',
+            type: 'GET',
+            data: {
+                dtpFromDate: $("#dtpFromDate").val(),
+                cboType: $("#cboType").val(),
+            },
+            traditional: true,
+              crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                // $("#reportViewerContainer").html(result);
+                // $("#loadingSpinner").hide();
+                    console.log(result);
+                    initializReveunueByGrid(prepareRevenueData(result));
+                    $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+           function prepareRevenueData(data) {
+        const result = [];
+
+        // Gom theo user + loginTime (1 cashier shift)
+        const cashierGroups = {};
+        data.forEach(item => {
+            const key = `${item.userName}-${item.loginTime}`;
+            if (!cashierGroups[key]) cashierGroups[key] = [];
+            cashierGroups[key].push(item);
+        });
+
+        Object.entries(cashierGroups).forEach(([key, cashierItems]) => {
+            const first = cashierItems[0];
+
+            // Dòng đầu tiên hiện cashier info
+            const header = {
+                cashierNo: first.userName,
+                userName: first.userName,
+                loginTime: first.loginTime,
+                logoutTime: first.logoutTime,
+                transactionCode: "",
+                description: "",
+                currencyID: "",
+                amount: "",
+                amountMaster: "",
+                cssClass: ""
+            };
+            result.push(header);
+
+            // Gom theo transactionCode bên trong nhóm cashier
+            const transactionGroups = {};
+            cashierItems.forEach(item => {
+                const tCode = item.transactionCode || "Unknown";
+                if (!transactionGroups[tCode]) transactionGroups[tCode] = [];
+                transactionGroups[tCode].push(item);
+            });
+
+            // Render từng nhóm transaction
+            Object.entries(transactionGroups).forEach(([code, items]) => {
+                items.forEach(i => {
+                    result.push({
+                        cashierNo: "",
+                        userName: "",
+                        loginTime: "",
+                        logoutTime: "",
+                        transactionCode: i.transactionCode,
+                        description: i.description,
+                        currencyID: i.currencyID,
+                        amount: i.amount,
+                        amountMaster: i.amountMaster,
+                        cssClass: ""
+                    });
+                });
+
+                // Subtotal theo transactionCode
+                result.push({
+                    cashierNo: "",
+                    userName: "",
+                    loginTime: "",
+                    logoutTime: "",
+                    transactionCode: "",
+                    description: "Transaction Code Total",
+                    currencyID: "",
+                    amount: sum(items, "amount"),
+                    amountMaster: sum(items, "amountMaster"),
+                    cssClass: "trn-total"
+                });
+            });
+
+            // Subtotal theo cashier
+            result.push({
+                cashierNo: "",
+                userName: "",
+                loginTime: "",
+                logoutTime: "",
+                transactionCode: "",
+                description: "Cashier Total",
+                currencyID: "",
+                amount: sum(cashierItems, "amount"),
+                amountMaster: sum(cashierItems, "amountMaster"),
+                cssClass: "cashier-total"
+            });
+        });
+        const grandTotalRow = {
+                cashierNo: "",
+                userName: "",
+                loginTime: "",
+                logoutTime: "",
+                transactionCode: "",
+                description: "Grand Total",
+                currencyID: "",
+                amount: sum(data, "amount"),
+                amountMaster: sum(data, "amountMaster"),
+                cssClass: "grandtotal"
+        };
+
+            result.push(grandTotalRow);
+            const summarytotal = {
+                cashierNo: "Summary Total",
+                userName: "",
+                loginTime: "",
+                logoutTime: "",
+                transactionCode: "",
+                description: "",
+                currencyID: "",
+                amount: "",
+                amountMaster: "",
+                cssClass: "summarytotal"
+        };
+        result.push(summarytotal);
+
+        const summaryByTrn = {};
+        data.forEach(item => {
+            const code = item.transactionCode || "Unknown";
+            if (!summaryByTrn[code]) summaryByTrn[code] = [];
+            summaryByTrn[code].push(item);
+        });
+
+        Object.entries(summaryByTrn).forEach(([code, items]) => {
+            const description = items[0]?.description || "";
+            result.push({
+                cashierNo: "",
+                userName: "",
+                loginTime: "",
+                logoutTime: "",
+                transactionCode: `${code}`,
+                description: description,
+                currencyID: "VND",
+                amount: "",
+                amountMaster: "",
+                cssClass: "summary-total"
+            });
+            result.push({
+                    cashierNo: "",
+                    userName: "",
+                    loginTime: "",
+                    logoutTime: "",
+                    transactionCode: "",
+                    description: "Transaction Code Total",
+                    currencyID: "",
+                    amount: sum(items, "amount"),
+                    amountMaster: sum(items, "amountMaster"),
+                    cssClass: "trn-total"
+                });
+        });
+        const grandTotalRoww = {
+                cashierNo: "",
+                userName: "",
+                loginTime: "",
+                logoutTime: "",
+                transactionCode: "",
+                description: "Grand Total",
+                currencyID: "",
+                amount: sum(data, "amount"),
+                amountMaster: sum(data, "amountMaster"),
+                cssClass: "grandtotal"
+        };
+        result.push(grandTotalRoww);
+
+        return result;
+    }
+
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
+
+    function initializReveunueByGrid(data) {
+        const columnWidth = 180;
+        $("#gridContainer").dxDataGrid({
+    dataSource: data, allowColumnResizing: true,
+
+            columns: [
+            { dataField: "cashierNo", caption: "Cashier No", width: columnWidth-40 },
+            { dataField: "userName", caption: "Name", width: columnWidth-80 },
+            { dataField: "loginTime", caption: "Open Start", width: 130, dataType: "date", format: "HH:mm" },
+            { dataField: "logoutTime", caption: "Stop", width: 130, dataType: "date", format: "HH:mm"},
+            { dataField: "transactionCode", caption: "Trn Code", width: columnWidth+ 50},
+            { dataField: "description", caption: "Description", width: columnWidth+50},
+            { dataField: "currencyID", caption: "Currency", width: columnWidth-70 },       
+            { dataField: "amount", caption: "Foreign Amount ", width:columnWidth-20, dataType: "number", format: "#,##0" },
+            { dataField: "exch", caption: "Exch Rate ", width:columnWidth-50, dataType: "number", format: "#,##0" },
+            { dataField: "amountMaster", caption: "Local Amount", width: columnWidth-20, dataType: "number", format: "#,##0"},
+                ],
+              rowPrepared: function (e) {
+                  const css = e.data.cssClass;
+
+        // 🟡 Log để kiểm tra giá trị
+                    console.log("Row:", e.data, "Class:", css);
+                    if (e.rowType === "data") {
+                        const css = e.data.cssClass;
+                        if (css === "trn-total") {
+                            e.rowElement.addClass("trn-total-row");
+                        } else if (css === "cashier-total") {
+                            e.rowElement.addClass("cashier-total-row");
+                        } else if (css === "grandtotal") {
+                            e.rowElement.addClass("grandtotal-row");
+                        } else if (css === "summarytotal") {
+                            e.rowElement.addClass("summarytotal-row");
+                        } else if (css === "summary-total") {
+                            e.rowElement.addClass("summary-total-row");
+                        }
+                    }
+                },
+                
+            paging: { pageSize: 25 },
+    //               scrolling:  {
+    //               mode: 'virtual',
+    //               useNative: true,
+    //               showScrollbar: "always"
+    // },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+    },
+            showBorders: true,
+                 
+        });
+    }
+
+
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport='@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // Đặt tên file theo selectedReport
+            let fileName =selectedReport + ".xlsx";
+
+            // Ghi file
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+        
+</script>

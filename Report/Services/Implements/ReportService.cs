@@ -763,7 +763,12 @@ namespace Report.Services.Implements
         }
         public DataTable ManagerReport(DateTime businessDate, string currency)
         {
-            // Tính toán các tham số liên quan
+            // Chặn lỗi nếu ngày quá nhỏ
+            if (businessDate < new DateTime(2, 1, 1))
+            {
+                businessDate = new DateTime(2, 1, 1); // hoặc bạn có thể return empty DataTable nếu muốn
+            }
+
             DateTime currentBusinessDate = businessDate.AddDays(1);
             DateTime lastBusinessDate = businessDate.AddYears(-1);
             DateTime tomorrow = currentBusinessDate;
@@ -784,11 +789,17 @@ namespace Report.Services.Implements
             return DataTableHelper.getTableData("spRptManagerReport", param);
         }
 
+        public DataTable CashierSummary(DateTime dtpFromDate, string cboType)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", dtpFromDate),
+                new SqlParameter("@cboType", cboType)
+               
+            };
 
-
-
-
-
+            return DataTableHelper.getTableData("spRptCahierSummary", param);
+        }
 
 
 

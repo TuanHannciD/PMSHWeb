@@ -65,6 +65,6 @@ namespace Report.Services.Interfaces
 
         DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
         DataTable ManagerReport(DateTime businessDate, string currency);
-
-    }
+        DataTable CashierSummary(DateTime dtpFromDate, string cboType);
+    } 
 }
