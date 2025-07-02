@@ -314,7 +314,7 @@
                      block: $("#block").val(),
                        zone: $("#zone").val(),
                   vip: $("#vip").val(),
-
+                       viponlycheck: $("#viponlycheck").is(":checked") ? "1" : "",
                      sortOrder: $("#viewBy").val(),
                 lateCheckOut: $("#latecheckoutonly").is(":checked") ? "1" : "",
                 earlyDep: $("#earlydepartureonly").is(":checked") ? "1" : "",
@@ -339,8 +339,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-              const processed = prepareArrivalsGroupedData(result);
-    initializArrivalsDetailedGrid(processed);
+              const processed = prepareDepartureReportsData(result);
+    initializDepartureReportsGrid(processed);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -349,13 +349,15 @@
             }
         });
     });
-        function prepareArrivalsGroupedData(data) {
+
+
+        function prepareDepartureReportsData(data) {
         const groupedData = {};
         const finalData = [];
 
         // Gom nhóm theo arrivalDate
         data.forEach(item => {
-            const key = item.arrivalDate || "";
+            const key = item.departureDate || "";
             if (!groupedData[key]) groupedData[key] = [];
             groupedData[key].push(item);
         });
@@ -369,130 +371,72 @@
         });
 
         // Duyệt theo key đã sắp xếp
-        sortedKeys.forEach(arrivalDate => {
-            const records = groupedData[arrivalDate];
-            const formattedDate = new Date(arrivalDate).toLocaleDateString('vi-VN');
+        sortedKeys.forEach(departureDate => {
+            const records = groupedData[departureDate];
+            const formattedDate = new Date(departureDate).toLocaleDateString('vi-VN');
             // Thêm dòng tiêu đề nhóm
              finalData.push({
-                roomNo: `Arrival Date`, 
-                 confirmationNo: formattedDate,                 
+                roomNo: `Departure`, 
+                 name: formattedDate,
                 isTitle: true,
                 cssClass: "custom"
             });
             // Thêm các dòng chi tiết
             finalData.push(...records);
+
+            const totalRow = {
+                vIP: "Sub total",  // Đặt tên hiển thị
+
+        noOfAdult: sum(records, 'noOfAdult'),
+        noOfChild: sum(records, 'noOfChild'),
+        noOfChild1: sum(records, 'noOfChild1'),
+        noOfChild2: sum(records, 'noOfChild2'),
+        prs: sum(records, 'prs'),
+             noOfRoom: sum(records, 'noOfRoom'),
+               cssClass: "custom",
+        isTotal: true // Cờ dòng tổng
+            };
+
+            finalData.push(totalRow);
         });
 
         return finalData;
     }
+       function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
 
 
-
-    function initializArrivalsDetailedGrid(data) {
+    function initializDepartureReportsGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
             columns: [
                { dataField: "roomNo", caption: "Room No", width: columnWidth-50},
             { dataField: "name", caption: "Name", width: columnWidth},
-             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth  },
-               {
-      caption: "Stay No",
-      width: columnWidth + 50,
-      cssClass: "wrap-cell",
-      cellTemplate: function (container, options) {
-        const data = options.data;
-          if (data.isTitle) {
-            container.html(""); // hoặc container.empty();
-            return;
-        }
-        // Kiểm tra các checkbox
-        const showPrintRate = $("#printRate").is(":checked");
-        const showFixedCharge = $("#fixCharges").is(":checked");
-        const showPackages = $("#packages").is(":checked");
-        const showPaymentMethod = $("#paymentMethod").is(":checked");
-        const showRouting = $("#routingInstruction").is(":checked");
-        const showShareName = $("#sharesNames").is(":checked");
-        const showAccompany = $("#accompanying").is(":checked");
-        const showItemInventory = $("#itemsInventorys").is(":checked");
-        const showSpecials = $("#specials").is(":checked");
-        const showComments = $("#commnets").is(":checked");
-        const showProfileNote = $("#profileNote").is(":checked");
+             { dataField: "reservationHolder", caption: "Resv.Holder", width: columnWidth  },
 
-        let htmlParts = [];
-
-        if (showItemInventory && data.itemInventory)
-          htmlParts.push(`<div class="wrap-line"><b>ItemInventory:</b> ${data.itemInventory}</div>`);
-
-        if (showSpecials && data.specials)
-          htmlParts.push(`<div class="wrap-line"><b>Specials:</b> ${data.specials}</div>`);
-
-             htmlParts.push(`<div class="wrap-line"><b></b> ${data.prevStays}</div>`);
-
-        if (showPrintRate && data.printRate)
-          htmlParts.push(`<div class="wrap-line"><b>Print Rate:</b> ${data.printRate}</div>`);
-
-        if (showFixedCharge && data.fixedCharge)
-          htmlParts.push(`<div class="wrap-line"><b>Fixed Charge:</b> ${data.fixedCharge}</div>`);
-
-        if (showPackages && data.packages)
-          htmlParts.push(`<div class="wrap-line"><b>Packages:</b> ${data.packages}</div>`);
-
-        if (showPaymentMethod && data.paymentMethod)
-          htmlParts.push(`<div class="wrap-line"><b>Payment Method:</b> ${data.paymentMethod}</div>`);
-
-        if (showRouting && data.routingTransaction)
-          htmlParts.push(`<div class="wrap-line"><b>Routing:</b> ${data.routingTransaction}</div>`);
-
-        if (showShareName && data.shareRoomName)
-          htmlParts.push(`<div class="wrap-line"><b>Share Name:</b> ${data.shareRoomName}</div>`);
-
-        if (showAccompany && data.accompanyName)
-          htmlParts.push(`<div class="wrap-line"><b>Accompanying:</b> ${data.accompanyName}</div>`);
-
-        if (showComments && data.comment)
-          htmlParts.push(`<div class="wrap-line"><b>Res. Comments:</b> ${data.comment}</div>`);
-
-        if (showProfileNote && data.party)
-          htmlParts.push(`<div class="wrap-line"><b>Profile Note:</b> ${data.party}</div>`);
-
-        container.html(htmlParts.join(""));
-      }
-    },
-
-
-            { dataField: "roomClassID", caption: "Rns", width: columnWidth-70},
             { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
-             { dataField: "lastRoom", caption: "LastRoom", width: columnWidth-80 },
-            { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
-            { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
 
                                { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
-            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
 
-               { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
-                     { dataField: "pickupTransportType", caption: "Trans.Type", width:columnWidth-70 },
+            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+      
             { dataField: "noOfAdult", caption: "A.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
             { dataField: "noOfChild", caption: "C.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
               { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
                 { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
-                       { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-                             { caption: "Mkt.Code", dataField: "MarketCode", width: columnWidth-70},
-                           { dataField: "packages", caption: "Packages", width: columnWidth-70},
-                              { dataField: "sourceCode", caption: "Source Code", width: columnWidth-70},
-                                     { dataField: "status", caption: "Status", width: columnWidth-70},
+                                { dataField: "prs", caption: "Prs.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
+                       { dataField: "noOfRoom", caption: "Rms.", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+                           { dataField: "noOfNight", caption: "Nst.", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+                           { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
 
-
-                    { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
-                               { dataField: "creditCardNo", caption: "Credit Card No.", width: columnWidth-30},
 
                { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
-            { dataField: "rate", caption: "Rate Amount",  width:columnWidth-70,dataType: "number", format: "#,##0" },
-             { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
-                  { dataField: "expirationDate", caption: "Exp.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                    { dataField: "", caption: "Deposit Received",  width:columnWidth-70 },
+                   { dataField: "status", caption: "Status", width: columnWidth-70},
+                                  { dataField: "etd", caption: "DEP.Time", width: columnWidth-70 },
+            { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth  },
+            { dataField: "balance", caption: "Balance",  width:columnWidth-70,dataType: "number", format: "#,##0" },
 
             ],
             paging: { pageSize: 25 },

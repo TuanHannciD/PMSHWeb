@@ -65,13 +65,23 @@ namespace Report.Services.Interfaces
 
         DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
         DataTable ManagerReport(DateTime businessDate, string currency);
-<<<<<<< HEAD
+
         DataTable ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
             string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate);
         DataTable ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
          string  pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate);
-=======
->>>>>>> f2706383c67b62686a7317f40027fabd3f6f4b47
+        DataTable DepartureReportsData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string paymethod, string rateCode, string block,
+            string zone, string vip, string viponlycheck, int sortOrder,
+           string pseudo, string dueout, string checkout, string disRoomSharer, string specials, string lateCheckOut, string earlyDep, string agents, string company,
+           string source, string individuals, string group);
+        DataTable DepositRequestLogReportData(DateTime fromDate, DateTime toDate);
+        DataTable TransferARReportsData(DateTime fromDate);
+        DataTable ArticleByRoomsDatas(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article);
 
+        DataTable JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp);
+        DataTable IncurringDepositCollectionData(DateTime fromDate, DateTime toDate, string zone, string cashier);
+        DataTable IncurringDepositPaymentPlanData(DateTime fromDate, DateTime toDate, string zone, string cashier, string notbalance);
+        DataTable IncurringDepositReturnData(DateTime fromDate, DateTime toDate, string zone, string cashier);
+        DataTable IncurringDepositSummaryData(DateTime fromDate, DateTime toDate, string zone, string cashier, string type);
     }
 }
