@@ -2115,25 +2115,25 @@ namespace Report.Controllers
             try
             {
                 DataTable dt = _iReportService.ArrivalsDetailedData(
-    fromDate,
-    toDate,
-    roomClass,
-    roomtype,
-    market,
-    rateCode,
-    source,
-    vip,
-    viponlycheck,
-    noPost,
-    sortOrder,
-    pseudo,
-    checkedInToday,
-    cancellations,
-    zeroRateOnly,
-    disRoomSharer,
-    searchCriteria,
-    ckhArrivalDate
-);
+                                        fromDate,
+                                        toDate,
+                                        roomClass,
+                                        roomtype,
+                                        market,
+                                        rateCode,
+                                        source,
+                                        vip,
+                                        viponlycheck,
+                                        noPost,
+                                        sortOrder,
+                                        pseudo,
+                                        checkedInToday,
+                                        cancellations,
+                                        zeroRateOnly,
+                                        disRoomSharer,
+                                        searchCriteria,
+                                        ckhArrivalDate
+                                    );
 
                 var result = (from d in dt.AsEnumerable()
                               select new
@@ -2385,10 +2385,43 @@ namespace Report.Controllers
             catch (Exception ex)
             {
                 return Json(new { error = ex.Message });
+            }            
+            }
+        [HttpGet]
+        public IActionResult DailyRevenueReportNew(DateTime dateView)
+        {
+            try
+            {
+                DataTable dt = _iReportService.DailyRevenueReportNew(dateView);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  GroupName = !string.IsNullOrEmpty(d["GroupName"].ToString()) ? d["GroupName"] : "",
+                                  SubGroup = !string.IsNullOrEmpty(d["SubGroup"].ToString()) ? d["SubGroup"] : "",
+                                  GroupID = !string.IsNullOrEmpty(d["GroupID"].ToString()) ? d["GroupID"] : "",
+                                  ItemName = !string.IsNullOrEmpty(d["ItemName"].ToString()) ? d["ItemName"] : "",
+                                  Daily_Value = !string.IsNullOrEmpty(d["Daily_Value"].ToString()) ? d["Daily_Value"] : "",
+                                  M_Actual = !string.IsNullOrEmpty(d["M_Actual"].ToString()) ? d["M_Actual"] : "",
+                                  M_Budget = !string.IsNullOrEmpty(d["M_Budget"].ToString()) ? d["M_Budget"] : "",
+                                  M_LastYear = !string.IsNullOrEmpty(d["M_LastYear"].ToString()) ? d["M_LastYear"] : "",
+                                  Y_Actual = !string.IsNullOrEmpty(d["Y_Actual"].ToString()) ? d["Y_Actual"] : "",
+                                  Y_Budget = !string.IsNullOrEmpty(d["Y_Budget"].ToString()) ? d["Y_Budget"] : "",
+                                  Y_LastYear = !string.IsNullOrEmpty(d["Y_LastYear"].ToString()) ? d["Y_LastYear"] : "",
+                                  Budget_Month = !string.IsNullOrEmpty(d["Budget_Month"].ToString()) ? d["Budget_Month"] : "",
+                                  Budget_Month_Per = !string.IsNullOrEmpty(d["Budget_Month_Per"].ToString()) ? d["Budget_Month_Per"] : "",
+                                  Budget_Year = !string.IsNullOrEmpty(d["Budget_Year"].ToString()) ? d["Budget_Year"] : "",
+                                  Budget_Year_Per = !string.IsNullOrEmpty(d["Budget_Year_Per"].ToString()) ? d["Budget_Year_Per"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
             }
         }
 
-        [HttpGet]
+
+            [HttpGet]
         public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)
         {
             try
@@ -2790,6 +2823,11 @@ namespace Report.Controllers
                 case "Alerts":
                     List<AlertsSetupModel> listal = PropertyUtils.ConvertToList<AlertsSetupModel>(AlertsSetupBO.Instance.FindAll());
                     ViewBag.ALertList = listal;
+                    break;
+                    ;
+                case "CashierAudit":
+                    List<CashierModel> listcash = PropertyUtils.ConvertToList<CashierModel>(CashierBO.Instance.FindAll());
+                    ViewBag.ALertList = listcash;
                     break;
                     ;
             }

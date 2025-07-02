@@ -338,7 +338,7 @@ namespace Report.Services.Implements
             {
                 new SqlParameter("@RoomClassID", roomClass),
                 new SqlParameter("@RoomTypeID", roomtype),
-                  new SqlParameter("@FromRoom", FromRoom),
+                 new SqlParameter("@FromRoom", FromRoom),
                 new SqlParameter("@ToRoom", ToRoom),
 
                    new SqlParameter("@OrderByRoomNo", OrderByRoomNo),
@@ -464,9 +464,9 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@ToDate", toDate),
                new SqlParameter("@Reason", commnet),
-                   new SqlParameter("@TypeDate", typeDate),
+               new SqlParameter("@TypeDate", typeDate),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReservationCancellations", param);
@@ -869,6 +869,22 @@ namespace Report.Services.Implements
 
             return DataTableHelper.getTableData("spRptCahierSummary", param);
         }
+
+        public DataTable DailyRevenueReportNew(DateTime dateView)
+        {
+            // Lùi 1 năm
+            DateTime lastYear = dateView.AddYears(-1);
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@DateView", dateView),
+                new SqlParameter("@LastYear", lastYear)
+            };
+
+            return DataTableHelper.getTableData("spRptDailyRevenueReport_New", param);
+        }
+
+
 
 
 
