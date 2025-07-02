@@ -503,7 +503,7 @@ namespace Report.Services.Implements
             {
                 new SqlParameter("@RoomClassID", roomClass),
                 new SqlParameter("@RoomTypeID", roomtype),
-                  new SqlParameter("@FromRoom", FromRoom),
+                 new SqlParameter("@FromRoom", FromRoom),
                 new SqlParameter("@ToRoom", ToRoom),
 
                    new SqlParameter("@OrderByRoomNo", OrderByRoomNo),
@@ -629,9 +629,9 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@ToDate", toDate),
                new SqlParameter("@Reason", commnet),
-                   new SqlParameter("@TypeDate", typeDate),
+               new SqlParameter("@TypeDate", typeDate),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReservationCancellations", param);
@@ -997,7 +997,12 @@ namespace Report.Services.Implements
         }
         public DataTable ManagerReport(DateTime businessDate, string currency)
         {
-            // Tính toán các tham số liên quan
+            // Chặn lỗi nếu ngày quá nhỏ
+            if (businessDate < new DateTime(2, 1, 1))
+            {
+                businessDate = new DateTime(2, 1, 1); // hoặc bạn có thể return empty DataTable nếu muốn
+            }
+
             DateTime currentBusinessDate = businessDate.AddDays(1);
             DateTime lastBusinessDate = businessDate.AddYears(-1);
             DateTime tomorrow = currentBusinessDate;
@@ -1018,9 +1023,31 @@ namespace Report.Services.Implements
             return DataTableHelper.getTableData("spRptManagerReport", param);
         }
 
+        public DataTable CashierSummary(DateTime dtpFromDate, string cboType)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", dtpFromDate),
+                new SqlParameter("@cboType", cboType)
+               
+            };
 
+            return DataTableHelper.getTableData("spRptCahierSummary", param);
+        }
 
+        public DataTable DailyRevenueReportNew(DateTime dateView)
+        {
+            // Lùi 1 năm
+            DateTime lastYear = dateView.AddYears(-1);
 
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@DateView", dateView),
+                new SqlParameter("@LastYear", lastYear)
+            };
+
+            return DataTableHelper.getTableData("spRptDailyRevenueReport_New", param);
+        }
 
 
 

@@ -196,17 +196,18 @@
                 dataSource: data,
                 showBorders: true,
                 rowAlternationEnabled: true,
-                columns: [
+                    columns: [
                     { dataField: "transactionCode", caption: "Code", width: 150 },
                     { dataField: "transactionName", caption: "Description", width: 250 },
-                    { dataField: "currencyID", caption: "Curr", width: 80 },             
-                    { dataField: "amountBeForeTax", caption: "DAY Net", format: "#,##0", width: 160 },
-                    { dataField: "amountGross", caption: "DAY Gross", format: "#,##0", width: 160 },
-                    { dataField: "amountBeforeTaxM", caption: "MONTH Net", format: "#,##0", width: 160 },
-                    { dataField: "amountGrossM", caption: "MONTH Gross", format: "#,##0", width: 160 },
-                    { dataField: "amountBeforeTaxY", caption: "YEAR Net", format: "#,##0", width: 160 },
-                    { dataField: "amountGrossY", caption: "YEAR Gross", format: "#,##0", width: 160 }
+                    { dataField: "currencyID", caption: "Curr", width: 80 },
+                    { dataField: "amountBeForeTax", caption: "DAY Net", dataType: "number", format: "#,##0", width: 160 },
+                    { dataField: "amountGross", caption: "DAY Gross", dataType: "number", format: "#,##0", width: 160 },
+                    { dataField: "amountBeforeTaxM", caption: "MONTH Net", dataType: "number", format: "#,##0", width: 160 },
+                    { dataField: "amountGrossM", caption: "MONTH Gross", dataType: "number", format: "#,##0", width: 160 },
+                    { dataField: "amountBeforeTaxY", caption: "YEAR Net", dataType: "number", format: "#,##0", width: 160 },
+                    { dataField: "amountGrossY", caption: "YEAR Gross", dataType: "number", format: "#,##0", width: 160 }
                 ],
+
                 onRowPrepared: function (e) {
                     if (e.rowType === "data") {
                         if (e.data?.cssClass === "group-header") {

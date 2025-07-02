@@ -1,0 +1,182 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var report = ViewBag.ReportName as XtraReport;
+}
+
+<style>
+    .filter_wrapper {
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Date:</label>
+            <input type="date" id="businessDate" name="businessDate" class="form-control form-control-sm w-auto" />
+        </div>  
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Reservation:</label>
+            <select id="currency" name="currency" class="form-control form-control-sm w-auto">
+                <option value="0">VND</option>
+                
+            </select>
+        </div>
+    </div>
+    <div class="mb-3">
+        <button id="btnPrint" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fa-solid fa-eye"></i> View</button>
+        <button id="btnExportExcel" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button id="btnExportPdf" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+
+</div>
+
+<div class="mui-card">
+    <div id="reportTitle" class="mt-1" style="font-size: 20px;"></div>
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      
+        $('#businessDate').val(formatDate(firstDayOfMonth));
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+    });
+
+    $('#btnPrint').click(function () {
+        $('#loadingSpinner').show();
+        $.ajax({
+            url: '/Report/ManagerReport',
+            type: 'GET',
+            headers: { "X-CSRF-TOKEN-HEADERNAME": $('input[name="__RequestVerificationToken"]').val() },
+            data: {
+                businessDate: $('#businessDate').val(),
+                currency: $('#currency').val()
+                
+            },
+            success: function (result) {
+                console.log(result);
+                initializeDataGrid(result);
+                $('#loadingSpinner').hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $('#loadingSpinner').hide();
+            }
+        });
+    });
+
+        function initializeDataGrid(data) {
+        const selectedDateString = $('#businessDate').val();
+        const selectedDate = new Date(selectedDateString);
+        const thisYear = selectedDate.getFullYear();     // năm hiện tại
+        const lastYear = thisYear - 1;
+        const safeData = Array.isArray(data) ? data : [];
+        $('#gridContainer').dxDataGrid({
+        dataSource: safeData, allowColumnResizing: true,
+
+            columns: [
+            { dataField: "code", caption: "", width: 70 },
+            { dataField: "itemName", caption: "", width: 250 },
+            { dataField: "currentDay", caption: `${thisYear} DAY`, width: 150, dataType: "number", format: "#,##0" },
+            { dataField: "currentMonth", caption: `${thisYear} MONTH`, width: 150, dataType: "number", format: "#,##0"},
+            { dataField: "currentYear", caption: `${thisYear} YEAR`, width: 150, dataType: "number", format: "#,##0"},
+            { dataField: "lastDay", caption: `${lastYear} DAY`, width: 150, dataType: "number", format: "#,##0"},
+            { dataField: "lastMonth", caption: `${lastYear} MONTH`, width: 150, dataType: "number", format: "#,##0" },
+            { dataField: "lastYear", caption: `${lastYear} YEAR`, width: 150, dataType: "number", format: "#,##0" },
+        ],
+            paging: {
+                pageSize: 25
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, "all"],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            // scrolling: {
+            //     mode: 'virtual',
+            //     useNative: true,
+            //     showScrollbar: "always"
+            // },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+            showBorders: true
+        });
+    }
+
+
+    $('#btnExportExcel').click(function () {
+        const grid = $('#gridContainer').dxDataGrid('instance');
+        grid.exportToExcel(false);
+    });
+
+    $('#btnExportPdf').click(function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $('#gridContainer').dxDataGrid('instance'),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>
