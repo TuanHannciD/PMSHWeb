@@ -108,6 +108,75 @@ namespace Report.Services.Implements
             return myTable;
         }
 
+        public DataTable ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+            string   pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+        new SqlParameter("@RoomClass", roomClass),
+        new SqlParameter("@RoomType", roomtype),
+                 new SqlParameter("@Market", market),
+                new SqlParameter("@RateCode", rateCode),
+                    new SqlParameter("@Source", source),
+              new SqlParameter("@Pseudo", pseudo),
+                  new SqlParameter("@CheckedInToday", checkedInToday),
+
+                         new SqlParameter("@Cancellations", cancellations),
+                  new SqlParameter("@VIP", vip),
+                          new SqlParameter("@SortOrder", sortOrder),
+                         new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
+
+                                  new SqlParameter("@SearchCriteria", searchCriteria),
+                  new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
+                          new SqlParameter("@ZeroRateOnly", zeroRateOnly),
+
+                                 new SqlParameter("@DisRoomSharer", disRoomSharer),
+                          new SqlParameter("@ChkVIPOnly", viponlycheck),
+                              new SqlParameter("@NoPost", noPost),
+            };
+
+
+            DataTable myTable = DataTableHelper.getTableData("spRptArrivalDetailed", param);
+            return myTable;
+        }
+
+        public DataTable ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
+          string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+        new SqlParameter("@RoomClass", roomClass),
+        new SqlParameter("@RoomType", roomtype),
+                 new SqlParameter("@Market", market),
+                new SqlParameter("@RateCode", rateCode),
+                    new SqlParameter("@Source", source),
+              new SqlParameter("@Pseudo", pseudo),
+                  new SqlParameter("@CheckedInToday", checkedInToday),
+
+                         new SqlParameter("@Cancellations", cancellations),
+                  new SqlParameter("@VIP", vip),
+                          new SqlParameter("@SortOrder", sortOrder),
+                         new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
+
+                                  new SqlParameter("@SearchCriteria", searchCriteria),
+                  new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
+                          new SqlParameter("@ZeroRateOnly", zeroRateOnly),
+
+                                 new SqlParameter("@DisRoomSharer", disRoomSharer),
+                          new SqlParameter("@ChkVIPOnly", viponlycheck),
+                              new SqlParameter("@NoPost", noPost),
+            };
+
+
+            DataTable myTable = DataTableHelper.getTableData("spRptArrivalDetailed", param);
+            return myTable;
+        }
+
+
         public DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -269,7 +338,7 @@ namespace Report.Services.Implements
             {
                 new SqlParameter("@RoomClassID", roomClass),
                 new SqlParameter("@RoomTypeID", roomtype),
-                  new SqlParameter("@FromRoom", FromRoom),
+                 new SqlParameter("@FromRoom", FromRoom),
                 new SqlParameter("@ToRoom", ToRoom),
 
                    new SqlParameter("@OrderByRoomNo", OrderByRoomNo),
@@ -395,9 +464,9 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@ToDate", toDate),
                new SqlParameter("@Reason", commnet),
-                   new SqlParameter("@TypeDate", typeDate),
+               new SqlParameter("@TypeDate", typeDate),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReservationCancellations", param);
@@ -763,7 +832,12 @@ namespace Report.Services.Implements
         }
         public DataTable ManagerReport(DateTime businessDate, string currency)
         {
-            // Tính toán các tham số liên quan
+            // Chặn lỗi nếu ngày quá nhỏ
+            if (businessDate < new DateTime(2, 1, 1))
+            {
+                businessDate = new DateTime(2, 1, 1); // hoặc bạn có thể return empty DataTable nếu muốn
+            }
+
             DateTime currentBusinessDate = businessDate.AddDays(1);
             DateTime lastBusinessDate = businessDate.AddYears(-1);
             DateTime tomorrow = currentBusinessDate;
@@ -784,9 +858,31 @@ namespace Report.Services.Implements
             return DataTableHelper.getTableData("spRptManagerReport", param);
         }
 
+        public DataTable CashierSummary(DateTime dtpFromDate, string cboType)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", dtpFromDate),
+                new SqlParameter("@cboType", cboType)
+               
+            };
 
+            return DataTableHelper.getTableData("spRptCahierSummary", param);
+        }
 
+        public DataTable DailyRevenueReportNew(DateTime dateView)
+        {
+            // Lùi 1 năm
+            DateTime lastYear = dateView.AddYears(-1);
 
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@DateView", dateView),
+                new SqlParameter("@LastYear", lastYear)
+            };
+
+            return DataTableHelper.getTableData("spRptDailyRevenueReport_New", param);
+        }
 
 
 

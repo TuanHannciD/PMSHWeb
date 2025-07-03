@@ -261,6 +261,7 @@
         noOfChild1: sum(records, 'noOfChild1'),
         noOfRoom: sum(records, 'noOfRoom'),
         noOfNight: sum(records, 'noOfNight'),
+               cssClass: "custom",
         isTotal: true // Cờ dòng tổng
             };
 
@@ -336,6 +337,12 @@
                headerFilter: {
                   visible: true
               },
+              
+            onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true
 

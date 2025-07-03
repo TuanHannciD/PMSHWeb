@@ -58,6 +58,12 @@
         box-sizing: border-box !important;
     }
 
+    .chart-fixed-sizeChartJS {
+        height: 359px !important;
+        width: 479px !important;
+        display: none;
+        box-sizing: border-box !important;
+    }
     .chart-container {
         display: flex;
         justify-content: center;
@@ -101,10 +107,10 @@
         <div id="barChartDevExtreme" style="height: 540px; display:none;"></div>
 
         <!-- Biểu đồ cột Chart.js -->
-        <canvas id="barChartChartJS" class="chart-fixed-size" style="display:none;"></canvas>
+        <canvas id="barChartChartJS" class="chart-fixed-sizeChartJS" style="display:none;"></canvas>
 
         <div id="highchartPie" class="chart-fixed-sizehigh" style="display:none;"></div>
-        <div id="highchartBar" class="chart-fixed-size" style="display:none;"></div>
+        <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
     </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -244,79 +250,105 @@
         });
     }
 
-      function renderBarChartDevExtreme(data) {
-        const chartData = data.map(x => ({
-            status: x.statusName,
-            total: parseInt(x.total)
-        }));
+  function renderBarChartDevExtreme(data) {
+    const chartData = data.map(x => ({
+        status: x.statusName,           // Trục X: tên trạng thái
+        total: parseInt(x.total)        // Trục Y: tổng số lượng
+    }));
 
-        $("#barChartDevExtreme").dxChart({
-            dataSource: chartData,
-            commonSeriesSettings: {
-                argumentField: "status",
-                type: "bar"
+    $("#barChartDevExtreme").dxChart({
+        dataSource: chartData,
+        commonSeriesSettings: {
+            argumentField: "status",    // Dữ liệu trục X (hàng)
+            type: "bar"
+        },
+        series: [{
+            valueField: "total",        // Dữ liệu trục Y (giá trị cột)
+            name: "Total"               // Tên series hiển thị trong legend
+        }],
+        legend: {
+            visible: true,              // ✅ Hiển thị legend
+            position: "bottom"          // Vị trí dưới biểu đồ
+        },
+        title: "Booking Summary by Status",
+        tooltip: {
+            enabled: true,
+            customizeTooltip(arg) {
+                return {
+                    text: `${arg.argumentText}: ${arg.valueText}`
+                };
+            }
+        },
+        valueAxis: {
+            title: {
+                text: "Total Bookings"   // ✅ Tiêu đề trục Y
             },
-            series: [{ valueField: "total", name: "Total" }],
-            legend: {
-                visible: false
-            },
-            title: "Booking Summary (Column - DevExtreme)",
-            tooltip: {
-                enabled: true,
-                customizeTooltip(arg) {
-                    return { text: `${arg.argumentText}: ${arg.valueText}` };
-                }
-            },
-            valueAxis: {
-                label: {
-                    format: {
-                        type: "fixedPoint",
-                        precision: 0
-                    }
-                }
-            },
-            argumentAxis: {
-                label: {
-                    overlappingBehavior: "rotate"
+            label: {
+                format: {
+                    type: "fixedPoint",
+                    precision: 0
                 }
             }
-        });
-    }
-
-    function renderBarChartChartJS(data) {
-        const labels = data.map(x => x.statusName);
-        const values = data.map(x => parseInt(x.total));
-
-        if (window.barChartJS) window.barChartJS.destroy();
-
-        const ctx = document.getElementById("barChartChartJS").getContext("2d");
-        window.barChartJS = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Total",
-                    data: values,
-                    backgroundColor: '#42a5f5'
-                }]
+        },
+        argumentAxis: {
+            title: {
+                text: "Status"           // ✅ Tiêu đề trục X
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
+            label: {
+                overlappingBehavior: "rotate"
+            }
+        }
+    });
+}
+
+function renderBarChartChartJS(data) {
+    const labels = data.map(x => x.statusName);        // Trục X: trạng thái
+    const values = data.map(x => parseInt(x.total));   // Trục Y: số lượng
+
+    if (window.barChartJS) window.barChartJS.destroy();
+
+    const ctx = document.getElementById("barChartChartJS").getContext("2d");
+    window.barChartJS = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Total",                 // ✅ Tên hiển thị trong legend
+                data: values,
+                backgroundColor: '#42a5f5'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,             // ✅ Hiển thị legend
+                    position: "bottom"
+                },
+                title: {
+                    display: true,
+                    text: 'Booking Summary by Status'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Booking Summary (Column - Chart.js)'
+                        text: 'Total Bookings' // ✅ Tiêu đề trục Y
                     }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Status'         // ✅ Tiêu đề trục X
                     }
                 }
             }
-        });
-    }
+        }
+    });
+}
+
     function renderStatusPieChartDevExtreme(data) {
            const total = data.reduce((sum, x) => sum + parseInt(x.total), 0);
 
@@ -366,8 +398,12 @@
        }
 
 
-           function renderHighchartPie(data) {
+       // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
+        function renderHighchartPie(data) {
+        // Tính tổng tất cả giá trị trong dữ liệu
         const total = data.reduce((sum, x) => sum + parseInt(x.total), 0);
+
+        // Chuyển đổi dữ liệu thành định dạng mà Highcharts cần
         const chartData = data.map(x => {
             const y = parseInt(x.total);
             const percent = total > 0 ? ((y / total) * 100).toFixed(1) : 0;
@@ -382,7 +418,7 @@
                 type: 'pie'
             },
             title: {
-                text: 'Booking Summary (Pie - Highcharts)'
+                text: 'Booking Summary by Status'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.y}</b>'
@@ -392,6 +428,12 @@
                     valueSuffix: '%'
                 }
             },
+            legend: {
+                enabled: true, // 🔰 bật legend
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal'
+            },
             plotOptions: {
                 pie: {
                     allowPointSelect: true,
@@ -399,7 +441,8 @@
                     dataLabels: {
                         enabled: true,
                         format: '{point.name}: {point.y}'
-                    }
+                    },
+                    showInLegend: true // 🔰 hiển thị dữ liệu trong legend
                 }
             },
             series: [{
@@ -410,6 +453,8 @@
         });
     }
 
+
+
     function renderHighchartBar(data) {
         const categories = data.map(x => x.statusName);
         const values = data.map(x => parseInt(x.total));
@@ -419,7 +464,7 @@
                 type: 'column'
             },
             title: {
-                text: 'Booking Summary (Bar - Highcharts)'
+                text: 'Booking Summary by Status'
             },
             xAxis: {
                 categories: categories,
