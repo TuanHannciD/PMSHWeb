@@ -17,7 +17,7 @@ namespace User.Services.Implements
         {
             try
             {
-                string PasswordHash = MD5.MD5Hash(Password);
+                string PasswordHash = MD5.Encrypt(Password);
                 var list = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll()).Where(x => x.LoginName == LoginName && x.PasswordHash == PasswordHash).ToList();
                 if (list.Count > 0) {
                     return list[0];
