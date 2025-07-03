@@ -2419,9 +2419,66 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+        [HttpGet]
+        public IActionResult DailyRevenueReportsV2(DateTime dateView)
+        {
+            try
+            {
+                DataTable dt = _iReportService.DailyRevenueReportsV2(dateView);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  GroupName = !string.IsNullOrEmpty(d["GroupName"].ToString()) ? d["GroupName"] : "",
+                                  SubGroup = !string.IsNullOrEmpty(d["SubGroup"].ToString()) ? d["SubGroup"] : "",
+                                  GroupID = !string.IsNullOrEmpty(d["GroupID"].ToString()) ? d["GroupID"] : "",
+                                  ItemName = !string.IsNullOrEmpty(d["ItemName"].ToString()) ? d["ItemName"] : "",
+                                  Daily_Value = !string.IsNullOrEmpty(d["Daily_Value"].ToString()) ? d["Daily_Value"] : "",
+                                  SVC = !string.IsNullOrEmpty(d["SVC"].ToString()) ? d["SVC"] : "",
+                                  VAT = !string.IsNullOrEmpty(d["VAT"].ToString()) ? d["VAT"] : "",
+                                  VATO = !string.IsNullOrEmpty(d["VATO"].ToString()) ? d["VATO"] : "",
+                                  Total = !string.IsNullOrEmpty(d["Total"].ToString()) ? d["Total"] : "",                                 
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
 
+      
+        [HttpGet]
+        public IActionResult CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type)
+        {
+            try
+            {
+                DataTable dt = _iReportService.CashierAudit(date, cashierList, transactionCodeList, type);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  Pay = !string.IsNullOrEmpty(d["*"].ToString()) ? d["*"] : "",
+                                  ConfirmationNo = !string.IsNullOrEmpty(d["ConfirmationNo"].ToString()) ? d["ConfirmationNo"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  FolioID = !string.IsNullOrEmpty(d["FolioID"].ToString()) ? d["FolioID"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  Account = !string.IsNullOrEmpty(d["Account"].ToString()) ? d["Account"] : "",
+                                  Reference = !string.IsNullOrEmpty(d["Reference"].ToString()) ? d["Reference"] : "",
+                                  Supplement = !string.IsNullOrEmpty(d["Supplement"].ToString()) ? d["Supplement"] : "",
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  CashierNo = !string.IsNullOrEmpty(d["CashierNo"].ToString()) ? d["CashierNo"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
 
-            [HttpGet]
+        [HttpGet]
         public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)
         {
             try
@@ -2780,7 +2837,7 @@ namespace Report.Controllers
                 case "RatecodeReports":
                 case "AnnualRoomOccupancy":
                 case "NationalStatistics":
-                case "ReservationSummary":
+                case "ReservationSummary":         
                 case "ArrivalsAndCheckInToday":
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
@@ -2826,8 +2883,11 @@ namespace Report.Controllers
                     break;
                     ;
                 case "CashierAudit":
-                    List<CashierModel> listcash = PropertyUtils.ConvertToList<CashierModel>(CashierBO.Instance.FindAll());
-                    ViewBag.ALertList = listcash;
+                    List<TransactionsModel> listtran = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
+
+                    ViewBag.TransactionsList = listtran;
+                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+                    ViewBag.UsersList = listuser;
                     break;
                     ;
             }

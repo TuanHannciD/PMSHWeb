@@ -4,8 +4,8 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var zoneList = ViewBag.ZoneList;
-    var rateCode = ViewBag.RateCodeList;
+    var transactionsList = ViewBag.TransactionsList;
+    var usersList = ViewBag.UsersList;
 }
 
 
@@ -46,29 +46,48 @@
         }
 
 </style>
-<div class="text-center" id="pageTitle" style="font-size: 20px">Annual Room Occupancy</div>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Month:</label>
-            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <label class="me-2 mb-0">For Date:</label>
+            <input type="date" id="date" name="date" class="form-control form-control-sm w-auto" />
         </div>
 
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Cashier:</label>
+            <select id="user" name="user" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                @foreach (var item in usersList)
+                {
+                    <option value="@item.LoginName">@item.LoginName</option>
+                }
+            </select>
+        </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Zone:</label>
-            <select id="zone" name="zone" class="form-control form-control-sm " style="width :100px">
-                @foreach (var item in zoneList)
+            <label class="me-2 mb-0">Transactions Code:</label>
+            <select id="transactions" name="transactions" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                @foreach (var item in transactionsList)
                 {
-                    <option value="@item.Code">@item.Code</option>
+                    <option value="@item.ID">@item.Code</option>
                 }
             </select>
 
         </div>
-       
 
+        <div style="display:none!important" class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Group By:</label>
+            <select id="groupBy" name="groupBy" class="form-control form-control-sm w-auto">
 
+                <option value="0">Cashier,Transaction Code</option>
+                <option value="1">Cashier</option>
+                <option value="2">Transaction Code</option>
+            </select>
+        </div>
+      
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -78,51 +97,44 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <script>
-
     function formatDate(date) {
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}`;
+        return `${year}-${month}-${day}`;
     }
 
     $(document).ready(function () {
-    $("#reportTitle").text('@ViewBag.ReportTitle');
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
-
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        // Lấy ngày cuối cùng của tháng
-        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
         // Định dạng theo local time
         const formattedFirstDay = formatDate(firstDayOfMonth);
-        const formattedLastDay = formatDate(lastDayOfMonth);
-
-        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa   
         // Gán giá trị cho input date
-        document.getElementById('fromDate').value = formattedFirstDay;
-        document.getElementById('toDate').value = formattedLastDay;
+        document.getElementById('date').value = formattedFirstDay;
+
 
 
 
     });
-
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/AnnualRoomOccupancyData',
+            url: '/Report/CashierAudit',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val(),
-                zone: $("#zone").val(),
+                date: $("#date").val(),
+                user: $("#user").val(),
+                transactions: $("#transactions").val(),
+                groupBy: $("#groupBy").val(),               
             },
             traditional: true,
               crossDomain: false,
@@ -131,9 +143,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-
-           initializeAnnualRoomOccupancyDataGrid(result);
-
+                initializReveunueByGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -142,118 +152,90 @@
             }
         });
     });
-        function initializeAnnualRoomOccupancyDataGrid(data) {
-        const columnWidth = 180;
-
-        const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        const fromDateStr = $("#fromDate").val(); // yyyy-MM-dd
-        const fromDate = new Date(fromDateStr);
-        const fromYear = fromDate.getFullYear();
-        const fromMonth = fromDate.getMonth(); // 0-based
-
-        const columns = [
-            { dataField: "day", caption: "Day", width: columnWidth - 100 }
-        ];
-
-        // Danh sách ánh xạ: fieldName (1..12) -> actual month (0..11)
-        const monthMap = [];
-        for (let i = 0; i < 12; i++) {
-            let actualMonth = (fromMonth + i) % 12;
-            let yearOffset = Math.floor((fromMonth + i) / 12); // để xác định đúng năm
-            let actualYear = fromYear + yearOffset;
-
-            monthMap.push({
-                fieldName: (i + 1).toString(),
-                monthIndex: actualMonth,
-                year: actualYear,
-                caption: monthNames[actualMonth]
-            });
-        }
-
-        for (let i = 0; i < monthMap.length; i++) {
-            const { fieldName, monthIndex, year, caption } = monthMap[i];
-
-            columns.push({
-                dataField: fieldName,
-                caption: caption,
-                width: columnWidth - 90,
-                    encodeHtml: false,
-                calculateCellValue: function (rowData) {
-                    const day = parseInt(rowData.day);
-                    if (!day || isNaN(day)) return "";
-
-                    const date = new Date(year, monthIndex, day);
-                    const weekday = weekdayNames[date.getDay()];
-                    const value = rowData[fieldName];
-
-                     if (value === undefined || value === null || value === "") return "";
-
-                return `<div style="display: flex; justify-content: space-between;">
-                            <span>${weekday}</span>
-                            <span>${value}</span>
-                        </div>`;
-                }
-            });
-        }
-
-        // Xử lý các cột dạng "1_", "2_"...
-        const existingFields = new Set(columns.map(c => c.dataField));
-        const underscoreFields = new Set();
+        function prepareCashierData(data) {
+        const grouped = {};
+        const result = [];
 
         data.forEach(item => {
-            Object.keys(item).forEach(key => {
-                if (/^\d+_$/.test(key) && !existingFields.has(key)) {
-                    underscoreFields.add(key);
-                }
+            const key = item.transactionCode || "Unknown";
+            if (!grouped[key]) grouped[key] = [];
+            grouped[key].push(item);
+        });
+
+        Object.entries(grouped).forEach(([code, items]) => {
+            // Header dòng "Transaction Code: ... - Mô tả"
+            result.push({
+                isGroupHeader: true,
+                transactionCode: code,
+                description: items[0].description
+            });
+
+            // Dòng chi tiết từng giao dịch
+            result.push(...items.map(x => ({
+                ...x,
+                isGroupHeader: false,
+                isSubtotal: false,
+                isGrandTotal: false
+            })));
+
+            // Dòng SubTotal
+            result.push({
+                isSubtotal: true,
+                amount: items.reduce((sum, x) => sum + (x.amount || 0), 0)
             });
         });
 
-        for (let fieldName of underscoreFields) {
-            columns.push({
-                dataField: fieldName,
-                caption: fieldName.replace("_", ""),
-                width: columnWidth - 80,
-                dataType: "number",
-                format: "#,##0"
-            });
-        }
+        // Dòng Grand Total
+        result.push({
+            isGrandTotal: true,
+            amount: data.reduce((sum, x) => sum + (x.amount || 0), 0)
+        });
 
+        return result;
+    }
+
+
+    function initializReveunueByGrid(data) {
+        const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
-            columns: columns,
+            columns: [
+
+            { dataField: "pay", caption: "Name", width: columnWidth-70 },
+            { dataField: "roomNo", caption: "Room No", width: columnWidth-40 },
+            { dataField: "supplement", caption: "Supplement / Credit Card No", width:columnWidth-50},       
+            { dataField: "user", caption: "Exp. Date", width: columnWidth },
+            { dataField: "reference", caption: "Reference", width: columnWidth },
+            { dataField: "amount", caption: "Amount", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "durrencyID", caption: "Curr.", width:columnWidth-60 },
+            { dataField: "folioID", caption: "FolioID", width: columnWidth},
+            { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-80 },
+            { dataField: "transactionDate", caption: "Curr.", width: columnWidth-70 },
+            { dataField: "userName", caption: "User Login", width: columnWidth-50 , dataType: "number", format: "#,##0"},        
+            ],
             paging: { pageSize: 25 },
-            scrolling: {
-                mode: 'virtual',
-                useNative: true,
-                showScrollbar: "always"
-            },
+      scrolling:  {
+         mode: 'virtual',
+        useNative: true,
+       showScrollbar: "always"
+    },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true
+                showNavigationButtons: true,
             },
-            filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            headerFilter: {
-                visible: true
-            },
-            selection: {
-                mode: "multiple",
-                showCheckBoxesMode: "none"
-            },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+    },
             showBorders: true,
-            onRowPrepared: function (e) {
-                if (e.rowType === "data" && e.data?.cssClass) {
-                    e.rowElement.addClass(e.data.cssClass);
-                }
-            }
+                
         });
     }
 

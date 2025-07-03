@@ -83,7 +83,7 @@
     $('#btnPrint').click(function () {
         $('#loadingSpinner').show();
         $.ajax({
-            url: '/Report/DailyRevenueReportNew',
+            url: '/Report/DailyRevenueReportsV2',
             type: 'GET',
             headers: { "X-CSRF-TOKEN-HEADERNAME": $('input[name="__RequestVerificationToken"]').val() },
             data: {
@@ -140,117 +140,48 @@
                 },
                 {
                     dataField: "daily_Value",
-                    caption: "Daily",
+                    caption: "Amount ++",
                     dataType: "number",
                     format: "#,##0",
                     alignment: "right"
                 },
                 {
-                    caption: "MTD",
-                    columns: [
-                        {
-                            dataField: "m_Actual",
-                            caption: "Actual",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right"
-                        },
-                        {
-                            dataField: "m_Budget",
-                            caption: "Budget",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right"
-                        },
-                        {
-                            dataField: "m_LastYear",
-                            caption: "Last year",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right"
-                        }
-                    ]
+                    dataField: "svc",
+                    caption: "SVC",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
                 },
                 {
-                    caption: "YTD",
-                    columns: [
-                        {
-                            dataField: "y_Actual",
-                            caption: "Actual",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right"
-                        },
-                        {
-                            dataField: "y_Budget",
-                            caption: "Budget",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right"
-                        },
-                        {
-                            dataField: "y_LastYear",
-                            caption: "Last year",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right"
-                        }
-                    ]
+                    dataField: "vato",
+                    caption: "Special Tax 30%",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
                 },
                 {
-                    caption: "% Complete budget of this month",
-                    columns: [
-                        {
-                            dataField: "budget_Month",
-                            caption: "Full month",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right",
-                            width: 120
-                        },
-                        {
-                            dataField: "budget_Month_Per",
-                            caption: "%",
-                            dataType: "number",
-                            format: "#,##0.##'%'",
-                            alignment: "right",
-                            width: 120
-                        }
-                    ]
+                    dataField: "vat",
+                    caption: "VAT 10%",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
                 },
                 {
-                    caption: "% Complete budget of this year",
-                    columns: [
-                        {
-                            dataField: "budget_Year",
-                            caption: "Full year",
-                            dataType: "number",
-                            format: "#,##0",
-                            alignment: "right",
-                            width: 120
-                        },
-                        {
-                            dataField: "budget_Year_Per",
-                            caption: "%",
-                            dataType: "number",
-                            format: "#,##0.##'%'",
-                            alignment: "right",
-                            width: 120
-                        }
-                    ]
-                }
+                    dataField: "total",
+                    caption: "Total",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
+                },
+
             ],
             summary: {
                 groupItems: [
                     { column: "daily_Value", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "m_Actual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "m_Budget", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "m_LastYear", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true , showInGroupFooter: true},
-                    { column: "y_Actual", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "y_Budget", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "y_LastYear", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "budget_Month", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
-                    { column: "budget_Year", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true }
+                    { column: "svc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
+                    { column: "vato", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
+                    { column: "vat", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true , showInGroupFooter: true},
+                    { column: "total", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true }
                 ],
                 },
             paging: {

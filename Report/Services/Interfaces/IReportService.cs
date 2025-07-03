@@ -73,6 +73,10 @@ namespace Report.Services.Interfaces
         DataTable ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
          string  pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate);
         DataTable DailyRevenueReportNew(DateTime dateView);
+        DataTable DailyRevenueReportsV2(DateTime dateView);
+        DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type);
+ 
+
 
     }
 
