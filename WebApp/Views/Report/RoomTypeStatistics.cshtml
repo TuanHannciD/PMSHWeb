@@ -1,0 +1,297 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var roomList = ViewBag.RoomTypeList;
+    
+}
+
+
+<style>
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    .bold {
+        font-weight: bold !important;
+    }
+
+</style>
+<!-- TomSelect CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+
+<!-- TomSelect JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3 row">
+        <!-- From Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="d-flex align-items-center col-md-3 row">
+            <label class="col-md-6 mb-0">Room Type:</label>
+            <select id="roomTypeCsv" name="roomTypeCsv" class="form-control col-md-6" multiple>
+                @foreach (var item in roomList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+        </div>
+    </div>
+
+</div>
+<div class=" mb-3 ">
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+</div>
+</div>
+
+<div class="mui-card">
+    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        return `${year}-${month}-${day}`;
+    }
+
+     $(document).ready(function () {
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        $('#fromDate').val(formatDate(firstDayOfMonth));
+        $('#toDate').val(formatDate(lastDayOfMonth));
+        initializeTomSelects();
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+    });
+            function initializeTomSelects() {
+        const selectors = ["#roomTypeCsv"];
+        for (const id of selectors) {
+            const el = document.querySelector(id);
+            if (!el) continue;
+
+            // Nếu đã khởi tạo rồi thì destroy
+            if (el.tomselect) el.tomselect.destroy();
+
+            // Gán lại tomselect để đảm bảo có giá trị
+            el.tomselect = new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: '',
+                persist: false,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+        }
+    }
+
+   
+
+
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Report/StatisticRoomType',
+            type: 'GET',
+            data: {
+                fromDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                roomTypeCsv: ($("#roomTypeCsv").val() || []).join(','),
+            },
+            traditional: true,
+              crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                initializReveunueByGrid(result);
+
+                $("#loadingSpinner").hide();
+            },
+                    error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+       
+    function initializReveunueByGrid(data) {
+        const columnWidth = 180;
+        $("#gridContainer").dxDataGrid({
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+
+            { dataField: "date", caption: "Date", width: columnWidth+20},
+            { dataField: "roomType", caption: "Room Type", width: columnWidth-50 },
+            { dataField: "description", caption: "Description", width: columnWidth-50 },
+            { dataField: "potentialRms", caption: "Potential Rms", width: columnWidth },
+            { dataField: "rmsOcc", caption: "Rms Occ", width: columnWidth-70},
+            { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-10, dataType: "number", format: "#,##0" },
+            { dataField: "prs", caption: "Prs", width:columnWidth-60 },
+            
+            ],
+                summary: {
+        totalItems: [
+            {
+                column: "description",
+                summaryType: "sum",
+                displayFormat: "Grand Total =",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "potentialRms",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "rmsOcc",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "roomRevenue",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            },
+            {
+                column: "prs",
+                summaryType: "sum",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            }
+        ]
+    },
+
+        paging: { pageSize: 25 },
+    //     scrolling:  {
+    //     mode: 'virtual',
+    //     useNative: true,
+    //     showScrollbar: "always"
+    // },
+        pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+        },
+        selection: { mode: "multiple", showCheckBoxesMode: "none" },
+        filterRow: {
+        visible: true,
+        applyFilter: "auto"
+    },
+         headerFilter: {
+        visible: true
+    },
+            showBorders: true,
+            onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data && e.data.cssClass) {
+            $(e.rowElement).addClass(e.data.cssClass);
+        }
+    }
+
+        });
+    }
+
+
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport='@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // Đặt tên file theo selectedReport
+            let fileName =selectedReport + ".xlsx";
+
+            // Ghi file
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>

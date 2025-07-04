@@ -2465,6 +2465,7 @@ namespace Report.Controllers
                                   Reference = !string.IsNullOrEmpty(d["Reference"].ToString()) ? d["Reference"] : "",
                                   Supplement = !string.IsNullOrEmpty(d["Supplement"].ToString()) ? d["Supplement"] : "",
                                   TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
                                   Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
                                   Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
                                   CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
@@ -2477,6 +2478,62 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+        [HttpGet]
+        public IActionResult RevenueSpa(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+
+                var data = _iReportService.RevenueSpa(fromDate, toDate);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  TransactionName = !string.IsNullOrEmpty(d["TransactionName"].ToString()) ? d["TransactionName"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  AmountBeForeTax = decimal.TryParse(d["AmountBeForeTax"]?.ToString(), out var amtBeforeTax) ? amtBeforeTax : 0,
+                                  AmountGross = decimal.TryParse(d["AmountGross"]?.ToString(), out var amtGross) ? amtGross : 0,
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",                          
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv)
+        {
+
+            try
+            {
+                roomTypeCsv = roomTypeCsv ?? "";
+                var data = _iReportService.StatisticRoomType(fromDate, toDate, roomTypeCsv);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  PotentialRms = !string.IsNullOrEmpty(d["Potential Rms"].ToString()) ? d["Potential Rms"] : "",
+                                  RmsOcc = !string.IsNullOrEmpty(d["Rms Occ"].ToString()) ? d["Rms Occ"] : "",
+                                  Prs = !string.IsNullOrEmpty(d["Prs"].ToString()) ? d["Prs"] : "",                               
+                                  RoomRevenue = !string.IsNullOrEmpty(d["Room Revenue"].ToString()) ? d["Room Revenue"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+
 
         [HttpGet]
         public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)
@@ -2836,6 +2893,10 @@ namespace Report.Controllers
                 case "LeadtimeReports":
                 case "RatecodeReports":
                 case "AnnualRoomOccupancy":
+                case "RoomTypeStatistics":
+                    List<RoomTypeModel> listroom = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+                    ViewBag.RoomTypeList = listroom;
+                    break;
                 case "NationalStatistics":
                 case "ReservationSummary":         
                 case "ArrivalsAndCheckInToday":

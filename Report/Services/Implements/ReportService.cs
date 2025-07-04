@@ -899,21 +899,47 @@ namespace Report.Services.Implements
         }
         public DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type)
         {
-            if (string.IsNullOrEmpty(cashierList)) cashierList = "";
-            if (string.IsNullOrEmpty(transactionCodeList)) transactionCodeList = "";
-            if (string.IsNullOrEmpty(type)) type = "0";
+            // Nếu null hoặc trắng, ta để nguyên null cho stored procedure xử lý
+            object cashierParam = string.IsNullOrWhiteSpace(cashierList) ? DBNull.Value : (object)cashierList;
+            object transParam = string.IsNullOrWhiteSpace(transactionCodeList) ? DBNull.Value : (object)transactionCodeList;
+            object typeParam = string.IsNullOrWhiteSpace(type) ? "0" : (object)type;
+
             SqlParameter[] param = new SqlParameter[]
             {
-                new SqlParameter("@Date", date),
-                new SqlParameter("@Cashier", cashierList),
-                new SqlParameter("@TransactionCode", transactionCodeList),
-                new SqlParameter("@Type", type)
+        new SqlParameter("@Date", date),
+        new SqlParameter("@Cashier", cashierParam),
+        new SqlParameter("@TransactionCode", transParam),
+        new SqlParameter("@Type", typeParam)
             };
 
             return DataTableHelper.getTableData("spRptCashierAudit_New", param);
-
         }
-        
+
+        public DataTable RevenueSpa(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+     
+            };
+
+            return DataTableHelper.getTableData("spRptSpa", param);
+        }
+        public DataTable StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv)
+        {
+            object roomTypeParam = (object)(roomTypeCsv?.Trim() ?? "");
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@RoomType", roomTypeParam),
+
+            };
+
+            return DataTableHelper.getTableData("spRptStatisticRoomType", param);
+        }
+
 
     }
 }

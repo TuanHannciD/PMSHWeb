@@ -75,7 +75,8 @@ namespace Report.Services.Interfaces
         DataTable DailyRevenueReportNew(DateTime dateView);
         DataTable DailyRevenueReportsV2(DateTime dateView);
         DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type);
- 
+        DataTable RevenueSpa(DateTime fromDate, DateTime toDate);
+        DataTable StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv);
 
 
     }
