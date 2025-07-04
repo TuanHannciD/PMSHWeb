@@ -1,0 +1,288 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var transactionsList = ViewBag.TransactionsList;
+    var usersList = ViewBag.UsersList;
+}
+
+
+<style>
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <!-- From Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">For Date:</label>
+            <input type="date" id="date" name="date" class="form-control form-control-sm w-auto" />
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Cashier:</label>
+            <select id="user" name="user" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                @foreach (var item in usersList)
+                {
+                    <option value="@item.LoginName">@item.LoginName</option>
+                }
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Transactions Code:</label>
+            <select id="transactions" name="transactions" class="form-control form-control-sm w-auto">
+                <option value="">ALL</option>
+                @foreach (var item in transactionsList)
+                {
+                    <option value="@item.ID">@item.Code</option>
+                }
+            </select>
+
+        </div>
+
+        <div style="display:none!important" class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Group By:</label>
+            <select id="groupBy" name="groupBy" class="form-control form-control-sm w-auto">
+
+                <option value="0">Cashier,Transaction Code</option>
+                <option value="1">Cashier</option>
+                <option value="2">Transaction Code</option>
+            </select>
+        </div>
+      
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+</div>
+
+<div class="mui-card">
+    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa   
+        // Gán giá trị cho input date
+        document.getElementById('date').value = formattedFirstDay;
+
+
+
+
+    });
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Report/CashierAudit',
+            type: 'GET',
+            data: {
+                date: $("#date").val(),
+                user: $("#user").val(),
+                transactions: $("#transactions").val(),
+                groupBy: $("#groupBy").val(),               
+            },
+            traditional: true,
+              crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                // $("#reportViewerContainer").html(result);
+                // $("#loadingSpinner").hide();
+                     console.log(result);
+                initializReveunueByGrid(result);
+                    $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+        function prepareCashierData(data) {
+        const grouped = {};
+        const result = [];
+
+        data.forEach(item => {
+            const key = item.transactionCode || "Unknown";
+            if (!grouped[key]) grouped[key] = [];
+            grouped[key].push(item);
+        });
+
+        Object.entries(grouped).forEach(([code, items]) => {
+            // Header dòng "Transaction Code: ... - Mô tả"
+            result.push({
+                isGroupHeader: true,
+                transactionCode: code,
+                description: items[0].description
+            });
+
+            // Dòng chi tiết từng giao dịch
+            result.push(...items.map(x => ({
+                ...x,
+                isGroupHeader: false,
+                isSubtotal: false,
+                isGrandTotal: false
+            })));
+
+            // Dòng SubTotal
+            result.push({
+                isSubtotal: true,
+                amount: items.reduce((sum, x) => sum + (x.amount || 0), 0)
+            });
+        });
+
+        // Dòng Grand Total
+        result.push({
+            isGrandTotal: true,
+            amount: data.reduce((sum, x) => sum + (x.amount || 0), 0)
+        });
+
+        return result;
+    }
+
+
+    function initializReveunueByGrid(data) {
+        const columnWidth = 180;
+        $("#gridContainer").dxDataGrid({
+    dataSource: data, allowColumnResizing: true,
+            columns: [
+
+            { dataField: "pay", caption: "Name", width: columnWidth-70 },
+            { dataField: "roomNo", caption: "Room No", width: columnWidth-40 },
+            { dataField: "supplement", caption: "Supplement / Credit Card No", width:columnWidth-50},       
+            { dataField: "user", caption: "Exp. Date", width: columnWidth },
+            { dataField: "reference", caption: "Reference", width: columnWidth },
+            { dataField: "amount", caption: "Amount", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "durrencyID", caption: "Curr.", width:columnWidth-60 },
+            { dataField: "folioID", caption: "FolioID", width: columnWidth},
+            { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-80 },
+            { dataField: "transactionDate", caption: "Curr.", width: columnWidth-70 },
+            { dataField: "userName", caption: "User Login", width: columnWidth-50 , dataType: "number", format: "#,##0"},        
+            ],
+            paging: { pageSize: 25 },
+      scrolling:  {
+         mode: 'virtual',
+        useNative: true,
+       showScrollbar: "always"
+    },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                filterRow: {
+         visible: true,
+        applyFilter: "auto"
+    },
+    headerFilter: {
+        visible: true
+    },
+            showBorders: true,
+                
+        });
+    }
+
+
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport='@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // Đặt tên file theo selectedReport
+            let fileName =selectedReport + ".xlsx";
+
+            // Ghi file
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>

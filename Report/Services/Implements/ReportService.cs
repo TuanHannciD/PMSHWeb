@@ -109,7 +109,7 @@ namespace Report.Services.Implements
         }
 
         public DataTable ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
-            string   pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
+            string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -963,7 +963,7 @@ namespace Report.Services.Implements
                 new SqlParameter("@pseudo", pseudo),
                 new SqlParameter("@variance", variance),
                 new SqlParameter("@fixRate", fixRate),
-                new SqlParameter("@package", package), 
+                new SqlParameter("@package", package),
                 new SqlParameter("@dcReason", dcReason),
                 new SqlParameter("@sort", sort),
                 new SqlParameter("@showFixCharge", showFixCharge),
@@ -973,8 +973,8 @@ namespace Report.Services.Implements
             return DataTableHelper.getTableData("spRptReservationRateCodeCheck", param);
         }
         public DataTable GuestLedger(DateTime date, string statusList)
-        {        
-            string trimmed = statusList.Trim('\''); 
+        {
+            string trimmed = statusList.Trim('\'');
             string formattedStatus = $"{trimmed.Replace("'", "'")}";
 
             SqlParameter[] param = new SqlParameter[]
@@ -1002,13 +1002,13 @@ namespace Report.Services.Implements
             {
                 new SqlParameter("@dtpFromDate", fromDate),
                 new SqlParameter("@dtpToDate", toDate),
-                new SqlParameter("@Transaction", ""), 
-                new SqlParameter("@Article", ""),    
-                new SqlParameter("@CashierNo", ""),   
-                new SqlParameter("@RoomClass", ""),   
-                new SqlParameter("@Room", ""),        
-                new SqlParameter("@OrderBy", ""),     
-                new SqlParameter("@NetDisp", "NET"),  
+                new SqlParameter("@Transaction", ""),
+                new SqlParameter("@Article", ""),
+                new SqlParameter("@CashierNo", ""),
+                new SqlParameter("@RoomClass", ""),
+                new SqlParameter("@Room", ""),
+                new SqlParameter("@OrderBy", ""),
+                new SqlParameter("@NetDisp", "NET"),
                 new SqlParameter("@IsShowDeleted", isShowDeleted)
             };
 
@@ -1048,7 +1048,7 @@ namespace Report.Services.Implements
             {
                 new SqlParameter("@dtpFromDate", dtpFromDate),
                 new SqlParameter("@cboType", cboType)
-               
+
             };
 
             return DataTableHelper.getTableData("spRptCahierSummary", param);
@@ -1066,13 +1066,38 @@ namespace Report.Services.Implements
             };
 
             return DataTableHelper.getTableData("spRptDailyRevenueReport_New", param);
+
         }
+        public DataTable DailyRevenueReportsV2(DateTime dateView)
+        {
+            // Lùi 1 năm
+            DateTime lastYear = dateView.AddYears(-1);
 
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@DateView", dateView),
+                new SqlParameter("@LastYear", lastYear)
+            };
 
+            return DataTableHelper.getTableData("spRptDailyRevenueReport_V2", param);
+        }
+        public DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type)
+        {
+            if (string.IsNullOrEmpty(cashierList)) cashierList = "";
+            if (string.IsNullOrEmpty(transactionCodeList)) transactionCodeList = "";
+            if (string.IsNullOrEmpty(type)) type = "0";
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Date", date),
+                new SqlParameter("@Cashier", cashierList),
+                new SqlParameter("@TransactionCode", transactionCodeList),
+                new SqlParameter("@Type", type)
+            };
 
+            return DataTableHelper.getTableData("spRptCashierAudit_New", param);
 
-
+        }
+        
 
     }
-
 }

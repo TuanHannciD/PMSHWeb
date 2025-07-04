@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Reservation.Commons.Helpers;
 using Reservation.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,17 @@ namespace Reservation.Controllers
 
         public IActionResult NewReservation()
         {
+            ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
+            ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
+            ViewBag.cboCity = ListItemHelper.GetCityProvider();
+            ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
+            ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
+            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
+            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+            ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
+
             return View();
         }
 

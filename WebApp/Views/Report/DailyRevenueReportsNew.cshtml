@@ -44,7 +44,7 @@
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Date:</label>
             <input type="date" id="dateView" name="dateView" class="form-control form-control-sm w-auto" />
-        </div>     
+        </div>
     </div>
     <div class="mb-3">
         <button id="btnPrint" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fa-solid fa-eye"></i> View</button>
@@ -73,10 +73,10 @@
 
     $(document).ready(function () {
         const today = new Date();
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);   
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
         $('#dateView').val(formatDate(firstDayOfMonth));
-      
+
         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
     });
 
@@ -87,7 +87,7 @@
             type: 'GET',
             headers: { "X-CSRF-TOKEN-HEADERNAME": $('input[name="__RequestVerificationToken"]').val() },
             data: {
-                dateView: $('#dateView').val(),              
+                dateView: $('#dateView').val(),
             },
             success: function (result) {
                 console.log(result);

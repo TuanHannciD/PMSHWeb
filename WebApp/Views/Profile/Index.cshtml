@@ -126,10 +126,10 @@
                         <div class="form-group row  mt-1">
                             <label for="inputPassword" class="col-sm-4 col-form-label text-right">Language/Title</label>
                             <div class="col-sm-8" style="display:flex;column-gap:8px">
-                                <select type="text" id="txtLanguageIndividual">
+                                <select type="text" id="txtLanguageIndividual" >
                                 </select>
 
-                                <select type="text" id="txtTitleIndividual">
+                                <select type="text" id="txtTitleIndividual" >
                                 </select>
                             </div>
                         </div>
@@ -1127,7 +1127,8 @@
             if ($(id).length) {
                 new TomSelect(id, {
                     allowEmptyOption: true,
-                    create: true
+                    create: true,
+
                 });
             }
         }

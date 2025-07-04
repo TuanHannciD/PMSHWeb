@@ -1,0 +1,238 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var report = ViewBag.ReportName as XtraReport;
+}
+
+<style>
+    .filter_wrapper {
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Date:</label>
+            <input type="date" id="dateView" name="dateView" class="form-control form-control-sm w-auto" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <button id="btnPrint" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fa-solid fa-eye"></i> View</button>
+        <button id="btnExportExcel" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button id="btnExportPdf" class="mui-button mui-button-new" style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+
+</div>
+
+<div class="mui-card">
+    <div id="reportTitle" class="mt-1" style="font-size: 20px;"></div>
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        $('#dateView').val(formatDate(firstDayOfMonth));
+
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+    });
+
+    $('#btnPrint').click(function () {
+        $('#loadingSpinner').show();
+        $.ajax({
+            url: '/Report/DailyRevenueReportsV2',
+            type: 'GET',
+            headers: { "X-CSRF-TOKEN-HEADERNAME": $('input[name="__RequestVerificationToken"]').val() },
+            data: {
+                dateView: $('#dateView').val(),
+            },
+            success: function (result) {
+                console.log(result);
+                initializeDataGrid(result);
+                $('#loadingSpinner').hide();
+            },
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $('#loadingSpinner').hide();
+            }
+        });
+    });
+
+        function initializeDataGrid(data) {
+             if ($("#gridContainer").dxDataGrid("instance")) {
+        $("#gridContainer").dxDataGrid("instance").dispose();
+        $("#gridContainer").empty();
+    }
+        $('#gridContainer').dxDataGrid({
+            dataSource: data, allowColumnResizing: true,
+            showBorders: true,
+            columnAutoWidth: true,
+            allowColumnResizing: true,
+            wordWrapEnabled: true,
+            rowAlternationEnabled: true,
+            groupPanel: {
+                visible: true
+            },
+            grouping: {
+                autoExpandAll: true
+            },
+
+            columns: [
+                {
+                    dataField: "groupName",
+                    caption: "Group",
+                    groupIndex: 0,
+                    visible: false
+                },
+                {
+                    dataField: "subGroup",
+                    caption: "Sub group",
+                    groupIndex: 1,
+                    visible: false
+                },
+                {
+                    dataField: "itemName",
+                    caption: "Description",
+                    width: 220
+                },
+                {
+                    dataField: "daily_Value",
+                    caption: "Amount ++",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
+                },
+                {
+                    dataField: "svc",
+                    caption: "SVC",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
+                },
+                {
+                    dataField: "vato",
+                    caption: "Special Tax 30%",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
+                },
+                {
+                    dataField: "vat",
+                    caption: "VAT 10%",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
+                },
+                {
+                    dataField: "total",
+                    caption: "Total",
+                    dataType: "number",
+                    format: "#,##0",
+                    alignment: "right"
+                },
+
+            ],
+            summary: {
+                groupItems: [
+                    { column: "daily_Value", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
+                    { column: "svc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
+                    { column: "vato", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true },
+                    { column: "vat", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true , showInGroupFooter: true},
+                    { column: "total", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0", alignByColumn: true, showInGroupFooter: true }
+                ],
+                },
+            paging: {
+                pageSize: 25
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50,"all"],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            // scrolling: {
+            //     mode: 'virtual',
+            //     useNative: true,
+            //     showScrollbar: "always"
+            // },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+            showBorders: true
+        });
+    }
+
+
+    $('#btnExportExcel').click(function () {
+        const grid = $('#gridContainer').dxDataGrid('instance');
+        grid.exportToExcel(false);
+    });
+
+    $('#btnExportPdf').click(function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $('#gridContainer').dxDataGrid('instance'),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
+</script>

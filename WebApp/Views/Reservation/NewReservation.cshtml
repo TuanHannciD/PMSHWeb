@@ -1,18 +1,19 @@
-﻿<link href="~/css/new_reservation.css" rel="stylesheet" />
+﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <div class="body">
-   
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>New Reservation</div>
+@*     <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p id="loading-text">Loading data ... <span id="progress">0%</span></p>
+    </div> *@
+    <div class="container2">
+        <div >
+            <div tyle="text-align: center !important;"></div>
             <div class="button-group mb-1">
-                <button  class="mui-button mui-button-new"><i class="fas fa-plus"></i> New</button>
+                <button  class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
                 <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
                 <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
             </div>
         </div>
-        <!-- Part 1: Personal, Address, Agent in one row -->
         <div class="top-row">
-            <!-- Personal Information Section -->
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Name</label>
@@ -25,7 +26,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Title</label>
-                    <select class="col-md-9" id="txtTitle">
+                    <select class="col-md-9" id="txtTitle" asp-items="ViewBag.cboTitle">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -46,7 +47,6 @@
                 </div>
             </div>
 
-            <!-- Address Section -->
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Address</label>
@@ -58,23 +58,22 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Nationality</label>
-                    <select class="col-md-9" id="txtNationality" >
+                    <select class="col-md-9" id="txtNationality" asp-items="ViewBag.cboNationality">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">City</label>
-                    <select class="col-md-9" id="txtCity">
+                    <select class="col-md-9" id="txtCity" asp-items="ViewBag.cboCity">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">VIP</label>
-                    <select class="col-md-9" id="txtVIP">
+                    <select class="col-md-9" id="txtVIP" asp-items="ViewBag.cboVIP">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Mem. Type</label>
-                    <select class="col-md-9" id="txtMemberType">
-                        <option>VIP</option>
+                    <select class="col-md-9" id="txtMemberType" asp-items="ViewBag.cboMemberType">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -83,18 +82,15 @@
                 </div>
             </div>
 
-            <!-- Agent Section -->
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Agent</label>
-                    <select class="col-md-9" id="txtAgent">
-                        <option>Company</option>
+                    <select class="col-md-9" id="txtAgent" asp-items="ViewBag.cboProfileAgent">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Company</label>
-                    <select class="col-md-9" id="txtCompany">
-                        <option>Company</option>
+                    <select class="col-md-9" id="txtCompany" asp-items="ViewBag.cboProfileCompany">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -103,8 +99,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Contact</label>
-                    <select class="col-md-9" id="txtContact">
-                        <option>Company</option>
+                    <select class="col-md-9" id="txtContact" asp-items="ViewBag.cboProfileContact">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -122,11 +117,8 @@
             </div>
         </div>
 
-        <!-- Divider -->
-        <div class="divider"></div>
 
-        <!-- Part 2: Only text for More Fields and Property -->
-        <div class="middle-row" style="display: flex; align-items: center;">
+        <div class="section" style="display: flex; align-items: center;">
             <div style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; padding: 4px; background-color: #D3D3D3; border: 1px solid #A9A9A9;">
                 More Fields
             </div>
@@ -135,10 +127,7 @@
             </div>
         </div>
 
-        <!-- Divider -->
-        <div class="divider"></div>
 
-        <!-- Part 3: Arrival, Res. Type, and Specials -->
         <div class="third-row">
             <!-- Arrival Section -->
             <div class="section">
@@ -179,7 +168,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Room Type</label>
-                    <select class="col-md-4" id="txtRoomType">
+                    <select class="col-md-4" id="txtRoomType" asp-items="ViewBag.cboRoomType">
                     </select>
                     <label class="col-md-2">RTC</label>
                     <select class="col-md-3" id="txtRTC">
@@ -204,8 +193,8 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Currency</label>
-                    <select class="col-md-9">
-                        <option>RTC</option>
+                    <select class="col-md-9" asp-items="ViewBag.cboCurrency">
+
                     </select>
                 </div>
                 <div class="row me-1">
@@ -375,20 +364,10 @@
 <script>
     $(document).ready(async function () {
         // Chờ tất cả các hàm AJAX hoàn thành
-        await Promise.all([
-            getAllProfileIndividual(),
-            getAllTitle(),
-            getAllNationality(),
-            getAllCity(),
-            getAllVIP(),
-            getAllMemberType(),
-            getAllAgent(),
-            getAllCompany(),
-            getAllContact(),
-            getAllRoomType(),
-            getAllRoomByRoomTypeID(0),
-        ]);
+         //fetchData();
     });
+    
+   
     // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
     function formatDate(date) {
         const year = date.getFullYear();
@@ -565,270 +544,56 @@
 
     // Khởi tạo trạng thái ban đầu
     updateRoomSelect();
-    async function getAllTitle() {
-        return $.ajax({
-            url: '/Profile/GetAllTitle',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtTitle').empty();
-                var html = `<option value='0'>Please select title</option>`
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.name}</option>`
-                    });
-
-                }
-                $('#txtTitle').append(html);
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-
-    async function getAllNationality() {
-        return $.ajax({
-            url: '/Profile/GetAllNationality',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtNationality').empty();
-                var html = `<option value='0'>Please select Nationality</option>`;
-                
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.name}</option>`
-                    });
-                }
-                $('#txtNationality').append(html);
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-
-    async function getAllCity() {
-        return $.ajax({
-            url: '/Profile/GetAllCity',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtCity').empty();
-                var html = `<option value='0'>Please select City</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.name}'>${item.name}</option>`
-                    });
-                }
-                $('#txtCity').append(html);
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
     
-    async function getAllVIP() {
-        return $.ajax({
-            url: '/Profile/GetAllVIP',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtVIP').empty();
-                var html = `<option value='0'>Please select VIP</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.name}</option>`
-                    });
-                }
-                $('#txtVIP').append(html);
+    // async function getAllProfileIndividual() {
+    //     return $.ajax({
+    //         url: '/Profile/GetAllProfileIndividual',
+    //         type: 'get',
+    //         dataType: 'json',
+    //         crossDomain: false,
+    //         headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+    //         success: function (result) {
+    //             $('#txtName').empty();
+    //             var html = `<option value='0'>Please select Profile Individual</option>`;
+    //             if (result.length > 0) {
+    //                 result.forEach(item => {
+    //                     html += `<option value='${item.id}'>${item.account}</option>`
+    //                 });
+    //             }
+    //             $('#txtName').append(html);
 
-            },
-            error: function (xhr, statusText, err) {
+    //         },
+    //         error: function (xhr, statusText, err) {
 
-            }
-        });
-    }
-    async function getAllMemberType() {
-        return $.ajax({
-            url: '/Profile/GetAllMemberType',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtMemberType').empty();
-                var html = `<option value='0'>Please select Member Type</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.name}</option>`
-                    });
-                }
-                $('#txtMemberType').append(html);
+    //         }
+    //     });
+    // }
 
-            },
-            error: function (xhr, statusText, err) {
 
-            }
-        });
-    }
 
-    async function getAllAgent() {
-        return $.ajax({
-            url: '/Profile/GetAllAgent',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtAgent').empty();
-                var html = `<option value='0'>Please select Agent</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.account}</option>`
-                    });
-                }
-                $('#txtAgent').append(html);
+    // async function getAllRoomByRoomTypeID(roomTypeID) {
+    //     return $.ajax({
+    //         url: '/Profile/GetRoomByRoomType',
+    //         type: 'get',
+    //         dataType: 'json',
+    //         crossDomain: false,
+    //         headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+    //         data:{roomTypeID : roomTypeID},
+    //         success: function (result) {
+    //             $('#roomSelect').empty();
+    //             var html = `<option value='0'>Room</option>`;
+    //             if (result.length > 0) {
+    //                 result.forEach(item => {
+    //                     html += `<option value='${item.roomNo}'>${item.roomName}</option>`;
+    //                 });
+    //             }
+    //             $('#roomSelect').append(html);
+    //         },
+    //         error: function (xhr, statusText, err) {
 
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-    async function getAllCompany() {
-        return $.ajax({
-            url: '/Profile/GetAllCompany',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtCompany').empty();
-                var html = `<option value='0'>Please select Company</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.account}</option>`
-                    });
-                }
-                $('#txtCompany').append(html);
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-    async function getAllContact() {
-        return $.ajax({
-            url: '/Profile/GetAllContact',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtContact').empty();
-                var html = `<option value='0'>Please select Contact</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.account}</option>`
-                    });
-                }
-                $('#txtContact').append(html);
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-
-    async function getAllProfileIndividual() {
-        return $.ajax({
-            url: '/Profile/GetAllProfileIndividual',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtName').empty();
-                var html = `<option value='0'>Please select Profile Individual</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.account}</option>`
-                    });
-                }
-                $('#txtName').append(html);
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-
-    async function getAllRoomType() {
-        return $.ajax({
-            url: '/Profile/GetAllRoomType',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtRoomType').empty();
-                $('#txtRTC').empty();
-                var html = `<option value='0'>RoomType</option>`;
-                var htmlRTC = `<option value='0'>RTC</option>`;
-                console.log(result);
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.id}'>${item.code} - ${item.name}</option>`;
-                         htmlRTC += `<option value='${item.id}'>${item.code} - ${item.name}</option>`
-                    });
-                }
-                $('#txtRoomType').append(html);
-                $('#txtRTC').append(htmlRTC);
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-
-    async function getAllRoomByRoomTypeID(roomTypeID) {
-        return $.ajax({
-            url: '/Profile/GetRoomByRoomType',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{roomTypeID : roomTypeID},
-            success: function (result) {
-                $('#roomSelect').empty();
-                var html = `<option value='0'>Room</option>`;
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.roomNo}'>${item.roomName}</option>`;
-                    });
-                }
-                $('#roomSelect').append(html);
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
+    //         }
+    //     });
+    // }
     $('#txtName').on('change', function() {
         let selectedValue = $(this).val();
         if(selectedValue != 0){
@@ -858,81 +623,42 @@
         });
         }
     });
-    $('#txtAgent').on('change', function() {
-        let selectedValue = $(this).val();
-        if(selectedValue != 0){
-            $.ajax({
-            url: '/Profile/GetProfileByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{id : selectedValue},
-            success: function (result) {
-                $('#txtCompany').val(0);
 
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-        }
-    });
-    $('#txtCompany').on('change', function() {
-        let selectedValue = $(this).val();
-        if(selectedValue != 0){
-            $.ajax({
-            url: '/Profile/GetProfileByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{id : selectedValue},
-            success: function (result) {
-                $('#txtAgent').val(0);
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-        }
-    });
-    function getRateCode() {
-        return $.ajax({
-            url: '/Reservation/GetRateCode',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{
-                arrivalDate:$('#arrival').val(),
-                departure:$('#departure').val(),
-                adults:$('#adults').val(),
-                roomType:$('#txtRoomType').val()
-            },
-            success: function (result) {
-                $('#txtRateCode').empty();
-                var html = `<option value='0'>Rate code</option>`;
-                console.log(result);
-                if (result.length > 0) {
-                    result.forEach(item => {
-                        html += `<option value='${item.rateCodeID}'>${item.rateCode} - ${item.amountAfterTax}</option>`;
-                    });
-                }
-                $('#txtRateCode').append(html);
+    // function getRateCode() {
+    //     return $.ajax({
+    //         url: '/Reservation/GetRateCode',
+    //         type: 'get',
+    //         dataType: 'json',
+    //         crossDomain: false,
+    //         headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+    //         data:{
+    //             arrivalDate:$('#arrival').val(),
+    //             departure:$('#departure').val(),
+    //             adults:$('#adults').val(),
+    //             roomType:$('#txtRoomType').val()
+    //         },
+    //         success: function (result) {
+    //             $('#txtRateCode').empty();
+    //             var html = `<option value='0'>Rate code</option>`;
+    //             console.log(result);
+    //             if (result.length > 0) {
+    //                 result.forEach(item => {
+    //                     html += `<option value='${item.rateCodeID}'>${item.rateCode} - ${item.amountAfterTax}</option>`;
+    //                 });
+    //             }
+    //             $('#txtRateCode').append(html);
 
 
-            },
-            error: function (xhr, statusText, err) {
+    //         },
+    //         error: function (xhr, statusText, err) {
 
-            }
-        });
-    }
-    $('#txtRoomType').on('change', function() {
-        let selectedValue = $(this).val();
-        $('#txtRTC').val(selectedValue);
-        getAllRoomByRoomTypeID(selectedValue);
-        getRateCode();
-    });
+    //         }
+    //     });
+    // }
+    // $('#txtRoomType').on('change', function() {
+    //     let selectedValue = $(this).val();
+    //     $('#txtRTC').val(selectedValue);
+    //     getAllRoomByRoomTypeID(selectedValue);
+    //     getRateCode();
+    // });
 </script>

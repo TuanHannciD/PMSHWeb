@@ -83,6 +83,10 @@ namespace Report.Services.Interfaces
         DataTable ArticleByRoomsDatas(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article);
 
         DataTable DailyRevenueReportNew(DateTime dateView);
+        DataTable DailyRevenueReportsV2(DateTime dateView);
+        DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type);
+ 
+
 
 
         DataTable JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp);
