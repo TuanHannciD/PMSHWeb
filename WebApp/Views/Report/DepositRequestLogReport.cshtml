@@ -4,6 +4,7 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
+    var rtList = ViewBag.RoomClassList;
 }
 
 
@@ -44,14 +45,21 @@
         }
 
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="text-center" id="reportTitle" style="font-size: 20px">NoShowReport</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Month:</label>
-            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
+
+        <!-- To Date -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+     
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -61,7 +69,7 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -72,21 +80,26 @@
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}`;
+        return `${year}-${month}-${day}`;
     }
 
     $(document).ready(function () {
-       $("#reportTitle").text('@ViewBag.ReportTitle');
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Lấy ngày cuối cùng của tháng
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
         // Định dạng theo local time
         const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
 
         console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
+        document.getElementById('toDate').value = formattedLastDay;
 
 
 
@@ -94,10 +107,11 @@
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/ReservationStatisticsReport',
+            url: '/Report/DepositRequestLogReportData',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val()
+                fromDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -106,7 +120,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeReservationStatisticsGrid(result);
+                    initializeDepositRequestLogReportDataGrid(result);
+
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -116,21 +131,27 @@
         });
     });
 
-    function initializeReservationStatisticsGrid(data) {
+
+    function initializeDepositRequestLogReportDataGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
             columns: [
-               { dataField: "marketCode", caption: "Market Code", width: columnWidth -70},
-            { dataField: "noOfRooms", caption: "No.Of Rooms", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "fbRevenue", caption: "F&B Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "miscRevenue", caption: "MISC Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "occ", caption: "%Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
-             { dataField: "noofGuest", caption: "No of Guest", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "multiOccpc", caption: "%Multli Occ", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "MultiOcc", caption: "Multli Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
-             { dataField: "singleOcc", caption: "Single Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" }
+               { dataField: "roomNo", caption: "Room No", width:columnWidth-80},
+                 { dataField: "confirmationNo", caption: "Conf.No", width:columnWidth-70},
+            { dataField: "guestName", caption: "Guest Name", width: columnWidth+50  },
+       
+                { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-70 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "roomType", caption: "Ro.Type", width: columnWidth-80  },
+            { dataField: "change", caption: "Change",width: columnWidth-60 },
+            { dataField: "oldValue", caption: "Old Value",width: columnWidth-40 },
+            { dataField: "newValue", caption: "New Value", width:columnWidth-40 },
+  
+             { dataField: "changeDate", caption: "Changeed Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "userName", caption: "User", width:columnWidth-80 },
+            { dataField: "description", caption: "Description",width: columnWidth-80  },
+           
             ],
             paging: { pageSize: 25 },
              scrolling:  {
@@ -145,24 +166,6 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
-             summary: {
-            totalItems: [
-                {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                { column: "noOfRooms", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "roomRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "fbRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "miscRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "occ", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "noofGuest", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "multiOccpc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "MultiOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "singleOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
-            ]
-        },
              filterRow: {
                  visible: true,
                  applyFilter: "auto"
@@ -172,7 +175,7 @@
               },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true
-   
+
         });
     }
 

@@ -4,7 +4,9 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var rtList = ViewBag.RoomTypeList; 
+    var zoneList = ViewBag.ZoneList;
+    var listroom = ViewBag.RoomList;
+    var listaticl = ViewBag.ArticleList;
 }
 
 
@@ -60,14 +62,51 @@
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Room Type:</label>
-            <select id="roomTypeID" name="roomTypeID" class="form-control form-control-sm w-auto">
-                @foreach (var item in rtList)
+            <label class="me-2 mb-0">Room:</label>
+            <select id="room" name="room" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in listroom)
                 {
-                    <option value="@item.ID">@item.Code</option>
+                    <option value="@item.RoomNo">@item.RoomNo-@item.RoomName</option>
                 }
             </select>
         </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Post By:</label>
+            <div style="width: 120px;">
+                <select class="form-control form-control-sm w-auto" id="viewBy" name="selectType1">
+                    <option value="0">ALL</option>
+                    <option value="1">FO</option>
+                    <option value="2">HKP</option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="form-control form-control-sm " style="width :100px">
+                <option value="--All--">ALL</option>
+                @foreach (var item in zoneList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Article:</label>
+            <select id="article" name="article" class="form-control form-control-sm " style="width: 100px;">
+                <option value="">ALL</option>
+                @foreach (var item in listaticl)
+                {
+                    <option value="@item.Code">@item.Description</option>
+                }
+            </select>
+
+        </div>
+
+       
+
 
     </div>
     <div class=" mb-3 ">
@@ -78,7 +117,7 @@
 </div>
 
 <div class="mui-card">
-    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -91,6 +130,7 @@
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         return `${year}-${month}-${day}`;
     }
+      
 
     $(document).ready(function () {
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
@@ -113,15 +153,18 @@
 
 
     });
-    $("#btnPrint").click(function () {
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/OccupancybyPersonData',
+            url: '/Report/ArticleByRoomsData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                toDate: $("#toDate").val(),           
-                roomTypeID: $("#roomTypeID").val(),
+                toDate: $("#toDate").val(),
+                  zone: $("#zone").val(),
+                    room: $("#room").val(),
+                         viewBy: $("#viewBy").val(),
+                   article: $("#article").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -130,7 +173,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializReveunueByGrid(result);
+                        const processed = prepareArticleByRoomsData(result);
+                        initializeReservationSummaryGrid(processed.data, processed.grandTotal);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -140,61 +184,167 @@
         });
     });
 
-            function initializReveunueByGrid(data) {
-        console.log("Dữ liệu đầu vào:", data); // Gỡ lỗi dữ liệu
+
+       function prepareArticleByRoomsData(data) {
+        const groupedData = {};
+        const finalData = [];
+
+       data.forEach(item => {
+        const key = item.roomNo || ""; // nếu null thì gán rỗng
+        if (!groupedData[key]) groupedData[key] = [];
+        groupedData[key].push(item);
+    });
+
+    const isLeadingZero = (str) => /^0\d+/.test(str); // true nếu có số 0 đầu
+
+    const sortedEntries = Object.entries(groupedData).sort(([a], [b]) => {
+        // Xử lý null hoặc ""
+        if (!a && b) return -1;
+        if (a && !b) return 1;
+        if (!a && !b) return 0;
+
+        const aHasZero = isLeadingZero(a);
+        const bHasZero = isLeadingZero(b);
+
+        // Nếu a có 0 đầu và b không → a đứng sau
+        if (aHasZero && !bHasZero) return 1;
+        if (!aHasZero && bHasZero) return -1;
+
+        // Cả hai cùng nhóm → sắp theo giá trị số
+        return parseInt(a) - parseInt(b);
+    });
+
+    sortedEntries.forEach(([roomNo, records]) => {
+        const firstRecord = records[0];
+
+        finalData.push({
+            articleCode: `Room: ${roomNo || ""}`,
+            articleDescription: `${firstRecord.lastName}`,
+            quantity: ` C: ${firstRecord.confirmationNo} `,
+            price: ` ${firstRecord.arrivalDate}`,
+            amountBeforeTax: ` ${firstRecord.departureDate}`,
+            isTitle: true,
+            cssClass: "custom"
+        });
+
+        finalData.push(...records);
+
+        finalData.push({
+            articleDescription: "Sub Total",
+            quantity: records.length,
+            amountBeforeTax: sum(records, 'amountBeforeTax'),
+            amount: sum(records, 'amount'),
+            isTotal: true,
+            cssClass: "custom"
+        });
+    });
+
+
+        // 👉 Tính Grand Total một lần ở đây
+        const grandTotal = {
+            quantity: sum(data, 'quantity'),
+            amountBeforeTax: sum(data, 'amountBeforeTax'),
+            amount: sum(data, 'amount')
+        };
+
+        return { data: finalData, grandTotal };
+    }
+
+
+      function averageOfSums(arr, fields) {
+        if (arr.length === 0) return 0;
+        let total = 0;
+        fields.forEach(field => {
+            total += sum(arr, field);
+        });
+        return total / fields.length;
+    }
+
+    // Helper functions
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
+
+    function average(arr, field) {
+        const valid = arr.filter(x => x[field] != null);
+        if (valid.length === 0) return 0;
+        return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
+    }
+
+
+    function initializeReservationSummaryGrid(data, grandTotal) {
+        const columnWidth = 180;
+
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             allowColumnResizing: true,
             columns: [
-                { dataField: "rateCode", caption: "RateCode", width: 150 },
-                { dataField: "dayOfWeek", caption: "Conf.No", width: 100 },
-                { dataField: "date", caption: "Date", width: 100, dataType: "date", format: "dd/MM/yyyy" },
-                { dataField: "vacRo", caption: "VacRo", width: 100 },
-                { dataField: "resRo", caption: "ResRo", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "indPax", caption: "IndPax", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "grpPax", caption: "GrpPax", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "totalPax1", caption: "TotalPax1", width: 120, dataType: "number", format: "#,##0" },
-                { dataField: "arrPax", caption: "ArrPax", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "depPax", caption: "DepPax", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "waitPax", caption: "WaitPax", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "oooRo", caption: "OOORo", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "totalPax2", caption: "TotalPax2", width: 100, dataType: "number", format: "#,##0" },
-                { dataField: "phantram", caption: "%", width: 100 },
-                { dataField: "accomOrPerson", caption: "AccomOrPerson", width: 150 },
-                { dataField: "accommodation", caption: "Accommodation", width: 150 },
-                { dataField: "fAndB", caption: "FAndB", width: 100 },
-                { dataField: "total", caption: "Total", width: 100 },
+                { dataField: "articleCode", caption: "Code", width: columnWidth - 80 },
+                { dataField: "articleDescription", caption: "Description", width: columnWidth + 50 },
+                { dataField: "quantity", caption: "Quantity", width: columnWidth - 40 },
+                { dataField: "price", caption: "Price", width: columnWidth - 50,dataType: "date",format: "dd/MM/yyyy" },
+                { dataField: "amountBeforeTax", caption: "Amount++", width: columnWidth - 50,dataType: "date",format: "dd/MM/yyyy" },
+                { dataField: "amount", caption: "Amount Net", width: columnWidth - 50, dataType: "number", format: "#,##0" }
             ],
+            summary: {
+                totalItems: [
+                    {
+                        name: "qty",
+                        column: "quantity",
+                        summaryType: "custom",
+                        displayFormat: "Grand Total: {0}",
+                        valueFormat: "#,##0"
+                    },
+                    {
+                        name: "amtBeforeTax",
+                        column: "amountBeforeTax",
+                        summaryType: "custom",
+                        valueFormat: "#,##0"
+                    },
+                    {
+                        name: "amt",
+                        column: "amount",
+                        summaryType: "custom",
+                        valueFormat: "#,##0"
+                    }
+                ]
+            },
+            onCustomSummaryCalculate: function (e) {
+                if (e.name === "qty") {
+                    e.totalValue = grandTotal.quantity;
+                } else if (e.name === "amtBeforeTax") {
+                    e.totalValue = grandTotal.amountBeforeTax;
+                } else if (e.name === "amt") {
+                    e.totalValue = grandTotal.amount;
+                }
+            },
             paging: { pageSize: 25 },
+            scrolling: {
+                mode: 'virtual',
+                useNative: true,
+                showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true,
+                showNavigationButtons: true
             },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
             filterRow: { visible: true, applyFilter: "auto" },
             headerFilter: { visible: true },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-            summary: {
-                totalItems: [
-                    {
-                        column: "date",
-                        summaryType: "custom",
-                        displayFormat: "Grand Total",                     
-                    },
-                        { column: "resRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "indPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "grpPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "totalPax1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "arrPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "depPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "waitPax", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "oooRo", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                        { column: "totalPax2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
-                ]
-            }          
+            onRowPrepared: function (e) {
+                if (e.rowType === "data") {
+                    if (e.data?.isTitle) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#e0e0e0" });
+                    }
+                    if (e.data?.isTotal) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#f6f6f6" });
+                    }
+                }
+            }
         });
     }
 
@@ -258,6 +408,7 @@
             });
         });
     });
+
 
 
     // Nút xuất PDF

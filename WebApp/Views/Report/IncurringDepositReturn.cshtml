@@ -4,7 +4,10 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
+    var listcsl = ViewBag.CashierUserList;
+    var zoneList = ViewBag.ZoneList;
 }
+
 
 
 <style>
@@ -49,9 +52,42 @@
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Month:</label>
-            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+
+
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Cashier :</label>
+            <select id="cashier" name="cashier" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in listcsl)
+                {
+                        <option value="@item.ID">@item.CashierNo-@item.UserName</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in zoneList)
+                {
+                        <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
+        </div>
+
+
+
+
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -61,7 +97,7 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -72,32 +108,47 @@
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}`;
+        return `${year}-${month}-${day}`;
     }
 
+
     $(document).ready(function () {
-       $("#reportTitle").text('@ViewBag.ReportTitle');
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Lấy ngày cuối cùng của tháng
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
         // Định dạng theo local time
         const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
 
         console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
+        document.getElementById('toDate').value = formattedLastDay;
 
 
 
     });
+
+
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
+
+
+
         $.ajax({
-            url: '/Report/ReservationStatisticsReport',
+            url: '/Report/IncurringDepositReturnData',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val()
+                fromDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                  zone: $("#zone").val(),
+                      cashier: $("#cashier").val(),
+
             },
             traditional: true,
               crossDomain: false,
@@ -106,7 +157,7 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                initializeReservationStatisticsGrid(result);
+                        initializeIncurringDepositReturnGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -116,65 +167,66 @@
         });
     });
 
-    function initializeReservationStatisticsGrid(data) {
+
+
+    function initializeIncurringDepositReturnGrid(data) {
         const columnWidth = 180;
+
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+            dataSource: data,
+            allowColumnResizing: true,
             columns: [
-               { dataField: "marketCode", caption: "Market Code", width: columnWidth -70},
-            { dataField: "noOfRooms", caption: "No.Of Rooms", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "fbRevenue", caption: "F&B Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "miscRevenue", caption: "MISC Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "occ", caption: "%Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
-             { dataField: "noofGuest", caption: "No of Guest", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "multiOccpc", caption: "%Multli Occ", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "MultiOcc", caption: "Multli Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
-             { dataField: "singleOcc", caption: "Single Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" }
+                { dataField: "lastName", caption: "Guest Name", width: columnWidth - 20  },
+                             { dataField: "currencyID", caption: "Currency:", width: columnWidth - 20  },
+                { dataField: "roomNo", caption: "Room No", width: columnWidth - 40 },
+                  { dataField: "confirmationNo", caption: "Conf.", width: columnWidth + 40 },
+                { dataField: "invoiceNo", caption: "Inv.No", width: columnWidth - 40 },
+                    { dataField: "transactionDate", caption: "Trs.Date", width: columnWidth - 40 , dataType: "date", format: "yyyy-MM-dd" },
+                         { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-70 , dataType: "date", format: "dd/MM/yyyy" },
+
+
+                       { dataField: "noOfNight", caption: "Nts.", width: columnWidth - 40  , dataType: "number", format: "#,##0" },
+
+                               { dataField: "userName", caption: "Cashier", width: columnWidth - 40 },
+                            { dataField: "paymentMethod", caption: "Payment Method", width: columnWidth  },
+                           { dataField: "depositAmount", caption: "Deposit Amount", width: columnWidth - 40  , dataType: "number", format: "#,##0" },
+                     { dataField: "ProfitCenterCode", caption: "Note", width: columnWidth - 40 },
+
             ],
+                       summary: {
+                    totalItems: [
+                            {
+        column: "paymentMethod",
+        summaryType: "custom",
+        displayFormat: "Subtotal:"
+    },
+                            { column: "depositAmount", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                    ]
+                },
             paging: { pageSize: 25 },
-             scrolling:  {
-                   mode: 'virtual',
-               useNative: true,
-               showScrollbar: "always"
-               },
+            scrolling: {
+                  mode: "standard",
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true,
+                showNavigationButtons: true
             },
-             summary: {
-            totalItems: [
-                {
-                    column: "marketCode",
-                    summaryType: "custom",
-                    displayFormat: "Total"
-                },
-                { column: "noOfRooms", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "roomRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "fbRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "miscRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "occ", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "noofGuest", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "multiOccpc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "MultiOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "singleOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
-            ]
-        },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true
-   
+            showBorders: true,
+             onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            },
         });
     }
+
 
 
 
