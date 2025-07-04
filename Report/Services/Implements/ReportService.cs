@@ -436,7 +436,26 @@ namespace Report.Services.Implements
             return myTable;
         }
 
+        public DataTable DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@DueDate_FromDate", DueDate_FromDate),
+                new SqlParameter("@DueDate_ToDate", DueDate_ToDate),
+                             new SqlParameter("@Arrival_FromDate", Arrival_FromDate),
+                new SqlParameter("@Arrival_ToDate", Arrival_ToDate),
 
+                               new SqlParameter("@Cashier", Cashier),
+                new SqlParameter("@Post_FromDate", Post_FromDate),
+                             new SqlParameter("@Post_ToDate", Post_ToDate),
+                new SqlParameter("@DepositOption", DepositOption),
+                   new SqlParameter("@RsvStatus", RsvStatus),
+                      new SqlParameter("@Sort", Sort),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepositActivity", param);
+            return myTable;
+        }
         public DataTable TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy, int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP)
         {
             SqlParameter[] param = new SqlParameter[]

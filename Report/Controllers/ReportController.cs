@@ -1226,6 +1226,61 @@ namespace Report.Controllers
 
             //     return PartialView("_ReportViewerPartial", report);
         }
+
+        [HttpGet]
+        public IActionResult DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DueDate_FromDate = DueDate_FromDate ?? "";
+                DueDate_ToDate = DueDate_ToDate ?? "";
+                Arrival_FromDate = Arrival_FromDate ?? "";
+                Arrival_ToDate = Arrival_ToDate ?? "";
+                Post_FromDate = Post_FromDate ?? "";
+                Post_ToDate = Post_ToDate ?? "";
+                Cashier = Cashier ?? "";
+                DataTable dataTable = _iReportService.DepositActivityData(DueDate_FromDate, DueDate_ToDate, Arrival_FromDate, Arrival_ToDate, Post_FromDate, Post_ToDate, Cashier, DepositOption, RsvStatus, Sort);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  RsvID = d["RsvID"]?.ToString() ?? "",
+                                  RsqID = d["RsqID"]?.ToString() ?? "",
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  LastName = d["LastName"]?.ToString() ?? "",
+                                  Company = d["Company"]?.ToString() ?? "",
+                                  RateCode = d["RateCode"]?.ToString() ?? "",
+                                  Rate = d["Rate"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  Status = d["Status"]?.ToString() ?? "",
+                                  DepositComment = d["DepositComment"]?.ToString() ?? "",
+                                  Rsq = d["Rsq"]?.ToString() ?? "",
+                                  PaidAmount = d["PaidAmount"]?.ToString() ?? "",
+                                  DueAmount = d["DueAmount"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "", // 'aRequest'
+                                  PostDate = d["PostDate"]?.ToString() ?? "", // '1/1/2011'
+                                  DueDate = d["DueDate"]?.ToString() ?? ""
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
         [HttpGet]
         public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass)
         {
@@ -3199,6 +3254,7 @@ namespace Report.Controllers
                     ViewBag.TransactionsList = listts;
                     break;
                 case "RevenueByReport":
+                case "DepositActivity":
                 case "IncurringDepositCollection":
                 case "IncurringDepositReturn":
                 case "IncurringDepositSummary":
