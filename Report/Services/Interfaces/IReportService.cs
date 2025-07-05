@@ -95,6 +95,7 @@ namespace Report.Services.Interfaces
         DataTable IncurringDepositReturnData(DateTime fromDate, DateTime toDate, string zone, string cashier);
         DataTable IncurringDepositSummaryData(DateTime fromDate, DateTime toDate, string zone, string cashier, string type);
         DataTable DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort);
+        DataTable DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article);
     }
 
 }

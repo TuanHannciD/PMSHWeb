@@ -272,6 +272,30 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptJournalByArticleRoom", param);
             return myTable;
         }
+
+        public DataTable DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                  new SqlParameter("@Room", room),
+                new SqlParameter("@Article", article),
+
+                    new SqlParameter("@RoomClass", ""),
+                new SqlParameter("@Transaction", ""),
+                      new SqlParameter("@NetDisp", ""),
+                new SqlParameter("@OrderBy", ""),
+
+                   new SqlParameter("@CashierNo", ""),
+                new SqlParameter("@Zone", zone),
+                    new SqlParameter("@PostBy",viewBy),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDailyMinibarReport", param);
+            return myTable;
+        }
         public DataTable JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp)
         {
             SqlParameter[] param = new SqlParameter[]
