@@ -3445,12 +3445,11 @@ namespace Report.Controllers
                 case "RatecodeReports":
                 case "AnnualRoomOccupancy":
                 case "RoomTypeStatistics":
-                    List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
-                    ViewBag.RoomTypeList = listroomt;
-                    break;
                 case "NationalStatistics":
                 case "ReservationSummary":         
                 case "ArrivalsAndCheckInToday":
+                    List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+                    ViewBag.RoomTypeList = listroomt;
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
