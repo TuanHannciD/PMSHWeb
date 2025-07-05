@@ -352,18 +352,12 @@
             { dataField: "transactionDate", caption: "Time", width: columnWidth-90,dataType: "date",format: "HH:MM" },
             { dataField: "userName", caption: "User Login", width: columnWidth-70},        
             ],
-<<<<<<< HEAD
-            paging: { pageSize: 25 },
-      scrolling:  {
-         
-=======
-        paging: { pageSize: 25 },
-        scrolling:  {
-        mode: 'virtual',
->>>>>>> fb3e3b0473dce56561dd227a2348ea8c6a76086c
-        useNative: true,
-        showScrollbar: "always"
-    },
+    paging: { pageSize: 25 },
+              scrolling: {
+
+                  useNative: true,
+                  showScrollbar: "always"
+              },
         pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
