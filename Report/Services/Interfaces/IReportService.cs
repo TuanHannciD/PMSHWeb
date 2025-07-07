@@ -88,14 +88,14 @@ namespace Report.Services.Interfaces
         DataTable RevenueSpa(DateTime fromDate, DateTime toDate);
         DataTable StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv);
 
-
-
         DataTable JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp);
         DataTable IncurringDepositCollectionData(DateTime fromDate, DateTime toDate, string zone, string cashier);
         DataTable IncurringDepositPaymentPlanData(DateTime fromDate, DateTime toDate, string zone, string cashier, string notbalance);
         DataTable IncurringDepositReturnData(DateTime fromDate, DateTime toDate, string zone, string cashier);
         DataTable IncurringDepositSummaryData(DateTime fromDate, DateTime toDate, string zone, string cashier, string type);
         DataTable DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort);
+        DataTable RoomStatistic(string year, string fromMonth, string toMonth, string fromRoom, string toRoom);
+        DataTable GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId);
     }
 
 }

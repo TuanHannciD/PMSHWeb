@@ -635,8 +635,8 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@dtpFromDate", fromDate),
-                                   new SqlParameter("@dtpToDate", toDate),
-                           new SqlParameter("@Zone", zone),
+               new SqlParameter("@dtpToDate", toDate),
+               new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptRoomOccupancy", param);
@@ -1122,6 +1122,30 @@ namespace Report.Services.Implements
             };
 
             return DataTableHelper.getTableData("spRptStatisticRoomType", param);
+        }
+        public DataTable RoomStatistic(string year, string fromMonth, string toMonth, string fromRoom, string toRoom)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Year", year),
+                new SqlParameter("@FromMonth", fromMonth),
+                new SqlParameter("@ToMonth", toMonth),
+                new SqlParameter("@FromRoom", fromRoom),
+                new SqlParameter("@ToRoom", toRoom),
+            };
+            return DataTableHelper.getTableData("spRptRoomStatistic", param);
+        }
+        public DataTable GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Date", date),
+                new SqlParameter("@IsRounting", isRouting),
+                new SqlParameter("@IsCheckOut", isCheckOut),
+                new SqlParameter("@RoomTypeID", string.IsNullOrEmpty(roomTypeId) ? "" : roomTypeId),
+
+            };
+            return DataTableHelper.getTableData("spRptGuestTrialBalance", param);
         }
 
 
