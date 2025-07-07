@@ -94,12 +94,10 @@ namespace Report.Services.Interfaces
         DataTable IncurringDepositReturnData(DateTime fromDate, DateTime toDate, string zone, string cashier);
         DataTable IncurringDepositSummaryData(DateTime fromDate, DateTime toDate, string zone, string cashier, string type);
         DataTable DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort);
-<<<<<<< HEAD
         DataTable RoomStatistic(string year, string fromMonth, string toMonth, string fromRoom, string toRoom);
         DataTable GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId);
-=======
         DataTable DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article);
->>>>>>> 1a1afda614fe95162e3880d95563ae30cb54ccd7
+
     }
 
 }

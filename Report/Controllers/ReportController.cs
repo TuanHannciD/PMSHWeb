@@ -3521,12 +3521,6 @@ namespace Report.Controllers
 
                 case "AnnualRoomOccupancy":
                 case "RoomTypeStatistics":
-<<<<<<< HEAD
-                    List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
-                    ViewBag.RoomTypeList = listroomt;
-                    break;
-=======
->>>>>>> 1a1afda614fe95162e3880d95563ae30cb54ccd7
                 case "NationalStatistics":
                 case "ReservationSummary":         
                 case "ArrivalsAndCheckInToday":
