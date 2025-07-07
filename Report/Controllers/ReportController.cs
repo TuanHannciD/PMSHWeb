@@ -3486,7 +3486,7 @@ namespace Report.Controllers
                     List<TransactionsModel> listts = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
                     ViewBag.TransactionsList = listts;
                     break;
-                case "RevenueByReport":
+                
                 case "DailyMinibarReport":
                 case "DepositActivity":
                 case "IncurringDepositCollection":
@@ -3502,30 +3502,25 @@ namespace Report.Controllers
                 case "ReservationPreblocked":
                 case "VacantRoom":
                 case "Transportation":
-                case "ReservationbyCompany":
-                case "RoomOccupancy":
-                    List<ZoneModel> listzone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
-                    ViewBag.ZoneList = listzone;
-                    break;       
+              
+                case "RoomOccupancy":                        
                 case "RoomMoves":
                 case "OccupancyByPerson":
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":
-                case "LeadtimeReports":
-                case "RatecodeReports":
-                case "RoomStatistics":
-                    List<RoomClassModel> listroomc = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
-                    ViewBag.RoomClassList = listroomc;
-                    break;
-
+                case "CashierAudit":
+                case "RoomStatistics":                 
                 case "AnnualRoomOccupancy":
                 case "RoomTypeStatistics":
                 case "NationalStatistics":
-                case "ReservationSummary":         
-                case "ArrivalsAndCheckInToday":
-                    List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
-                    ViewBag.RoomTypeList = listroomt;
+                case "ReservationSummary":
+                case "GuestTrialBalance":
+                case "RevenueByReport":
+                case "ReservationbyCompany":
+                case "LeadtimeReports":
+                case "RatecodeReports":
+                case "ArrivalsAndCheckInToday":                   
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
@@ -3538,37 +3533,28 @@ namespace Report.Controllers
                     ViewBag.RateCodeList = listrc;
                     List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
                     ViewBag.RoomList = listroom;
-
                     List<ArticleModel> listaticl = PropertyUtils.ConvertToList<ArticleModel>(ArticleBO.Instance.FindAll());
                     ViewBag.ArticleList = listaticl;
-
-
                     List<SourceModel> listsrc = PropertyUtils.ConvertToList<SourceModel>(SourceBO.Instance.FindAll());
                     ViewBag.SourceList = listsrc;
-
                     List<TransactionsModel> listpmtr = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
-
                     ViewBag.TransactionsList = listpmtr;
-
                     List<BusinessBlockModel> listbnbl = PropertyUtils.ConvertToList<BusinessBlockModel>(BusinessBlockBO.Instance.FindAll());
-
                     ViewBag.BusinessBlockList = listbnbl;
-
                     List<CashierUserModel> listcse = PropertyUtils.ConvertToList<CashierUserModel>(CashierUserBO.Instance.FindAll());
-
                     ViewBag.CashierUserList = listcse;
-
                     List<ARPaymentModel> listarpm = PropertyUtils
                     .ConvertToList<ARPaymentModel>(ARPaymentBO.Instance.FindAll())
                     .GroupBy(x => x.TransactionCode)
                     .Select(g => g.First())
                     .ToList();
                     ViewBag.ARPaymentList = listarpm;
-
                     List<VIPModel> listvip = PropertyUtils.ConvertToList<VIPModel>(VIPBO.Instance.FindAll());
                     ViewBag.VIPList = listvip;
                     List<TransportTypeModel> listtrantt = PropertyUtils.ConvertToList<TransportTypeModel>(TransportTypeBO.Instance.FindAll());
-                    ViewBag.TransportTypeList = listtrantt;
+                    ViewBag.TransportTypeList = listtrantt;                 
+                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+                    ViewBag.UsersList = listuser;
                     break;
                 case "ReservationCancellations":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
@@ -3577,22 +3563,8 @@ namespace Report.Controllers
                 case "Alerts":
                     List<AlertsSetupModel> listal = PropertyUtils.ConvertToList<AlertsSetupModel>(AlertsSetupBO.Instance.FindAll());
                     ViewBag.ALertList = listal;
-                    break;
-                    ;
-                case "CashierAudit":
-                    List<TransactionsModel> listtran = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
-
-                    ViewBag.TransactionsList = listtran;
-                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
-                    ViewBag.UsersList = listuser;
-                    break;
-                case "GuestTrialBalance":
-                    List<RoomClassModel> listroomcl = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
-                    ViewBag.RoomClassList = listroomcl;
-                    List<RoomTypeModel> listroomty = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
-                    ViewBag.RoomTypeList = listroomty;
-                    break;
-                    ;
+                    break;                                               
+                   ;
             }
             ViewBag.ReportTitle = title;
             // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng
