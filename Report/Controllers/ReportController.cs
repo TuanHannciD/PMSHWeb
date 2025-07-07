@@ -2090,6 +2090,57 @@ namespace Report.Controllers
 
 
         [HttpGet]
+        public IActionResult DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article)
+        {
+            zone = zone ?? "";
+            room = room ?? "";
+            article = article ?? "";
+            try
+            {
+                DataTable dataTable = _iReportService.DailyMinibarReportData(fromDate, toDate, zone, room, viewBy, article);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = d["TransactionDate"].ToString(),
+                                  RoomNo = d["RoomNo"].ToString(),
+                                  AccountName = d["AccountName"].ToString(),
+                                  TransactionCode = d["TransactionCode"].ToString(),
+                                  TrnsDescription = d["TrnsDescription"].ToString(),
+                                  ArticleCode = d["ArticleCode"].ToString(),
+                                  ArticleDescription = d["ArticleDescription"].ToString(),
+                                  InvoiceNo = d["InvoiceNo"].ToString(),
+                                  Supplement = d["Supplement"].ToString(),
+                                  Reference = d["Reference"].ToString(),
+                                  CurrencyMaster = d["CurrencyMaster"].ToString(),
+                                  DebitAmount = d["DebitAmount"].ToString(),
+                                  CreditAmount = d["CreditAmount"].ToString(),
+                                  AmountMaster = d["AmountMaster"].ToString(),
+                                  CashierNo = d["CashierNo"].ToString(),
+                                  UserName = d["UserName"].ToString(),
+                                  RoomClass = d["RoomClass"].ToString(),
+                                  TransactionGroup = d["TransactionGroup"].ToString(),
+                                  TransactionSubGroup = d["TransactionSubGroup"].ToString(),
+                                  Quantity = d["Quantity"].ToString(),
+                                  Price = d["Price"].ToString(),
+                                  AmountBeforeTax = d["AmountBeforeTax"].ToString(),
+                                  Amount = d["Amount"].ToString(),
+                                  ConfirmationNo = d["ConfirmationNo"].ToString(),
+                                  LastName = d["LastName"].ToString(),
+                                  ArrivalDate = d["ArrivalDate"].ToString(),
+                                  DepartureDate = d["DepartureDate"].ToString()
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi lấy dữ liệu Transfer AR: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
         public IActionResult RoomDiscrepancy(int Sleep = 0, int Skip = 0, int Person = 0)
         {
             try
@@ -3436,6 +3487,7 @@ namespace Report.Controllers
                     ViewBag.TransactionsList = listts;
                     break;
                 case "RevenueByReport":
+                case "DailyMinibarReport":
                 case "DepositActivity":
                 case "IncurringDepositCollection":
                 case "IncurringDepositReturn":
@@ -3469,12 +3521,17 @@ namespace Report.Controllers
 
                 case "AnnualRoomOccupancy":
                 case "RoomTypeStatistics":
+<<<<<<< HEAD
                     List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
                     ViewBag.RoomTypeList = listroomt;
                     break;
+=======
+>>>>>>> 1a1afda614fe95162e3880d95563ae30cb54ccd7
                 case "NationalStatistics":
                 case "ReservationSummary":         
                 case "ArrivalsAndCheckInToday":
+                    List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+                    ViewBag.RoomTypeList = listroomt;
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());

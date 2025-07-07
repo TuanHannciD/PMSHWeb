@@ -5,7 +5,8 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var zoneList = ViewBag.ZoneList;
-    var rateCode = ViewBag.RateCodeList;
+    var listroom = ViewBag.RoomList;
+    var listaticl = ViewBag.ArticleList;
 }
 
 
@@ -51,15 +52,39 @@
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Month:</label>
-            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
 
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Room:</label>
+            <select id="room" name="room" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in listroom)
+                {
+                    <option value="@item.RoomNo">@item.RoomNo-@item.RoomName</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Post By:</label>
+            <div style="width: 120px;">
+                <select class="form-control form-control-sm w-auto" id="viewBy" name="selectType1">
+                    <option value="0">ALL</option>
+                    <option value="1">FO</option>
+                    <option value="2">HKP</option>
+                </select>
+            </div>
+        </div>
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Zone:</label>
             <select id="zone" name="zone" class="form-control form-control-sm " style="width :100px">
-                <option value="">ALL</option>
+                <option value="All">ALL</option>
                 @foreach (var item in zoneList)
                 {
                     <option value="@item.Code">@item.Code</option>
@@ -67,25 +92,20 @@
             </select>
 
         </div>
+
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Rate Code:</label>
-            <select id="rate" name="rate" class="form-control form-control-sm w-auto">
+            <label class="me-2 mb-0">Article:</label>
+            <select id="article" name="article" class="form-control form-control-sm " style="width: 100px;">
                 <option value="">ALL</option>
-                @foreach (var item in rateCode)
+                @foreach (var item in listaticl)
                 {
-                    <option value="@item.RateCode">@item.RateCode</option>
+                    <option value="@item.Code">@item.Description</option>
                 }
             </select>
 
         </div>
-        <div style="display:none!important" class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">View By:</label>
-            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
 
-                <option value="VND">VND</option>
-                <option value="USD">USD</option>
-            </select>
-        </div>
+
 
 
     </div>
@@ -97,20 +117,20 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <script>
-
     function formatDate(date) {
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}`;
+        return `${year}-${month}-${day}`;
     }
+
 
     $(document).ready(function () {
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
@@ -133,19 +153,18 @@
 
 
     });
-    $(".include-option").on("change", function () {
-        $(".include-option").not(this).prop("checked", false);
-    });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/RatecodeReportsData',
+            url: '/Report/DailyMinibarReportData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                        zone: $("#zone").val(),
-                                  rate: $("#rate").val(),
-                              viewBy:  $("#viewBy").val(),
+                toDate: $("#toDate").val(),
+                  zone: $("#zone").val(),
+                    room: $("#room").val(),
+                         viewBy: $("#viewBy").val(),
+                   article: $("#article").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -154,9 +173,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                  
-           initializeRatecodeReportsGrid(result);
-
+                        const processed = prepareArticleByRoomsData(result);
+                        initializeReservationSummaryGrid(processed.data, processed.grandTotal);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -166,89 +184,143 @@
         });
     });
 
-        function initializeRatecodeReportsGrid(data) {
-        const columnWidth = 180;
 
-        const columns = [
-            { dataField: "RateCode", caption: "Rate Code", width: columnWidth - 70 },
-            { dataField: "Row", caption: "Row", width: columnWidth - 70 }
-        ];
+        function prepareArticleByRoomsData(data) {
+        const groupedData = {};
+        const finalData = [];
 
-        const fromDateStr = $("#fromDate").val(); // yyyy-MM-dd
-        const fromDateObj = new Date(fromDateStr);
-
-        const fieldOrder = [];
-
-
-            const startMonth = fromDateObj.getMonth() + 1;
-            for (let i = startMonth; i <= 12; i++) {
-                fieldOrder.push(i.toString());
-            }
-            for (let i = 1; i < startMonth; i++) {
-                fieldOrder.push(i.toString());
-            }
-        
-
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        for (let i of fieldOrder) {
-            const fieldName = `${i}`;
-            const hasData = data.some(item => item[fieldName] != null && item[fieldName] !== "");
-
-            if (hasData) {
-                let displayName = fieldName;
-                    const monthIndex = parseInt(fieldName) - 1;
-                    if (monthIndex >= 0 && monthIndex < 12) {
-                        displayName = monthNames[monthIndex];
-                    }
-
-                columns.push({
-                    dataField: fieldName,
-                    caption: displayName,
-                    width: columnWidth - 80,
-                    dataType: "number",
-                    format: "#,##0"
-                });
-            }
-        }
-
-        const existingFields = new Set(columns.map(c => c.dataField));
-
-        const underscoreFields = new Set();
+        // 👉 Group theo invoiceNo thay vì roomNo
         data.forEach(item => {
-            Object.keys(item).forEach(key => {
-                if (/^\d+_$/.test(key) && !existingFields.has(key)) {
-                    underscoreFields.add(key);
-                }
+            const key = item.invoiceNo || ""; // Nếu null thì gán rỗng
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
+        });
+
+        const sortedEntries = Object.entries(groupedData).sort(([a], [b]) => {
+            // Sắp xếp tương tự như cũ, nếu muốn sắp xếp theo số invoice
+            if (!a && b) return -1;
+            if (a && !b) return 1;
+            if (!a && !b) return 0;
+
+            return a.localeCompare(b, undefined, { numeric: true });
+        });
+
+        sortedEntries.forEach(([invoiceNo, records]) => {
+            const firstRecord = records[0];
+
+            finalData.push({
+                roomNo: `Invoice: ${invoiceNo || ""}`,
+                isTitle: true,
+                cssClass: "custom"
+            });
+
+            finalData.push(...records);
+
+            finalData.push({
+                accountName: "Sub Total",
+                amountBeforeTax: sum(records, 'amountBeforeTax'),
+                amount: sum(records, 'amount'),
+                isTotal: true,
+                cssClass: "custom"
             });
         });
 
-        for (let fieldName of underscoreFields) {
-            const hasData = data.some(item => item[fieldName] != null && item[fieldName] !== "");
+        const grandTotal = {
+            amountBeforeTax: sum(data, 'amountBeforeTax'),
+            amount: sum(data, 'amount')
+        };
 
-            if (hasData) {
-                let displayName = fieldName.replace("_", "");
-                if (displayName.length === 3) {
-                    displayName = displayName.substring(0, 2);
-                }
+        return { data: finalData, grandTotal };
+    }
 
-                columns.push({
-                    dataField: fieldName,
-                    caption: displayName,
-                    width: columnWidth - 80,
-                    dataType: "number",
-                    format: "#,##0"
-                });
-            }
-        }
+
+
+      function averageOfSums(arr, fields) {
+        if (arr.length === 0) return 0;
+        let total = 0;
+        fields.forEach(field => {
+            total += sum(arr, field);
+        });
+        return total / fields.length;
+    }
+
+    // Helper functions
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+    }
+
+    function average(arr, field) {
+        const valid = arr.filter(x => x[field] != null);
+        if (valid.length === 0) return 0;
+        return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
+    }
+
+
+    function initializeReservationSummaryGrid(data, grandTotal) {
+        const columnWidth = 180;
 
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
-            columns: columns,
+            dataSource: data,
+            allowColumnResizing: true,
+            columns: [
+                { dataField: "roomNo", caption: "Room No", width: columnWidth - 80 },
+                { dataField: "accountName", caption: "Last Name", width: columnWidth + 50 },
+                { dataField: "quantity", caption: "Status", width: columnWidth - 40 },
+                { dataField: "amountBeforeTax", caption: "VND++", width: columnWidth - 50,dataType: "number", format: "#,##0" },
+                { dataField: "amount", caption: "VND NET", width: columnWidth - 50, dataType: "number", format: "#,##0" },
+                     { dataField: "", caption: "USD++", width: columnWidth - 50,dataType: "number", format: "#,##0" },
+                { dataField: "", caption: "USD NET", width: columnWidth - 50, dataType: "number", format: "#,##0" }
+            ],
+         summary: {
+        totalItems: [
+               {
+                        column: "quantity",
+                        summaryType: "custom",
+                        displayFormat: "Grand Total:"
+                    },
+            {
+                name: "amountBeforeTaxSummary",
+                showInColumn: "amountBeforeTax",
+                summaryType: "custom",
+                displayFormat: " {0}",
+                valueFormat: "#,##0"
+            },
+            {
+                name: "amountSummary",
+                showInColumn: "amount",
+                summaryType: "custom",
+                displayFormat: "{0}",
+                valueFormat: "#,##0"
+            }
+        ],  
+           calculateCustomSummary: function (e) {
+        if (e.name === "amountBeforeTaxSummary" || e.name === "amountSummary") {
+            if (e.summaryProcess === "start") {
+                e.totalValue = 0;
+            } else if (e.summaryProcess === "calculate") {
+                const row = e.value;
+                const isSubTotalRow = row?.isTotal === true || row?.cssClass === "custom";
+                if (isSubTotalRow) return;
+                console.log(row);
+                   console.log(row?.amountBeforeTax);
+                const amountBeforeTax = parseFloat(row?.amountBeforeTax) || 0;
+                const amount = parseFloat(row?.amount) || 0;
+
+                if (e.name === "amountBeforeTaxSummary") {
+                    e.totalValue += amountBeforeTax;
+                }
+
+                if (e.name === "amountSummary") {
+                    e.totalValue += amount;
+                }
+            }
+        }
+    }
+    },
+   
             paging: { pageSize: 25 },
             scrolling: {
-                
+           
                 useNative: true,
                 showScrollbar: "always"
             },
@@ -259,26 +331,22 @@
                 showInfo: true,
                 showNavigationButtons: true
             },
-            filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            headerFilter: {
-                visible: true
-            },
-            selection: {
-                mode: "multiple",
-                showCheckBoxesMode: "none"
-            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-                onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data?.cssClass) {
-            e.rowElement.addClass(e.data.cssClass);
-        }
-    }
+            onRowPrepared: function (e) {
+                if (e.rowType === "data") {
+                    if (e.data?.isTitle) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#e0e0e0" });
+                    }
+                    if (e.data?.isTotal) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#f6f6f6" });
+                    }
+                }
+            }
         });
     }
-
 
 
 
@@ -340,6 +408,7 @@
             });
         });
     });
+
 
 
     // Nút xuất PDF
