@@ -49,42 +49,59 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <!-- From Date -->
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">From Date:</label>
-            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-        </div>
+        <div class="d-flex flex-column ">
 
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">To Date:</label>
-            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-        </div>
+            <div class="d-flex align-items-center">
+                <label class="fw-bold me-3"> Date Range:</label>
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">From Date:</label>
+                    <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                </div>
 
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">To Date:</label>
+                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                </div>
+            </div>
+        </div>
         <div class="d-flex flex-column">
 
             <div class="d-flex flex-wrap gap-2">
-                <label class="mb-1">Profile Type</label>
+                <label class="mb-1 fw-bold">Profile Type</label>
                 <!-- Row 1 -->
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="arrival" name="includeOptions" value="1" checked>
+                    <input class="form-check-input include-option" type="checkbox" id="travelagent" name="includeOptions" value="1,101" checked>
                     <label class="form-check-label" for="arrival">Travel Agents</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="2">
+                    <input class="form-check-input include-option" type="checkbox" id="company" name="includeOptions" value="2,102">
                     <label class="form-check-label" for="cancel">Company</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="0">
+                    <input class="form-check-input include-option" type="checkbox" id="profile" name="includeOptions" value="0,100">
                     <label class="form-check-label" for="cancel">Profile Ind</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="3">
+                    <input class="form-check-input include-option" type="checkbox" id="individuals" name="includeOptions" value="3,103">
                     <label class="form-check-label" for="cancel">Individuals</label>
                 </div>
             </div>
         </div>
 
+        <div class="d-flex flex-column">
 
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1 fw-bold me-3">By:</label>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="confirmation" name="masterllio" value="0">
+                    <label class="form-check-label" for="cancel">By Confirmation No</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="masterllio" name="masterllio" value="3" checked>
+                    <label class="form-check-label" for="cancel">By Master Folio</label>
+                </div>
+            </div>
+        </div>
 
         <div style="display:none !important" class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">View By:</label>
@@ -94,17 +111,25 @@
                 <option value="USD">USD</option>
             </select>
         </div>
-        <div class="d-flex align-items-center me-3">
+@*         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">View By:</label>
             <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
 
                 <option value="0">Ascending</option>
                 <option value="1">Descending</option>
             </select>
-        </div>
+        </div> *@
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Sorting:</label>
+            <label class="me-2 mb-0 fw-bold">Sorting:</label>
+            <div class="form-check me-3">
+                <input class="form-check-input include-option" type="checkbox" id="ascending" name="ascending" value="0">
+                <label class="form-check-label" for="ascending">Ascending</label>
+            </div>
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="descending" name="descending" checked>
+                <label class="form-check-label" for="descending">Descending</label>
+            </div>
             <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
                 <option value="2">Account Name</option>
                 <option value="3">Total Turnover</option>
@@ -141,6 +166,20 @@
     }
 
     $(document).ready(function () {
+
+                // Nhóm "By"
+        $("#confirmation, #masterllio").on("change", function () {
+            if (this.checked) {
+                $("#confirmation, #masterllio").not(this).prop("checked", false);
+            }
+        });
+
+        // Nhóm "Sorting"
+        $("#ascending, #descending").on("change", function () {
+            if (this.checked) {
+                $("#ascending, #descending").not(this).prop("checked", false);
+            }
+        });
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -162,74 +201,86 @@
 
     });
 
-    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        const sortFieldIndex = parseInt($("#sortOrder").val());
+        const isDescending = $("#descending").is(":checked");
+        const isAscending = $("#ascending").is(":checked");
+        const sortDirection = isDescending ? "desc" : (isAscending ? "asc" : null);
 
-            var statusValues = $("input[name='includeOptions']:checked")
-        .map(function () {
-            return $(this).val();
-        }).get().join(',');
+        const masterllio = $("#masterllio").is(":checked");
+
+        const statusValues = $("input[name='includeOptions']:checked")
+            .map(function () {
+                const val = $(this).val();         // ví dụ: "1,101"
+                const parts = val.split(',');      // ["1", "101"]
+                if (masterllio) {
+                    return parts.find(p => p.length === 3); // lấy mã 3 chữ số
+                } else {
+                    return parts.find(p => p.length === 1); // lấy mã 1 chữ số
+                }
+            })
+            .get()
+            .join(',');
 
         $("#loadingSpinner").show();
+
         $.ajax({
             url: '/Report/SalesinChargeActivityData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                   type: statusValues,
-                   currency: $("#viewBy").val(),
+                type: statusValues,
+                currency: $("#viewBy").val()
             },
             traditional: true,
-              crossDomain: false,
-                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            crossDomain: false,
+            headers: {
+                "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+            },
             success: function (result) {
-                // $("#reportViewerContainer").html(result);
-                // $("#loadingSpinner").hide();
-                       // 1. Lọc theo roomNight (>=)
-            const roomNightFilter = parseInt($("#roomNight").val());
-            const filteredResult = isNaN(roomNightFilter)
-                ? result
-                : result.filter(item => (item.roomNight || 0) >= roomNightFilter);
+                // 1. Lọc theo roomNight (>=)
+                const roomNightFilter = parseInt($("#roomNight").val());
+                const filteredResult = isNaN(roomNightFilter)
+                    ? result
+                    : result.filter(item => (item.roomNight || 0) >= roomNightFilter);
 
-            // 2. Nhóm theo saleInCharge
-            const processedData = preparSalesinChargeActivityData(filteredResult);
+                // 2. Nhóm lại dữ liệu
+                const processedData = preparSalesinChargeActivityData(filteredResult);
 
-            // 3. Sắp xếp theo lựa chọn
-            const sortDirection = $("#viewBy").val(); // 0 = Asc, 1 = Desc
-            const sortFieldCode = $("#sortOrder").val(); // field ID từ dropdown
+                // 3. Sắp xếp dữ liệu
+                const sortFieldMap = {
+                    2: "guestName",        // Account Name
+                    3: "totalTurnover",    // Total Turnover
+                    4: "roomSales",        // Room Sales
+                    8: "roomNight",        // Room Night
+                    9: "bedNightAll"       // Bed Night
+                };
+                const sortField = sortFieldMap[sortFieldIndex];
 
-            const sortFieldMap = {
-                2: "guestName",        // Account Name
-                3: "totalTurnover",    // Total Turnover
-                4: "roomSales",        // Room Sales
-                8: "roomNight",        // Room Night
-                9: "bedNightAll"       // Bed Night
-            };
+                if (sortField && sortDirection) {
+                    processedData.sort((a, b) => {
+                        // Đảm bảo giữ nguyên dòng tiêu đề và dòng tổng
+                        if (a.isTitle || a.isTotal) return -1;
+                        if (b.isTitle || b.isTotal) return 1;
 
-            const sortField = sortFieldMap[sortFieldCode];
+                        const aVal = a[sortField] ?? 0;
+                        const bVal = b[sortField] ?? 0;
 
-            if (sortField) {
-                processedData.sort((a, b) => {
-                    // Giữ nguyên dòng tiêu đề và tổng
-                    if (a.isTitle || a.isTotal) return -1;
-                    if (b.isTitle || b.isTotal) return 1;
+                        if (typeof aVal === "string") {
+                            return sortDirection === "asc"
+                                ? aVal.localeCompare(bVal)
+                                : bVal.localeCompare(aVal);
+                        } else {
+                            return sortDirection === "asc"
+                                ? aVal - bVal
+                                : bVal - aVal;
+                        }
+                    });
+                }
 
-                    const aVal = a[sortField] ?? 0;
-                    const bVal = b[sortField] ?? 0;
-
-                    if (typeof aVal === "string") {
-                        return sortDirection === "0"
-                            ? aVal.localeCompare(bVal)
-                            : bVal.localeCompare(aVal);
-                    } else {
-                        return sortDirection === "0"
-                            ? aVal - bVal
-                            : bVal - aVal;
-                    }
-                });
-            }
-                    initializProductActivityGrid(processedData);
-                    $("#loadingSpinner").hide();
+                initializProductActivityGrid(processedData);
+                $("#loadingSpinner").hide();
             },
             error: function () {
                 alert("Không thể tải báo cáo.");
@@ -237,6 +288,7 @@
             }
         });
     });
+
             function preparSalesinChargeActivityData(data) {
         const groupedData = {};
 
@@ -261,24 +313,24 @@
             // Thêm các record
             finalData.push(...records);
 
-            // Thêm dòng TOTAL cho nhóm
-            const totalRow = {
-                guestNo: "TOTAL",
-                totalTurnover: sum(records, 'totalTurnover'),
-                roomSales: sum(records, 'roomSales'),
-                taxService: sum(records, 'taxService'),
-                totalAdult: sum(records, 'totalAdult'),
-                totalChild: sum(records, 'totalChild'),
-                totalChild1: sum(records, 'totalChild1'),
-                totalChild2: sum(records, 'totalChild2'),
-                bedNightAC: sum(records, 'bedNightAC'),
-                bedNightAll: sum(records, 'bedNightAll'),
-                roomNight: sum(records, 'roomNight'),
-                total: sum(records, 'total'),
-                isTotal: true
-            };
+            // // Thêm dòng TOTAL cho nhóm
+            // const totalRow = {
+            //     guestNo: "TOTAL",
+            //     totalTurnover: sum(records, 'totalTurnover'),
+            //     roomSales: sum(records, 'roomSales'),
+            //     taxService: sum(records, 'taxService'),
+            //     totalAdult: sum(records, 'totalAdult'),
+            //     totalChild: sum(records, 'totalChild'),
+            //     totalChild1: sum(records, 'totalChild1'),
+            //     totalChild2: sum(records, 'totalChild2'),
+            //     bedNightAC: sum(records, 'bedNightAC'),
+            //     bedNightAll: sum(records, 'bedNightAll'),
+            //     roomNight: sum(records, 'roomNight'),
+            //     total: sum(records, 'total'),
+            //     isTotal: true
+            // };
 
-            finalData.push(totalRow);
+            // finalData.push(totalRow);
         });
 
         return finalData;
@@ -336,6 +388,9 @@
                     summaryType: "custom",
                     displayFormat: "Total"
                 },
+                   { column: "totalTurnover", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                       { column: "roomSales", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                           { column: "taxService", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "totalAdult", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "totalChild", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "totalChild1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },

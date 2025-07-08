@@ -52,8 +52,11 @@
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Date :</label>
-            <input type="text" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <label class="me-2 mb-0">Year:</label>
+            <select id="fromYear" name="fromYear" class="form-select form-select-sm w-auto">
+                <!-- Các năm sẽ được thêm bằng JavaScript -->
+            </select>
+
         </div>
         <div style="display:none !important" class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Currency:</label>
@@ -89,32 +92,30 @@
      
     $(document).ready(function () {
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
-        const today = new Date();
+      const currentYear = new Date().getFullYear();
+        const startYear = 2000;
+        const $yearSelect = $('#fromYear');
 
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        // Lấy ngày cuối cùng của tháng
-        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        for (let year = startYear; year <= currentYear; year++) {
+            $yearSelect.append($('<option>', {
+                value: year,
+                text: year
+            }));
+        }
 
-        // Định dạng theo local time
-        const formattedFirstDay = formatDate(firstDayOfMonth);
-        const formattedLastDay = formatDate(lastDayOfMonth);
-
-        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-        // Gán giá trị cho input date
-        document.getElementById('fromDate').value = formattedFirstDay;
-        document.getElementById('toDate').value = formattedLastDay;
-
-
+        // Đặt năm mặc định là năm hiện tại (nếu cần)
+        $yearSelect.val(currentYear);
 
     });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
+            const selectedYear = $("#fromYear").val();
+    const fromDate = `${selectedYear}-01-01`;
         $.ajax({
             url: '/Report/SalesinChargeReportsForm1Data',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val(),
+                fromDate: fromDate,
               
                   viewBy: $("#viewBy").val(),
             },
@@ -136,69 +137,73 @@
         });
     });
 
-        function preparSalesinChargeReportsForm1Data(data) {
+      function preparSalesinChargeReportsForm1Data(data) {
         const groupedData = {};
 
-        // Group by MonthDisplay
+        // Group theo zone
         data.forEach(item => {
             const key = item.zone;
+            if (!key) return; // Bỏ qua nếu không có zone
             if (!groupedData[key]) groupedData[key] = [];
             groupedData[key].push(item);
         });
 
         const finalData = [];
 
-        Object.entries(groupedData).forEach(([month, records]) => {
-            const titleRow = {
-           saleInCharge: `S.In Charge : ${records[0].zone}`,
-           isTitle: true ,
-    cssClass: "custom"
-          };
+        Object.entries(groupedData).forEach(([zone, records]) => {
+            console.log(`Zone: ${zone} | Records: ${records.length}`);
 
-         finalData.push(titleRow);
+            // Dòng tiêu đề
+            const titleRow = {
+                saleInCharge: `S.In Charge : ${zone}`,
+                isTitle: true,
+                cssClass: "custom"
+            };
+            finalData.push(titleRow);
+
+            // Thêm các dòng dữ liệu gốc
             finalData.push(...records);
 
+            // Dòng tổng
             const totalRow = {
                 saleInCharge: "TOTAL",
-                saleInChargeGroup:records[0].zone,
+                saleInChargeGroup: zone,
                 t1: sum(records, 't1'),
-        t2: sum(records, 't2'),
-        t3: sum(records, 't3'),
-        t4: sum(records, 't4'),
-        t5: sum(records, 't5'),
-        t6: sum(records, 't6'),
-        t7: sum(records, 't7'),
-        t8: sum(records, 't8'),
-        t9: sum(records, 't9'),
-        t10: sum(records, 't10'),
-        t11: sum(records, 't11'),
-        t12: sum(records, 't12'),
-
-        // Tính tổng q1 - q4
-        q1: sum(records, 'q1'),
-        q2: sum(records, 'q2'),
-        q3: sum(records, 'q3'),
-        q4: sum(records, 'q4'),
-               total: sum(records, 'total'),
+                t2: sum(records, 't2'),
+                t3: sum(records, 't3'),
+                t4: sum(records, 't4'),
+                t5: sum(records, 't5'),
+                t6: sum(records, 't6'),
+                t7: sum(records, 't7'),
+                t8: sum(records, 't8'),
+                t9: sum(records, 't9'),
+                t10: sum(records, 't10'),
+                t11: sum(records, 't11'),
+                t12: sum(records, 't12'),
+                q1: sum(records, 'q1'),
+                q2: sum(records, 'q2'),
+                q3: sum(records, 'q3'),
+                q4: sum(records, 'q4'),
+                total: sum(records, 'total'),
                 cssClass: "custom",
-                isTotal: true // Để phân biệt dòng tổng
+                isTotal: true
             };
-
             finalData.push(totalRow);
         });
 
         return finalData;
     }
 
-    // Helper functions
     function sum(arr, field) {
-        return arr.reduce((total, item) => total + (item[field] || 0), 0);
+        return arr
+            .filter(item => !item.isTitle && !item.isTotal) // Không tính dòng tiêu đề và tổng
+            .reduce((total, item) => total + (parseFloat(item[field]) || 0), 0);
     }
 
     function average(arr, field) {
-        const valid = arr.filter(x => x[field] != null);
+        const valid = arr.filter(x => x[field] != null && !x.isTitle && !x.isTotal);
         if (valid.length === 0) return 0;
-        return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
+        return valid.reduce((sum, x) => sum + parseFloat(x[field] || 0), 0) / valid.length;
     }
 
     function initializSalesinChargeReportsForm1Grid(data) {
@@ -227,6 +232,7 @@
             { dataField: "q4", caption: "Q4", width: columnWidth - 70, dataType: "number", format: "#,##0" },
                 { dataField: "total", caption: "Q4", width: columnWidth - 70, dataType: "number", format: "#,##0" },
             ],
+       
             paging: { pageSize: 25 },
       scrolling:  {
          
@@ -249,117 +255,53 @@
         visible: true
     },        
     summary: {
-                    totalItems: [
-                            {
-        column: "saleInCharge",
-        summaryType: "custom",
-        displayFormat: "Total"
-    },
-                         { column: "t1", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t2", summaryType: "sum",customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t3", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t4", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t5", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t6", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t7", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t8", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t9", summaryType: "sum",customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t10", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t11", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "t12", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
+                        totalItems: [
+    { name: "t1", showInColumn: "t1", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t2", showInColumn: "t2", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t3", showInColumn: "t3", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t4", showInColumn: "t4", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t5", showInColumn: "t5", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t6", showInColumn: "t6", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t7", showInColumn: "t7", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t8", showInColumn: "t8", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t9", showInColumn: "t9", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t10", showInColumn: "t10", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t11", showInColumn: "t11", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "t12", showInColumn: "t12", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
 
-        // Tổng q1 - q4
-        { column: "q1", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "q2", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "q3", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-        { column: "q4", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } },
-           { column: "total", summaryType: "sum", customizeText: function (e) {
-                return Math.round(e.value).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-            } }
-                    ]
+    // Các quý
+    { name: "q1", showInColumn: "q1", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "q2", showInColumn: "q2", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "q3", showInColumn: "q3", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+    { name: "q4", showInColumn: "q4", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" },
+
+    // Tổng cuối
+    { name: "total", showInColumn: "total", summaryType: "custom", displayFormat: "{0}", valueFormat: "#,##0" }
+    ],
+
+                   calculateCustomSummary: function (e) {
+        const summaryFields = [
+            "t1", "t2", "t3", "t4", "t5", "t6",
+            "t7", "t8", "t9", "t10", "t11", "t12",
+            "q1", "q2", "q3", "q4", "total"
+        ];
+
+        if (summaryFields.includes(e.name)) {
+            if (e.summaryProcess === "start") {
+                e.totalValue = 0;
+            } else if (e.summaryProcess === "calculate") {
+                const row = e.value;
+                const isTotalRow = row?.isTotal === true || row?.cssClass === "custom";
+
+                // ✅ Chỉ cộng giá trị nếu là dòng tổng/custom
+                if (!isTotalRow) return;
+
+                const value = parseFloat(row?.[e.name]) || 0;
+                e.totalValue += value;
+            }
+        }
+    }
+
                 },
             showBorders: true,
                     onRowPrepared: function (e) {
@@ -372,7 +314,12 @@
     }
 
 
-
+        function formatVN(e) {
+        return Math.round(e.value).toLocaleString('vi-VN', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    }
 
     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");
