@@ -924,6 +924,46 @@ namespace Report.Controllers
 
             //     return PartialView("_ReportViewerPartial", report);
         }
+        [HttpGet]
+        public IActionResult RoomOccupancyChart(DateTime fromDate, DateTime toDate, string zone)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.RoomOccupancyReport(fromDate, toDate, zone);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Fair = !string.IsNullOrEmpty(d["Fair"].ToString()) ? d["Fair"] : "",
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  VacRo = !string.IsNullOrEmpty(d["Vac Ro"].ToString()) ? d["Vac Ro"] : "",
+                                  ResRo = !string.IsNullOrEmpty(d["Res Ro"].ToString()) ? d["Res Ro"] : "",
+                                  NonDeductRo = !string.IsNullOrEmpty(d["Non Deduct Ro"].ToString()) ? d["Non Deduct Ro"] : "",
+                                  AltRo = !string.IsNullOrEmpty(d["Alt Ro"].ToString()) ? d["Alt Ro"] : "",
+                                  TotaRo1 = !string.IsNullOrEmpty(d["Tota Ro1"].ToString()) ? d["Tota Ro1"] : "",
+                                  ARo = !string.IsNullOrEmpty(d["A Ro"].ToString()) ? d["A Ro"] : "",
+                                  DepRo = !string.IsNullOrEmpty(d["Dep Ro"].ToString()) ? d["Dep Ro"] : "",
+                                  OOO = !string.IsNullOrEmpty(d["OOO"].ToString()) ? d["OOO"] : "",
+                                  TotaRo2 = !string.IsNullOrEmpty(d["Tota Ro2"].ToString()) ? d["Tota Ro2"] : "",
+                                  PT = !string.IsNullOrEmpty(d["%"].ToString()) ? d["%"] : "",
+                                  MonthDisplay = !string.IsNullOrEmpty(d["MonthDisplay"].ToString()) ? d["MonthDisplay"] : "",
+                                  MonthGroup = !string.IsNullOrEmpty(d["MonthGroup"].ToString()) ? d["MonthGroup"] : "",
+                                  DOW = !string.IsNullOrEmpty(d["DOW"].ToString()) ? d["DOW"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
 
         [HttpGet]
         public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
@@ -3503,7 +3543,9 @@ namespace Report.Controllers
                 case "VacantRoom":
                 case "Transportation":
               
-                case "RoomOccupancy":                        
+                case "RoomOccupancy":
+                case "RoomOccupancyChart":
+
                 case "RoomMoves":
                 case "OccupancyByPerson":
                 case "NoShowReport":
