@@ -50,12 +50,20 @@
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">From Date:</label>
+            <label id="fromDateLabel" class="me-2 mb-0">Arrival From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">To Date:</label>
+            <label id="toDateLabel" class="me-2 mb-0">Arrival To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input include-option" type="checkbox" id="arrivalDateChk" name="includeOptions" value="0" checked>
+            <label class="form-check-label" for="arrivalDateChk">Arrival</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input include-option" type="checkbox" id="cancelDateChk" name="includeOptions" value="1">
+            <label class="form-check-label" for="cancelDateChk">Cancel Date</label>
         </div>
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Cancel Reason:</label>
@@ -68,7 +76,7 @@
             </select>
 
         </div>
-        <div class="d-flex flex-column">
+      @*   <div class="d-flex flex-column">
   
             <div class="d-flex flex-wrap gap-2">
                 <label class="mb-1">Include</label>
@@ -83,7 +91,7 @@
                 </div>
             </div>
         </div>
-
+ *@
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -106,6 +114,38 @@
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         return `${year}-${month}-${day}`;
     }
+        $("#arrivalDateChk").on("change", function () {
+        if (this.checked) {
+            // Bỏ tick Cancel Date
+            $("#cancelDateChk").prop("checked", false);
+            // Cập nhật label
+            $("#fromDateLabel").text("From Arrival Date:");
+            $("#toDateLabel").text("To Arrival Date:");
+        } else {
+            // Nếu bỏ tick, kiểm tra nếu Cancel cũng không tick → trở lại mặc định
+            if (!$("#cancelDateChk").is(":checked")) {
+                $("#fromDateLabel").text("From Date:");
+                $("#toDateLabel").text("To Date:");
+            }
+        }
+    });
+
+    $("#cancelDateChk").on("change", function () {
+        if (this.checked) {
+            // Bỏ tick Arrival Date
+            $("#arrivalDateChk").prop("checked", false);
+            // Cập nhật label
+            $("#fromDateLabel").text("From Cancel Date:");
+            $("#toDateLabel").text("To Cancel Date:");
+        } else {
+            // Nếu bỏ tick, kiểm tra nếu Arrival cũng không tick → trở lại mặc định
+            if (!$("#arrivalDateChk").is(":checked")) {
+                $("#fromDateLabel").text("From Date:");
+                $("#toDateLabel").text("To Date:");
+            }
+        }
+    });
+
 
     $(document).ready(function () {
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
@@ -130,7 +170,7 @@
     });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
-            let typeDate = $("input[name='includeOptions']:checked").attr("id") === "arrival" ? 0 : 1;
+            let typeDate = $("input[name='includeOptions']:checked").attr("id") === "arrivalDateChk" ? 0 : 1;
         $.ajax({
             url: '/Report/ReservationCancellationsReport',
             type: 'GET',
@@ -190,6 +230,22 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
+                summary: {
+        totalItems: [
+            {
+                column: "roomType",
+                summaryType: "custom", // bất kỳ, chỉ để render dòng
+                displayFormat: "Grand Total"
+            },
+            {
+                column: "noOfRoom",
+                summaryType: "sum",
+                valueFormat: "#,##0",
+                displayFormat: "{0}"
+            }
+        ]
+    },
+
              filterRow: {
                visible: true,
                applyFilter: "auto"

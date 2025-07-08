@@ -51,13 +51,18 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
             <!-- From Date -->
-        <div class="d-flex align-items-center me-3">
-             <label class ="me-2 mb-0">Month:</label>
-            <input style="width: 130px;" type="month" id="toDateMonth" name="toDate" class="form-control form-control-sm w-auto" />
-            </div>
+        <div class="d-flex flex-column ">
 
+            <div class="d-flex align-items-center">
+                <label class="fw-bold me-3">Monthly:</label>
+                    <div class="d-flex align-items-center me-3">
+                         <label class ="me-2 mb-0">Month:</label>
+                        <input style="width: 130px;" type="month" id="toDateMonth" name="toDate" class="form-control form-control-sm w-auto" />
+                    </div>
+            </div>
+        </div>
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Profile type:</label>
+            <label class="me-2 mb-0 fw-bold me-3">Profile type:</label>
                 <div class="form-check me-3">
                     <input class="form-check-input" type="checkbox" id="profileTravelAgents" name="profileType" value="TravelAgents" checked>
                     <label class="form-check-label" for="profileTravelAgents">Travel Agents</label>
@@ -67,15 +72,22 @@
                     <label class="form-check-label" for="profileCompany">Company</label>
                 </div>
             </div>
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Room Night ≥</label>
-            <input style="width: 130px;" type="text" id="roomNight" name="roomNight" class="form-control form-control-sm w-auto" />
-          </div>
 
-        <div style="display:none!important" class="d-flex align-items-center">
-            <label class="me-2 mb-0">View Vy</label>
-            <input style="width: 130px;" type="text" id="viewBy" name="viewBy" class="form-control form-control-sm w-auto" value="VND" readonly />
-         </div>
+        <div class="d-flex flex-column ">
+
+            <div class="d-flex align-items-center">
+                <label class="fw-bold me-3">Other:</label>
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Room Night ≥</label>
+                        <input style="width: 130px;" type="text" id="roomNight" name="roomNight" class="form-control form-control-sm w-auto" />
+                      </div>
+
+                    <div style="display:none!important" class="d-flex align-items-center">
+                        <label class="me-2 mb-0">View Vy</label>
+                        <input style="width: 130px;" type="text" id="viewBy" name="viewBy" class="form-control form-control-sm w-auto" value="VND" readonly />
+                     </div>
+            </div>
+        </div>
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
