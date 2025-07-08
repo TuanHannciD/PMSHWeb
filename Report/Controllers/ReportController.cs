@@ -3075,6 +3075,74 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+        [HttpGet]
+        public IActionResult RoomStatistic(string year, string fromMonth, string toMonth, string fromRoom, string toRoom)
+        {
+
+            try
+            {        
+                var data = _iReportService.RoomStatistic(year, fromMonth, toMonth, fromRoom, toRoom);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["Room No"].ToString()) ? d["Room No"] : "",
+                                  Month = !string.IsNullOrEmpty(d["Month"].ToString()) ? d["Month"] : "",
+                                  RoomArrivals = !string.IsNullOrEmpty(d["Room Arrivals"].ToString()) ? d["Room Arrivals"] : "",
+                                  RoomNights = !string.IsNullOrEmpty(d["Room Nights"].ToString()) ? d["Room Nights"] : "",
+                                  BedNights = !string.IsNullOrEmpty(d["Bed Nights"].ToString()) ? d["Bed Nights"] : "",
+                                  RoomRevenue = !string.IsNullOrEmpty(d["Room Revenue"].ToString()) ? d["Room Revenue"] : "",
+                                  ADR = !string.IsNullOrEmpty(d["ADR"].ToString()) ? d["ADR"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId)
+        {
+
+            try
+            {
+                var data = _iReportService.GuestTrialBalance(date, isRouting, isCheckOut, roomTypeId);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  Reservation = !string.IsNullOrEmpty(d["Reservation"].ToString()) ? d["Reservation"] : "",
+                                  AccountName = !string.IsNullOrEmpty(d["AccountName"].ToString()) ? d["AccountName"] : "",
+                                  ReservationNo = !string.IsNullOrEmpty(d["ReservationNo"].ToString()) ? d["ReservationNo"] : "",
+                                  IsPasserBy = !string.IsNullOrEmpty(d["IsPasserBy"].ToString()) ? d["IsPasserBy"] : "",
+                                  RoomTypeID = !string.IsNullOrEmpty(d["RoomTypeID"].ToString()) ? d["RoomTypeID"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  OpenBalance = !string.IsNullOrEmpty(d["OpenBalance"].ToString()) ? d["OpenBalance"] : "",
+                                  Debit = !string.IsNullOrEmpty(d["Debit"].ToString()) ? d["Debit"] : "",
+                                  DebitTranfer = !string.IsNullOrEmpty(d["DebitTranfer"].ToString()) ? d["DebitTranfer"] : "",
+                                  Credit = !string.IsNullOrEmpty(d["Credit"].ToString()) ? d["Credit"] : "",
+                                  CreditTranfer = !string.IsNullOrEmpty(d["CreditTranfer"].ToString()) ? d["CreditTranfer"] : "",
+                                  CloseBalance = !string.IsNullOrEmpty(d["CloseBalance"].ToString()) ? d["CloseBalance"] : "",
+                                  Currency = !string.IsNullOrEmpty(d["Currency"].ToString()) ? d["Currency"] : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
+                                  FolioID = !string.IsNullOrEmpty(d["FolioID"].ToString()) ? d["FolioID"] : "",
+
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+
+
 
 
         [HttpGet]
@@ -3418,7 +3486,7 @@ namespace Report.Controllers
                     List<TransactionsModel> listts = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
                     ViewBag.TransactionsList = listts;
                     break;
-                case "RevenueByReport":
+                
                 case "DailyMinibarReport":
                 case "DepositActivity":
                 case "IncurringDepositCollection":
@@ -3434,22 +3502,25 @@ namespace Report.Controllers
                 case "ReservationPreblocked":
                 case "VacantRoom":
                 case "Transportation":
-                case "ReservationbyCompany":
-                case "RoomOccupancy":
+              
+                case "RoomOccupancy":                        
                 case "RoomMoves":
                 case "OccupancyByPerson":
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":
-                case "LeadtimeReports":
-                case "RatecodeReports":
+                case "CashierAudit":
+                case "RoomStatistics":                 
                 case "AnnualRoomOccupancy":
                 case "RoomTypeStatistics":
                 case "NationalStatistics":
-                case "ReservationSummary":         
-                case "ArrivalsAndCheckInToday":
-                    List<RoomTypeModel> listroomt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
-                    ViewBag.RoomTypeList = listroomt;
+                case "ReservationSummary":
+                case "GuestTrialBalance":
+                case "RevenueByReport":
+                case "ReservationbyCompany":
+                case "LeadtimeReports":
+                case "RatecodeReports":
+                case "ArrivalsAndCheckInToday":                   
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
@@ -3462,37 +3533,28 @@ namespace Report.Controllers
                     ViewBag.RateCodeList = listrc;
                     List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
                     ViewBag.RoomList = listroom;
-
                     List<ArticleModel> listaticl = PropertyUtils.ConvertToList<ArticleModel>(ArticleBO.Instance.FindAll());
                     ViewBag.ArticleList = listaticl;
-
-
                     List<SourceModel> listsrc = PropertyUtils.ConvertToList<SourceModel>(SourceBO.Instance.FindAll());
                     ViewBag.SourceList = listsrc;
-
                     List<TransactionsModel> listpmtr = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
-
                     ViewBag.TransactionsList = listpmtr;
-
                     List<BusinessBlockModel> listbnbl = PropertyUtils.ConvertToList<BusinessBlockModel>(BusinessBlockBO.Instance.FindAll());
-
                     ViewBag.BusinessBlockList = listbnbl;
-
                     List<CashierUserModel> listcse = PropertyUtils.ConvertToList<CashierUserModel>(CashierUserBO.Instance.FindAll());
-
                     ViewBag.CashierUserList = listcse;
-
                     List<ARPaymentModel> listarpm = PropertyUtils
                     .ConvertToList<ARPaymentModel>(ARPaymentBO.Instance.FindAll())
                     .GroupBy(x => x.TransactionCode)
                     .Select(g => g.First())
                     .ToList();
                     ViewBag.ARPaymentList = listarpm;
-
                     List<VIPModel> listvip = PropertyUtils.ConvertToList<VIPModel>(VIPBO.Instance.FindAll());
                     ViewBag.VIPList = listvip;
                     List<TransportTypeModel> listtrantt = PropertyUtils.ConvertToList<TransportTypeModel>(TransportTypeBO.Instance.FindAll());
-                    ViewBag.TransportTypeList = listtrantt;
+                    ViewBag.TransportTypeList = listtrantt;                 
+                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+                    ViewBag.UsersList = listuser;
                     break;
                 case "ReservationCancellations":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
@@ -3501,16 +3563,8 @@ namespace Report.Controllers
                 case "Alerts":
                     List<AlertsSetupModel> listal = PropertyUtils.ConvertToList<AlertsSetupModel>(AlertsSetupBO.Instance.FindAll());
                     ViewBag.ALertList = listal;
-                    break;
-                    ;
-                case "CashierAudit":
-                    List<TransactionsModel> listtran = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
-
-                    ViewBag.TransactionsList = listtran;
-                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
-                    ViewBag.UsersList = listuser;
-                    break;
-                    ;
+                    break;                                               
+                   ;
             }
             ViewBag.ReportTitle = title;
             // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng
