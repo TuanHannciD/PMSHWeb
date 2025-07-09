@@ -46,7 +46,8 @@ namespace User.Controllers
                 string password = Request.Form["Password"].ToString();
                 var result = _iUserService.Login(loginName,password);
                 int UserGroupID = result.UserGroupID;
-                var result2 = _iUserService.PermissionNames(UserGroupID);
+                int UserID = result.ID;
+                var result2 = _iUserService.PermissionNames(UserGroupID, UserID);
 
                 var resultname = (from d in result2.AsEnumerable()
                               select new
@@ -56,7 +57,7 @@ namespace User.Controllers
 
 
                 if (result.ID != 0) {
-                    return Json(new { code = 0, msg = "Successfully", data = resultname });
+                    return Json(new { code = 0, msg = "Successfully", data = resultname ,namelogin= loginName });
                 }
                 else
                 {

@@ -30,11 +30,12 @@ namespace User.Services.Implements
                 return new UsersModel();
             }
         }
-        public DataTable PermissionNames(int UserGroupID)
+        public DataTable PermissionNames(int UserGroupID,int UserID)
         {
             SqlParameter[] param = new SqlParameter[]
             {
-               new SqlParameter("@UserGroupID ", UserGroupID),
+               new SqlParameter("@UserGroupID", UserGroupID),
+                  new SqlParameter("@UserID", UserID),
             };
 
             DataTable myTable = DataTableHelper.getTableData("GetPermissionNamesByUserGroup", param);

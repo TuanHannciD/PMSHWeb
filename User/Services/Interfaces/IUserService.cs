@@ -12,6 +12,6 @@ namespace User.Services.Interfaces
     {
 
         UsersModel Login(string LoginName, string Password);
-        DataTable PermissionNames(int UserGroupID);
+        DataTable PermissionNames(int UserGroupID, int UserID);
     }
 }

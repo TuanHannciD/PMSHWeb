@@ -3526,7 +3526,8 @@ namespace Report.Controllers
                     List<TransactionsModel> listts = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
                     ViewBag.TransactionsList = listts;
                     break;
-                
+
+                case "RevenueBy":
                 case "DailyMinibarReport":
                 case "DepositActivity":
                 case "IncurringDepositCollection":
@@ -3536,9 +3537,9 @@ namespace Report.Controllers
                 case "JournalByCashierArticle":
                 case "ArticleByRooms":
                 case "RoomOccupancyStatistics":
-                case "DepartureReports":
+                case "DepartureReport":
                 case "ArrivalsDetailed":
-                case "ArrivalDetailGroupbyHolders":
+                case "ArrivalDetailedGroupbyHolder":
                 case "ReservationPreblocked":
                 case "VacantRoom":
                 case "Transportation":
@@ -3547,21 +3548,20 @@ namespace Report.Controllers
                 case "RoomOccupancyChart":
 
                 case "RoomMoves":
-                case "OccupancyByPerson":
+                case "OccupancyByPercon":
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":
                 case "CashierAudit":
-                case "RoomStatistics":                 
+                case "RoomStatistic":                 
                 case "AnnualRoomOccupancy":
-                case "RoomTypeStatistics":
+                case "RoomTypeStatistic":
                 case "NationalStatistics":
                 case "ReservationSummary":
                 case "GuestTrialBalance":
-                case "RevenueByReport":
                 case "ReservationbyCompany":
-                case "LeadtimeReports":
-                case "RatecodeReports":
+                case "LeadTimeReport":
+                case "RatecodeReport":
                 case "ArrivalsAndCheckInToday":                   
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
@@ -3598,7 +3598,7 @@ namespace Report.Controllers
                     List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
                     ViewBag.UsersList = listuser;
                     break;
-                case "ReservationCancellations":
+                case "ReservationCancellation":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
                     ViewBag.ComList = listcm;
                     break;
