@@ -217,6 +217,10 @@
                     $('#txtPassword').val('');
                 } 
                 else{
+                    localStorage.removeItem("PermissionNames");
+
+                    // Gán dữ liệu mới vào localStorage (dưới dạng chuỗi JSON)
+                    localStorage.setItem("PermissionNames", JSON.stringify(data.data));
                     window.location.href = "/Home/Index";
                 }
 
