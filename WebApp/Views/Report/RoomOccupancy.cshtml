@@ -1,16 +1,23 @@
 ﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var zoneList = ViewBag.ZoneList;
 }
 
-<!-- Thư viện Highcharts -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
 
 <style>
     .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
         padding: 18px 0px 0px 14px;
         border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
     }
 
     .button_wrapper {
@@ -24,69 +31,89 @@
         }
 
     .selected {
-        background-color: #4CAF50;
+        background-color: #4CAF50; /* Màu xanh */
         color: white;
     }
 
-    #highchartBar {
-        margin: 0px 8px;
-        height: 500px;
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
     }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
 </style>
-
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <!-- From Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
+
+        <!-- To Date --> 
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Zone:</label>
-            <select id="zone" name="zone" class="form-control form-control-sm" style="width: 100px">
+            <select id="zone" name="zone" class="form-control form-control-sm" style="width :100px">
                 @foreach (var item in zoneList)
                 {
                     <option value="@item.Code">@item.Code</option>
                 }
             </select>
+
         </div>
     </div>
-    <div class="mb-3">
-        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i> View</button>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 </div>
 
-<!-- Biểu đồ -->
-<div id="highchartBar" class="mui-card"></div>
-
-<!-- Spinner loading -->
+<div class="mui-card">
+@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
-
 <script>
     function formatDate(date) {
         let year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         return `${year}-${month}-${day}`;
     }
 
     $(document).ready(function () {
-        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
-        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        $('#fromDate').val(formatDate(firstDay));
-        $('#toDate').val(formatDate(lastDay));
-    });
 
-    $("#btnPrint").click(function () {
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Lấy ngày cuối cùng của tháng
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
+
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        // Gán giá trị cho input date
+        document.getElementById('fromDate').value = formattedFirstDay;
+        document.getElementById('toDate').value = formattedLastDay;
+
+
+
+    });
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/RoomOccupancyReport',
@@ -94,69 +121,69 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                zone: $("#zone").val()
+                   zone: $("#zone").val(),
             },
-            headers: {
-                "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
-            },
-        success: function (result) {
-        const groupedData = prepareRoomOccupancyGroupedData(result);
-        renderRoomOccupancyGroupedBarChart(groupedData);
-        $("#loadingSpinner").hide();
-    },
+            traditional: true,
+              crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                // $("#reportViewerContainer").html(result);
+                // $("#loadingSpinner").hide();
+                     console.log(result);
+    const processedData = prepareRoomOccupancyData(result);
+    initializeRoomOccupancyGrid(processedData);
 
+                    $("#loadingSpinner").hide();
+            },
             error: function () {
                 alert("Không thể tải báo cáo.");
                 $("#loadingSpinner").hide();
             }
         });
     });
+    function prepareRoomOccupancyData(data) {
+        const groupedData = {};
 
-       function prepareRoomOccupancyGroupedData(data) {
-        const grouped = {};
-
+        // Group by MonthDisplay
         data.forEach(item => {
-            const month = item.monthDisplay;
-            if (!grouped[month]) {
-                grouped[month] = {
-                    VacRo: 0, ResRo: 0, NonDeductRo: 0, AltRo: 0,
-                    TotaRo1: 0, ARo: 0, DepRo: 0, OOO: 0, TotaRo2: 0, PT: 0,
-                    count: 0
-                };
-            }
-
-            grouped[month].VacRo += parseFloat(item.vacRo ?? 0);
-            grouped[month].ResRo += parseFloat(item.resRo ?? 0);
-            grouped[month].NonDeductRo += parseFloat(item.nonDeductRo ?? 0);
-            grouped[month].AltRo += parseFloat(item.altRo ?? 0);
-            grouped[month].TotaRo1 += parseFloat(item.totaRo1 ?? 0);
-            grouped[month].ARo += parseFloat(item.aRo ?? 0);
-            grouped[month].DepRo += parseFloat(item.depRo ?? 0);
-            grouped[month].OOO += parseFloat(item.ooo ?? 0);
-            grouped[month].TotaRo2 += parseFloat(item.totaRo2 ?? 0);
-            grouped[month].PT += parseFloat(item.pt ?? 0);
-            grouped[month].count++;
+            const key = item.monthDisplay;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
         });
 
-        // Tính trung bình
-        const months = Object.keys(grouped);
-        const result = {
-            categories: months,
-            series: []
-        };
+        const finalData = [];
 
-        const fields = ["VacRo", "ResRo", "NonDeductRo", "AltRo", "TotaRo1", "ARo", "DepRo", "OOO", "TotaRo2", "PT"];
-        fields.forEach(field => {
-            result.series.push({
-                name: field,
-                data: months.map(month => {
-                    const val = grouped[month][field] / (field === "PT" ? grouped[month].count : 1);
-                    return parseFloat(val.toFixed(2));
-                })
-            });
+        Object.entries(groupedData).forEach(([month, records]) => {
+            finalData.push(...records);
+
+            const totalRow = {
+                fair: "TOTAL",
+                dow:records[0].monthDisplay,
+                date: null,
+                monthDisplay: month,
+                vacRo: sum(records, 'vacRo'),
+                resRo: sum(records, 'resRo'),
+                nonDeductRo: sum(records, 'nonDeductRo'),
+                altRo: sum(records, 'altRo'),
+                totaRo1: sum(records, 'totaRo1'),
+                aRo: sum(records, 'aRo'),
+                depRo: sum(records, 'depRo'),
+                ooo: sum(records, 'ooo'),
+                totaRo2: sum(records, 'totaRo2'),
+                pt: average(records, 'pt'),
+                cssClass: "custom",
+                isTotal: true // Để phân biệt dòng tổng
+            };
+
+            finalData.push(totalRow);
         });
 
-        return result;
+        return finalData;
+    }
+
+    // Helper functions
+    function sum(arr, field) {
+        return arr.reduce((total, item) => total + (item[field] || 0), 0);
     }
 
     function average(arr, field) {
@@ -165,37 +192,132 @@
         return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
     }
 
-       function renderRoomOccupancyGroupedBarChart(groupedData) {
-        Highcharts.chart('highchartBar', {
-            chart: {
-                type: 'column'
+    function initializeRoomOccupancyGrid(data) {
+        const columnWidth = 180;
+        $("#gridContainer").dxDataGrid({
+    dataSource: data, allowColumnResizing: true,
+            columns: [
+            { dataField: "fair", caption: "Fair", width:columnWidth-100},
+            { dataField: "dow", caption: "Dow", width:columnWidth-50},
+            { dataField: "date", caption: "Date", width: columnWidth-70 ,dataType: "date",format: "dd/MM/yyyy"  },
+            { dataField: "vacRo", caption: "Vac Ro", width: columnWidth-70 , dataType: "number", format: "#,##0" },
+            { dataField: "resRo", caption: "Res Ro",width: columnWidth-70 , dataType: "number", format: "#,##0" },
+            { dataField: "nonDeductRo", caption: "Non Dec Ro",width: columnWidth-50, dataType: "number", format: "#,##0" },
+            { dataField: "altRo", caption: "Alt Ro", width:columnWidth-70, dataType: "number", format: "#,##0" },
+            { dataField: "totaRo1", caption: "Tota Ro",width: columnWidth-70 , dataType: "number", format: "#,##0" },
+            { dataField: "aRo", caption: "Arr Ro",width: columnWidth-70, dataType: "number", format: "#,##0" },
+            { dataField: "depRo", caption: "DepRo", width:columnWidth-70, dataType: "number", format: "#,##0" },
+            { dataField: "ooo", caption: "OOO",width: columnWidth-70 , dataType: "number", format: "#,##0" },
+            { dataField: "totaRo2", caption: "Tota Ro",width: columnWidth-70 , dataType: "number", format: "#,##0" },
+            { dataField: "pt", caption: "%",width: columnWidth-70, dataType: "number", format: "#,##0" },
+            ],
+            paging: { pageSize: 25 },
+             scrolling:  {                
+               useNative: true,
+               showScrollbar: "always"
+               },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
             },
-            title: {
-                text: 'Room Occupancy by Month'
-            },
-            xAxis: {
-                categories: groupedData.categories,
-                crosshair: true
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Values'
-                }
-            },
-            tooltip: {
-                shared: true,
-                valueDecimals: 2
-            },
-            plotOptions: {
-                column: {
-                    grouping: true,
-                    shadow: false,
-                    borderWidth: 0
-                }
-            },
-            series: groupedData.series
+             filterRow: {
+                 visible: true,
+                 applyFilter: "auto"
+              },
+               headerFilter: {
+                  visible: true
+              },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+              showBorders: true,                  onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data?.cssClass) {
+            e.rowElement.addClass(e.data.cssClass);
+        }
+    }
+        
         });
     }
 
+
+
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport = '@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        // === Tạo header công ty (dòng 1) ===
+        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+        worksheet.mergeCells('A1:E1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+        // === Dòng 2: Thời gian xuất (phải) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+        worksheet.mergeCells('E2:H2');
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+        // === Dòng 3–4: Trống
+        worksheet.addRow([]);
+        worksheet.addRow([]);
+
+        // === Dòng 5: Tên báo cáo ở giữa ===
+        const reportRow = worksheet.addRow(['', '', selectedReport]);
+        worksheet.mergeCells('C5:F5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // === Dòng 6: Trống trước khi xuất dữ liệu
+        worksheet.addRow([]);
+
+        // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+        }).then(function () {
+            // Footer
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+            // Ghi file
+            let fileName = selectedReport + ".xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+    // Nút xuất PDF
+       $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+        const doc = new jsPDF();
+
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
+        });
+    });
 </script>
