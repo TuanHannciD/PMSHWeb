@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BaseBusiness.BO;
+using BaseBusiness.Model;
+using BaseBusiness.util;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +36,7 @@ namespace Reservation.Controllers
 
         public IActionResult NewReservation()
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
             ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
             ViewBag.cboCity = ListItemHelper.GetCityProvider();
@@ -43,10 +47,24 @@ namespace Reservation.Controllers
             ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
-
+            ViewBag.businesDate = businessDateModel[0].BusinessDate;
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> GetInfoProfile(int profileID)
+        {
+            try
+            {
 
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(profileID);
+
+                return Json(profile);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> GetRateCode(DateTime arrivalDate,DateTime departure,int adults,int roomType)
         {
