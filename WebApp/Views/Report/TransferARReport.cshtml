@@ -4,8 +4,7 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
-    var zoneList = ViewBag.ZoneList;
-    var rateCode = ViewBag.RateCodeList;
+    var rtList = ViewBag.RoomClassList;
 }
 
 
@@ -46,48 +45,17 @@
         }
 
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="text-center" id="reportTitle" style="font-size: 20px">NoShowReport</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Month:</label>
-            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <label class="me-2 mb-0"> Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
 
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Zone:</label>
-            <select id="zone" name="zone" class="form-control form-control-sm " style="width :100px">
-                <option value="">ALL</option>
-                @foreach (var item in zoneList)
-                {
-                    <option value="@item.Code">@item.Code</option>
-                }
-            </select>
-
-        </div>
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Rate Code:</label>
-            <select id="rate" name="rate" class="form-control form-control-sm w-auto">
-                <option value="">ALL</option>
-                @foreach (var item in rateCode)
-                {
-                    <option value="@item.RateCode">@item.RateCode</option>
-                }
-            </select>
-
-        </div>
-        <div style="display:none!important" class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">View By:</label>
-            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
-
-                <option value="VND">VND</option>
-                <option value="USD">USD</option>
-            </select>
-        </div>
-
-
+      
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -97,19 +65,18 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <script>
-
     function formatDate(date) {
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}`;
+        return `${year}-${month}-${day}`;
     }
 
     $(document).ready(function () {
@@ -128,24 +95,18 @@
         console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
-        document.getElementById('toDate').value = formattedLastDay;
 
 
 
-    });
-    $(".include-option").on("change", function () {
-        $(".include-option").not(this).prop("checked", false);
     });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
-            url: '/Report/RatecodeReportsData',
+            url: '/Report/TransferARReportsData',
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                        zone: $("#zone").val(),
-                                  rate: $("#rate").val(),
-                              viewBy:  $("#viewBy").val(),
+      
             },
             traditional: true,
               crossDomain: false,
@@ -154,8 +115,8 @@
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
                      console.log(result);
-                  
-           initializeRatecodeReportsGrid(result);
+                     const processedData = prepareTransferARData(result); // ✅ xử lý Subtotal và Total
+            initializeTransferARReportsDataGrid(processedData);
 
                     $("#loadingSpinner").hide();
             },
@@ -165,90 +126,101 @@
             }
         });
     });
+        function prepareTransferARData(data) {
+        const groupedData = {};
+        const finalData = [];
 
-        function initializeRatecodeReportsGrid(data) {
-        const columnWidth = 180;
-
-        const columns = [
-            { dataField: "RateCode", caption: "Rate Code", width: columnWidth - 70 },
-            { dataField: "Row", caption: "Row", width: columnWidth - 70 }
-        ];
-
-        const fromDateStr = $("#fromDate").val(); // yyyy-MM-dd
-        const fromDateObj = new Date(fromDateStr);
-
-        const fieldOrder = [];
-
-
-            const startMonth = fromDateObj.getMonth() + 1;
-            for (let i = startMonth; i <= 12; i++) {
-                fieldOrder.push(i.toString());
-            }
-            for (let i = 1; i < startMonth; i++) {
-                fieldOrder.push(i.toString());
-            }
-        
-
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        for (let i of fieldOrder) {
-            const fieldName = `${i}`;
-            const hasData = data.some(item => item[fieldName] != null && item[fieldName] !== "");
-
-            if (hasData) {
-                let displayName = fieldName;
-                    const monthIndex = parseInt(fieldName) - 1;
-                    if (monthIndex >= 0 && monthIndex < 12) {
-                        displayName = monthNames[monthIndex];
-                    }
-
-                columns.push({
-                    dataField: fieldName,
-                    caption: displayName,
-                    width: columnWidth - 80,
-                    dataType: "number",
-                    format: "#,##0"
-                });
-            }
-        }
-
-        const existingFields = new Set(columns.map(c => c.dataField));
-
-        const underscoreFields = new Set();
+        // Gom nhóm theo acc
         data.forEach(item => {
-            Object.keys(item).forEach(key => {
-                if (/^\d+_$/.test(key) && !existingFields.has(key)) {
-                    underscoreFields.add(key);
-                }
-            });
+            const key = item.acc || "NO-ACC";
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(item);
         });
 
-        for (let fieldName of underscoreFields) {
-            const hasData = data.some(item => item[fieldName] != null && item[fieldName] !== "");
+        // Duyệt từng nhóm để thêm Subtotal
+        Object.entries(groupedData).forEach(([key, records]) => {
+            finalData.push(...records);
 
-            if (hasData) {
-                let displayName = fieldName.replace("_", "");
-                if (displayName.length === 3) {
-                    displayName = displayName.substring(0, 2);
-                }
+            const subtotal = {
+                acc: key,
+                companyOrName: "SUB TOTAL",
+                amount: sum(records, 'amount'),
+                cssClass: "custom",
+                isTotal: true
+            };
 
-                columns.push({
-                    dataField: fieldName,
-                    caption: displayName,
-                    width: columnWidth - 80,
-                    dataType: "number",
-                    format: "#,##0"
-                });
-            }
-        }
+            finalData.push(subtotal);
+        });
+
+        // Dòng tổng cuối
+        const totalAmount = sum(data, 'amount');
+
+        const totalRow = {
+            acc: "",
+            companyOrName: "TOTAL",
+            amount: totalAmount,
+            cssClass: "custom",
+            isTotal: true
+        };
+
+        finalData.push(totalRow);
+
+        // ✅ Gán tổng tiền vào finalData.totalAmount để truyền cho summary
+        finalData.totalAmount = totalAmount;
+
+        return finalData;
+    }
+
+
+    function sum(arr, field) {
+        return arr.reduce((t, x) => t + (parseFloat(x[field]) || 0), 0);
+    }
+
+
+      function initializeTransferARReportsDataGrid(data) {
+        const columnWidth = 180;
+        const totalAmount = data.totalAmount || 0;
 
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
-            columns: columns,
+            dataSource: data,
+            allowColumnResizing: true,
+            columns: [
+                { dataField: "acc", caption: "ACC", width: columnWidth - 80 },
+                { dataField: "companyOrName", caption: "Company/Name", width: columnWidth + 20 },
+                { dataField: "account", caption: "Account", width: columnWidth + 20 },
+                { dataField: "roomNo", caption: "Ro.No", width: columnWidth - 80 },
+                { dataField: "folioNo", caption: "FolioNo", width: columnWidth - 60 },
+                {
+                    dataField: "amount", caption: "Amount", width: columnWidth - 40,
+                    dataType: "number", format: "#,##0"
+                },
+                { dataField: "currencyID", caption: "Curr", width: columnWidth - 40 },
+                { dataField: "userName", caption: "User", width: columnWidth - 80 },
+            ],
+            summary: {
+                totalItems: [
+                    {
+                        column: "companyOrName",
+                        summaryType: "custom",
+                        displayFormat: "GRAND TOTAL"
+                    },
+                    {
+                        column: "amount",
+                        summaryType: "custom",
+                        customizeText: function () {
+                            return totalAmount.toLocaleString();  // định dạng với dấu phẩy
+                        }
+                    }
+                ]
+            },
+            rowPrepared: function (info) {
+                if (info.data && info.data.isTotal) {
+                    $(info.rowElement).css("font-weight", "bold").css("background-color", "#f3f3f3");
+                }
+            },
             paging: { pageSize: 25 },
             scrolling: {
-                mode: 'virtual',
+                
                 useNative: true,
                 showScrollbar: "always"
             },
@@ -263,6 +235,11 @@
                 visible: true,
                 applyFilter: "auto"
             },
+              onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            },
             headerFilter: {
                 visible: true
             },
@@ -270,20 +247,16 @@
                 mode: "multiple",
                 showCheckBoxesMode: "none"
             },
-            showBorders: true,
-                onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data?.cssClass) {
-            e.rowElement.addClass(e.data.cssClass);
-        }
-    }
+            showBorders: true
         });
     }
 
 
 
+
     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");
-        var selectedReport='@ViewBag.ReportTitle';
+        var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
@@ -292,15 +265,48 @@
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Sheet 1");
 
+        // === Tạo header công ty (dòng 1) ===
+        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+        worksheet.mergeCells('A1:E1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+        // === Dòng 2: Thời gian xuất (phải) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+        worksheet.mergeCells('E2:H2');
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+        // === Dòng 3–4: Trống
+        worksheet.addRow([]);
+        worksheet.addRow([]);
+
+        // === Dòng 5: Tên báo cáo ở giữa ===
+        const reportRow = worksheet.addRow(['', '', selectedReport]);
+        worksheet.mergeCells('C5:F5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // === Dòng 6: Trống trước khi xuất dữ liệu
+        worksheet.addRow([]);
+
+        // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
         DevExpress.excelExporter.exportDataGrid({
             component: grid,
             worksheet: worksheet,
-            autoFilterEnabled: true
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
         }).then(function () {
-            // Đặt tên file theo selectedReport
-            let fileName =selectedReport + ".xlsx";
+            // Footer
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
             // Ghi file
+            let fileName = selectedReport + ".xlsx";
             workbook.xlsx.writeBuffer().then(function (buffer) {
                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
             });

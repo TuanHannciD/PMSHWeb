@@ -1,6 +1,7 @@
 ﻿using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using DevExpress.ClipboardSource.SpreadsheetML;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,8 +45,19 @@ namespace User.Controllers
                 string loginName = Request.Form["LoginName"].ToString();
                 string password = Request.Form["Password"].ToString();
                 var result = _iUserService.Login(loginName,password);
+                int UserGroupID = result.UserGroupID;
+                int UserID = result.ID;
+                var result2 = _iUserService.PermissionNames(UserGroupID, UserID);
+
+                var resultname = (from d in result2.AsEnumerable()
+                              select new
+                              {
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                              }).ToList();
+
+
                 if (result.ID != 0) {
-                    return Json(new { code = 0, msg = "Successfully" });
+                    return Json(new { code = 0, msg = "Successfully", data = resultname ,namelogin= loginName });
                 }
                 else
                 {

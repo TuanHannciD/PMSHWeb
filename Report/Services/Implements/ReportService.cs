@@ -177,6 +177,43 @@ namespace Report.Services.Implements
         }
 
 
+        public DataTable DepartureReportsData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string paymethod, string rateCode, string block,
+            string zone, string vip, string viponlycheck, int sortOrder,
+           string pseudo, string dueout, string checkout, string disRoomSharer, string specials, string lateCheckOut, string earlyDep, string agents, string company,
+           string source, string individuals, string group)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+     new SqlParameter("@FromDate", fromDate),
+        new SqlParameter("@ToDate", toDate),
+        new SqlParameter("@RoomClass", roomClass),
+        new SqlParameter("@RoomType", roomtype),
+        new SqlParameter("@PaymentMethod", paymethod),
+        new SqlParameter("@RateCode", rateCode),
+        new SqlParameter("@BlockCode", block),
+        new SqlParameter("@Zone", zone),
+        new SqlParameter("@VIP", vip),
+        new SqlParameter("@ChkVIPOnly", viponlycheck),
+        new SqlParameter("@SortOrder", sortOrder),
+        new SqlParameter("@PseudoRooms", pseudo),
+        new SqlParameter("@DueOut", dueout),
+        new SqlParameter("@CheckedOut", checkout),
+        new SqlParameter("@DisRoomSharer", disRoomSharer),
+        //new SqlParameter("@Specials", specials),
+        new SqlParameter("@LateCheckOut", lateCheckOut),
+        new SqlParameter("@EarlyDep", earlyDep),
+        new SqlParameter("@Agent", agents),
+        new SqlParameter("@Company", company),
+        new SqlParameter("@Source", source),
+        new SqlParameter("@Individual", individuals),
+        new SqlParameter("@Group", group)
+            };
+
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepartures", param);
+            return myTable;
+        }
+
         public DataTable AlertsData(DateTime fromDate, DateTime toDate, string viewBy, string altercode)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -199,6 +236,158 @@ namespace Report.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptSummaryReservation", param);
+            return myTable;
+        }
+        public DataTable DepositRequestLogReportData(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepositRequestLog", param);
+            return myTable;
+        }
+        public DataTable ArticleByRoomsDatas(DateTime fromDate, DateTime toDate, string zone, string room, int  viewBy, string article)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                  new SqlParameter("@Room", room),
+                new SqlParameter("@Article", article),
+
+                    new SqlParameter("@RoomClass", ""),
+                new SqlParameter("@Transaction", ""),
+                      new SqlParameter("@NetDisp", ""),
+                new SqlParameter("@OrderBy", ""),
+
+                   new SqlParameter("@CashierNo", ""),
+                new SqlParameter("@Zone", zone),
+                    new SqlParameter("@PostBy",viewBy),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptJournalByArticleRoom", param);
+            return myTable;
+        }
+
+        public DataTable DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                  new SqlParameter("@Room", room),
+                new SqlParameter("@Article", article),
+
+                    new SqlParameter("@RoomClass", ""),
+                new SqlParameter("@Transaction", ""),
+                      new SqlParameter("@NetDisp", ""),
+                new SqlParameter("@OrderBy", ""),
+
+                   new SqlParameter("@CashierNo", ""),
+                new SqlParameter("@Zone", zone),
+                    new SqlParameter("@PostBy",viewBy),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDailyMinibarReport", param);
+            return myTable;
+        }
+        public DataTable JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                  new SqlParameter("@Room", room),
+                new SqlParameter("@Article", article),
+
+                    new SqlParameter("@RoomClass", roomclass),
+                new SqlParameter("@Transaction",transaction),
+                      new SqlParameter("@NetDisp",netDisp),
+                      new SqlParameter("@CashierNo",cashier),
+                    new SqlParameter("@OrderBy",viewBy),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptJournalByCashier", param);
+            return myTable;
+        }
+        public DataTable TransferARReportsData(DateTime fromDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@dtpFromDate", fromDate),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptTranferAR", param);
+            return myTable;
+        }
+        public DataTable IncurringDepositCollectionData(DateTime fromDate, DateTime toDate, string zone, string cashier)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+              new SqlParameter("@Cashier", cashier),
+               new SqlParameter("@TransCode", "8520"),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptIncurringDepositCollection", param);
+            return myTable;
+        }
+        public DataTable IncurringDepositReturnData(DateTime fromDate, DateTime toDate, string zone, string cashier)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+              new SqlParameter("@Cashier", cashier),
+               new SqlParameter("@TransCode", "8520"),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptIncurringDepositReturn", param);
+            return myTable;
+        }
+        public DataTable IncurringDepositPaymentPlanData(DateTime fromDate, DateTime toDate, string zone, string cashier,string notbalance)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+              new SqlParameter("@Cashier", cashier),
+               new SqlParameter("@TransCode", "8520"),
+                           new SqlParameter("@NotBalance", notbalance),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptIncurringDepositPaymentPlan", param);
+            return myTable;
+        }
+
+        public DataTable IncurringDepositSummaryData(DateTime fromDate, DateTime toDate, string zone, string cashier, string type)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+              new SqlParameter("@Cashier", cashier),
+               new SqlParameter("@TransCode", "8520"),
+                           new SqlParameter("@Type", type),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptIncurringDepositSummary", param);
             return myTable;
         }
         public DataTable TraceReportView(DateTime fromDate, DateTime toDate, int roomClass, int department, int status, int byAlphabetical, int byRoom, int byVip, int pseudoRoom, int reserved, int checkedIn, int dueout, int individual, int blockcode, int vipOnly)
@@ -271,7 +460,26 @@ namespace Report.Services.Implements
             return myTable;
         }
 
+        public DataTable DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@DueDate_FromDate", DueDate_FromDate),
+                new SqlParameter("@DueDate_ToDate", DueDate_ToDate),
+                             new SqlParameter("@Arrival_FromDate", Arrival_FromDate),
+                new SqlParameter("@Arrival_ToDate", Arrival_ToDate),
 
+                               new SqlParameter("@Cashier", Cashier),
+                new SqlParameter("@Post_FromDate", Post_FromDate),
+                             new SqlParameter("@Post_ToDate", Post_ToDate),
+                new SqlParameter("@DepositOption", DepositOption),
+                   new SqlParameter("@RsvStatus", RsvStatus),
+                      new SqlParameter("@Sort", Sort),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptDepositActivity", param);
+            return myTable;
+        }
         public DataTable TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy, int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -451,8 +659,8 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@dtpFromDate", fromDate),
-                                   new SqlParameter("@dtpToDate", toDate),
-                           new SqlParameter("@Zone", zone),
+               new SqlParameter("@dtpToDate", toDate),
+               new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptRoomOccupancy", param);
@@ -899,21 +1107,83 @@ namespace Report.Services.Implements
         }
         public DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type)
         {
-            if (string.IsNullOrEmpty(cashierList)) cashierList = "";
-            if (string.IsNullOrEmpty(transactionCodeList)) transactionCodeList = "";
-            if (string.IsNullOrEmpty(type)) type = "0";
+            // Nếu null hoặc trắng, ta để nguyên null cho stored procedure xử lý
+            object cashierParam = string.IsNullOrWhiteSpace(cashierList) ? DBNull.Value : (object)cashierList;
+            object transParam = string.IsNullOrWhiteSpace(transactionCodeList) ? DBNull.Value : (object)transactionCodeList;
+            object typeParam = string.IsNullOrWhiteSpace(type) ? "0" : (object)type;
+
             SqlParameter[] param = new SqlParameter[]
             {
-                new SqlParameter("@Date", date),
-                new SqlParameter("@Cashier", cashierList),
-                new SqlParameter("@TransactionCode", transactionCodeList),
-                new SqlParameter("@Type", type)
+        new SqlParameter("@Date", date),
+        new SqlParameter("@Cashier", cashierParam),
+        new SqlParameter("@TransactionCode", transParam),
+        new SqlParameter("@Type", typeParam)
             };
 
             return DataTableHelper.getTableData("spRptCashierAudit_New", param);
-
         }
-        
+
+        public DataTable RevenueSpa(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+     
+            };
+
+            return DataTableHelper.getTableData("spRptSpa", param);
+        }
+        public DataTable StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv)
+        {
+            object roomTypeParam = (object)(roomTypeCsv?.Trim() ?? "");
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@RoomType", roomTypeParam),
+
+            };
+
+            return DataTableHelper.getTableData("spRptStatisticRoomType", param);
+        }
+        public DataTable RoomStatistic(string year, string fromMonth, string toMonth, string fromRoom, string toRoom)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Year", year),
+                new SqlParameter("@FromMonth", fromMonth),
+                new SqlParameter("@ToMonth", toMonth),
+                new SqlParameter("@FromRoom", fromRoom),
+                new SqlParameter("@ToRoom", toRoom),
+            };
+            return DataTableHelper.getTableData("spRptRoomStatistic", param);
+        }
+        public DataTable GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Date", date),
+                new SqlParameter("@IsRounting", isRouting),
+                new SqlParameter("@IsCheckOut", isCheckOut),
+                new SqlParameter("@RoomTypeID", string.IsNullOrEmpty(roomTypeId) ? "" : roomTypeId),
+
+            };
+            return DataTableHelper.getTableData("spRptGuestTrialBalance", param);
+        }
+        public DataTable RevenueRoomReport(DateTime fromDate, DateTime toDate, string roomTypes, int zone)
+        {
+            if (string.IsNullOrEmpty(roomTypes)) roomTypes = "";
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                new SqlParameter("@RoomType", roomTypes),
+                new SqlParameter("@Zone", zone),
+
+            };
+            return DataTableHelper.getTableData("spRptRevenueRoom", param);
+        }
 
     }
 }

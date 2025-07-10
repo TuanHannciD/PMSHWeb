@@ -924,6 +924,46 @@ namespace Report.Controllers
 
             //     return PartialView("_ReportViewerPartial", report);
         }
+        [HttpGet]
+        public IActionResult RoomOccupancyChart(DateTime fromDate, DateTime toDate, string zone)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.RoomOccupancyReport(fromDate, toDate, zone);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Fair = !string.IsNullOrEmpty(d["Fair"].ToString()) ? d["Fair"] : "",
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  VacRo = !string.IsNullOrEmpty(d["Vac Ro"].ToString()) ? d["Vac Ro"] : "",
+                                  ResRo = !string.IsNullOrEmpty(d["Res Ro"].ToString()) ? d["Res Ro"] : "",
+                                  NonDeductRo = !string.IsNullOrEmpty(d["Non Deduct Ro"].ToString()) ? d["Non Deduct Ro"] : "",
+                                  AltRo = !string.IsNullOrEmpty(d["Alt Ro"].ToString()) ? d["Alt Ro"] : "",
+                                  TotaRo1 = !string.IsNullOrEmpty(d["Tota Ro1"].ToString()) ? d["Tota Ro1"] : "",
+                                  ARo = !string.IsNullOrEmpty(d["A Ro"].ToString()) ? d["A Ro"] : "",
+                                  DepRo = !string.IsNullOrEmpty(d["Dep Ro"].ToString()) ? d["Dep Ro"] : "",
+                                  OOO = !string.IsNullOrEmpty(d["OOO"].ToString()) ? d["OOO"] : "",
+                                  TotaRo2 = !string.IsNullOrEmpty(d["Tota Ro2"].ToString()) ? d["Tota Ro2"] : "",
+                                  PT = !string.IsNullOrEmpty(d["%"].ToString()) ? d["%"] : "",
+                                  MonthDisplay = !string.IsNullOrEmpty(d["MonthDisplay"].ToString()) ? d["MonthDisplay"] : "",
+                                  MonthGroup = !string.IsNullOrEmpty(d["MonthGroup"].ToString()) ? d["MonthGroup"] : "",
+                                  DOW = !string.IsNullOrEmpty(d["DOW"].ToString()) ? d["DOW"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
 
         [HttpGet]
         public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
@@ -1055,6 +1095,231 @@ namespace Report.Controllers
             //     return PartialView("_ReportViewerPartial", report);
         }
 
+        [HttpGet]
+        public IActionResult IncurringDepositCollectionData(DateTime fromDate, DateTime toDate, string zone, string cashier)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                cashier = cashier ?? "";
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.IncurringDepositCollectionData(fromDate, toDate, zone, cashier);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  LastName = d["LastName"]?.ToString(),
+                                  RoomNo = d["RoomNo"]?.ToString(),
+                                  InvoiceNo = d["InvoiceNo"]?.ToString(),
+                                  ArrivalDate = d["ArrivalDate"]?.ToString(),
+                                  DepartureDate = d["DepartureDate"]?.ToString(),
+                                  NoOfNight = d["NoOfNight"]?.ToString(),
+                                  CurrencyID = d["CurrencyID"]?.ToString(),
+                                  PaymentMethod = d["PaymentMethod"]?.ToString(),
+                                  TransactionDate = d["TransactionDate"]?.ToString(),
+                                  DepositAmount = d["DepositAmount"]?.ToString(),
+                                  ReturnAmount = d["ReturnAmount"]?.ToString(),
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString(),
+                                  UserName = d["UserName"]?.ToString(),
+                                  UserID = d["UserID"]?.ToString(),
+                                  ProfitCenterCode = d["ProfitCenterCode"]?.ToString()
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+        [HttpGet]
+        public IActionResult IncurringDepositReturnData(DateTime fromDate, DateTime toDate, string zone, string cashier)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                cashier = cashier ?? "";
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.IncurringDepositReturnData(fromDate, toDate, zone, cashier);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  LastName = d["LastName"]?.ToString(),
+                                  RoomNo = d["RoomNo"]?.ToString(),
+                                  InvoiceNo = d["InvoiceNo"]?.ToString(),
+                                  ArrivalDate = d["ArrivalDate"]?.ToString(),
+                                  DepartureDate = d["DepartureDate"]?.ToString(),
+                                  NoOfNight = d["NoOfNight"]?.ToString(),
+                                  CurrencyID = d["CurrencyID"]?.ToString(),
+                                  PaymentMethod = d["PaymentMethod"]?.ToString(),
+                                  TransactionDate = d["TransactionDate"]?.ToString(),
+                                  DepositAmount = d["DepositAmount"]?.ToString(),
+                                  ReturnAmount = d["ReturnAmount"]?.ToString(),
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString(),
+                                  UserName = d["UserName"]?.ToString(),
+                                  UserID = d["UserID"]?.ToString(),
+                                  ProfitCenterCode = d["ProfitCenterCode"]?.ToString()
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult IncurringDepositPaymentPlanData(DateTime fromDate, DateTime toDate, string zone, string cashier,string notbalance)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                cashier = cashier ?? "";
+                zone = zone ?? "";
+                notbalance = notbalance ?? "";
+                DataTable dataTable = _iReportService.IncurringDepositPaymentPlanData(fromDate, toDate, zone, cashier, notbalance);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  LastName = d["LastName"]?.ToString(),
+                                  RoomNo = d["RoomNo"]?.ToString(),
+                                  InvoiceNo = d["InvoiceNo"]?.ToString(),
+                                  ArrivalDate = d["ArrivalDate"]?.ToString(),
+                                  DepartureDate = d["DepartureDate"]?.ToString(),
+                                  NoOfNight = d["NoOfNight"]?.ToString(),
+                                  CurrencyID = d["CurrencyID"]?.ToString(),
+                                  PaymentMethod = d["PaymentMethod"]?.ToString(),
+                                  TransactionDate = d["TransactionDate"]?.ToString(),
+                                  DepositAmount = d["DepositAmount"]?.ToString(),
+                                  ReturnAmount = d["ReturnAmount"]?.ToString(),
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString(),
+                                  UserName = d["UserName"]?.ToString(),
+                                  UserID = d["UserID"]?.ToString(),
+                                  ProfitCenterCode = d["ProfitCenterCode"]?.ToString()
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+        [HttpGet]
+        public IActionResult IncurringDepositSummaryData(DateTime fromDate, DateTime toDate, string zone, string cashier, string type)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                cashier = cashier ?? "";
+                zone = zone ?? "";
+                type = type ?? "0";
+                DataTable dataTable = _iReportService.IncurringDepositSummaryData(fromDate, toDate, zone, cashier, type);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  LastName = d["LastName"]?.ToString() ?? "",
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  FolioNo = d["FolioNo"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  NoOfNight = d["NoOfNight"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  Deposit = d["Deposit"]?.ToString() ?? "",
+                                  Return = d["Return"]?.ToString() ?? "",
+                                  Balance = d["Balance"]?.ToString() ?? ""
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpGet]
+        public IActionResult DepositActivityData(string DueDate_FromDate, string DueDate_ToDate, string Arrival_FromDate, string Arrival_ToDate, string Post_FromDate, string Post_ToDate, string Cashier, int DepositOption, int RsvStatus, int Sort)
+        {
+            //XtraReport report = new OneSPMSh.Report.GuestStayReport();
+            try
+            {
+                DueDate_FromDate = DueDate_FromDate ?? "";
+                DueDate_ToDate = DueDate_ToDate ?? "";
+                Arrival_FromDate = Arrival_FromDate ?? "";
+                Arrival_ToDate = Arrival_ToDate ?? "";
+                Post_FromDate = Post_FromDate ?? "";
+                Post_ToDate = Post_ToDate ?? "";
+                Cashier = Cashier ?? "";
+                DataTable dataTable = _iReportService.DepositActivityData(DueDate_FromDate, DueDate_ToDate, Arrival_FromDate, Arrival_ToDate, Post_FromDate, Post_ToDate, Cashier, DepositOption, RsvStatus, Sort);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  RsvID = d["RsvID"]?.ToString() ?? "",
+                                  RsqID = d["RsqID"]?.ToString() ?? "",
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  LastName = d["LastName"]?.ToString() ?? "",
+                                  Company = d["Company"]?.ToString() ?? "",
+                                  RateCode = d["RateCode"]?.ToString() ?? "",
+                                  Rate = d["Rate"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  Status = d["Status"]?.ToString() ?? "",
+                                  DepositComment = d["DepositComment"]?.ToString() ?? "",
+                                  Rsq = d["Rsq"]?.ToString() ?? "",
+                                  PaidAmount = d["PaidAmount"]?.ToString() ?? "",
+                                  DueAmount = d["DueAmount"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "", // 'aRequest'
+                                  PostDate = d["PostDate"]?.ToString() ?? "", // '1/1/2011'
+                                  DueDate = d["DueDate"]?.ToString() ?? ""
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            // report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            //report.RequestParameters = false;
+
+            //     return PartialView("_ReportViewerPartial", report);
+        }
 
         [HttpGet]
         public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass)
@@ -1749,6 +2014,172 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public IActionResult DepositRequestLogReportData(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                DataTable dataTable = _iReportService.DepositRequestLogReportData(fromDate, toDate);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  rsvID = d["RsvID"]?.ToString() ?? "",
+                                  reservationNo = d["ReservationNo"]?.ToString() ?? "",
+                                  confirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  guestName = d["GuestName"]?.ToString() ?? "",
+                                  roomNo = d["RoomNo"]?.ToString() ?? "",
+                                  roomType = d["RoomType"]?.ToString() ?? "",
+                                  arrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  departureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  change = d["Change"]?.ToString() ?? "",
+                                  oldValue = d["OldValue"]?.ToString() ?? "",
+                                  newValue = d["NewValue"]?.ToString() ?? "",
+                                  changeDate = d["ChangeDate"]?.ToString() ?? "",
+                                  userName = d["UserName"]?.ToString() ?? "",
+                                  description = d["Description"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi load dữ liệu log: " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult TransferARReportsData(DateTime fromDate)
+        {
+            try
+            {
+                DataTable dataTable = _iReportService.TransferARReportsData(fromDate);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  acc = d["ACC"]?.ToString() ?? "",
+                                  companyOrName = d["Company/name"]?.ToString() ?? "",
+                                  account = d["Account"]?.ToString() ?? "",
+                                  accountName = d["AccountName"]?.ToString() ?? "",
+                                  roomNo = d["RoomNo"]?.ToString() ?? "",
+                                  folioNo = d["FolioNo"]?.ToString() ?? "",
+                                  amount = d["Amount"]?.ToString() ?? "",
+                                  userName = d["UserName"]?.ToString() ?? "",
+                                  currencyID = d["CurrencyID"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi lấy dữ liệu Transfer AR: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ArticleByRoomsData(DateTime fromDate, DateTime toDate,string zone,string room, int viewBy,string article)
+        {
+            zone = zone ?? "";
+            room = room ?? "";
+            article = article ?? "";
+            try
+            {
+                DataTable dataTable = _iReportService.ArticleByRoomsDatas(fromDate, toDate, zone, room, viewBy, article);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = d["TransactionDate"].ToString(),
+                                  RoomNo = d["RoomNo"].ToString(),
+                                  AccountName = d["AccountName"].ToString(),
+                                  TransactionCode = d["TransactionCode"].ToString(),
+                                  TrnsDescription = d["TrnsDescription"].ToString(),
+                                  ArticleCode = d["ArticleCode"].ToString(),
+                                  ArticleDescription = d["ArticleDescription"].ToString(),
+                                  InvoiceNo = d["InvoiceNo"].ToString(),
+                                  Supplement = d["Supplement"].ToString(),
+                                  Reference = d["Reference"].ToString(),
+                                  CurrencyMaster = d["CurrencyMaster"].ToString(),
+                                  DebitAmount = d["DebitAmount"].ToString(),
+                                  CreditAmount = d["CreditAmount"].ToString(),
+                                  AmountMaster = d["AmountMaster"].ToString(),
+                                  CashierNo = d["CashierNo"].ToString(),
+                                  UserName = d["UserName"].ToString(),
+                                  RoomClass = d["RoomClass"].ToString(),
+                                  TransactionGroup = d["TransactionGroup"].ToString(),
+                                  TransactionSubGroup = d["TransactionSubGroup"].ToString(),
+                                  Quantity = d["Quantity"].ToString(),
+                                  Price = d["Price"].ToString(),
+                                  AmountBeforeTax = d["AmountBeforeTax"].ToString(),
+                                  Amount = d["Amount"].ToString(),
+                                  ConfirmationNo = d["ConfirmationNo"].ToString(),
+                                  LastName = d["LastName"].ToString(),
+                                  ArrivalDate = d["ArrivalDate"].ToString(),
+                                  DepartureDate = d["DepartureDate"].ToString()
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi lấy dữ liệu Transfer AR: " + ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article)
+        {
+            zone = zone ?? "";
+            room = room ?? "";
+            article = article ?? "";
+            try
+            {
+                DataTable dataTable = _iReportService.DailyMinibarReportData(fromDate, toDate, zone, room, viewBy, article);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = d["TransactionDate"].ToString(),
+                                  RoomNo = d["RoomNo"].ToString(),
+                                  AccountName = d["AccountName"].ToString(),
+                                  TransactionCode = d["TransactionCode"].ToString(),
+                                  TrnsDescription = d["TrnsDescription"].ToString(),
+                                  ArticleCode = d["ArticleCode"].ToString(),
+                                  ArticleDescription = d["ArticleDescription"].ToString(),
+                                  InvoiceNo = d["InvoiceNo"].ToString(),
+                                  Supplement = d["Supplement"].ToString(),
+                                  Reference = d["Reference"].ToString(),
+                                  CurrencyMaster = d["CurrencyMaster"].ToString(),
+                                  DebitAmount = d["DebitAmount"].ToString(),
+                                  CreditAmount = d["CreditAmount"].ToString(),
+                                  AmountMaster = d["AmountMaster"].ToString(),
+                                  CashierNo = d["CashierNo"].ToString(),
+                                  UserName = d["UserName"].ToString(),
+                                  RoomClass = d["RoomClass"].ToString(),
+                                  TransactionGroup = d["TransactionGroup"].ToString(),
+                                  TransactionSubGroup = d["TransactionSubGroup"].ToString(),
+                                  Quantity = d["Quantity"].ToString(),
+                                  Price = d["Price"].ToString(),
+                                  AmountBeforeTax = d["AmountBeforeTax"].ToString(),
+                                  Amount = d["Amount"].ToString(),
+                                  ConfirmationNo = d["ConfirmationNo"].ToString(),
+                                  LastName = d["LastName"].ToString(),
+                                  ArrivalDate = d["ArrivalDate"].ToString(),
+                                  DepartureDate = d["DepartureDate"].ToString()
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi lấy dữ liệu Transfer AR: " + ex.Message });
+            }
+        }
+
         [HttpGet]
         public IActionResult RoomDiscrepancy(int Sleep = 0, int Skip = 0, int Person = 0)
         {
@@ -2060,6 +2491,34 @@ namespace Report.Controllers
             }
         }
         [HttpGet]
+        public IActionResult RevenueRoomReport(DateTime fromDate, DateTime toDate, string roomTypes, int zone)
+        {
+            try
+            {
+                var data = _iReportService.RevenueRoomReport(fromDate, toDate, roomTypes, zone);
+
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  Zone = !string.IsNullOrEmpty(d["Zone"].ToString()) ? d["Zone"] : "",
+                                  RoomDate = !string.IsNullOrEmpty(d["RoomDate"].ToString()) ? d["RoomDate"] : "",
+                                  TotalRoom = !string.IsNullOrEmpty(d["TotalRoom"].ToString()) ? d["TotalRoom"] : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
+                                  OCC = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"] : "",
+                                  Persons = !string.IsNullOrEmpty(d["Persons"].ToString()) ? d["Persons"] : "",
+                                  RoomSales = !string.IsNullOrEmpty(d["RoomSales"].ToString()) ? d["RoomSales"] : "",
+                                  TurnOver = !string.IsNullOrEmpty(d["TurnOver"].ToString()) ? d["TurnOver"] : "",
+                                  RoomSalesVND = !string.IsNullOrEmpty(d["RoomSalesVND"].ToString()) ? d["RoomSalesVND"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
+        [HttpGet]
         public IActionResult OccupancybyPersonData(DateTime fromDate, DateTime toDate, int roomTypeID)
         {
             try
@@ -2092,7 +2551,7 @@ namespace Report.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+                return Json(ex.Message);
             }
         }
 
@@ -2310,6 +2769,106 @@ namespace Report.Controllers
 
 
         [HttpGet]
+        public IActionResult DepartureReportsData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string paymethod, string rateCode, string block,
+            string zone, string vip, string viponlycheck, int sortOrder,
+           string pseudo, string dueout, string checkout, string disRoomSharer, string  specials, string lateCheckOut, string earlyDep,string agents,string company,
+           string source,string individuals,string group)
+        {
+            roomClass = roomClass ?? "";
+            roomtype = roomtype ?? "";
+            paymethod = paymethod ?? "";
+            rateCode = rateCode ?? "";
+            block = block ?? "";
+            zone = zone ?? "";
+            vip = vip ?? "";
+            viponlycheck = viponlycheck ?? "";
+            pseudo = pseudo ?? "";
+            dueout = dueout ?? "";
+            checkout = checkout ?? "";
+            disRoomSharer = disRoomSharer ?? "";
+            specials = specials ?? "";
+            lateCheckOut = lateCheckOut ?? "";
+            earlyDep = earlyDep ?? "";
+            agents = agents ?? "";
+            company = company ?? "";
+            source = source ?? "";
+            individuals = individuals ?? "";
+            group = group ?? "";
+
+            try
+            {
+                DataTable dt = _iReportService.DepartureReportsData(
+    fromDate,
+    toDate,
+    roomClass,
+    roomtype,
+    paymethod,
+    rateCode,
+    block,
+    zone,
+    vip,
+    viponlycheck,
+    sortOrder,
+    pseudo,
+    dueout,
+    checkout,
+    disRoomSharer,
+    specials,
+    lateCheckOut,
+    earlyDep,
+    agents,
+    company,
+    source,
+    individuals,
+    group);
+
+
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+                                  ReservationHolder = d["ReservationHolder"]?.ToString() ?? "",
+                                  Status = d["Status"]?.ToString() ?? "",
+                                  VIP = d["VIP"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? "",
+                                  OriginalDepartureDate = d["OriginalDepartureDate"]?.ToString() ?? "",
+                                  NoOfAdult = d["NoOfAdult"]?.ToString() ?? "",
+                                  NoOfChild = d["NoOfChild"]?.ToString() ?? "",
+                                  NoOfChild1 = d["NoOfChild1"]?.ToString() ?? "",
+                                  NoOfChild2 = d["NoOfChild2"]?.ToString() ?? "",
+                                  Prs = d["Prs"]?.ToString() ?? "",
+                                  NoOfRoom = d["NoOfRoom"]?.ToString() ?? "",
+                                  NoOfNight = d["NoOfNight"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  BusinessBlockCode = d["BusinessBlockCode"]?.ToString() ?? "",
+                                  RateCode = d["RateCode"]?.ToString() ?? "",
+                                  ResType = d["ResType"]?.ToString() ?? "",
+                                  ETD = d["ETD"]?.ToString() ?? "",
+                                  PaymentMethod = d["PaymentMethod"]?.ToString() ?? "",
+                                  FolioBalance = d["FolioBalance"]?.ToString() ?? "",
+                                  ShareRoomName = d["ShareRoomName"]?.ToString() ?? "",
+                                  AccompanyName = d["AccompanyName"]?.ToString() ?? "",
+                                  Balance = d["Balance"]?.ToString() ?? "",
+                                  CurrencyMaster = d["CurrencyMaster"]?.ToString() ?? "",
+                                  Comment = d["Comment"]?.ToString() ?? "",
+                                  Packages = d["Packages"]?.ToString() ?? "",
+                                  Specials = d["Specials"]?.ToString() ?? "",
+                                  ItemInventory = d["ItemInventory"]?.ToString() ?? "",
+                                  GroupCode = d["GroupCode"]?.ToString() ?? ""
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
         public IActionResult SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted)
         {
             try
@@ -2336,6 +2895,57 @@ namespace Report.Controllers
                 return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
             }
         }
+
+        [HttpGet]
+        public IActionResult JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp)
+        {
+            transaction = transaction ?? "";
+            article = article ?? "";
+            cashier = cashier ?? "";
+            roomclass = roomclass ?? "";
+            room = room ?? "";
+            viewBy = viewBy ?? "";
+            netDisp = netDisp ?? "";
+            try
+            {
+                DataTable dt = _iReportService.JournalByCashierArticleData(fromDate, toDate, transaction, article, cashier, roomclass, room, viewBy, netDisp);
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = d["TransactionDate"].ToString() ?? "",
+                                  RoomNo = d["RoomNo"].ToString() ?? "",
+                                  AccountName = d["AccountName"].ToString() ?? "",
+                                  TransactionCode = d["TransactionCode"].ToString() ?? "",
+                                  TrnsDescription = d["TrnsDescription"].ToString() ?? "",
+                                  ArticleCode = d["ArticleCode"].ToString() ?? "",
+                                  ArticleDescription = d["ArticleDescription"].ToString() ?? "",
+                                  InvoiceNo = d["InvoiceNo"].ToString() ?? "",
+                                  Supplement = d.Table.Columns.Contains("Supplement")
+                                 ? d["Supplement"].ToString() ?? ""
+                                 : (d.Table.Columns.Contains("Expr1") ? d["Expr1"].ToString() ?? "" : ""),
+                                  Reference = d["Reference"].ToString() ?? "",
+                                  CurrencyMaster = d["CurrencyMaster"].ToString() ?? "",
+                                  DebitAmount = d["DebitAmount"].ToString() ?? "",
+                                  CreditAmount = d["CreditAmount"].ToString() ?? "",
+                                  AmountMaster = d["AmountMaster"].ToString() ?? "",
+                                  CashierNo = d["CashierNo"].ToString() ?? "",
+                                  UserName = d["UserName"].ToString() ?? "",
+                                  RoomClass = d["RoomClass"].ToString() ?? "",
+                                  TransactionGroup = d["TransactionGroup"].ToString() ?? "",
+                                  TransactionSubGroup = d["TransactionSubGroup"].ToString() ?? "",
+                                  Price = d.Table.Columns.Contains("Price") ? d["Price"].ToString() ?? "" : "",
+                                  AmountBeforeTax = d.Table.Columns.Contains("AmountBeforeTax") ? d["AmountBeforeTax"].ToString() ?? "" : "",
+                                  Amount = d.Table.Columns.Contains("Amount") ? d["Amount"].ToString() ?? "" : "",
+                                  TransDescription = d["TransDescription"].ToString() ?? ""
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
+
         [HttpGet]
         public IActionResult ManagerReport(DateTime businessDate, string currency)
         {
@@ -2465,6 +3075,7 @@ namespace Report.Controllers
                                   Reference = !string.IsNullOrEmpty(d["Reference"].ToString()) ? d["Reference"] : "",
                                   Supplement = !string.IsNullOrEmpty(d["Supplement"].ToString()) ? d["Supplement"] : "",
                                   TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["TransactionCode"].ToString()) ? d["TransactionCode"] : "",
                                   Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
                                   Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
                                   CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
@@ -2477,6 +3088,130 @@ namespace Report.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+        [HttpGet]
+        public IActionResult RevenueSpa(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+
+                var data = _iReportService.RevenueSpa(fromDate, toDate);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  TransactionName = !string.IsNullOrEmpty(d["TransactionName"].ToString()) ? d["TransactionName"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(d["CurrencyID"].ToString()) ? d["CurrencyID"] : "",
+                                  AmountBeForeTax = decimal.TryParse(d["AmountBeForeTax"]?.ToString(), out var amtBeforeTax) ? amtBeforeTax : 0,
+                                  AmountGross = decimal.TryParse(d["AmountGross"]?.ToString(), out var amtGross) ? amtGross : 0,
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",                          
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv)
+        {
+
+            try
+            {
+                roomTypeCsv = roomTypeCsv ?? "";
+                var data = _iReportService.StatisticRoomType(fromDate, toDate, roomTypeCsv);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  PotentialRms = !string.IsNullOrEmpty(d["Potential Rms"].ToString()) ? d["Potential Rms"] : "",
+                                  RmsOcc = !string.IsNullOrEmpty(d["Rms Occ"].ToString()) ? d["Rms Occ"] : "",
+                                  Prs = !string.IsNullOrEmpty(d["Prs"].ToString()) ? d["Prs"] : "",                               
+                                  RoomRevenue = !string.IsNullOrEmpty(d["Room Revenue"].ToString()) ? d["Room Revenue"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult RoomStatistic(string year, string fromMonth, string toMonth, string fromRoom, string toRoom)
+        {
+
+            try
+            {        
+                var data = _iReportService.RoomStatistic(year, fromMonth, toMonth, fromRoom, toRoom);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["Room No"].ToString()) ? d["Room No"] : "",
+                                  Month = !string.IsNullOrEmpty(d["Month"].ToString()) ? d["Month"] : "",
+                                  RoomArrivals = !string.IsNullOrEmpty(d["Room Arrivals"].ToString()) ? d["Room Arrivals"] : "",
+                                  RoomNights = !string.IsNullOrEmpty(d["Room Nights"].ToString()) ? d["Room Nights"] : "",
+                                  BedNights = !string.IsNullOrEmpty(d["Bed Nights"].ToString()) ? d["Bed Nights"] : "",
+                                  RoomRevenue = !string.IsNullOrEmpty(d["Room Revenue"].ToString()) ? d["Room Revenue"] : "",
+                                  ADR = !string.IsNullOrEmpty(d["ADR"].ToString()) ? d["ADR"] : "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId)
+        {
+
+            try
+            {
+                var data = _iReportService.GuestTrialBalance(date, isRouting, isCheckOut, roomTypeId);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  Reservation = !string.IsNullOrEmpty(d["Reservation"].ToString()) ? d["Reservation"] : "",
+                                  AccountName = !string.IsNullOrEmpty(d["AccountName"].ToString()) ? d["AccountName"] : "",
+                                  ReservationNo = !string.IsNullOrEmpty(d["ReservationNo"].ToString()) ? d["ReservationNo"] : "",
+                                  IsPasserBy = !string.IsNullOrEmpty(d["IsPasserBy"].ToString()) ? d["IsPasserBy"] : "",
+                                  RoomTypeID = !string.IsNullOrEmpty(d["RoomTypeID"].ToString()) ? d["RoomTypeID"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  ArrivalDate = !string.IsNullOrEmpty(d["ArrivalDate"].ToString()) ? d["ArrivalDate"] : "",
+                                  DepartureDate = !string.IsNullOrEmpty(d["DepartureDate"].ToString()) ? d["DepartureDate"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  OpenBalance = !string.IsNullOrEmpty(d["OpenBalance"].ToString()) ? d["OpenBalance"] : "",
+                                  Debit = !string.IsNullOrEmpty(d["Debit"].ToString()) ? d["Debit"] : "",
+                                  DebitTranfer = !string.IsNullOrEmpty(d["DebitTranfer"].ToString()) ? d["DebitTranfer"] : "",
+                                  Credit = !string.IsNullOrEmpty(d["Credit"].ToString()) ? d["Credit"] : "",
+                                  CreditTranfer = !string.IsNullOrEmpty(d["CreditTranfer"].ToString()) ? d["CreditTranfer"] : "",
+                                  CloseBalance = !string.IsNullOrEmpty(d["CloseBalance"].ToString()) ? d["CloseBalance"] : "",
+                                  Currency = !string.IsNullOrEmpty(d["Currency"].ToString()) ? d["Currency"] : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
+                                  FolioID = !string.IsNullOrEmpty(d["FolioID"].ToString()) ? d["FolioID"] : "",
+
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { error = ex.Message });
+            }
+        }
+
+
+
 
         [HttpGet]
         public IActionResult ArrivalsandCheckInTodayData(string roomClass ,string roomtype, string paymethod,string vip,string viewBy,string pseudo,string chkviponly,int disRoomSharer,string nopost)
@@ -2819,26 +3554,44 @@ namespace Report.Controllers
                     List<TransactionsModel> listts = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
                     ViewBag.TransactionsList = listts;
                     break;
-                case "RevenueByReport":
-                case "DepartureReports":
+
+                case "RevenueBy":
+                case "DailyMinibarReport":
+                case "DepositActivity":
+                case "IncurringDepositCollection":
+                case "IncurringDepositReturn":
+                case "IncurringDepositSummary":
+                case "IncurringDepositPaymentPlan":
+                case "JournalByCashierArticle":
+                case "ArticleByRooms":
+                case "RoomOccupancyStatistics":
+                case "DepartureReport":
                 case "ArrivalsDetailed":
-                case "ArrivalDetailGroupbyHolders":
+                case "ArrivalDetailedGroupbyHolder":
                 case "ReservationPreblocked":
                 case "VacantRoom":
                 case "Transportation":
-                case "ReservationbyCompany":
+              
                 case "RoomOccupancy":
+                case "RoomOccupancyChart":
+                case "RevenueRoom":
+
                 case "RoomMoves":
-                case "OccupancyByPerson":
+                case "OccupancyByPercon":
                 case "NoShowReport":
                 case "RevenueReports":
                 case "GuestMarketReport":
-                case "LeadtimeReports":
-                case "RatecodeReports":
+                case "CashierAudit":
+                case "RoomStatistic":                 
                 case "AnnualRoomOccupancy":
+                case "RoomTypeStatistic":
                 case "NationalStatistics":
-                case "ReservationSummary":         
-                case "ArrivalsAndCheckInToday":
+                case "ReservationSummary":
+                case "GuestTrialBalance":
+                case "ReservationbyCompany":
+                case "LeadTimeReport":
+                case "RatecodeReport":
+                case "ArrivalsAndCheckInToday":                   
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
@@ -2849,47 +3602,40 @@ namespace Report.Controllers
                     ViewBag.MarketList = listmk;
                     List<RateCodeModel> listrc = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
                     ViewBag.RateCodeList = listrc;
-
+                    List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+                    ViewBag.RoomList = listroom;
+                    List<ArticleModel> listaticl = PropertyUtils.ConvertToList<ArticleModel>(ArticleBO.Instance.FindAll());
+                    ViewBag.ArticleList = listaticl;
                     List<SourceModel> listsrc = PropertyUtils.ConvertToList<SourceModel>(SourceBO.Instance.FindAll());
                     ViewBag.SourceList = listsrc;
-
                     List<TransactionsModel> listpmtr = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
-
                     ViewBag.TransactionsList = listpmtr;
-
                     List<BusinessBlockModel> listbnbl = PropertyUtils.ConvertToList<BusinessBlockModel>(BusinessBlockBO.Instance.FindAll());
-
                     ViewBag.BusinessBlockList = listbnbl;
-
+                    List<CashierUserModel> listcse = PropertyUtils.ConvertToList<CashierUserModel>(CashierUserBO.Instance.FindAll());
+                    ViewBag.CashierUserList = listcse;
                     List<ARPaymentModel> listarpm = PropertyUtils
                     .ConvertToList<ARPaymentModel>(ARPaymentBO.Instance.FindAll())
                     .GroupBy(x => x.TransactionCode)
                     .Select(g => g.First())
                     .ToList();
                     ViewBag.ARPaymentList = listarpm;
-
                     List<VIPModel> listvip = PropertyUtils.ConvertToList<VIPModel>(VIPBO.Instance.FindAll());
                     ViewBag.VIPList = listvip;
                     List<TransportTypeModel> listtrantt = PropertyUtils.ConvertToList<TransportTypeModel>(TransportTypeBO.Instance.FindAll());
-                    ViewBag.TransportTypeList = listtrantt;
+                    ViewBag.TransportTypeList = listtrantt;                 
+                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+                    ViewBag.UsersList = listuser;
                     break;
-                case "ReservationCancellations":
+                case "ReservationCancellation":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
                     ViewBag.ComList = listcm;
                     break;
                 case "Alerts":
                     List<AlertsSetupModel> listal = PropertyUtils.ConvertToList<AlertsSetupModel>(AlertsSetupBO.Instance.FindAll());
                     ViewBag.ALertList = listal;
-                    break;
-                    ;
-                case "CashierAudit":
-                    List<TransactionsModel> listtran = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll()).Where(x => x.GroupType == 1).ToList();
-
-                    ViewBag.TransactionsList = listtran;
-                    List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
-                    ViewBag.UsersList = listuser;
-                    break;
-                    ;
+                    break;                                               
+                   ;
             }
             ViewBag.ReportTitle = title;
             // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng

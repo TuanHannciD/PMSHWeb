@@ -1,0 +1,349 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var roomClassList = ViewBag.RoomClassList;
+    var report = ViewBag.ReportName as XtraReport;
+}
+
+<style>
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    .header-row {
+        font-weight: bold;
+        background-color: #f1f1f1; /* Có thể thay đổi màu nền */
+    }
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">Year:</label>
+            <select id="year" name="year" class="form-select form-select-sm w-auto">
+                @for (int y = 2020; y <= DateTime.Now.Year + 1; y++)
+                {
+                    <option value="@y">@y</option>
+                }
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Month:</label>
+            <select id="fromMonth" name="fromMonth" class="form-select form-select-sm w-auto">
+                @for (int m = 1; m <= 12; m++)
+                {
+                    <option value="@m">@m</option>
+                }
+            </select>
+        </div>
+
+        <!-- To Month -->
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Month:</label>
+            <select id="toMonth" name="toMonth" class="form-select form-select-sm w-auto">
+                @for (int m = 1; m <= 12; m++)
+                {
+                    <option value="@m">@m</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">From Room:</label>
+            <select id="fromRoom" name="fromRoom" class="form-control form-control-sm" style="width :100px">
+                @foreach (var item in roomClassList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
+        </div>
+        <div class="d-flex align-items-center me-3">
+            <label class="me-2 mb-0">To Room:</label>
+            <select id="toRoom" name="toRoom" class="form-control form-control-sm" style="width :100px">
+                @foreach (var item in roomClassList)
+                {
+                    <option value="@item.Code">@item.Code</option>
+                }
+            </select>
+
+        </div>
+
+       
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
+</div>
+<div class="mui-card">
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+        return `${year}-${month}-${day}`;
+    }
+
+        $(document).ready(function () {
+        const today = new Date();
+        const currentMonth = today.getMonth() + 1; 
+        const currentYear = today.getFullYear();
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        $("#year").val(currentYear);
+        $("#fromMonth").val(currentMonth);
+        $("#toMonth").val(currentMonth);  
+        $("#fromMonth").change(function () {
+            const from = parseInt($(this).val());
+            const to = parseInt($("#toMonth").val());
+
+            if (from > to) {
+                $("#toMonth").val(from);
+            }
+
+        });
+
+        // Khi thay đổi toMonth → đảm bảo toMonth >= fromMonth
+        $("#toMonth").change(function () {
+            const to = parseInt($(this).val());
+            const from = parseInt($("#fromMonth").val());
+
+            if (to < from) {
+                $("#fromMonth").val(to);
+            }
+        });
+    });          
+
+         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+            $("#loadingSpinner").show();
+            $.ajax({
+                 url: '/Report/RoomStatistic',
+                type: 'GET',
+                data: {
+                  year: $("#year").val(),
+                  fromMonth: $("#fromMonth").val(),
+                  toMonth: $("#toMonth").val(),
+                  fromRoom: $("#fromRoom").val(),
+                  toRoom: $("#toRoom").val(),
+                },
+                 crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    // $("#reportViewerContainer").html(result);
+                    // $("#loadingSpinner").hide();
+                              console.log(result);
+                initializeDataGrid(result);
+                    $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không thể tải báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+        });
+        function initializeDataGrid(data) {
+            var columnWidth = 160;
+        $("#gridContainer").dxDataGrid({
+            dataSource: data, allowColumnResizing: true,
+            columns: [
+                { dataField: "roomNo", caption: "RoomNo", width: columnWidth-60 },
+                { dataField: "month", caption: "Month", width: columnWidth -40},
+                { dataField: "roomArrivals", caption: "Room Arrivals", width: columnWidth -20},
+                { dataField: "roomNights", caption: "Room Nights", width: columnWidth -20},
+                { dataField: "bedNights", caption: "Bed Nights", width: columnWidth-20},
+                { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth -20 },
+                { dataField: "adr", caption: "ADR", width: columnWidth-20 , dataType: "number", format: "#,##0"},
+            ],
+            summary: {
+        totalItems: [
+            {
+                    column: "month",
+                    summaryType: "sum",
+                    displayFormat: "Grand Total =",
+                    valueFormat: "#,##0"
+            },
+
+            {
+                    column: "roomArrivals",
+                    summaryType: "sum",
+                    displayFormat: "{0}",
+                    valueFormat: "#,##0"
+            },
+            {
+                    column: "roomNights",
+                    summaryType: "sum",
+                    displayFormat: "{0}",
+                    valueFormat: "#,##0"
+            },
+            {
+                    column: "bedNights",
+                    summaryType: "sum",
+                    displayFormat: "{0}",
+                    valueFormat: "#,##0"
+            },
+            {
+                    column: "roomRevenue",
+                    summaryType: "sum",
+                    displayFormat: "{0}",
+                    valueFormat: "#,##0"
+            },
+            {
+                    column: "adr",
+                    summaryType: "sum",
+                    displayFormat: "{0}",
+                    valueFormat: "#,##0"
+            }
+        ]
+    },
+            paging: { pageSize: 25 },
+               // scrolling:  {
+               //        mode: 'virtual',
+               //       useNative: true,
+               //      showScrollbar: "always"
+               //   },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
+             filterRow: {
+                  visible: true,
+                 applyFilter: "auto"
+              },
+               headerFilter: {
+                  visible: true
+              },            
+            showBorders: true,
+            onRowClick: function(e) {
+                console.log("ID được click:", e.data.id);
+            }
+
+        });
+    }
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedReport = '@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        // === Tạo header công ty (dòng 1) ===
+        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+        worksheet.mergeCells('A1:E1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+        // === Dòng 2: Thời gian xuất (phải) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+        worksheet.mergeCells('E2:H2');
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+        // === Dòng 3–4: Trống
+        worksheet.addRow([]);
+        worksheet.addRow([]);
+
+        // === Dòng 5: Tên báo cáo ở giữa ===
+        const reportRow = worksheet.addRow(['', '', selectedReport]);
+        worksheet.mergeCells('C5:F5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // === Dòng 6: Trống trước khi xuất dữ liệu
+        worksheet.addRow([]);
+
+        // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+        }).then(function () {
+            // Footer
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+            // Ghi file
+            let fileName = selectedReport + ".xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+
+
+      // Nút xuất PDF
+         $("#btnExportPdf").click(function () {
+          const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+          const doc = new jsPDF();
+
+          DevExpress.pdfExporter.exportDataGrid({
+              jsPDFDocument: doc,
+              component: $("#gridContainer").dxDataGrid("instance"),
+              autoTableOptions: {
+                  styles: { cellPadding: 2, fontSize: 8 },
+                  margin: { top: 20 }
+              }
+          }).then(() => {
+              doc.save("BaoCao.pdf");
+          });
+      });
+</script>
