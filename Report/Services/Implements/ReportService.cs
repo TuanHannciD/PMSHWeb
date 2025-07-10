@@ -1171,7 +1171,19 @@ namespace Report.Services.Implements
             };
             return DataTableHelper.getTableData("spRptGuestTrialBalance", param);
         }
+        public DataTable RevenueRoomReport(DateTime fromDate, DateTime toDate, string roomTypes, int zone)
+        {
+            if (string.IsNullOrEmpty(roomTypes)) roomTypes = "";
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpToDate", toDate),
+                new SqlParameter("@RoomType", roomTypes),
+                new SqlParameter("@Zone", zone),
 
+            };
+            return DataTableHelper.getTableData("spRptRevenueRoom", param);
+        }
 
     }
 }
