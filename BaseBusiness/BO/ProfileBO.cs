@@ -31,19 +31,19 @@ namespace BaseBusiness.BO
             {
                 code = "";
             }
-            if (string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(account))
             {
                 account = "";
             }
-            if (string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(firstName))
             {
                 firstName = "";
             }
-            if (string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(keyWord))
             {
                 keyWord = "";
             }
-            if (string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(city))
             {
                 city = "";
             }

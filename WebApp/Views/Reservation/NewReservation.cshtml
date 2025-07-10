@@ -1,14 +1,15 @@
-﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
+﻿﻿
+<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <div class="body">
-@*     <div id="loading" class="loading">
+    @*     <div id="loading" class="loading">
         <div class="spinner"></div>
         <p id="loading-text">Loading data ... <span id="progress">0%</span></p>
     </div> *@
     <div class="container2">
-        <div >
+        <div>
             <div tyle="text-align: center !important;"></div>
             <div class="button-group mb-1">
-                <button  class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
+                <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
                 <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
                 <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
             </div>
@@ -17,8 +18,8 @@
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Name</label>
-                    <select class="col-md-9" id="txtName">
-                    </select>
+                    <input class="col-md-8" id="txtName"/>
+                    <button class="col-md-1" onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">First name</label>
@@ -54,7 +55,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Date of Birth</label>
-                    <input class="col-md-9"  type="date" value="1900-01-01" id="txtDob">
+                    <input class="col-md-9" type="date" value="1900-01-01" id="txtDob">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Nationality</label>
@@ -132,7 +133,7 @@
             <!-- Arrival Section -->
             <div class="section">
                 <div class="row me-1">
-                    
+
                     <label class="col-md-3">Arrival</label>
                     <input type="date" id="arrival" class="col-md-5">
                     <button class="col-md-1" onclick="changeDate('arrival', -1)">-</button>
@@ -194,7 +195,6 @@
                 <div class="row me-1">
                     <label class="col-md-3">Currency</label>
                     <select class="col-md-9" asp-items="ViewBag.cboCurrency">
-
                     </select>
                 </div>
                 <div class="row me-1">
@@ -208,8 +208,8 @@
                     </select>
                 </div>
                 <div class="row me-1">
-                    <label  class="col-md-3">Allotment</label>
-                    <select  class="col-md-9">
+                    <label class="col-md-3">Allotment</label>
+                    <select class="col-md-9">
                         <option></option>
                     </select>
                 </div>
@@ -220,7 +220,7 @@
                     <input type="number" value="0.00" class="col-md-5">
                 </div>
                 <div class="row me-1">
-                    <label  class="col-md-3">Reason</label>
+                    <label class="col-md-3">Reason</label>
                     <select class="col-md-9">
                         <option></option>
                     </select>
@@ -231,7 +231,7 @@
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Res. Type</label>
-                    <select  class="col-md-9">
+                    <select class="col-md-9">
                         <option>Market</option>
                     </select>
                 </div>
@@ -289,7 +289,8 @@
                         </div>
                     </div>
                     <div class="col-md-4 row" style="text-align:center;justify-content:center">
-                        <span style="font-size:12px;color:red;padding-top:8px">Rate amount
+                        <span style="font-size:12px;color:red;padding-top:8px">
+                            Rate amount
                             after discount
                         </span>
                     </div>
@@ -337,8 +338,8 @@
                     <label class="col-md-1" style="font-size:12px;color:red;">VND</label>
                 </div>
                 <div class="row me-1">
-                    <label  class="col-md-3">Set Color</label>
-                    <input  class="col-md-9" type="color">
+                    <label class="col-md-3">Set Color</label>
+                    <input class="col-md-9" type="color">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Print Rate</label>
@@ -355,9 +356,76 @@
 
                 <div class="row me-1">
                     <label class="col-md-3">Comments</label>
-                    <textarea rows="3"class="specials-section col-md-9"></textarea>
+                    <textarea rows="3" class="specials-section col-md-9"></textarea>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="nameToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+</div>
+<!-- Modal search profile-->
+<div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchProfle()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mui-card mb-2">
+                    <div class="col-md-2 mb-2">
+                        <label for="input1" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="nameProfileSearch" placeholder="Enter name" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input2" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstNameProfileSearch" placeholder="Enter first name" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input3" class="form-label">View By</label>
+                        <select type="text" class="form-control" id="viewByProfileSearch" disabled style="line-height:1.28">
+                            <option selected value="3">Individual</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input4" class="form-label">City</label>
+                        <select type="text" class="form-control" id="cityProfileSearch" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input5" class="form-label">Key word</label>
+                        <input type="text" class="form-control" id="keywordProfileSearch" placeholder="Enter value" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input6" class="form-label">Code</label>
+                        <input type="text" class="form-control" id="codeProfileSearch" placeholder="Enter value" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input4" class="form-label">Property</label>
+                        <select type="text" class="form-control" id="propertyProfileSearch" disabled style="line-height:1.28">
+                            <option selected>PMSh TheArena</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label >Sale in charge</label>
+                        <div>
+                            <input type="checkbox" id="sale" name="myCheckbox">
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchProfile" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -366,8 +434,8 @@
         // Chờ tất cả các hàm AJAX hoàn thành
          //fetchData();
     });
-    
-   
+
+
     // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
     function formatDate(date) {
         const year = date.getFullYear();
@@ -544,7 +612,176 @@
 
     // Khởi tạo trạng thái ban đầu
     updateRoomSelect();
-    
+    function openModalSearchProfile(){
+        getAllProfiles();
+        $('#modalProfile').modal('show');
+    }
+    function closeModalSearchProfle(){
+        $('#modalProfile').modal('hide');
+
+    }
+    var listProfiles = [];
+    function getAllProfiles() {
+        $.ajax({
+            url: '/Profile/GetAllProfiles',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                code: $('#codeProfileSearch').val(),
+                account: $('#nameProfileSearch').val(),
+                firstName: $('#firstNameProfileSearch').val(),
+                keyWord: $('#keywordProfileSearch').val(),
+                city: $('#cityProfileSearch').val(),
+                type: $('#viewByProfileSearch').val(),
+                showSaleInCharge: $("#sale").is(":checked"),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listProfiles = result;
+                initializeDataGridSearchProfile(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+        });
+    }
+      
+    function filterProfileModal() {
+        const codeSearchTerm = $('#codeProfileSearch').val().toLowerCase();
+        const firstNameSearchTerm = $('#firstNameProfileSearch').val().toLowerCase();
+        const accountSearchTerm = $('#nameProfileSearch').val().toLowerCase();
+        const citySearchTerm = $('#cityProfileSearch').val();
+        const keywordkSearchTerm = $('#keywordProfileSearch').val();
+        const filteredProfiles = listProfiles.filter(profile => 
+            profile.code.toLowerCase().includes(codeSearchTerm) &&
+            profile.account.toLowerCase().includes(firstNameSearchTerm) &&
+            profile.city == citySearchTerm && 
+            profile.keyword.toLowerCase().includes(keywordkSearchTerm) &&
+            profile.account.toLowerCase().includes(accountSearchTerm)
+        );
+        initializeDataGridSearchProfile(filteredProfiles);
+    }
+    function initializeDataGridSearchProfile(data) {
+        var columnWidth = 150; 
+
+        $("#gridContainerSearchProfile").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true, 
+            columns: [
+
+
+                { dataField: "id", caption: "ID", width: columnWidth - 80, visible: false},
+                { dataField: "code", caption: "Code", width: columnWidth - 80 },
+                { dataField: "account", caption: "Account", width: columnWidth * 2 },
+                { dataField: "taxCode", caption: "Tax Code", width: columnWidth },
+                { dataField: "city", caption: "City", width: columnWidth },
+                { dataField: "nationality", caption: "Nat", width: columnWidth },
+                { dataField: "address", caption: "Address", width: columnWidth },
+                { dataField: "homeAddres", caption: "Business Address", width: columnWidth },
+                { dataField: "company", caption: "Company", width: columnWidth },
+                { dataField: "handPhone", caption: "HandPhone", width: columnWidth },
+                { dataField: "telephone", caption: "Telephone", width: columnWidth },
+                { dataField: "email", caption: "Email", width: columnWidth },
+                { dataField: "website", caption: "Website", width: columnWidth },
+                { dataField: "aRNo", caption: "ARNo", width: columnWidth },
+                { dataField: "postalCode", caption: "Postal Code", width: columnWidth },
+                { dataField: "keyword", caption: "Keyword", width: columnWidth },
+                { dataField: "description", caption: "Description", width: columnWidth },
+                { dataField: "personInChargeID", caption: "Sale In Charge", width: columnWidth },    
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                 visible: true,
+                 applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                console.log("Double-clicked row data:", e.data);
+                getInfoByProfileID(e.data.id);
+                $('#modalProfile').modal('hide');
+            }
+        });
+    }
+    function extractLastName(name) {
+        const parts = name.trim().split(/,\s*/);
+        return parts[1] || '';
+    }
+    function showToast(title, message, isSuccess) {
+        const toast = new bootstrap.Toast($('#nameToast')[0]);
+        $('#toastTitle').text(title);
+        $('#toastMessage').text(message);
+        $('#nameToast').removeClass('bg-success bg-danger text-white').addClass(isSuccess ? 'bg-success text-white' : 'bg-danger text-white');
+        toast.show();
+    }
+    function validateName(name) {
+        // Regex for "FirstName MiddleName, LastName" or "FirstName MiddleName,LastName"
+        const namePattern = /^[A-Z][a-z]*\s[A-Z][a-z]*,\s*[A-Z][a-z]*$/;
+        return namePattern.test(name.trim());
+    }
+    $('#txtName').on('blur', function() {
+        const name = $(this).val();
+        if (name) {
+            if (validateName(name)) {
+                const lastName = extractLastName(name);
+                $('#txtFirstName').val(lastName);
+                $('#nameProfileSearch').val(name);
+            } else {
+                showToast('Error', 'Invalid name format! Use FirstName MiddleName LastName or FirstName MiddleName,LastName', false);
+            }
+        }
+    });
+    function getInfoByProfileID(id){
+        $.ajax({
+            url: '/Reservation/GetInfoProfile',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                profileID: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#nameProfileSearch').val(result.account);
+                $('#txtName').val(result.account);
+                $('#txtFirstName').val(result.firstname);
+                $('#txtTitle').val(result.titleID);
+                $('#txtPhone').val(result.handPhone);
+                $('#txtEmail').val(result.email);
+                $('#txtIdentityCard').val(result.identityCard);
+                $('#txtPassport').val(result.passPort);
+                $('#txtAddress').val(result.address);
+                const formattedDate = result.dateOfBirth.split("T")[0];
+                    $('#txtDob').val(formattedDate);
+                // $('#txtFirstName').val(result.firstname);
+
+
+
+;            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
     // async function getAllProfileIndividual() {
     //     return $.ajax({
     //         url: '/Profile/GetAllProfileIndividual',
@@ -594,35 +831,7 @@
     //         }
     //     });
     // }
-    $('#txtName').on('change', function() {
-        let selectedValue = $(this).val();
-        if(selectedValue != 0){
-            $.ajax({
-            url: '/Profile/GetProfileByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{id : selectedValue},
-            success: function (result) {
-                $('#txtFirstName').val(result.profile.firstname);
-                $('#txtTitle').val(result.profile.titleID);
-                $('#txtPhone').val(result.profile.handPhone);
-                $('#txtEmail').val(result.profile.email);
-                $('#txtIdentityCard').val(result.profile.identityCard);
-                $('#txtPassport').val(result.profile.passPort);
-                $('#txtAddress').val(result.profile.address);
-                $('#txtNationality').val(result.profile.nationalityID);
-                $('#txtCity').val(result.profile.city);
-                console.log(result.profile);
-                $('#txtVIP').val(result.profile.vipid);
-            },
-            error: function (xhr, statusText, err) {
 
-            }
-        });
-        }
-    });
 
     // function getRateCode() {
     //     return $.ajax({
