@@ -623,6 +623,24 @@
         $('#modalProfile').modal('show');
     }
     function closeModalSearchProfle(){
+        $('#nameProfileSearch').val('');
+        $('#firstNameProfileSearch').val('');
+        $('#cityProfileSearch').val(0);
+        $('#txtName').val('');
+        $('#txtFirstName').val('');
+        $('#txtTitle').val(0);
+        $('#txtPhone').val('');
+        $('#txtEmail').val('');
+        $('#txtIdentityCard').val('');
+        $('#txtPassport').val('');
+        $('#txtAddress').val('');
+        $('#txtDob').val('');
+        $('#txtNationality').val(0);
+        $('#txtCity').val(0);
+        $('#txtVIP').val(0);
+        $('#txtMemberType').val(0);
+        $('#txtCardNo').val('');
+        $('#txtPrefRoom').val('');
         $('#modalProfile').modal('hide');
 
     }
@@ -723,7 +741,6 @@
                 mode: "single" // Allows only one row to be selected at a time
             },
             onRowDblClick: function(e) {
-                console.log("Double-clicked row data:", e.data);
                 getInfoByProfileID(e.data.id);
                 $('#modalProfile').modal('hide');
             }
@@ -784,7 +801,6 @@
                 $('#txtNationality').val(result.nationalityID);
                 $('#txtCity').val(result.city);
                 $('#txtVIP').val(result.vipID);
-                $('#txtMemberType').val(result.memberType);
                 $('#txtCardNo').val(result.memberNo);
                 $('#txtMemberType').val(result.memberType);
                 $('#txtPrefRoom').val(result.prefRoom);
