@@ -38,5 +38,39 @@ namespace Reservation.Services.Implements
                 throw new Exception($"Lỗi không xác định khi lấy RateCode: {ex.Message}", ex);
             }
         }
+
+        public DataTable GetRoomAvailable(DateTime fromDate, DateTime toDate, string floor, string roomTypeID, string smoking, string foStatus, string hkStatus, string isDummy, string roomNo, int roomID, int Type)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@FromDate", fromDate),
+                    new SqlParameter("@ToDate", toDate),
+                    new SqlParameter("@Floor", floor),
+                    new SqlParameter("@RoomTypeID", roomTypeID),
+                    new SqlParameter("@Smoking", smoking),
+                    new SqlParameter("@FOStatus", foStatus),
+                    new SqlParameter("@HKStatusID", hkStatus),
+                    new SqlParameter("@IsDummy", isDummy),
+                    new SqlParameter("@RoomNo", roomNo),
+                    new SqlParameter("@RoomID", roomID),
+                    new SqlParameter("@Type", Type),
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spAvailableRoomsSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"Error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception($"Error: {ex.Message}", ex);
+            }
+        }
     }
 }
