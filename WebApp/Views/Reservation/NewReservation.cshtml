@@ -96,7 +96,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Group Code</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtGroupCode">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Contact</label>
@@ -105,15 +105,15 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Con. Phone</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtContactPhone">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Pref. Room</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtPrefRoom">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Last Stay</label>
-                    <label class="col-md-9">1</label>
+                    <input class="col-md-9" type="text" id="txtLastStay" value="1">
                 </div>
             </div>
         </div>
@@ -376,6 +376,7 @@
 <div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
                 <button type="button" class="btn-close" onclick="closeModalSearchProfle()"></button>
@@ -419,6 +420,11 @@
                         <div>
                             <input type="checkbox" id="sale" name="myCheckbox">
                         </div>
+                    </div>
+                </div>
+                <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 <div class="mui-card">
@@ -622,6 +628,7 @@
     }
     var listProfiles = [];
     function getAllProfiles() {
+        $("#loadingSpinner").show();
         $.ajax({
             url: '/Profile/GetAllProfiles',
             type: 'get',
@@ -647,6 +654,9 @@
                 } else {
                     informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
                 }
+            },
+            complete: function () {
+                $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
             }
         });
     }
@@ -759,6 +769,8 @@
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 $('#nameProfileSearch').val(result.account);
+                $('#firstNameProfileSearch').val(result.firstname);
+                $('#cityProfileSearch').val(result.city);
                 $('#txtName').val(result.account);
                 $('#txtFirstName').val(result.firstname);
                 $('#txtTitle').val(result.titleID);
@@ -768,11 +780,16 @@
                 $('#txtPassport').val(result.passPort);
                 $('#txtAddress').val(result.address);
                 const formattedDate = result.dateOfBirth.split("T")[0];
-                    $('#txtDob').val(formattedDate);
-                // $('#txtFirstName').val(result.firstname);
+                $('#txtDob').val(formattedDate);
+                $('#txtNationality').val(result.nationalityID);
+                $('#txtCity').val(result.city);
+                $('#txtVIP').val(result.vipID);
+                $('#txtMemberType').val(result.memberType);
+                $('#txtCardNo').val(result.memberNo);
+                $('#txtMemberType').val(result.memberType);
+                $('#txtPrefRoom').val(result.prefRoom);
 
-
-
+                    
 ;            },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
