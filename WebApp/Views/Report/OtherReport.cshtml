@@ -29,6 +29,11 @@
         color: white;
     }
 
+    .disabled-link {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
     #gridContainer .dx-datagrid {
         border-radius: 10px;
         overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài góc bo */
@@ -307,7 +312,7 @@
                 <a style="color:black" id="ReservationSummaryReport" class="text-decoration-none report-link" data-report="ReservationSummaryReport" data-title="Reservation Summary Report">Reservation Summary Report</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="RevenueByReport" class="text-decoration-none report-link" data-report="RevenueByReport" data-title="Revenue By ">Revenue By </a>
+                <a style="color:black" id="RevenueByReport" class="text-decoration-none report-link" data-report="RevenueBy" data-title="Revenue By ">Revenue By </a>
             </li>
            @*  <li class="list-group-item">
                 <a style="color:black" id="RatecodebyDateReport" class="text-decoration-none report-link" data-report="RatecodebyDateReport" data-title="Ratecode by Date Report">Ratecode by Date Report</a>
@@ -337,7 +342,7 @@
                 <a style="color:black" id="RoomOccupancy" class="text-decoration-none report-link" data-report="RoomOccupancy" data-title="Room Occupancy">Room Occupancy</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="ReservationCancellations" class="text-decoration-none report-link" data-report="ReservationCancellations" data-title="Reservation Cancellations">Reservation Cancellations</a>
+                <a style="color:black" id="ReservationCancellations" class="text-decoration-none report-link" data-report="ReservationCancellation" data-title="Reservation Cancellations">Reservation Cancellations</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" id="ReservationStatistics" class="text-decoration-none report-link" data-report="ReservationStatistics" data-title="Reservation Statistics">Reservation Statistics</a>
@@ -358,10 +363,10 @@
                 <a style="color:black" id="NationalStatistics" class="text-decoration-none report-link" data-report="NationalStatistics" data-title="National Statistics">National Statistics</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="SalesinChargeReportsForm" class="text-decoration-none report-link" data-report="SalesinChargeReportsForm" data-title="Sales in Charge Report ">Sales in Charge Reports </a>
+                <a style="color:black" id="SalesinChargeReportsForm" class="text-decoration-none report-link" data-report="SaleinChargeReport" data-title="Sales in Charge Report ">Sales in Charge Reports </a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="SalesinChargeActivity" class="text-decoration-none report-link" data-report="SalesinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
+                <a style="color:black" id="SalesinChargeActivity" class="text-decoration-none report-link" data-report="SaleinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" id="RevenueDetail" class="text-decoration-none report-link" data-report="RevenueDetail" data-title="Revenue Detail">Revenue Detail</a>
@@ -373,10 +378,10 @@
                 <a style="color:black" id="TAProductionReport" class="text-decoration-none report-link" data-report="TAProductionReport" data-title="TA Production Report">TA Production Report</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="LeadtimeReports" class="text-decoration-none report-link" data-report="LeadtimeReports" data-title="Leadtime Report">Leadtime Reports</a>
+                <a style="color:black" id="LeadtimeReports" class="text-decoration-none report-link" data-report="LeadTimeReport" data-title="Leadtime Report">Leadtime Reports</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="RatecodeReports" class="text-decoration-none report-link" data-report="RatecodeReports" data-title="Ratecode Report">Ratecode Reports</a>
+                <a style="color:black" id="RatecodeReports" class="text-decoration-none report-link" data-report="RatecodeReport" data-title="Ratecode Report">Ratecode Reports</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" id="AnnualRoomOccupancy" class="text-decoration-none report-link" data-report="AnnualRoomOccupancy" data-title="Annual Room Occupancy">Annual Room Occupancy</a>
@@ -388,7 +393,7 @@
                 <a style="color:black" id="RoomMoves" class="text-decoration-none report-link" data-report="RoomMoves" data-title="Room Moves">Room Moves</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" id="DepositTransferredAtCheckIn" class="text-decoration-none report-link" data-report="DepositTransferredAtCheckIn" data-title="Deposit Transferred At Check In">Deposit Transferred At Check In</a>
+                <a style="color:black" id="DepositTransferredAtCheckIn" class="text-decoration-none report-link" data-report="DepositTransferAtCheckIn" data-title="Deposit Transferred At Check In">Deposit Transferred At Check In</a>
             </li>
           
             <li class="list-group-item">
@@ -419,13 +424,13 @@
                 <a style="color:black" class="text-decoration-none report-link" data-report="BlacklistReport" data-title="Blacklist Report">Blacklist Report</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" class="text-decoration-none report-link" data-report="LeadtimeReports" data-title="Leadtime Reports">Leadtime Reports</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="LeadTimeReport" data-title="Leadtime Reports">Leadtime Reports</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" class="text-decoration-none report-link" data-report="SalesinChargeReportsForm" data-title="Sales in Charge Reports">Sales in Charge Reports</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="SaleinChargeReport" data-title="Sales in Charge Reports">Sales in Charge Reports</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" class="text-decoration-none report-link" data-report="SalesinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="SaleinChargeActivity" data-title="Sales in Charge Activity">Sales in Charge Activity</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" class="text-decoration-none report-link" data-report="ReservationSummaryReport" data-title="Reservation Summary Report">Reservation Summary Report</a>
@@ -452,7 +457,7 @@
                 <a style="color:black" class="text-decoration-none report-link" data-report="ArrivalsDetailed" data-title="Arrivals Detailed">Arrivals Detailed</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" class="text-decoration-none report-link" data-report="ArrivalDetailGroupbyHolders" data-title="Arrival Detail Group by Holders">Arrival Detail Group by Holders</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="ArrivalDetailedGroupbyHolder" data-title="Arrival Detail Group by Holders">Arrival Detail Group by Holders</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" class="text-decoration-none report-link" data-report="ReservationbyCompany" data-title="Reservation by Company">Reservation by Company</a>
@@ -464,7 +469,7 @@
                 <a style="color:black" class="text-decoration-none report-link" data-report="ReservationStatistics" data-title="Reservation Statistics">Reservation Statistics</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationCancellations" data-title="Reservation Cancellations">Reservation Cancellations</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationCancellation" data-title="Reservation Cancellations">Reservation Cancellations</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" class="text-decoration-none report-link" data-report="RoomOccupancy" data-title="Room Occupancy">Room Occupancy</a>
@@ -476,7 +481,7 @@
                 <a style="color:black" class="text-decoration-none report-link" data-report="DepartureIndividualAndGroup" data-title="Departure Individual and Group">Departure Individual and Group</a>
             </li>
             <li class="list-group-item">
-                <a style="color:black" class="text-decoration-none report-link" data-report="DepartureReports" data-title="Departure Reports">Departure Reports</a>
+                <a style="color:black" class="text-decoration-none report-link" data-report="DeparturesReport" data-title="Departure Reports">Departure Reports</a>
             </li>
             <li class="list-group-item">
                 <a style="color:black" class="text-decoration-none report-link" data-report="RoomDiscrepancy" data-title="Room Discrepancy">Room Discrepancy</a>
@@ -487,6 +492,7 @@
             <li class="list-group-item">
                 <a style="color:black" class="text-decoration-none report-link" data-report="DepartureExtended" data-title="Departure Extended">Departure Extended</a>
             </li>
+
         </ul>
 
         <div class="filter-header" id="header-nightaudit">
@@ -502,35 +508,35 @@
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="FixCharge Report">FixCharge Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositRequestLogReport" data-title="Deposit Request Log Report">Deposit Request Log Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueSpa" data-title="Revenue Spa">Revenue Spa</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueReports" data-title="Revenue Reports">Revenue Reports</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueReport" data-title="Revenue Reports">Revenue Reports</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueSummary" data-title="Revenue Summary">Revenue Summary</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="TransferARReports" data-title="Transfer AR Reports">Transfer AR Reports</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositTransferredAtCheckIn" data-title="Deposit Transferred at Check In">Deposit Transferred at Check In</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="TransferARReport" data-title="Transfer AR Reports">Transfer AR Reports</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositTransferAtCheckIn" data-title="Deposit Transferred at Check In">Deposit Transferred at Check In</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="TrialBalance" data-title="Trial Balance">Trial Balance</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositActivity" data-title="Deposit Activity">Deposit Activity</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositLedger" data-title="Deposit Ledger">Deposit Ledger</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyMinibarReport" data-title="Daily Minibar Report">Daily Minibar Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="GuestLedger" data-title="Guest Ledger">Guest Ledger</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueByReport" data-title="Revenue By">Revenue By</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueBy" data-title="Revenue By">Revenue By</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="CancellationJournal" data-title="Cancellation Journal">Cancellation Journal</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RatecodeReports" data-title="Ratecode Report">Ratecode Reports</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RatecodeReport" data-title="Ratecode Report">Ratecode Reports</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="PostingJournalInvoicing" data-title="Posting Journal Invoicing">Posting Journal Invoicing</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="ReservationPreblocked" data-title="Reservation Preblocked">Reservation Preblocked</a></li>
             <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DetailCheckOut" data-title="Detail Check Out">Detail Check Out</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="ArticleByRooms" data-title="Article by Rooms">Article by Rooms</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="JournalByCashierArticle" data-title="Journal by Cashier & Article">Journal by Cashier & Article</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="OccupancyByPerson" data-title="Occupancy by Person">Occupancy by Person</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="ArticleByRoom" data-title="Article by Rooms">Article by Rooms</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="JournalByCashierAndArticle" data-title="Journal by Cashier & Article">Journal by Cashier & Article</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="OccupancyByPercon" data-title="Occupancy by Person">Occupancy by Person</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="SummaryByArticle" data-title="Summary by Article">Summary by Article</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="IncurringDepositCollection" data-title="Incurring Deposit Collection">Incurring Deposit Collection</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="IncurringDepositPaymentPlan" data-title="Incurring Deposit Payment Plan">Incurring Deposit Payment Plan</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="IncurringDepositReturn" data-title="Incurring Deposit Return">Incurring Deposit Return</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="IncurringDepositSummary" data-title="Incurring Deposit Summary">Incurring Deposit Summary</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RoomStatistics" data-title="Room Statistics">Room Statistics</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RoomStatistic" data-title="Room Statistics">Room Statistics</a></li>
             <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DailyRevenueReports" data-title="Daily Revenue Reports">Daily Revenue Reports</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyRevenueReportsNew" data-title="Daily Revenue Reports New">Daily Revenue Reports New</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyRevenueReportsV2" data-title="Daily Revenue Report (V2)">Daily Revenue Report (V2)</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyRevenueReportNew" data-title="Daily Revenue Reports New">Daily Revenue Reports New</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyRevenueReport(V2)" data-title="Daily Revenue Report (V2)">Daily Revenue Report (V2)</a></li>
             <li class="list-group-item"><a style="color:blue" class="text-decoration-none report-link" data-report="ManagerReport" data-title="Manager Report">Manager Report</a></li>
-            <li class="list-group-item"><a style="color:blue" class="text-decoration-none report-link" data-report="RoomTypeStatistics" data-title="Room Type Statistics">Room Type Statistics</a></li>
+            <li class="list-group-item"><a style="color:blue" class="text-decoration-none report-link" data-report="RoomTypeStatistic" data-title="Room Type Statistics">Room Type Statistics</a></li>
 
         </ul>
 
@@ -550,6 +556,28 @@
    
 
    $(document).ready(function () {
+
+              const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];
+
+    const lowerPermissionNames = permissionData
+        .map(x => x.name?.trim().toLowerCase());
+
+
+
+    // Lặp qua tất cả các report-link
+    $(".report-link").each(function () {
+        const reportName = $(this).data("report")?.toString().trim().toLowerCase();
+
+        if (!lowerPermissionNames.includes(reportName)) {
+            $(this).addClass("disabled-link");
+            $(this).css({
+                "pointer-events": "none",
+                "opacity": "0.4"
+            });
+        }
+    });
+
+
 
        $('#header-sale').click(function () {
         const reportList = $('#report-list');

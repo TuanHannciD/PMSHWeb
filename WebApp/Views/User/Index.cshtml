@@ -217,6 +217,15 @@
                     $('#txtPassword').val('');
                 } 
                 else{
+                    localStorage.removeItem("PermissionNames");
+
+                    // Gán dữ liệu mới vào localStorage (dưới dạng chuỗi JSON)
+                    localStorage.setItem("PermissionNames", JSON.stringify(data.data));
+
+                        localStorage.removeItem("Loginname");
+
+                    // Gán dữ liệu mới vào localStorage (dưới dạng chuỗi JSON)
+                    localStorage.setItem("Loginname", JSON.stringify(data.namelogin));
                     window.location.href = "/Home/Index";
                 }
 
