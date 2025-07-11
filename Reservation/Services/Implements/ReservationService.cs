@@ -100,6 +100,33 @@ namespace Reservation.Services.Implements
             }
         }
 
+        public DataTable GetReservationPreference(string code, int group)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@Code", code),
+                    new SqlParameter("@Group", group),
+
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationPreference", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
         public DataTable GetRoomAvailable(DateTime fromDate, DateTime toDate, string floor, string roomTypeID, string smoking, string foStatus, string hkStatus, string isDummy, string roomNo, int roomID, int Type)
         {
             try

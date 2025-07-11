@@ -597,10 +597,40 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " PaymentMethod";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Promotion";
 
                 var items = new List<SelectListItem>();
                 List<PromotionModel> list = PropertyUtils.ConvertToList<PromotionModel>(PromotionBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách Group Preference cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Group Preference</returns>
+        public static List<SelectListItem> GetGroupPreferenceProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Group Preference";
+
+                var items = new List<SelectListItem>();
+                List<PreferenceGroupModel> list = PropertyUtils.ConvertToList<PreferenceGroupModel>(PreferenceGroupBO.Instance.FindByAttribute("Inactive", 0));
                 if (list.Count > 0)
                 {
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();

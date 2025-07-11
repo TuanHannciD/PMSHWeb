@@ -17,6 +17,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Reservation.Controllers
 {
@@ -60,7 +61,7 @@ namespace Reservation.Controllers
             ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
             ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
             ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
-
+            ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             return View();
         }
@@ -294,6 +295,37 @@ namespace Reservation.Controllers
                                       col => col.ColumnName,
                                       col => d[col.ColumnName]?.ToString()
                                   )).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllPreference(string code,int preferenceGroup)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(code))
+                {
+                    code = "";
+                }
+                DataTable myData = _iReservationService.GetReservationPreference(code, preferenceGroup);
+
+                var result = (from d in myData.AsEnumerable()
+
+                              select new
+                              {
+                                  PreferenceID = d["PreferenceID"].ToString(),
+                                  Code = d["Code"].ToString(),
+                                  Description = d["Description"].ToString(),
+  
+
+                              }).ToList();
 
 
                 return Json(result);
