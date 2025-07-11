@@ -23,7 +23,7 @@
                 <div class="row me-1">
                     <label class="col-md-3">Name</label>
                     <input class="col-md-8" id="txtName"/>
-                    <button class="col-md-1" onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
+                    <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">First name</label>
@@ -186,9 +186,7 @@
                     <button class="col-md-1" onclick="openModalSearchRoom()"><i class="fa-solid fa-ellipsis"></i></button>
 
                     <label class="col-md-1">RN</label>
-                    <select class="col-md-3">
-                        <option>RTC</option>
-                    </select>
+                    <input class="col-md-3" id="txtRN"/>
                 </div>
 
                 <div class="row me-1">
@@ -207,15 +205,14 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Packages</label>
-                    <select class="col-md-9">
-                        <option>net</option>
+                    <select class="col-md-9" id="txtPackage" asp-items="ViewBag.cboPackage">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Allotment</label>
-                    <select class="col-md-9">
-                        <option></option>
-                    </select>
+                    <input class="col-md-8" id="txtAllotment"/>
+                    <button class="col-md-1" onclick="openModalSearchAllotment()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Disc. Amt</label>
@@ -225,8 +222,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Reason</label>
-                    <select class="col-md-9">
-                        <option></option>
+                    <select class="col-md-9" id="txtReason" asp-items="ViewBag.cboReason">
                     </select>
                 </div>
             </div>
@@ -235,32 +231,28 @@
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Res. Type</label>
-                    <select class="col-md-9">
-                        <option>Market</option>
+                    <select class="col-md-9" asp-items="ViewBag.cboReservationType" id="txtResType">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Market</label>
-                    <select class="col-md-9">
-                        <option></option>
-                    </select>
+                    <input class="col-md-8" id="txtMarket"/>
+                    <button class="col-md-1" onclick="openModalSearchMarket()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Source</label>
-                    <select class="col-md-9">
-                        <option>Source</option>
+                    <select class="col-md-9" id="txtSource" asp-items="ViewBag.cboSource">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Sale</label>
-                    <select class="col-md-9">
-                        <option>Sale</option>
+                    <select class="col-md-9" id="txtPersonInCharge" asp-items="ViewBag.cboPersonInCharge">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Payment</label>
-                    <select class="col-md-9">
-                        <option>Payment</option>
+                    <select class="col-md-9" id="txtPayment" asp-items="ViewBag.cboPaymentMethod">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -324,8 +316,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Promotions</label>
-                    <select class="col-md-9">
-                        <option>Promotions</option>
+                    <select class="col-md-9" id="txtPromotion" asp-for="ViewBag.cboPromotion">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -440,13 +431,13 @@
     </div>
 </div>
 
-<!-- Modal search profile-->
+<!-- Modal search room-->
 <div class="modal fade modal-xl" id="modalRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Available Room Search</h5>
                 <button type="button" class="btn-close" onclick="closeModalSearchRoom()"></button>
             </div>
             <div class="modal-body">
@@ -534,6 +525,89 @@
                 <div class="mui-card">
                     <div id="gridContainerSearchRoom" class="mt-2 gridContainer"></div>
                 </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal search allotment-->
+<div class="modal fade modal-xl" id="modalAllotment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchAllotment()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllotment();"><i class="fas fa-search"></i> Search</button>
+@*                     <button class="mui-button mui-button-new" onclick="clearModelSearchRoom();"><i class="fas fa-eraser"></i> Clear</button>
+ *@                </div>
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">Code</label>
+                            <input type="text" class="form-control" id="codeAllotmentSearch"/>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Market</label>
+                            <select type="text" class="form-control" id="marketAllotmentSearch" asp-items="ViewBag.cboMarket">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input3" class="form-label">Allotment Type</label>
+                            <select type="text" class="form-control" id="allotmentTypeSearch" asp-items="ViewBag.cboAllotmentType"></select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input4" class="form-label">Profile</label>
+                            <select type="text" class="form-control" id="profileAllotmentSearch" asp-items="ViewBag.cboProfile">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2" >
+                            <label class="form-check-label" for="default">Default</label>
+                            <div><input class="form-check-input" type="checkbox" name="default" value="1">
+                            </<div>
+                        </div>
+                    </div>
+                </div>
+
+@*                 <div id="loadingSpinnerRoom" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchRoom" class="mt-2 gridContainer"></div>
+                </div> *@
+            </div>
+
+        </div>
+                <div class="row">
+                    <div class="mui-card col-md-5">
+                        <div id="gridContainerSearchAllotment" class="mt-2 gridContainer"></div>
+                    </div>
+                    <div class="mui-card col-md-6" style="display:none" id="SearchAllotmentDetail_wrapper">
+                        <div id="gridContainerSearchAllotmentDetail" class="mt-2 gridContainer"></div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal search market-->
+<div class="modal fade modal-xl" id="modalMarket" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Market</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchMarket()"></button>
+            </div>
+            <div class="modal-body">
+                <div id="treeListMarket"></div>
             </div>
 
         </div>
@@ -728,7 +802,7 @@
     // Khởi tạo trạng thái ban đầu
     updateRoomSelect();
     function openModalSearchProfile(){
-        getAllProfiles();
+        getAllProfiles(3);
         $('#modalProfile').modal('show');
     }
     function closeModalSearchProfle(){
@@ -754,8 +828,9 @@
 
     }
     var listProfiles = [];
-    function getAllProfiles() {
+    function getAllProfiles(type) {
         $("#loadingSpinner").show();
+        $('#viewByProfileSearch').val(3);
         $.ajax({
             url: '/Profile/GetAllProfiles',
             type: 'get',
@@ -1040,7 +1115,196 @@
         $('#roomNoSearch').val('');
         $('#floorSearch').val('');
         $('#smokingSearch').val('');
-    }      
+    }
+    function openModalSearchAllotment(){
+        $('#modalAllotment').modal('show');
+        getAllotment();
+    }
+    function closeModalSearchAllotment(){
+        $('#SearchAllotmentDetail_wrapper').hide();
+
+        $('#modalAllotment').modal('hide');
+    }
+    function getAllotment(){
+        var check =  $('#default').is(':checked') ? 1 : '';
+        $.ajax({
+            url: '/Reservation/GetAllotmentSearch',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                code : $('#codeAllotmentSearch').val(),
+                marketID: $('#marketAllotmentSearch').val(),
+                allotmentTypeID: $('#allotmentTypeSearch').val(),
+                profileID: $('#profileAllotmentSearch').val(),
+                isDefault: check,
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                    initializeDataGridSearchAllotment(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Can not load allotment");
+                }
+            }
+        });
+    }
+    function initializeDataGridSearchAllotment(data) {
+        var columnWidth = 150;
+
+        $("#gridContainerSearchAllotment").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "ID", caption: "ID", width: columnWidth - 80, visible: false},
+                { dataField: "code", caption: "All.Code", width: columnWidth - 80 },
+                { dataField: "allotmentName", caption: "All. Name", width: columnWidth * 2 },
+                { dataField: "accountName", caption: "Profile", width: columnWidth },
+                { dataField: "market", caption: "Market", width: columnWidth },
+                { dataField: "allotmentType", caption: "All. Type", width: columnWidth },
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowClick:function(e){
+                getAllotmentDetail(e.data.id);
+                $('#SearchAllotmentDetail_wrapper').show();
+            },
+            onRowDblClick: function(e) {
+                $('#modalAllotment').modal('hide');
+                $('#txtAllotment').val(e.data.code);
+                $('#codeAllotmentSearch').val(e.data.code);
+                $('#marketAllotmentSearch').val(e.data.marketID)
+                $('#allotmentTypeSearch').val(e.data.allotmentTypeID)
+                $('#profileAllotmentSearch').val(e.data.profileID)
+
+            }
+        });
+    }
+    function getAllotmentDetail(id){
+        var check =  $('#default').is(':checked') ? 1 : '';
+        $.ajax({
+                    url: '/Reservation/GetAllotmentSearchDetail',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                allotmentID : id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearchAllotmentDetail(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Can not load allotment");
+                }
+            }
+        });
+    }
+    function initializeDataGridSearchAllotmentDetail(data) {
+
+        $("#gridContainerSearchAllotmentDetail").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            }
+        });
+    }
+    function openModalSearchMarket(){
+        getDataMarket();
+        $('#modalMarket').modal('show');
+
+    }
+    function closeModalSearchMarket(){
+        $('#modalMarket').modal('hide');
+    }
+    function getDataMarket(){
+        $.ajax({
+            url: '/Reservation/GetAllMarket',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                treeListMarket(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+            // ,
+            // complete: function () {
+            //     $("#loadingSpinnerRoom").hide();
+            // }
+        });
+    }
+    function treeListMarket(data){
+        $("#treeListMarket").dxTreeList({
+                dataSource: data,
+                keyExpr: "id", // Unique identifier for each node
+                parentIdExpr: "parentId", // Field that defines the parent-child relationship
+                columns: [
+                    {
+                        dataField: "code",
+                        caption: "Code"
+                    },
+                    {
+                        dataField: "name",
+                        caption: "Name"
+                    }
+                    // Add more columns if needed
+                ],
+                expandedRowKeys: [], // Expand all nodes by default
+                showRowLines: true,
+                showBorders: true,
+                columnAutoWidth: true
+            });
+    }
     // async function getAllProfileIndividual() {
     //     return $.ajax({
     //         url: '/Profile/GetAllProfileIndividual',

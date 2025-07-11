@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace BaseBusiness.BO
 {
-    public class PackageBO : BaseBO
+    public class ReasonBO : BaseBO
     {
-        private PackageFacade facade = PackageFacade.Instance;
-        protected static PackageBO instance = new PackageBO();
+        private ReasonFacade facade = ReasonFacade.Instance;
+        protected static ReasonBO instance = new ReasonBO();
 
-        protected PackageBO()
+        protected ReasonBO()
         {
             this.baseFacade = facade;
         }
 
-        public static PackageBO Instance
+        public static ReasonBO Instance
         {
             get { return instance; }
         }

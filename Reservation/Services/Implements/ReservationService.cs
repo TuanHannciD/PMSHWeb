@@ -1,4 +1,6 @@
-﻿using BaseBusiness.util;
+﻿using BaseBusiness.BO;
+using BaseBusiness.util;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Data.SqlClient;
 using Reservation.Services.Interfaces;
 using System;
@@ -12,6 +14,65 @@ namespace Reservation.Services.Implements
 {
     public class ReservationService : IReservationService
     {
+    
+
+        public DataTable GetAllotment(string code, string marketID, string profileID, string isDefault,string allotmentTypeID)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@Code", code),
+                    new SqlParameter("@MarketID", marketID),
+                    new SqlParameter("@AllotmentTypeID", allotmentTypeID),
+                    new SqlParameter("@ProfileID", profileID),
+                    new SqlParameter("@IsDefault", isDefault),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spAllotmentSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable GetAllotmentDetail(int allotmentID, string roomType, DateTime showHistory)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@AllotmentID", allotmentID),
+                    new SqlParameter("@RoomType", roomType),
+                    new SqlParameter("@ShowHistory", showHistory)
+,
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spAllotmentDetailSearch_Temp", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
         public DataTable GetRateCode(DateTime arrival, DateTime departure, int adults, int roomType)
         {
             try
