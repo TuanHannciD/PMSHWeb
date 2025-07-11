@@ -117,11 +117,11 @@
             ],
 
             paging: { pageSize: 25 },
-            // scrolling: {
-            //     
-            //     useNative: true,
-            //     showScrollbar: "always"
-            // },
+            scrolling: {
+                
+                useNative: true,
+                showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -132,7 +132,7 @@
             summary: {
                 totalItems: [
                     {
-                        column: "name",
+                        column: "rsvStatus",
                         summaryType: "custom",
                         name: "grandTotalText",
                         displayFormat: "Grand Total"
@@ -142,6 +142,12 @@
                         summaryType: "sum",
                         displayFormat: "{0}",
                         valueFormat: "#,##0"
+                    },
+                    {
+                        column: "currencyID",
+                        summaryType: "custom",
+                        name: "currencySummary",
+                        displayFormat: "VND"
                     }
                 ],
 
