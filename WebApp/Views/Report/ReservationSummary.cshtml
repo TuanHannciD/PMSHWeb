@@ -280,89 +280,109 @@
         if (valid.length === 0) return 0;
         return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
     }
-    function initializReservationSummaryGrid(data) {
+      function initializReservationSummaryGrid(data) {
         const columnWidth = 180;
+
+        const numericColumns = [
+            "totalOccRms", "indRms", "blkRmsPU", "blkRmsNotPU", "totalAvailable",
+            "occPer", "roomRevenue", "grpRevenue", "avrRate",
+            "arrRms", "blkArrRms", "charrRms",
+            "depRms", "blkDepRms", "chdepRms",
+            "oOORms", "adl", "chl", "chl1", "chl2",
+            "totPer", "arrPrs", "depPrs"
+        ];
+
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+            dataSource: data,
+            allowColumnResizing: true,
             columns: [
-               { dataField: "rsvSummaryDate", caption: "Date", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy"},
-            { dataField: "weekDate", caption: "Week Date", width: columnWidth-80 },
-            { dataField: "totalOccRms", caption: "TotalOcc.R", width: columnWidth -70, dataType: "number", format: "#,##0"},
-            { dataField: "indRms", caption: "IndRm", width: columnWidth-70, dataType: "number", format: "#,##0"},
-            { dataField: "blkRmsPU", caption: "Grp Rm", width: columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "blkRmsNotPU", caption: "CH Rm", width: columnWidth-70 , dataType: "number", format: "#,##0"},
-            { dataField: "totalAvailable", caption: "Total Avail", width: columnWidth-70 , dataType: "number", format: "#,##0"},
-
-               { dataField: "occPer", caption: "Occ %", width:columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "roomRevenue", caption: "Individual Revenue",width: columnWidth-70 , dataType: "number", format: "#,##0" },
-            { dataField: "grpRevenue", caption: "Group Revenue", width: columnWidth-70, dataType: "number", format: "#,##0" },
-              { dataField: "indRevenue", caption: "Total Revenue", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
-                { dataField: "avrRate", caption: "Avr Rate", width:columnWidth-70 ,dataType: "date",format: "dd/MM/yyyy" },
-
-                    { dataField: "arrRms", caption: "Ind Arr Rm", width: columnWidth-70, dataType: "number", format: "#,##0" },
-               { dataField: "blkArrRms", caption: "Grp Arr Rm", width:columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "charrRms", caption: "C&H Arr Rm",  width:columnWidth-70,dataType: "number", format: "#,##0" },
-               {
-        caption: "Total Arr Rm",
-        width: columnWidth - 70,
-        dataType: "number",
-        format: "#,##0",
-        calculateCellValue: function(data) {
-            return (data.arrRms || 0) + (data.blkArrRms || 0) + (data.charrRms || 0);
-        }
-    },
-
-              { dataField: "depRms", caption: "Ind Dep Rm", width: columnWidth-70, dataType: "number", format: "#,##0"  },
-                { dataField: "blkDepRms", caption: "Grp Dep Rm", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-                { dataField: "chdepRms", caption: "C&H Rate", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-                    {
-        caption: "Total Dep Rm",
-        width: columnWidth - 70,
-        dataType: "number",
-        format: "#,##0",
-        calculateCellValue: function(data) {
-            return (data.depRms || 0) + (data.blkDepRms || 0) + (data.chdepRms || 0);
-        }
-    },  { dataField: "oOORms", caption: "OOORm", width: columnWidth-70, dataType: "number", format: "#,##0"  },
-                { dataField: "adl", caption: "adl", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-                { dataField: "chl", caption: "C", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-
-                   { dataField: "chl1", caption: "C1", width: columnWidth-70, dataType: "number", format: "#,##0"  },
-                { dataField: "chl2", caption: "C2", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-                { dataField: "totPer", caption: "Total Prs", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-                 { dataField: "arrPrs", caption: "Arr.Prs", width:columnWidth-70 , dataType: "number", format: "#,##0" },
-                { dataField: "depPrs", caption: "Dep.Prs", width:columnWidth-70 , dataType: "number", format: "#,##0" },
+                { dataField: "rsvSummaryDate", caption: "Date", width: columnWidth - 70, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "weekDate", caption: "Week Date", width: columnWidth - 80 },
+                { dataField: "totalOccRms", caption: "TotalOcc.R", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "indRms", caption: "IndRm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "blkRmsPU", caption: "Grp Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "blkRmsNotPU", caption: "CH Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "totalAvailable", caption: "Total Avail", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "occPer", caption: "Occ %", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "roomRevenue", caption: "Individual Revenue", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "grpRevenue", caption: "Group Revenue", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "indRevenue", caption: "Total Revenue", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "avrRate", caption: "Avr Rate", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "arrRms", caption: "Ind Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "blkArrRms", caption: "Grp Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "charrRms", caption: "C&H Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                {
+                    caption: "Total Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0",
+                    calculateCellValue: function (data) {
+                        return (data.arrRms || 0) + (data.blkArrRms || 0) + (data.charrRms || 0);
+                    }
+                },
+                { dataField: "depRms", caption: "Ind Dep Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "blkDepRms", caption: "Grp Dep Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chdepRms", caption: "C&H Rate", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                {
+                    caption: "Total Dep Rm", width: columnWidth - 70, dataType: "number", format: "#,##0",
+                    calculateCellValue: function (data) {
+                        return (data.depRms || 0) + (data.blkDepRms || 0) + (data.chdepRms || 0);
+                    }
+                },
+                { dataField: "oOORms", caption: "OOORm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "adl", caption: "adl", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chl", caption: "C", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chl1", caption: "C1", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chl2", caption: "C2", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "totPer", caption: "Total Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "arrPrs", caption: "Arr.Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "depPrs", caption: "Dep.Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" }
             ],
+         summary: {
+        totalItems: numericColumns.map(field => ({
+            name: `${field}Summary`,
+            showInColumn: field, // << QUAN TRỌNG
+            summaryType: "custom",
+            displayFormat: "{0}",
+            valueFormat: "#,##0"
+        })),
+        calculateCustomSummary: function (e) {
+            const isCustomRow = row => row?.cssClass === "custom" || row?.isTotal === true;
+
+            if (e.summaryProcess === "start") {
+                e.totalValue = 0;
+            } else if (e.summaryProcess === "calculate") {
+                const row = e.value;
+                if (isCustomRow(row)) return;
+
+                const field = e.name.replace("Summary", ""); // Tách tên cột từ name
+                const value = parseFloat(row[field]) || 0;
+                e.totalValue += value;
+            }
+        }
+    }
+,
             paging: { pageSize: 25 },
-      scrolling:  {
-         
-        useNative: true,
-       showScrollbar: "always"
-    },
+            scrolling: {
+                useNative: true,
+                showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true,
+                showNavigationButtons: true
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
-                filterRow: {
-         visible: true,
-        applyFilter: "auto"
-    },
-    headerFilter: {
-        visible: true
-    },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
             showBorders: true,
-                            onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data?.cssClass) {
-            e.rowElement.addClass(e.data.cssClass);
-        }
-    }
-           
+            onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            }
         });
     }
+
 
 
 

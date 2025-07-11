@@ -126,10 +126,11 @@
             { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "fbRevenue", caption: "F&B Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "miscRevenue", caption: "MISC Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
+                 { dataField: "adr", caption: "ADR", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "occ", caption: "%Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
              { dataField: "noofGuest", caption: "No of Guest", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "multiOccpc", caption: "%Multli Occ", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "MultiOcc", caption: "Multli Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "multiOcc", caption: "Multli Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
              { dataField: "singleOcc", caption: "Single Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" }
             ],
             paging: { pageSize: 25 },
@@ -156,10 +157,11 @@
                 { column: "roomRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "fbRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "miscRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                       { column: "adr", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "occ", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "noofGuest", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "multiOccpc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                { column: "MultiOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                { column: "multiOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "singleOcc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" }
             ]
         },

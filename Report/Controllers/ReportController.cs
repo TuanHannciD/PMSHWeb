@@ -484,6 +484,7 @@ namespace Report.Controllers
         [HttpGet]
         public IActionResult OTAsMonthlyReport(DateTime fromDate, string Number, string type, string currencyID)
         {
+            Number = Number ?? "";
             try
             {
                 var startDate = fromDate;
@@ -1020,6 +1021,7 @@ namespace Report.Controllers
                                   RoomRevenue = !string.IsNullOrEmpty(d["Room Revenue"].ToString()) ? d["Room Revenue"] : "",
                                   FBRevenue = !string.IsNullOrEmpty(d["F&B Revenue"].ToString()) ? d["F&B Revenue"] : "",
                                   MISCRevenue = !string.IsNullOrEmpty(d["MISC Revenue"].ToString()) ? d["MISC Revenue"] : "",
+                                  adr = !string.IsNullOrEmpty(d["ADR"].ToString()) ? d["ADR"] : "",
                                   Occ = !string.IsNullOrEmpty(d["% Occ"].ToString()) ? d["% Occ"] : "",
                                   NoofGuest = !string.IsNullOrEmpty(d["No. of Guest"].ToString()) ? d["No. of Guest"] : "",
                                   MultiOccpc = !string.IsNullOrEmpty(d["% Multi Occ"].ToString()) ? d["% Multi Occ"] : "",
@@ -1042,7 +1044,7 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder,string noOfRoom)
+        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder,string noOfRoom)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
@@ -3562,7 +3564,7 @@ namespace Report.Controllers
                 case "IncurringDepositReturn":
                 case "IncurringDepositSummary":
                 case "IncurringDepositPaymentPlan":
-                case "JournalByCashierArticle":
+                case "JournalByCashierAndArticle":
                 case "ArticleByRooms":
                 case "RoomOccupancyStatistics":
                 case "DepartureReport":

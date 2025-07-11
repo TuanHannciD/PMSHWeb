@@ -166,6 +166,7 @@
             }
         });
     });
+
        function initializeOTAsMonthly(response) {
         const data = response.data;
         const monthHeaders = response.monthHeaders;
@@ -191,53 +192,62 @@
                 caption: monthHeaders[i],
                 columns: [
                     {
+                        dataField: null,
                         name: nightColumnName,
                         caption: "Room night",
-                        calculateCellValue: function (rowData) {
-                            return Array.isArray(rowData.roomNights) && rowData.roomNights[i]
-                                ? rowData.roomNights[i].value
-                                : 0;
+                        cellTemplate: function (container, options) {
+                            const rowData = options.data;
+                            const value = Math.round(rowData?.roomNights?.[i]?.value || 0);
+                            container.text(value.toLocaleString('vi-VN'));
                         },
-                            width: columnWidth - 60
+                        width: columnWidth - 60
                     },
                     {
+                        dataField: null,
                         name: revenueColumnName,
                         caption: "Room revenue",
-                        calculateCellValue: function (rowData) {
-                            return Array.isArray(rowData.roomRevenue) && rowData.roomRevenue[i]
-                                ? rowData.roomRevenue[i].value
-                                : 0;
+                        cellTemplate: function (container, options) {
+                            const rowData = options.data;
+                            const value = Math.round(rowData?.roomRevenue?.[i]?.value || 0);
+                            container.text(value.toLocaleString('vi-VN'));
                         },
                         width: columnWidth - 60
                     }
                 ]
             });
 
-            // Thêm hàng tổng cho Room night
+            // Tổng Room night
             totalItems.push({
-                name: nightColumnName,
+                name: `total_${nightColumnName}`,
                 summaryType: "custom",
-                customizeText: function (e) {
-                    return "Tổng: " + e.value.toLocaleString();
-                }
+                showInColumn: nightColumnName,
+                displayFormat: " {0}",
+                valueFormat: "#,##0"
             });
 
-            // Thêm hàng tổng cho Room revenue
+            // Tổng Room revenue
             totalItems.push({
-                name: revenueColumnName,
+                name: `total_${revenueColumnName}`,
                 summaryType: "custom",
-                customizeText: function (e) {
-                    return "Tổng: " + e.value.toLocaleString('vi-VN') + " đ";
-                }
+                showInColumn: revenueColumnName,
+                displayFormat: " {0}",
+                valueFormat: "#,##0"
             });
         }
 
+        // ✅ Thêm tổng đếm số dòng ở cột guestName
+        totalItems.unshift({
+            column: "guestName",
+            summaryType: "count",
+            displayFormat: "Total: {0}"
+        });
+
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+            dataSource: data,
+            allowColumnResizing: true,
             columns: columns,
             paging: { pageSize: 25 },
-            scrolling:  {
-                
+            scrolling: {
                 useNative: true,
                 showScrollbar: "always"
             },
@@ -248,33 +258,54 @@
                 showInfo: true,
                 showNavigationButtons: true
             },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-                filterRow: {
-         visible: true,
-        applyFilter: "auto"
-    },
-    headerFilter: {
-        visible: true
-    },
+            showTotalSummary: true,
             summary: {
-                totalItems: totalItems
-            },
-            onCustomSummaryCalculate: function (e) {
-                if (e.summaryProcess === "start") {
-                    e.totalValue = 0;
+                totalItems: totalItems,
+                calculateCustomSummary: function (e) {
+                    const prefixNight = "total_roomNight_";
+                    const prefixRevenue = "total_roomRevenue_";
+
+                    let index = null;
+                    let isRevenue = false;
+
+                    if (e.name.startsWith(prefixNight)) {
+                        index = parseInt(e.name.replace(prefixNight, ""));
+                        isRevenue = false;
+                    } else if (e.name.startsWith(prefixRevenue)) {
+                        index = parseInt(e.name.replace(prefixRevenue, ""));
+                        isRevenue = true;
+                    } else {
+                        return;
+                    }
+
+                    if (e.summaryProcess === "start") {
+                        e.totalValue = 0;
+                    } else if (e.summaryProcess === "calculate") {
+                        const row = e.value;
+                        const value = isRevenue
+                            ? parseFloat(row?.roomRevenue?.[index]?.value || 0)
+                            : parseFloat(row?.roomNights?.[index]?.value || 0);
+                        e.totalValue += value;
+                    }
                 }
-                if (e.summaryProcess === "calculate") {
-                    const index = parseInt(e.name.split("_")[1]); // lấy chỉ số tháng
-                    const isRevenue = e.name.startsWith("roomRevenue");
-                    const value = isRevenue
-                        ? (e.value.roomRevenue?.[index]?.value || 0)
-                        : (e.value.roomNights?.[index]?.value || 0);
-                    e.totalValue += value;
+            },
+            onRowPrepared: function (e) {
+                if (e.rowType === "data") {
+                    if (e.data?.isTitle) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#e0e0e0" });
+                    }
+                    if (e.data?.isTotal) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#f6f6f6" });
+                    }
                 }
             }
         });
     }
+
 
 
 
