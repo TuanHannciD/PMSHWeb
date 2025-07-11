@@ -55,13 +55,13 @@
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
-            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
         <!-- To Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
-            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+            <input type="month" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Zone:</label>
@@ -104,7 +104,7 @@
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-        return `${year}-${month}-${day}`;
+        return `${year}-${month}`;
     }
 
     $(document).ready(function () {
@@ -194,7 +194,10 @@
                 const zoneKey = `zone${i}`;
                 totalRow[zoneKey] = sum(records, zoneKey);
             }
+                totalRow.sum1 = sum(records, "sum1");
 
+    // 👉 Trung bình percentage
+           totalRow.percentage = sum(records, "percentage");
             totalRow.isTotal = true;
             finalData.push(totalRow);
         });
@@ -214,117 +217,90 @@
         return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
     }
 
-    function initializeRoomOccupancyGrid(data) {
+      function initializeRoomOccupancyGrid(data) {
         const columnWidth = 180;
+
+        const numericZoneColumns = Array.from({ length: 31 }, (_, i) => `zone${i + 1}`);
+        const numericSummaryColumns = [...numericZoneColumns, "sum1"];
+
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+            dataSource: data,
+            allowColumnResizing: true,
             columns: [
-               { dataField: "national", caption: "National", width:columnWidth},            
-             { dataField: "zone1", caption: "1", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone2", caption: "2", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone3", caption: "3", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone4", caption: "4", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone5", caption: "5", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone6", caption: "6", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone7", caption: "7", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone8", caption: "8", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone9", caption: "9", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone10", caption: "10", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone11", caption: "11", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone12", caption: "12", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone13", caption: "13", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone14", caption: "14", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone15", caption: "15", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone16", caption: "16", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone17", caption: "17", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone18", caption: "18", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone19", caption: "19", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone20", caption: "20", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone21", caption: "21", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone22", caption: "22", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone23", caption: "23", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone24", caption: "24", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone25", caption: "25", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone26", caption: "26", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone27", caption: "27", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone28", caption: "28", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone29", caption: "29", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone30", caption: "30", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-            { dataField: "zone31", caption: "31", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-                     { dataField: "sum1", caption: "Sum", width: columnWidth - 100, dataType: "number", format: "#,##0" },
-              { dataField: "percentage", caption: "%", width: columnWidth - 100, dataType: "number", format: "#,##0" },
+                { dataField: "national", caption: "National", width: columnWidth },
+                ...numericZoneColumns.map(zone => ({
+                    dataField: zone,
+                    caption: zone.replace("zone", ""),
+                    width: columnWidth - 100,
+                    dataType: "number",
+                    format: "#,##0"
+                })),
+                { dataField: "sum1", caption: "Sum", width: columnWidth - 100, dataType: "number", format: "#,##0" },
+                { dataField: "percentage", caption: "%", width: columnWidth - 100, dataType: "number", format: "#,##0" }
             ],
+            summary: {
+                totalItems: [
+                    {
+                        name: "labelSummary",
+                        showInColumn: "national",
+                        summaryType: "custom",
+                        displayFormat: "Total"
+                    },
+                    ...numericSummaryColumns.map(field => ({
+                        name: `${field}Summary`,
+                        showInColumn: field,
+                        summaryType: "custom",
+                        displayFormat: "{0}",
+                        valueFormat: "#,##0"
+                    }))
+                ],
+                calculateCustomSummary: function (e) {
+                    const isCustomRow = row => row?.cssClass === "custom" || row?.isTotal === true;
+
+                    if (e.summaryProcess === "start") {
+                        e.totalValue = 0;
+                    } else if (e.summaryProcess === "calculate") {
+                        const row = e.value;
+                        if (!isCustomRow(row)) return;
+
+                        const field = e.name.replace("Summary", "");
+                        const value = parseFloat(row[field]) || 0;
+                        e.totalValue += value;
+                    }
+                }
+            },
             paging: { pageSize: 25 },
-             scrolling:  {
-                   
-               useNative: true,
-               showScrollbar: "always"
-               },
+            scrolling: {
+                useNative: true,
+                showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true,
+                showNavigationButtons: true
             },
-             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
-              },
-               headerFilter: {
-                  visible: true
-              },
-                     summary: {
-                    totalItems: [
-                            {
-        column: "national",
-        summaryType: "custom",
-        displayFormat: "Total"
-    },
-                            { column: "zone1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone3", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone4", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone5", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone6", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone7", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone8", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone9", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone10", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone11", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone12", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone13", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone14", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone15", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone16", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone17", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone18", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone19", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone20", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone21", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone22", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone23", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone24", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone25", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone26", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone27", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone28", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone29", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone30", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        { column: "zone31", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-             { column: "sum1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                    ]
-                },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
             showBorders: true,
-                              onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data?.cssClass) {
-            e.rowElement.addClass(e.data.cssClass);
-        }
-    }
-
+            onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            }
         });
     }
+
 
 
 

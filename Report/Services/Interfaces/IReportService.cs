@@ -29,7 +29,7 @@ namespace Report.Services.Interfaces
         DataTable RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone);
         DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate);
         DataTable ReservationStatisticsReport(DateTime fromDate);
-        DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder, string noOfRoom);
+        DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder, string noOfRoom);
         DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass);
         DataTable ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType, string zone, string viewBy, string market);
         DataTable ProductActivityData(DateTime fromDate, DateTime toDate, string type, string currency);
