@@ -138,11 +138,17 @@
 
     .filter-header {
         FONT-SIZE: 17px;
+        user-select: none; /* Không cho bôi đen */
+        cursor: pointer; /* Hiện icon bàn tay */
+        transition: background-color 0.2s ease;
     }
 
     .list-group-item {
         padding-top: 2px !important;
         padding-bottom: 2px !important;
+        user-select: none; /* Không cho bôi đen */
+        cursor: pointer; /* Hiện icon bàn tay */
+        transition: background-color 0.2s ease;
     }
 
     .header2 {
@@ -285,6 +291,11 @@
       font-size: 17px;  
       font-weight: bold;  
     }   */
+    .menu-item {
+        cursor: pointer; /* đổi con trỏ thành bàn tay */
+        user-select: none; /* không cho bôi đen */
+    }
+
 </style>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -308,7 +319,7 @@
 @*             <li class="list-group-item">
                 <a style="color:black" id="BookingSource" class="text-decoration-none report-link" data-report="BookingSource" data-title="Booking Source">Booking Source</a>
             </li> *@
-            <li class="list-group-item">
+            <li  class="list-group-item">
                 <a style="color:black" id="ReservationSummaryReport" class="text-decoration-none report-link" data-report="ReservationSummaryReport" data-title="Reservation Summary Report">Reservation Summary Report</a>
             </li>
             <li class="list-group-item">
@@ -399,7 +410,9 @@
             <li class="list-group-item">
                 <a style="color:black" id="DepositLedger" class="text-decoration-none report-link" data-report="DepositLedger" data-title="Deposit Ledger">Deposit Ledger</a>
             </li>
-           
+            <li class="list-group-item">
+                <a style="color:black" id="RoomOccupancyStatistics" class="text-decoration-none report-link" data-report="RoomOccupancyStatistics" data-title="Room Occupancy Statistics">Room Occupancy Statistics</a>
+            </li>
             <li class="list-group-item">
                 <a style="color:Green" id="BookingSummaryByStatus" class="text-decoration-none report-link" data-report="BookingSummaryByStatus" data-title="Booking Summary By Status">Booking Summary By Status</a>
             </li>

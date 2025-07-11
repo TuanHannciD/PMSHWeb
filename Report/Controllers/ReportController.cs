@@ -2493,6 +2493,34 @@ namespace Report.Controllers
             }
         }
         [HttpGet]
+        public IActionResult RevenueRoomReport(DateTime fromDate, DateTime toDate, string roomTypes, int zone)
+        {
+            try
+            {
+                var data = _iReportService.RevenueRoomReport(fromDate, toDate, roomTypes, zone);
+
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  Zone = !string.IsNullOrEmpty(d["Zone"].ToString()) ? d["Zone"] : "",
+                                  RoomDate = !string.IsNullOrEmpty(d["RoomDate"].ToString()) ? d["RoomDate"] : "",
+                                  TotalRoom = !string.IsNullOrEmpty(d["TotalRoom"].ToString()) ? d["TotalRoom"] : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"] : "",
+                                  OCC = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"] : "",
+                                  Persons = !string.IsNullOrEmpty(d["Persons"].ToString()) ? d["Persons"] : "",
+                                  RoomSales = !string.IsNullOrEmpty(d["RoomSales"].ToString()) ? d["RoomSales"] : "",
+                                  TurnOver = !string.IsNullOrEmpty(d["TurnOver"].ToString()) ? d["TurnOver"] : "",
+                                  RoomSalesVND = !string.IsNullOrEmpty(d["RoomSalesVND"].ToString()) ? d["RoomSalesVND"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+            }
+        }
+        [HttpGet]
         public IActionResult OccupancybyPersonData(DateTime fromDate, DateTime toDate, int roomTypeID)
         {
             try
@@ -2525,7 +2553,7 @@ namespace Report.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error generating Reservation Rate Code Check report: {ex.Message}");
+                return Json(ex.Message);
             }
         }
 
@@ -3548,6 +3576,7 @@ namespace Report.Controllers
               
                 case "RoomOccupancy":
                 case "RoomOccupancyChart":
+                case "RevenueRoom":
 
                 case "RoomMoves":
                 case "OccupancyByPercon":

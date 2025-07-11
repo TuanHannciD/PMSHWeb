@@ -1,24 +1,29 @@
-﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
+﻿﻿
+<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <div class="body">
-@*     <div id="loading" class="loading">
+    @*     <div id="loading" class="loading">
         <div class="spinner"></div>
         <p id="loading-text">Loading data ... <span id="progress">0%</span></p>
     </div> *@
     <div class="container2">
-        <div >
-            <div tyle="text-align: center !important;"></div>
+        <div>
+            <div class="text-center" style="font-size: 20px;">Reservation</div>            
             <div class="button-group mb-1">
-                <button  class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
-                <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
-                <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
+                <div>
+                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
+                    <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
+                    <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
+                </div>
+                
+                <div><a href="#" style="text-decoration:none">Search reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
         </div>
         <div class="top-row">
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Name</label>
-                    <select class="col-md-9" id="txtName">
-                    </select>
+                    <input class="col-md-8" id="txtName"/>
+                    <button class="col-md-1" onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">First name</label>
@@ -54,7 +59,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Date of Birth</label>
-                    <input class="col-md-9"  type="date" value="1900-01-01" id="txtDob">
+                    <input class="col-md-9" type="date" value="1900-01-01" id="txtDob">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Nationality</label>
@@ -95,7 +100,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Group Code</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtGroupCode">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Contact</label>
@@ -104,15 +109,15 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Con. Phone</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtContactPhone">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Pref. Room</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtPrefRoom">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Last Stay</label>
-                    <label class="col-md-9">1</label>
+                    <input class="col-md-9" type="text" id="txtLastStay" value="1">
                 </div>
             </div>
         </div>
@@ -132,7 +137,7 @@
             <!-- Arrival Section -->
             <div class="section">
                 <div class="row me-1">
-                    
+
                     <label class="col-md-3">Arrival</label>
                     <input type="date" id="arrival" class="col-md-5">
                     <button class="col-md-1" onclick="changeDate('arrival', -1)">-</button>
@@ -171,15 +176,15 @@
                     <select class="col-md-4" id="txtRoomType" asp-items="ViewBag.cboRoomType">
                     </select>
                     <label class="col-md-2">RTC</label>
-                    <select class="col-md-3" id="txtRTC">
+                    <select class="col-md-3" id="txtRTC" asp-items="ViewBag.cboRoomType">
                     </select>
                 </div>
 
                 <div class="row me-1">
                     <label class="col-md-3">Room</label>
-                    <select class="col-md-5" id="roomSelect">
-                        <option>RTC</option>
-                    </select>
+                    <input class="col-md-4" id="roomSelect"/>
+                    <button class="col-md-1" onclick="openModalSearchRoom()"><i class="fa-solid fa-ellipsis"></i></button>
+
                     <label class="col-md-1">RN</label>
                     <select class="col-md-3">
                         <option>RTC</option>
@@ -194,7 +199,6 @@
                 <div class="row me-1">
                     <label class="col-md-3">Currency</label>
                     <select class="col-md-9" asp-items="ViewBag.cboCurrency">
-
                     </select>
                 </div>
                 <div class="row me-1">
@@ -208,8 +212,8 @@
                     </select>
                 </div>
                 <div class="row me-1">
-                    <label  class="col-md-3">Allotment</label>
-                    <select  class="col-md-9">
+                    <label class="col-md-3">Allotment</label>
+                    <select class="col-md-9">
                         <option></option>
                     </select>
                 </div>
@@ -220,7 +224,7 @@
                     <input type="number" value="0.00" class="col-md-5">
                 </div>
                 <div class="row me-1">
-                    <label  class="col-md-3">Reason</label>
+                    <label class="col-md-3">Reason</label>
                     <select class="col-md-9">
                         <option></option>
                     </select>
@@ -231,7 +235,7 @@
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Res. Type</label>
-                    <select  class="col-md-9">
+                    <select class="col-md-9">
                         <option>Market</option>
                     </select>
                 </div>
@@ -289,7 +293,8 @@
                         </div>
                     </div>
                     <div class="col-md-4 row" style="text-align:center;justify-content:center">
-                        <span style="font-size:12px;color:red;padding-top:8px">Rate amount
+                        <span style="font-size:12px;color:red;padding-top:8px">
+                            Rate amount
                             after discount
                         </span>
                     </div>
@@ -337,8 +342,8 @@
                     <label class="col-md-1" style="font-size:12px;color:red;">VND</label>
                 </div>
                 <div class="row me-1">
-                    <label  class="col-md-3">Set Color</label>
-                    <input  class="col-md-9" type="color">
+                    <label class="col-md-3">Set Color</label>
+                    <input class="col-md-9" type="color">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Print Rate</label>
@@ -355,9 +360,182 @@
 
                 <div class="row me-1">
                     <label class="col-md-3">Comments</label>
-                    <textarea rows="3"class="specials-section col-md-9"></textarea>
+                    <textarea rows="3" class="specials-section col-md-9"></textarea>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="nameToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+</div>
+<!-- Modal search profile-->
+<div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchProfle()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mui-card mb-2">
+                    <div class="col-md-2 mb-2">
+                        <label for="input1" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="nameProfileSearch" placeholder="Enter name" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input2" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstNameProfileSearch" placeholder="Enter first name" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input3" class="form-label">View By</label>
+                        <select type="text" class="form-control" id="viewByProfileSearch" disabled style="line-height:1.28">
+                            <option selected value="3">Individual</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input4" class="form-label">City</label>
+                        <select type="text" class="form-control" id="cityProfileSearch" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input5" class="form-label">Key word</label>
+                        <input type="text" class="form-control" id="keywordProfileSearch" placeholder="Enter value" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input6" class="form-label">Code</label>
+                        <input type="text" class="form-control" id="codeProfileSearch" placeholder="Enter value" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input4" class="form-label">Property</label>
+                        <select type="text" class="form-control" id="propertyProfileSearch" disabled style="line-height:1.28">
+                            <option selected>PMSh TheArena</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label >Sale in charge</label>
+                        <div>
+                            <input type="checkbox" id="sale" name="myCheckbox">
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchProfile" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal search profile-->
+<div class="modal fade modal-xl" id="modalRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchRoom()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllRooms();"><i class="fas fa-search"></i> Search</button>
+                    <button class="mui-button mui-button-new" onclick="clearModelSearchRoom();"><i class="fas fa-eraser"></i> Clear</button>
+                </div>
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">RoomType</label>
+                            <select type="text" class="form-control" id="roomTypeSearch" asp-items="ViewBag.cboRoomType">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Smoking</label>
+                            <select type="text" class="form-control" id="smokingSearch">
+                                <option value="2">---Select all ---</option>
+                                <option value="1">Smoking</option>
+                                <option value="0">No Smoking</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input3" class="form-label">RoomNo</label>
+                            <input type="text" class="form-control" id="roomNoSearch" />
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input4" class="form-label">Floor</label>
+                            <input type="text" class="form-control" id="floorSearch">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input5" class="form-label">From</label>
+                            <input type="date" class="form-control" id="fromSearch">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input6" class="form-label">To</label>
+                            <input type="date" class="form-control" id="toSearch">
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex">
+                        <label>FO Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="foStatus" checked value="0">
+                            <label class="form-check-label" for="foActive">Vacant</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="foStatus" value="1">
+                            <label class="form-check-label" for="foInactive">Occupied</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex">
+                        <label>HK Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="1">
+                            <label class="form-check-label" for="hkClean">Clean Non-checked Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus" value="2">
+                            <label class="form-check-label" for="hkDirty">Dirty Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="4">
+                            <label class="form-check-label" for="hkInProgress">Clean Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="5">
+                            <label class="form-check-label" for="hkOutOfService">OOC Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="6">
+                            <label class="form-check-label" for="hkInspected">OOS Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkDummy">
+                            <label class="form-check-label" for="hkOccupied">Pseudo (Dummy) Roóm</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingSpinnerRoom" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchRoom" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -366,8 +544,8 @@
         // Chờ tất cả các hàm AJAX hoàn thành
          //fetchData();
     });
-    
-   
+
+
     // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
     function formatDate(date) {
         const year = date.getFullYear();
@@ -463,12 +641,17 @@
 
     // Khởi tạo ngày mặc định
     window.onload = function() {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
+        var businessDate = '@ViewBag.businesDate';
+        var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
+        var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
 
-        document.getElementById('arrival').value = formatDate(today);
-        document.getElementById('departure').value = formatDate(tomorrow);
+        var departureDate = new Date(parsedBusinessDate);
+        departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+        // Set arrival and departure input values
+        document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+        document.getElementById('departure').value = formatDate(departureDate);
         updateDates();
     };
 
@@ -544,7 +727,320 @@
 
     // Khởi tạo trạng thái ban đầu
     updateRoomSelect();
-    
+    function openModalSearchProfile(){
+        getAllProfiles();
+        $('#modalProfile').modal('show');
+    }
+    function closeModalSearchProfle(){
+        $('#nameProfileSearch').val('');
+        $('#firstNameProfileSearch').val('');
+        $('#cityProfileSearch').val(0);
+        $('#txtName').val('');
+        $('#txtFirstName').val('');
+        $('#txtTitle').val(0);
+        $('#txtPhone').val('');
+        $('#txtEmail').val('');
+        $('#txtIdentityCard').val('');
+        $('#txtPassport').val('');
+        $('#txtAddress').val('');
+        $('#txtDob').val('');
+        $('#txtNationality').val(0);
+        $('#txtCity').val(0);
+        $('#txtVIP').val(0);
+        $('#txtMemberType').val(0);
+        $('#txtCardNo').val('');
+        $('#txtPrefRoom').val('');
+        $('#modalProfile').modal('hide');
+
+    }
+    var listProfiles = [];
+    function getAllProfiles() {
+        $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Profile/GetAllProfiles',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                code: $('#codeProfileSearch').val(),
+                account: $('#nameProfileSearch').val(),
+                firstName: $('#firstNameProfileSearch').val(),
+                keyWord: $('#keywordProfileSearch').val(),
+                city: $('#cityProfileSearch').val(),
+                type: $('#viewByProfileSearch').val(),
+                showSaleInCharge: $("#sale").is(":checked"),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listProfiles = result;
+                initializeDataGridSearchProfile(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            },
+            complete: function () {
+                $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
+            }
+        });
+    }
+      
+    function filterProfileModal() {
+        const codeSearchTerm = $('#codeProfileSearch').val().toLowerCase();
+        const firstNameSearchTerm = $('#firstNameProfileSearch').val().toLowerCase();
+        const accountSearchTerm = $('#nameProfileSearch').val().toLowerCase();
+        const citySearchTerm = $('#cityProfileSearch').val();
+        const keywordkSearchTerm = $('#keywordProfileSearch').val();
+        const filteredProfiles = listProfiles.filter(profile => 
+            profile.code.toLowerCase().includes(codeSearchTerm) &&
+            profile.account.toLowerCase().includes(firstNameSearchTerm) &&
+            profile.city == citySearchTerm && 
+            profile.keyword.toLowerCase().includes(keywordkSearchTerm) &&
+            profile.account.toLowerCase().includes(accountSearchTerm)
+        );
+        initializeDataGridSearchProfile(filteredProfiles);
+    }
+    function initializeDataGridSearchProfile(data) {
+        var columnWidth = 150; 
+
+        $("#gridContainerSearchProfile").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true, 
+            columns: [
+
+
+                { dataField: "id", caption: "ID", width: columnWidth - 80, visible: false},
+                { dataField: "code", caption: "Code", width: columnWidth - 80 },
+                { dataField: "account", caption: "Account", width: columnWidth * 2 },
+                { dataField: "taxCode", caption: "Tax Code", width: columnWidth },
+                { dataField: "city", caption: "City", width: columnWidth },
+                { dataField: "nationality", caption: "Nat", width: columnWidth },
+                { dataField: "address", caption: "Address", width: columnWidth },
+                { dataField: "homeAddres", caption: "Business Address", width: columnWidth },
+                { dataField: "company", caption: "Company", width: columnWidth },
+                { dataField: "handPhone", caption: "HandPhone", width: columnWidth },
+                { dataField: "telephone", caption: "Telephone", width: columnWidth },
+                { dataField: "email", caption: "Email", width: columnWidth },
+                { dataField: "website", caption: "Website", width: columnWidth },
+                { dataField: "aRNo", caption: "ARNo", width: columnWidth },
+                { dataField: "postalCode", caption: "Postal Code", width: columnWidth },
+                { dataField: "keyword", caption: "Keyword", width: columnWidth },
+                { dataField: "description", caption: "Description", width: columnWidth },
+                { dataField: "personInChargeID", caption: "Sale In Charge", width: columnWidth },    
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                 visible: true,
+                 applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                getInfoByProfileID(e.data.id);
+                $('#modalProfile').modal('hide');
+            }
+        });
+    }
+    function extractLastName(name) {
+        const parts = name.trim().split(/,\s*/);
+        return parts[1] || '';
+    }
+    function showToast(title, message, isSuccess) {
+        const toast = new bootstrap.Toast($('#nameToast')[0]);
+        $('#toastTitle').text(title);
+        $('#toastMessage').text(message);
+        $('#nameToast').removeClass('bg-success bg-danger text-white').addClass(isSuccess ? 'bg-success text-white' : 'bg-danger text-white');
+        toast.show();
+    }
+    function validateName(name) {
+        // Regex for "FirstName MiddleName, LastName" or "FirstName MiddleName,LastName"
+        const namePattern = /^[A-Z][a-z]*\s[A-Z][a-z]*,\s*[A-Z][a-z]*$/;
+        return namePattern.test(name.trim());
+    }
+    $('#txtName').on('blur', function() {
+        const name = $(this).val();
+        if (name) {
+            if (validateName(name)) {
+                const lastName = extractLastName(name);
+                $('#txtFirstName').val(lastName);
+                $('#nameProfileSearch').val(name);
+            } else {
+                showToast('Error', 'Invalid name format! Use FirstName MiddleName LastName or FirstName MiddleName,LastName', false);
+            }
+        }
+    });
+    function getInfoByProfileID(id){
+        $.ajax({
+            url: '/Reservation/GetInfoProfile',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                profileID: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#nameProfileSearch').val(result.account);
+                $('#firstNameProfileSearch').val(result.firstname);
+                $('#cityProfileSearch').val(result.city);
+                $('#txtName').val(result.account);
+                $('#txtFirstName').val(result.firstname);
+                $('#txtTitle').val(result.titleID);
+                $('#txtPhone').val(result.handPhone);
+                $('#txtEmail').val(result.email);
+                $('#txtIdentityCard').val(result.identityCard);
+                $('#txtPassport').val(result.passPort);
+                $('#txtAddress').val(result.address);
+                const formattedDate = result.dateOfBirth.split("T")[0];
+                $('#txtDob').val(formattedDate);
+                $('#txtNationality').val(result.nationalityID);
+                $('#txtCity').val(result.city);
+                $('#txtVIP').val(result.vipID);
+                $('#txtCardNo').val(result.memberNo);
+                $('#txtMemberType').val(result.memberType);
+                $('#txtPrefRoom').val(result.prefRoom);
+
+                    
+;            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    $('#txtRoomType').change(function () {
+        var selectedValue = $(this).val();
+        $('#txtRTC').val(selectedValue);
+    });
+    function getSelectedCheckboxes(name) {
+        const checkboxes = document.querySelectorAll(`input[type="checkbox"][name="${name}"]:checked`);
+        const values = Array.from(checkboxes).map(checkbox => checkbox.value);
+        return values.join(","); // Trả về chuỗi dạng 'a,c,v,c'
+    }
+
+    function getSelectedRadio(name) {
+        const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
+        return radio ? radio.value : null;
+    }
+    function getAllRooms() {
+        $("#loadingSpinnerRoom").show();
+        const selectedHKStatus = getSelectedCheckboxes('hkStatus');
+        const selectedFOStatus = getSelectedRadio('foStatus');
+        var check =  $('#hkDummy').is(':checked') ? 1 : 0;
+        $.ajax({
+            url: '/Reservation/GetAllRooms',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                fromDate : $('#fromSearch').val(),
+                toDate: $('#toSearch').val(),
+                floor: $('#floorSearch').val(),
+                roomTypeID: $('#roomTypeSearch').val(),
+                smoking: $('#smokingSearch').val(),
+                foStatus:selectedFOStatus,
+                hkStatus: selectedHKStatus,
+                isDummy:check,
+                roomNo:$('#roomNoSearch').val()
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearchRoom(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            },
+            complete: function () {
+                $("#loadingSpinnerRoom").hide();
+            }
+        });
+    }
+    function initializeDataGridSearchRoom(data) {
+        var columnWidth = 150;
+
+        $("#gridContainerSearchRoom").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "roomID", caption: "Room ID", width: columnWidth - 80, visible: false},
+                { dataField: "roomNo", caption: "Ro.No", width: columnWidth - 80 },
+                { dataField: "roomType", caption: "Room Type", width: columnWidth * 2 },
+                { dataField: "hkStatus", caption: "HK Status", width: columnWidth },
+                { dataField: "fo", caption: "FO", width: columnWidth },
+                { dataField: "floor", caption: "Floor", width: columnWidth },
+                { dataField: "guestCheckOut", caption: "Back-to-Back", width: columnWidth },
+                { dataField: "connecting", caption: "Connecting", width: columnWidth },
+                { dataField: "balcony", caption: "Balcony", width: columnWidth },
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                // getInfoByProfileID(e.data.id);
+                $('#roomSelect').val(e.data.roomNo);
+                $('#txtRoomType').val(e.data.roomTypeID);
+                $('#txtRTC').val(e.data.roomTypeID);
+                $('#roomNoSearch').val(e.data.roomNo);
+                $('#floorSearch').val(e.data.floor);
+                $('#txtRTC').val(e.data.roomTypeID);
+                $('#modalRoom').modal('hide');
+            }
+        });
+    }
+    function openModalSearchRoom(){
+        $('#roomTypeSearch').val($('#txtRoomType').val());
+        $('#fromSearch').val($('#arrival').val());
+        $('#toSearch').val($('#departure').val());
+        getAllRooms();
+        $('#modalRoom').modal('show');
+    }
+    function closeModalSearchRoom(){
+        $('#modalRoom').modal('hide');
+    }
+    function clearModelSearchRoom(){
+        $('#roomTypeSearch').val('');
+        $('#roomNoSearch').val('');
+        $('#floorSearch').val('');
+        $('#smokingSearch').val('');
+    }      
     // async function getAllProfileIndividual() {
     //     return $.ajax({
     //         url: '/Profile/GetAllProfileIndividual',
@@ -594,35 +1090,7 @@
     //         }
     //     });
     // }
-    $('#txtName').on('change', function() {
-        let selectedValue = $(this).val();
-        if(selectedValue != 0){
-            $.ajax({
-            url: '/Profile/GetProfileByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{id : selectedValue},
-            success: function (result) {
-                $('#txtFirstName').val(result.profile.firstname);
-                $('#txtTitle').val(result.profile.titleID);
-                $('#txtPhone').val(result.profile.handPhone);
-                $('#txtEmail').val(result.profile.email);
-                $('#txtIdentityCard').val(result.profile.identityCard);
-                $('#txtPassport').val(result.profile.passPort);
-                $('#txtAddress').val(result.profile.address);
-                $('#txtNationality').val(result.profile.nationalityID);
-                $('#txtCity').val(result.profile.city);
-                console.log(result.profile);
-                $('#txtVIP').val(result.profile.vipid);
-            },
-            error: function (xhr, statusText, err) {
 
-            }
-        });
-        }
-    });
 
     // function getRateCode() {
     //     return $.ajax({
