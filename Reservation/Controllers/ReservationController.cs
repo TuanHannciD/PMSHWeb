@@ -36,7 +36,10 @@ namespace Reservation.Controllers
             _configuration = configuration;
             _iReservationService = iReservationService;
         }
-
+        public IActionResult SearchReservation()
+        {
+            return View();
+        }
 
         public IActionResult NewReservation()
         {
