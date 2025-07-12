@@ -301,15 +301,14 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
               new SqlParameter("@dtpFromDate", fromDate),
-                new SqlParameter("@dtpToDate", toDate),
-                  new SqlParameter("@Room", room),
-                new SqlParameter("@Article", article),
-
-                    new SqlParameter("@RoomClass", roomclass),
-                new SqlParameter("@Transaction",transaction),
-                      new SqlParameter("@NetDisp",netDisp),
-                      new SqlParameter("@CashierNo",cashier),
-                    new SqlParameter("@OrderBy",viewBy),
+              new SqlParameter("@dtpToDate", toDate),
+              new SqlParameter("@Room", room),
+              new SqlParameter("@Article", article),
+              new SqlParameter("@RoomClass", roomclass),
+              new SqlParameter("@Transaction",transaction),
+              new SqlParameter("@NetDisp",netDisp),
+              new SqlParameter("@CashierNo",cashier),
+              new SqlParameter("@OrderBy",viewBy),
 
             };
 

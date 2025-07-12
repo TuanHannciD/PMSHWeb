@@ -57,18 +57,13 @@ namespace Report.Services.Interfaces
         DataTable GuestLedger(DateTime date, string statusList);
         DataTable OccupancybyPerson(DateTime fromDate, DateTime toDate, int roomTypeID);
         DataTable ReservationPreblockedyData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string pseudo, string chkviponly, string individual, string blockcode, string preblocked);
-
         DataTable TransportationData(DateTime fromDate, DateTime toDate, string transportType, int viewBy, int reservationStatus, int sortByGuestName, int sortByRoom, int sortByTime, int sortByVIP);
         DataTable DepartureIndividualAndGroupData(DateTime fromDate);
         DataTable BookingSummaryByStatusData(DateTime fromDate, DateTime toDate);
         DataTable VacantRoomData(string roomClass, string roomtype, string FromRoom, string ToRoom, string OrderByRoomNo, string OrderByHKPStatus, string OrderByFOStatus, string HKPStatus, string FOStatus, string IsGroupByRoomClass);
-
         DataTable SummarybyArticle(DateTime fromDate, DateTime toDate, string transaction, string article, string cashierNo, string roomClass, string room, string orderBy, string netDisp, int isShowDeleted);
         DataTable ManagerReport(DateTime businessDate, string currency);
-
-        DataTable CashierSummary(DateTime dtpFromDate, string cboType);
-     
-
+        DataTable CashierSummary(DateTime dtpFromDate, string cboType); 
         DataTable ArrivalsDetailedData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
             string pseudo, string checkedInToday, string cancellations, string zeroRateOnly, int disRoomSharer, int searchCriteria, int ckhArrivalDate);
         DataTable ArrivalDetailGroupbyHoldersData(DateTime fromDate, DateTime toDate, string roomClass, string roomtype, string market, string rateCode, string source, string vip, string viponlycheck, string noPost, int sortOrder,
@@ -81,13 +76,11 @@ namespace Report.Services.Interfaces
         DataTable DepositRequestLogReportData(DateTime fromDate, DateTime toDate);
         DataTable TransferARReportsData(DateTime fromDate);
         DataTable ArticleByRoomsDatas(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article);
-
         DataTable DailyRevenueReportNew(DateTime dateView);
         DataTable DailyRevenueReportsV2(DateTime dateView);
         DataTable CashierAudit(DateTime date, string cashierList, string transactionCodeList, string type);
         DataTable RevenueSpa(DateTime fromDate, DateTime toDate);
         DataTable StatisticRoomType(DateTime fromDate, DateTime toDate, string roomTypeCsv);
-
         DataTable JournalByCashierArticleData(DateTime fromDate, DateTime toDate, string transaction, string article, string cashier, string roomclass, string room, string viewBy, string netDisp);
         DataTable IncurringDepositCollectionData(DateTime fromDate, DateTime toDate, string zone, string cashier);
         DataTable IncurringDepositPaymentPlanData(DateTime fromDate, DateTime toDate, string zone, string cashier, string notbalance);
