@@ -285,7 +285,7 @@ namespace Reservation.Commons.Helpers
         }
 
         /// <summary>
-        /// Lấy tất cả danh sách Currency oomType cho dropdown
+        /// Lấy tất cả danh sách Currency  cho dropdown
         /// </summary>
         /// <param name="defaultValue">Giá trị mặc định.</param>
         /// <param name="textDefault">Text thứ hai.</param>
@@ -294,13 +294,346 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " RoomType";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Currency";
 
                 var items = new List<SelectListItem>();
                 List<CurrencyModel> list = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindByAttribute("Inactive", 0));
                 if (list.Count > 0)
                 {
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách Packages cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Packages</returns>
+        public static List<SelectListItem> GetPackagesProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Package";
+
+                var items = new List<SelectListItem>();
+                List<PackageModel> list = PropertyUtils.ConvertToList<PackageModel>(PackageBO.Instance.FindByAttribute("Active", 1));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách Packages cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Packages</returns>
+        public static List<SelectListItem> GetReasonProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Reason";
+
+                var items = new List<SelectListItem>();
+                List<ReasonModel> list = PropertyUtils.ConvertToList<ReasonModel>(ReasonBO.Instance.FindByAttribute("Inactive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách ReservationType cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách ReservationType</returns>
+        public static List<SelectListItem> GetReservationTypeProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " ReservationType";
+
+                var items = new List<SelectListItem>();
+                List<ReservationTypeModel> list = PropertyUtils.ConvertToList<ReservationTypeModel>(ReservationTypeBO.Instance.FindByAttribute("Inactive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+
+        /// <summary>
+        /// Lấy tất cả danh sách Source cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Source</returns>
+        public static List<SelectListItem> GetSourceProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Source";
+
+                var items = new List<SelectListItem>();
+                List<SourceModel> list = PropertyUtils.ConvertToList<SourceModel>(SourceBO.Instance.FindByAttribute("Inactive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách Market cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Market</returns>
+        public static List<SelectListItem> GetMarketProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Market";
+
+                var items = new List<SelectListItem>();
+                List<MarketModel> list = PropertyUtils.ConvertToList<MarketModel>(MarketBO.Instance.FindByAttribute("Inactive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách Profile cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Profile</returns>
+        public static List<SelectListItem> GetProfileProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Profile";
+
+                var items = new List<SelectListItem>();
+                List<ProfileModel> list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Account, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách AllotmentType cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách AllotmentType</returns>
+        public static List<SelectListItem> GetAllotmentTypeProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Allotment Type";
+
+                var items = new List<SelectListItem>();
+                List<AllotmentTypeModel> list = PropertyUtils.ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách PersonInCharge cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách PersonInCharge</returns>
+        public static List<SelectListItem> GetPersonInChargeProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Person In Charge";
+
+                var items = new List<SelectListItem>();
+                List<PersonInChargeModel> list = PropertyUtils.ConvertToList<PersonInChargeModel>(PersonInChargeBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+
+        /// <summary>
+        /// Lấy tất cả danh sách PaymentMethod cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách PaymentMethod</returns>
+        public static List<SelectListItem> GetPaymentMethodProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " PaymentMethod";
+
+                var items = new List<SelectListItem>();
+                List<PaymentMethodModel> list = PropertyUtils.ConvertToList<PaymentMethodModel>(PaymentMethodBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.CreditCardNo, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+
+        /// <summary>
+        /// Lấy tất cả danh sách Promotion cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Promotion</returns>
+        public static List<SelectListItem> GetPromotionProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Promotion";
+
+                var items = new List<SelectListItem>();
+                List<PromotionModel> list = PropertyUtils.ConvertToList<PromotionModel>(PromotionBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách Group Preference cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Group Preference</returns>
+        public static List<SelectListItem> GetGroupPreferenceProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Group Preference";
+
+                var items = new List<SelectListItem>();
+                List<PreferenceGroupModel> list = PropertyUtils.ConvertToList<PreferenceGroupModel>(PreferenceGroupBO.Instance.FindByAttribute("Inactive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
                     items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });

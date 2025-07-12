@@ -7,11 +7,15 @@
     </div> *@
     <div class="container2">
         <div>
-            <div tyle="text-align: center !important;"></div>
+            <div class="text-center" style="font-size: 20px;">Reservation</div>            
             <div class="button-group mb-1">
-                <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
-                <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
-                <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
+                <div>
+                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Save</button>
+                    <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
+                    <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
+                </div>
+                
+                <div><a href="#" style="text-decoration:none">Search reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
         </div>
         <div class="top-row">
@@ -19,7 +23,7 @@
                 <div class="row me-1">
                     <label class="col-md-3">Name</label>
                     <input class="col-md-8" id="txtName"/>
-                    <button class="col-md-1" onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
+                    <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">First name</label>
@@ -96,7 +100,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Group Code</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtGroupCode">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Contact</label>
@@ -105,15 +109,15 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Con. Phone</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtContactPhone">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Pref. Room</label>
-                    <input class="col-md-9" type="text">
+                    <input class="col-md-9" type="text" id="txtPrefRoom">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Last Stay</label>
-                    <label class="col-md-9">1</label>
+                    <input class="col-md-9" type="text" id="txtLastStay" value="1">
                 </div>
             </div>
         </div>
@@ -172,19 +176,17 @@
                     <select class="col-md-4" id="txtRoomType" asp-items="ViewBag.cboRoomType">
                     </select>
                     <label class="col-md-2">RTC</label>
-                    <select class="col-md-3" id="txtRTC">
+                    <select class="col-md-3" id="txtRTC" asp-items="ViewBag.cboRoomType">
                     </select>
                 </div>
 
                 <div class="row me-1">
                     <label class="col-md-3">Room</label>
-                    <select class="col-md-5" id="roomSelect">
-                        <option>RTC</option>
-                    </select>
+                    <input class="col-md-4" id="roomSelect"/>
+                    <button class="col-md-1" onclick="openModalSearchRoom()"><i class="fa-solid fa-ellipsis"></i></button>
+
                     <label class="col-md-1">RN</label>
-                    <select class="col-md-3">
-                        <option>RTC</option>
-                    </select>
+                    <input class="col-md-3" id="txtRN"/>
                 </div>
 
                 <div class="row me-1">
@@ -203,15 +205,14 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Packages</label>
-                    <select class="col-md-9">
-                        <option>net</option>
+                    <select class="col-md-9" id="txtPackage" asp-items="ViewBag.cboPackage">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Allotment</label>
-                    <select class="col-md-9">
-                        <option></option>
-                    </select>
+                    <input class="col-md-8" id="txtAllotment"/>
+                    <button class="col-md-1" onclick="openModalSearchAllotment()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Disc. Amt</label>
@@ -221,8 +222,7 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Reason</label>
-                    <select class="col-md-9">
-                        <option></option>
+                    <select class="col-md-9" id="txtReason" asp-items="ViewBag.cboReason">
                     </select>
                 </div>
             </div>
@@ -231,32 +231,28 @@
             <div class="section">
                 <div class="row me-1">
                     <label class="col-md-3">Res. Type</label>
-                    <select class="col-md-9">
-                        <option>Market</option>
+                    <select class="col-md-9" asp-items="ViewBag.cboReservationType" id="txtResType">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Market</label>
-                    <select class="col-md-9">
-                        <option></option>
-                    </select>
+                    <input class="col-md-8" id="txtMarket"/>
+                    <button class="col-md-1" onclick="openModalSearchMarket()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Source</label>
-                    <select class="col-md-9">
-                        <option>Source</option>
+                    <select class="col-md-9" id="txtSource" asp-items="ViewBag.cboSource">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Sale</label>
-                    <select class="col-md-9">
-                        <option>Sale</option>
+                    <select class="col-md-9" id="txtPersonInCharge" asp-items="ViewBag.cboPersonInCharge">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Payment</label>
-                    <select class="col-md-9">
-                        <option>Payment</option>
+                    <select class="col-md-9" id="txtPayment" asp-items="ViewBag.cboPaymentMethod">
                     </select>
                 </div>
                 <div class="row me-1">
@@ -314,20 +310,18 @@
             <div class="section ">
                 <div class="row me-1">
                     <label class="col-md-3">Specials</label>
-                    <select class="col-md-9">
-                        <option>Specials</option>
-                    </select>
+                    <input class="col-md-8" id="txtPreference" />
+                    <button class="col-md-1" onclick="openModalSearchPreference()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Promotions</label>
-                    <select class="col-md-9">
-                        <option>Promotions</option>
+                    <select class="col-md-9" id="txtPromotion" asp-items="ViewBag.cboPromotion">
                     </select>
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Item .Inv</label>
                     <select class="col-md-9">
-                        <option>Promotions</option>
                     </select>
                 </div>
                 <div class="row me-1">
@@ -376,6 +370,7 @@
 <div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
                 <button type="button" class="btn-close" onclick="closeModalSearchProfle()"></button>
@@ -421,11 +416,223 @@
                         </div>
                     </div>
                 </div>
+                <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <div class="mui-card">
                     <div id="gridContainerSearchProfile" class="mt-2 gridContainer"></div>
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<!-- Modal search room-->
+<div class="modal fade modal-xl" id="modalRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Available Room Search</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchRoom()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllRooms();"><i class="fas fa-search"></i> Search</button>
+                    <button class="mui-button mui-button-new" onclick="clearModelSearchRoom();"><i class="fas fa-eraser"></i> Clear</button>
+                </div>
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">RoomType</label>
+                            <select type="text" class="form-control" id="roomTypeSearch" asp-items="ViewBag.cboRoomType">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Smoking</label>
+                            <select type="text" class="form-control" id="smokingSearch">
+                                <option value="2">---Select all ---</option>
+                                <option value="1">Smoking</option>
+                                <option value="0">No Smoking</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input3" class="form-label">RoomNo</label>
+                            <input type="text" class="form-control" id="roomNoSearch" />
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input4" class="form-label">Floor</label>
+                            <input type="text" class="form-control" id="floorSearch">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input5" class="form-label">From</label>
+                            <input type="date" class="form-control" id="fromSearch">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input6" class="form-label">To</label>
+                            <input type="date" class="form-control" id="toSearch">
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex">
+                        <label>FO Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="foStatus" checked value="0">
+                            <label class="form-check-label" for="foActive">Vacant</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="foStatus" value="1">
+                            <label class="form-check-label" for="foInactive">Occupied</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex">
+                        <label>HK Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="1">
+                            <label class="form-check-label" for="hkClean">Clean Non-checked Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus" value="2">
+                            <label class="form-check-label" for="hkDirty">Dirty Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="4">
+                            <label class="form-check-label" for="hkInProgress">Clean Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="5">
+                            <label class="form-check-label" for="hkOutOfService">OOC Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="6">
+                            <label class="form-check-label" for="hkInspected">OOS Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkDummy">
+                            <label class="form-check-label" for="hkOccupied">Pseudo (Dummy) Roóm</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingSpinnerRoom" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchRoom" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal search allotment-->
+<div class="modal fade modal-xl" id="modalAllotment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchAllotment()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllotment();"><i class="fas fa-search"></i> Search</button>
+@*                     <button class="mui-button mui-button-new" onclick="clearModelSearchRoom();"><i class="fas fa-eraser"></i> Clear</button>
+ *@                </div>
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">Code</label>
+                            <input type="text" class="form-control" id="codeAllotmentSearch"/>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Market</label>
+                            <select type="text" class="form-control" id="marketAllotmentSearch" asp-items="ViewBag.cboMarket">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input3" class="form-label">Allotment Type</label>
+                            <select type="text" class="form-control" id="allotmentTypeSearch" asp-items="ViewBag.cboAllotmentType"></select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input4" class="form-label">Profile</label>
+                            <select type="text" class="form-control" id="profileAllotmentSearch" asp-items="ViewBag.cboProfile">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2" >
+                            <label class="form-check-label" for="default">Default</label>
+                            <div><input class="form-check-input" type="checkbox" name="default" value="1">
+                            </<div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+                <div class="row">
+                    <div class="mui-card col-md-5">
+                        <div id="gridContainerSearchAllotment" class="mt-2 gridContainer"></div>
+                    </div>
+                    <div class="mui-card col-md-6" style="display:none" id="SearchAllotmentDetail_wrapper">
+                        <div id="gridContainerSearchAllotmentDetail" class="mt-2 gridContainer"></div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal search market-->
+<div class="modal fade modal-xl" id="modalMarket" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Market</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchMarket()"></button>
+            </div>
+            <div class="modal-body">
+                <div id="treeListMarket"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal search preference-->
+<div class="modal fade modal-xl" id="modalPreference" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Preference</h5>
+                    <button type="button" class="btn-close" onclick="closeModalSearchPreference()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">Code</label>
+                            <input type="text" class="form-control" id="codePreferenceSearch" oninput="getDataPreference();"/>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Group Preference</label>
+                            <select type="text" class="form-control" id="groupPreferenceSearch" asp-items="ViewBag.cboGroupPreferenceProvider" onchange="getDataPreference();">
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchPreference" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -531,12 +738,17 @@
 
     // Khởi tạo ngày mặc định
     window.onload = function() {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
+        var businessDate = '@ViewBag.businesDate';
+        var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
+        var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
 
-        document.getElementById('arrival').value = formatDate(today);
-        document.getElementById('departure').value = formatDate(tomorrow);
+        var departureDate = new Date(parsedBusinessDate);
+        departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+        // Set arrival and departure input values
+        document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+        document.getElementById('departure').value = formatDate(departureDate);
         updateDates();
     };
 
@@ -613,15 +825,35 @@
     // Khởi tạo trạng thái ban đầu
     updateRoomSelect();
     function openModalSearchProfile(){
-        getAllProfiles();
+        getAllProfiles(3);
         $('#modalProfile').modal('show');
     }
     function closeModalSearchProfle(){
+        $('#nameProfileSearch').val('');
+        $('#firstNameProfileSearch').val('');
+        $('#cityProfileSearch').val(0);
+        $('#txtName').val('');
+        $('#txtFirstName').val('');
+        $('#txtTitle').val(0);
+        $('#txtPhone').val('');
+        $('#txtEmail').val('');
+        $('#txtIdentityCard').val('');
+        $('#txtPassport').val('');
+        $('#txtAddress').val('');
+        $('#txtDob').val('');
+        $('#txtNationality').val(0);
+        $('#txtCity').val(0);
+        $('#txtVIP').val(0);
+        $('#txtMemberType').val(0);
+        $('#txtCardNo').val('');
+        $('#txtPrefRoom').val('');
         $('#modalProfile').modal('hide');
 
     }
     var listProfiles = [];
-    function getAllProfiles() {
+    function getAllProfiles(type) {
+        $("#loadingSpinner").show();
+        $('#viewByProfileSearch').val(3);
         $.ajax({
             url: '/Profile/GetAllProfiles',
             type: 'get',
@@ -647,6 +879,9 @@
                 } else {
                     informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
                 }
+            },
+            complete: function () {
+                $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
             }
         });
     }
@@ -713,7 +948,6 @@
                 mode: "single" // Allows only one row to be selected at a time
             },
             onRowDblClick: function(e) {
-                console.log("Double-clicked row data:", e.data);
                 getInfoByProfileID(e.data.id);
                 $('#modalProfile').modal('hide');
             }
@@ -759,6 +993,8 @@
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 $('#nameProfileSearch').val(result.account);
+                $('#firstNameProfileSearch').val(result.firstname);
+                $('#cityProfileSearch').val(result.city);
                 $('#txtName').val(result.account);
                 $('#txtFirstName').val(result.firstname);
                 $('#txtTitle').val(result.titleID);
@@ -768,11 +1004,15 @@
                 $('#txtPassport').val(result.passPort);
                 $('#txtAddress').val(result.address);
                 const formattedDate = result.dateOfBirth.split("T")[0];
-                    $('#txtDob').val(formattedDate);
-                // $('#txtFirstName').val(result.firstname);
+                $('#txtDob').val(formattedDate);
+                $('#txtNationality').val(result.nationalityID);
+                $('#txtCity').val(result.city);
+                $('#txtVIP').val(result.vipID);
+                $('#txtCardNo').val(result.memberNo);
+                $('#txtMemberType').val(result.memberType);
+                $('#txtPrefRoom').val(result.prefRoom);
 
-
-
+                    
 ;            },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -781,6 +1021,378 @@
                 }
             }
         });
+    }
+    $('#txtRoomType').change(function () {
+        var selectedValue = $(this).val();
+        $('#txtRTC').val(selectedValue);
+    });
+    function getSelectedCheckboxes(name) {
+        const checkboxes = document.querySelectorAll(`input[type="checkbox"][name="${name}"]:checked`);
+        const values = Array.from(checkboxes).map(checkbox => checkbox.value);
+        return values.join(","); // Trả về chuỗi dạng 'a,c,v,c'
+    }
+
+    function getSelectedRadio(name) {
+        const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
+        return radio ? radio.value : null;
+    }
+    function getAllRooms() {
+        $("#loadingSpinnerRoom").show();
+        const selectedHKStatus = getSelectedCheckboxes('hkStatus');
+        const selectedFOStatus = getSelectedRadio('foStatus');
+        var check =  $('#hkDummy').is(':checked') ? 1 : 0;
+        $.ajax({
+            url: '/Reservation/GetAllRooms',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                fromDate : $('#fromSearch').val(),
+                toDate: $('#toSearch').val(),
+                floor: $('#floorSearch').val(),
+                roomTypeID: $('#roomTypeSearch').val(),
+                smoking: $('#smokingSearch').val(),
+                foStatus:selectedFOStatus,
+                hkStatus: selectedHKStatus,
+                isDummy:check,
+                roomNo:$('#roomNoSearch').val()
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearchRoom(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            },
+            complete: function () {
+                $("#loadingSpinnerRoom").hide();
+            }
+        });
+    }
+    function initializeDataGridSearchRoom(data) {
+        var columnWidth = 150;
+
+        $("#gridContainerSearchRoom").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "roomID", caption: "Room ID", width: columnWidth - 80, visible: false},
+                { dataField: "roomNo", caption: "Ro.No", width: columnWidth - 80 },
+                { dataField: "roomType", caption: "Room Type", width: columnWidth * 2 },
+                { dataField: "hkStatus", caption: "HK Status", width: columnWidth },
+                { dataField: "fo", caption: "FO", width: columnWidth },
+                { dataField: "floor", caption: "Floor", width: columnWidth },
+                { dataField: "guestCheckOut", caption: "Back-to-Back", width: columnWidth },
+                { dataField: "connecting", caption: "Connecting", width: columnWidth },
+                { dataField: "balcony", caption: "Balcony", width: columnWidth },
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                // getInfoByProfileID(e.data.id);
+                $('#roomSelect').val(e.data.roomNo);
+                $('#txtRoomType').val(e.data.roomTypeID);
+                $('#txtRTC').val(e.data.roomTypeID);
+                $('#roomNoSearch').val(e.data.roomNo);
+                $('#floorSearch').val(e.data.floor);
+                $('#txtRTC').val(e.data.roomTypeID);
+                $('#modalRoom').modal('hide');
+            }
+        });
+    }
+    function openModalSearchRoom(){
+        $('#roomTypeSearch').val($('#txtRoomType').val());
+        $('#fromSearch').val($('#arrival').val());
+        $('#toSearch').val($('#departure').val());
+        getAllRooms();
+        $('#modalRoom').modal('show');
+    }
+    function closeModalSearchRoom(){
+        $('#modalRoom').modal('hide');
+    }
+    function clearModelSearchRoom(){
+        $('#roomTypeSearch').val('');
+        $('#roomNoSearch').val('');
+        $('#floorSearch').val('');
+        $('#smokingSearch').val('');
+    }
+    function openModalSearchAllotment(){
+        $('#modalAllotment').modal('show');
+        getAllotment();
+    }
+    function closeModalSearchAllotment(){
+        $('#SearchAllotmentDetail_wrapper').hide();
+
+        $('#modalAllotment').modal('hide');
+    }
+    function getAllotment(){
+        var check =  $('#default').is(':checked') ? 1 : '';
+        $.ajax({
+            url: '/Reservation/GetAllotmentSearch',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                code : $('#codeAllotmentSearch').val(),
+                marketID: $('#marketAllotmentSearch').val(),
+                allotmentTypeID: $('#allotmentTypeSearch').val(),
+                profileID: $('#profileAllotmentSearch').val(),
+                isDefault: check,
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                    initializeDataGridSearchAllotment(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Can not load allotment");
+                }
+            }
+        });
+    }
+    function initializeDataGridSearchAllotment(data) {
+        var columnWidth = 150;
+
+        $("#gridContainerSearchAllotment").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "ID", caption: "ID", width: columnWidth - 80, visible: false},
+                { dataField: "code", caption: "All.Code", width: columnWidth - 80 },
+                { dataField: "allotmentName", caption: "All. Name", width: columnWidth * 2 },
+                { dataField: "accountName", caption: "Profile", width: columnWidth },
+                { dataField: "market", caption: "Market", width: columnWidth },
+                { dataField: "allotmentType", caption: "All. Type", width: columnWidth },
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowClick:function(e){
+                getAllotmentDetail(e.data.id);
+                $('#SearchAllotmentDetail_wrapper').show();
+            },
+            onRowDblClick: function(e) {
+                $('#modalAllotment').modal('hide');
+                $('#txtAllotment').val(e.data.code);
+                $('#codeAllotmentSearch').val(e.data.code);
+                $('#marketAllotmentSearch').val(e.data.marketID)
+                $('#allotmentTypeSearch').val(e.data.allotmentTypeID)
+                $('#profileAllotmentSearch').val(e.data.profileID)
+
+            }
+        });
+    }
+    function getAllotmentDetail(id){
+        var check =  $('#default').is(':checked') ? 1 : '';
+        $.ajax({
+                    url: '/Reservation/GetAllotmentSearchDetail',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                allotmentID : id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearchAllotmentDetail(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Can not load allotment");
+                }
+            }
+        });
+    }
+    function initializeDataGridSearchAllotmentDetail(data) {
+
+        $("#gridContainerSearchAllotmentDetail").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            }
+        });
+    }
+    function openModalSearchMarket(){
+        getDataMarket();
+        $('#modalMarket').modal('show');
+
+    }
+    function closeModalSearchMarket(){
+        $('#modalMarket').modal('hide');
+    }
+    function getDataMarket(){
+        $.ajax({
+            url: '/Reservation/GetAllMarket',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                treeListMarket(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+            // ,
+            // complete: function () {
+            //     $("#loadingSpinnerRoom").hide();
+            // }
+        });
+    }
+    function treeListMarket(data){
+        $("#treeListMarket").dxTreeList({
+                dataSource: data,
+                keyExpr: "id", // Unique identifier for each node
+                parentIdExpr: "parentId", // Field that defines the parent-child relationship
+                columns: [
+                    {
+                        dataField: "code",
+                        caption: "Code"
+                    },
+                    {
+                        dataField: "name",
+                        caption: "Name"
+                    }
+                    // Add more columns if needed
+                ],
+                expandedRowKeys: [], // Expand all nodes by default
+                showRowLines: true,
+                showBorders: true,
+                columnAutoWidth: true
+            });
+    }
+    function getDataPreference(){
+        $.ajax({
+            url: '/Reservation/GetAllPreference',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                code : $('#codePreferenceSearch').val(),
+                preferenceGroup: $('#groupPreferenceSearch').val(),
+            },
+            success: function (result) {
+                initializeDataGridSearchPreference(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+
+        });
+    }
+    function initializeDataGridSearchPreference(data) {
+        $("#gridContainerSearchPreference").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+                    columns: [
+                        { dataField: "ID", caption: "ID",  visible: false},
+                        { dataField: "code", caption: "Code", },
+                        { dataField: "description", caption: "Description",  },
+                    ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                $('#modalPreference').modal('hide');
+                $('#codePreferenceSearch').val(e.data.code);
+                        $('#txtPreference').val(e.data.code);
+            }
+        });
+    }
+    function openModalSearchPreference(){
+        getDataPreference();
+        $('#modalPreference').modal('show');
+
+    }
+    function closeModalSearchPreference(){
+        $('#modalPreference').modal('hide');
     }
     // async function getAllProfileIndividual() {
     //     return $.ajax({

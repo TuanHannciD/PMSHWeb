@@ -150,12 +150,15 @@
             opacity: 0.4;
         }
 
+        .img-fluid {
+            width: 100vw;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="banner">
-            <img src="~/images/banner.PNG" alt="Banner Image" class="img-fluid">
+            <img src="~/images/banner.jpg" alt="Banner Image" class="img-fluid">
         </div>
         <nav class="navbar navbar-expand-md navbar-custom">
             <div class="container-fluid">
@@ -168,13 +171,6 @@
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">Profile</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="profile" asp-action="index">new profile</a></li>
-                            </ul>
-                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#">Profile</a>
                             <ul class="dropdown-menu">

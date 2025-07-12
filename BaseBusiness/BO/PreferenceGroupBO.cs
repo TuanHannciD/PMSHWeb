@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace BaseBusiness.BO
 {
-    public class PackageBO : BaseBO
+    public class PreferenceGroupBO : BaseBO
     {
-        private PackageFacade facade = PackageFacade.Instance;
-        protected static PackageBO instance = new PackageBO();
+        private PreferenceGroupFacade facade = PreferenceGroupFacade.Instance;
+        protected static PreferenceGroupBO instance = new PreferenceGroupBO();
 
-        protected PackageBO()
+        protected PreferenceGroupBO()
         {
             this.baseFacade = facade;
         }
 
-        public static PackageBO Instance
+        public static PreferenceGroupBO Instance
         {
             get { return instance; }
         }

@@ -83,7 +83,7 @@ namespace Report.Services.Implements
             {
           new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
-        new SqlParameter("@ProfileID",0),
+        new SqlParameter("@ProfileID","0"),
         new SqlParameter("@CurrencyID", currencyID),
                 new SqlParameter("@Type", type),
                  new SqlParameter("@Number", Number),
@@ -691,7 +691,7 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string searchCrip, string sortOrder, string noOfRoom)
+        public DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder, string noOfRoom)
         {
             SqlParameter[] param = new SqlParameter[]
             {

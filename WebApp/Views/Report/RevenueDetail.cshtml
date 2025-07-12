@@ -154,7 +154,7 @@ tr.custom > td {
             grandTotalAmount += totalAmount;
 
             finalData.push({
-                description: `${groupCode}`,
+                subgroupCode: `${groupCode}`,
                 amount: totalAmount,
                 isTitle: true,
                 cssClass: "custom"
@@ -186,7 +186,7 @@ tr.custom > td {
             dataSource: data,
             allowColumnResizing: true,
             columns: [
-                { dataField: "description", caption: "Description", width: columnWidth },
+                { dataField: "subgroupCode", caption: "Description", width: columnWidth },
                 { dataField: "totalUSD", caption: "Amount", width: columnWidth - 40, dataType: "number", format: "#,##0" },
                 { dataField: "totalSVCUSD", caption: "SVC", width: columnWidth - 40, dataType: "number", format: "#,##0" },
                 { dataField: "totalVATUSD", caption: "VAT", width: columnWidth - 40, dataType: "number", format: "#,##0" },
@@ -195,7 +195,7 @@ tr.custom > td {
             summary: {
                 totalItems: [
                     {
-                        column: "description",
+                        column: "subgroupCode",
                         summaryType: "custom",
                         displayFormat: "Grand Total"
                     },

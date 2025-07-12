@@ -8,7 +8,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 0 auto;
+    margin: 0 10px;
     width: 100%;
 }
 
@@ -85,11 +85,13 @@
         background-color: #ffff99;
     }
 
-
+.button-group{
+    display:flex;
+    justify-content:space-between;
+}
 
 .specials-section {
     background-color: #ffe6e6;
-
     border: 1px solid #ccc;
     border-radius: 5px;
 }
