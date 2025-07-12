@@ -3558,6 +3558,7 @@ namespace Report.Controllers
                     break;
 
                 case "RevenueBy":
+                case "RevenueByChart":
                 case "DailyMinibarReport":
                 case "DepositActivity":
                 case "IncurringDepositCollection":
@@ -3565,19 +3566,23 @@ namespace Report.Controllers
                 case "IncurringDepositSummary":
                 case "IncurringDepositPaymentPlan":
                 case "JournalByCashierAndArticle":
+<<<<<<< HEAD
+                case "ArticleByRoom":
+=======
                 case "ArticleByRooms":
+>>>>>>> 502e80cfc9b8851b756bef2bf72e03b3633471eb
                 case "RoomOccupancyStatistics":
-                case "DepartureReport":
+                case "DeparturesReport":
                 case "ArrivalsDetailed":
                 case "ArrivalDetailedGroupbyHolder":
                 case "ReservationPreblocked":
                 case "VacantRoom":
                 case "Transportation":
-              
+             
                 case "RoomOccupancy":
                 case "RoomOccupancyChart":
                 case "RevenueRoom":
-
+                
                 case "RoomMoves":
                 case "OccupancyByPercon":
                 case "NoShowReport":
@@ -3633,11 +3638,17 @@ namespace Report.Controllers
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
                     ViewBag.ComList = listcm;
                     break;
+                
                 case "Alerts":
                     List<AlertsSetupModel> listal = PropertyUtils.ConvertToList<AlertsSetupModel>(AlertsSetupBO.Instance.FindAll());
                     ViewBag.ALertList = listal;
                     break;                                               
-                   ;
+                   
+                case "ReservationCancellationChart":
+                    List<CommentModel> listcm1 = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
+                    ViewBag.ComList = listcm1;
+                    break;
+                    ;
             }
             ViewBag.ReportTitle = title;
             // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng

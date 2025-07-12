@@ -102,10 +102,14 @@
     });
 
         function initializeDataGrid(data) {
-             if ($("#gridContainer").dxDataGrid("instance")) {
-        $("#gridContainer").dxDataGrid("instance").dispose();
+            const container = $("#gridContainer")[0];
+    const gridInstance = DevExpress.ui.dxDataGrid.getInstance(container);
+
+    if (gridInstance) {
+        gridInstance.dispose();
         $("#gridContainer").empty();
     }
+
         $('#gridContainer').dxDataGrid({
             dataSource: data, allowColumnResizing: true,
             showBorders: true,
