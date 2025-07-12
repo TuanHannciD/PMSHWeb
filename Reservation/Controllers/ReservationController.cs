@@ -62,6 +62,7 @@ namespace Reservation.Controllers
             ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
             ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
             ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
+            ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             return View();
         }
