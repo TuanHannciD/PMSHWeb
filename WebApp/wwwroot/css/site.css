@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -7,7 +7,49 @@ html {
     font-size: 16px;
   }
 }
+/* Container ảnh */
+.banner {
+    position: relative;
+    width: 100vw;
+    overflow: hidden;
+}
 
+    .banner img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+/* Dòng chữ giữa ảnh */
+.banner-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 21px; /* sử dụng rem để phù hợp với html font-size */
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    padding: 0 20px;
+    max-width: 90vw;
+    word-wrap: break-word;
+}
+
+/* Responsive: Thiết bị nhỏ */
+@media (max-width: 768px) {
+    .banner-text {
+        font-size: 8px;
+        padding: 0 15px;
+    }
+}
+
+/* Responsive: Điện thoại rất nhỏ */
+@media (max-width: 480px) {
+    .banner-text {
+        font-size: 6px;
+    }
+}
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
