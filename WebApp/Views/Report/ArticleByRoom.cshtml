@@ -171,10 +171,10 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                  zone: $("#zone").val(),
-                    room: $("#room").val(),
-                         viewBy: $("#viewBy").val(),
-                   article: $("#article").val(),
+                zone: $("#zone").val(),
+                room: $("#room").val(),
+                viewBy: $("#viewBy").val(),
+                article: $("#article").val(),
             },
             traditional: true,
               crossDomain: false,
@@ -182,7 +182,7 @@
             success: function (result) {
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
-                     console.log(result);
+            console.log(result);
                         const processed = prepareArticleByRoomsData(result);
                         initializeReservationSummaryGrid(processed.data, processed.grandTotal);
                     $("#loadingSpinner").hide();
@@ -231,8 +231,8 @@
             articleCode: `Room: ${roomNo || ""}`,
             articleDescription: `${firstRecord.lastName}`,
             quantity: ` C: ${firstRecord.confirmationNo} `,
-            price: ` ${firstRecord.arrivalDate}`,
-            amountBeforeTax: ` ${firstRecord.departureDate}`,
+            price: ` ${toDMY(firstRecord.arrivalDate)}`,
+            amountBeforeTax: ` ${toDMY(firstRecord.departureDate)}`,
             isTitle: true,
             cssClass: "custom"
         });
@@ -241,7 +241,7 @@
 
         finalData.push({
             articleDescription: "Sub Total",
-            quantity: records.length,
+            quantity: sum(records, 'quantity'),
             amountBeforeTax: sum(records, 'amountBeforeTax'),
             amount: sum(records, 'amount'),
             isTotal: true,
@@ -271,16 +271,32 @@
     }
 
     // Helper functions
-    function sum(arr, field) {
-        return arr.reduce((total, item) => total + (item[field] || 0), 0);
-    }
+   function sum(arr, field) {
+    return arr.reduce((total, item) => {
+        let val = field ? item?.[field] : item;
+
+        // loại bỏ null/undefined
+        if (val == null) return total;
+
+        // Nếu là chuỗi, bỏ ký tự không phải số, dấu phẩy, khoảng trắng
+        if (typeof val === "string") {
+            val = val.replace(/[^0-9.-]/g, "");  // giữ lại số, dấu - và .
+        }
+
+        val = parseFloat(val);
+        return Number.isFinite(val) ? total + val : total;
+    }, 0);
+}
 
     function average(arr, field) {
         const valid = arr.filter(x => x[field] != null);
         if (valid.length === 0) return 0;
         return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
     }
-
+        function toDMY(date){
+        if (!date) return "";
+        return new Date(date).toLocaleDateString("vi-VN"); // hoặc format khác tuỳ ý
+    }
 
     function initializeReservationSummaryGrid(data, grandTotal) {
         const columnWidth = 180;
@@ -289,45 +305,32 @@
             dataSource: data,
             allowColumnResizing: true,
             columns: [
+
                 { dataField: "articleCode", caption: "Code", width: columnWidth - 80 },
                 { dataField: "articleDescription", caption: "Description", width: columnWidth + 50 },
                 { dataField: "quantity", caption: "Quantity", width: columnWidth - 40 },
-                { dataField: "price", caption: "Price", width: columnWidth - 50,dataType: "date",format: "dd/MM/yyyy" },
-                { dataField: "amountBeforeTax", caption: "Amount++", width: columnWidth - 50,dataType: "date",format: "dd/MM/yyyy" },
+                { dataField: "price", caption: "Price", width: columnWidth - 50, dataType: "number", format: "#,##0" },
+                { dataField: "amountBeforeTax", caption: "Amount++", width: columnWidth - 50, dataType: "number", format: "#,##0"},
                 { dataField: "amount", caption: "Amount Net", width: columnWidth - 50, dataType: "number", format: "#,##0" }
             ],
-            summary: {
-                totalItems: [
-                    {
-                        name: "qty",
-                        column: "quantity",
-                        summaryType: "custom",
-                        displayFormat: "Grand Total: {0}",
-                        valueFormat: "#,##0"
-                    },
-                    {
-                        name: "amtBeforeTax",
-                        column: "amountBeforeTax",
-                        summaryType: "custom",
-                        valueFormat: "#,##0"
-                    },
-                    {
-                        name: "amt",
-                        column: "amount",
-                        summaryType: "custom",
-                        valueFormat: "#,##0"
-                    }
-                ]
-            },
-            onCustomSummaryCalculate: function (e) {
-                if (e.name === "qty") {
-                    e.totalValue = grandTotal.quantity;
-                } else if (e.name === "amtBeforeTax") {
-                    e.totalValue = grandTotal.amountBeforeTax;
-                } else if (e.name === "amt") {
-                    e.totalValue = grandTotal.amount;
-                }
-            },
+                summary: {
+                      totalItems: [
+                    { name:"arDescription", column:"articleDescription", summaryType:"custom", displayFormat:"Grand Total:" },
+                    { name:"qty",          column:"quantity",        summaryType:"custom", displayFormat:"{0}" },
+                    { name:"amtBeforeTax", column:"amountBeforeTax", summaryType:"custom", valueFormat:"#,##0" },
+                    { name:"amt",          column:"amount",          summaryType:"custom", valueFormat:"#,##0" }
+                  ],
+
+                  // Đây mới là hàm DevExtreme sẽ gọi khi summaryType="custom"
+                  calculateCustomSummary: function (e) {
+                      if (e.summaryProcess === "finalize") {
+                          if (e.name === "qty")          e.totalValue = grandTotal.quantity;
+                          if (e.name === "amtBeforeTax") e.totalValue = grandTotal.amountBeforeTax;
+                          if (e.name === "amt")          e.totalValue = grandTotal.amount;
+                      }
+                  }
+                },
+
             paging: { pageSize: 25 },
             scrolling: {
                 
@@ -345,16 +348,34 @@
             headerFilter: { visible: true },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-            onRowPrepared: function (e) {
-                if (e.rowType === "data") {
-                    if (e.data?.isTitle) {
-                        e.rowElement.css({ "font-weight": "bold", "background-color": "#e0e0e0" });
-                    }
-                    if (e.data?.isTotal) {
-                        e.rowElement.css({ "font-weight": "bold", "background-color": "#f6f6f6" });
-                    }
-                }
+                onRowPrepared: function (e) {
+        if (e.rowType === "data") {
+            if (e.data?.isTitle) {
+                // Xoá hết nội dung các ô
+                e.rowElement.empty();
+
+                // Tạo 1 ô duy nhất chiếm toàn bộ chiều ngang bảng (colspan)
+                const td = $("<td></td>")
+                    .attr("colspan", e.columns.length)
+                    .css({
+                        "font-weight": "bold",
+                        "background-color": "#e0e0e0",
+                        "padding": "6px 12px"
+                    })
+                    .text(`Room: ${e.data.articleCode.replace("Room: ", "")} | ${e.data.articleDescription} | ${e.data.quantity} | ${e.data.price} | ${e.data.amountBeforeTax}`);
+
+                e.rowElement.append(td);
             }
+
+            if (e.data?.isTotal) {
+                e.rowElement.css({
+                    "font-weight": "bold",
+                    "background-color": "#f6f6f6"
+                });
+            }
+        }
+    }
+
         });
     }
 

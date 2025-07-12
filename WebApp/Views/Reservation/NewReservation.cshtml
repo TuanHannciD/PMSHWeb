@@ -124,8 +124,8 @@
 
 
         <div class="section" style="display: flex; align-items: center;">
-            <div style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; padding: 4px; background-color: #D3D3D3; border: 1px solid #A9A9A9;">
-                More Fields
+            <div class="row">            
+                <button onclick="openModalMoreFields()" style="margin-left:12px">More Fields</button>
             </div>
             <div style="flex: 1; text-align: center;color:#9F0010;font-size:20px;font-weight:600">
                 Property : Pmsh The Arena
@@ -261,9 +261,9 @@
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Booker</label>
-                    <select class="col-md-9">
-                        <option></option>
-                    </select>
+                    <input class="col-md-8" id="txtBooker"/>
+                    <button class="col-md-1" onclick="openModalSearchBooker()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">ETA</label>
@@ -310,9 +310,9 @@
             <div class="section ">
                 <div class="row me-1">
                     <label class="col-md-3">Specials</label>
-                    <select class="col-md-9">
-                        <option>Specials</option>
-                    </select>
+                    <input class="col-md-8" id="txtPreference" />
+                    <button class="col-md-1" onclick="openModalSearchPreference()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Promotions</label>
@@ -322,7 +322,6 @@
                 <div class="row me-1">
                     <label class="col-md-3">Item .Inv</label>
                     <select class="col-md-9">
-                        <option>Promotions</option>
                     </select>
                 </div>
                 <div class="row me-1">
@@ -357,6 +356,7 @@
         </div>
     </div>
 </div>
+
 <!-- Toast Container -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="nameToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -543,8 +543,7 @@
             <div class="modal-body">
                 <div class="mb-2">
                     <button class="mui-button mui-button-new" onclick="getAllotment();"><i class="fas fa-search"></i> Search</button>
-@*                     <button class="mui-button mui-button-new" onclick="clearModelSearchRoom();"><i class="fas fa-eraser"></i> Clear</button>
- *@                </div>
+               </div>
                 <div class="row mui-card mb-2">
                     <div class="row">
                         <div class="col-md-2 mb-2">
@@ -572,15 +571,6 @@
                         </div>
                     </div>
                 </div>
-
-@*                 <div id="loadingSpinnerRoom" style="display: none; text-align: center; padding: 20px;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-                <div class="mui-card">
-                    <div id="gridContainerSearchRoom" class="mt-2 gridContainer"></div>
-                </div> *@
             </div>
 
         </div>
@@ -592,10 +582,10 @@
                         <div id="gridContainerSearchAllotmentDetail" class="mt-2 gridContainer"></div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>
-
 
 <!-- Modal search market-->
 <div class="modal fade modal-xl" id="modalMarket" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -610,6 +600,210 @@
                 <div id="treeListMarket"></div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<!-- Modal search preference-->
+<div class="modal fade modal-xl" id="modalPreference" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Preference</h5>
+                    <button type="button" class="btn-close" onclick="closeModalSearchPreference()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">Code</label>
+                            <input type="text" class="form-control" id="codePreferenceSearch" oninput="getDataPreference();"/>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Group Preference</label>
+                            <select type="text" class="form-control" id="groupPreferenceSearch" asp-items="ViewBag.cboGroupPreferenceProvider" onchange="getDataPreference();">
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchPreference" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal search booker-->
+<div class="modal fade modal-xl" id="modalBooker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchBooker()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mui-card mb-2">
+                    <div class="col-md-2 mb-2">
+                        <label  class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="nameBookerSearch" placeholder="Enter name" oninput="filterBookerModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label  class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstNameBookerSearch" placeholder="Enter first name" oninput="filterBookerModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label  class="form-label">View By</label>
+                        <select type="text" class="form-control" id="viewByBookerSearch" disabled style="line-height:1.28">
+                            <option selected value="5">Contact</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label  class="form-label">City</label>
+                        <select type="text" class="form-control" id="cityBookerSearch" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">Key word</label>
+                        <input type="text" class="form-control" id="keywordBookerSearch" placeholder="Enter value" oninput="filterBookerModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label  class="form-label">Code</label>
+                        <input type="text" class="form-control" id="codeBookerSearch" placeholder="Enter value" oninput="filterBookerModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label  class="form-label">Property</label>
+                        <select type="text" class="form-control" id="propertyBookerSearch" disabled style="line-height:1.28">
+                            <option selected>PMSh TheArena</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label>Sale in charge</label>
+                        <div>
+                            <input type="checkbox" id="saleBooker" name="myCheckbox">
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingSpinnerBooker" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchBooker" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal more fields-->
+<div class="modal fade modal-xl" id="modalMoreFields" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">More Fields</h5>
+                <button type="button" class="btn-close" onclick="closeModalMoreFields()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllotment();"> OK</button>
+                </div>
+                <div class="row ">
+                    <div class="col-md-5 mui-card">
+                        <div class="row me-1 mt-2">
+                            <label style="color:#9F0010;font-size:16px">Pickup</label>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Picked Reqd</label>
+                            <select class="col-md-9">
+                                <option>No</option>
+                                <option>Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport Type</label>
+                            <select class="col-md-9" asp-items="ViewBag.cboTransportType">
+                            </select>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Station Code</label>
+                            <input class="col-md-9"/>
+
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Carrier Code</label>
+                            <input class="col-md-9" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport No.</label>
+                            <input class="col-md-9" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Arrival Date</label>
+                            <input class="col-md-9" type="date" id="pickUpDate"/>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Pickup Time</label>
+                            <input class="col-md-9"  />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Description</label>
+                            <input class="col-md-9" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mui-card">
+                        <div class="row me-1 mt-2">
+                            <label style="color:#9F0010;font-size:16px">Drop Off</label>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Dropoff Reqd</label>
+                            <select class="col-md-9">
+                                <option>No</option>
+                                <option>Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport Type</label>
+                            <select class="col-md-9" asp-items="ViewBag.cboTransportType">
+                            </select>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Station Code</label>
+                            <input class="col-md-9" />
+
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Carrier Code</label>
+                            <input class="col-md-9" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport No.</label>
+                            <input class="col-md-9" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Departure Date</label>
+                            <input class="col-md-9" type="date" id="dropOffDate"/>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">DropOff Time</label>
+                            <input class="col-md-9" />
+                        </div>  
+                        <div class="row me-1">
+                            <label class="col-md-3">Description</label>
+                            <input class="col-md-9" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
@@ -725,7 +919,11 @@
 
         // Set arrival and departure input values
         document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+        document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
+
         document.getElementById('departure').value = formatDate(departureDate);
+        document.getElementById('dropOffDate').value = formatDate(departureDate);
+
         updateDates();
     };
 
@@ -955,6 +1153,9 @@
                 $('#nameProfileSearch').val(name);
             } else {
                 showToast('Error', 'Invalid name format! Use FirstName MiddleName LastName or FirstName MiddleName,LastName', false);
+                $('#txtName').val('');
+                $('#txtFirstName').val('');
+
             }
         }
     });
@@ -1304,6 +1505,221 @@
                 showBorders: true,
                 columnAutoWidth: true
             });
+    }
+    function getDataPreference(){
+        $.ajax({
+            url: '/Reservation/GetAllPreference',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                code : $('#codePreferenceSearch').val(),
+                preferenceGroup: $('#groupPreferenceSearch').val(),
+            },
+            success: function (result) {
+                initializeDataGridSearchPreference(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+
+        });
+    }
+    function initializeDataGridSearchPreference(data) {
+        $("#gridContainerSearchPreference").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+                    columns: [
+                        { dataField: "ID", caption: "ID",  visible: false},
+                        { dataField: "code", caption: "Code", },
+                        { dataField: "description", caption: "Description",  },
+                    ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                $('#modalPreference').modal('hide');
+                $('#codePreferenceSearch').val(e.data.code);
+                        $('#txtPreference').val(e.data.code);
+            }
+        });
+    }
+    function openModalSearchPreference(){
+        getDataPreference();
+        $('#modalPreference').modal('show');
+
+    }
+    function closeModalSearchPreference(){
+        $('#modalPreference').modal('hide');
+    }
+
+    function openModalSearchBooker(){
+        getAllBookers(5);
+        $('#modalBooker').modal('show');
+    }
+    function closeModalSearchBooker(){
+        $('#nameBookerSearch').val('');
+        $('#firstNameBookerSearch').val('');
+        $('#cityBookerSearch').val(0);
+        $('#modalBooker').modal('hide');
+
+    }
+    var listBookers = [];
+    function getAllBookers(type) {
+        $("#loadingSpinnerBooker").show();
+        $('#viewByBookerSearch').val(type);
+        $.ajax({
+            url: '/Profile/GetAllProfiles',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                code: $('#codeBookerSearch').val(),
+                account: $('#nameBookerSearch').val(),
+                firstName: $('#firstNameBookerSearch').val(),
+                keyWord: $('#keywordBookerSearch').val(),
+                city: $('#cityBookerSearch').val(),
+                type: $('#viewByBookerSearch').val(),
+                showSaleInCharge: $("#saleBooker").is(":checked"),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listBookers = result;
+                initializeDataGridSearchBooker(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            },
+            complete: function () {
+                $("#loadingSpinnerBooker").hide(); // 👉 Hide spinner sau khi hoàn tất
+            }
+        });
+    }
+
+    function filterBookerModal() {
+        const codeSearchTerm = $('#codeBookerSearch').val().toLowerCase();
+        const firstNameSearchTerm = $('#firstNameBookerSearch').val().toLowerCase();
+        const accountSearchTerm = $('#nameBookerSearch').val().toLowerCase();
+        const citySearchTerm = $('#cityBookerSearch').val();
+        const keywordkSearchTerm = $('#keywordBookerSearch').val();
+        const filteredProfiles = listProfiles.filter(profile =>
+            profile.code.toLowerCase().includes(codeSearchTerm) &&
+            profile.account.toLowerCase().includes(firstNameSearchTerm) &&
+            profile.city == citySearchTerm &&
+            profile.keyword.toLowerCase().includes(keywordkSearchTerm) &&
+            profile.account.toLowerCase().includes(accountSearchTerm)
+        );
+        initializeDataGridSearchBooker(filteredProfiles);
+    }
+    function initializeDataGridSearchBooker(data) {
+        var columnWidth = 150;
+
+        $("#gridContainerSearchBooker").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "id", caption: "ID", width: columnWidth - 80, visible: false},
+                { dataField: "code", caption: "Code", width: columnWidth - 80 },
+                { dataField: "account", caption: "Account", width: columnWidth * 2 },
+                { dataField: "taxCode", caption: "Tax Code", width: columnWidth },
+                { dataField: "city", caption: "City", width: columnWidth },
+                { dataField: "nationality", caption: "Nat", width: columnWidth },
+                { dataField: "address", caption: "Address", width: columnWidth },
+                { dataField: "homeAddres", caption: "Business Address", width: columnWidth },
+                { dataField: "company", caption: "Company", width: columnWidth },
+                { dataField: "handPhone", caption: "HandPhone", width: columnWidth },
+                { dataField: "telephone", caption: "Telephone", width: columnWidth },
+                { dataField: "email", caption: "Email", width: columnWidth },
+                { dataField: "website", caption: "Website", width: columnWidth },
+                { dataField: "aRNo", caption: "ARNo", width: columnWidth },
+                { dataField: "postalCode", caption: "Postal Code", width: columnWidth },
+                { dataField: "keyword", caption: "Keyword", width: columnWidth },
+                { dataField: "description", caption: "Description", width: columnWidth },
+                { dataField: "personInChargeID", caption: "Sale In Charge", width: columnWidth },
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                getInfoByBookerID(e.data.id);
+                
+                $('#modalBooker').modal('hide');
+            }
+        });
+    }
+    function getInfoByBookerID(id){
+        $.ajax({
+            url: '/Reservation/GetInfoProfile',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                profileID: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#txtBooker').val(result.account);
+                $('#nameBookerSearch').val(result.account);
+                $('#firstNameBookerSearch').val(result.firstname);
+                $('#cityBookerSearch').val(result.city);
+;            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+
+
+    function openModalMoreFields(){
+        $('#modalMoreFields').modal('show');
+
+    }
+    function closeModalMoreFields(){
+        $('#modalMoreFields').modal('hide');
     }
     // async function getAllProfileIndividual() {
     //     return $.ajax({

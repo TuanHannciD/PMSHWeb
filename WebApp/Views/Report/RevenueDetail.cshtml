@@ -212,12 +212,34 @@ tr.custom > td {
                     }
                 ]
             },
-            showBorders: true,
-            onRowPrepared: function (e) {
-                if (e.rowType === "data" && e.data?.cssClass) {
-                    e.rowElement.addClass(e.data.cssClass);
-                }
+
+            paging: { pageSize: 25 },
+            scrolling:  {
+         
+            useNative: true,
+            showScrollbar: "always"
+             },
+                    pager: {
+                    visible: true,
+                    allowedPageSizes: [25, 50, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true,
+                },
+                selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                    filterRow: {
+             visible: true,
+            applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+                showBorders: true,
+                onRowPrepared: function (e) {
+            if (e.rowType === "data" && e.data && e.data.cssClass) {
+                e.rowElement.addClass(e.data.cssClass);
             }
+        },
         });
     }
 
