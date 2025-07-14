@@ -159,11 +159,11 @@
                     <label class="col-md-3">Adults</label>
                     <input type="number" value="2" class="small-input col-md-3" id="adults">
                     <label class="col-md-1">C</label>
-                    <input type="number" value="0" class="small-input col-md-1">
+                    <input type="number" value="0" class="small-input col-md-1" id="c">
                     <label class="col-md-1">C1</label>
-                    <input type="number" value="0" class="small-input col-md-1">
+                    <input type="number" value="0" class="small-input col-md-1" id="c1">
                     <label class="col-md-1">C2</label>
-                    <input type="number" value="0" class="small-input col-md-1">
+                    <input type="number" value="0" class="small-input col-md-1" id="c2">
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">No. of Room</label>
@@ -191,8 +191,9 @@
 
                 <div class="row me-1">
                     <label class="col-md-3">Rate Code</label>
-                    <select class="col-md-9" id="txtRateCode">
-                    </select>
+                    <input class="col-md-8" id="txtRateCode"/>
+                    <button class="col-md-1" onclick="openModalRateCode()"><i class="fa-solid fa-ellipsis"></i></button>
+
                 </div>
                 <div class="row me-1">
                     <label class="col-md-3">Currency</label>
@@ -807,6 +808,134 @@
         </div>
     </div>
 </div>
+
+<!-- Modal more rate code-->
+<div class="modal fade modal-xl" id="modalRateCode" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Rate Code</h5>
+                <button type="button" class="btn-close" onclick="closeModalRateCode()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllotment();">Search</button>
+                </div>
+                <div class="row " style="justify-content:space-between">
+                    <div class="col-md-5 mui-card">
+                        <div class="row me-1 mt-1">
+
+                            <label class="col-md-3">Arrival</label>
+                            <input type="date" id="arrivalRateCode" class="col-md-5">
+                            <button class="col-md-1" onclick="changeDateRateCode('arrivalRateCode', -1)">-</button>
+                            <button class="col-md-1" onclick="changeDateRateCode('arrivalRateCode', 1)">+</button>
+                            <span class="col-md-2" style="font-size:12px;color:#9F0010" id="arrival-day-ratecode"></span>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Nights</label>
+                            <input type="text" id="nightsRateCode" class="col-md-9" readonly>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Departure</label>
+                            <input type="date" id="departureRateCode" class="col-md-5">
+                            <button class="col-md-1" onclick="changeDateRateCode('departureRateCode', -1)">-</button>
+                            <button class="col-md-1" onclick="changeDateRateCode('departureRateCode', 1)">+</button>
+                            <span class="col-md-2" style="font-size:12px;color:#9F0010" id="departure-day-ratecode"></span>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Adults</label>
+                            <input type="number" value="2" class="small-input col-md-3" id="adultsRateCode">
+                            <label class="col-md-1">C</label>
+                            <input type="number" value="0" class="small-input col-md-1" id="cRateCode">
+                            <label class="col-md-1">C1</label>
+                            <input type="number" value="0" class="small-input col-md-1" id="c1RateCode">
+                            <label class="col-md-1">C2</label>
+                            <input type="number" value="0" class="small-input col-md-1" id="c2RateCode">
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">No. of Room</label>
+                            <input class="col-md-7" type="number" id="numRoomsRateCode" value="1" min="1">
+                            <button class="col-md-1" onclick="decreaseRoomsRateCode()">-</button>
+                            <button class="col-md-1" onclick="increaseRoomsRateCode()">+</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mui-card">
+                        <div class="row me-1 mt-1">
+                            <label class="col-md-5">RoomType</label>
+                            <input type="text" id="roomTypeRateCode" class="col-md-7">
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-5">Promotions</label>
+                            <select id="promotionRateCode" class="col-md-7" asp-items="ViewBag.cboPromotion">
+                            </select>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-5">Packages</label>
+                            <select id="packageRateCode" class="col-md-7" asp-items="ViewBag.cboPackage">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mui-card row" style="margin:0;padding:0">
+                        <div class="form-group" style="display:flex">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="func" checked value="0">
+                                <label class="form-check-label">Total</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="func" value="1">
+                                <label class="form-check-label">Average</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="func" value="2">
+                                <label class="form-check-label">First Rate</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="dayuse" value="1">
+                                <label class="form-check-label">Day Use</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>Currency</label>
+                                <div style="display:flex">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="currency" checked value="VND">
+                                        <label class="form-check-label" >VND</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="currency" value="USD">
+                                        <label class="form-check-label" >USD</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>Display</label>
+                                <div style="display:flex">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="display" checked value="0">
+                                        <label class="form-check-label" >+++</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="display" value="1">
+                                        <label class="form-check-label" >net</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="mui-card">
+                        <div id="gridContainerRateCode" class="mt-2 gridContainer"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(async function () {
         // Chờ tất cả các hàm AJAX hoàn thành
@@ -839,6 +968,17 @@
         }
     }
 
+
+    function calculateNightsRateCode() {
+        const arrival = new Date(document.getElementById('arrivalRateCode').value);
+        const departure = new Date(document.getElementById('departureRateCode').value);
+        if (arrival && departure) {
+            const diffTime = departure - arrival;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('nightsRateCode').value = diffDays >= 0 ? diffDays : 0;
+        }
+    }
+
     // Hàm cập nhật ngày và thứ
     function updateDates() {
         const arrivalInput = document.getElementById('arrival');
@@ -857,7 +997,23 @@
         }
         calculateNights();
     }
+    function updateDatesRateCode() {
+        const arrivalInput = document.getElementById('arrivalRateCode');
+        const departureInput = document.getElementById('departureRateCode');
+        const arrivalDay = document.getElementById('arrival-day-ratecode');
+        const departureDay = document.getElementById('departure-day-ratecode');
 
+        const arrivalDate = new Date(arrivalInput.value);
+        const departureDate = new Date(departureInput.value);
+
+        if (arrivalDate) {
+            arrivalDay.textContent = getDayName(arrivalDate);
+        }
+        if (departureDate) {
+            departureDay.textContent = getDayName(departureDate);
+        }
+        calculateNightsRateCode();
+    }
     // Hàm thay đổi ngày khi nhấn nút + hoặc -
     function changeDate(field, delta) {
         const input = document.getElementById(field);
@@ -906,7 +1062,53 @@
 
         updateDates();
     }
+    function changeDateRateCode(field, delta) {
+        const input = document.getElementById(field);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
+        const currentDate = new Date(input.value || today);
+        const arrivalDate = new Date(document.getElementById('arrivalRateCode').value);
 
+        // Kiểm tra nếu giảm ngày và ngày hiện tại nhỏ hơn ngày hôm nay
+        if (delta < 0) {
+            const newDate = new Date(currentDate);
+            newDate.setDate(currentDate.getDate() + delta);
+            if (newDate < today) {
+                return; // Không cho phép giảm ngày nếu nhỏ hơn hôm nay
+            }
+            // Nếu giảm departure, đảm bảo không nhỏ hơn hoặc bằng arrival
+            if (field === 'departureRateCode' && newDate <= arrivalDate) {
+                return; // Không cho phép giảm departure nếu nhỏ hơn hoặc bằng arrival
+            }
+        }
+
+        // Cập nhật ngày
+        currentDate.setDate(currentDate.getDate() + delta);
+        input.value = formatDate(currentDate);
+
+        // Nếu thay đổi arrival, cập nhật departure để giữ số đêm cố định
+        if (field === 'arrivalRateCode') {
+            const nights = parseInt(document.getElementById('nightsRateCode').value) || 1;
+            const departureDate = new Date(currentDate);
+            departureDate.setDate(currentDate.getDate() + nights);
+            // Đảm bảo departure lớn hơn arrival
+            if (departureDate <= currentDate) {
+                departureDate.setDate(currentDate.getDate() + 1);
+            }
+            document.getElementById('departureRateCode').value = formatDate(departureDate);
+        }
+
+        // Nếu thay đổi departure, đảm bảo departure lớn hơn arrival
+        if (field === 'departureRateCode') {
+            if (currentDate <= arrivalDate) {
+                const newDeparture = new Date(arrivalDate);
+                newDeparture.setDate(arrivalDate.getDate() + 1);
+                document.getElementById('departureRateCode').value = formatDate(newDeparture);
+            }
+        }
+
+        updateDatesRateCode();
+    }
     // Khởi tạo ngày mặc định
     window.onload = function() {
         var businessDate = '@ViewBag.businesDate';
@@ -963,6 +1165,7 @@
 
     const numRoomsInput = document.getElementById('numRooms');
     const roomSelect = document.getElementById('roomSelect');
+    const numRoomsRateCodeInput = document.getElementById('numRoomsRateCode');
 
     // Hàm kiểm tra và cập nhật trạng thái select
     function updateRoomSelect() {
@@ -989,6 +1192,18 @@
         updateRoomSelect();
     }
 
+
+    function decreaseRoomsRateCode() {
+        let value = parseInt(numRoomsRateCodeInput.value);
+        if (value > 1) {
+            numRoomsRateCodeInput.value = value - 1;
+        }
+    }
+
+    function increaseRoomsRateCode() {
+        let value = parseInt(numRoomsRateCodeInput.value);
+        numRoomsRateCodeInput.value = value + 1;
+    }
     // Xác thực khi nhập trực tiếp vào input
     numRoomsInput.addEventListener('input', function() {
         if (numRoomsInput.value < 1 || isNaN(numRoomsInput.value)) {
@@ -1720,6 +1935,63 @@
     }
     function closeModalMoreFields(){
         $('#modalMoreFields').modal('hide');
+    }
+
+    function openModalRateCode(){
+        $('#arrivalRateCode').val($('#arrival').val());
+        $('#departureRateCode').val($('#departure').val());
+        $('#adultsRateCode').val($('#adults').val());
+        $('#cRateCode').val($('#c').val());
+        $('#c1RateCode').val($('#c1').val());
+        $('#c2RateCode').val($('#c2').val());
+        $('#numRoomsRateCode').val($('#numRooms').val());
+        updateDatesRateCode();
+        $('#modalRateCode').modal('show');
+
+    }
+    function closeModalRateCode(){
+        $('#modalRateCode').modal('hide');
+    }
+
+    function ReservationRateQueryDetail() {
+        // $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Reservation/ReservationRateQueryDetail',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                fromDate:$('#arrivalRateCode').val(),
+                toDate: $('#departureRateCode').val(),
+                roomType:$('#roomTypeRateCode').val(),
+                adults:$('#adultsRateCode').val(),
+                noOfNight:$('#nightsRateCode').val(),
+                packageID:$('#packageRateCode').val(),
+                promotionID:$('#promotionRateCode').val(),
+                func:$('input[name="func"]:checked').val(),
+                display:$('input[name="display"]:checked').val(),
+                dayUse:$('input[name="dayuse"]').is(':checked'),
+                c1:$('#cRateCode').val(),
+                c2:$('#c1RateCode').val(),
+                c3:$('#c2RateCode').val(),
+                noOfRoom:$('#numRoomsRateCode').val(),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listProfiles = result;
+                initializeDataGridSearchProfile(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+            // ,complete: function () {
+            //     $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
+            // }
+        });
     }
     // async function getAllProfileIndividual() {
     //     return $.ajax({

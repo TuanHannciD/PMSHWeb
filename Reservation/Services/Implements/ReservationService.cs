@@ -160,5 +160,50 @@ namespace Reservation.Services.Implements
                 throw new Exception($"Error: {ex.Message}", ex);
             }
         }
+
+        public DataTable ReservationRateQueryDetail(DateTime fromDate, DateTime toDate, int roomType, int adults, int noOfNight, 
+            int packageID, int promotionID, string tableName, string onRows, string onRowsAlias, string onCols, string sumcol,
+            int func, string currency, int display, int dayUse, int c1, int c2, int c3, int noOfRoom)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@fromDate", fromDate),
+                    new SqlParameter("@toDate", toDate),
+                    new SqlParameter("@roomType", roomType),
+                    new SqlParameter("@adults", adults),
+                    new SqlParameter("@NoOfNight", noOfNight),
+                    new SqlParameter("@PackageID", packageID),
+                    new SqlParameter("@PromotionID", promotionID),
+                    new SqlParameter("@table", tableName),
+                    new SqlParameter("@onrows", onRows),
+                    new SqlParameter("@onrowsalias", onRowsAlias),
+                    new SqlParameter("@oncols", onCols),
+                    new SqlParameter("@sumcol", sumcol),
+                    new SqlParameter("@func", func),
+                    new SqlParameter("@currency", currency),
+                    new SqlParameter("@display", display),
+                    new SqlParameter("@dayuse", dayUse),
+                    new SqlParameter("@c1", c1),
+                    new SqlParameter("@c2", c2),
+                    new SqlParameter("@c3", c3),
+                    new SqlParameter("@NoOfRoom", noOfRoom),
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationRateQueryDetail", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }
