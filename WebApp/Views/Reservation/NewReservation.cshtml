@@ -914,11 +914,11 @@
                                 <label>Display</label>
                                 <div style="display:flex">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="display" checked value="+++">
+                                        <input class="form-check-input" type="radio" name="display" checked value="0">
                                         <label class="form-check-label" >+++</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="display" value="net">
+                                        <input class="form-check-input" type="radio" name="display" value="1">
                                         <label class="form-check-label" >net</label>
                                     </div>
                                 </div>
@@ -1953,26 +1953,27 @@
         $('#modalRateCode').modal('hide');
     }
 
-    function getAllProfiles(type) {
+    function ReservationRateQueryDetail() {
         // $("#loadingSpinner").show();
         $.ajax({
             url: '/Reservation/ReservationRateQueryDetail',
             type: 'get',
             dataType: 'json',
             data:{
-                code: $('#codeProfileSearch').val(),
-                fromDate,
-                toDate,
-                roomType,
-                adults,
-                noOfNight,
-                packageID,
-                promotionID,
-                func,
-                display,
-                dayUse,
-                c1,c2,c3,
-                noOfRoom,
+                fromDate:$('#arrivalRateCode').val(),
+                toDate: $('#departureRateCode').val(),
+                roomType:$('#roomTypeRateCode').val(),
+                adults:$('#adultsRateCode').val(),
+                noOfNight:$('#nightsRateCode').val(),
+                packageID:$('#packageRateCode').val(),
+                promotionID:$('#promotionRateCode').val(),
+                func:$('input[name="func"]:checked').val(),
+                display:$('input[name="display"]:checked').val(),
+                dayUse:$('input[name="dayuse"]').is(':checked'),
+                c1:$('#cRateCode').val(),
+                c2:$('#c1RateCode').val(),
+                c3:$('#c2RateCode').val(),
+                noOfRoom:$('#numRoomsRateCode').val(),
             },
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
