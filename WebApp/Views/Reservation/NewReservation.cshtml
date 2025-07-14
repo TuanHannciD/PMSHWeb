@@ -1952,6 +1952,46 @@
     function closeModalRateCode(){
         $('#modalRateCode').modal('hide');
     }
+
+    function getAllProfiles(type) {
+        // $("#loadingSpinner").show();
+        $.ajax({
+            url: '/Reservation/ReservationRateQueryDetail',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                code: $('#codeProfileSearch').val(),
+                fromDate,
+                toDate,
+                roomType,
+                adults,
+                noOfNight,
+                packageID,
+                promotionID,
+                func,
+                display,
+                dayUse,
+                c1,c2,c3,
+                noOfRoom,
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listProfiles = result;
+                initializeDataGridSearchProfile(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải chi tiết danh sách danh mục dịch vụ hoặc bạn không có quyền tải");
+                }
+            }
+            // ,complete: function () {
+            //     $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
+            // }
+        });
+    }
     // async function getAllProfileIndividual() {
     //     return $.ajax({
     //         url: '/Profile/GetAllProfileIndividual',

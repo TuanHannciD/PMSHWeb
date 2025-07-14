@@ -17,6 +17,9 @@ namespace Reservation.Services.Interfaces
         DataTable GetAllotment(string code, string marketID, string profileID,string isDefault,string allotmentTypeID);
         DataTable GetAllotmentDetail(int allotmentID,string roomType,DateTime showHistory);
         DataTable GetReservationPreference(string code, int group);
+        DataTable ReservationRateQueryDetail(DateTime fromDate, DateTime toDate,int roomType,int adults,int noOfNight,int packageID,int promotionID,
+            string tableName,string onRows,string onRowsAlias,string onCols,string sumcol,int func,string currency,int display,int dayUse,int c1,int c2,
+            int c3,int noOfRoom);
 
 
     }
