@@ -36,7 +36,10 @@ namespace Reservation.Controllers
             _configuration = configuration;
             _iReservationService = iReservationService;
         }
-
+        public IActionResult SearchReservation()
+        {
+            return View();
+        }
 
         public IActionResult NewReservation()
         {
@@ -62,6 +65,7 @@ namespace Reservation.Controllers
             ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
             ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
             ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
+            ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             return View();
         }
@@ -325,6 +329,39 @@ namespace Reservation.Controllers
                                   Description = d["Description"].ToString(),
   
 
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReservationRateQueryDetail(DateTime fromDate, DateTime toDate, int roomType, int adults, int noOfNight, int packageID, 
+            int promotionID,int func,int display,int dayUse, int c1, int c2,int c3, int noOfRoom)
+        {
+            try
+            {
+                string tableName = "VwRatRateQuery";
+                string onRows = "RateCode";
+                string onRowsAlias = "RateCode";
+                string onCols = "Code";
+                string sumcol = "A2";
+                string currency = "USD";
+                DataTable myData = _iReservationService.ReservationRateQueryDetail( fromDate,  toDate,  roomType,  adults,  noOfNight,  packageID,
+                 promotionID,  tableName,  onRows,  onRowsAlias,  onCols,  sumcol,  func,  currency,  display,dayUse,  c1,  c2,  c3,  noOfRoom);
+
+                var result = (from d in myData.AsEnumerable()
+
+                              select new
+                              {
+                                  PreferenceID = d["PreferenceID"].ToString(),
+                                  Code = d["Code"].ToString(),
+                                  Description = d["Description"].ToString(),
                               }).ToList();
 
 
