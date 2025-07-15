@@ -97,11 +97,11 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@FromMonth", fromDate),
-                new SqlParameter("@ToMonth", toDate),
-        new SqlParameter("@PrevFromMonth", new DateTime(2024, 4, 1, 0, 0, 0)),
-        new SqlParameter("@PrevToMonth", new DateTime(2024, 4, 1, 0, 0, 0)),
-                 new SqlParameter("@Status", status),
-                new SqlParameter("@SortOder", sortOder),
+               new SqlParameter("@ToMonth", toDate),
+               new SqlParameter("@PrevFromMonth", new DateTime(2024, 4, 1, 0, 0, 0)),
+               new SqlParameter("@PrevToMonth", new DateTime(2024, 4, 1, 0, 0, 0)),
+               new SqlParameter("@Status", status),
+               new SqlParameter("@SortOder", sortOder),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptNationalCompareStatistics", param);
@@ -113,28 +113,25 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-        new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
-        new SqlParameter("@RoomClass", roomClass),
-        new SqlParameter("@RoomType", roomtype),
-                 new SqlParameter("@Market", market),
+                new SqlParameter("@RoomClass", roomClass),
+                new SqlParameter("@RoomType", roomtype),
+                new SqlParameter("@Market", market),
                 new SqlParameter("@RateCode", rateCode),
-                    new SqlParameter("@Source", source),
-              new SqlParameter("@Pseudo", pseudo),
-                  new SqlParameter("@CheckedInToday", checkedInToday),
-
-                         new SqlParameter("@Cancellations", cancellations),
-                  new SqlParameter("@VIP", vip),
-                          new SqlParameter("@SortOrder", sortOrder),
-                         new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
-
-                                  new SqlParameter("@SearchCriteria", searchCriteria),
-                  new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
-                          new SqlParameter("@ZeroRateOnly", zeroRateOnly),
-
-                                 new SqlParameter("@DisRoomSharer", disRoomSharer),
-                          new SqlParameter("@ChkVIPOnly", viponlycheck),
-                              new SqlParameter("@NoPost", noPost),
+                new SqlParameter("@Source", source),
+                new SqlParameter("@Pseudo", pseudo),
+                new SqlParameter("@CheckedInToday", checkedInToday),
+                new SqlParameter("@Cancellations", cancellations),
+                new SqlParameter("@VIP", vip),
+                new SqlParameter("@SortOrder", sortOrder),
+                new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
+                new SqlParameter("@SearchCriteria", searchCriteria),
+                new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
+                new SqlParameter("@ZeroRateOnly", zeroRateOnly),
+                new SqlParameter("@DisRoomSharer", disRoomSharer),
+                new SqlParameter("@ChkVIPOnly", viponlycheck),
+                new SqlParameter("@NoPost", noPost),
             };
 
 
@@ -147,28 +144,25 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-        new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
-        new SqlParameter("@RoomClass", roomClass),
-        new SqlParameter("@RoomType", roomtype),
-                 new SqlParameter("@Market", market),
+                new SqlParameter("@RoomClass", roomClass),
+                new SqlParameter("@RoomType", roomtype),
+                new SqlParameter("@Market", market),
                 new SqlParameter("@RateCode", rateCode),
-                    new SqlParameter("@Source", source),
-              new SqlParameter("@Pseudo", pseudo),
-                  new SqlParameter("@CheckedInToday", checkedInToday),
-
-                         new SqlParameter("@Cancellations", cancellations),
-                  new SqlParameter("@VIP", vip),
-                          new SqlParameter("@SortOrder", sortOrder),
-                         new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
-
-                                  new SqlParameter("@SearchCriteria", searchCriteria),
-                  new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
-                          new SqlParameter("@ZeroRateOnly", zeroRateOnly),
-
-                                 new SqlParameter("@DisRoomSharer", disRoomSharer),
-                          new SqlParameter("@ChkVIPOnly", viponlycheck),
-                              new SqlParameter("@NoPost", noPost),
+                new SqlParameter("@Source", source),
+                new SqlParameter("@Pseudo", pseudo),
+                new SqlParameter("@CheckedInToday", checkedInToday),
+                new SqlParameter("@Cancellations", cancellations),
+                new SqlParameter("@VIP", vip),
+                new SqlParameter("@SortOrder", sortOrder),
+                new SqlParameter("@BusinessDate", DateTime.Parse("2024-08-29 00:00:00")),
+                new SqlParameter("@SearchCriteria", searchCriteria),
+                new SqlParameter("@CkhArrivalDate", ckhArrivalDate),
+                new SqlParameter("@ZeroRateOnly", zeroRateOnly),
+                new SqlParameter("@DisRoomSharer", disRoomSharer),
+                new SqlParameter("@ChkVIPOnly", viponlycheck),
+                new SqlParameter("@NoPost", noPost),
             };
 
 
@@ -185,28 +179,28 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
      new SqlParameter("@FromDate", fromDate),
-        new SqlParameter("@ToDate", toDate),
-        new SqlParameter("@RoomClass", roomClass),
-        new SqlParameter("@RoomType", roomtype),
-        new SqlParameter("@PaymentMethod", paymethod),
-        new SqlParameter("@RateCode", rateCode),
-        new SqlParameter("@BlockCode", block),
-        new SqlParameter("@Zone", zone),
-        new SqlParameter("@VIP", vip),
-        new SqlParameter("@ChkVIPOnly", viponlycheck),
-        new SqlParameter("@SortOrder", sortOrder),
-        new SqlParameter("@PseudoRooms", pseudo),
-        new SqlParameter("@DueOut", dueout),
-        new SqlParameter("@CheckedOut", checkout),
-        new SqlParameter("@DisRoomSharer", disRoomSharer),
-        //new SqlParameter("@Specials", specials),
-        new SqlParameter("@LateCheckOut", lateCheckOut),
-        new SqlParameter("@EarlyDep", earlyDep),
-        new SqlParameter("@Agent", agents),
-        new SqlParameter("@Company", company),
-        new SqlParameter("@Source", source),
-        new SqlParameter("@Individual", individuals),
-        new SqlParameter("@Group", group)
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@RoomClass", roomClass),
+                new SqlParameter("@RoomType", roomtype),
+                new SqlParameter("@PaymentMethod", paymethod),
+                new SqlParameter("@RateCode", rateCode),
+                new SqlParameter("@BlockCode", block),
+                new SqlParameter("@Zone", zone),
+                new SqlParameter("@VIP", vip),
+                new SqlParameter("@ChkVIPOnly", viponlycheck),
+                new SqlParameter("@SortOrder", sortOrder),
+                new SqlParameter("@PseudoRooms", pseudo),
+                new SqlParameter("@DueOut", dueout),
+                new SqlParameter("@CheckedOut", checkout),
+                new SqlParameter("@DisRoomSharer", disRoomSharer),
+                //new SqlParameter("@Specials", specials),
+                new SqlParameter("@LateCheckOut", lateCheckOut),
+                new SqlParameter("@EarlyDep", earlyDep),
+                new SqlParameter("@Agent", agents),
+                new SqlParameter("@Company", company),
+                new SqlParameter("@Source", source),
+                new SqlParameter("@Individual", individuals),
+                new SqlParameter("@Group", group)
             };
 
 
@@ -219,9 +213,9 @@ namespace Report.Services.Implements
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
-                 new SqlParameter("@Area", viewBy),
-                new SqlParameter("@AlertCode", altercode),
+               new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Area", viewBy),
+               new SqlParameter("@AlertCode", altercode),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptAlerts", param);
@@ -231,7 +225,7 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
             };
 
@@ -242,7 +236,7 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
             };
 
@@ -253,19 +247,17 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpFromDate", fromDate),
                 new SqlParameter("@dtpToDate", toDate),
-                  new SqlParameter("@Room", room),
+                new SqlParameter("@Room", room),
                 new SqlParameter("@Article", article),
-
-                    new SqlParameter("@RoomClass", ""),
+                new SqlParameter("@RoomClass", ""),
                 new SqlParameter("@Transaction", ""),
-                      new SqlParameter("@NetDisp", ""),
+                new SqlParameter("@NetDisp", ""),
                 new SqlParameter("@OrderBy", ""),
-
-                   new SqlParameter("@CashierNo", ""),
+                new SqlParameter("@CashierNo", ""),
                 new SqlParameter("@Zone", zone),
-                    new SqlParameter("@PostBy",viewBy),
+                new SqlParameter("@PostBy",viewBy),
 
             };
 
@@ -277,19 +269,17 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@dtpFromDate", fromDate),
+                new SqlParameter("@dtpFromDate", fromDate),
                 new SqlParameter("@dtpToDate", toDate),
-                  new SqlParameter("@Room", room),
+                new SqlParameter("@Room", room),
                 new SqlParameter("@Article", article),
-
-                    new SqlParameter("@RoomClass", ""),
+                new SqlParameter("@RoomClass", ""),
                 new SqlParameter("@Transaction", ""),
-                      new SqlParameter("@NetDisp", ""),
+                new SqlParameter("@NetDisp", ""),
                 new SqlParameter("@OrderBy", ""),
-
-                   new SqlParameter("@CashierNo", ""),
+                new SqlParameter("@CashierNo", ""),
                 new SqlParameter("@Zone", zone),
-                    new SqlParameter("@PostBy",viewBy),
+                new SqlParameter("@PostBy",viewBy),
 
             };
 
@@ -300,15 +290,15 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@dtpFromDate", fromDate),
-              new SqlParameter("@dtpToDate", toDate),
-              new SqlParameter("@Room", room),
-              new SqlParameter("@Article", article),
-              new SqlParameter("@RoomClass", roomclass),
-              new SqlParameter("@Transaction",transaction),
-              new SqlParameter("@NetDisp",netDisp),
-              new SqlParameter("@CashierNo",cashier),
-              new SqlParameter("@OrderBy",viewBy),
+                  new SqlParameter("@dtpFromDate", fromDate),
+                  new SqlParameter("@dtpToDate", toDate),
+                  new SqlParameter("@Room", room),
+                  new SqlParameter("@Article", article),
+                  new SqlParameter("@RoomClass", roomclass),
+                  new SqlParameter("@Transaction",transaction),
+                  new SqlParameter("@NetDisp",netDisp),
+                  new SqlParameter("@CashierNo",cashier),
+                  new SqlParameter("@OrderBy",viewBy),
 
             };
 
@@ -330,11 +320,11 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
-               new SqlParameter("@Zone", zone),
-              new SqlParameter("@Cashier", cashier),
-               new SqlParameter("@TransCode", "8520"),
+                  new SqlParameter("@FromDate", fromDate),
+                  new SqlParameter("@ToDate", toDate),
+                  new SqlParameter("@Zone", zone),
+                  new SqlParameter("@Cashier", cashier),
+                  new SqlParameter("@TransCode", "8520"),
 
             };
 
@@ -345,11 +335,11 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
-               new SqlParameter("@Zone", zone),
-              new SqlParameter("@Cashier", cashier),
-               new SqlParameter("@TransCode", "8520"),
+                  new SqlParameter("@FromDate", fromDate),
+                  new SqlParameter("@ToDate", toDate),
+                  new SqlParameter("@Zone", zone),
+                  new SqlParameter("@Cashier", cashier),
+                  new SqlParameter("@TransCode", "8520"),
 
             };
 
@@ -360,12 +350,12 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
-               new SqlParameter("@Zone", zone),
-              new SqlParameter("@Cashier", cashier),
-               new SqlParameter("@TransCode", "8520"),
-                           new SqlParameter("@NotBalance", notbalance),
+                  new SqlParameter("@FromDate", fromDate),
+                  new SqlParameter("@ToDate", toDate),
+                  new SqlParameter("@Zone", zone),
+                  new SqlParameter("@Cashier", cashier),
+                  new SqlParameter("@TransCode", "8520"),
+                  new SqlParameter("@NotBalance", notbalance),
 
             };
 
@@ -377,12 +367,12 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
-                new SqlParameter("@ToDate", toDate),
-               new SqlParameter("@Zone", zone),
-              new SqlParameter("@Cashier", cashier),
-               new SqlParameter("@TransCode", "8520"),
-                           new SqlParameter("@Type", type),
+                  new SqlParameter("@FromDate", fromDate),
+                  new SqlParameter("@ToDate", toDate),
+                  new SqlParameter("@Zone", zone),
+                  new SqlParameter("@Cashier", cashier),
+                  new SqlParameter("@TransCode", "8520"),
+                  new SqlParameter("@Type", type),
 
             };
 
@@ -393,18 +383,18 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-              new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
-                  new SqlParameter("@RoomClassID", roomClass),
+                new SqlParameter("@RoomClassID", roomClass),
                 new SqlParameter("@DepartmentID", department),
-                  new SqlParameter("@Status", status),
+                new SqlParameter("@Status", status),
                 new SqlParameter("@ByAlphabetical", byAlphabetical),
-                  new SqlParameter("@ByRoom", byRoom),
-                    new SqlParameter("@ByVIP", byVip),
-                      new SqlParameter("@IsPseudo", pseudoRoom),
-                        new SqlParameter("@IsReserved", reserved),
-                          new SqlParameter("@CheckedIn", checkedIn),
-                            new SqlParameter("@DueOut", dueout),
+                new SqlParameter("@ByRoom", byRoom),
+                new SqlParameter("@ByVIP", byVip),
+                new SqlParameter("@IsPseudo", pseudoRoom),
+                new SqlParameter("@IsReserved", reserved),
+                new SqlParameter("@CheckedIn", checkedIn),
+                new SqlParameter("@DueOut", dueout),
                 new SqlParameter("@Individual", individual),
                 new SqlParameter("@BlockCode", blockcode),
                 new SqlParameter("@VIPOnly", vipOnly),
@@ -419,20 +409,16 @@ namespace Report.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-               new SqlParameter("@RoomClass", roomClass),
-                new SqlParameter("@RoomType", roomtype),
-                new SqlParameter("@Payment", paymethod),
-                       new SqlParameter("@VIP",vip),
-                           new SqlParameter("@SortOrder",viewBy),
-
-                                new SqlParameter("@Pseudo", pseudo),
-
-                       new SqlParameter("@ChkVIPOnly",chkviponly),
-                       new SqlParameter("@BusinessDate", DateTime.Now.Date),
-
-
-                               new SqlParameter("@DisRoomSharer", disRoomSharer),
-                       new SqlParameter("@NoPost",nopost),
+                   new SqlParameter("@RoomClass", roomClass),
+                   new SqlParameter("@RoomType", roomtype),
+                   new SqlParameter("@Payment", paymethod),
+                   new SqlParameter("@VIP",vip),
+                   new SqlParameter("@SortOrder",viewBy),
+                   new SqlParameter("@Pseudo", pseudo),
+                   new SqlParameter("@ChkVIPOnly",chkviponly),
+                   new SqlParameter("@BusinessDate", DateTime.Now.Date),
+                   new SqlParameter("@DisRoomSharer", disRoomSharer),
+                   new SqlParameter("@NoPost",nopost),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptArrivalAndCheckedInToday", param);
