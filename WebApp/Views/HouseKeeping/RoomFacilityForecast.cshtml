@@ -26,7 +26,7 @@
 
 
     .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
-        display:none;
+        display: none;
     }
 
     #gridContainer .dx-datagrid-rowsview .dx-row > td {
@@ -100,7 +100,7 @@
         min-height: 26px !important;
         font-size: 12px !important;
     }
-  
+
 
     .filter_wrapper {
         /*     background-color: #ececec; */
@@ -226,7 +226,7 @@
         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
-                url: '/HouseKeeping/RoomControlPanelData',
+                url: '/HouseKeeping/RoomFacilityForecastData',
                 type: 'GET',
                 data: {
                     fromDate: $("#fromDate").val(),
@@ -331,7 +331,7 @@
             showBorders: true,
             onRowPrepared: function (e) {
                 if (e.rowType === "data") {
-                   
+
                     if (e.data?.isTotal) {
                         e.rowElement.css({
                             "font-weight": "bold",

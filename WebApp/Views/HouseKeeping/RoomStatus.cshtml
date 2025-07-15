@@ -1,0 +1,734 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var zoneList = ViewBag.ZoneList;
+    var roomtypeList = ViewBag.RoomTypeList;
+    var roomList = ViewBag.RoomList;
+}
+
+
+<style>
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    .dx-datagrid-headers .dx-header-row td {
+        white-space: pre-line !important;
+        text-align: center;
+        font-size: 11px;
+    }
+
+
+    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
+        display: none;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 12px !important;
+        line-height: 24px !important;
+    }
+
+    #gridContainer .dx-datagrid-headers {
+        background-color: #3b9ac6 !important; /* Màu xanh dương */
+        color: white !important; /* Chữ trắng cho dễ đọc */
+    }
+
+        #gridContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            font-size: 12px !important;
+        }
+
+        #gridContainer .dx-datagrid-headers .dx-header-row > td {
+            background-color: #3b9ac6 !important;
+            color: white !important;
+            font-weight: bold;
+            border-right: 1px solid #ddd !important;
+            text-align: center !important;
+        }
+
+        #gridContainer .dx-datagrid-rowsview td,
+        #gridContainer .dx-datagrid-headers td {
+            border-right: 1px solid #ddd !important;
+        }
+
+        /* Loại bỏ viền phải ở cột cuối cùng (tùy chọn) */
+        #gridContainer .dx-datagrid-rowsview tr td:last-child,
+        #gridContainer .dx-datagrid-headers tr td:last-child {
+            border-right: none !important;
+        }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #gridContainer .dx-datagrid-filter-row td .dx-datebox {
+        height: 24px !important;
+        min-height: 24px !important;
+    }
+
+        #gridContainer .dx-datagrid-filter-row td .dx-datebox input {
+            font-size: 12px !important;
+            height: 24px !important;
+        }
+
+    #gridContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
+    #gridContainer .dx-datagrid-filter-row td .dx-texteditor input {
+        height: 24px !important;
+        line-height: 24px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        box-sizing: border-box;
+    }
+
+    #gridContainer .dx-datagrid-filter-row td .dx-datebox,
+    #gridContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
+        height: 26px !important;
+        min-height: 26px !important;
+        font-size: 12px !important;
+    }
+
+
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #gridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <!-- From Date -->
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1 fw-bold me-3">Room Status:</label>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="cleannon" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Clean Non-Checked</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="clean" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Clean</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="dirty" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Dirty</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="pickup" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Pickup</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="oocheck" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">OO</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="oscheck" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">OS</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1 fw-bold me-3">FO Status:</label>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="vacant" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Vacant</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="occupied" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Occupied</label>
+                </div>
+              
+            </div>
+        </div>
+
+        <div class="d-flex flex-column">
+
+            <div class="d-flex flex-wrap gap-2">
+                <label class="mb-1 fw-bold me-3">Reservation Status:</label>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="arrivals" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Arrivals</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="arrived" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Arrived</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="stayover" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Stayover</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input " type="checkbox" id="dayuse" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">DayUse</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="dueout" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Due Out</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="departed" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Departed</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input include-option" type="checkbox" id="notReserved" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">NotReserved</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input " type="checkbox" id="departuredarr" name="masterllio" value="1" checked>
+                    <label class="form-check-label" for="cancel">Departured/Arrival</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column">
+
+            <!-- Hàng 1: Bộ lọc Room -->
+            <div class="d-flex align-items-center flex-wrap mb-2">
+                <label class="fw-bold me-3">Room:</label>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Room Type:</label>
+                    <select id="roomtype" name="roomtype" class="form-control form-control-sm" style="width: 100px">
+                        <option value=""></option>
+                        @foreach (var item in roomtypeList)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Zone:</label>
+                    <select id="zone" name="zone" class="form-control form-control-sm" style="width: 100px">
+                        <option value=""></option>
+                        @foreach (var item in zoneList)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">From Room:</label>
+                    <select id="roomfrom" name="roomfrom" class="form-control form-control-sm" style="width: 100px">
+                        <option value=""></option>
+                        @foreach (var item in roomList)
+                        {
+                            <option value="@item.RoomNo">@item.RoomNo</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">To Room:</label>
+                    <select id="roomto" name="roomto" class="form-control form-control-sm" style="width: 100px">
+                        <option value=""></option>
+                        @foreach (var item in roomList)
+                        {
+                            <option value="@item.RoomNo">@item.RoomNo</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Hàng 2: Change Status xuống dòng -->
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                <label class="fw-bold me-3 mb-1">Change Status:</label>
+
+                <div class="form-check me-3">
+                    <input class="form-check-input " type="checkbox" id="cleannonup" name="masterllioup" value="1">
+                    <label class="form-check-label" for="cleannonup">Clean Non-Checked</label>
+                </div>
+
+                <div class="form-check me-3">
+                    <input class="form-check-input " type="checkbox" id="dirtyup" name="masterllioup" value="1">
+                    <label class="form-check-label" for="dirtyup">Dirty</label>
+                </div>
+
+                <div class="form-check me-3">
+                    <input class="form-check-input " type="checkbox" id="cleanup" name="masterllioup" value="1" checked>
+                    <label class="form-check-label" for="cleanup">Clean</label>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnSelectAll" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-check-square"></i> Select All
+        </button>
+
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnClearAll" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-x"></i> Clear All
+        </button>
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnChangeStatus" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-rotate"></i> Chg Status
+        </button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnUpdatestatus" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Update</button>
+
+    </div>
+</div>
+<!-- Nền mờ -->
+<div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;"></div>
+
+<!-- Popup -->
+<div id="popupChangeStatus" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1000; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px;">
+
+    <h5 class="mb-3">Change Room Status</h5>
+
+    <!-- ✅ Hàng 1: RoomList -->
+    <div class="mb-3">
+        <label class="fw-bold me-2">Room List:</label>
+        <select id="popupRoomList" class="form-control form-control-sm">
+            <option value=""></option>
+            @foreach (var item in roomList)
+            {
+                <option value="@item.RoomNo">@item.RoomNo</option>
+            }
+        </select>
+    </div>
+
+    <!-- ✅ Hàng 2: From Room / To Room -->
+    <div class="mb-3 d-flex gap-3">
+        <div style="flex: 1;">
+            <label class="fw-bold me-2">From Room:</label>
+            <select id="popupRoomFrom" class="form-control form-control-sm">
+                <option value=""></option>
+                @foreach (var item in roomList)
+                {
+                    <option value="@item.RoomNo">@item.RoomNo</option>
+                }
+            </select>
+        </div>
+
+        <div style="flex: 1;">
+            <label class="fw-bold me-2">To Room:</label>
+            <select id="popupRoomTo" class="form-control form-control-sm">
+                <option value=""></option>
+                @foreach (var item in roomList)
+                {
+                    <option value="@item.RoomNo">@item.RoomNo</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <button id="btnClosePopup" class="btn btn-secondary">Close</button>
+    </div>
+</div>
+
+
+<div class="mui-card">
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+
+
+
+        $(document).ready(function () {
+             document.getElementById("reportTitle").innerText = 'Room Status';
+
+                 $("input[name='masterllioup']").on("change", function () {
+        $("input[name='masterllioup']").not(this).prop("checked", false);
+
+       
+
+        });
+          $('#btnSelectAll').click(function () {
+            $('.include-option').prop('checked', true);
+        });
+
+            // Khi nhấn "Clear All" => bỏ check tất cả checkbox có class include-option
+            $('#btnClearAll').click(function () {
+                $('.include-option').prop('checked', false);
+            });
+
+             $('#btnChangeStatus').click(function () {
+                $('#overlay').fadeIn(200);
+                $('#popupChangeStatus').fadeIn(200);
+            });
+
+        // Đóng popup
+            $('#btnClosePopup, #overlay').click(function () {
+                $('#popupChangeStatus').fadeOut(200);
+                $('#overlay').fadeOut(200);
+            });
+        });
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+
+        // ROOM STATUS
+        let cleannon_room = $("#cleannon").is(":checked") ? 1 : 0;
+        let clean = $("#clean").is(":checked") ? 1 : 0;
+        let dirty = $("#dirty").is(":checked") ? 1 : 0;
+        let pickup = $("#pickup").is(":checked") ? 1 : 0;
+        let oocheck = $("#oocheck").is(":checked") ? 1 : 0;
+        let oscheck = $("#oscheck").is(":checked") ? 1 : 0;
+
+        // FO STATUS
+        let vacant = $("#vacant").is(":checked") ? 1 : 0;
+        let occupied = $("#occupied").is(":checked") ? 1 : 0;
+
+        // RESERVATION STATUS
+        let arrivals = $("#arrivals").is(":checked") ? 1 : 0;
+        let arrived = $("#arrived").is(":checked") ? 1 : 0;
+        let stayover = $("#stayover").is(":checked") ? 1 : 0;
+        let dayuse = $("#dayuse").is(":checked") ? 1 : 0;
+        let dueout = $("#dueout").is(":checked") ? 1 : 0;
+        let departed = $("#departed").is(":checked") ? 1 : 0;
+        let notReserved = $("#notReserved").is(":checked") ? 1 : 0;
+        let departuredarr = $("#departuredarr").is(":checked") ? 1 : 0;
+
+        // ROOM FILTER
+        let roomType = $("#roomtype").val();
+        let zone = $("#zone").val();
+        let roomFrom = $("#roomfrom").val();
+        let roomTo = $("#roomto").val();
+
+        // Gửi ajax
+        $.ajax({
+            url: '/HouseKeeping/RoomStatusData',
+            type: 'GET',
+            data: {
+                cleannon_room: cleannon_room,
+                clean: clean,
+                dirty: dirty,
+                pickup: pickup,
+                oocheck: oocheck,
+                oscheck: oscheck,
+
+                vacant: vacant,
+                occupied: occupied,
+
+                arrivals: arrivals,
+                arrived: arrived,
+                stayover: stayover,
+                dayuse: dayuse,
+                dueout: dueout,
+                departed: departed,
+                notReserved: notReserved,
+                departuredarr: departuredarr,
+
+                roomType: roomType,
+                zone: zone,
+                roomFrom: roomFrom,
+                roomTo: roomTo
+            },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    // $("#reportViewerContainer").html(result);
+                    // $("#loadingSpinner").hide();
+                console.log(result);
+            initializeRoomStatusGrid(result);
+                        $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không thể tải báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+        });
+
+
+    
+
+        let selectedRoomIds = [];
+           function initializeRoomStatusGrid(data) {
+        const columnWidth = 120;
+
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            columns: [
+                 { dataField: "id", caption: "ID", width: columnWidth -10 , visible: false},
+                { dataField: "roomNumber", caption: "Room No", width: columnWidth -10 },
+                { dataField: "roomType", caption: "Room Type", width: columnWidth  },
+                { dataField: "roomName", caption: "Room Name", width: columnWidth +50 },
+                { dataField: "roomStatus", caption: "Room Status", width: columnWidth+ 30 },
+                { dataField: "foStatus", caption: "FO Status", width: columnWidth  },
+    { dataField: "floor", caption: "Floor", width: columnWidth, dataType: "number", format: "#,##0" },
+                { dataField: "roomClass", caption: "Room Class", width: columnWidth  },
+                { dataField: "reservationStatus", caption: "Resv.Type", width: columnWidth  },
+                 { dataField: "arrival", caption: "Arrivals", width: columnWidth  },
+            ],
+
+            paging: { pageSize: 25 },
+            scrolling: {
+                useNative: true,
+                showScrollbar: "always"
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            showBorders: true,
+            onRowPrepared: function (e) {
+                if (e.rowType === "data") {
+
+                    if (e.data?.isTotal) {
+                        e.rowElement.css({
+                            "font-weight": "bold",
+                            "background-color": "#f6f6f6"
+                        });
+                    }
+                }
+               
+            },
+                onCellPrepared: function (e) {
+                    if (e.rowType === "data" && e.column.dataField === "roomStatus") {
+                        const status = (e.value || "").toLowerCase();
+
+                        if (status.includes("dirty")) {
+                            e.cellElement.css("background-color", "Red"); // đỏ nhạt
+                              e.cellElement.css("color", "white");
+                        } else if (status.includes("pickup")) {
+                            e.cellElement.css("background-color", "#f740f4"); // tím nhạt
+                        } else if (status.includes("clean non-checked")) {
+                            e.cellElement.css("background-color", "#1bdff5"); // xanh nước biển nhạt
+                        } else if (status.includes("out of order")) {
+                            e.cellElement.css("background-color", "#cf159a"); // hồng
+                              e.cellElement.css("color", "white");
+                        } else if (status.includes("clean")) {
+                            e.cellElement.css("background-color", "green"); // xanh lá
+                            e.cellElement.css("color", "white"); // chữ trắng cho dễ nhìn
+                        }
+                    }
+                },
+
+               onRowClick: onRowClick,
+
+        });
+    }
+
+    function onRowClick(e) {
+        selectedRoomIds = [];
+
+        // Lấy grid instance
+        const dataGrid = $("#gridContainer").dxDataGrid("instance");
+
+        // Lấy toàn bộ data đã chọn từ DOM (tr, class dx-selection)
+        $("tr.dx-selection").each(function () {
+            const rowIndex = $(this).attr("aria-rowindex");
+
+            if (rowIndex) {
+                const index = parseInt(rowIndex) - 1; // Vì aria-rowindex bắt đầu từ 1
+                const rowData = dataGrid.getVisibleRows()[index]?.data;
+
+                if (rowData && rowData.id) {
+                    selectedRoomIds.push(rowData.id);
+                }
+            }
+        });
+
+        console.log("Danh sách ID được chọn:", selectedRoomIds);
+    }
+
+    $(document).off("click", "#btnUpdatestatus").on("click", "#btnUpdatestatus", function () {
+        if (!selectedRoomIds || selectedRoomIds.length === 0) {
+            alert("You must choose at least one room.");
+            return;
+        }
+
+        // Hiển thị hộp thoại xác nhận
+        const confirmChange = confirm("Are you sure you want to change room status?");
+        if (!confirmChange) {
+            return;
+        }
+
+        updateStatus(selectedRoomIds);
+    });
+
+         function updateStatus(selectedRoomIds) {
+            let status = 0;
+
+            if ($("#cleannonup").is(":checked")) {
+                status = 1;
+            } else if ($("#dirtyup").is(":checked")) {
+                status = 2;
+            } else if ($("#cleanup").is(":checked")) {
+                status = 4;
+            }
+
+            if (selectedRoomIds.length === 0) {
+                alert("You must chose room.");
+                return;
+            }
+                const loginName = JSON.parse(localStorage.getItem("Loginname"));
+            $.ajax({
+                url: '/HouseKeeping/UpdateRoomStatus',
+                type: 'POST',
+                data: { ids: selectedRoomIds  , status: status,loginName:loginName},
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (response) {
+                   if (response.success) {
+                        alert(response.message); 
+                       $("#btnPrint").trigger("click");
+                       const grid = $("#gridContainer").dxDataGrid("instance");
+                       grid.refresh();
+
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Đã xảy ra lỗi khi cập nhật trạng thái.");
+                }
+            });
+         }
+
+
+
+
+        $("#btnExportExcel").click(function () {
+            const grid = $("#gridContainer").dxDataGrid("instance");
+            var selectedReport = '@ViewBag.ReportTitle';
+            if (!selectedReport) {
+                alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+                return;
+            }
+
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Sheet 1");
+
+            // === Tạo header công ty (dòng 1) ===
+            worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+            worksheet.mergeCells('A1:E1');
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+            // === Dòng 2: Thời gian xuất (phải) ===
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+            worksheet.mergeCells('E2:H2');
+            worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+            // === Dòng 3–4: Trống
+            worksheet.addRow([]);
+            worksheet.addRow([]);
+
+            // === Dòng 5: Tên báo cáo ở giữa ===
+            const reportRow = worksheet.addRow(['', '', selectedReport]);
+            worksheet.mergeCells('C5:F5');
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+            // === Dòng 6: Trống trước khi xuất dữ liệu
+            worksheet.addRow([]);
+
+            // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+            }).then(function () {
+                // Footer
+                const lastRow = worksheet.lastRow.number + 2;
+                worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+                worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+                // Ghi file
+                let fileName = selectedReport + ".xlsx";
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+                });
+            });
+        });
+
+
+
+        // Nút xuất PDF
+           $("#btnExportPdf").click(function () {
+            const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+
+            const doc = new jsPDF();
+
+            DevExpress.pdfExporter.exportDataGrid({
+                jsPDFDocument: doc,
+                component: $("#gridContainer").dxDataGrid("instance"),
+                autoTableOptions: {
+                    styles: { cellPadding: 2, fontSize: 8 },
+                    margin: { top: 20 }
+                }
+            }).then(() => {
+                doc.save("BaoCao.pdf");
+            });
+        });
+</script>
