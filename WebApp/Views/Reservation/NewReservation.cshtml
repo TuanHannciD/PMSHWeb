@@ -10,12 +10,12 @@
             <div class="text-center" style="font-size: 20px;">Reservation</div>            
             <div class="button-group mb-1">
                 <div>
-                    <button class="mui-button mui-button-new" onclick="SaveReservation();"><i class="fas fa-plus"></i> Save</button>
-                    <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
-                    <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
+                    <button class="mui-button mui-button-new" onclick="SaveReservation();"><i class="fa-solid fa-floppy-disk"></i></i> Save</button>
+                    <button class="mui-button mui-button-clear" onclick="resetForm()"><i class="fas fa-eraser"></i> Clear</button>
+                    <button class="mui-button mui-button-close" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
                 </div>
                 
-                <div><a href="#" style="text-decoration:none">Search reservation  <i class="fa-solid fa-angles-right"></i></a></div>
+                <div><a href="/Reservation/SearchReservation" style="text-decoration:none">Search reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
         </div>
         <div class="top-row">

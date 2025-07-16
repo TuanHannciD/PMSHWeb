@@ -39,6 +39,8 @@ namespace Reservation.Controllers
         }
         public IActionResult SearchReservation()
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.businesDate = businessDateModel[0].BusinessDate;
             return View();
         }
 
@@ -667,6 +669,24 @@ namespace Reservation.Controllers
 
             }
         }
+        #endregion
+
+        #region search reservation
+        [HttpGet]
+        public async Task<IActionResult> SearchReservation2(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                List<ReservationModel> roomTypeModels = PropertyUtils.ConvertToList<ReservationModel>(ReservationBO.Instance.FindAll())
+                    .Where(x => x.ArrivalDate <= fromDate && x.DepartureDate >= toDate).ToList();
+                return Json(roomTypeModels);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
         #endregion
     }
 }
