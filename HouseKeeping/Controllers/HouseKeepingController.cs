@@ -183,6 +183,35 @@ namespace HouseKeeping.Controllers
             }
         }
         [HttpPost]
+        public IActionResult CheckLogStatus(List<int> id)
+        {
+            int idroom = id[0];
+            RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPrimaryKey(idroom);
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.CheckLogStatus(modelRoom.RoomNo);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"].ToString() : "",
+                                  OldValue = !string.IsNullOrEmpty(d["OldValue"].ToString()) ? d["OldValue"].ToString() : "",
+                                  NewValue = !string.IsNullOrEmpty(d["NewValue"].ToString()) ? d["NewValue"].ToString() : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"].ToString() : "",
+                                  Action = !string.IsNullOrEmpty(d["Action"].ToString()) ? d["Action"].ToString() : "",
+                                  ComputerName = !string.IsNullOrEmpty(d["ComputerName"].ToString()) ? d["ComputerName"].ToString() : "",
+                                  ChangeDate = !string.IsNullOrEmpty(d["ChangeDate"].ToString()) ? d["ChangeDate"].ToString() : ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
         public IActionResult UpdateRoomStatus(List<int> ids, int status, string loginName)
         {
             try
@@ -231,6 +260,8 @@ namespace HouseKeeping.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+
         [HttpPost]
         public IActionResult UpdateRoomStatusPopup(int status, List<int> roomIds, int isFromTo, string loginName)
         {
