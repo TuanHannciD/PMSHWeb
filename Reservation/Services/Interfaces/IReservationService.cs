@@ -46,5 +46,18 @@ namespace Reservation.Services.Interfaces
         /// <returns>Giá trị net</returns>
         (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNet(decimal Price,string TransactionCode,decimal DiscountAmount, decimal DiscountPercent);
 
+        /// <summary>
+        /// DatVP: lấy rate query detail
+        /// </summary>
+        /// <param name="fromDate">arival date</param>
+        /// <param name="toDate">departure date</param>
+        /// <param name="rateCodeID">id rate code</param>
+        /// <param name="roomType">id room type</param>
+        /// <param name="currency">Currency</param>
+        /// <param name="packageID">id package</param>
+        /// <param name="day">day</param>
+        /// <returns>Giá trị net</returns>
+        DataTable SearchReservation(DateTime fromDate, DateTime toDate);
+
     }
 }

@@ -39,6 +39,8 @@ namespace Reservation.Controllers
         }
         public IActionResult SearchReservation()
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.businesDate = businessDateModel[0].BusinessDate;
             return View();
         }
 
@@ -450,10 +452,9 @@ namespace Reservation.Controllers
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
-
                 ReservationModel reservationModel = new ReservationModel();
-                reservationModel.ConfirmationNo = "";
-                reservationModel.ReservationNo = "";
+                reservationModel.ConfirmationNo = (ReservationBO.GetTopConfirmationNo() + 1).ToString();
+                reservationModel.ReservationNo = (ReservationBO.GetTopID() + 1).ToString();
                 reservationModel.ReservationDate = businessDate[0].BusinessDate;
                 reservationModel.ProfileAgentId = int.Parse(Request.Form["profileAgentID"].ToString());
                 reservationModel.AgentName = Request.Form["agentName"].ToString();
@@ -597,7 +598,7 @@ namespace Reservation.Controllers
                 reservationModel.DropOffDescription = Request.Form["dropOffDescription"].ToString();
                 reservationModel.PackageId = int.Parse(Request.Form["packageID"].ToString());
                 reservationModel.Packages = Request.Form["packages"].ToString();
-                reservationModel.Relationship = 0;
+                reservationModel.Relationship = ReservationBO.GetTopID() + 1;
                 reservationModel.Status = 0;
                 reservationModel.PostingMaster = false;
                 reservationModel.MainGuest = true;
@@ -615,7 +616,7 @@ namespace Reservation.Controllers
                 reservationModel.ARNo = "";
                 reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
                 reservationModel.Specials = Request.Form["specials"].ToString();
-                reservationModel.ShareRoom = 0;
+                reservationModel.ShareRoom = ReservationBO.GetTopID() + 1;
                 reservationModel.NoShowStatus = false;
                 reservationModel.ShareRoomName = "";
                 reservationModel.AccompanyName = "";
@@ -643,7 +644,7 @@ namespace Reservation.Controllers
                     reservationModel.AllotmentId = int.Parse(Request.Form["allotmentID"].ToString());
                     reservationModel.AllotmentCode = Request.Form["allotmentCode"].ToString();
                 }
-                reservationModel.PinCode = "";
+                reservationModel.PinCode = (ReservationBO.GetTopID() + 1).ToString();
                 reservationModel.PersonInChargeId = int.Parse(Request.Form["perrsonInCharge"].ToString()); 
                 reservationModel.RoomNight = int.Parse(Request.Form["roomNight"].ToString());
                 reservationModel.CardId = "";
@@ -668,6 +669,24 @@ namespace Reservation.Controllers
 
             }
         }
+        #endregion
+
+        #region search reservation
+        [HttpGet]
+        public async Task<IActionResult> SearchReservation2(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                List<ReservationModel> roomTypeModels = PropertyUtils.ConvertToList<ReservationModel>(ReservationBO.Instance.FindAll())
+                    .Where(x => x.ArrivalDate <= fromDate && x.DepartureDate >= toDate).ToList();
+                return Json(roomTypeModels);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
         #endregion
     }
 }

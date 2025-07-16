@@ -299,5 +299,10 @@ namespace Reservation.Services.Implements
             }
 
         }
+
+        public DataTable SearchReservation(DateTime fromDate, DateTime toDate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
