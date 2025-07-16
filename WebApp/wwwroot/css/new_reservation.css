@@ -1,10 +1,10 @@
 ﻿.body {
     font-family: Arial, sans-serif;
-    padding: 10px;
     margin: 0;
+    padding:0 10px;
 }
 
-.container2{
+.container2 {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -37,57 +37,62 @@
     }
 
 .row {
-
     margin-bottom: 5px;
-
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
     .row label {
-        padding-top:4px;
+        padding-top: 4px;
         font-size: 12px;
- 
+        min-width: 80px;
+        text-align: right;
     }
 
     .row input, .row select {
-
-        padding: 5px;
+        padding: 2px;
         font-size: 12px;
         border: 1px solid #ccc;
         border-radius: 3px;
-
+        flex: 1;
     }
+
     .row select {
-        padding: 6px;
-        font-size: 12px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
-        .row input[type="checkbox"] {
-            flex: 0;
-        }
-
-    .row button {
-        padding: 3px 5px;
-        font-size: 12px;
-        background-color: #ddd;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        cursor: pointer;
+        padding: 3px;
     }
 
-        .row button.red {
-            background-color: #ff0000;
-            color: white;
-            border: none;
-        }
-
-    .row .highlighted {
-        background-color: #ffff99;
+    .row input[type="checkbox"] {
+        flex: 0;
     }
 
-.button-group{
-    display:flex;
-    justify-content:space-between;
+.amount {
+    text-align: right;
+}
+
+.row button {
+    height: 24px;
+    padding: 3px 5px;
+    font-size: 12px;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+    .row button.red {
+        background-color: #ff0000;
+        color: white;
+        border: none;
+    }
+
+.row .highlighted {
+    background-color: #ffff99;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
 }
 
 .specials-section {
@@ -101,7 +106,7 @@
     margin: 10px 0;
 }
 
- .section {
+.section {
     flex: 1;
     min-width: 300px;
 }
@@ -115,7 +120,6 @@
     width: 100%;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .top-row, .third-row {
         flex-direction: column;
@@ -125,58 +129,31 @@
         min-width: 100%;
         margin-bottom: 10px;
     }
-/*
-    .row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-        .row label {
-            min-width: 100%;
-        }
-
-        .row input, .row select {
-            min-width: 100%;
-        }*/
 }
 
 @media (max-width: 768px) {
     .row {
         gap: 2px;
     }
-
-/*        .row label {
-            font-size: 10px;
-        }
-
-        .row input, .row select {
-            font-size: 10px;
-            padding: 2px;
-        }
-
-        .row button {
-            font-size: 10px;
-            padding: 2px 4px;
-        }*/
 }
-/* CSS */
+
 .loading {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
-    flex-direction: column; /* Sắp xếp spinner và text theo cột */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
 .spinner {
-    border: 4px solid #f3f3f3; /* Màu nền */
-    border-top: 4px solid #3498db; /* Màu vòng xoay */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -184,9 +161,9 @@
 }
 
 #loading-text {
-    color: #fff; /* Màu chữ */
+    color: #fff;
     font-size: 16px;
-    margin-top: 10px; /* Khoảng cách giữa spinner và chữ */
+    margin-top: 10px;
 }
 
 @keyframes spin {
@@ -200,15 +177,16 @@
 }
 
 .hidden {
-    display: none; /* Ẩn loading */
+    display: none;
 }
 
-.profile_modal_group label{
-    padding :0;
+.profile_modal_group label {
+    padding: 0;
 }
+
 .gridContainer .dx-datagrid-rowsview .dx-selection {
-    background-color: #005f87 !important; /* màu xanh ngọc */
-    color: white !important; /* chữ trắng */
+    background-color: #005f87 !important;
+    color: white !important;
 }
 
     .gridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -223,17 +201,14 @@
 }
 
 .gridContainer .dx-datagrid-headers {
-    background-color: #3b9ac6 !important; /* Màu xanh dương */
-    color: white !important; /* Chữ trắng cho dễ đọc */
+    background-color: #3b9ac6 !important;
+    color: white !important;
 }
 
     .gridContainer .dx-datagrid-headers .dx-header-row > td {
         padding-top: 12px !important;
         padding-bottom: 12px !important;
         font-size: 12px !important;
-    }
-
-    .gridContainer .dx-datagrid-headers .dx-header-row > td {
         background-color: #3b9ac6 !important;
         color: white !important;
         font-weight: bold;
@@ -246,19 +221,9 @@
         border-right: 1px solid #ddd !important;
     }
 
-    /* Loại bỏ viền phải ở cột cuối cùng (tùy chọn) */
     .gridContainer .dx-datagrid-rowsview tr td:last-child,
     .gridContainer .dx-datagrid-headers tr td:last-child {
         border-right: none !important;
-    }
-
-.gridContainer .dx-datagrid-rowsview .dx-selection {
-    background-color: #01579b !important;
-    color: white !important;
-}
-
-    .gridContainer .dx-datagrid-rowsview .dx-selection * {
-        color: white !important;
     }
 
 .gridContainer .dx-datagrid-filter-row td .dx-datebox {

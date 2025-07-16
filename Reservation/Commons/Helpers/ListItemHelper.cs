@@ -12,7 +12,7 @@ namespace Reservation.Commons.Helpers
 {
     public static class ListItemHelper
     {
-        private static readonly string _textDefault = "Please choose";
+        private static readonly string _textDefault = "";
 
         /// <summary>
         /// Lấy tất cả danh sách nationality inactive cho dropdown
@@ -24,7 +24,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Nationality";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<NationalityModel> list = PropertyUtils.ConvertToList<NationalityModel>(NationalityBO.Instance.FindByAttribute("Inactive", 0));
@@ -33,7 +33,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -54,16 +54,16 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Title";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<TitleModel> list = PropertyUtils.ConvertToList<TitleModel>(TitleBO.Instance.FindByAttribute("Inactive", 0));
                 if (list.Count > 0)
                 {
-                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                    items = list.Select(p => new SelectListItem { Value = p.Code, Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "", Selected = true });
 
                 return items;
             }
@@ -84,7 +84,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " City";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<CityModel> list = PropertyUtils.ConvertToList<CityModel>(CityBO.Instance.FindByAttribute("Inactive", 0));
@@ -93,7 +93,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.Name, Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "", Selected = true });
 
                 return items;
             }
@@ -114,7 +114,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " VIP";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<VIPModel> list = PropertyUtils.ConvertToList<VIPModel>(VIPBO.Instance.FindByAttribute("Inactive", 0));
@@ -123,7 +123,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -144,7 +144,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " MemberType";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<MemberTypeModel> list = PropertyUtils.ConvertToList<MemberTypeModel>(MemberTypeBO.Instance.FindByAttribute("Inactive", 0));
@@ -153,7 +153,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -174,7 +174,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Agent";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<ProfileModel> list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindByAttribute("Type", 1));
@@ -183,7 +183,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Account, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -204,7 +204,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Company";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault ;
 
                 var items = new List<SelectListItem>();
                 List<ProfileModel> list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindByAttribute("Type", 2));
@@ -213,7 +213,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Account, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -234,7 +234,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Contact";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<ProfileModel> list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindByAttribute("Type", 5));
@@ -243,7 +243,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Account, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -264,7 +264,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " RoomType";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<RoomTypeModel> list = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindByAttribute("InActive", 0));
@@ -273,7 +273,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Code, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -294,7 +294,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Currency";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<CurrencyModel> list = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindByAttribute("Inactive", 0));
@@ -303,7 +303,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -324,7 +324,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Package";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<PackageModel> list = PropertyUtils.ConvertToList<PackageModel>(PackageBO.Instance.FindByAttribute("Active", 1));
@@ -333,7 +333,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -354,7 +354,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Reason";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<ReasonModel> list = PropertyUtils.ConvertToList<ReasonModel>(ReasonBO.Instance.FindByAttribute("Inactive", 0));
@@ -363,7 +363,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -384,7 +384,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " ReservationType";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<ReservationTypeModel> list = PropertyUtils.ConvertToList<ReservationTypeModel>(ReservationTypeBO.Instance.FindByAttribute("Inactive", 0));
@@ -393,7 +393,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -415,7 +415,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Source";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<SourceModel> list = PropertyUtils.ConvertToList<SourceModel>(SourceBO.Instance.FindByAttribute("Inactive", 0));
@@ -424,7 +424,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -445,7 +445,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Market";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<MarketModel> list = PropertyUtils.ConvertToList<MarketModel>(MarketBO.Instance.FindByAttribute("Inactive", 0));
@@ -454,7 +454,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -475,7 +475,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Profile";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<ProfileModel> list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll());
@@ -484,7 +484,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Account, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -505,7 +505,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Allotment Type";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<AllotmentTypeModel> list = PropertyUtils.ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll());
@@ -514,7 +514,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -535,7 +535,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Person In Charge";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<PersonInChargeModel> list = PropertyUtils.ConvertToList<PersonInChargeModel>(PersonInChargeBO.Instance.FindAll());
@@ -544,7 +544,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -566,7 +566,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " PaymentMethod";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<PaymentMethodModel> list = PropertyUtils.ConvertToList<PaymentMethodModel>(PaymentMethodBO.Instance.FindAll());
@@ -575,7 +575,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.CreditCardNo, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -597,7 +597,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Promotion";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<PromotionModel> list = PropertyUtils.ConvertToList<PromotionModel>(PromotionBO.Instance.FindAll());
@@ -606,7 +606,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -627,7 +627,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Group Preference";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<PreferenceGroupModel> list = PropertyUtils.ConvertToList<PreferenceGroupModel>(PreferenceGroupBO.Instance.FindByAttribute("Inactive", 0));
@@ -636,7 +636,7 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }
@@ -657,7 +657,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault + " Transport Type";
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<TransportTypeModel> list = PropertyUtils.ConvertToList<TransportTypeModel>(TransportTypeBO.Instance.FindByAttribute("Inactive", 0));
@@ -666,7 +666,37 @@ namespace Reservation.Commons.Helpers
                     items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
-                    items.Insert(0, new SelectListItem { Text = textDefault, Value = string.Empty, Selected = true });
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả danh sách item inventory cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Item Inventory</returns>
+        public static List<SelectListItem> GetItemInventoryProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<ItemModel> list = PropertyUtils.ConvertToList<ItemModel>(ItemBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
 
                 return items;
             }

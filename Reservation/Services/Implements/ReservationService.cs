@@ -1,4 +1,5 @@
 ﻿using BaseBusiness.BO;
+using BaseBusiness.Model;
 using BaseBusiness.util;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Data.SqlClient;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,8 +16,75 @@ namespace Reservation.Services.Implements
 {
     public class ReservationService : IReservationService
     {
-    
 
+
+
+        public (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount)  CalculateNet(decimal Price, string TransactionCode,decimal DiscountAmount,decimal DiscountPercent)
+        {
+            try
+            {
+                decimal svc = 0;
+                decimal vat = 0;
+                decimal room = 0;
+                decimal priceDiscount = 0;
+                decimal priceAfterDiscount = 0;
+                List<GenerateTransactionModel> generateTransactionModels = PropertyUtils.ConvertToList<GenerateTransactionModel>(GenerateTransactionBO.Instance.FindAll()).
+                Where(x => x.TransactionCode == TransactionCode).ToList();
+                #region lấy ra phần trăm giá room, svc và vat
+                if (generateTransactionModels.Count > 0)
+                {
+                    foreach (var item in generateTransactionModels)
+                    {
+                        if (item.SubgroupCode == "RR")
+                        {
+                            room = item.Percentage;
+                        }
+                        if (item.SubgroupCode == "SVC")
+                        {
+                            svc = item.Percentage;
+                        }
+                        if (item.SubgroupCode == "Tax")
+                        {
+                            vat = item.Percentage;
+                        }
+                    }
+                }
+                #endregion
+
+                #region tính giá trị net
+                decimal priceAfter = (Price + (Price * svc / 100) + (Price + (Price * svc / 100)) * vat / 100);
+                #endregion
+
+                #region tính giá trị rate code và net sau discount percent
+                priceDiscount = Price - (DiscountPercent / 100) * Price;
+                priceAfterDiscount = priceAfter - (DiscountPercent / 100) * priceAfter;
+                #endregion
+
+                #region tính giá trị rate code và net sau discount amount
+                priceAfterDiscount = priceAfterDiscount - DiscountAmount;
+                priceDiscount = (priceAfterDiscount / (1 + vat / 100)) / (1 + svc / 100);
+                #endregion
+                return (Price, priceAfter,priceDiscount,priceAfterDiscount);
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"Error: {ex.Message}", ex);
+            }
+        }
+
+        
+
+
+        /// <summary>
+        /// DatVP: Lấy danh sách allotment từ store procedure
+        /// </summary>
+        /// <param name="code">code</param>
+        /// <param name="marketID">id market</param>
+        /// <param name="profileID">id profile</param>
+        /// <param name="isDefault">isDefault</param>
+        /// <param name="allotmentTypeID">id allotmentType</param
+        /// <returns>Data table chứa danh sách allotment</returns>
         public DataTable GetAllotment(string code, string marketID, string profileID, string isDefault,string allotmentTypeID)
         {
             try
@@ -38,13 +107,16 @@ namespace Reservation.Services.Implements
 
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
-            catch (Exception ex)
-            {
 
-                throw new Exception($"ERROR: {ex.Message}", ex);
-            }
         }
 
+        /// <summary>
+        /// DatVP: Lây danh sách allotment detail theo allotment id từ store procedure
+        /// </summary>
+        /// <param name="allotmentID">id allotment</param>
+        /// <param name="roomType">room type</param>
+        /// <param name="showHistory">ngày xem</param>
+        /// <returns>Data table chứa thông tin chi tiết của allotment</returns>
         public DataTable GetAllotmentDetail(int allotmentID, string roomType, DateTime showHistory)
         {
             try
@@ -93,13 +165,15 @@ namespace Reservation.Services.Implements
 
                 throw new Exception($"Lỗi cơ sở dữ liệu khi lấy RateCode: {ex.Message}", ex);
             }
-            catch (Exception ex)
-            {
 
-                throw new Exception($"Lỗi không xác định khi lấy RateCode: {ex.Message}", ex);
-            }
         }
 
+        /// <summary>
+        /// DatVP: Lây danh sách reservation preference từ store procedure
+        /// </summary>
+        /// <param name="code">id allotment</param>
+        /// <param name="group">room type</param>
+        /// <returns>Data table chứa danh sách preference</returns>
         public DataTable GetReservationPreference(string code, int group)
         {
             try
@@ -120,13 +194,13 @@ namespace Reservation.Services.Implements
 
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
-            catch (Exception ex)
-            {
 
-                throw new Exception($"ERROR: {ex.Message}", ex);
-            }
         }
 
+        /// <summary>
+        /// DatVP: Lây danh sách room available từ store procedure
+        /// </summary>
+        /// <returns>Data table chứa danh sách room available</returns>
         public DataTable GetRoomAvailable(DateTime fromDate, DateTime toDate, string floor, string roomTypeID, string smoking, string foStatus, string hkStatus, string isDummy, string roomNo, int roomID, int Type)
         {
             try
@@ -154,7 +228,31 @@ namespace Reservation.Services.Implements
 
                 throw new Exception($"Error: {ex.Message}", ex);
             }
-            catch (Exception ex)
+
+        }
+
+
+        public DataTable ReservationGetRateQueryDetail(DateTime fromDate, DateTime toDate,int rateCodeID, int roomType, string currency, int packageID, int day)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@ArrivalDate", fromDate),
+                    new SqlParameter("@DepartureDate", toDate),
+                    new SqlParameter("@RateCodeID", rateCodeID),
+
+                    new SqlParameter("@RoomTypeID", roomType),
+                    new SqlParameter("@CurrencyID", currency),
+                    new SqlParameter("@PackageID", packageID),
+                    new SqlParameter("@Day", day),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationGetRateQuery", param);
+                return myTable;
+            }
+            catch (SqlException ex)
             {
 
                 throw new Exception($"Error: {ex.Message}", ex);
@@ -199,11 +297,7 @@ namespace Reservation.Services.Implements
 
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
-            catch (Exception ex)
-            {
 
-                throw new Exception($"ERROR: {ex.Message}", ex);
-            }
         }
     }
 }
