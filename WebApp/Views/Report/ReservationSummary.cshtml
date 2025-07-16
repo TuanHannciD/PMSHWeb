@@ -46,6 +46,53 @@
             color: white !important;
         }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
@@ -109,8 +156,8 @@
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 </div>
 
@@ -296,44 +343,45 @@
             dataSource: data,
             allowColumnResizing: true,
             columns: [
-                { dataField: "rsvSummaryDate", caption: "Date", width: columnWidth - 70, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "rsvSummaryDate", caption: "Date", width: columnWidth - 60, dataType: "date", format: "dd/MM/yyyy" },
                 { dataField: "weekDate", caption: "Week Date", width: columnWidth - 80 },
-                { dataField: "totalOccRms", caption: "TotalOcc.R", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "indRms", caption: "IndRm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "blkRmsPU", caption: "Grp Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "blkRmsNotPU", caption: "CH Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "totalAvailable", caption: "Total Avail", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "occPer", caption: "Occ %", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "roomRevenue", caption: "Individual Revenue", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "grpRevenue", caption: "Group Revenue", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "indRevenue", caption: "Total Revenue", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "avrRate", caption: "Avr Rate", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "arrRms", caption: "Ind Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "blkArrRms", caption: "Grp Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "charrRms", caption: "C&H Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "totalOccRms", caption: "TotalOcc.R", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "indRms", caption: "IndRm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "blkRmsPU", caption: "Grp Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "blkRmsNotPU", caption: "CH Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "totalAvailable", caption: "Total Avail", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "occPer", caption: "Occ %", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                { dataField: "roomRevenue", caption: "Individual Revenue", width: columnWidth - 30, dataType: "number", format: "#,##0" },
+                    { dataField: "grpRevenue", caption: "Group Revenue", width: columnWidth - 30, dataType: "number", format: "#,##0" },
+                    { dataField: "indRevenue", caption: "Total Revenue", width: columnWidth - 30, dataType: "number", format: "#,##0" },
+                    { dataField: "avrRate", caption: "Avr Rate", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "arrRms", caption: "Ind Arr Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "blkArrRms", caption: "Grp Arr Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "charrRms", caption: "C&H Arr Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
                 {
-                    caption: "Total Arr Rm", width: columnWidth - 70, dataType: "number", format: "#,##0",
+                    caption: "Total Arr Rm", width: columnWidth - 60, dataType: "number", format: "#,##0",
                     calculateCellValue: function (data) {
                         return (data.arrRms || 0) + (data.blkArrRms || 0) + (data.charrRms || 0);
                     }
                 },
-                { dataField: "depRms", caption: "Ind Dep Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "blkDepRms", caption: "Grp Dep Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "chdepRms", caption: "C&H Rate", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                    { dataField: "depRms", caption: "Ind Dep Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "blkDepRms", caption: "Grp Dep Rm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
+                    { dataField: "chdepRms", caption: "C&H Rate", width: columnWidth - 60, dataType: "number", format: "#,##0" },
                 {
-                    caption: "Total Dep Rm", width: columnWidth - 70, dataType: "number", format: "#,##0",
+                        caption: "Total Dep Rm", width: columnWidth - 60, dataType: "number", format: "#,##0",
                     calculateCellValue: function (data) {
                         return (data.depRms || 0) + (data.blkDepRms || 0) + (data.chdepRms || 0);
                     }
                 },
-                { dataField: "oOORms", caption: "OOORm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "adl", caption: "adl", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+
+                { dataField: "oOORms", caption: "OOO Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "adl", caption: "Adl.", width: columnWidth - 70, dataType: "number", format: "#,##0" },
                 { dataField: "chl", caption: "C", width: columnWidth - 70, dataType: "number", format: "#,##0" },
                 { dataField: "chl1", caption: "C1", width: columnWidth - 70, dataType: "number", format: "#,##0" },
                 { dataField: "chl2", caption: "C2", width: columnWidth - 70, dataType: "number", format: "#,##0" },
                 { dataField: "totPer", caption: "Total Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "arrPrs", caption: "Arr.Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
-                { dataField: "depPrs", caption: "Dep.Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" }
+                { dataField: "arrPrs", caption: "Arr. Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "depPrs", caption: "Dep. Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" }
             ],
          summary: {
         totalItems: numericColumns.map(field => ({

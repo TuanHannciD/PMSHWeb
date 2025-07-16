@@ -43,21 +43,83 @@
             color: white !important;
         }
 
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td,
+    #gridContainer .dx-datagrid .dx-summary-row > td,
+    #gridContainer .dx-datagrid .dx-total-footer td,
+    #gridContainer .dx-datagrid .dx-footer-row td {
+        font-size: 11px !important;
+    }
+
+    .sticky-header input[type="month"].form-control-sm {
+        font-size: 12px !important; /* đúng 12 px */
+        height: calc(1.1em + .2rem + 2px); /* giữ cùng chiều cao */
+    }
+
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
+    }
+
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
+        }
+
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+    .sticky-header label {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="report-bar">
+    <h4 id="reportTitle">Product Activity</h4>
+
+    <div class="action-buttons">
+        <button class="mui-button mui-button-new" style="background:#3b9ac6;border-radius:4px;margin-right:6px" id="btnPrint">
+            <i class="fa-solid fa-eye"></i> View
+        </button>
+        <button class="mui-button mui-button-new" style="background:green;border-radius:4px;margin-right:6px" id="btnExportExcel">
+            <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button class="mui-button mui-button-new" style="background:darkorange;border-radius:4px" id="btnExportPdf">
+            <i class="fas fa-eraser"></i> PDF
+        </button>
+    </div>
+</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <!-- From Date -->
+        <label class="me-2 mb-0 fw-bold">Date Range:</label>
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Month:</label>
             <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
     </div>
-    <div class=" mb-3 ">
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-    </div>
+    
 </div>
 
 <div class="mui-card">
@@ -121,17 +183,18 @@
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
             columns: [
-               { dataField: "marketCode", caption: "Market Code", width: columnWidth -70},
-            { dataField: "noOfRooms", caption: "No.Of Rooms", width: columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "marketCode", caption: "Market Code", width: columnWidth -70},
+            { dataField: "name", caption: "Name", width: columnWidth -70},
+            { dataField: "noOfRooms", caption: "No. Of Rooms", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "fbRevenue", caption: "F&B Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "miscRevenue", caption: "MISC Revenue", width: columnWidth-60, dataType: "number", format: "#,##0" },
-                 { dataField: "adr", caption: "ADR", width: columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "adr", caption: "ADR", width: columnWidth-60, dataType: "number", format: "#,##0" },
             { dataField: "occ", caption: "%Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
-             { dataField: "noofGuest", caption: "No of Guest", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "multiOccpc", caption: "%Multli Occ", width: columnWidth-60, dataType: "number", format: "#,##0" },
-            { dataField: "multiOcc", caption: "Multli Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
-             { dataField: "singleOcc", caption: "Single Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" }
+            { dataField: "noofGuest", caption: "No. of Guest", width: columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "multiOccpc", caption: "%Multi Occ", width: columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "multiOcc", caption: "Multi Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "singleOcc", caption: "Single Occ", width:  columnWidth-60, dataType: "number", format: "#,##0" }
             ],
             paging: { pageSize: 25 },
              scrolling:  {
@@ -157,7 +220,7 @@
                 { column: "roomRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "fbRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "miscRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-                       { column: "adr", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
+                { column: "adr", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "occ", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "noofGuest", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                 { column: "multiOccpc", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
