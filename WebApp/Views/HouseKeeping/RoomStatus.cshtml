@@ -441,6 +441,7 @@
 
 
         $(document).ready(function () {
+                 $("#btnPrint").trigger("click");
              document.getElementById("reportTitle").innerText = 'Room Status';
 
                $("input[name='masterllioup']").on("change", function () {
@@ -468,6 +469,9 @@
             $('#btnClosePopup, #overlay').click(function () {
                 $('#popupChangeStatus').fadeOut(200);
                 $('#overlay').fadeOut(200);
+                     $("#btnPrint").trigger("click");
+                       const grid = $("#gridContainer").dxDataGrid("instance");
+                       grid.refresh();
             });
            $('#checkRoomList').change(function () {
                 $('#checkRoomRange').prop('checked', false);
@@ -832,9 +836,14 @@
                 traditional: true,
                 crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                    alert("Room status updated successfully.");
-                    $("#loadingSpinner").hide();
+                success: function (response) {
+                   if (response.success) {
+                        alert(response.message); 
+                  
+
+                    } else {
+                        alert(response.message);
+                    }
                 },
                 error: function () {
                     alert("Failed to update room status.");
