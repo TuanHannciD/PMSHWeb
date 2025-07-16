@@ -2558,5 +2558,21 @@
             $("#txtAllotment").val('');
             $("#txtPersonInCharge").val('');
             $("#nights").val('');
+                var businessDate = '@ViewBag.businesDate';
+            var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
+            var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
+
+            var departureDate = new Date(parsedBusinessDate);
+            departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+            // Set arrival and departure input values
+            document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+            document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
+
+            document.getElementById('departure').value = formatDate(departureDate);
+            document.getElementById('dropOffDate').value = formatDate(departureDate);
+
+            updateDates();
     }
 </script>
