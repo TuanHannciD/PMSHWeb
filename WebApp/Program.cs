@@ -16,11 +16,15 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using WebApp.Commons.Containts;
 using Reservation.Services.Interfaces;
 using Reservation.Services.Implements;
+using HouseKeeping.Controllers;
+using HouseKeeping.Services.Interfaces;
+using HouseKeeping.Services.Implements;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(HouseKeepingController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ProfileController).Assembly));
 builder.Services.AddControllersWithViews()
@@ -41,6 +45,7 @@ builder.Services.ConfigureReportingServices(configurator => {
     });
 });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IHouseKeepingService, HouseKeepingService>();
 builder.Services.AddSingleton<IReportService, ReportService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IReservationService, ReservationService>();
