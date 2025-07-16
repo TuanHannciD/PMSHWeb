@@ -231,6 +231,85 @@ namespace HouseKeeping.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public IActionResult UpdateRoomStatusPopup(int status, List<int> roomIds, int isFromTo, string loginName)
+        {
+            try
+            {
+                string hostName = Dns.GetHostName();
+                List<UsersModel> list = PropertyUtils.ConvertToList<UsersModel>(
+                    UsersBO.Instance.FindByAttribute("LoginName", loginName)
+                );
+                int userId = list.Count > 0 ? list[0].ID : 0;
+
+                List<string> failedRooms = new List<string>();
+
+                if (isFromTo == 0)
+                {
+                    foreach (var id in roomIds)
+                    {
+                        RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPrimaryKey(id);
+                        if (modelRoom == null)
+                        {
+                            failedRooms.Add($"Room ID {id} not found.");
+                            continue;
+                        }
+
+                        InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), status.ToString(), DateTime.Now, hostName, "Manual", modelRoom.ID, "Room", loginName);
+
+                        modelRoom.HKStatusID = status;
+                        modelRoom.UpdateDate = DateTime.Now;
+                        modelRoom.UserUpdateID = userId;
+
+                        RoomBO.Instance.Update(modelRoom);
+                    }
+                }
+                else
+                {
+                    if (roomIds.Count < 2)
+                        return Json(new { success = false, message = "Missing From and To Room IDs." });
+
+                    int fromId = roomIds[0];
+                    int toId = roomIds[1];
+                    int minId = Math.Min(fromId, toId);
+                    int maxId = Math.Max(fromId, toId);
+
+                    // Lấy tất cả phòng
+                    List<RoomModel> allRooms = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+
+                    var selectedRooms = allRooms
+                    .Where(r => int.Parse(r.RoomNo) >= minId && int.Parse(r.RoomNo) <= maxId)
+                    .OrderBy(r => r.ID)
+                    .ToList();
+
+
+                    foreach (var modelRoom in selectedRooms)
+                    {
+                       
+
+                        InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), status.ToString(), DateTime.Now, hostName, "Manual", modelRoom.ID, "Room", loginName);
+
+                        modelRoom.HKStatusID = status;
+                        modelRoom.UpdateDate = DateTime.Now;
+                        modelRoom.UserUpdateID = userId;
+
+                        RoomBO.Instance.Update(modelRoom);
+                    }
+                }
+
+                if (failedRooms.Count > 0)
+                {
+                    return Json(new { success = false, message = string.Join("\n", failedRooms) });
+                }
+
+                return Json(new { success = true, message = "Room status updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
 
         public static void InsertHistory(string roomNo, string oldValue, string newValue, DateTime systemDate, string computerName, string action, int objectID, string tableName,string loginName)
         {
@@ -246,6 +325,94 @@ namespace HouseKeeping.Controllers
             modelH.TableName = tableName;
             RoomStatusHistoryBO.Instance.Insert(modelH);
         }
-        
+        //private void tsSave_Click(object sender, EventArgs e)
+        //{
+        //    if (validateForm() == false) return;
+        //    // bước 1: gán các trạng thái cần update
+        //    // bước 2: update trạng thái cho 1 phòng
+        //    // bước 3: update trạng thái cho nhiều phòng
+        //    #region gán tham số
+        //    if (rdbClean.Checked == true) hKStatus = 1;
+        //    else if (rdbDirty.Checked == true) hKStatus = 2;
+        //    else if (rdbPickup.Checked == true) hKStatus = 3;
+        //    else if (rdbInspected.Checked == true) hKStatus = 4;
+        //    else if (rdbDueOut.Checked == true) hKStatus = 7;
+        //    #endregion
+
+        //    #region trường hợp update trạng thái cho 1 phòng
+        //    if (rdbRoomList.Checked == true && arrRoomID[0] > 0)//trường hợp update trạng thái cho 1 phòng
+        //    {
+        //        for (int i = 0; i < arrRoomID.Length; i++)
+        //        {
+        //            try
+        //            {
+        //                //update
+        //                RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPK(arrRoomID[i]);
+        //                modelRoom.ID = arrRoomID[i];
+        //                #region lưu history
+        //                RoomStatusHistoryBO.InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), hKStatus.ToString(), systemDate, TextUtils.GetHostName(), "Manual", modelRoom.ID, "Room");
+        //                #endregion                           
+        //                modelRoom.HKStatusID = hKStatus;
+        //                modelRoom.UserUpdateID = Global.UserID;
+        //                modelRoom.UpdateDate = systemDate;
+        //                RoomBO.Instance.Update(modelRoom);
+        //                txtRoomList.Text = "";
+
+        //                this.Close();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                throw new Exception(ex.ToString());
+        //            }
+        //        }
+        //    }
+        //    #endregion
+
+        //    #region trường hợp update trạng thái cho nhiều phòng
+
+        //    if (rdbFromRoom.Checked == true)// trường hợp update trạng thái cho nhiều phòng
+        //    {
+        //        try
+        //        {
+        //            string fromRoom = txtRoomFrom.Text;
+        //            string toRoom = txtRoomTo.Text;
+        //            if (int.Parse(fromRoom) > int.Parse(toRoom))// nếu chọn fromRoom > ToRoom thì hoán đổi giá trị
+        //            {
+        //                fromRoom = txtRoomTo.Text;
+        //                toRoom = txtRoomFrom.Text;
+        //            }
+        //            string[] arrParaNames = new string[] { "@FromRoom", "@ToRoom" };
+        //            object[] arrParaValues = new object[] { fromRoom, toRoom };
+        //            DataTable dataTable = RoomBO.Instance.LoadDataFromSP("spHkpChangeStatus", "tbRoom", arrParaNames, arrParaValues);
+        //            for (int i = 0; i < dataTable.Rows.Count; i++)// update status cho từng dòng
+        //            {
+        //                int iD = int.Parse(dataTable.Rows[i]["ID"].ToString());
+        //                RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPK(iD);
+        //                modelRoom.ID = iD;
+        //                #region lưu history
+        //                RoomStatusHistoryBO.InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), hKStatus.ToString(), systemDate, TextUtils.GetHostName(), "Manual", modelRoom.ID, "Room");
+        //                #endregion
+        //                modelRoom.HKStatusID = hKStatus;
+        //                modelRoom.UpdateDate = systemDate;
+        //                modelRoom.UserUpdateID = Global.UserID;
+        //                try
+        //                {
+        //                    RoomBO.Instance.Update(modelRoom);
+        //                    this.Close();
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    throw new Exception(ex.ToString());
+        //                }
+        //                txtRoomFrom.Text = ""; txtRoomTo.Text = "";
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new Exception(ex.ToString());
+        //        }
+        //        #endregion
+        //    }
+        //}
     }
 }

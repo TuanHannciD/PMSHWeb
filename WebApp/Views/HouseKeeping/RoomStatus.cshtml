@@ -320,7 +320,7 @@
         </button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnUpdatestatus" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Update</button>
+       <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnUpdatestatus" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Update</button>
 
     </div>
 </div>
@@ -333,11 +333,51 @@
     z-index: 1000; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px;">
 
     <h5 class="mb-3">Change Room Status</h5>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <button id="btnSavePopup" class="btn text-white" style="background-color: #3b9ac6; border-radius: 4px;">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Save
+        </button>
+        <button id="btnClearPopup" class="btn text-white" style="background-color: #3b9ac6; border-radius: 4px;">
+            <i class="fa-solid fa-eraser me-1"></i> Clear
+        </button>
+        <button id="btnClosePopup" class="btn text-white" style="background-color: #3b9ac6; border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
 
-    <!-- ✅ Hàng 1: RoomList -->
-    <div class="mb-3">
-        <label class="fw-bold me-2">Room List:</label>
-        <select id="popupRoomList" class="form-control form-control-sm">
+
+    <!-- ✅ Room List -->
+    <div class="mb-3 d-flex align-items-center gap-2">
+        <div class="form-check mb-0">
+            <input class="form-check-input" type="checkbox" id="checkRoomList" checked>
+        </div>
+        <label class="fw-bold me-2 mb-0" style="min-width: 90px;">Room List:</label>
+        <select id="popupRoomList" class="form-control form-control-sm" multiple style="flex: 1;">
+            @foreach (var item in roomList)
+            {
+                <option value="@item.RoomNo">@item.RoomNo</option>
+            }
+        </select>
+    </div>
+
+    <!-- ✅ From Room - To Room -->
+    <div class="mb-3 d-flex align-items-center gap-2">
+        <div class="form-check mb-0">
+            <input class="form-check-input" type="checkbox" id="checkRoomRange">
+        </div>
+        <label class="fw-bold me-2 mb-0" style="min-width: 90px;">From Room:</label>
+
+        <select id="popupRoomFrom" class="form-control form-control-sm" style="width: 120px;">
+            <option value=""></option>
+            @foreach (var item in roomList)
+            {
+                <option value="@item.RoomNo">@item.RoomNo</option>
+            }
+        </select>
+
+        <span class="fw-bold">→ To</span>
+
+        <select id="popupRoomTo" class="form-control form-control-sm" style="width: 120px;">
             <option value=""></option>
             @foreach (var item in roomList)
             {
@@ -346,35 +386,47 @@
         </select>
     </div>
 
-    <!-- ✅ Hàng 2: From Room / To Room -->
-    <div class="mb-3 d-flex gap-3">
-        <div style="flex: 1;">
-            <label class="fw-bold me-2">From Room:</label>
-            <select id="popupRoomFrom" class="form-control form-control-sm">
-                <option value=""></option>
-                @foreach (var item in roomList)
-                {
-                    <option value="@item.RoomNo">@item.RoomNo</option>
-                }
-            </select>
-        </div>
 
-        <div style="flex: 1;">
-            <label class="fw-bold me-2">To Room:</label>
-            <select id="popupRoomTo" class="form-control form-control-sm">
-                <option value=""></option>
-                @foreach (var item in roomList)
-                {
-                    <option value="@item.RoomNo">@item.RoomNo</option>
-                }
-            </select>
+    <!-- ✅ Checkbox status -->
+    <!-- Dòng tiêu đề label nằm riêng -->
+    <div class="d-flex flex-column mt-2">
+        <label class="fw-bold mb-2">Change Status:</label>
+
+        <!-- Dòng chứa các checkbox -->
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="cleannonup" name="masterlliouppop" value="1">
+                <label class="form-check-label" for="cleannonup">Clean Non-Checked</label>
+            </div>
+
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="dirtyup" name="masterlliouppop" value="1">
+                <label class="form-check-label" for="dirtyup">Dirty</label>
+            </div>
+
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="cleanup" name="masterlliouppop" value="1">
+                <label class="form-check-label" for="cleanup">Clean</label>
+            </div>
+
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="pickup" name="masterlliouppop" value="1">
+                <label class="form-check-label" for="pickup">Pickup</label>
+            </div>
+
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="dueout" name="masterlliouppop" value="1">
+                <label class="form-check-label" for="dueout">Due Out</label>
+            </div>
         </div>
     </div>
 
-    <div class="text-end">
+
+    <div class="text-end mt-3">
         <button id="btnClosePopup" class="btn btn-secondary">Close</button>
     </div>
 </div>
+
 
 
 <div class="mui-card">
@@ -391,15 +443,16 @@
         $(document).ready(function () {
              document.getElementById("reportTitle").innerText = 'Room Status';
 
-                 $("input[name='masterllioup']").on("change", function () {
-        $("input[name='masterllioup']").not(this).prop("checked", false);
+               $("input[name='masterllioup']").on("change", function () {
+                 $("input[name='masterllioup']").not(this).prop("checked", false);
+              });
 
-       
-
-        });
-          $('#btnSelectAll').click(function () {
-            $('.include-option').prop('checked', true);
-        });
+               $("input[name='masterlliouppop']").on("change", function () {
+                 $("input[name='masterlliouppop']").not(this).prop("checked", false);
+              });
+              $('#btnSelectAll').click(function () {
+                $('.include-option').prop('checked', true);
+            });
 
             // Khi nhấn "Clear All" => bỏ check tất cả checkbox có class include-option
             $('#btnClearAll').click(function () {
@@ -409,14 +462,76 @@
              $('#btnChangeStatus').click(function () {
                 $('#overlay').fadeIn(200);
                 $('#popupChangeStatus').fadeIn(200);
-            });
+             });
 
         // Đóng popup
             $('#btnClosePopup, #overlay').click(function () {
                 $('#popupChangeStatus').fadeOut(200);
                 $('#overlay').fadeOut(200);
             });
+           $('#checkRoomList').change(function () {
+                $('#checkRoomRange').prop('checked', false);
+                updateRoomInputs();
+           });
+
+            $('#checkRoomRange').change(function () {
+                $('#checkRoomList').prop('checked', false);
+                updateRoomInputs();
+            });
+
+            // Nếu người dùng click label → set checked và gọi lại logic
+            $('label[for="checkRoomList"]').click(function () {
+                $('#checkRoomList').prop('checked', true).trigger('change');
+            });
+
+            $('label[for="checkRoomRange"]').click(function () {
+                $('#checkRoomRange').prop('checked', true).trigger('change');
+            });
+
+            // Gọi khởi tạo ban đầu
+           initializePopupRoomListTomSelect();
+           updateRoomInputs();
+
         });
+
+        function updateRoomInputs() {
+            const useList = $('#checkRoomList').is(':checked');
+
+            $('#checkRoomRange').prop('checked', !useList);
+
+            const popupRoomListEl = document.querySelector("#popupRoomList");
+            if (popupRoomListEl.tomselect) {
+                popupRoomListEl.tomselect.setDisabled(!useList);
+            } else {
+                $('#popupRoomList').prop('disabled', !useList);
+            }
+
+            $('#popupRoomFrom, #popupRoomTo').prop('disabled', useList);
+        }
+
+
+        function initializePopupRoomListTomSelect() {
+            const el = document.querySelector("#popupRoomList");
+            if (!el) return;
+
+            // Nếu đã được khởi tạo thì huỷ trước
+            if (el.tomselect) el.tomselect.destroy();
+
+            new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: 'Select rooms...',
+                persist: false,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+        }
+
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
 
@@ -649,6 +764,84 @@
                 }
             });
          }
+
+        $(document).off("click", "#btnSavePopup").on("click", "#btnSavePopup", function () {
+            $("#loadingSpinner").show();
+
+            // Determine status from checkboxes
+            let status = 0;
+            if ($("#cleannonup").is(":checked")) {
+                status = 1;
+            } else if ($("#dirtyup").is(":checked")) {
+                status = 2;
+            } else if ($("#cleanup").is(":checked")) {
+                status = 4;
+            } else if ($("#dueout").is(":checked")) {
+                status = 7;
+            } else if ($("#pickup").is(":checked")) {
+                status = 3;
+            }
+
+            if (status === 0) {
+                alert("Please select a room status.");
+                $("#loadingSpinner").hide();
+                return;
+            }
+
+            // Get room list
+            let isFromTo = 0;
+            let roomIds = [];
+
+            if ($("#checkRoomRange").is(":checked")) {
+                isFromTo = 1;
+                let from = $("#popupRoomFrom").val();
+                let to = $("#popupRoomTo").val();
+
+                if (!from || !to) {
+                    alert("Please select both From and To rooms.");
+                    $("#loadingSpinner").hide();
+                    return;
+                }
+
+                roomIds = [from, to]; // Let server handle range
+            } else if ($("#checkRoomList").is(":checked")) {
+                isFromTo = 0;
+                roomIds = $("#popupRoomList").val();
+
+                if (!roomIds || roomIds.length === 0) {
+                    alert("Please select at least one room.");
+                    $("#loadingSpinner").hide();
+                    return;
+                }
+            } else {
+                alert("Please choose how to select rooms (List or From → To).");
+                $("#loadingSpinner").hide();
+                return;
+            }
+             const loginName = JSON.parse(localStorage.getItem("Loginname"));
+            // Send AJAX
+            $.ajax({
+                url: '/HouseKeeping/UpdateRoomStatusPopup',
+                type: 'POST',
+                data: {
+                    status: status,
+                    roomIds: roomIds,
+                    isFromTo: isFromTo,
+                    loginName:loginName
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    alert("Room status updated successfully.");
+                    $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Failed to update room status.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+        });
 
 
 
