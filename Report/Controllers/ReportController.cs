@@ -3566,13 +3566,8 @@ namespace Report.Controllers
                 case "IncurringDepositSummary":
                 case "IncurringDepositPaymentPlan":
                 case "JournalByCashierAndArticle":
-
-<<<<<<< HEAD
-                case "ArticleByRooms":
-=======
                 case "ArticleByRoom":
 
->>>>>>> 2a5df730d85eaccb48b04b1976f766360adb5dbf
                 case "RoomOccupancyStatistics":
                 case "DeparturesReport":
                 case "ArrivalsDetailed":
