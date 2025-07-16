@@ -41,6 +41,8 @@ namespace Reservation.Controllers
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
+            ViewBag.cboZone = ListItemHelper.GetZoneProvider();
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             return View();
         }
 
@@ -523,8 +525,17 @@ namespace Reservation.Controllers
                     reservationModel.RoomType = "";
                 }
                 reservationModel.RtcId = int.Parse(Request.Form["rtcID"].ToString());
-                reservationModel.RoomId = int.Parse(Request.Form["roomID"].ToString());
-                reservationModel.RoomNo = Request.Form["roomNo"].ToString();
+                if (string.IsNullOrEmpty(Request.Form["roomNo"].ToString()))
+                {
+                    reservationModel.RoomId = 0;
+                    reservationModel.RoomNo = "";
+                }
+                else
+                {
+                    reservationModel.RoomId = int.Parse(Request.Form["roomID"].ToString());
+                    reservationModel.RoomNo = Request.Form["roomNo"].ToString();
+                }
+ 
                 reservationModel.BusinessBlockId = 0;
                 reservationModel.BusinessBlockCode = "";
                 reservationModel.Eta = Request.Form["eta"].ToString();
@@ -602,8 +613,16 @@ namespace Reservation.Controllers
                 reservationModel.Status = 0;
                 reservationModel.PostingMaster = false;
                 reservationModel.MainGuest = true;
-                reservationModel.RateCodeId = int.Parse(Request.Form["rateCodeID"].ToString());
-                reservationModel.RateCode = Request.Form["rateCode"].ToString();
+                if (string.IsNullOrEmpty(Request.Form["rateCode"].ToString()))
+                {
+                    reservationModel.RateCodeId = 0;
+                    reservationModel.RateCode = "";
+                }
+                else
+                {
+                    reservationModel.RateCodeId = int.Parse(Request.Form["rateCodeID"].ToString());
+                    reservationModel.RateCode = Request.Form["rateCode"].ToString();
+                }
                 reservationModel.Rate = decimal.Parse(Request.Form["rateAmount"].ToString());
                 reservationModel.RateAfterTax = decimal.Parse(Request.Form["rateAfter"].ToString());
                 reservationModel.FixedRate = false;
@@ -673,12 +692,35 @@ namespace Reservation.Controllers
 
         #region search reservation
         [HttpGet]
-        public async Task<IActionResult> SearchReservation2(DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> SearchReservation2(int searchType,string name,string firstName,string reservationHolder,string confirmationNo,
+            string crsNo,string roomNo,string roomType,string package,string zone,DateTime arrivalFrom, DateTime arrivalTo,string roomSharer,string owner)
         {
             try
             {
-                List<ReservationModel> roomTypeModels = PropertyUtils.ConvertToList<ReservationModel>(ReservationBO.Instance.FindAll())
-                    .Where(x => x.ArrivalDate <= fromDate && x.DepartureDate >= toDate).ToList();
+                
+                var data = _iReservationService.SearchReservation( searchType,  name,  firstName,  reservationHolder,  confirmationNo,
+                crsNo,  roomNo,  roomType,  package,  zone,  arrivalFrom,  arrivalTo,  roomSharer,  owner);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProfileIndividual()
+        {
+            try
+            {
+                List<ProfileModel> roomTypeModels = ReservationBO.GetProfileIndividual();
                 return Json(roomTypeModels);
             }
             catch (Exception ex)
@@ -686,7 +728,6 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
-
         #endregion
     }
 }

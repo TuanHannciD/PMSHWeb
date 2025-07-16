@@ -1,5 +1,28 @@
 ﻿﻿
 <link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
+<style>
+.ts-wrapper {
+    margin: 0 !important; /* Bỏ margin của container */
+    min-height: 25px; /* Đặt chiều cao tối thiểu */
+}
+
+.ts-control {
+    height: 25px !important; /* Giảm chiều cao của input */
+    line-height: 25px; /* Căn giữa nội dung */
+    padding: 0 10px; /* Điều chỉnh padding */
+    margin: 0 !important; /* Bỏ margin */
+}
+
+.ts-dropdown {
+    margin: 0 !important; /* Bỏ margin của dropdown */
+    font-size: 14px; /* Giảm kích thước chữ nếu cần */
+}
+
+.ts-dropdown .option {
+    padding: 5px 10px; /* Giảm padding của các mục trong dropdown */
+    margin: 0 !important; /* Bỏ margin */
+}
+</style>
 <div class="body">
     @*     <div id="loading" class="loading">
         <div class="spinner"></div>
@@ -23,10 +46,10 @@
                 <div class="row">
                     <div class="row col-md-7">
                         <input class="col-md-8" id="txtID" style="display:none"/>
-                        <label class="col-md-3">Name</label>
-                        <input class="col-md-8" id="txtName" />
-                        <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
-                    </div>
+                        <label class="col-md-2">Name</label>
+                        <select class="col-md-8" id="txtName" ></select>
+@*                         <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
+ *@                    </div>
                     <div class="row col-md-5">
                         <label class="col-md-6">First name</label>
                         <input class="col-md-6" type="text" id="txtFirstName" readonly>
@@ -216,7 +239,7 @@
                     <div class="row col-md-6">
                         <label class="col-md-3">Room</label>
                         <input class="col-md-10" id="roomSelect" readonly/>
-                        <button class="col-md-1" onclick="openModalSearchRoom()"><i class="fa-solid fa-ellipsis"></i></button>
+                        <button class="col-md-1" onclick="openModalSearchRoom()" id="btnRoom"><i class="fa-solid fa-ellipsis"></i></button>
 
 
                     </div>
@@ -1025,9 +1048,9 @@
     </div>
 </div>
 <script>
-    $(document).ready(async function () {
-        // Chờ tất cả các hàm AJAX hoàn thành
-         //fetchData();
+    $(document).ready(async function (){
+        await setTomSelect();
+        getProfileIndividual();
     });
 
 
@@ -1200,6 +1223,7 @@
     // Khởi tạo ngày mặc định
     window.onload = function() {
         var businessDate = '@ViewBag.businesDate';
+        console.log(businessDate);
         var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
         var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
 
@@ -1259,8 +1283,10 @@
     function updateRoomSelect() {
         if (parseInt(numRoomsInput.value) > 1) {
             roomSelect.disabled = true;
+            $('#btnRoom').hide();
         } else {
             roomSelect.disabled = false;
+            $('#btnRoom').show();
         }
     }
 
@@ -1277,6 +1303,7 @@
     function increaseRooms() {
         let value = parseInt(numRoomsInput.value);
         numRoomsInput.value = value + 1;
+        
         updateRoomSelect();
     }
 
@@ -2404,9 +2431,11 @@
         formData.append('contactName', $('#txtContact').find('option:selected').text());
         formData.append('contactPhone', $("#txtContactPhone").val());
         formData.append('profileIndividualID', $("#txtID").val());
-        formData.append('lastName', $("#txtName").val());
+        const tomSelect = $('#txtName')[0].tomselect;
+        const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
         formData.append('firstName', $("#txtFirstName").val());
-        formData.append('title', $("#txtTitleID").val());
+        formData.append('lastName', selectedText);
+        formData.append('title', $("#txtTitle").val() ?? '');
         formData.append('phone', $("#txtPhone").val());
         formData.append('email', $("#txtEmail").val());
         formData.append('memberType', $("#txtMemberType").val());
@@ -2449,9 +2478,9 @@
         formData.append('pickUpTransportNo', $("#pickUpTransportNo").val());
         formData.append('pickUpDescription', $("#pickUpDescription").val());
         formData.append('dropOffId', $("#dropOffId").val());
-        formData.append('dropOffCarrierCode', $("#txtContactNameCOM").val());
-        formData.append('dropOffTransportType', $("#txtEmailCOM").val());
-        formData.append('dropOffStationCode', $("#txtWebsiteCOM").val());
+        formData.append('dropOffCarrierCode', $("#dropOffCarrierCode").val());
+        formData.append('dropOffTransportType', $("#dropOffTransportType").val());
+        formData.append('dropOffStationCode', $("#dropOffStationCode").val());
         formData.append('dropOffTime', $("#dropOffTime").val());
         formData.append('dropOffTransportNo', $("#dropOffTransportNo").val());
         formData.append('dropOffDate', $("#dropOffDate").val());
@@ -2575,4 +2604,66 @@
 
             updateDates();
     }
+
+    async function setTomSelect(){
+        const ids = [
+            "#txtName"
+            //,
+            //"#txtStateGroup",
+            // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
+            // "#txtVIPGroup", "#txtLanguageContact", "#txtTitleContact", "#txtCityContact",
+            // "#txtStateContact", "#txtCountryContact", "#txtOwnerContact", "#txtTerritoryContact"
+        ];
+
+        for (const id of ids) {
+            if ($(id).length) {
+                new TomSelect(id, {
+                    allowEmptyOption: true,
+                    create: true
+                });
+            }
+        }
+    }
+    function getProfileIndividual(){
+        $.ajax({
+                url: '/Reservation/GetProfileIndividual',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                if (result.length > 0) {
+                    let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+
+                    select.addOption({ value: '0', text: '' });
+                    result.forEach(item => {
+                        select.addOption({ value: item.id, text: `${item.account}` });
+                    });
+
+                    select.setValue('0'); // Chọn giá trị mặc định
+
+
+                }
+                else{
+                    let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+                    select.addOption({ value: '0', text: '' });
+                    select.setValue('0');
+
+                }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    $('#txtName').on('change', function() {
+        getInfoByProfileID($(this).val());
+    });
 </script>
