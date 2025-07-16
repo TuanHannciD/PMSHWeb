@@ -415,11 +415,11 @@ namespace Reservation.Controllers
         [HttpPost]
         public ActionResult SaveReservation()
         {
-            //ProcessTransactions pt = new ProcessTransactions();
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                //pt.OpenConnection();
-                //pt.BeginTransaction();
+                pt.OpenConnection();
+                pt.BeginTransaction();
                 List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
                 int memberTypeID = 0;int roomTypeID = 0; int vipID = 0;
                 if (string.IsNullOrEmpty(Request.Form["memberType"].ToString()))
@@ -433,6 +433,19 @@ namespace Reservation.Controllers
                 if (string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
                 {
                     roomTypeID = 0;
+                }
+                if (string.IsNullOrEmpty(Request.Form["lastName"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Profile cannot be blank" });
+                }
+                if (string.IsNullOrEmpty(Request.Form["reservationTypeCode"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Reservation Type cannot be blank" });
+                }
+                if(decimal.Parse(Request.Form["rateAmount"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Rate cannot be blank " });
+
                 }
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
@@ -535,8 +548,17 @@ namespace Reservation.Controllers
                 reservationModel.OriginId = 0;
                 reservationModel.OriginCode = "";
                 reservationModel.CCHolder = "";
-                reservationModel.BookerId = int.Parse(Request.Form["bookerID"].ToString());
-                reservationModel.BookerName = Request.Form["bookerName"].ToString();
+                if (string.IsNullOrEmpty(Request.Form["bookerID"].ToString()))
+                {
+                    reservationModel.BookerId = 0;
+                    reservationModel.BookerName = "";
+                }
+                else
+                {
+                    reservationModel.BookerId = int.Parse(Request.Form["bookerID"].ToString());
+                    reservationModel.BookerName = Request.Form["bookerName"].ToString();
+                }
+
                 reservationModel.BookerDetails = "";
                 reservationModel.NoPost = false;
                 reservationModel.PrintRate = true;
@@ -631,20 +653,20 @@ namespace Reservation.Controllers
                 reservationModel.FixedMeal = false;
                 reservationModel.VoucherId = "";
                 ReservationBO.Instance.Insert(reservationModel);
-                //pt.CommitTransaction();
+                pt.CommitTransaction();
                 return Json(new { code = 0, msg = "New reservation created successfully" });
 
             }
             catch (Exception ex)
             {
-                //pt.RollBack();
+                pt.RollBack();
                 return Json(new { code = 1, msg = ex.Message });
             }
-            //finally
-            //{
-            //    pt.CloseConnection();
+            finally
+            {
+                pt.CloseConnection();
 
-            //}
+            }
         }
         #endregion
     }
