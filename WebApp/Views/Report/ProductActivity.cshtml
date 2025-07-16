@@ -45,6 +45,39 @@
             color: white !important;
         }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+       
+        padding: 5px !important;
+   
+        height: 24px !important;
+    
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td, /* data & group rows */
+    #gridContainer .dx-datagrid .dx-summary-row > td, /* summary trong group */
+    #gridContainer .dx-datagrid .dx-total-footer td, /* total footer */
+    #gridContainer .dx-datagrid .dx-footer-row td { /* custom footer */
+        font-size: 11px !important;
+    }
+
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px">Product Activity</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
@@ -68,23 +101,22 @@
         <div class="d-flex flex-column">
 
             <div class="d-flex flex-wrap gap-2">
-                <label class="mb-1 fw-bold me-3">Profile Type:</label>
-                <!-- Row 1 -->
+                <label class="mb-1 fw-bold me-3">Profile Type:</label>           
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="arrival" name="includeOptions" value="1,101" checked>
-                    <label class="form-check-label" for="arrival">Travel Agents</label>
+                    <input class="form-check-input include-option" type="checkbox" id="travel" name="includeOptions" value="1,101" checked>
+                    <label class="form-check-label" for="travel">Travel Agents</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="2,102">
-                    <label class="form-check-label" for="cancel">Company</label>
+                    <input class="form-check-input include-option" type="checkbox" id="company" name="includeOptions" value="2,102">
+                    <label class="form-check-label" for="company">Company</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="0,100">
-                    <label class="form-check-label" for="cancel">Profile Ind</label>
+                    <input class="form-check-input include-option" type="checkbox" id="profile" name="includeOptions" value="0,100">
+                    <label class="form-check-label" for="profile">Profile Ind</label>
                 </div>
                 <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="cancel" name="includeOptions" value="3,103">
-                    <label class="form-check-label" for="cancel">Individuals</label>
+                    <input class="form-check-input include-option" type="checkbox" id="individuals" name="includeOptions" value="3,103">
+                    <label class="form-check-label" for="individuals">Individuals</label>
                 </div>
             </div>
         </div>
@@ -93,12 +125,12 @@
             <div class="d-flex flex-wrap gap-2">
                 <label class="mb-1 fw-bold me-3">By:</label>
                     <div class="form-check me-3">
-                    <input class="form-check-input include-option" type="checkbox" id="confirmation" name="masterllio" value="0">
-                        <label class="form-check-label" for="cancel">By Confirmation No</label>
+                    <input class="form-check-input include-option" type="checkbox" id="confirmation" name="masterllio" value="0" checked>
+                    <label class="form-check-label" for="confirmation">By Confirmation No</label>
                     </div>
                     <div class="form-check me-3">
                     <input class="form-check-input include-option" type="checkbox" id="masterllio" name="masterllio" value="3">
-                        <label class="form-check-label" for="cancel">By Master Folio</label>
+                    <label class="form-check-label" for="masterllio">By Master Folio</label>
                     </div>
             </div>
         </div>
@@ -140,8 +172,8 @@
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 </div>
 

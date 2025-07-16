@@ -46,6 +46,53 @@
             color: white !important;
         }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
@@ -109,8 +156,8 @@
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 </div>
 
@@ -326,14 +373,15 @@
                         return (data.depRms || 0) + (data.blkDepRms || 0) + (data.chdepRms || 0);
                     }
                 },
-                    { dataField: "oOORms", caption: "OOORm", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "adl", caption: "adl", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "chl", caption: "C", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "chl1", caption: "C1", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "chl2", caption: "C2", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "totPer", caption: "Total Prs", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "arrPrs", caption: "Arr.Prs", width: columnWidth - 60, dataType: "number", format: "#,##0" },
-                    { dataField: "depPrs", caption: "Dep.Prs", width: columnWidth - 60, dataType: "number", format: "#,##0" }
+
+                { dataField: "oOORms", caption: "OOO Rm", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "adl", caption: "Adl.", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chl", caption: "C", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chl1", caption: "C1", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "chl2", caption: "C2", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "totPer", caption: "Total Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "arrPrs", caption: "Arr. Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "depPrs", caption: "Dep. Prs", width: columnWidth - 70, dataType: "number", format: "#,##0" }
             ],
          summary: {
         totalItems: numericColumns.map(field => ({

@@ -45,103 +45,152 @@
             color: white !important;
         }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td,
+    #gridContainer .dx-datagrid .dx-summary-row > td,
+    #gridContainer .dx-datagrid .dx-total-footer td,
+    #gridContainer .dx-datagrid .dx-footer-row td {
+        font-size: 11px !important;
+    }
+
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
+    }
+
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
+        }
+
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="report-bar">
+    <h4 id="reportTitle">Product Activity</h4>
+
+    <div class="action-buttons">
+        <button class="mui-button mui-button-new" style="background:#3b9ac6;border-radius:4px;margin-right:6px" id="btnPrint">
+            <i class="fa-solid fa-eye"></i> View
+        </button>
+        <button class="mui-button mui-button-new" style="background:green;border-radius:4px;margin-right:6px" id="btnExportExcel">
+            <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button class="mui-button mui-button-new" style="background:darkorange;border-radius:4px" id="btnExportPdf">
+            <i class="fas fa-eraser"></i> PDF
+        </button>
+    </div>
+</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <div class="d-flex flex-column ">
+        <div class="d-flex align-items-center me-3">
+            <label class="fw-bold me-3">Date Range:</label>
 
-            <div class="d-flex align-items-center">
-                <label class="fw-bold me-3"> Date Range:</label>
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">From Date:</label>
-                        <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">To Date:</label>
-                        <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-                    </div>
+            <div class="d-flex align-items-center me-1">
+                <label class="me-0 mb-0">From:</label>
+                <input type="date" id="fromDate" class="form-control form-control-sm w-auto" />
             </div>
-        </div>
-        <div class="d-flex flex-column ">
 
-            <div class="d-flex align-items-center">
-                <label class="fw-bold me-3">Search Criteria:</label>
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Reservation:</label>
-                    <select id="reservation" name="reservation" class="form-control form-control-sm w-auto">
-                        <option value="0">All Reservation</option>
-                        <option value="1">Reservation with Block</option>
-                        <option value="2">Reservation with Travel Agent</option>
-                        <option value="3">Reservation with Company</option>
-                        <option value="4">Reservation with Individual</option>
-                        <option value="5">Reservation with Member</option>
-                        <option value="6">Reservation with VIP</option>
-                    </select>
-                </div>
+            <div class="d-flex align-items-center me-1">
+                <label class="me-0 mb-0">To:</label>
+                <input type="date" id="toDate" class="form-control form-control-sm w-auto" />
             </div>
         </div>
 
-        <div class="d-flex flex-column ">
+        <!-- ❷ Filter + Search nối đuôi -->
+        <div class="d-flex align-items-center flex-wrap">
+            <!-- Filter -->
+            <label class="fw-bold me-3">Filter:</label>
 
-            <div class="d-flex align-items-center">
-                <label class="fw-bold me-3"> Filter:</label>
+            <div class="d-flex align-items-center me-1">
+                <label class="me-0 mb-0">Room Type:</label>
+                <select id="roomType" class="form-control form-control-sm w-auto">
+                    <option value="">ALL</option>
+                    @foreach (var rt in rtList)
+                    {
+                        <option value="@rt.ID">@rt.Code</option>
+                    }
+                </select>
+            </div>
 
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Room Type:</label>
-                    <select id="roomType" name="roomType" class="form-control form-control-sm w-auto">
-                        <option value="">ALL</option>
-                        @foreach (var item in rtList)
-                        {
-                            <option value="@item.ID">@item.Code</option>
-                        }
-                    </select>
-                </div>
+            <div class="d-flex align-items-center me-3">
+                <label class="me-0 mb-0">Zone:</label>
+                <select id="zone" class="form-control form-control-sm w-auto">
+                    <option value="">ALL</option>
+                    @foreach (var z in zoneList)
+                    {
+                        <option value="@z.ID">@z.Code</option>
+                    }
+                </select>
+            </div>
 
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" name="zone" class="form-control form-control-sm w-auto">
-                        <option value="">ALL</option>
-                            @foreach (var item in zoneList)
-                            {
-                                <option value="@item.ID">@item.Code</option>
-                            }
-                    </select>
-      
-                </div>
+            <!-- Search Criteria (ngay sau Filter) -->
+            <label class="fw-bold ms-2 me-3">Search Criteria:</label>
+
+            <div class="d-flex align-items-center me-3">
+                <label class="me-1 mb-0">Reservation:</label>
+                <select id="reservation" class="form-control form-control-sm w-auto">
+                    <option value="0">All Reservation</option>
+                    <option value="1">Block</option>
+                    <option value="2">Travel Agent</option>
+                    <!-- … -->
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center me-3">
+                <label class="me-1 mb-0">Sort Order:</label>
+                <select id="sortOrder" class="form-control form-control-sm w-auto">
+                    <option value="0">Alphabetical</option>
+                    <option value="1">Folio No</option>
+                    <!-- … -->
+                </select>
             </div>
         </div>
+        
 
         <div style="display:none!important" class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">View By:</label>
-            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
-               
+            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">              
                 <option value="VND">VND</option>
                 <option value="USD">USD</option>
             </select>
         </div>
 
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0 fw-bold me-3">Sort Order:</label>
-            <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
-                <option value="0">Alphabetical</option>
-                <option value="1">Folio No</option>
-                <option value="2">Arrival Date</option>
-                <option value="3">Departure Date</option>
-            </select>
-        </div>
-
     </div>
-    <div class=" mb-3 ">
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-    </div>
+    
 </div>
 
 <div class="mui-card">
-  @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+
     <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -168,12 +217,10 @@
         const formattedLastDay = formatDate(lastDayOfMonth);
 
         console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); 
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
         document.getElementById('toDate').value = formattedLastDay;
-
-
 
     });
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
@@ -212,25 +259,24 @@
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
             columns: [
-               { dataField: "folioID", caption: "Folio No", width: columnWidth-70 },
-            { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-80 },
-            { dataField: "guestName", caption: "Name", width: columnWidth },
-            { dataField: "reservationHolder", caption: "Resv.Holder", width: columnWidth},
+            { dataField: "folioID", caption: "Folio No", width: columnWidth-90 },
+            { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-90,dataType: "number" },
+            { dataField: "guestName", caption: "Name", width: columnWidth - 10  },
+            { dataField: "reservationHolder", caption: "Resv.Holder", width: columnWidth - 10},
             { dataField: "roomRevenue", caption: "Room Revenue", width: columnWidth-40, dataType: "number", format: "#,##0" },
-            { dataField: "fbRevenue", caption: "F&BRevenue", width: columnWidth-50 , dataType: "number", format: "#,##0"},
-            { dataField: "otherRevenue", caption: "Other Revenue", width: columnWidth-50, dataType: "number", format: "#,##0" },
-            { dataField: "totalRevenue", caption: "Total Revenue", width:columnWidth-50, dataType: "number", format: "#,##0" },
-            { dataField: "currency", caption: "Curr.", width: columnWidth-70 },
-            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
-            { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-70,dataType: "date",format: "dd/MM/yyyy" },
-            { dataField: "status", caption: "Status", width:columnWidth-60 }
+            { dataField: "fbRevenue", caption: "F&BRevenue", width: columnWidth-40 , dataType: "number", format: "#,##0"},
+            { dataField: "otherRevenue", caption: "Other Revenue", width: columnWidth-40, dataType: "number", format: "#,##0" },
+            { dataField: "totalRevenue", caption: "Total Revenue", width:columnWidth-40, dataType: "number", format: "#,##0" },
+            { dataField: "currency", caption: "Curr.", width: columnWidth-110 },
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-85,dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "departureDate", caption: "Dep.Date", width: columnWidth-85,dataType: "date",format: "dd/MM/yyyy" },
+            { dataField: "status", caption: "Status", width:columnWidth-70 }
             ],
             paging: { pageSize: 25 },
-      scrolling:  {
-         
-        useNative: true,
-       showScrollbar: "always"
-    },
+            scrolling:  {       
+            useNative: true,
+            showScrollbar: "always"
+            },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
@@ -240,20 +286,20 @@
             },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
                 filterRow: {
-         visible: true,
-        applyFilter: "auto"
-    },
-    headerFilter: {
-        visible: true
-    },
+            visible: true,
+            applyFilter: "auto"
+            },
+            headerFilter: {
+            visible: true
+            },
             showBorders: true,
                  summary: {
                 totalItems: [
                         {
-        column: "reservationHolder",
-        summaryType: "custom",
-        displayFormat: "Grand Total:"
-    },
+            column: "reservationHolder",
+            summaryType: "custom",
+            displayFormat: "Grand Total:"
+            },
                         { column: "roomRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                         { column: "fbRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
                         { column: "otherRevenue", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },

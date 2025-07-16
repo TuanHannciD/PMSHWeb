@@ -44,18 +44,92 @@
             color: white !important;
         }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td, /* data & group rows */
+    #gridContainer .dx-datagrid .dx-summary-row > td, /* summary trong group */
+    #gridContainer .dx-datagrid .dx-total-footer td, /* total footer */
+    #gridContainer .dx-datagrid .dx-footer-row td { /* custom footer */
+        font-size: 11px !important;
+    }
+
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
+    }
+
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
+        }
+
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 </style>
-<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="report-bar">
+    <h4 id="reportTitle">Product Activity</h4>
+
+    <div class="action-buttons">
+        <button class="mui-button mui-button-new" style="background:#3b9ac6;border-radius:4px;margin-right:6px" id="btnPrint">
+            <i class="fa-solid fa-eye"></i> View
+        </button>
+        <button class="mui-button mui-button-new" style="background:green;border-radius:4px;margin-right:6px" id="btnExportExcel">
+            <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button class="mui-button mui-button-new" style="background:darkorange;border-radius:4px" id="btnExportPdf">
+            <i class="fas fa-eraser"></i> PDF
+        </button>
+    </div>
+</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <!-- From Date -->
-        <div class="d-flex align-items-center me-3">
-            <label id="fromDateLabel" class="me-2 mb-0">Arrival From Date:</label>
+        <label class="me-2 mb-0 fw-bold me-1">Date Range:</label>
+        <div class="d-flex align-items-center me-1">
+            <label id="fromDateLabel" class="me-2 mb-0">From Arrival Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
-        <div class="d-flex align-items-center me-3">
-            <label id="toDateLabel" class="me-2 mb-0">Arrival To Date:</label>
+        <div class="d-flex align-items-center me-1">
+            <label id="toDateLabel" class="me-2 mb-0">To Arrival Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+        </div>
+        <label class="me-2 mb-0 fw-bold me-1">Filter:</label>
+        <div class="d-flex align-items-center me-1">
+            <label class="me-2 mb-0">Cancel Reason:</label>
+            <select id="commnet" name="commnet" class="form-control form-control-sm " style="width :100px">
+                <option value="">ALL</option>
+                @foreach (var item in comList)
+                {
+                    <option value="@item.Code">@item.Code-@item.Description</option>
+                }
+            </select>
         </div>
         <div class="form-check me-3">
             <input class="form-check-input include-option" type="checkbox" id="arrivalDateChk" name="includeOptions" value="0" checked>
@@ -65,17 +139,7 @@
             <input class="form-check-input include-option" type="checkbox" id="cancelDateChk" name="includeOptions" value="1">
             <label class="form-check-label" for="cancelDateChk">Cancel Date</label>
         </div>
-        <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Cancel Reason:</label>
-            <select id="commnet" name="commnet" class="form-control form-control-sm "  style="width :100px"> 
-                <option value="">ALL</option>
-                @foreach (var item in comList)
-                {
-                    <option value="@item.Code">@item.Code-@item.Description</option>
-                }
-            </select>
-
-        </div>
+       
       @*   <div class="d-flex flex-column">
   
             <div class="d-flex flex-wrap gap-2">
@@ -93,11 +157,7 @@
         </div>
  *@
     </div>
-    <div class=" mb-3 ">
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-    </div>
+    
 </div>
 
 <div class="mui-card">
@@ -124,8 +184,8 @@
         } else {
             // Nếu bỏ tick, kiểm tra nếu Cancel cũng không tick → trở lại mặc định
             if (!$("#cancelDateChk").is(":checked")) {
-                $("#fromDateLabel").text("From Date:");
-                $("#toDateLabel").text("To Date:");
+                $("#fromDateLabel").text("From Arrival Date:");
+                $("#toDateLabel").text("From Arrival Date:");
             }
         }
     });
@@ -135,13 +195,13 @@
             // Bỏ tick Arrival Date
             $("#arrivalDateChk").prop("checked", false);
             // Cập nhật label
-            $("#fromDateLabel").text("From Cancel Date:");
-            $("#toDateLabel").text("To Cancel Date:");
+            $("#fromDateLabel").text("From Arrival Date:");
+            $("#toDateLabel").text("To Arrival Date:");
         } else {
             // Nếu bỏ tick, kiểm tra nếu Arrival cũng không tick → trở lại mặc định
             if (!$("#arrivalDateChk").is(":checked")) {
-                $("#fromDateLabel").text("From Date:");
-                $("#toDateLabel").text("To Date:");
+                $("#fromDateLabel").text("From Arrival Date:");
+                $("#toDateLabel").text("From Arrival Date:");
             }
         }
     });
@@ -202,20 +262,20 @@
         $("#gridContainer").dxDataGrid({
     dataSource: data, allowColumnResizing: true,
             columns: [
-            { dataField: "name", caption: "Name", width: columnWidth-30  },
-            { dataField: "group", caption: "Group", width: columnWidth-80 },
-            { dataField: "company", caption: "Reservtion Holder",  width: columnWidth+70 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "name", caption: "Name", width: columnWidth+20  },
+            { dataField: "group", caption: "Conf.No", width: columnWidth-80, dataType: "number", },
+            { dataField: "company", caption: "Reservation Holder",  width: columnWidth+120 },
             { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
-            { dataField: "noOfNight", caption: "Nts.",  width: columnWidth-80, dataType: "number", format: "#,##0" },
-             { dataField: "departureDate", caption: "Dep.Date",  width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
-              { dataField: "rate", caption: "Rate",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
-               { dataField: "roomType", caption: "Ro.Type",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
-                { dataField: "noOfRoom", caption: "No.of Rms.",  width: columnWidth-60, dataType: "number", format: "#,##0" },
-                 { dataField: "reservationTypeCode", caption: "Resv.type",  width: columnWidth-50 },
-                                       { dataField: "reservationBy", caption: "Reserved By",  width: columnWidth-50 },
-                  { dataField: "cancellationDate", caption: "Cancel.Date",  width: columnWidth-50 ,dataType: "date", format: "dd/MM/yyyy" },
-                        { dataField: "cancelBy", caption: "CancelBy",  width: columnWidth-50 },
-                            { dataField: "description", caption: "Reason",  width: columnWidth-50 },
+            { dataField: "noOfNight", caption: "Nts.",  width: columnWidth-100, dataType: "number", format: "#,##0" },
+            { dataField: "departureDate", caption: "Dep.Date",  width: columnWidth-80 , dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "roomType", caption: "Room Type",  width: columnWidth-60},
+            { dataField: "noOfRoom", caption: "No.of Rms.",  width: columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "reservationTypeCode", caption: "Resv.type",  width: columnWidth-40 },
+            { dataField: "reservationBy", caption: "Reserved By",  width: columnWidth-60 },
+            { dataField: "cancellationDate", caption: "Cancel Date",  width: columnWidth-60 ,dataType: "date", format: "dd/MM/yyyy" },
+            { dataField: "cancelBy", caption: "Cancel By",  width: columnWidth-60 },
+            { dataField: "description", caption: "Reason",  width: columnWidth+20 },
+            { dataField: "rate", caption: "Rate",  width: columnWidth-80 , dataType: "number", format: "#,##0" },
             ],
             paging: { pageSize: 25 },
             scrolling:  {
