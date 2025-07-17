@@ -95,21 +95,7 @@
             transform: translateY(-50%);
         }
 </style>
-<div class="report-bar">
-    <h4 id="reportTitle">Product Activity</h4>
-
-    <div class="action-buttons">
-        <button class="mui-button mui-button-new" style="background:#3b9ac6;border-radius:4px;margin-right:6px" id="btnPrint">
-            <i class="fa-solid fa-eye"></i> View
-        </button>
-        <button class="mui-button mui-button-new" style="background:green;border-radius:4px;margin-right:6px" id="btnExportExcel">
-            <i class="fa-solid fa-file-excel"></i> Excel
-        </button>
-        <button class="mui-button mui-button-new" style="background:darkorange;border-radius:4px" id="btnExportPdf">
-            <i class="fas fa-eraser"></i> PDF
-        </button>
-    </div>
-</div>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="d-flex align-items-center me-3">
@@ -185,6 +171,11 @@
             </select>
         </div>
 
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
     
 </div>

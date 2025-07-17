@@ -95,21 +95,7 @@
         }
 
 </style>
-<div class="report-bar">
-    <h4 id="reportTitle">Product Activity</h4>
-
-    <div class="action-buttons">
-        <button class="mui-button mui-button-new" style="background:#3b9ac6;border-radius:4px;margin-right:6px" id="btnPrint">
-            <i class="fa-solid fa-eye"></i> View
-        </button>
-        <button class="mui-button mui-button-new" style="background:green;border-radius:4px;margin-right:6px" id="btnExportExcel">
-            <i class="fa-solid fa-file-excel"></i> Excel
-        </button>
-        <button class="mui-button mui-button-new" style="background:darkorange;border-radius:4px" id="btnExportPdf">
-            <i class="fas fa-eraser"></i> PDF
-        </button>
-    </div>
-</div>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <label class="fw-bold me-2 mb-0">Date:</label>
@@ -135,6 +121,11 @@
             </select>
 
         </div>
+    </div>
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
     
 </div>
@@ -265,23 +256,13 @@
             { dataField: "vacRo", caption: "Vac Ro", width: columnWidth-80 , dataType: "number", format: "#,##0" },
             { dataField: "resRo", caption: "Res Ro",width: columnWidth-80 , dataType: "number", format: "#,##0" },
             { dataField: "nonDeductRo", caption: "Non Dec Ro",width: columnWidth-50, dataType: "number", format: "#,##0" },
-<<<<<<< HEAD
             { dataField: "altRo", caption: "Alt Ro", width:columnWidth-80, dataType: "number", format: "#,##0" },
             { dataField: "totaRo1", caption: "Total Ro",width: columnWidth-80 , dataType: "number", format: "#,##0" },
             { dataField: "aRo", caption: "Arr Ro",width: columnWidth-80, dataType: "number", format: "#,##0" },
             { dataField: "depRo", caption: "Dep Ro", width:columnWidth-80, dataType: "number", format: "#,##0" },
             { dataField: "ooo", caption: "OOO",width: columnWidth-80 , dataType: "number", format: "#,##0" },
             { dataField: "totaRo2", caption: "Total Ro",width: columnWidth-80 , dataType: "number", format: "#,##0" },
-            { dataField: "pt", caption: "%",width: columnWidth-100, dataType: "number", format: "#,##0" },
-=======
-            { dataField: "altRo", caption: "Alt Ro", width:columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "totaRo1", caption: "Total Ro",width: columnWidth-70 , dataType: "number", format: "#,##0" },
-            { dataField: "aRo", caption: "Arr Ro",width: columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "depRo", caption: "DepRo", width:columnWidth-70, dataType: "number", format: "#,##0" },
-            { dataField: "ooo", caption: "OOO",width: columnWidth-70 , dataType: "number", format: "#,##0" },
-            { dataField: "totaRo2", caption: "Total Ro",width: columnWidth-70 , dataType: "number", format: "#,##0" },
-            { dataField: "pt", caption: "%",width: columnWidth-70, dataType: "number", format: "#,##0" },
->>>>>>> 2a5df730d85eaccb48b04b1976f766360adb5dbf
+            { dataField: "pt", caption: "%",width: columnWidth-100, dataType: "number", format: "#,##0" },            
             ],
             paging: { pageSize: 25 },
              scrolling:  {                

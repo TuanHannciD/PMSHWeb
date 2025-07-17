@@ -70,6 +70,36 @@
         margin-right: .5rem !important;
     }
 
+    .filter-panel {
+        font-size: 12px;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: .5rem;
+    }
+
+        .filter-row .title {
+            width: 80px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .filter-row .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem 1rem;
+        }
+
+    .filter-panel .form-control-sm,
+    .filter-panel .form-select-sm,
+    .filter-panel .ts-control {
+        font-size: 12px;
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
 
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
@@ -115,46 +145,45 @@
                         </select>
 
                     </div>
-                    <div class="d-flex align-items-center me-3" id="vipContainer" style="display: none;">
-                        <label class="me-2 mb-0">VIP:</label>
-                        <select id="vip" name="vip" class="form-control form-control-sm " style="width: 100px;">
+                    
+
+            </div>
+        </div>
+        <div class="d-flex flex-column me-3">
+
+            <div class="d-flex flex-wrap gap-2 me-3">
+                    <label class="d-flex align-items-center mb-1 fw-bold me-3">Include:</label>
+                <!-- Row 1 -->
+                    <div class="d-flex align-items-center form-check me-3">
+                    <input class="form-check-input " type="checkbox" id="pseudo" name="includeOptions" value="1">
+                        <label class="form-check-label ms-2" for="pseudo">Pseudo Rooms</label>
+                </div>
+                    <div class="d-flex align-items-center me-3" id="vipContainer">
+                        <div class="d-flex align-items-center form-check me-3">
+                            <input class="form-check-input" type="checkbox" id="viponlycheck" name="viponlycheck">
+                            <label class="form-check-label ms-2" for="viponlycheck">Vip Only</label>
+                        </div>
+                        <select id="vip" name="vip" class="form-control form-control-sm" style="width: 100px; display: none;">
                             <option value="">ALL</option>
                             @foreach (var item in vipList)
                             {
                                 <option value="@item.Code">@item.Description</option>
                             }
                         </select>
-
                     </div>
-
-            </div>
-        </div>
-        <div class="d-flex flex-column me-3">
-
-            <div class="d-flex flex-wrap gap-2">
-                <label class="mb-1 fw-bold me-3">Include:</label>
-                <!-- Row 1 -->
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="pseudo" name="includeOptions" value="1">
-                    <label class="form-check-label" for="reservation">Pseudo Rooms</label>
-                </div>
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="chkviponly" name="includeOptions" value="1">
-                    <label class="form-check-label" for="chkviponly">Vip Only</label>
-                </div>
-                <div class="form-check me-3">
+                    <div class="d-flex align-items-center form-check me-3 ">
                     <input class="form-check-input" type="checkbox" id="sharenames" name="includeOptions" value="1">
-                    <label class="form-check-label" for="checkedIn">Share Names</label>
+                        <label class="form-check-label ms-2" for="sharenames">Share Names</label>
                 </div>
 
                 <!-- Row 2 -->
-                <div class="form-check me-3">
+                    <div class="d-flex align-items-center form-check me-3">
                     <input class="form-check-input" type="checkbox" id="accompanying" name="includeOptions" value="1">
-                    <label class="form-check-label" for="cancellation">Accompanying Names</label>
+                        <label class="form-check-label ms-2" for="accompanying">Accompanying Names</label>
                 </div>
-                <div class="form-check me-3">
+                    <div class="d-flex align-items-center form-check me-3">
                     <input class="form-check-input" type="checkbox" id="disRoomSharer" name="includeOptions" value="1">
-                    <label class="form-check-label" for="waitList">Display Room Sharer </label>
+                        <label class="form-check-label ms-2" for="disRoomSharer">Display Room Sharer </label>
                 </div>
                
             </div>
@@ -164,19 +193,19 @@
         <div class="d-flex flex-column me-3">
 
             <div class="d-flex flex-wrap gap-2">
-                <label class="mb-1 fw-bold me-3">Display:</label>
+                <label class="d-flex align-items-center mb-1 fw-bold me-3">Display:</label>
                 <!-- Row 1 -->
-                <div class="form-check me-3">
+                <div class="d-flex align-items-center form-check me-3">
                     <input class="form-check-input" type="checkbox" id="printpate" name="includeOptions"  checked>
-                    <label class="form-check-label" for="reservation">Print Rate</label>
+                        <label class="form-check-label ms-2" for="printpate">Print Rate</label>
                 </div>
-                <div class="form-check me-3">
+                <div class="d-flex align-items-center form-check me-3">
                     <input class="form-check-input" type="checkbox" id="nopost" name="includeOptions"  checked>
-                    <label class="form-check-label" for="checkedOut">No Post</label>
+                        <label class="form-check-label ms-2" for="nopost">No Post</label>
                 </div>
-                <div class="form-check me-3">
+                <div class="d-flex align-items-center form-check me-3">
                     <input class="form-check-input" type="checkbox" id="commnets" name="includeOptions">
-                    <label class="form-check-label" for="checkedIn">Comments</label>
+                        <label class="form-check-label ms-2" for="commnets">Comments</label>
                 </div>
 
             </div>
@@ -198,9 +227,10 @@
  </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
+
 </div>
 
 <div class="mui-card">
@@ -219,37 +249,15 @@
     }
 
     $(document).ready(function () {
-         function toggleVipDropdown() {
-            if ($("#chkviponly").is(":checked")) {
-                $("#vipContainer").show();
+         $('#viponlycheck').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#vip').show();
             } else {
-                $("#vipContainer").hide();
-                $("#vip").val(""); // Reset dropdown nếu bị ẩn
-            }
-        }
-
-        $("input[name='includeOptions']").change(function () {
-            if ($(this).is(":checked")) {
-                $(this).val("1");
-            } else {
-                // Đặt lại value là 0 nếu cần xử lý khi gửi form
-                $(this).val("0");
+                $('#vip').hide();
+                $('#vip').val('');
             }
         });
-
-        // Gọi 1 lần khi trang tải để đảm bảo trạng thái đúng
-        $("input[name='includeOptions']").each(function () {
-            $(this).trigger("change");
-        });
-
-
-        // Khi checkbox thay đổi trạng thái
-        $("#chkviponly").change(toggleVipDropdown);
-
-        // Đảm bảo ban đầu luôn ẩn
-        toggleVipDropdown();
-
-         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -282,7 +290,7 @@
                           viewBy: $("#viewBy").val(),
 
                   pseudo: $("#pseudo").is(":checked") ? "1" : "",
-                 chkviponly: $("#chkviponly").is(":checked") ? "1" : "",
+                 viponlycheck: $("#chkviponly").is(":checked") ? "1" : "",
           
                 disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" :0,
                   nopost:$('#nopost').is(':checked') ? "1" : ""
@@ -356,7 +364,7 @@
             { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
             { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
 
-                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+                             { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
                                          { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
                { dataField: "etd", caption: "ETD", width: columnWidth-70 },
