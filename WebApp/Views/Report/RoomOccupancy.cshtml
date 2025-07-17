@@ -74,37 +74,25 @@
         font-size: 11px !important;
     }
 
-    .report-bar {
-        position: relative; 
-        margin-bottom: 1rem; /* = mb-3 của bạn */
+
+    .tomselect-custom {
+        width: 300px;
+        font-size: 0.65rem !important; /* áp dụng cho input */
+        min-height: 30px;
     }
 
-        /* Tiêu đề ở giữa, full width để text-center hoạt động */
-        .report-bar #reportTitle {
-            font-size: 20px;
-            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
-            text-align: center;
-        }
-
-        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
-        .report-bar .action-buttons {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
 </style>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <label class="fw-bold me-2 mb-0">Date:</label>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">       
         <div class="d-flex align-items-center me-3">
+            <label class="fw-bold me-2 mb-0">Date:</label>
             <label class="me-2 mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
-        <!-- To Date --> 
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
@@ -112,16 +100,18 @@
 
         <label class="fw-bold me-2 mb-0">Filter:</label>
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Zone:</label>
-            <select id="zone" name="zone" class="form-control form-control-sm" style="width :100px">
-                @foreach (var item in zoneList)
+            <label for="zone" class="me-2 mb-0">Zone:</label>
+            <select id="zone" class="tomselect-custom" multiple>
+
+                @foreach (var z in zoneList)
                 {
-                    <option value="@item.Code">@item.Code</option>
+                    <option value="@z.ID">@z.Code</option>
                 }
             </select>
-
         </div>
+
     </div>
+
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
@@ -162,10 +152,36 @@
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
         document.getElementById('toDate').value = formattedLastDay;
-
+        initializeTomSelects();
 
 
     });
+     function initializeTomSelects() {
+        const selectors = ["#zone"];
+
+        for (const id of selectors) {
+            const el = document.querySelector(id);
+            if (!el) continue;
+
+            // Nếu đã khởi tạo rồi thì destroy
+            if (el.tomselect) el.tomselect.destroy();
+
+            const ts = new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: '',
+                persist: false,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+
+        }
+    }
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({

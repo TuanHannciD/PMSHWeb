@@ -93,7 +93,25 @@
             top: 50%;
             transform: translateY(-50%);
         }
+
+    .tomselect-custom {
+        width: 100%;
+        min-height: 36px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.875rem;
+    }
 </style>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    new TomSelect("#commnet", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "Select reason..."
+    });
+</script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
@@ -109,14 +127,15 @@
         <label class="me-2 mb-0 fw-bold me-1">Filter:</label>
         <div class="d-flex align-items-center me-1">
             <label class="me-2 mb-0">Cancel Reason:</label>
-            <select id="commnet" name="commnet" class="form-control form-control-sm " style="width :100px">
+            <select id="commnet" name="commnet" class="tomselect-custom" style="width: 150px">
                 <option value="">ALL</option>
                 @foreach (var item in comList)
                 {
-                    <option value="@item.Code">@item.Code-@item.Description</option>
+                    <option value="@item.Code">@item.Code - @item.Description</option>
                 }
             </select>
         </div>
+
         <div class="form-check me-3">
             <input class="form-check-input include-option" type="checkbox" id="arrivalDateChk" name="includeOptions" value="0" checked>
             <label class="form-check-label" for="arrivalDateChk">Arrival</label>
