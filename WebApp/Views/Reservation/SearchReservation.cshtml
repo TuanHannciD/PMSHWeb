@@ -3,13 +3,200 @@
     <div class="container2">
         <div>
             <div class="text-center" style="font-size: 20px;">Search Reservation</div>            
-            <div class="button-group mb-1">
+            <div class="button-group mb-1 mt-2">
                 <div>
-                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Search</button>
+                    <button class="mui-button mui-button-search"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                    <button class="mui-button mui-button-advance"><i class="fa-solid fa-file"></i>Advance</button>
+                    <button class="mui-button mui-button-clear"><i class="fa-solid fa-arrows-rotate"></i>Clear</button>
+                    <button class="mui-button mui-button-edit"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
+                    <button class="mui-button mui-button-cancel"><i class="fa-solid fa-ban"></i>Cancel</button>
+                    <button class="mui-button mui-button-reinstate"><i class="fa-solid fa-file-import"></i> Reinstate</button>
+                    <button class="mui-button mui-button-card"><i class="fa-solid fa-id-card"></i>  Reg.Card</button>
+                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Check In</button>
+                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Profile</button>
+                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Group Admin</button>
+                    <button class="mui-button mui-button-new"><i class="fas fa-plus"></i> Room Asg</button>
+                    <button class="mui-button mui-button-export"><i class="fas fa-plus"></i> Export</button>
+                    <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
+
                 </div>
                 
                 <div><a href="/Reservation/NewReservation" style="text-decoration:none">New reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
+            <div class="row bg-light border rounded" style="margin: 14px 0px">
+                <div class="col-md-1 mb-1">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input id="firstName" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="package" class="form-label">Package</label>
+                    <input id="package" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="zone" class="form-label">Zone</label>
+                    <select id="zone" class="form-select" asp-items="ViewBag.cboZone"></select>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="confirmationNo" class="form-label">Conf. No</label>
+                    <input id="confirmationNo" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="arrival" class="form-label">Arrival Date</label>
+                    <input id="arrival" type="date" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="departure" class="form-label">Departure Date</label>
+                    <input id="departure" type="date" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="crsNo" class="form-label">CRS No/Gc</label>
+                    <input id="crsNo" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="roomShare" class="form-label">Room Sharer</label>
+                    <div class="form-check">
+                        <input class="form-check-input" checked type="checkbox" id="roomShare" name="roomShare" value="IncludeRS">
+                    </div>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="roomNo" class="form-label">Room No</label>
+                    <input id="roomNo" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="resvHolder" class="form-label">Resv. Holder</label>
+                    <input id="resvHolder" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="roomType" class="form-label">Room Type</label>
+                    <select id="roomType" class="form-select" asp-items="ViewBag.cboRoomType"></select>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="searchType" class="form-label">Search Type</label>
+                    <select id="searchType" class="form-select">
+                        <option value="0">General</option>
+                    </select>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="reservationOnline" class="form-label">Reservation Online</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                    </div>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="owner" class="form-label">Owner</label>
+                    <select id="owner" class="form-select">
+                        <option value="">--All--</option>
+                        <option value="--Hotel--">--Hotel--</option>
+                        <option value="--Owner--">--Owner--</option>
+                    </select>
+                </div>
+            </div>
+            <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="mui-card">
+                <div id="gridContainer" class="mt-2 gridContainer"></div>
+            </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(async function () {
+        searchReservation();
+    });
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    window.onload = function() {
+        var businessDate = '@ViewBag.businesDate';
+        var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
+        var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
+
+        var departureDate = new Date(parsedBusinessDate);
+        departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+        // Set arrival and departure input values
+        document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+
+        document.getElementById('departure').value = formatDate(departureDate);
+
+    };
+    function searchReservation() {
+        $("#loadingSpinner").show();
+        const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
+        $.ajax({
+            url: '/Reservation/SearchReservation2',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                searchType: $('#searchType').val(),
+                name: $('#name').val(),
+                firstName : $('#firstName').val(),
+                reservationHolder: $('#resvHolder').val(),
+                confirmationNo : $('#confirmationNo').va(),
+                crsNo: $('#crsNo').val(),
+                roomNo: $('#roomNo').val(),
+                roomType: $('#roomType').find('option:selected').text(),
+                package: $('#package').val(),
+                zone: $('#zone').find('option:selected').text(),
+                arrivalFrom :$('#arrival').val(),
+                arrivalTo: $('#departure').val(),
+                roomSharer:checkboxValue,
+                owner: $('owner').val()
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearch(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+            ,complete: function () {
+                $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
+            }
+        });
+    }
+
+    function initializeDataGridSearch(data) {
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            onCellDblClick: function(e) {
+            }
+        });
+    }
+</script>

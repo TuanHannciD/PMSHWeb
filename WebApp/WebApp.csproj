@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HouseKeeping\HouseKeeping.csproj" />
     <ProjectReference Include="..\Profile\Profile.csproj" />
     <ProjectReference Include="..\Report\Report.csproj" />
     <ProjectReference Include="..\Reservation\Reservation.csproj" />

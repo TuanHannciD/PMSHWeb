@@ -13,6 +13,10 @@ namespace Reservation.Services.Interfaces
     {
         DataTable GetRateCode(DateTime arrival, DateTime departure, int adults, int roomType);
 
+        /// <summary>
+        /// DatVP: Lây danh sách room available từ store procedure
+        /// </summary>
+        /// <returns>Data table chứa danh sách room available</returns>
         DataTable GetRoomAvailable(DateTime fromDate, DateTime toDate,string floor,string roomTypeID,string smoking,string foStatus,string hkStatus,string isDummy,string roomNo,int roomID,int Type );
         DataTable GetAllotment(string code, string marketID, string profileID,string isDefault,string allotmentTypeID);
         DataTable GetAllotmentDetail(int allotmentID,string roomType,DateTime showHistory);
@@ -21,6 +25,33 @@ namespace Reservation.Services.Interfaces
             string tableName,string onRows,string onRowsAlias,string onCols,string sumcol,int func,string currency,int display,int dayUse,int c1,int c2,
             int c3,int noOfRoom);
 
+        /// <summary>
+        /// DatVP: lấy rate query detail
+        /// </summary>
+        /// <param name="fromDate">arival date</param>
+        /// <param name="toDate">departure date</param>
+        /// <param name="rateCodeID">id rate code</param>
+        /// <param name="roomType">id room type</param>
+        /// <param name="currency">Currency</param>
+        /// <param name="packageID">id package</param>
+        /// <param name="day">day</param>
+        /// <returns>Giá trị net</returns>
+        DataTable ReservationGetRateQueryDetail(DateTime fromDate, DateTime toDate,int rateCodeID, int roomType, string currency,int packageID,int day);
+
+        /// <summary>
+        /// DatVP: Tính net cho rate code
+        /// </summary>
+        /// <param name="Price">Giá trị tiền rate code</param>
+        /// <param name="TransactionCode">Giá trị tiền rate code</param>
+        /// <returns>Giá trị net</returns>
+        (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNet(decimal Price,string TransactionCode,decimal DiscountAmount, decimal DiscountPercent);
+
+        /// <summary>
+        /// DatVP: search reservation
+        /// </summary>
+        /// <returns>Giá trị net</returns>
+        DataTable SearchReservation(int searchType, string name, string firstName, string reservationHolder, string confirmationNo,
+            string crsNo, string roomNo, string roomType, string package, string zone, DateTime arrivalFrom, DateTime arrivalTo, string roomSharer, string owner);
 
     }
 }
