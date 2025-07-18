@@ -1,6 +1,10 @@
 ﻿using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using DevExpress.CodeParser;
+using DevExpress.DataAccess.DataFederation;
+using DevExpress.XtraReports.Serialization;
+using DevExpress.XtraRichEdit.Import.Doc;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Data.SqlClient;
 using Reservation.Services.Interfaces;
@@ -9,6 +13,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +24,7 @@ namespace Reservation.Services.Implements
 
 
 
-        public (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount)  CalculateNet(decimal Price, string TransactionCode,decimal DiscountAmount,decimal DiscountPercent)
+        public (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNet(decimal Price, string TransactionCode, decimal DiscountAmount, decimal DiscountPercent)
         {
             try
             {
@@ -64,7 +69,7 @@ namespace Reservation.Services.Implements
                 priceAfterDiscount = priceAfterDiscount - DiscountAmount;
                 priceDiscount = (priceAfterDiscount / (1 + vat / 100)) / (1 + svc / 100);
                 #endregion
-                return (Price, priceAfter,priceDiscount,priceAfterDiscount);
+                return (Price, priceAfter, priceDiscount, priceAfterDiscount);
             }
             catch (SqlException ex)
             {
@@ -73,7 +78,7 @@ namespace Reservation.Services.Implements
             }
         }
 
-        
+
 
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace Reservation.Services.Implements
         /// <param name="isDefault">isDefault</param>
         /// <param name="allotmentTypeID">id allotmentType</param
         /// <returns>Data table chứa danh sách allotment</returns>
-        public DataTable GetAllotment(string code, string marketID, string profileID, string isDefault,string allotmentTypeID)
+        public DataTable GetAllotment(string code, string marketID, string profileID, string isDefault, string allotmentTypeID)
         {
             try
             {
@@ -138,11 +143,7 @@ namespace Reservation.Services.Implements
 
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
-            catch (Exception ex)
-            {
 
-                throw new Exception($"ERROR: {ex.Message}", ex);
-            }
         }
 
         public DataTable GetRateCode(DateTime arrival, DateTime departure, int adults, int roomType)
@@ -232,7 +233,7 @@ namespace Reservation.Services.Implements
         }
 
 
-        public DataTable ReservationGetRateQueryDetail(DateTime fromDate, DateTime toDate,int rateCodeID, int roomType, string currency, int packageID, int day)
+        public DataTable ReservationGetRateQueryDetail(DateTime fromDate, DateTime toDate, int rateCodeID, int roomType, string currency, int packageID, int day)
         {
             try
             {
@@ -259,7 +260,7 @@ namespace Reservation.Services.Implements
             }
         }
 
-        public DataTable ReservationRateQueryDetail(DateTime fromDate, DateTime toDate, int roomType, int adults, int noOfNight, 
+        public DataTable ReservationRateQueryDetail(DateTime fromDate, DateTime toDate, int roomType, int adults, int noOfNight,
             int packageID, int promotionID, string tableName, string onRows, string onRowsAlias, string onCols, string sumcol,
             int func, string currency, int display, int dayUse, int c1, int c2, int c3, int noOfRoom)
         {
@@ -300,9 +301,57 @@ namespace Reservation.Services.Implements
 
         }
 
-        public DataTable SearchReservation(DateTime fromDate, DateTime toDate)
+        public DataTable SearchReservation(int searchType, string name, string firstName, string reservationHolder, string confirmationNo,
+            string crsNo, string roomNo, string roomType, string package, string zone, DateTime arrivalFrom, DateTime arrivalTo, string roomSharer, string owner)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@SearchType", searchType),
+                    new SqlParameter("@Name", name ?? ""),
+                    new SqlParameter("@FirstName", firstName ?? ""),
+                    new SqlParameter("@ReservationHolder", reservationHolder ?? ""),
+                    new SqlParameter("@ConfirmationNo", confirmationNo ?? ""),
+                    new SqlParameter("@CRSNo", crsNo ?? ""),
+                    new SqlParameter("@RoomNo", roomNo ?? ""),
+                    new SqlParameter("@RoomType", roomType ?? ""),
+                    new SqlParameter("@Package", package ?? ""),
+                    new SqlParameter("@Zone", zone ?? ""),
+                    new SqlParameter("@ArrivalFrom", arrivalFrom),
+                    new SqlParameter("@ArrivalTo", arrivalTo),
+                    new SqlParameter("@RoomSharer", roomSharer),
+                    new SqlParameter("@CreateDate", ""),
+                    new SqlParameter("@CreateBy", ""),
+                    new SqlParameter("@Departure", ""),
+                    new SqlParameter("@StayOn", ""),
+                    new SqlParameter("@Market",""),
+                    new SqlParameter("@Source",""),
+                    new SqlParameter("@ReservationType", ""),
+                    new SqlParameter("@MemberType", ""),
+                    new SqlParameter("@ARNo",""),
+                    new SqlParameter("@BusinessBlock", ""),
+                    new SqlParameter("@VIP", ""),
+                    new SqlParameter("@ChkVIPOnly", ""),
+                    new SqlParameter("@MasterFolio", ""),
+                    new SqlParameter("@SpecialUpdatedDate", ""),
+                    new SqlParameter("@SaleInChagre", ""),
+                    new SqlParameter("@RateCode", ""),
+                    new SqlParameter("@IsTransfer", ""),
+                    new SqlParameter("@VoucherNo",  ""),
+                    new SqlParameter("@Owner", owner ?? "")
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"ERROR: {ex.Message}", ex);
+
+
+            }
         }
     }
 }
