@@ -103,6 +103,83 @@
         font-size: 12px !important;
     }
 
+    #logGridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; /* màu xanh ngọc */
+        color: white !important; /* chữ trắng */
+    }
+
+        #logGridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGridContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 12px !important;
+        line-height: 24px !important;
+    }
+
+    #logGridContainer .dx-datagrid-headers {
+        background-color: #3b9ac6 !important; /* Màu xanh dương */
+        color: white !important; /* Chữ trắng cho dễ đọc */
+    }
+
+        #logGridContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            font-size: 12px !important;
+            background-color: #3b9ac6 !important;
+            color: white !important;
+            font-weight: bold;
+            border-right: 1px solid #ddd !important;
+            text-align: center !important;
+        }
+
+        #logGridContainer .dx-datagrid-rowsview td,
+        #logGridContainer .dx-datagrid-headers td {
+            border-right: 1px solid #ddd !important;
+        }
+
+        /* Loại bỏ viền phải ở cột cuối cùng (tùy chọn) */
+        #logGridContainer .dx-datagrid-rowsview tr td:last-child,
+        #logGridContainer .dx-datagrid-headers tr td:last-child {
+            border-right: none !important;
+        }
+
+    #logGridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #logGridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGridContainer .dx-datagrid-filter-row td .dx-datebox {
+        height: 24px !important;
+        min-height: 24px !important;
+    }
+
+        #logGridContainer .dx-datagrid-filter-row td .dx-datebox input {
+            font-size: 12px !important;
+            height: 24px !important;
+        }
+
+    #logGridContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
+    #logGridContainer .dx-datagrid-filter-row td .dx-texteditor input {
+        height: 24px !important;
+        line-height: 24px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        box-sizing: border-box;
+    }
+
+    #logGridContainer .dx-datagrid-filter-row td .dx-datebox,
+    #logGridContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
+        height: 26px !important;
+        min-height: 26px !important;
+        font-size: 12px !important;
+    }
 
     .filter_wrapper {
         /*     background-color: #ececec; */
@@ -139,10 +216,21 @@
             color: white !important;
         }
 
+    .filter-panel {
+        font-size: 12px;
+    }
+
+        .filter-panel .form-control-sm,
+        .filter-panel .form-select-sm,
+        .filter-panel .ts-control {
+            font-size: 12px;
+            padding: .1rem .35rem;
+            height: calc(1.1em + .2rem + 2px);
+        }
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3 filter-panel">
         <!-- From Date -->
         <div class="d-flex flex-column">
 
@@ -318,6 +406,9 @@
         <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnChangeStatus" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-rotate"></i> Chg Status
         </button>
+        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnFlorrflan" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-rotate"></i> Floor Flan
+        </button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnChecklog" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ac.Log</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -431,9 +522,45 @@
 
     <div class="d-flex justify-content-between mb-2">
         <h5 class="mb-0">Room Status History</h5>
-        <button onclick="$('#popupLogGrid').hide()" class="btn btn-sm btn-danger">Close</button>
+        <div class="d-flex justify-content-start mb-3 gap-2">
+            <button id="btnSearchHis" class="btn text-white" style="background-color: #3b9ac6; border-radius: 4px;">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Search
+            </button>
+            <button onclick="$('#popupLogGrid').hide()" class="btn btn-sm btn-danger" style="background-color: #3b9ac6; border-radius: 4px;">
+                <i class="fa-solid fa-xmark me-1"></i> Close
+            </button>
+        </div>
     </div>
+      <div class="d-flex align-items-center flex-wrap mb-2">
+                <label class="fw-bold me-3">Room:</label>
 
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Room:</label>
+            <select id="roomstatus" name="roomstatus" class="form-control form-control-sm" style="width: 100px">
+                        <option value=""></option>
+                     @foreach (var item in roomList)
+                        {
+                    <option value="@item.ID">@item.RoomNo</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">User name:</label>
+            <input  id="username" type="text" class="form-control form-control-sm" placeholder="Enter user name" style="width: 100px;">
+                </div>
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                </div>
+
+                <!-- To Date -->
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">To Date:</label>
+                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                </div>
+  
+            </div>
     <div id="logGridContainer"></div>
 </div>
 
@@ -449,8 +576,32 @@
 <script>
 
 
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+            let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+            return `${year}-${month}-${day}`;
+        }
 
         $(document).ready(function () {
+                    const today = new Date();
+
+           const firstDayOfMonth = new Date(today);
+        firstDayOfMonth.setDate(today.getDate() - 1);
+
+        // Ngày hôm nay
+        const lastDayOfMonth = new Date(today);
+
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
+
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        // Gán giá trị cho input date
+    $('#fromDate').val(formattedFirstDay);
+    $('#toDate').val(formattedLastDay);
+
                  $("#btnPrint").trigger("click");
              document.getElementById("reportTitle").innerText = 'Room Status';
 
@@ -479,9 +630,9 @@
             $('#btnClosePopup, #overlay').click(function () {
                 $('#popupChangeStatus').fadeOut(200);
                 $('#overlay').fadeOut(200);
-                     $("#btnPrint").trigger("click");
-                       const grid = $("#gridContainer").dxDataGrid("instance");
-                       grid.refresh();
+                     // $("#btnPrint").trigger("click");
+                     //   const grid = $("#gridContainer").dxDataGrid("instance");
+                     //   grid.refresh();
             });
            $('#checkRoomList').change(function () {
                 $('#checkRoomRange').prop('checked', false);
@@ -757,22 +908,50 @@
             return;
         }
 
-       
-        checkLogStatus(selectedRoomIds);
+        const fromDate = $('#fromDate').val();
+        console.log(fromDate);
+        const toDate = $('#toDate').val();
+     const username = $('#username').val();
+
+   
+        checkLogStatus(selectedRoomIds,fromDate,toDate,username);
     });
 
-         function checkLogStatus(selectedRoomIds) {
-          console.log(selectedRoomIds);
+
+        $(document).off("click", "#btnSearchHis").on("click", "#btnSearchHis", function () {
+        if (!selectedRoomIds || selectedRoomIds.length === 0) {
+            alert("You must choose at least one room.");
+            return;
+        }
+
+        const fromDate = $('#fromDate').val();
+        console.log(fromDate);
+        const toDate = $('#toDate').val();
+     const username = $('#username').val();
+
+      const roomStatusValue = $('#roomstatus').val();
+        checkLogStatus(roomStatusValue,fromDate,toDate,username);
+    });
+         function checkLogStatus(selectedRoomIds,fromDate,toDate,username) {
+          
             $.ajax({
                 url: '/HouseKeeping/CheckLogStatus',
                 type: 'POST',
-                data: { id: selectedRoomIds },
+                data: {  id: selectedRoomIds,
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    username: username
+                },
                 headers: {
                     "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
                 },
                 success: function (response) {
 
-                   
+                    if (response.length > 0 && response[0].roomNo) {
+                        $('#roomstatus').val(response[0].roomNo);
+                        selectedRoomIds = [];
+                    }
+
 
                     // Hiển thị grid mới
                     initializeLogStatusGrid(response);
