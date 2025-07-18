@@ -216,6 +216,53 @@
             color: white !important;
         }
 
+<<<<<<< HEAD
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    .sticky-header input[type="date"].form-control-sm {
+        font-size: 12px !important; /* đúng 12 px */
+        height: calc(1.1em + .2rem + 2px); /* giữ cùng chiều cao */
+    }
+
+    .sticky-header label {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
+
+    .tomselect-custom {
+        width: 250px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.65rem;
+    }
+
+    .sort-select {
+        max-width: 130px; /* hoặc 100px nếu muốn nhỏ hơn */
+        font-size: 12px;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .sort-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none !important;
+        padding-right: 10px !important;
+    }
+=======
     .filter-panel {
         font-size: 12px;
     }
@@ -227,14 +274,27 @@
             padding: .1rem .35rem;
             height: calc(1.1em + .2rem + 2px);
         }
+>>>>>>> 692623b54646b1edd767cf354343a66fa5987d11
 </style>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    new TomSelect("#roomfrom","roomto", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "Select room..."
+    });
+</script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3 filter-panel">
         <!-- From Date -->
         <div class="d-flex flex-column">
-
-            <div class="d-flex flex-wrap gap-2">
+            
+            <div class="d-flex flex-wrap align-items-center gap-2">
                 <label class="mb-1 fw-bold me-3">Room Status:</label>
                 <div class="form-check me-3">
                     <input class="form-check-input include-option" type="checkbox" id="cleannon" name="masterllio" value="1" checked>
@@ -265,7 +325,7 @@
 
         <div class="d-flex flex-column">
 
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap align-items-center gap-2">
                 <label class="mb-1 fw-bold me-3">FO Status:</label>
                 <div class="form-check me-3">
                     <input class="form-check-input include-option" type="checkbox" id="vacant" name="masterllio" value="1" checked>
@@ -281,7 +341,7 @@
 
         <div class="d-flex flex-column">
 
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap align-items-center gap-2">
                 <label class="mb-1 fw-bold me-3">Reservation Status:</label>
                 <div class="form-check me-3">
                     <input class="form-check-input include-option" type="checkbox" id="arrivals" name="masterllio" value="1" checked>
@@ -325,9 +385,8 @@
                 <label class="fw-bold me-3">Room:</label>
 
                 <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Room Type:</label>
-                    <select id="roomtype" name="roomtype" class="form-control form-control-sm" style="width: 100px">
-                        <option value=""></option>
+                    <label class="me-2 mb-1 mt-1">Room Type:</label>
+                    <select id="roomtype" name="roomtype" class="tomselect-custom" multiple>
                         @foreach (var item in roomtypeList)
                         {
                             <option value="@item.Code">@item.Code</option>
@@ -336,9 +395,8 @@
                 </div>
 
                 <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" name="zone" class="form-control form-control-sm" style="width: 100px">
-                        <option value=""></option>
+                    <label class="me-2 mb-1  mt-1">Zone:</label>
+                    <select id="zone" name="zone" class="tomselect-custom" multiple>
                         @foreach (var item in zoneList)
                         {
                             <option value="@item.Code">@item.Code</option>
@@ -347,7 +405,7 @@
                 </div>
 
                 <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">From Room:</label>
+                    <label class="me-2 mb-1 mt-1">From Room:</label>
                     <select id="roomfrom" name="roomfrom" class="form-control form-control-sm" style="width: 100px">
                         <option value=""></option>
                         @foreach (var item in roomList)
@@ -358,7 +416,7 @@
                 </div>
 
                 <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">To Room:</label>
+                    <label class="me-2 mb-1 mt-1">To Room:</label>
                     <select id="roomto" name="roomto" class="form-control form-control-sm" style="width: 100px">
                         <option value=""></option>
                         @foreach (var item in roomList)
@@ -390,22 +448,25 @@
             </div>
 
         </div>
-
-
-
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnSelectAll" class="mui-button mui-button-new" type="button">
+        <button style="border-radius: 4px; margin-right: 6px; background-color: indianred" id="btnSelectAll" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-check-square"></i> Select All
         </button>
 
-        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnClearAll" class="mui-button mui-button-new" type="button">
+        <button style="border-radius: 4px; margin-right: 6px; background-color: darkgray;" id="btnClearAll" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-x"></i> Clear All
         </button>
-        <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnChangeStatus" class="mui-button mui-button-new" type="button">
+        <button style="border-radius: 4px; margin-right: 6px; background-color: lightpink" id="btnChangeStatus" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-rotate"></i> Chg Status
         </button>
+<<<<<<< HEAD
+        <button style="border-radius: 4px;  margin-right: 6px;background-color:hotpink;" id="btnChecklog" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ac.Log</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+       <button style="border-radius: 4px;  margin-right: 6px;background-color: chocolate;" id="btnUpdatestatus" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Update</button>
+=======
         <button style="border-radius: 4px; margin-right: 6px; background-color: #3b9ac6;" id="btnFlorrflan" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-rotate"></i> Floor Flan
         </button>
@@ -413,6 +474,7 @@
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnUpdatestatus" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Update</button>
+>>>>>>> 692623b54646b1edd767cf354343a66fa5987d11
 
     </div>
 </div>
@@ -478,9 +540,6 @@
         </select>
     </div>
 
-
-    <!-- ✅ Checkbox status -->
-    <!-- Dòng tiêu đề label nằm riêng -->
     <div class="d-flex flex-column mt-2">
         <label class="fw-bold mb-2">Change Status:</label>
 
@@ -669,8 +728,34 @@
             // Gọi khởi tạo ban đầu
            initializePopupRoomListTomSelect();
            updateRoomInputs();
+            initializeTomSelects();
 
         });
+        function initializeTomSelects() {
+        const selectors = ["#roomtype","#zone"];
+
+        for (const id of selectors) {
+            const el = document.querySelector(id);
+            if (!el) continue;
+
+            if (el.tomselect) el.tomselect.destroy();
+
+            const ts = new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: '',
+                persist: false,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+
+        }
+    }
 
         function updateRoomInputs() {
             const useList = $('#checkRoomList').is(':checked');
