@@ -68,14 +68,13 @@ namespace HouseKeeping.Services.Implements
             return myTable;
         }
 
-        public DataTable CheckLogStatus(string  RoomNo)
+        public DataTable CheckLogStatus(string  RoomNo, DateTime fromDate, DateTime toDate, string username)
         {
-            DateTime fromDate = DateTime.Now.AddDays(-1).Date; // ngày hôm qua, chỉ lấy phần ngày (00:00:00)
-            DateTime toDate = DateTime.Now.Date;
+
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@RoomNo", RoomNo),
-                new SqlParameter("@UserName", ""),
+                new SqlParameter("@UserName",username),
                  new SqlParameter("@FromDate", fromDate),
                         new SqlParameter("@ToDate", toDate),
 
@@ -83,6 +82,22 @@ namespace HouseKeeping.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRoomStatusHistory", param);
+            return myTable;
+        }
+        public DataTable RoomPlanData(DateTime fromDate, DateTime toDate, int  orderbyroom, string owner)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@Owner", owner),
+                new SqlParameter("@OrderByRoom",orderbyroom),
+                 new SqlParameter("@MinDate", fromDate),
+                        new SqlParameter("@MaxDate", toDate),
+
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgRoomPlan", param);
             return myTable;
         }
     }
