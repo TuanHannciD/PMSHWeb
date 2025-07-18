@@ -125,7 +125,7 @@
             <div class="d-flex align-items-center me-1">
                 <label class="fw-bold me-3">Filter:</label>
                 <label class="me-2 mb-0">Room Type:</label>
-                <select id="roomType" class="tomselect-custom" multiple>
+                <select id="roomType" class="tomselect-custom" style="width: 450px;" multiple>
                     @foreach (var rt in rtList)
                     {
                         <option value="@rt.ID">@rt.Code</option>
@@ -135,7 +135,7 @@
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" class="tomselect-custom" multiple>
+                    <select id="zone" class="tomselect-custom" style="width: 200px;" multiple>
                         @foreach (var z in zoneList)
                         {
                             <option value="@z.ID">@z.Code</option>

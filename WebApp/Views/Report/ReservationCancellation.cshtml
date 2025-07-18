@@ -95,10 +95,28 @@
         }
 
     .tomselect-custom {
-        width: 100%;
-        min-height: 36px; /* hoặc tùy theo chiều cao bạn muốn */
-        font-size: 0.875rem;
+        width: 200px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.75rem !important;
     }
+
+        .tomselect-custom + .ts-dropdown .option {
+            font-size: 0.75rem !important;
+            padding: 4px 4px !important;
+        }
+
+    /* Nhỏ input khi đã khởi tạo TomSelect */
+    .ts-wrapper.single .ts-control {
+        font-size: 0.75rem !important;
+        min-height: 30px !important;
+        padding: 4px 4px !important;
+    }
+
+        /* Ẩn mũi tên dropdown */
+        .ts-wrapper.single .ts-control::after {
+            display: none !important;
+        }
+
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
@@ -128,7 +146,7 @@
         <div class="d-flex align-items-center me-1">
             <label class="me-2 mb-0">Cancel Reason:</label>
             <select id="commnet" name="commnet" class="tomselect-custom" style="width: 150px">
-                <option value="">ALL</option>
+                <option value=""></option>
                 @foreach (var item in comList)
                 {
                     <option value="@item.Code">@item.Code - @item.Description</option>
