@@ -5,207 +5,388 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var zoneList = ViewBag.ZoneList;
+    var roomtypeList = ViewBag.RoomTypeList;
 }
 
 
 <style>
 
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .box {
-      border: 1px solid #ccc;
-      padding: 15px;
-      flex: 1 1 30%;
-      min-width: 350px;
-    }
-
-    h3 {
-      margin-top: 0;
-      font-size: 16px;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .row label {
-      flex: 1;
-      white-space: nowrap;
-    }
-
-    .row input {
-      width: 60px;
-      padding: 2px 5px;
-      text-align: right;
-    }
-
-    .row input.big {
-      width: 100px;
-    }
-
-    .highlight-green {
-      background-color: #00ffcc;
-    }
-
-    .highlight-pink {
-      background-color: #ff0099;
-      color: #fff;
-    }
-
-    .highlight-red {
-      background-color: #ff0000;
-      color: #fff;
-    }
-
-    .highlight-grey {
-      background-color: #666;
-      color: #fff;
-    }
-
-    .highlight-lightgrey {
-      background-color: #ccc;
-    }
-
-    .search-row {
-      margin-top: 10px;
-    }
-
-    .container {
+    .containerhs {
         display: flex;
-        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .column {
+        width: 50%;
+        padding: 0 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
         gap: 20px;
     }
 
-    .box {
+    fieldset {
         border: 1px solid #ccc;
-        padding: 15px;
-        flex: 1 1 30%;
-        min-width: 350px;
+        border-radius: 5px;
+        padding: 10px 15px;
+        background-color: #fff;
     }
 
-    h3 {
-        margin-top: 0;
-        font-size: 16px;
+    legend {
+        font-weight: bold;
+        padding: 0 5px;
     }
 
-    .row {
+    .form-row {
         display: flex;
         align-items: center;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
+        gap: 8px;
     }
 
-        .row label {
-            flex: 1;
-            white-space: nowrap;
+        .form-row label {
+            width: 180px;
+            font-size: 14px;
         }
 
-        .row input {
-            width: 60px;
-            padding: 2px 5px;
-            text-align: right;
+        .form-row input,
+        .form-row select {
+            width: 30%; /* 7 phần của 100% */
+            padding: 3px 5px;
+            font-size: 14px;
+            box-sizing: border-box;
         }
 
-            .row input.big {
-                width: 100px;
-            }
 
-    .highlight-green {
-        background-color: #00ffcc;
+    .status-box {
+        text-align: center;
+        font-weight: bold;
+        color: white;
+        border-radius: 3px;
+        padding: 3px;
     }
 
-    .highlight-pink {
-        background-color: #ff0099;
-        color: #fff;
+    .green {
+        background-color: #28a745;
     }
 
-    .highlight-red {
-        background-color: #ff0000;
-        color: #fff;
+    .red {
+        background-color: #dc3545;
     }
 
-    .highlight-grey {
-        background-color: #666;
-        color: #fff;
+    .pink {
+        background-color: #ff00ff;
     }
 
-    .highlight-lightgrey {
-        background-color: #ccc;
+    .gray {
+        background-color: #6c757d;
     }
 
-    .search-row {
+    button {
+        padding: 5px 15px;
         margin-top: 10px;
+        cursor: pointer;
     }
+
+    .three-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 5px;
+    }
+
+        .three-cols .form-row label {
+            width: auto;
+            flex: 0 0 100px;
+        }
+
 </style>
 
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-<div class="container">
-    <!-- Room Summary -->
-    <div class="box">
-        <h3>Room Summary</h3>
-        <div class="row"><label>Total Physical Room</label><input value="1018"></div>
-        <div class="row"><label>Out of Order</label><input class="highlight-pink" value="0"></div>
-        <div class="row"><label>Total Room to Sell</label><input value="1018"></div>
-        <div class="row"><label>Out of Service</label><input class="highlight-grey" value="0"></div>
+<div class=" mb-3 ">
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+</div>
+<div class="containerhs">
+
+    <!-- LEFT COLUMN -->
+    <div class="column">
+        <!-- Room Summary -->
+        <fieldset>
+            <legend>Room Summary</legend>
+
+            <div class="form-row">
+                <label for="totalRoom">Total Physical Room:</label>
+                <input type="text" id="totalRoom" value="1018" readonly>
+            </div>
+            <div class="form-row">
+                <label for="outOfOrder">Out of Order:</label>
+                <input type="text" id="outOfOrder" value="0" class="status-box pink" readonly>
+            </div>
+            <div class="form-row">
+                <label for="roomToSell">Total Room to Sell:</label>
+                <input type="text" id="roomToSell" value="1018" readonly>
+            </div>
+            <div class="form-row">
+                <label for="outOfService">Out of Service:</label>
+                <input type="text" id="outOfService" value="0" class="status-box gray" readonly>
+            </div>
+        </fieldset>
+
+        <!-- End of Day Projection -->
+        <fieldset>
+            <legend>End of Day Projection</legend>
+
+            <div class="form-row" style="font-weight: bold;">
+                <label style="width: 150px;"></label>
+                <label style="width: 80px;">Rooms</label>
+                <label style="width: 80px;">Persons</label>
+                <label style="width: 80px;">VIP</label>
+            </div>
+
+            <div class="form-row">
+                <label>Occupancy:</label>
+                <input type="text" value="11" readonly>
+                <input type="text" value="24" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>% Occupancy:</label>
+                <input type="text" value="1.08" readonly>
+                <input type="text" readonly>
+                <input type="text" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Min Available Tonight:</label>
+                <input type="text" value="1006" readonly>
+                <input type="text" readonly>
+                <input type="text" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Max Occ Tonight:</label>
+                <input type="text" value="12" readonly>
+                <input type="text" value="26" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Max % Occ Tonight:</label>
+                <input type="text" value="1.18" readonly>
+                <input type="text" readonly>
+                <input type="text" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Individuals:</label>
+                <input type="text" value="7" readonly>
+                <input type="text" value="16" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Groups:</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Comp and HU:</label>
+                <input type="text" value="4" readonly>
+                <input type="text" value="8" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>Room Revenue:</label>
+                <input type="text" value="10,405,644" readonly>
+                <input type="text" readonly>
+                <input type="text" readonly>
+            </div>
+
+            <div class="form-row">
+                <label>AVG:</label>
+                <input type="text" value="867,137" readonly>
+                <input type="text" readonly>
+                <input type="text" readonly>
+            </div>
+        </fieldset>
+
+
+        <!-- Search -->
+        <fieldset>
+            <legend>Search</legend>
+
+            <div class="form-row">
+                <label for="roomType">Room Type:</label>
+                <select id="roomtype" name="roomtype" class="tomselect-custom" multiple>
+                    @foreach (var item in roomtypeList)
+                    {
+                        <option value="@item.Code">@item.Code</option>
+                    }
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="date">Date:</label>
+                <input type="text" id="datebunisess" >
+            </div>
+            <div class="form-row">
+                <label for="zone">Zone:</label>
+                <select id="zone" name="zone" class="tomselect-custom" multiple>
+                    @foreach (var item in zoneList)
+                    {
+                        <option value="@item.Code">@item.Code</option>
+                    }
+                </select>
+            </div>
+
+       
+        </fieldset>
     </div>
 
-    <!-- End of Day Projection -->
-    <div class="box">
-        <h3>End of Day Projection</h3>
-        <div class="row"><label>Occupancy</label><input value="11"><input value="24"><input value="0"></div>
-        <div class="row"><label>% Occupancy</label><input value="1.08"></div>
-        <div class="row"><label>Min Available Tonight</label><input value="1006"></div>
-        <div class="row"><label>Max Occ Tonight</label><input value="12"><input value="26"><input value="0"></div>
-        <div class="row"><label>Max % Occ Tonight</label><input value="1.18"></div>
-        <div class="row"><label>Individuals</label><input value="7"><input value="16"><input value="0"></div>
-        <div class="row"><label>Groups</label><input value="0"><input value="0"><input value="0"></div>
-        <div class="row"><label>Comp and HU</label><input value="4"><input value="8"><input value="0"></div>
-        <div class="row"><label>Room Revenue</label><input class="big" value="10,405,644"> AVG: <input class="big" value="867,137"></div>
-    </div>
+    <!-- RIGHT COLUMN -->
+    <div class="column">
 
-    <!-- Activity -->
-    <div class="box">
-        <h3>Activity</h3>
-        <div class="row"><label>Stayovers</label><input value="11"><input value="24"><input value="0"></div>
-        <div class="row"><label>Departures Expected</label><input><input><input></div>
-        <div class="row"><label>Departures Actual</label><input><input><input></div>
-        <div class="row"><label>Arrival Expected</label><input><input><input></div>
-        <div class="row"><label>Arrival Actual</label><input value="11"><input value="24"><input value="0"></div>
-        <div class="row"><label>Extended Stays</label><input><input><input></div>
-        <div class="row"><label>Early Departures</label><input><input><input></div>
-        <div class="row"><label>Day Use Rooms</label><input><input><input></div>
-        <div class="row"><label>Walk In</label><input><input><input></div>
-    </div>
+        <!-- Activity -->
+        <fieldset>
+            <legend>Activity</legend>
 
-    <!-- Housekeeping -->
-    <div class="box">
-        <h3>House keeping Room Status</h3>
-        <div class="row"><label>Clean</label><input class="highlight-green" value="350"><input value="7"><input value="357"></div>
-        <div class="row"><label>Clean Non-Checked</label><input class="highlight-lightgrey" value="165"><input value="3"><input value="168"></div>
-        <div class="row"><label>Dirty</label><input class="highlight-pink" value="14"><input class="highlight-red" value="1"><input value="15"></div>
-        <div class="row"><label>Due Out</label><input><input><input></div>
-        <div class="row"><label>Total</label><input value="529"><input value="11"><input value="540"></div>
-        <div class="row"><label>Out of Order</label><input class="highlight-pink" value="187"><input><input></div>
-        <div class="row"><label>Out of Service</label><input class="highlight-grey" value="0"><input><input></div>
-    </div>
+            <div class="form-row" style="font-weight: bold;">
+                <label style="width: 150px;"></label>
+                <label style="width: 80px;">Rooms</label>
+                <label style="width: 80px;">Persons</label>
+                <label style="width: 80px;">VIP</label>
+            </div>
 
-    <!-- Search -->
-    <div class="box">
-        <h3>Search</h3>
-        <div class="row"><label>Room Type</label><select><option>--All--</option></select></div>
-        <div class="row"><label>Date</label><input value="29/08/24"></div>
-        <div class="row"><label>Zone</label><input value="HT"></div>
-        <div class="search-row"><button>Search</button></div>
-        <div class="search-row">
-            <input type="radio" checked> Fast Print
-            <input type="radio"> Save File and Print
-        </div>
-        <div class="search-row"><button>Print</button> <button>Close</button></div>
+            <div class="form-row">
+                <label for="stayover">Stayovers</label>
+                <input type="text" value="11" readonly>
+                <input type="text" value="24" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="depExpected">Departures Expected</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="depActual">Departures Actual</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="arrExpected">Arrival Expected</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="arrActual">Arrival Actual</label>
+                <input type="text" value="11" readonly>
+                <input type="text" value="24" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="extStay">Extended Stays</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="earlyDep">Early Departures</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="dayUse">Day Use Rooms</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+            <div class="form-row">
+                <label for="walkIn">Walk In</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+        </fieldset>
+
+
+        <!-- Housekeeping Room Status -->
+        <fieldset>
+            <legend>House Keeping Room Status</legend>
+
+            <!-- Header Row -->
+            <div class="form-row" style="font-weight: bold;">
+                <label style="width: 200px;"></label>
+                <label style="width: 100px;">Vacant</label>
+                <label style="width: 100px;">Occupied</label>
+                <label style="width: 100px;">Total</label>
+            </div>
+
+            <!-- Row: Clean -->
+            <div class="form-row">
+                <label>Clean</label>
+                <input type="text" value="350" class="status-box green" readonly>
+                <input type="text" value="7" class="status-box green" readonly>
+                <input type="text" value="357" readonly>
+            </div>
+
+            <!-- Row: Clean Non-Checked -->
+            <div class="form-row">
+                <label>Clean Non-Checked</label>
+                <input type="text" value="165" readonly>
+                <input type="text" value="3" readonly>
+                <input type="text" value="168" readonly>
+            </div>
+
+            <!-- Row: Dirty -->
+            <div class="form-row">
+                <label>Dirty</label>
+                <input type="text" value="14" class="status-box red" readonly>
+                <input type="text" value="1" class="status-box red" readonly>
+                <input type="text" value="15" readonly>
+            </div>
+
+            <!-- Row: Due Out -->
+            <div class="form-row">
+                <label>Due Out</label>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+
+            <!-- Row: Total -->
+            <div class="form-row">
+                <label>Total</label>
+                <input type="text" value="529" readonly>
+                <input type="text" value="11" readonly>
+                <input type="text" value="540" readonly>
+            </div>
+
+            <!-- Row: Out of Order -->
+            <div class="form-row">
+                <label>Out of Order</label>
+                <input type="text" value="187" class="status-box pink" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="187" readonly>
+            </div>
+
+            <!-- Row: Out of Service -->
+            <div class="form-row">
+                <label>Out of Service</label>
+                <input type="text" value="0" class="status-box gray" readonly>
+                <input type="text" value="0" readonly>
+                <input type="text" value="0" readonly>
+            </div>
+        </fieldset>
+
     </div>
 </div>
 
@@ -225,6 +406,44 @@
 
         });
 
+       window.onload = function() {
+            var businessDate = '@ViewBag.businesDate';
+            var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
+            var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
+
+            var departureDate = new Date(parsedBusinessDate);
+            departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+            // Set arrival and departure input values
+            document.getElementById('datebunisess').value = formatDate(parsedBusinessDate);
+
+       };
+
+
+         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+            $("#loadingSpinner").show();
+            $.ajax({
+             url: '/HouseKeeping/HouseStatusData',
+                type: 'GET',
+                data: {
+                    datebunisess: $("#datebunisess").val(),
+                    roomtype: $("#roomtype").val(),
+                    zone: $("#zone").val(),
+                },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+
+                        $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Eror");
+                    $("#loadingSpinner").hide();
+                }
+            });
+        });
       
   
 </script>
