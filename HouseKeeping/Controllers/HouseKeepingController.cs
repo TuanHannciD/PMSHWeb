@@ -53,7 +53,23 @@ namespace HouseKeeping.Controllers
             ViewBag.RoomList = listroom;
             return View();
         }
-
+        public IActionResult HouseStatus()
+        {
+            
+            return View();
+        }
+        public IActionResult RoomPlan()
+        {
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+            List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+            ViewBag.RoomTypeList = listrt;
+            List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+            ViewBag.RoomList = listroom;
+            List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
+            ViewBag.FloorList = listfloor;
+            return View();
+        }
         [HttpGet]
         public IActionResult RoomControlPanelData(DateTime fromDate, DateTime toDate, string zone)
         {
@@ -183,13 +199,14 @@ namespace HouseKeeping.Controllers
             }
         }
         [HttpPost]
-        public IActionResult CheckLogStatus(List<int> id)
+        public IActionResult CheckLogStatus(List<int> id, DateTime fromDate, DateTime toDate, string username)
         {
+            username = string.IsNullOrEmpty(username) ? "" : username;
             int idroom = id[0];
             RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPrimaryKey(idroom);
             try
             {
-                DataTable dataTable = _iHouseKeepingService.CheckLogStatus(modelRoom.RoomNo);
+                DataTable dataTable = _iHouseKeepingService.CheckLogStatus(modelRoom.RoomNo, fromDate, toDate, username);
 
                 var result = (from d in dataTable.AsEnumerable()
                               select new
@@ -356,94 +373,56 @@ namespace HouseKeeping.Controllers
             modelH.TableName = tableName;
             RoomStatusHistoryBO.Instance.Insert(modelH);
         }
-        //private void tsSave_Click(object sender, EventArgs e)
-        //{
-        //    if (validateForm() == false) return;
-        //    // bước 1: gán các trạng thái cần update
-        //    // bước 2: update trạng thái cho 1 phòng
-        //    // bước 3: update trạng thái cho nhiều phòng
-        //    #region gán tham số
-        //    if (rdbClean.Checked == true) hKStatus = 1;
-        //    else if (rdbDirty.Checked == true) hKStatus = 2;
-        //    else if (rdbPickup.Checked == true) hKStatus = 3;
-        //    else if (rdbInspected.Checked == true) hKStatus = 4;
-        //    else if (rdbDueOut.Checked == true) hKStatus = 7;
-        //    #endregion
+        [HttpGet]
+        public IActionResult RoomPlanData(DateTime fromDate, DateTime toDate, int orderbyroom, string owner)
+        {
+            owner = string.IsNullOrEmpty(owner) ? "" : owner;
 
-        //    #region trường hợp update trạng thái cho 1 phòng
-        //    if (rdbRoomList.Checked == true && arrRoomID[0] > 0)//trường hợp update trạng thái cho 1 phòng
-        //    {
-        //        for (int i = 0; i < arrRoomID.Length; i++)
-        //        {
-        //            try
-        //            {
-        //                //update
-        //                RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPK(arrRoomID[i]);
-        //                modelRoom.ID = arrRoomID[i];
-        //                #region lưu history
-        //                RoomStatusHistoryBO.InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), hKStatus.ToString(), systemDate, TextUtils.GetHostName(), "Manual", modelRoom.ID, "Room");
-        //                #endregion                           
-        //                modelRoom.HKStatusID = hKStatus;
-        //                modelRoom.UserUpdateID = Global.UserID;
-        //                modelRoom.UpdateDate = systemDate;
-        //                RoomBO.Instance.Update(modelRoom);
-        //                txtRoomList.Text = "";
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.RoomPlanData(fromDate, toDate, orderbyroom, owner);
 
-        //                this.Close();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                throw new Exception(ex.ToString());
-        //            }
-        //        }
-        //    }
-        //    #endregion
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = d["RoomNo"].ToString() ?? "",
+                                  RoomID = d["RoomID"].ToString() ?? "",
+                                  RoomTypeCode = d["RoomTypeCode"].ToString() ?? "",
+                                  Status = d["Status"].ToString() ?? "",
+                                  FOStatus = d["FOStatus"].ToString() ?? "",
+                                  HKStatus = d["HKStatus"].ToString() ?? "",
+                                  ZoneCode = d["ZoneCode"].ToString() ?? "",
+                                  Smoking = d["Smoking"].ToString() ?? "",
+                                  Floor = d["Floor"].ToString() ?? "",
+                                  RoomNumber = d["RoomNumber"].ToString() ?? "",
+                                  Comment = d["Comment"].ToString() ?? "",
+                                  LastName = d["LastName"].ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"].ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"].ToString() ?? "",
+                                  ConfirmationNo = d["ConfirmationNo"].ToString() ?? "",
+                                  CreateDate = d["CreateDate"].ToString() ?? "",
+                                  PaymentMethod = d["PaymentMethod"].ToString() ?? "",
+                                  Agent = d["Agent"].ToString() ?? "",
+                                  Company = d["Company"].ToString() ?? "",
+                                  ShareRoomName = d["ShareRoomName"].ToString() ?? "",
+                                  ReservationID = d["ReservationID"].ToString() ?? "",
+                                  ReservationStatus = d["ReservationStatus"].ToString() ?? "",
+                                  OOOID = d["OOOID"].ToString() ?? "",
+                                  Code = d["Code"].ToString() ?? "",
+                                  Description = d["Description"].ToString() ?? "",
+                                  OOOStatus = d["OOOStatus"].ToString() ?? "",
+                                  DisplaySequence = d["DisplaySequence"].ToString() ?? "",
+                                  Type = d["Type"].ToString() ?? ""
+                              }).ToList();
 
-        //    #region trường hợp update trạng thái cho nhiều phòng
 
-        //    if (rdbFromRoom.Checked == true)// trường hợp update trạng thái cho nhiều phòng
-        //    {
-        //        try
-        //        {
-        //            string fromRoom = txtRoomFrom.Text;
-        //            string toRoom = txtRoomTo.Text;
-        //            if (int.Parse(fromRoom) > int.Parse(toRoom))// nếu chọn fromRoom > ToRoom thì hoán đổi giá trị
-        //            {
-        //                fromRoom = txtRoomTo.Text;
-        //                toRoom = txtRoomFrom.Text;
-        //            }
-        //            string[] arrParaNames = new string[] { "@FromRoom", "@ToRoom" };
-        //            object[] arrParaValues = new object[] { fromRoom, toRoom };
-        //            DataTable dataTable = RoomBO.Instance.LoadDataFromSP("spHkpChangeStatus", "tbRoom", arrParaNames, arrParaValues);
-        //            for (int i = 0; i < dataTable.Rows.Count; i++)// update status cho từng dòng
-        //            {
-        //                int iD = int.Parse(dataTable.Rows[i]["ID"].ToString());
-        //                RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPK(iD);
-        //                modelRoom.ID = iD;
-        //                #region lưu history
-        //                RoomStatusHistoryBO.InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), hKStatus.ToString(), systemDate, TextUtils.GetHostName(), "Manual", modelRoom.ID, "Room");
-        //                #endregion
-        //                modelRoom.HKStatusID = hKStatus;
-        //                modelRoom.UpdateDate = systemDate;
-        //                modelRoom.UserUpdateID = Global.UserID;
-        //                try
-        //                {
-        //                    RoomBO.Instance.Update(modelRoom);
-        //                    this.Close();
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    throw new Exception(ex.ToString());
-        //                }
-        //                txtRoomFrom.Text = ""; txtRoomTo.Text = "";
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            throw new Exception(ex.ToString());
-        //        }
-        //        #endregion
-        //    }
-        //}
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
     }
 }

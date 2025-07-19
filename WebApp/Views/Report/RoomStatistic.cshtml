@@ -49,16 +49,57 @@
         background-color: #f1f1f1; /* Có thể thay đổi màu nền */
     }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm,
+    .sticky-header .form-select-sm {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
+
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
+    }
+
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
+        }
+
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+    .sticky-header label {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
+
     
-</style>
+</style>    
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="filter-panel">
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
 
         <div class="d-flex align-items-center me-3">
-            <label class="fw-bold me-2 mb-0">Year:</label>
-            <select id="year" name="year" class="form-select form-select-sm w-auto">
-                @for (int y = 2020; y <= DateTime.Now.Year + 1; y++)
+            <label class="me-2 mb-0 ">Year:</label>
+                <select id="year" class="form-select form-select-sm" style="width: 75px;">
+                @for (int y = 2010; y <= DateTime.Now.Year + 1; y++)
                 {
                     <option value="@y">@y</option>
                 }
@@ -66,8 +107,8 @@
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="fw-bold me-2 mb-0">From Month:</label>
-            <select id="fromMonth" name="fromMonth" class="form-select form-select-sm w-auto">
+            <label class="me-2 mb-0">From Month:</label>
+                <select id="fromMonth" class="form-select form-select-sm" style="width: 6px;">
                 @for (int m = 1; m <= 12; m++)
                 {
                     <option value="@m">@m</option>
@@ -77,8 +118,8 @@
 
         <!-- To Month -->
         <div class="d-flex align-items-center me-3">
-            <label class="fw-bold me-2 mb-0">To Month:</label>
-            <select id="toMonth" name="toMonth" class="form-select form-select-sm w-auto">
+            <label class="me-2 mb-0">To Month:</label>
+                <select id="toMonth" class="form-select form-select-sm" style="width: 60px;">
                 @for (int m = 1; m <= 12; m++)
                 {
                     <option value="@m">@m</option>
@@ -87,23 +128,23 @@
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="fw-bold me-2 mb-0">From Room:</label>
+            <label class="me-2 mb-0">From Room:</label>
             <input id="fromRoom" name="fromRoom" class="form-control form-control-sm w-auto"
                    placeholder="" />
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="fw-bold me-2 mb-0">To Room:</label>
+            <label class="me-2 mb-0">To Room:</label>
             <input id="toRoom" name="toRoom" class="form-control form-control-sm w-auto"
                    placeholder="" />
         </div>
 
-       
+        </div>
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 </div>
 <div class="mui-card">
@@ -177,8 +218,11 @@
                 }
             });
         });
+
         function initializeDataGrid(data) {
             var columnWidth = 160;
+
+
         $("#gridContainer").dxDataGrid({
             dataSource: data, allowColumnResizing: true,
             columns: [

@@ -93,22 +93,44 @@
             top: 50%;
             transform: translateY(-50%);
         }
-</style>
-<div class="report-bar">
-    <h4 id="reportTitle">Product Activity</h4>
 
-    <div class="action-buttons">
-        <button class="mui-button mui-button-new" style="background:#3b9ac6;border-radius:4px;margin-right:6px" id="btnPrint">
-            <i class="fa-solid fa-eye"></i> View
-        </button>
-        <button class="mui-button mui-button-new" style="background:green;border-radius:4px;margin-right:6px" id="btnExportExcel">
-            <i class="fa-solid fa-file-excel"></i> Excel
-        </button>
-        <button class="mui-button mui-button-new" style="background:darkorange;border-radius:4px" id="btnExportPdf">
-            <i class="fas fa-eraser"></i> PDF
-        </button>
-    </div>
-</div>
+    .tomselect-custom {
+        width: 200px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.75rem !important;
+    }
+
+        .tomselect-custom + .ts-dropdown .option {
+            font-size: 0.75rem !important;
+            padding: 4px 4px !important;
+        }
+
+    /* Nhỏ input khi đã khởi tạo TomSelect */
+    .ts-wrapper.single .ts-control {
+        font-size: 0.75rem !important;
+        min-height: 30px !important;
+        padding: 4px 4px !important;
+    }
+
+        /* Ẩn mũi tên dropdown */
+        .ts-wrapper.single .ts-control::after {
+            display: none !important;
+        }
+
+</style>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    new TomSelect("#commnet", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "Select reason..."
+    });
+</script>
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <label class="me-2 mb-0 fw-bold me-1">Date Range:</label>
@@ -123,14 +145,15 @@
         <label class="me-2 mb-0 fw-bold me-1">Filter:</label>
         <div class="d-flex align-items-center me-1">
             <label class="me-2 mb-0">Cancel Reason:</label>
-            <select id="commnet" name="commnet" class="form-control form-control-sm " style="width :100px">
-                <option value="">ALL</option>
+            <select id="commnet" name="commnet" class="tomselect-custom" style="width: 150px">
+                <option value=""></option>
                 @foreach (var item in comList)
                 {
-                    <option value="@item.Code">@item.Code-@item.Description</option>
+                    <option value="@item.Code">@item.Code - @item.Description</option>
                 }
             </select>
         </div>
+
         <div class="form-check me-3">
             <input class="form-check-input include-option" type="checkbox" id="arrivalDateChk" name="includeOptions" value="0" checked>
             <label class="form-check-label" for="arrivalDateChk">Arrival</label>
@@ -157,7 +180,11 @@
         </div>
  *@
     </div>
-    
+    <div class=" mb-3 ">
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    </div>
 </div>
 
 <div class="mui-card">

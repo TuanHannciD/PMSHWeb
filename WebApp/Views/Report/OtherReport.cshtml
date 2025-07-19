@@ -302,24 +302,34 @@
         font-size: 12px;
     }
 
+    .col-custom-2-1 {
+        flex: 0 0 18.33%;
+        max-width: 18.33%%;
+    }
+
+    .col-custom-9-9 {
+        flex: 0 0 81.67%;
+        max-width: 81.67%;
+    }
 </style>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <div class="content_wrapper row">
-    <div class="filter_wrapper col-md-2 mui-card" style="border: 1px solid #005f87;height: fit-content;">
+    <div class="filter_wrapper col-custom-2-1 mui-card" style="border: 1px solid #005f87;height: fit-content;">
         <div class="text-center fw-bold py-2" style="font-size: 1.25rem; color: #005f87; border-bottom: 1px solid #ccc;">
             REPORT
         </div>
 
-        <div class=" py-1">
+        <div class=" py-1 me-1">
             <input type="text" class="form-control form-control-sm" id="report-search" placeholder="Search...">
         </div>
 
-        <div class="filter-header" id="header-sale">
+        <div class="filter-header" id="header-sale" style="font-size: 14px;">
             <span>Sale and forecast</span>
             <i id="icon-sale" class="fas fa-chevron-right"></i>
         </div>
+
         <hr class="mui-divider" />
         <ul id="report-list" class="list-group list-group-flush  report-list-scrollable" style="display: none;">
 @*             <li class="list-group-item">
@@ -441,7 +451,7 @@
 
         </ul>
 
-        <div class="filter-header" id="header-reservation">
+        <div class="filter-header" id="header-reservation" style="font-size: 14px;">
             <span>Report reservation</span>
             <i id="icon-reservation" class="fas fa-chevron-right"></i>
         </div>
@@ -525,7 +535,7 @@
 
         </ul>
 
-        <div class="filter-header" id="header-nightaudit">
+        <div class="filter-header" id="header-nightaudit" style="font-size: 14px;">
             <span>Night audit</span>
             <i id="icon-nightaudit" class="fas fa-chevron-right"></i>
         </div>
@@ -535,7 +545,7 @@
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="CashierAudit" data-title="Cashier Audit">Cashier Audit</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="CashierSummary" data-title="Cashier Summary">Cashier Summary</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="GuestTrialBalance" data-title="Guest Trial Balance">Guest Trial Balance</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="FixCharge Report">FixCharge Report</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="Fix Charge Report">Fix Charge Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositRequestLogReport" data-title="Deposit Request Log Report">Deposit Request Log Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueSpa" data-title="Revenue Spa">Revenue Spa</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueReport" data-title="Revenue Reports">Revenue Reports</a></li>
@@ -572,7 +582,7 @@
 
     </div>
 
-    <div class="function_wrapper col-md-10">
+    <div class="function_wrapper col-custom-9-9">
      
         <div id="reportContainer"></div>
 

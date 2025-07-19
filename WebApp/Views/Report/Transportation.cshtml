@@ -44,8 +44,61 @@
             color: white !important;
         }
 
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td,
+    #gridContainer .dx-datagrid .dx-summary-row > td,
+    #gridContainer .dx-datagrid .dx-total-footer td,
+    #gridContainer .dx-datagrid .dx-footer-row td {
+        font-size: 11px !important;
+    }
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    .filter-panel {
+        font-size: 12px;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: .5rem;
+    }
+
+        .filter-row .title {
+            width: 80px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .filter-row .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem 1rem;
+        }
+
+    .filter-panel .form-control-sm,
+    .filter-panel .form-select-sm,
+    .filter-panel .ts-control {
+        font-size: 12px;
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="filter-panel">
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="d-flex flex-column ">
@@ -79,7 +132,7 @@
                 </div>
 
                 <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">View By:</label>
+                    <label class="fw-bold me-2 mb-0">View By:</label>
                     <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
                         <option value="0">Both</option>
                         <option value="1">Pickup</option>
@@ -100,7 +153,7 @@
 
 
                 <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Sort Order:</label>
+                        <label class="fw-bold me-2 mb-0">Sort Order:</label>
                     <select id="sortOrder" name="sortOrder" class="form-control form-control-sm w-auto">
                         <option value="guestName">Guest Name</option>
                         <option value="room">Room</option>
@@ -110,13 +163,13 @@
                 </div>
             </div>
         </div>
-
+        </div>
 
     </div>
     <div class=" mb-3 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 </div>
 
