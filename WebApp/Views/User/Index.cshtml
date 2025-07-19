@@ -226,6 +226,8 @@
 
                     // Gán dữ liệu mới vào localStorage (dưới dạng chuỗi JSON)
                     localStorage.setItem("Loginname", JSON.stringify(data.namelogin));
+                    localStorage.setItem("userID", JSON.stringify(data.userID));
+
                     window.location.href = "/Home/Index";
                 }
 

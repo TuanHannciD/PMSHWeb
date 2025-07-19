@@ -251,3 +251,79 @@
     min-height: 26px !important;
     font-size: 12px !important;
 }
+     .ts-wrapper {
+        margin: 0 !important; 
+        min-height: 25px; 
+    }
+
+    .ts-control {
+        height: 25px !important; 
+        line-height: 25px;
+        padding: 0 10px; 
+        margin: 0 !important; 
+    }
+
+    .ts-dropdown {
+        margin: 0 !important; 
+        font-size: 14px; 
+    }
+
+        .ts-dropdown .option {
+            padding: 5px 10px; 
+            margin: 0 !important; 
+        }
+
+.nav-tabs {
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .nav-tabs .nav-link {
+        color: #1e40af; /* Vibrant blue text */
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+    }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #e0f2fe;
+            border-color: #bfdbfe;
+            color: #1e3a8a; /* Darker blue on hover */
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #ffffff;
+            border-color: #bfdbfe #bfdbfe #ffffff;
+            color: #1e3a8a; /* Darker blue for active tab */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-tabs .nav-link:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+@media (max-width: 576px) {
+    .nav-tabs .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+.listFunction {
+    display: flex;
+    column-gap: 4px;
+}
+.listFunction div {
+    padding: 4px;
+    font-size: 10px;
+    background-color: #DE8C60;
+    color:white;
+}
+.listFunction div:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}

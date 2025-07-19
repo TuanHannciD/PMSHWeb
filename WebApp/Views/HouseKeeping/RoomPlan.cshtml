@@ -148,7 +148,7 @@
         .filter-panel .form-control-sm,
         .filter-panel .form-select-sm,
         .filter-panel .ts-control {
-            font-size: 16px;
+            font-size: 12px;
             padding: .1rem .35rem;
             height: calc(1.1em + .2rem + 2px);
         }
@@ -272,47 +272,76 @@
                 <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
                     <!-- Checkbox Group -->
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="cleannonupop" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="cleannonupop" name="masterllioup" value="1" checked>
                         <label class="form-check-label" for="cleannonupop">Clean Non-Checked</label>
                     </div>
 
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="dirtyupop" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="dirtyupop" name="masterllioup" value="1" checked>
                         <label class="form-check-label" for="dirtyupop">Dirty</label>
                     </div>
 
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="cleanupop" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="cleanupop" name="masterllioup" value="1"checked>
                         <label class="form-check-label" for="cleanupop">Clean</label>
                     </div>
 
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="ooos" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="ooos" name="masterllioup" value="1" checked>
                         <label class="form-check-label" for="ooos">OOO/S</label>
                     </div>
 
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="dueout" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="dueout" name="masterllioup" value="1" checked>
                         <label class="form-check-label" for="dueout">Due Out</label>
                     </div>
 
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="occupied" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="occupied" name="masterllioup" value="1" checked>
                         <label class="form-check-label" for="occupied">Occupied</label>
                     </div>
 
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="vacant" name="masterlliouppop" value="1">
+                        <input class="form-check-input" type="checkbox" id="vacant" name="masterllioup" value="1" checked>
                         <label class="form-check-label" for="vacant">Vacant</label>
                     </div>
                 </div>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+
+                    <div class="d-flex align-items-center me-3">
+                        <div style="width: 20px; height: 12px; background-color: #A82F19;" class="me-2 rounded"></div>
+                        <span>OOO</span>
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <div style="width: 20px; height: 12px; background-color: red;" class="me-2 rounded"></div>
+                        <span>OOS</span>
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <div style="width: 20px; height: 12px; background-color: purple;" class="me-2 rounded"></div>
+                        <span>Due Out</span>
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <div style="width: 20px; height: 12px; background-color: yellow;" class="me-2 rounded border"></div>
+                        <span>Expected</span>
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <div style="width: 20px; height: 12px; background-color: #4CAF50;" class="me-2 rounded"></div>
+                        <span>Check In</span>
+                    </div>
+
+                </div>
+
 
                 <!-- Select Groups (2 hàng, mỗi hàng 3 select) -->
                 <div class="w-100 mt-3 d-flex flex-wrap gap-4">
                     <!-- Hàng 1 -->
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Zone:</label>
-                        <select id="zone" name="zone" class="form-control form-control-sm" style="width: 200px">
+                        <select id="zone" name="zone" class="form-control form-control-sm" style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in zoneList)
                             {
@@ -323,7 +352,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Room:</label>
-                        <select id="room" name="room" class="form-control form-control-sm" style="width: 200px">
+                        <select id="room" name="room" class="form-control form-control-sm" style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in roomList)
                             {
@@ -334,7 +363,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Room Type:</label>
-                        <select id="roomType" name="roomType" class="form-control form-control-sm" style="width: 200px">
+                        <select id="roomType" name="roomType" class="form-control form-control-sm" style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in roomtypeList)
                             {
@@ -356,9 +385,9 @@
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Smoking:</label>
                         <select id="smoking" name="smoking" class="form-control form-control-sm w-auto">
-                            <option value="0">--ALL--</option>
+                            <option value="">--ALL--</option>
                             <option value="1">--Yes--</option>
-                            <option value="2">--No--</option>
+                            <option value="0">--No--</option>
                         </select>
                     </div>
 
@@ -381,49 +410,51 @@
                             <option value="2">Without-Balcony</option>
                         </select>
                     </div>
+
+                    <div class="d-flex flex-column ">
+
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Min Date :</label>
+                                <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Max Date :</label>
+                                <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column mt-2">
+
+
+                        <!-- Dòng chứa các checkbox -->
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <label class="fw-bold mb-2">Order By:</label>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
+                                <label class="form-check-label" for="cleannonup">Room No</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
+                                <label class="form-check-label" for="dirtyup">Room Type</label>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center ms-3">
+                        <label class="fw-bold mb-0 me-2">Zoom:</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
+                    </div>
                 </div>
             </div>
 
         </div>
-        <div class="d-flex flex-column ">
 
-            <div class="d-flex align-items-center">
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Min Date :</label>
-                    <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-                </div>
-
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Max Date :</label>
-                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-                </div>
-            </div>
-        </div>
-
-        <div class="d-flex flex-column mt-2">
-     
-
-            <!-- Dòng chứa các checkbox -->
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <label class="fw-bold mb-2">Order By:</label>
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
-                    <label class="form-check-label" for="cleannonup">Room No</label>
-                </div>
-
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
-                    <label class="form-check-label" for="dirtyup">Room Type</label>
-                </div>
-
-               
-            </div>
-        </div>
-        <div class="d-flex align-items-center ms-3">
-            <label class="fw-bold mb-0 me-2">Zoom:</label>
-            <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
-        </div>
 
     </div>
     <div>
@@ -488,7 +519,11 @@
             }
         });
 
-        
+         $('input[name="masterlliouppop"]').on('change', function () {
+            if ($(this).is(':checked')) {
+                $("#btnPrint").trigger("click");
+            }
+        });
              document.getElementById("reportTitle").innerText = 'Room Plan';
             const today = new Date();
 
@@ -518,7 +553,7 @@
             // Nếu đã được khởi tạo thì huỷ trước
             if (el.tomselect) el.tomselect.destroy();
 
-            new TomSelect(el, {
+           const ts = new TomSelect(el, {
                 plugins: ['remove_button'],
                 create: false,
                 maxItems: null,
@@ -539,12 +574,12 @@
             // Nếu đã được khởi tạo thì huỷ trước
             if (el.tomselect) el.tomselect.destroy();
 
-            new TomSelect(el, {
+           const ts = new TomSelect(el, {
                 plugins: ['remove_button'],
                 create: false,
-                maxItems: null, 
+                maxItems: null,
                 allowEmptyOption: true,
-                placeholder: ' ',
+                placeholder: '',
                 persist: false,
                 render: {
                     option: function (data, escape) {
@@ -561,7 +596,7 @@
             // Nếu đã được khởi tạo thì huỷ trước
             if (el.tomselect) el.tomselect.destroy();
 
-            new TomSelect(el, {
+           const ts = new TomSelect(el, {
                 plugins: ['remove_button'],
                 create: false,
                 maxItems: null,
@@ -593,20 +628,47 @@
                 traditional: true,
                   crossDomain: false,
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (data) {
-                    // $("#reportViewerContainer").html(result);
-                    // $("#loadingSpinner").hide();
-                 console.log(data);
-               initializeRoomPlanGrid(data);
-            // // initializeRoomScheduler(roomHasRoomNo,$("#fromDate").val(),$("#toDate").val())
+            success: function (data) {
+        // Lấy filter từ các dropdown (multiple hoặc đơn)
+        const selectedZones = $("#zone").val();              // array
+        const selectedRooms = $("#room").val();              // array
+        const selectedRoomTypes = $("#roomType").val();      // array
+        const selectedSmoking = $("#smoking").val();         // string ("1", "2", hoặc "")
+        const selectedFloor = $("#floor").val();             // string
 
-                 const fromDate = $("#fromDate").val();
-                const toDate = $("#toDate").val();
-             initializeRoomScheduler(data, fromDate, toDate);
+        // Lấy các checkbox đang được tích
+        const checkedStatuses = [];
+        $("input[name='masterllioup']:checked").each(function () {
+            const labelText = $("label[for='" + $(this).attr("id") + "']").text().trim();
+            checkedStatuses.push(labelText);
+        });
 
-            
-                        $("#loadingSpinner").hide();
-                },
+        // Lọc dữ liệu
+        const filteredData = data.filter(item => {
+            const matchZone = !selectedZones || selectedZones.length === 0 || selectedZones.includes(item.zoneCode);
+            const matchRoom = !selectedRooms || selectedRooms.length === 0 || selectedRooms.includes(item.roomNumber);
+            const matchRoomType = !selectedRoomTypes || selectedRoomTypes.length === 0 || selectedRoomTypes.includes(item.roomTypeCode);
+            const matchSmoking = !selectedSmoking || selectedSmoking === "" || item.smoking === selectedSmoking;
+            const matchFloor = !selectedFloor || selectedFloor === "" || item.floor === selectedFloor;
+
+            const matchFoStatus = checkedStatuses.length === 0 || checkedStatuses.includes(item.foStatus);
+
+            return matchZone && matchRoom && matchRoomType && matchSmoking && matchFloor && matchFoStatus;
+        });
+
+        // Gọi các hàm khởi tạo với dữ liệu đã lọc
+        initializeRoomPlanGrid(filteredData);
+
+        const fromDate = $("#fromDate").val();
+        const toDate = $("#toDate").val();
+        initializeRoomScheduler(filteredData, fromDate, toDate);
+
+        $("#loadingSpinner").hide();
+    }
+
+    ,
+
+
                 error: function () {
                     alert("Không thể tải báo cáo.");
                     $("#loadingSpinner").hide();
@@ -614,7 +676,7 @@
             });
         });
 
-        function initializeRoomScheduler(schedulerData, fromDate, toDate) {
+      function initializeRoomScheduler(schedulerData, fromDate, toDate) {
         if (!schedulerData || !schedulerData.length) return;
 
         const startDate = new Date(fromDate);
@@ -649,12 +711,14 @@
                     startDate: new Date(d.arrivalDate),
                     endDate: new Date(d.departureDate),
                     roomID: d.roomID.toString(),
+                    type: d.type || "", // 👈 Thêm type vào
                     tooltipData: {
                         company: d.company,
                         agent: d.agent,
                         paymentMethod: d.paymentMethod,
                         comment: d.comment,
-                        confirmationNo: d.confirmationNo
+                        confirmationNo: d.confirmationNo,
+                         code: d.code,
                     }
                 };
             });
@@ -680,14 +744,18 @@
                 label: "Phòng",
                 allowMultiple: false
             }],
-
-            // ✅ Tối ưu: xử lý tooltip và dịch vị trí tại thời điểm render
             onAppointmentRendered: function (e) {
                 const el = $(e.appointmentElement);
                 const data = e.appointmentData;
 
-                const lastName = data.text;
                 const tooltipData = data.tooltipData || {};
+                const lastName = data.text;
+
+                // 👉 Nếu là OOOS thì title hiển thị code + (out of order), ngược lại dùng lastName
+                let titleText = lastName;
+                if (data.type === "OOOS") {
+                    titleText = `${tooltipData.code || "Code"} (Out of Order)`;
+                }
 
                 const tooltipContent = [
                     `Company:        ${tooltipData.company || ""}`,
@@ -699,9 +767,16 @@
 
                 const titleEl = el.find(".dx-scheduler-appointment-title");
                 if (titleEl.length) {
-                    titleEl.text(lastName).css("display", "block").attr("title", tooltipContent);
+                    titleEl.text(titleText).css("display", "block").attr("title", tooltipContent);
                 } else {
-                    el.append(`<div class="dx-scheduler-appointment-title" title="${tooltipContent}">${lastName}</div>`);
+                    el.append(`<div class="dx-scheduler-appointment-title" title="${tooltipContent}">${titleText}</div>`);
+                }
+
+                // 🎯 Màu theo type
+                if (data.type === "Reservation") {
+                    el.css("background-color", "#4CAF50"); // Xanh lá
+                } else if (data.type === "OOOS") {
+                    el.css("background-color", "#a82f19"); // Đỏ nâu
                 }
 
                 // Dịch translateY lên
@@ -715,6 +790,7 @@
                     el.attr("style", style.replace(/translate\([^)]+\)/, newTransform));
                 }
             }
+
         });
 
         // Đồng bộ cuộn grid với scheduler
@@ -741,8 +817,9 @@
                     }
                 });
             }
-        }, 200); // Giảm timeout từ 500 -> 200ms
+        }, 200);
     }
+
 
 
          function initializeRoomPlanGrid(data) {

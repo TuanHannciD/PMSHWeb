@@ -10,8 +10,8 @@
 
 <style>
     #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ngọc */
-        color: white !important; /* chữ trắng */
+        background-color: #005f87 !important; /* màu xanh ng?c */
+        color: white !important; /* ch? tr?ng */
     }
 
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -37,8 +37,8 @@
     }
 
     #gridContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh dương */
-        color: white !important; /* Chữ trắng cho dễ đọc */
+        background-color: #3b9ac6 !important; /* Màu xanh duong */
+        color: white !important; /* Ch? tr?ng cho d? d?c */
     }
 
         #gridContainer .dx-datagrid-headers .dx-header-row > td {
@@ -60,7 +60,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Loại bỏ viền phải ở cột cuối cùng (tùy chọn) */
+        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
         #gridContainer .dx-datagrid-rowsview tr td:last-child,
         #gridContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -129,8 +129,8 @@
     }
 
     #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #01579b !important; /* màu xanh ngọc */
-        color: white !important; /* chữ trắng */
+        background-color: #01579b !important; /* màu xanh ng?c */
+        color: white !important; /* ch? tr?ng */
     }
 
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -154,8 +154,8 @@
     }
 
     .sticky-header input[type="date"].form-control-sm {
-        font-size: 12px !important; /* đúng 12 px */
-        height: calc(1.1em + .2rem + 2px); /* giữ cùng chiều cao */
+        font-size: 12px !important; /* dúng 12?px */
+        height: calc(1.1em + .2rem + 2px); /* gi? cùng chi?u cao */
     }
 
     .sticky-header label {
@@ -165,12 +165,12 @@
 
     .tomselect-custom {
         width: 250px;
-        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
         font-size: 0.65rem;
     }
 
     .sort-select {
-        max-width: 130px; /* hoặc 100px nếu muốn nhỏ hơn */
+        max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
         font-size: 12px;
         padding: 0.15rem 0.5rem;
     }
@@ -242,8 +242,8 @@
 <script>
         function formatDate(date) {
             let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
+            let day = date.getDate().toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
             return `${year}-${month}-${day}`;
         }
 
@@ -253,16 +253,16 @@
             const today = new Date();
 
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            // Lấy ngày cuối cùng của tháng
+            // L?y ngày cu?i cùng c?a tháng
             const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-            // Định dạng theo local time
+            // Ð?nh d?ng theo local time
             const formattedFirstDay = formatDate(firstDayOfMonth);
             const formattedLastDay = formatDate(lastDayOfMonth);
 
-            console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-            console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-            // Gán giá trị cho input date
+            console.log(formattedFirstDay); // Ki?m tra giá tr? dúng chua
+            console.log(formattedLastDay); // Ki?m tra giá tr? dúng chua
+            // Gán giá tr? cho input date
             document.getElementById('fromDate').value = formattedFirstDay;
             document.getElementById('toDate').value = formattedLastDay;
             initializeTomSelects();
@@ -315,7 +315,7 @@
                         $("#loadingSpinner").hide();
                 },
                 error: function () {
-                    alert("Không thể tải báo cáo.");
+                    alert("Không th? t?i báo cáo.");
                     $("#loadingSpinner").hide();
                 }
             });
@@ -343,7 +343,7 @@
                 dataType: "number",
                 format: {
                     type: "fixedPoint",
-                    precision: 1 // luôn có 1 chữ số thập phân
+                    precision: 1 // luôn có 1 ch? s? th?p phân
                 },
                 alignment: "center",
                 headerCellTemplate: function (container) {
@@ -421,45 +421,45 @@
             const grid = $("#gridContainer").dxDataGrid("instance");
             var selectedReport = '@ViewBag.ReportTitle';
             if (!selectedReport) {
-                alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+                alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
                 return;
             }
 
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet("Sheet 1");
 
-            // === Tạo header công ty (dòng 1) ===
-            worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+            // === T?o header công ty (dòng 1) ===
+            worksheet.addRow(['Công ty C? ph?n Gi?i pháp Công ngh? CS-Solution']);
             worksheet.mergeCells('A1:E1');
             worksheet.getRow(1).font = { bold: true };
             worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
 
-            // === Dòng 2: Thời gian xuất (phải) ===
+            // === Dòng 2: Th?i gian xu?t (ph?i) ===
             const now = new Date();
             const exportDate = now.toLocaleString("vi-VN");
             worksheet.addRow(['', '', '', '', ' ' + exportDate]);
             worksheet.mergeCells('E2:H2');
             worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
 
-            // === Dòng 3–4: Trống
+            // === Dòng 3–4: Tr?ng
             worksheet.addRow([]);
             worksheet.addRow([]);
 
-            // === Dòng 5: Tên báo cáo ở giữa ===
+            // === Dòng 5: Tên báo cáo ? gi?a ===
             const reportRow = worksheet.addRow(['', '', selectedReport]);
             worksheet.mergeCells('C5:F5');
             reportRow.font = { bold: true, size: 14 };
             reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            // === Dòng 6: Trống trước khi xuất dữ liệu
+            // === Dòng 6: Tr?ng tru?c khi xu?t d? li?u
             worksheet.addRow([]);
 
-            // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+            // === Export d? li?u t? DevExtreme (b?t d?u t? dòng 7)
             DevExpress.excelExporter.exportDataGrid({
                 component: grid,
                 worksheet: worksheet,
                 autoFilterEnabled: true,
-                topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+                topLeftCell: { row: 7, column: 1 } // d? li?u b?t d?u t? dòng 7
             }).then(function () {
                 // Footer
                 const lastRow = worksheet.lastRow.number + 2;
@@ -478,9 +478,9 @@
 
 
 
-        // Nút xuất PDF
+        // Nút xu?t PDF
            $("#btnExportPdf").click(function () {
-            const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+            const { jsPDF } = window.jspdf; // ?? B? sung dòng này
 
             const doc = new jsPDF();
 

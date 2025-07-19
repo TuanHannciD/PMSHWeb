@@ -53,6 +53,16 @@ namespace HouseKeeping.Controllers
             ViewBag.RoomList = listroom;
             return View();
         }
+        public IActionResult HouseStatus()
+        {
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+            List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+            ViewBag.RoomTypeList = listrt;
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.businesDate = businessDateModel[0].BusinessDate;
+            return View();
+        }
         public IActionResult RoomPlan()
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
@@ -214,6 +224,209 @@ namespace HouseKeeping.Controllers
                                   ComputerName = !string.IsNullOrEmpty(d["ComputerName"].ToString()) ? d["ComputerName"].ToString() : "",
                                   ChangeDate = !string.IsNullOrEmpty(d["ChangeDate"].ToString()) ? d["ChangeDate"].ToString() : ""
                               }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult HouseStatusData( DateTime datebunisess,  string roomtype,string zone)
+        {
+            roomtype = string.IsNullOrEmpty(roomtype) ? "0" : roomtype;
+      
+  
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.SummaryTotalPhysicalRoom(roomtype, zone);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  TotalPhysicalRoom = !string.IsNullOrEmpty(d["TotalPhysicalRoom"].ToString()) ? d["TotalPhysicalRoom"].ToString() : "",                                
+                              }).ToList();
+
+                DataTable dataTable1 = _iHouseKeepingService.StatusSummaryOutOfOrder(datebunisess,roomtype, zone);
+
+                var result1 = (from d in dataTable1.AsEnumerable()
+                              select new
+                              {
+                                  OutOfOrder = !string.IsNullOrEmpty(d["OutOfOrder"].ToString()) ? d["OutOfOrder"].ToString() : "",
+                              }).ToList();
+
+                DataTable dataTable2 = _iHouseKeepingService.SummaryOutOfService(datebunisess, roomtype, zone);
+
+                var result2 = (from d in dataTable2.AsEnumerable()
+                               select new
+                               {
+                                   OutOfService = !string.IsNullOrEmpty(d["OutOfService"].ToString()) ? d["OutOfService"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable3 = _iHouseKeepingService.ActivityStayOver(datebunisess, roomtype, zone);
+
+                var result3 = (from d in dataTable3.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable4 = _iHouseKeepingService.ActivityDepartureExpected(datebunisess, roomtype, zone);
+
+                var result4 = (from d in dataTable4.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable5 = _iHouseKeepingService.ActivityDepartureActual(datebunisess, roomtype, zone);
+
+                var result5 = (from d in dataTable5.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable6 = _iHouseKeepingService.ActivityArrivalExpected(datebunisess, roomtype, zone);
+
+                var result6 = (from d in dataTable6.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable7 = _iHouseKeepingService.ActivityArrivalActual(datebunisess, roomtype, zone);
+
+                var result7 = (from d in dataTable7.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable8 = _iHouseKeepingService.ActivityExtendedStay(datebunisess, roomtype, zone);
+
+                var result8 = (from d in dataTable8.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable9 = _iHouseKeepingService.ActivityEarlyDeparture(datebunisess, roomtype, zone);
+
+                var result9 = (from d in dataTable9.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable10 = _iHouseKeepingService.ActivityDayUseRoom(datebunisess, roomtype, zone);
+
+                var result10 = (from d in dataTable10.AsEnumerable()
+                               select new
+                               {
+                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                               }).ToList();
+
+                DataTable dataTable11 = _iHouseKeepingService.StatusHKInspected( roomtype, zone);
+
+                var result11 = (from d in dataTable11.AsEnumerable()
+                                select new
+                                {
+                                    Vacant = !string.IsNullOrEmpty(d["Vacant"].ToString()) ? d["Vacant"].ToString() : "",
+                                    occ = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"].ToString() : "",
+                                }).ToList();
+
+
+                DataTable dataTable12 = _iHouseKeepingService.StatusHKClean(roomtype, zone);
+
+                var result12 = (from d in dataTable12.AsEnumerable()
+                                select new
+                                {
+                                    Vacant = !string.IsNullOrEmpty(d["Vacant"].ToString()) ? d["Vacant"].ToString() : "",
+                                    occ = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable13 = _iHouseKeepingService.StatusHKDirty(roomtype, zone);
+
+                var result13 = (from d in dataTable13.AsEnumerable()
+                                select new
+                                {
+                                    Vacant = !string.IsNullOrEmpty(d["Vacant"].ToString()) ? d["Vacant"].ToString() : "",
+                                    occ = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable14 = _iHouseKeepingService.StatusHKOutOfOrder(roomtype, zone);
+
+                var result14 = (from d in dataTable14.AsEnumerable()
+                                select new
+                                {
+                                    Vacant = !string.IsNullOrEmpty(d["Vacant"].ToString()) ? d["Vacant"].ToString() : "",
+                                    occ = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable15 = _iHouseKeepingService.StatusHKOutOfService(roomtype, zone);
+
+                var result15 = (from d in dataTable15.AsEnumerable()
+                                select new
+                                {
+                                    Vacant = !string.IsNullOrEmpty(d["Vacant"].ToString()) ? d["Vacant"].ToString() : "",
+                                    occ = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable16 = _iHouseKeepingService.StatusEndOfDayGroupAndBlock( datebunisess, roomtype, zone);
+
+                var result16 = (from d in dataTable16.AsEnumerable()
+                                select new
+                                {
+                                    TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                    TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable17 = _iHouseKeepingService.StatusEndOfDayIndividual(datebunisess, roomtype, zone);
+
+                var result17 = (from d in dataTable17.AsEnumerable()
+                                select new
+                                {
+                                    TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                    TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable18 = _iHouseKeepingService.StatusEndOfDayCHU(datebunisess, roomtype, zone);
+
+                var result18 = (from d in dataTable18.AsEnumerable()
+                                select new
+                                {
+                                    TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                    TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable19 = _iHouseKeepingService.StatusEndOfDayMaxOccTonight(datebunisess, roomtype, zone);
+
+                var result19 = (from d in dataTable19.AsEnumerable()
+                                select new
+                                {
+                                    TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                    TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                                }).ToList();
+
+                DataTable dataTable20 = _iHouseKeepingService.StatusEndOfDayRoomRevenue(datebunisess, roomtype, zone);
+
+                var result20 = (from d in dataTable20.AsEnumerable()
+                                select new
+                                {
+                                    Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"].ToString() : "",
+                                   
+                                }).ToList();
 
                 return Json(result);
             }

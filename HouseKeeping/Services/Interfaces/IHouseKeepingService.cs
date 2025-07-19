@@ -14,5 +14,26 @@ namespace HouseKeeping.Services.Interfaces
         DataTable RoomStatusData(int cleannon_room, int clean, int dirty, int pickup, int oocheck, int oscheck, int vacant, int occupied, int arrivals, int arrived, int stayover, int dayuse, int dueout, int departed, int notReserved, int departuredarr, string roomType, string zone, string roomFrom, string roomTo);
         DataTable CheckLogStatus(string RoomNo, DateTime fromDate, DateTime toDate, string username);
         DataTable RoomPlanData(DateTime fromDate, DateTime toDate, int orderbyroom, string owner);
+        DataTable SummaryTotalPhysicalRoom(string roomtype, string zone);
+        DataTable StatusSummaryOutOfOrder(DateTime datebunisess, string roomtype, string zone);
+        DataTable SummaryOutOfService(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityStayOver(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityDepartureExpected(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityDepartureActual(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityArrivalExpected(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityArrivalActual(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityExtendedStay(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityEarlyDeparture(DateTime datebunisess, string roomtype, string zone);
+        DataTable ActivityDayUseRoom(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusHKInspected(string roomtype, string zone);
+        DataTable StatusHKClean(string roomtype, string zone);
+        DataTable StatusHKDirty(string roomtype, string zone);
+        DataTable StatusHKOutOfOrder(string roomtype, string zone);
+        DataTable StatusHKOutOfService(string roomtype, string zone);
+        DataTable StatusEndOfDayGroupAndBlock(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayIndividual(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayCHU(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayMaxOccTonight(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayRoomRevenue(DateTime datebunisess, string roomtype, string zone);
     }
 }
