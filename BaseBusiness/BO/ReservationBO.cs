@@ -47,5 +47,11 @@ namespace BaseBusiness.BO
             string query = $"select * from Profile where Type = 0 order by id desc ";
             return instance.GetList<ProfileModel>(query);
         }
+
+        public static List<ReservationModel> GetReservationByConfirmationNo(string confirmationNo)
+        {
+            string query = $"select * from Reservation where ConfirmationNo = '{confirmationNo}'";
+            return instance.GetList<ReservationModel>(query);
+        }
     }
 }

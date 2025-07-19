@@ -53,11 +53,12 @@ namespace User.Controllers
                               select new
                               {
                                   Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+
                               }).ToList();
 
 
                 if (result.ID != 0) {
-                    return Json(new { code = 0, msg = "Successfully", data = resultname ,namelogin= loginName });
+                    return Json(new { code = 0, msg = "Successfully", data = resultname ,namelogin= loginName,userID = UserID });
                 }
                 else
                 {
