@@ -50,3 +50,15 @@
     background-color: #2B4F2B;
     color: white;
 }
+.button-report-view {
+    background-color: #3b9ac6;
+    color: white;
+}
+.button-report-excel {
+    background-color: green;
+    color: white;
+}
+.button-report-pdf {
+    background-color: darkorange;
+    color: white;
+}
