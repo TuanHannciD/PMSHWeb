@@ -1,43 +1,20 @@
-﻿﻿
+﻿﻿﻿
 <link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <style>
-.ts-wrapper {
-    margin: 0 !important; /* Bỏ margin của container */
-    min-height: 25px; /* Đặt chiều cao tối thiểu */
-}
 
-.ts-control {
-    height: 25px !important; /* Giảm chiều cao của input */
-    line-height: 25px; /* Căn giữa nội dung */
-    padding: 0 10px; /* Điều chỉnh padding */
-    margin: 0 !important; /* Bỏ margin */
-}
-
-.ts-dropdown {
-    margin: 0 !important; /* Bỏ margin của dropdown */
-    font-size: 14px; /* Giảm kích thước chữ nếu cần */
-}
-
-.ts-dropdown .option {
-    padding: 5px 10px; /* Giảm padding của các mục trong dropdown */
-    margin: 0 !important; /* Bỏ margin */
-}
 </style>
 <div class="body">
-    @*     <div id="loading" class="loading">
-        <div class="spinner"></div>
-        <p id="loading-text">Loading data ... <span id="progress">0%</span></p>
-    </div> *@
+
     <div class="container2">
         <div>
-            <div class="text-center" style="font-size: 20px;">Reservation</div>            
+            <div class="text-center" style="font-size: 20px;">Reservation</div>
             <div class="button-group mb-1">
                 <div>
                     <button class="mui-button mui-button-new" onclick="SaveReservation();"><i class="fa-solid fa-floppy-disk"></i></i> Save</button>
                     <button class="mui-button mui-button-clear" onclick="resetForm()"><i class="fas fa-eraser"></i> Clear</button>
                     <button class="mui-button mui-button-close" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
                 </div>
-                
+
                 <div><a href="/Reservation/SearchReservation" style="text-decoration:none">Search reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
         </div>
@@ -45,10 +22,10 @@
             <div class="section">
                 <div class="row">
                     <div class="row col-md-7">
-                        <input class="col-md-8" id="txtID" style="display:none"/>
+                        <input class="col-md-8" id="txtID" style="display:none" />
                         <label class="col-md-2">Name</label>
-                        <select class="col-md-8" id="txtName" ></select>
-@*                         <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
+                        <select class="col-md-8" id="txtName"></select>
+                        @*                         <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
  *@                    </div>
                     <div class="row col-md-5">
                         <label class="col-md-6">First name</label>
@@ -198,27 +175,34 @@
                 <div class="row">
                     <div class="col-md-4 row">
                         <label class="col-md-3">Nights</label>
-                        <input type="text" id="nights" class="col-md-9" readonly>
+                        <input type="text" id="nights" class="col-md-9" readonly style="text-align:right">
                     </div>
                     <div class="col-md-8 row">
                         <label class="col-md-6">No. of Room</label>
-                        <input class="col-md-2" type="number" id="numRooms" value="1" min="1">
+                        <input class="col-md-2" type="number" id="numRooms" value="1" min="1" style="text-align:right">
                         <button class="col-md-1" onclick="decreaseRooms()">-</button>
                         <button class="col-md-1" onclick="increaseRooms()">+</button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="row col-md-4">
-                        <label class="col-md-2">Adults</label>
-                        <input type="number" value="2" class=" col-md-10" id="adults">
+                        <label class="col-md-1">Adults</label>
+                        <input type="number" value="2" class=" col-md-11" id="adults" style="text-align:right">
                     </div>
-                    <div class="row col-md-8">
-                        <label class="col-md-1">C</label>
-                        <input type="number" value="0" class=" col-md-2" id="c">
-                        <label class="col-md-1">C1</label>
-                        <input type="number" value="0" class=" col-md-2" id="c1">
-                        <label class="col-md-1">C2</label>
-                        <input type="number" value="0" class="col-md-2" id="c2">
+                    <div class="row col-md-8" style="justify-content:flex-end">
+                        <div class="col-md-4 row">
+                            <label class="col-md-3" style="min-width:0">C</label>
+                            <input type="number" value="0" class=" col-md-9" id="c" style="text-align:right">
+                         </div>
+                         <div class="row col-md-4">
+                            <label class="col-md-3" style="min-width:0">C1</label>
+                            <input type="number" value="0" class=" col-md-9" id="c1" style="text-align:right">
+                         </div>
+                         <div class="row col-md-4">
+                            <label class="col-md-3" style="min-width:0">C2</label>
+                            <input type="number" value="0" class="col-md-9" id="c2" style="text-align:right">
+                         </div>
+
                     </div>
                 </div>
                 <div class="row">
@@ -238,7 +222,7 @@
                 <div class="row">
                     <div class="row col-md-6">
                         <label class="col-md-3">Room</label>
-                        <input class="col-md-10" id="roomSelect" readonly/>
+                        <input class="col-md-10" id="roomSelect" readonly />
                         <button class="col-md-1" onclick="openModalSearchRoom()" id="btnRoom"><i class="fa-solid fa-ellipsis"></i></button>
 
 
@@ -252,7 +236,7 @@
                 <div class="row">
                     <div class="row col-md-7">
                         <label class="col-md-3">Rate Code</label>
-                        <input class="col-md-4" id="txtRateCode" style="text-align:right" readonly/>
+                        <input class="col-md-4" id="txtRateCode" style="text-align:right" readonly />
                         <input class="col-md-4" id="txtRateCodeID" style="display:none" readonly />
 
                         <button class="col-md-1" onclick="openModalRateCode()"><i class="fa-solid fa-ellipsis"></i></button>
@@ -262,14 +246,14 @@
                 <div class="row">
                     <div class="row col-md-6">
                         <label class="col-md-2">Rate</label>
-                        <input class="col-md-3" value="0.00" id="txtRateAmount">
+                        <input class="col-md-3" value="0" id="txtRateAmount" style="text-align:right">
                     </div>
                     <div class="row col-md-6">
                         <label class="col-md-2">net</label>
-                        <input class="col-md-3" value="0.00" id="txtNetAmount">
+                        <input class="col-md-3" value="0" id="txtNetAmount" style="text-align:right">
                     </div>
                 </div>
- @*                <div class="row me-1">
+                @*                <div class="row me-1">
                     <label class="col-md-3">Currency</label>
                     <select class="col-md-9" asp-items="ViewBag.cboCurrency">
                     </select>
@@ -282,8 +266,8 @@
                     </div>
                     <div class="row col-md-6">
                         <label class="col-md-3">Allotment</label>
-                        <input class="col-md-8" id="txtAllotment" readonly/>
-                        <input class="col-md-8" id="txtAllotmentID" readonly style="display:none"/>
+                        <input class="col-md-8" id="txtAllotment" readonly />
+                        <input class="col-md-8" id="txtAllotmentID" readonly style="display:none" />
 
                         <button class="col-md-1" onclick="openModalSearchAllotment()"><i class="fa-solid fa-ellipsis"></i></button>
                     </div>
@@ -291,11 +275,11 @@
                 <div class="row">
                     <div class="row col-md-6">
                         <label class="col-md-3">Disc. Amt</label>
-                        <input type="text" value="0.00" class="col-md-3" id="txtDiscountAmount">
+                        <input type="text" value="0" class="col-md-3" id="txtDiscountAmount" style="text-align:right">
                     </div>
                     <div class="row col-md-6">
                         <label class="col-md-1">%</label>
-                        <input type="text" value="0.00" class="col-md-5" id="txtDiscountPercent">
+                        <input type="text" value="0" class="col-md-5" id="txtDiscountPercent" style="text-align:right">
                     </div>
                 </div>
 
@@ -312,7 +296,7 @@
                     <div class="row col-md-6">
                         <label class="col-md-3">Market</label>
                         <input class="col-md-8" id="txtMarket" />
-                        <input class="col-md-8" id="txtMarketID" style="display:none"/>
+                        <input class="col-md-8" id="txtMarketID" style="display:none" />
                         <button class="col-md-1" onclick="openModalSearchMarket()"><i class="fa-solid fa-ellipsis"></i></button>
 
                     </div>
@@ -343,19 +327,19 @@
 
                 <div class="row col-md-8">
                     <label class="col-md-2">Booker</label>
-                    <input class="col-md-8" id="txtBooker"/>
-                    <input class="col-md-8" id="txtBookerID" style="display:none"/>
+                    <input class="col-md-8" id="txtBooker" />
+                    <input class="col-md-8" id="txtBookerID" style="display:none" />
                     <button class="col-md-1" onclick="openModalSearchBooker()"><i class="fa-solid fa-ellipsis"></i></button>
 
                 </div>
                 <div class="row">
-                    <div class="row col-md-6">
+                    <div class="row col-md-4">
                         <label class="col-md-3">ETA</label>
-                        <input class="col-md-3" type="time" value="06:00" id="txtETA">
+                        <input class="col-md-3" type="time" value="06:00" id="txtETA style="text-align:right">
                     </div>
-                    <div class="row col-md-6">
+                    <div class="row col-md-4">
                         <label class="col-md-2">ETD</label>
-                        <input class="col-md-4" type="time" value="12:00" id="txtETD">
+                        <input class="col-md-4" type="time" value="12:00" id="txtETD" style="text-align:right">
                     </div>
                 </div>
 
@@ -364,12 +348,12 @@
                     <div class="row col-md-8">
                         <label class="col-md-3">Rate</label>
                         <div class="col-md-9 row">
-                            <input type="text" value="0" class="highlighted col-md-5" id="txtRateAfterDiscount" readonly>
+                            <input type="text" value="0" class="highlighted col-md-5" id="txtRateAfterDiscount" readonly style="text-align:right">
                             <span class="col-md-2" style="font-size:12px">+ net</span>
-                            <input type="text" style="font-size:12px" value="0" class="highlighted col-md-5" id="txtNetAfterDiscount" readonly>
+                            <input type="text" style="font-size:12px;text-align:right" value="0" class="highlighted col-md-5" id="txtNetAfterDiscount" readonly>
                         </div>
                     </div>
- 
+
                     <div class="col-md-4 row">
                         <span style="font-size:12px;color:red">
                             Rate amount after discount
@@ -380,13 +364,13 @@
                     <div class="row col-md-8">
                         <label class="col-md-3">Total</label>
                         <div class="col-md-9 row">
-                            <input type="number" value="0" class="highlighted col-md-5" readonly>
+                            <input type="number" value="0" class="highlighted col-md-5" readonly style="text-align:right">
                             <span class="col-md-2" style="font-size:12px">+ net</span>
-                            <input type="number" style="font-size:12px" value="0" class="highlighted col-md-5" readonly>
+                            <input type="number" style="font-size:12px;text-align:right" value="0" class="highlighted col-md-5" readonly>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row col-md-8">
                     <label class="col-md-2">Reason</label>
                     <select class="col-md-9" id="txtReason" asp-items="ViewBag.cboReason">
@@ -412,7 +396,7 @@
                 <div class="row">
                     <div class="row col-md-6">
                         <label class="col-md-3">Item .Inv</label>
-                        <select class="col-md-9" id="txtItemInventory" asp-items="ViewBag.cboItem" disabled>
+                        <select class="col-md-7" id="txtItemInventory" asp-items="ViewBag.cboItem" disabled multiple>
                         </select>
                     </div>
                     <div class="row col-md-6">
@@ -423,15 +407,15 @@
                 <div class="row">
                     <div class="row col-md-5">
                         <label class="col-md-3">Folio Bal</label>
-                        <input class="col-md-4" type="number" value="0.00">
+                        <input class="col-md-4" type="number" value="0" style="text-align:right">
                     </div>
                     <div class="row col-md-5">
-                        <label class="col-md-1" style="font-size:12px;color:red;">$</label>
-                        <input class="col-md-3" type="number" value="0.00">
+                        <label class="col-md-1" style="font-size:12px;color:red">$</label>
+                        <input class="col-md-3" type="number" value="0">
                     </div>
                     <div class="row col-md-2">
 
-                        <label class="col-md-1" style="font-size:12px;color:red;">VND</label>
+                        <label class="col-md-1" style="font-size:12px;color:red;text-align:right">VND</label>
                     </div>
                 </div>
 
@@ -465,16 +449,7 @@
     </div>
 </div>
 
-<!-- Toast Container -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="nameToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <strong class="me-auto" id="toastTitle">Notification</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body" id="toastMessage"></div>
-    </div>
-</div>
+
 <!-- Modal search profile-->
 <div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -519,7 +494,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <label >Sale in charge</label>
+                        <label>Sale in charge</label>
                         <div>
                             <input type="checkbox" id="sale" name="myCheckbox">
                         </div>
@@ -600,7 +575,7 @@
                     <div class="form-group" style="display:flex">
                         <label>HK Status</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="1">
+                            <input class="form-check-input" type="checkbox" name="hkStatus" value="1">
                             <label class="form-check-label" for="hkClean">Clean Non-checked Rooms</label>
                         </div>
                         <div class="form-check">
@@ -608,15 +583,15 @@
                             <label class="form-check-label" for="hkDirty">Dirty Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="4">
+                            <input class="form-check-input" type="checkbox" name="hkStatus" value="4">
                             <label class="form-check-label" for="hkInProgress">Clean Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="5">
+                            <input class="form-check-input" type="checkbox" name="hkStatus" value="5">
                             <label class="form-check-label" for="hkOutOfService">OOC Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus"  value="6">
+                            <input class="form-check-input" type="checkbox" name="hkStatus" value="6">
                             <label class="form-check-label" for="hkInspected">OOS Rooms</label>
                         </div>
                         <div class="form-check">
@@ -651,12 +626,12 @@
             <div class="modal-body">
                 <div class="mb-2">
                     <button class="mui-button mui-button-new" onclick="getAllotment();"><i class="fas fa-search"></i> Search</button>
-               </div>
+                </div>
                 <div class="row mui-card mb-2">
                     <div class="row">
                         <div class="col-md-2 mb-2">
                             <label for="input1" class="form-label">Code</label>
-                            <input type="text" class="form-control" id="codeAllotmentSearch"/>
+                            <input type="text" class="form-control" id="codeAllotmentSearch" />
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input2" class="form-label">Market</label>
@@ -672,16 +647,17 @@
                             <select type="text" class="form-control" id="profileAllotmentSearch" asp-items="ViewBag.cboProfile">
                             </select>
                         </div>
-                        <div class="col-md-2 mb-2" >
+                        <div class="col-md-2 mb-2">
                             <label class="form-check-label" for="default">Default</label>
-                            <div><input class="form-check-input" type="checkbox" name="default" value="1">
-                            </<div>
+                            <div>
+                                <input class="form-check-input" type="checkbox" name="default" value="1">
+                                </<div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-        </div>
+                </div>
                 <div class="row">
                     <div class="mui-card col-md-5">
                         <div id="gridContainerSearchAllotment" class="mt-2 gridContainer"></div>
@@ -719,14 +695,14 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Search Preference</h5>
-                    <button type="button" class="btn-close" onclick="closeModalSearchPreference()"></button>
+                <button type="button" class="btn-close" onclick="closeModalSearchPreference()"></button>
             </div>
             <div class="modal-body">
                 <div class="row mui-card mb-2">
                     <div class="row">
                         <div class="col-md-2 mb-2">
                             <label for="input1" class="form-label">Code</label>
-                            <input type="text" class="form-control" id="codePreferenceSearch" oninput="getDataPreference();"/>
+                            <input type="text" class="form-control" id="codePreferenceSearch" oninput="getDataPreference();" />
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input2" class="form-label">Group Preference</label>
@@ -757,21 +733,21 @@
             <div class="modal-body">
                 <div class="row mui-card mb-2">
                     <div class="col-md-2 mb-2">
-                        <label  class="form-label">Full Name</label>
+                        <label class="form-label">Full Name</label>
                         <input type="text" class="form-control" id="nameBookerSearch" placeholder="Enter name" oninput="filterBookerModal()">
                     </div>
                     <div class="col-md-2 mb-2">
-                        <label  class="form-label">First Name</label>
+                        <label class="form-label">First Name</label>
                         <input type="text" class="form-control" id="firstNameBookerSearch" placeholder="Enter first name" oninput="filterBookerModal()">
                     </div>
                     <div class="col-md-2 mb-2">
-                        <label  class="form-label">View By</label>
+                        <label class="form-label">View By</label>
                         <select type="text" class="form-control" id="viewByBookerSearch" disabled style="line-height:1.28">
                             <option selected value="5">Contact</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <label  class="form-label">City</label>
+                        <label class="form-label">City</label>
                         <select type="text" class="form-control" id="cityBookerSearch" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
                     </div>
                     <div class="col-md-2 mb-2">
@@ -779,11 +755,11 @@
                         <input type="text" class="form-control" id="keywordBookerSearch" placeholder="Enter value" oninput="filterBookerModal()">
                     </div>
                     <div class="col-md-2 mb-2">
-                        <label  class="form-label">Code</label>
+                        <label class="form-label">Code</label>
                         <input type="text" class="form-control" id="codeBookerSearch" placeholder="Enter value" oninput="filterBookerModal()">
                     </div>
                     <div class="col-md-2 mb-2">
-                        <label  class="form-label">Property</label>
+                        <label class="form-label">Property</label>
                         <select type="text" class="form-control" id="propertyBookerSearch" disabled style="line-height:1.28">
                             <option selected>PMSh TheArena</option>
                         </select>
@@ -842,28 +818,28 @@
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Station Code</label>
-                            <input class="col-md-9" id="pickUpStationCode"/>
+                            <input class="col-md-9" id="pickUpStationCode" />
 
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Carrier Code</label>
-                            <input class="col-md-9" id="pickUpCarrierCode"/>
+                            <input class="col-md-9" id="pickUpCarrierCode" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Transport No.</label>
-                            <input class="col-md-9" id="pickUpTransportNo"/>
+                            <input class="col-md-9" id="pickUpTransportNo" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Arrival Date</label>
-                            <input class="col-md-9" type="date" id="pickUpDate"/>
+                            <input class="col-md-3" type="date" id="pickUpDate" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Pickup Time</label>
-                            <input class="col-md-9"  id="pickUpTime"/>
+                            <input class="col-md-9" id="pickUpTime" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Description</label>
-                            <input class="col-md-9" id="pickUpDescription"/>
+                            <input class="col-md-9" id="pickUpDescription" />
                         </div>
                     </div>
                     <div class="col-md-6 mui-card">
@@ -885,28 +861,28 @@
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Station Code</label>
-                            <input class="col-md-9" id="dropOffStationCode"/>
+                            <input class="col-md-9" id="dropOffStationCode" />
 
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Carrier Code</label>
-                            <input class="col-md-9" id="dropOffCarrierCode"/>
+                            <input class="col-md-9" id="dropOffCarrierCode" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Transport No.</label>
-                            <input class="col-md-9" id="dropOffTransportNo"/>
+                            <input class="col-md-9" id="dropOffTransportNo" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">Departure Date</label>
-                            <input class="col-md-9" type="date" id="dropOffDate"/>
+                            <input class="col-md-3" type="date" id="dropOffDate" />
                         </div>
                         <div class="row me-1">
                             <label class="col-md-3">DropOff Time</label>
-                            <input class="col-md-9" id="dropOffTime"/>
-                        </div>  
+                            <input class="col-md-9" id="dropOffTime" />
+                        </div>
                         <div class="row me-1">
                             <label class="col-md-3">Description</label>
-                            <input class="col-md-9" id="dropOffDescription"/>
+                            <input class="col-md-9" id="dropOffDescription" />
                         </div>
                     </div>
                 </div>
@@ -1007,11 +983,11 @@
                                 <div style="display:flex">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="currency" checked value="VND">
-                                        <label class="form-check-label" >VND</label>
+                                        <label class="form-check-label">VND</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="currency" value="USD">
-                                        <label class="form-check-label" >USD</label>
+                                        <label class="form-check-label">USD</label>
                                     </div>
                                 </div>
                             </div>
@@ -1022,11 +998,11 @@
                                 <div style="display:flex">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="display" checked value="0">
-                                        <label class="form-check-label" >+++</label>
+                                        <label class="form-check-label">+++</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="display" value="1">
-                                        <label class="form-check-label" >net</label>
+                                        <label class="form-check-label">net</label>
                                     </div>
                                 </div>
                             </div>
@@ -1223,7 +1199,6 @@
     // Khởi tạo ngày mặc định
     window.onload = function() {
         var businessDate = '@ViewBag.businesDate';
-        console.log(businessDate);
         var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
         var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
 
@@ -1303,7 +1278,7 @@
     function increaseRooms() {
         let value = parseInt(numRoomsInput.value);
         numRoomsInput.value = value + 1;
-        
+
         updateRoomSelect();
     }
 
@@ -1390,28 +1365,28 @@
             }
         });
     }
-      
+
     function filterProfileModal() {
         const codeSearchTerm = $('#codeProfileSearch').val().toLowerCase();
         const firstNameSearchTerm = $('#firstNameProfileSearch').val().toLowerCase();
         const accountSearchTerm = $('#nameProfileSearch').val().toLowerCase();
         const citySearchTerm = $('#cityProfileSearch').val();
         const keywordkSearchTerm = $('#keywordProfileSearch').val();
-        const filteredProfiles = listProfiles.filter(profile => 
+        const filteredProfiles = listProfiles.filter(profile =>
             profile.code.toLowerCase().includes(codeSearchTerm) &&
             profile.account.toLowerCase().includes(firstNameSearchTerm) &&
-            profile.city == citySearchTerm && 
+            profile.city == citySearchTerm &&
             profile.keyword.toLowerCase().includes(keywordkSearchTerm) &&
             profile.account.toLowerCase().includes(accountSearchTerm)
         );
         initializeDataGridSearchProfile(filteredProfiles);
     }
     function initializeDataGridSearchProfile(data) {
-        var columnWidth = 150; 
+        var columnWidth = 150;
 
         $("#gridContainerSearchProfile").dxDataGrid({
 
-        dataSource: data, allowColumnResizing: true, 
+        dataSource: data, allowColumnResizing: true,
             columns: [
 
 
@@ -1432,7 +1407,7 @@
                 { dataField: "postalCode", caption: "Postal Code", width: columnWidth },
                 { dataField: "keyword", caption: "Keyword", width: columnWidth },
                 { dataField: "description", caption: "Description", width: columnWidth },
-                { dataField: "personInChargeID", caption: "Sale In Charge", width: columnWidth },    
+                { dataField: "personInChargeID", caption: "Sale In Charge", width: columnWidth },
             ],
             paging: { pageSize: 15 },
             scrolling: {
@@ -1446,14 +1421,14 @@
                 showNavigationButtons: true,
             },
             filterRow: {
-                 visible: true,
-                 applyFilter: "auto"
+                    visible: true,
+                    applyFilter: "auto"
             },
             selection: {
                 mode: "single" // Allows only one row to be selected at a time
             },
             onRowDblClick: function(e) {
-                
+
                 getInfoByProfileID(e.data.id);
                 $('#modalProfile').modal('hide');
             }
@@ -1463,13 +1438,7 @@
         const parts = name.trim().split(/,\s*/);
         return parts[1] || '';
     }
-    function showToast(title, message, isSuccess) {
-        const toast = new bootstrap.Toast($('#nameToast')[0]);
-        $('#toastTitle').text(title);
-        $('#toastMessage').text(message);
-        $('#nameToast').removeClass('bg-success bg-danger text-white').addClass(isSuccess ? 'bg-success text-white' : 'bg-danger text-white');
-        toast.show();
-    }
+    
     function validateName(name) {
         // Regex for "FirstName MiddleName, LastName" or "FirstName MiddleName,LastName"
         const namePattern = /^[A-Z][a-z]*\s[A-Z][a-z]*,\s*[A-Z][a-z]*$/;
@@ -1482,12 +1451,10 @@
                 const lastName = extractLastName(name);
                 $('#txtFirstName').val(lastName);
                 $('#nameProfileSearch').val(name);
-                $('#txtItemInventory').prop('disabled', false); // Enable the select element
             } else {
                 showToast('Error', 'Invalid name format! Use FirstName MiddleName LastName or FirstName MiddleName,LastName', false);
                 $('#txtName').val('');
                 $('#txtFirstName').val('');
-                $('#txtItemInventory').prop('disabled', true); // Keep the select element disabled
             }
         } else {
             $('#txtItemInventory').prop('disabled', true); // Keep disabled if name is empty
@@ -1526,7 +1493,7 @@
                 $('#txtMemberType').val(result.memberType);
                 $('#txtPrefRoom').val(result.prefRoom);
 
-                    
+
 ;            },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -2207,7 +2174,7 @@
                             alignment: "left",
                             format: null
                         });
-                    } 
+                    }
                     else {
                         // Căn phải và định dạng số với dấu phẩy, không thập phân
                         e.component.columnOption(column.dataField, {
@@ -2237,7 +2204,7 @@
                             return $(this).text().trim() === columnName;
                         });
                         if (matchingOption.length > 0) {
-                            $('#txtRoomType').val(matchingOption.val()); 
+                            $('#txtRoomType').val(matchingOption.val());
                         } else {
                             console.warn("No option found with text: ", columnName);
                         }
@@ -2288,7 +2255,7 @@
             },
             success: function (result) {
                 var value = parseFloat(result.priceAfter);
-                 valueFloat =  Math.round(value).toLocaleString('en-US', {
+                    valueFloat =  Math.round(value).toLocaleString('en-US', {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
                             });
@@ -2416,6 +2383,8 @@
         $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
     });
     function SaveReservation() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
         var formData = new FormData();
         let valueDiscountPercent = $('#txtDiscountPercent').val();
         let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
@@ -2492,13 +2461,18 @@
         formData.append('rateAmount', $("#txtRateAmount").val());
         formData.append('rateAfter', $("#txtNetAmount").val());
         formData.append('color', $("#txtColor").val());
-        formData.append('itemInventory', $("#txtItemInventory").val());
+        const selectedValues = $("#txtItemInventory").val(); 
+        selectedValues.forEach(value => {
+            formData.append('itemInventory', value); 
+        });
         formData.append('specials', $("#txtPreference").val());
         formData.append('allotmentID', $("#txtAllotmentID").val());
         formData.append('allotmentCode', $("#txtAllotment").val());
         formData.append('perrsonInCharge', $("#txtPersonInCharge").val());
         formData.append('roomNight', $("#nights").val());
-        
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+
         $.ajax({
             url: '/Reservation/SaveReservation',
             type: 'POST',
@@ -2537,14 +2511,14 @@
             $("#txtCardNo").val('');
             $("#txtAddress").val('');
             $("#txtCity").val('');
-             $("#txtNationality").val('');
+                $("#txtNationality").val('');
             $("#arrival").val('');
-             $("#departure").val('');
-             $("#adults").val('');
+                $("#departure").val('');
+                $("#adults").val('');
             $("#c").val('');
             $("#c1").val('');
             $("#c2").val('');
-           $("#nights").val('');
+            $("#nights").val('');
             $("#numRooms").val('');
             $("#txtRoomType").val('');
             $("#txtVIP").val('');
@@ -2607,7 +2581,7 @@
 
     async function setTomSelect(){
         const ids = [
-            "#txtName"
+            "#txtName","#txtItemInventory"
             //,
             //"#txtStateGroup",
             // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
@@ -2664,6 +2638,25 @@
         });
     }
     $('#txtName').on('change', function() {
-        getInfoByProfileID($(this).val());
+        var value = $(this).val();
+        getInfoByProfileID(value);
+
+        // Lấy instance của TomSelect cho #txtItemInventory
+        var tomSelectInstance = $('#txtItemInventory')[0].tomselect; // Lấy đối tượng TomSelect
+
+        if (value && value !== '0') {
+            if (tomSelectInstance) {
+                tomSelectInstance.enable(); // Sử dụng API của TomSelect để enable
+            } else {
+                // Fallback: Thử enable bằng jQuery nếu không tìm thấy TomSelect
+                $('#txtItemInventory').prop('disabled', false);
+            }
+        } else {
+            if (tomSelectInstance) {
+                tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable
+            } else {
+                $('#txtItemInventory').prop('disabled', true);
+            }
+        }
     });
 </script>
