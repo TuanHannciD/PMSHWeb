@@ -1,0 +1,230 @@
+﻿@using DevExpress.XtraReports.UI
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var zoneList = ViewBag.ZoneList;
+}
+
+
+<style>
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .box {
+      border: 1px solid #ccc;
+      padding: 15px;
+      flex: 1 1 30%;
+      min-width: 350px;
+    }
+
+    h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .row label {
+      flex: 1;
+      white-space: nowrap;
+    }
+
+    .row input {
+      width: 60px;
+      padding: 2px 5px;
+      text-align: right;
+    }
+
+    .row input.big {
+      width: 100px;
+    }
+
+    .highlight-green {
+      background-color: #00ffcc;
+    }
+
+    .highlight-pink {
+      background-color: #ff0099;
+      color: #fff;
+    }
+
+    .highlight-red {
+      background-color: #ff0000;
+      color: #fff;
+    }
+
+    .highlight-grey {
+      background-color: #666;
+      color: #fff;
+    }
+
+    .highlight-lightgrey {
+      background-color: #ccc;
+    }
+
+    .search-row {
+      margin-top: 10px;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .box {
+        border: 1px solid #ccc;
+        padding: 15px;
+        flex: 1 1 30%;
+        min-width: 350px;
+    }
+
+    h3 {
+        margin-top: 0;
+        font-size: 16px;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+        .row label {
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        .row input {
+            width: 60px;
+            padding: 2px 5px;
+            text-align: right;
+        }
+
+            .row input.big {
+                width: 100px;
+            }
+
+    .highlight-green {
+        background-color: #00ffcc;
+    }
+
+    .highlight-pink {
+        background-color: #ff0099;
+        color: #fff;
+    }
+
+    .highlight-red {
+        background-color: #ff0000;
+        color: #fff;
+    }
+
+    .highlight-grey {
+        background-color: #666;
+        color: #fff;
+    }
+
+    .highlight-lightgrey {
+        background-color: #ccc;
+    }
+
+    .search-row {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+<div class="container">
+    <!-- Room Summary -->
+    <div class="box">
+        <h3>Room Summary</h3>
+        <div class="row"><label>Total Physical Room</label><input value="1018"></div>
+        <div class="row"><label>Out of Order</label><input class="highlight-pink" value="0"></div>
+        <div class="row"><label>Total Room to Sell</label><input value="1018"></div>
+        <div class="row"><label>Out of Service</label><input class="highlight-grey" value="0"></div>
+    </div>
+
+    <!-- End of Day Projection -->
+    <div class="box">
+        <h3>End of Day Projection</h3>
+        <div class="row"><label>Occupancy</label><input value="11"><input value="24"><input value="0"></div>
+        <div class="row"><label>% Occupancy</label><input value="1.08"></div>
+        <div class="row"><label>Min Available Tonight</label><input value="1006"></div>
+        <div class="row"><label>Max Occ Tonight</label><input value="12"><input value="26"><input value="0"></div>
+        <div class="row"><label>Max % Occ Tonight</label><input value="1.18"></div>
+        <div class="row"><label>Individuals</label><input value="7"><input value="16"><input value="0"></div>
+        <div class="row"><label>Groups</label><input value="0"><input value="0"><input value="0"></div>
+        <div class="row"><label>Comp and HU</label><input value="4"><input value="8"><input value="0"></div>
+        <div class="row"><label>Room Revenue</label><input class="big" value="10,405,644"> AVG: <input class="big" value="867,137"></div>
+    </div>
+
+    <!-- Activity -->
+    <div class="box">
+        <h3>Activity</h3>
+        <div class="row"><label>Stayovers</label><input value="11"><input value="24"><input value="0"></div>
+        <div class="row"><label>Departures Expected</label><input><input><input></div>
+        <div class="row"><label>Departures Actual</label><input><input><input></div>
+        <div class="row"><label>Arrival Expected</label><input><input><input></div>
+        <div class="row"><label>Arrival Actual</label><input value="11"><input value="24"><input value="0"></div>
+        <div class="row"><label>Extended Stays</label><input><input><input></div>
+        <div class="row"><label>Early Departures</label><input><input><input></div>
+        <div class="row"><label>Day Use Rooms</label><input><input><input></div>
+        <div class="row"><label>Walk In</label><input><input><input></div>
+    </div>
+
+    <!-- Housekeeping -->
+    <div class="box">
+        <h3>House keeping Room Status</h3>
+        <div class="row"><label>Clean</label><input class="highlight-green" value="350"><input value="7"><input value="357"></div>
+        <div class="row"><label>Clean Non-Checked</label><input class="highlight-lightgrey" value="165"><input value="3"><input value="168"></div>
+        <div class="row"><label>Dirty</label><input class="highlight-pink" value="14"><input class="highlight-red" value="1"><input value="15"></div>
+        <div class="row"><label>Due Out</label><input><input><input></div>
+        <div class="row"><label>Total</label><input value="529"><input value="11"><input value="540"></div>
+        <div class="row"><label>Out of Order</label><input class="highlight-pink" value="187"><input><input></div>
+        <div class="row"><label>Out of Service</label><input class="highlight-grey" value="0"><input><input></div>
+    </div>
+
+    <!-- Search -->
+    <div class="box">
+        <h3>Search</h3>
+        <div class="row"><label>Room Type</label><select><option>--All--</option></select></div>
+        <div class="row"><label>Date</label><input value="29/08/24"></div>
+        <div class="row"><label>Zone</label><input value="HT"></div>
+        <div class="search-row"><button>Search</button></div>
+        <div class="search-row">
+            <input type="radio" checked> Fast Print
+            <input type="radio"> Save File and Print
+        </div>
+        <div class="search-row"><button>Print</button> <button>Close</button></div>
+    </div>
+</div>
+
+<div class="mui-card">
+    <div id="gridContainer" class="mt-2"></div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+
+
+        $(document).ready(function () {
+             document.getElementById("reportTitle").innerText = 'Room Facility Forecast';
+
+
+
+        });
+
+      
+  
+</script>

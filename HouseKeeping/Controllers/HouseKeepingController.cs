@@ -53,6 +53,11 @@ namespace HouseKeeping.Controllers
             ViewBag.RoomList = listroom;
             return View();
         }
+        public IActionResult HouseStatus()
+        {
+            
+            return View();
+        }
         public IActionResult RoomPlan()
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());

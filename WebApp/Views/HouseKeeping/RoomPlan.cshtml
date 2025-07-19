@@ -410,49 +410,51 @@
                             <option value="2">Without-Balcony</option>
                         </select>
                     </div>
+
+                    <div class="d-flex flex-column ">
+
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Min Date :</label>
+                                <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Max Date :</label>
+                                <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column mt-2">
+
+
+                        <!-- Dòng chứa các checkbox -->
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <label class="fw-bold mb-2">Order By:</label>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
+                                <label class="form-check-label" for="cleannonup">Room No</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
+                                <label class="form-check-label" for="dirtyup">Room Type</label>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center ms-3">
+                        <label class="fw-bold mb-0 me-2">Zoom:</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
+                    </div>
                 </div>
             </div>
 
         </div>
-        <div class="d-flex flex-column ">
 
-            <div class="d-flex align-items-center">
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Min Date :</label>
-                    <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-                </div>
-
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Max Date :</label>
-                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-                </div>
-            </div>
-        </div>
-
-        <div class="d-flex flex-column mt-2">
-     
-
-            <!-- Dòng chứa các checkbox -->
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <label class="fw-bold mb-2">Order By:</label>
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
-                    <label class="form-check-label" for="cleannonup">Room No</label>
-                </div>
-
-                <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
-                    <label class="form-check-label" for="dirtyup">Room Type</label>
-                </div>
-
-               
-            </div>
-        </div>
-        <div class="d-flex align-items-center ms-3">
-            <label class="fw-bold mb-0 me-2">Zoom:</label>
-            <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
-        </div>
 
     </div>
     <div>
@@ -626,8 +628,7 @@
                 traditional: true,
                   crossDomain: false,
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-               success: function (data) {
-                  
+            success: function (data) {
         // Lấy filter từ các dropdown (multiple hoặc đơn)
         const selectedZones = $("#zone").val();              // array
         const selectedRooms = $("#room").val();              // array
@@ -635,15 +636,24 @@
         const selectedSmoking = $("#smoking").val();         // string ("1", "2", hoặc "")
         const selectedFloor = $("#floor").val();             // string
 
+        // Lấy các checkbox đang được tích
+        const checkedStatuses = [];
+        $("input[name='masterllioup']:checked").each(function () {
+            const labelText = $("label[for='" + $(this).attr("id") + "']").text().trim();
+            checkedStatuses.push(labelText);
+        });
+
+        // Lọc dữ liệu
         const filteredData = data.filter(item => {
             const matchZone = !selectedZones || selectedZones.length === 0 || selectedZones.includes(item.zoneCode);
             const matchRoom = !selectedRooms || selectedRooms.length === 0 || selectedRooms.includes(item.roomNumber);
             const matchRoomType = !selectedRoomTypes || selectedRoomTypes.length === 0 || selectedRoomTypes.includes(item.roomTypeCode);
-
             const matchSmoking = !selectedSmoking || selectedSmoking === "" || item.smoking === selectedSmoking;
             const matchFloor = !selectedFloor || selectedFloor === "" || item.floor === selectedFloor;
 
-            return matchZone && matchRoom && matchRoomType && matchSmoking && matchFloor;
+            const matchFoStatus = checkedStatuses.length === 0 || checkedStatuses.includes(item.foStatus);
+
+            return matchZone && matchRoom && matchRoomType && matchSmoking && matchFloor && matchFoStatus;
         });
 
         // Gọi các hàm khởi tạo với dữ liệu đã lọc
@@ -655,6 +665,7 @@
 
         $("#loadingSpinner").hide();
     }
+
     ,
 
 
