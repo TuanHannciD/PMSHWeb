@@ -1206,7 +1206,7 @@ namespace Reservation.Controllers
                 }
                 ReservationAccompanyModel model = new ReservationAccompanyModel();
                 model.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
-                model.ProfileIndProfileIndividualID = int.Parse(Request.Form["profileAgentID"].ToString());
+                model.ProfileIndividualID = int.Parse(Request.Form["profileAgentID"].ToString());
                 model.UserInsertID = model.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
                 model.UpdateDate = model.CreateDate = DateTime.Now;
                 ReservationAccompanyBO.Instance.Insert(model);
