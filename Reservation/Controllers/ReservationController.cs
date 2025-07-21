@@ -1171,6 +1171,8 @@ namespace Reservation.Controllers
             }
         }
 
+
+
         #region Reservation Accompanying
         [HttpGet]
         public async Task<IActionResult> GetReservationAccompanyingByReservationID(int reservationID)
@@ -1178,7 +1180,7 @@ namespace Reservation.Controllers
             try
             {
 
-                List<ReservationAccompanyModel> result = ReservationAccompanyBO.GetReservationAccompanyByReservationID(reservationID);
+                var result = ReservationAccompanyBO.GetReservationAccompanyByReservationID(reservationID);
 
                 return Json(result);
             }
@@ -1204,6 +1206,12 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Please choose booking" });
                 }
+                var checkReservationAccompany = ReservationAccompanyBO.GetReservationAccompany(int.Parse(Request.Form["rsvID"].ToString()), int.Parse(Request.Form["profileAgentID"].ToString()));
+                if(checkReservationAccompany.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "This profile has been attached, please choose another profile" });
+
+                }
                 ReservationAccompanyModel model = new ReservationAccompanyModel();
                 model.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
                 model.ProfileIndividualID = int.Parse(Request.Form["profileAgentID"].ToString());
@@ -1212,6 +1220,37 @@ namespace Reservation.Controllers
                 ReservationAccompanyBO.Instance.Insert(model);
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Profile was attacheđ successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpPost]
+        public ActionResult DettachAccompanying(int id)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if (id == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose profile dettach" });
+                }
+
+
+                ReservationAccompanyBO.Instance.Delete(id);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Profile was dettached successfully" });
 
             }
             catch (Exception ex)

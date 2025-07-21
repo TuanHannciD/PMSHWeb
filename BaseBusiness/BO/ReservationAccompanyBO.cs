@@ -23,12 +23,19 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
-        public static List<ReservationAccompanyModel> GetReservationAccompanyByReservationID(int reservationID)
+        public static List<object> GetReservationAccompanyByReservationID(int reservationID)
         {
 
 
-            string query = $"SELECT * FROM ReservationAccompany WHERE ReservationID = {reservationID} ORDER BY id DESC";
-            return instance.GetList<ReservationAccompanyModel>(query);
+            string query = $"SELECT \r\n    a.ID AS ID, \r\n    b.City, \r\n    c.Account, \r\n    CONVERT(varchar, c.DateOfBirth, 103) AS DateOfBirth\r\nFROM ReservationAccompany a\r\nLEFT JOIN Reservation b ON a.ReservationID = b.ID\r\nLEFT JOIN Profile c ON a.ProfileIndividualID = c.ID\r\nWHERE b.ID = {reservationID}\r\n";
+            return instance.GetList<object>(query);
+        }
+        public static List<object> GetReservationAccompany(int reservationID, int profileID)
+        {
+
+
+            string query = $"select * from ReservationAccompany where ReservationID = {reservationID} and ProfileIndividualID = {profileID}";
+            return instance.GetList<object>(query);
         }
     }
 }
