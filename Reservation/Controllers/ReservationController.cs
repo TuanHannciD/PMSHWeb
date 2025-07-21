@@ -1155,5 +1155,76 @@ namespace Reservation.Controllers
 
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetRegistrationCard()
+        {
+            try
+            {
+                List<RegistrationCardModel> result = PropertyUtils.ConvertToList<RegistrationCardModel>(RegistrationCardBO.Instance.FindAll());
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        #region Reservation Accompanying
+        [HttpGet]
+        public async Task<IActionResult> GetReservationAccompanyingByReservationID(int reservationID)
+        {
+            try
+            {
+
+                List<ReservationAccompanyModel> result = ReservationAccompanyBO.GetReservationAccompanyByReservationID(reservationID);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AttachAccompanying()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if (string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Could not find profile attached" });
+                }
+                if (string.IsNullOrEmpty(Request.Form["rsvID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Please choose booking" });
+                }
+                ReservationAccompanyModel model = new ReservationAccompanyModel();
+                model.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                model.ProfileIndProfileIndividualID = int.Parse(Request.Form["profileAgentID"].ToString());
+                model.UserInsertID = model.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                model.UpdateDate = model.CreateDate = DateTime.Now;
+                ReservationAccompanyBO.Instance.Insert(model);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Profile was attacheđ successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
     }
 }
