@@ -27,19 +27,19 @@ namespace Reservation.Controllers
 {
     public class ReservationController : Controller
     {
-            private readonly IConfiguration _configuration;
-            private readonly ILogger<ReservationController> _logger;
-            private readonly IMemoryCache _cache;
-            private readonly IReservationService _iReservationService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<ReservationController> _logger;
+        private readonly IMemoryCache _cache;
+        private readonly IReservationService _iReservationService;
 
-            public ReservationController(ILogger<ReservationController> logger,
-                 IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService)
-            {
-                _cache = cache;
-                _logger = logger;
-                _configuration = configuration;
-                _iReservationService = iReservationService;
-            }
+        public ReservationController(ILogger<ReservationController> logger,
+                IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService)
+        {
+            _cache = cache;
+            _logger = logger;
+            _configuration = configuration;
+            _iReservationService = iReservationService;
+        }
         public IActionResult SearchReservation()
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());

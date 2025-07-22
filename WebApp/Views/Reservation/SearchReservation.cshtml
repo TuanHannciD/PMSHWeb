@@ -34,11 +34,19 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.mui-divider {
+    border: none;
+    border-top: 1px solid #005f87;
+    color: #005f87;
+    margin: 16px 0;
+}
 </style>
 <div class="body">
     <div class="container2">
         <div>
-            <div class="text-center" style="font-size: 20px;">Search Reservation</div>            
+            <div class="text-center" style="font-size: 20px;">Search Reservation</div>
+            <div class="mui-divider"></div>
             <div class="button-group mb-1 mt-2">
                 <div>
                     <button class="mui-button mui-button-search" onclick="searchReservation();"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
@@ -60,6 +68,7 @@
                 
                 <div><a href="/Reservation/NewReservation" style="text-decoration:none">New reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
+            <div class="mui-divider"></div>
             <div class="row" style="margin: 14px 14px; height: auto; justify-content: space-between; display: flex; align-items: stretch;">
                 <div class="col-md-10 row bg-light border rounded">
                     <div class="col-md-1 mb-1">
@@ -147,7 +156,7 @@
                     <div >Shares</div>
                     <div >Fixed Charge</div>
                     <div >Alerts</div>
-                    <div >Billing</div>
+                    <div onclick="openModalBilling();">Billing</div>
                     <div >ItemInventory</div>
 
                 </div>
@@ -1223,6 +1232,7 @@
 @await Html.PartialAsync("Partial/Option")
 @await Html.PartialAsync("Partial/RegistrationCard")
 @await Html.PartialAsync("Partial/CheckIn")
+@await Html.PartialAsync("Partial/Billing")
 
 <script>
     $(document).ready(async function () {

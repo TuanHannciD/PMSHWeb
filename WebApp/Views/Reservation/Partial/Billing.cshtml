@@ -1,0 +1,70 @@
+﻿
+<!-- Modal billimg-->
+<div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Billing</h5>
+                <button type="button" class="btn-close" onclick="closeModalBilling()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-search" >Post</button>
+                </div>
+                <div class="row" style="margin: 14px 14px; height: auto; justify-content: space-between; display: flex; align-items: stretch;">
+                    <div class="col-md-10 row bg-light border rounded">
+                        <div class="col-md-2 mb-1">
+                            <label for="firstName" class="form-label">RSV Status</label>
+                            <input id="rsvStatusBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="package" class="form-label">Conf.No</label>
+                            <input id="confirmatioNoBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="zone" class="form-label">Balance</label>
+                            <input id="balanceBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="confirmationNo" class="form-label">Total</label>
+                            <input id="totalBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="crsNo" class="form-label">Group</label>
+                            <input id="groupBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="crsNo" class="form-label">Company</label>
+                            <input id="companyBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="arrival" class="form-label">Arrival </label>
+                            <input id="arrivalBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="departure" class="form-label">Departure </label>
+                            <input id="departureBilling" type="text" class="form-control" />
+                        </div>
+
+                        
+                        
+                    </div>
+                    <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px" id="moreInfo">
+                    </div>
+                </div>
+                <div>
+                    <span>SITEMIDERR</span>
+                    <span>Balance    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openModalBilling(){
+        $('#modalBilling').modal('show');
+    }
+    function closeModalBilling(){
+        $('#modalBilling').modal('hide');
+    }
+</script>
