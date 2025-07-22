@@ -297,17 +297,15 @@
             url: '/Report/ArrivalsandCheckInTodayData',
             type: 'GET',
             data: {
-                  roomClass: $("#roomClass").val(),
-                   roomtype: $("#roomtype").val(),
-                    paymethod: $("#paymethod").val(),
-                   vip: $("#vip").val(),
-                          viewBy: $("#viewBy").val(),
-
-                  pseudo: $("#pseudo").is(":checked") ? "1" : "",
-                 viponlycheck: $("#chkviponly").is(":checked") ? "1" : "",
-          
+                roomClass: $("#roomClass").val().map(r => r.replace( "''")).join("','") + "",
+                roomtype: $("#roomtype").val().map(r => r.replace( "''")).join("','") + "",
+                paymethod: $("#paymethod").val().map(r => r.replace( "''")).join("','") + "",
+                vip: $("#vip").val(),
+                viewBy: $("#viewBy").val(),
+                pseudo: $("#pseudo").is(":checked") ? "1" : "",
+                viponlycheck: $("#chkviponly").is(":checked") ? "1" : "",         
                 disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" :0,
-                  nopost:$('#nopost').is(':checked') ? "1" : ""
+                nopost:$('#nopost').is(':checked') ? "1" : ""
             },
             traditional: true,
               crossDomain: false,

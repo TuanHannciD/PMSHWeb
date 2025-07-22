@@ -105,7 +105,7 @@
 
                 @foreach (var z in zoneList)
                 {
-                    <option value="@z.ID">@z.Code</option>
+                    <option value="@z.Code">@z.Code</option>
                 }
             </select>
         </div>
@@ -190,7 +190,7 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                   zone: $("#zone").val(),
+                zone: $("#zone").val().map(r => r.replace( "''")).join("','") + "",
             },
             traditional: true,
               crossDomain: false,

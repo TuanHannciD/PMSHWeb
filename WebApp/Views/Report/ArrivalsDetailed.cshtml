@@ -49,6 +49,22 @@
             color: white !important;
         }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
     #gridContainer .dx-datagrid-headers .dx-header-row > td {
         padding: 5px !important;
         height: 24px !important;
@@ -63,48 +79,36 @@
         font-size: 11px !important;
     }
 
-    .sticky-header .form-control-sm {
-        padding: .1rem .35rem;
-        height: calc(1.1em + .2rem + 2px);
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
     }
 
-    .sticky-header label[class*="me-"] {
-        margin-right: .5rem !important;
-    }
-
-    .filter-panel {
-        font-size: 12px;
-    }
-
-    .filter-row {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: .5rem;
-    }
-
-        .filter-row .title {
-            width: 80px;
-            font-weight: 700;
-            line-height: 1.2;
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
         }
 
-        .filter-row .content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .5rem 1rem;
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
-    .filter-panel .form-control-sm,
-    .filter-panel .form-select-sm,
-    .filter-panel .ts-control {
-        font-size: 12px;
-        padding: .1rem .35rem;
-        height: calc(1.1em + .2rem + 2px);
+    .tomselect-custom {
+        width: 300px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.65rem;
     }
 
 </style>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-<div class="filter-panel">
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
@@ -162,8 +166,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Room Class:</label>
-                    <select id="roomClass" name="roomClass" class="form-control form-control-sm" style="width: 100px;">
-                        <option value="">ALL</option>
+                    <select id="roomClass" name="roomClass" class="tomselect-custom" style="width: 100px;" multiple>
                         @foreach (var item in roomclassList)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -173,8 +176,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Room Type:</label>
-                    <select id="roomtype" name="roomtype" class="form-control form-control-sm" style="width: 100px;">
-                        <option value="">ALL</option>
+                    <select id="roomtype" name="roomtype" class="tomselect-custom" style="width: 100px;" multiple>
                         @foreach (var item in rtList)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -184,8 +186,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Market:</label>
-                    <select id="market" name="market" class="form-control form-control-sm" style="width: 100px;">
-                        <option value="">ALL</option>
+                    <select id="market" name="market" class="tomselect-custom" style="width: 100px;" multiple>
                         @foreach (var item in listmk)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -195,8 +196,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Rate Code:</label>
-                    <select id="rateCode" name="rateCode" class="form-control form-control-sm" style="width: 100px;">
-                        <option value="">ALL</option>
+                    <select id="rateCode" name="rateCode" class="tomselect-custom" style="width: 100px;" multiple>
                         @foreach (var item in listrc)
                         {
                             <option value="@item.RateCode">@item.RateCode-@item.Descripton</option>
@@ -209,8 +209,7 @@
             <div class="d-flex align-items-center flex-wrap">
                 <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0 fw-bold">Source:</label>
-                    <select id="source" name="source" class="form-control form-control-sm" style="width: 100px;">
-                        <option value="">ALL</option>
+                    <select id="source" name="source" class="tomselect-custom" style="width: 100px;" multiple>
                         @foreach (var item in listsrc)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -224,7 +223,6 @@
                         <label class="form-check-label" for="viponlycheck">Vip Only</label>
                     </div>
                     <select id="vip" name="vip" class="form-control form-control-sm" style="width: 100px; display: none;">
-                        <option value="">ALL</option>
                         @foreach (var item in vipList)
                         {
                             <option value="@item.Code">@item.Description</option>
@@ -343,8 +341,6 @@
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
     </div>
 
-</div>
-
 <div class="mui-card">
     @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="mt-2"></div>
@@ -409,10 +405,36 @@
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
         document.getElementById('toDate').value = formattedLastDay;
-
+         initializeTomSelects();
 
 
     });
+    function initializeTomSelects() {
+        const selectors = ["#roomClass", "#roomtype","#market","#rateCode","#source"];
+
+        for (const id of selectors) {
+            const el = document.querySelector(id);
+            if (!el) continue;
+
+            // Nếu đã khởi tạo rồi thì destroy
+            if (el.tomselect) el.tomselect.destroy();
+
+            const ts = new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: '',
+                persist: false,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+
+        }
+    }
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
@@ -421,12 +443,12 @@
             data: {
                      fromDate: $("#fromDate").val(),
                      toDate: $("#toDate").val(),
-                  roomClass: $("#roomClass").val(),
-                   roomtype: $("#roomtype").val(),
-                      market: $("#market").val(),
-                    rateCode: $("#rateCode").val(),
-                     source: $("#source").val(),
-                  vip: $("#vip").val(),
+                     roomClass: $("#roomClass").val().map(r => r.replace( "''")).join("','") + "",
+                     roomtype: $("#roomtype").val().map(r => r.replace( "''")).join("','") + "",
+                     market: $("#market").val().map(r => r.replace( "''")).join("','") + "",
+                     rateCode: $("#rateCode").val().map(r => r.replace( "''")).join("','") + "",
+                     source: $("#source").val().map(r => r.replace( "''")).join("','") + "",                 
+                     vip: $("#vip").val(),
 
                      sortOrder: $("#viewBy").val(),
                 viponlycheck: $("#viponlycheck").is(":checked") ? "1" : "",

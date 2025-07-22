@@ -220,8 +220,8 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                                viewBy: $("#viewBy").val(),
-                altercode: $("#altercode").val(),
+                viewBy: $("#viewBy").val(),
+                altercode: $("#altercode").val().map(r => r.replace( "''")).join("','") + "",
             },
             traditional: true,
               crossDomain: false,
