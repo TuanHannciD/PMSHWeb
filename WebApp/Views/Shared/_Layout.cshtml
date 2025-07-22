@@ -298,6 +298,11 @@
                     </ul>
                     <ul class="navbar-nav">
                         <li class="nav-item">
+                            <a id="businessDate" class="nav-link" asp-area="" asp-controller="" asp-action=""></a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
                             <a id="user-display" class="nav-link" asp-area="" asp-controller="User" asp-action="Index">[ admin - THOÁT ]</a>
                         </li>
                     </ul>
@@ -345,28 +350,31 @@
             $("#user-display").text("[ CHƯA ĐĂNG NHẬP ]");
         }
 
-     const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];
+        const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];
 
-    // Bước 2: Chuyển tất cả tên quyền thành chữ thường
-    const lowerPermissionNames = permissionData.map(x => x.name?.trim().toLowerCase());
+        // Bước 2: Chuyển tất cả tên quyền thành chữ thường
+        const lowerPermissionNames = permissionData.map(x => x.name?.trim().toLowerCase());
 
-    // Bước 3: Duyệt tất cả các thẻ <a> trong dropdown có href chứa '?name='
-    $('a[href*="/Report/OtherReport?name="]').each(function () {
-        const href = $(this).attr('href');
-        const urlParams = new URLSearchParams(href.split('?')[1]);
-        const reportName = urlParams.get('name')?.trim().toLowerCase();
+        // Bước 3: Duyệt tất cả các thẻ <a> trong dropdown có href chứa '?name='
+        $('a[href*="/Report/OtherReport?name="]').each(function () {
+            const href = $(this).attr('href');
+            const urlParams = new URLSearchParams(href.split('?')[1]);
+            const reportName = urlParams.get('name')?.trim().toLowerCase();
 
-        // Nếu reportName không có trong quyền thì ẩn hoặc disable
-        if (!lowerPermissionNames.includes(reportName)) {
-            $(this).css({
-                "pointer-events": "none",
-                "opacity": "0.5",
-                "color": "gray"
-            });
+            // Nếu reportName không có trong quyền thì ẩn hoặc disable
+            if (!lowerPermissionNames.includes(reportName)) {
+                $(this).css({
+                    "pointer-events": "none",
+                    "opacity": "0.5",
+                    "color": "gray"
+                });
            
-        }
-    });
+            }
+        });
 
+        // lấy businessDate
+        const businessDate = JSON.parse(localStorage.getItem("businessDate"));
+        $("#businessDate").text(`Business Date : ${businessDate.split(' ')[0]}`);
     });
 </script>
 

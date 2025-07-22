@@ -51,9 +51,9 @@
                     <div class="tab-pane fade show active" id="accompanying" role="tabpanel" aria-labelledby="tab1-tab">
                         <div class="p-3">
                             <div class="mb-1 mt-2">
-                                <button class="mui-button mui-button-export" id="attach" onclick="AttachAccompanying();"><i class="fa-solid fa-paperclip"></i> Attach</button>
+                                <button class="mui-button mui-button-search" id="attach" onclick="AttachAccompanying();"><i class="fa-solid fa-paperclip"></i> Attach</button>
                                 <button class="mui-button mui-button-delete" id="detach" onclick="detach()"><i class="fa-solid fa-xmark"></i>Detach</button>
-                                <button class="mui-button mui-button-clear"><i class="fa-solid fa-circle-xmark"></i> Close</button>
+                                <button class="mui-button mui-button-clear" onclick="closeModalOption();"><i class="fa-solid fa-circle-xmark"></i> Close</button>
                             </div>
                             <div>
                                 <select id="txtNameAccompanying"></select>
@@ -186,50 +186,40 @@
         $(this).addClass('active').attr('aria-selected', 'true');
         const targetTab = $(this).attr('aria-controls');
         if(targetTab == 'accompanying'){
-            getInfoByProfileIDAccompanying(listProfile);
+            getInfoByProfileIDAccompanying(idReservation);
         }
         if(targetTab == 'alerts'){
                 initializeDataGridAlerts(listAlerts);
         }
         $('#' + targetTab).addClass('show active');
     });
-    function closeModalEdit(){
-        $('#modalEdit').modal('hide');
-    }
+
     function openModalOption(){
         if (idReservation === 0) {
             showToast('Error', 'Please choose Booking', false);
             return;
         }
         $('#detach').hide();
-        initializeDataGridAccompanying(listProfile);
+        getInfoByProfileIDAccompanying(idReservation);
         $('#modalOption').modal('show');
     }
     function closeModalOption(){
         $('#modalOption').modal('hide');
     }
     //begin accompanying option
-    var listProfile = [];
     function getInfoByProfileIDAccompanying(id) {
         $.ajax({
             url: '/Reservation/GetReservationAccompanyingByReservationID',
             type: 'get',
             dataType: 'json',
             data: {
-                profileID: id
+                reservationID: id
             },
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                // Check if a profile with the same id already exists in listProfile
-                if (!listProfile.some(profile => profile.id == id)) {
-                    listProfile.push(result);
-                }
-                else{
-                    showToast('Error', 'Profile has been attached, please choose another profile', false);
-
-                }
-                initializeDataGridAccompanying(listProfile);
+                console.log(result);
+                initializeDataGridAccompanying(result);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -240,9 +230,26 @@
     }
     var profileID = 0;
     function detach(){
-            listProfile = listProfile.filter(item => item.id !== profileID);
+        console.log(profileID);
+        $.ajax({
+            url: '/Reservation/DettachAccompanying',
+            type: 'POST',
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: {id:profileID},
+            success: function (data) {
+                if (data.code == 0) {
+                    getInfoByProfileIDAccompanying(idReservation);
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
 
-        initializeDataGridAccompanying(listProfile);
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
     }
 
     function AttachAccompanying() {
@@ -263,7 +270,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     var value = $('#txtNameAccompanying').val();
-                    getInfoByProfileIDAccompanying(value);
+                    getInfoByProfileIDAccompanying(idReservation);
                     const tomSelectInstance = $('#txtNameAccompanying')[0].tomselect;
                     tomSelectInstance.setValue(0);
                     showToast('Success', data.msg, true);
@@ -278,8 +285,6 @@
         });
 
     }
-    // end acccompanying option
-
 
     function initializeDataGridAccompanying(data) {
 
@@ -289,10 +294,10 @@
             columns: [
 
 
-                { dataField: "id", caption: "ID",  visible: false},
-                { dataField: "account", caption: "Name"  },
-                { dataField: "city", caption: "City"},
-                    { dataField: "dateOfBirth", caption: "Birthday"},
+                { dataField: "ID", caption: "ID",  visible: false},
+                { dataField: "Account", caption: "Name"  },
+                { dataField: "City", caption: "City"},
+                { dataField: "DateOfBirth", caption: "Birthday"},
             ],
             paging: { pageSize: 15 },
             scrolling: {
@@ -313,11 +318,15 @@
                 mode: "single" // Allows only one row to be selected at a time
             },
             onRowClick: function(e) {
-                profileID = e.data.id;
+                console.log(e.data.ID);
+                profileID = e.data.ID;
                 $('#detach').show();
             }
         });
     }
+    // end acccompanying option
+
+
     function getAlerts(){
 
         initializeDataGridAlerts(listAlerts);

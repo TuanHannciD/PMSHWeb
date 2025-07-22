@@ -48,7 +48,8 @@ namespace User.Controllers
                 int UserGroupID = result.UserGroupID;
                 int UserID = result.ID;
                 var result2 = _iUserService.PermissionNames(UserGroupID, UserID);
-
+                var businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                int memberTypeID = 0; int roomTypeID = 0; int vipID = 0;
                 var resultname = (from d in result2.AsEnumerable()
                               select new
                               {
@@ -58,7 +59,7 @@ namespace User.Controllers
 
 
                 if (result.ID != 0) {
-                    return Json(new { code = 0, msg = "Successfully", data = resultname ,namelogin= loginName,userID = UserID });
+                    return Json(new { code = 0, msg = "Successfully", data = resultname ,namelogin= loginName,userID = UserID,businessDate = businessDate[0].BusinessDate.ToString() });
                 }
                 else
                 {
