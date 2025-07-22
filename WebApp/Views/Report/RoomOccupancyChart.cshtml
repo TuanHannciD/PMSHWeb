@@ -150,7 +150,7 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                zone: $("#zone").val()
+                zone: $("#zone").val().map(r => r.replace( "''")).join("','") + "",
             },
             headers: {
                 "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()

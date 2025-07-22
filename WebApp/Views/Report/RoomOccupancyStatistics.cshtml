@@ -99,10 +99,11 @@
         </div>
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Zone:</label>
-            <select id="zone" name="zone" class="tomselect-custom" multiple>
+            <select id="zone" name="zone" class="form-control form-control-sm w-auto">
+                <option value="4">--ALL--</option>
                 @foreach (var item in zoneList)
                 {
-                    <option value="@item.Code">@item.Code</option>
+                    <option value="@item.ID">@item.Name</option>
                 }
             </select>
 
@@ -161,7 +162,7 @@
 
     });
     function initializeTomSelects() {
-        const selectors = ["#zone","#roomtype"];
+        const selectors = ["#roomtype"];
 
             for (const id of selectors) {
                 const el = document.querySelector(id);
@@ -195,7 +196,8 @@
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
                 zone: $("#zone").val(),
-                roomtype: $("#roomtype").val() || "" ,
+                // roomtype: $("#roomtype").val() || "" ,
+                roomtype: $("#roomtype").val().map(r => r.replace( "''")).join("','") + "",
             },
             traditional: true,
               crossDomain: false,

@@ -180,21 +180,7 @@
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         return `${year}-${month}-${day}`;
     }
-        function getSelectedOrAll(selectId) {
-        const select = document.getElementById(selectId);
-        const selectedValue = select.value;
-
-        if (selectedValue === "") {
-            // Lấy tất cả các giá trị (trừ giá trị rỗng)
-            return Array.from(select.options)
-                .map(opt => opt.value)
-                .filter(val => val !== "")
-                .join(",");
-        } else {
-            return selectedValue;
-        }
-    }
-
+       
     $(document).ready(function () {
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
@@ -250,10 +236,10 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                    roomType: getSelectedOrAll("roomType"),
-            zone: getSelectedOrAll("zone"),
-            market: getSelectedOrAll("market"),
-                  viewBy: $("#viewBy").val(),
+                roomType: $("#roomType").val().join(","),
+                zone: $("#zone").val().join(",") ,
+                market: $("#market").val().join(",") ,
+                viewBy: $("#viewBy").val(),
             },
             traditional: true,
               crossDomain: false,

@@ -192,8 +192,8 @@
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                zone: $("#zone").val(),
-                rate: $("#rate").val(),
+                zone: $("#zone").val().map(r => r.replace( "''")).join("','") + "",
+                rate: $("#rate").val().map(r => r.replace( "''")).join("','") + "",
                 viewBy:  $("#viewBy").val(),
             },
             traditional: true,

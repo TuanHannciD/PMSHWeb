@@ -115,6 +115,23 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInfoProfileIndividual(int id)
+        {
+            try
+            {
+                ReservationModel res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(id);
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(res.ProfileIndividualId);
+
+                return Json(profile);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetRateCode(DateTime arrivalDate,DateTime departure,int adults,int roomType)
         {

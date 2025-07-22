@@ -128,7 +128,7 @@
                 <select id="roomType" class="tomselect-custom" style="width: 450px;" multiple>
                     @foreach (var rt in rtList)
                     {
-                        <option value="@rt.ID">@rt.Code</option>
+                        <option value="@rt.Code">@rt.Code</option>
                     }
                 </select>
             </div>
@@ -138,7 +138,7 @@
                     <select id="zone" class="tomselect-custom" style="width: 200px;" multiple>
                         @foreach (var z in zoneList)
                         {
-                            <option value="@z.ID">@z.Code</option>
+                            <option value="@z.Code">@z.Code</option>
                         }
                     </select>
                 </div>
@@ -259,8 +259,8 @@
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
                 reservation: $("#reservation").val(),
-                roomType: $("#roomType").val(),
-                zone: $("#zone").val(),
+                roomType: $("#roomType").val().map(r => r.replace( "''")).join("','") + "",
+                zone: $("#zone").val().map(r => r.replace( "''")).join("','") + "",
                 viewBy: $("#viewBy").val(),
                 sortOrder: $("#sortOrder").val(),
             },
