@@ -1384,7 +1384,8 @@
                     roomNo = result.roomNo;
                     roomtypeid = result.roomTypeID;
                     const roomtypecode = result.roomTypeCode;
-
+                    console.log(roomNo);
+                      console.log(roomtypeid);
                     const isSameRoomType = roomtypecode === oldData.roomTypeCode;
 
                     if (isMoved) {
@@ -2010,10 +2011,10 @@
         formData.append('contactName', $('#txtContact').find('option:selected').text());
         formData.append('contactPhone', $("#txtContactPhone").val());
         formData.append('profileIndividualID', $("#txtID").val());
-        const tomSelect = $('#txtName')[0].tomselect;
-        const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
+        // const tomSelect = $('#txtName')[0].tomselect;
+        // const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
         formData.append('firstName', $("#txtFirstName").val());
-        formData.append('lastName', selectedText);
+        formData.append('lastName', $('#txtName').val());
         formData.append('title', $("#txtTitle").val() ?? '');
         formData.append('phone', $("#txtPhone").val());
         formData.append('email', $("#txtEmail").val());

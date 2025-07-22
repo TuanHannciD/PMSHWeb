@@ -61,7 +61,7 @@ namespace HouseKeeping.Controllers
             List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
             ViewBag.RoomTypeList = listrt;
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-            ViewBag.businesDate = businessDateModel[0].BusinessDate;
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
             return View();
         }
         public IActionResult RoomPlan()
@@ -451,6 +451,16 @@ namespace HouseKeeping.Controllers
                                     Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"].ToString() : "",
                                    
                                 }).ToList();
+
+
+                //DataTable dataTable21 = _iHouseKeepingService.StatusEndOfDayMaxOccTonightVIP(datebunisess, roomtype, zone);
+
+                //var dataTable21 = (from d in dataTable20.AsEnumerable()
+                //                select new
+                //                {
+                //                    Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"].ToString() : "",
+
+                //                }).ToList();
 
                 return Json(result);
             }

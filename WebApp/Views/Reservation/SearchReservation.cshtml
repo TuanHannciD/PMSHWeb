@@ -1523,8 +1523,11 @@
     // Khởi tạo ngày mặc định
     window.onload = function() {
         var businessDate = '@ViewBag.businesDate';
-        var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
-        var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
+                  var dateOnly = businessDate.split(' ')[0]; // '8/29/2024'
+                        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+
+                        // Parse đúng thứ tự: new Date(year, monthIndex, day)
+                        var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
 
         var departureDate = new Date(parsedBusinessDate);
         departureDate.setDate(parsedBusinessDate.getDate() + 1);
@@ -1540,7 +1543,12 @@
         document.getElementById('departureForm').value = formatDate(departureDate);
 
         document.getElementById('dropOffDate').value = formatDate(departureDate);
-
+               function formatDate(date) {
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                        }
         updateDates();
     };
 
@@ -2887,8 +2895,12 @@
             $("#txtPersonInCharge").val('');
             $("#nights").val('');
                 var businessDate = '@ViewBag.businesDate';
-            var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
-            var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
+                              var dateOnly = businessDate.split(' ')[0]; // '8/29/2024'
+            var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+
+            // Parse đúng thứ tự: new Date(year, monthIndex, day)
+            var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
+
 
             var departureDate = new Date(parsedBusinessDate);
             departureDate.setDate(parsedBusinessDate.getDate() + 1);
