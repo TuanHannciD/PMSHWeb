@@ -10,7 +10,7 @@
     var roomFloor = ViewBag.FloorList;
 }
 
-
+<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <style>
     #gridContainer .dx-datagrid-rowsview .dx-selection {
         background-color: #005f87 !important; /* màu xanh ngọc */
@@ -30,6 +30,11 @@
 
     .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
         display: none;
+    }
+
+    .swal2-popup.small-swal {
+        max-width: 400px;
+        font-size: 14px;
     }
 
     #gridContainer .dx-datagrid-rowsview .dx-row > td {
@@ -495,6 +500,464 @@
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
+<div class="modal fade modal-xl" id="modalEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edit Reservation</h5>
+                <button type="button" class="btn-close" onclick="closeModalEdit()"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Thêm spinner loading -->
+                <div id="loadingSpinnerEdit" class="d-none text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="progress mt-3" role="progressbar" aria-label="Loading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar text-bg-primary" style="width: 0%" id="progressBar">0%</div>
+                    </div>
+                </div>
+                <div class="container2">
+                    <div>
+                        <div class="button-group mb-1">
+                            <div>
+                                <button id="saveClick" class="mui-button mui-button-new" onclick="EditReservation();"><i class="fa-solid fa-floppy-disk"></i></i> Save</button>
+                                <button id="clearClick" class="mui-button mui-button-clear" onclick="resetForm()"><i class="fas fa-eraser"></i> Clear</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="top-row">
+                        <div class="section">
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <input class="col-md-8" id="txtID" style="display:none" />
+                                    <label class="col-md-2">Name</label>
+                                    <input class="col-md-6" type="text" id="txtName" readonly>
+                                  @*   <select class="col-md-8" id="txtName"></select> *@
+                                    @*                         <button class="col-md-1" onclick="openModalSearchProfile(3)"><i class="fa-solid fa-ellipsis"></i></button>
+ *@                             </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-6">First name</label>
+                                    <input class="col-md-6" type="text" id="txtFirstName" readonly>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-5">Title</label>
+                                    <select class="col-md-7" id="txtTitle" asp-items="ViewBag.cboTitle">
+                                    </select>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Phone</label>
+                                    <input class="col-md-9" type="text" id="txtPhone">
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="row col-md-5">
+                                    <label class="col-md-2">Passport</label>
+                                    <input class="col-md-10" type="text" id="txtPassport">
+                                </div>
+                                <div class="row me-1 col-md-7">
+                                    <label class="col-md-4">Identity Card</label>
+                                    <input class="col-md-8" type="text" id="txtIdentityCard">
+                                </div>
+                            </div>
+
+                            <div class="row me-1 col-md-7">
+                                <label class="col-md-3">Email</label>
+                                <input class="col-md-9" type="email" id="txtEmail">
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="row">
+                                <div class="row col-md-7">
+                                    <label class="col-md-3">Address</label>
+                                    <input class="col-md-9" type="text" id="txtAddress">
+                                </div>
+                                <div class="row col-md-5">
+                                    <label class="col-md-3" style="min-width:0">Dob</label>
+                                    <input class="col-md-6" type="date" value="1900-01-01" id="txtDob">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Nationality</label>
+                                    <select class="col-md-9" id="txtNationality" asp-items="ViewBag.cboNationality">
+                                    </select>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">City</label>
+                                    <select class="col-md-9" id="txtCity" asp-items="ViewBag.cboCity">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">VIP</label>
+                                    <select class="col-md-9" id="txtVIP" asp-items="ViewBag.cboVIP">
+                                    </select>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-5">Mem. Type</label>
+                                    <select class="col-md-7" id="txtMemberType" asp-items="ViewBag.cboMemberType">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row col-md-5">
+                                <label class="col-md-2">Card No.</label>
+                                <input class="col-md-10" type="text" id="txtCardNo">
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Agent</label>
+                                    <select class="col-md-9" id="txtAgent" asp-items="ViewBag.cboProfileAgent">
+                                    </select>
+                                </div>
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Company</label>
+                                    <select class="col-md-9" id="txtCompany" asp-items="ViewBag.cboProfileCompany">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-4">Grp Code</label>
+                                    <input class="col-md-8" type="text" id="txtGroupCode">
+                                </div>
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Contact</label>
+                                    <select class="col-md-9" id="txtContact" asp-items="ViewBag.cboProfileContact">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-4">Con.Phone</label>
+                                    <input class="col-md-8" type="text" id="txtContactPhone">
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-4">Prf. Room</label>
+                                    <input class="col-md-8" type="text" id="txtPrefRoom">
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Last Stay</label>
+                                    <input class="col-md-9" type="text" id="txtLastStay" value="1">
+                                </div>
+                                <div class="row col-md-5">
+                                    <button onclick="openModalMoreFields()" style="margin-left:12px">More Fields</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="third-row">
+                        <!-- Arrival Section -->
+                        <div class="section">
+                            <div class="row ">
+                                <div class="row col-md-8">
+                                    <label class="col-md-1">Arrival</label>
+                                    <input type="date" id="arrival" class="col-md-2">
+                                    <button class="col-md-1" onclick="changeDate('arrival', -1)">-</button>
+                                    <button class="col-md-1" onclick="changeDate('arrival', 1)">+</button>
+                                    <span class="col-md-1" style="font-size:12px;color:#9F0010;display:none" id="arrival-day"></span>
+                                </div>
+                                <div class="row col-md-8">
+                                    <label class="col-md-1">Departure</label>
+                                    <input type="date" id="departure" class="col-md-2">
+                                    <button class="col-md-1" onclick="changeDate('departure', -1)">-</button>
+                                    <button class="col-md-1" onclick="changeDate('departure', 1)">+</button>
+                                    <span class="col-md-1" style="font-size:12px;color:#9F0010;display:none" id="departure-day"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 row">
+                                    <label class="col-md-3">Nights</label>
+                                    <input type="text" id="nights" class="col-md-9" readonly style="text-align:right">
+                                </div>
+                                <div class="col-md-7 row">
+                                    <label class="col-md-6">No. of Room</label>
+                                    <input class="col-md-2" type="number" id="numRooms" value="1" min="1" style="text-align:right">
+                                    <button class="col-md-1" onclick="decreaseRooms()">-</button>
+                                    <button class="col-md-1" onclick="increaseRooms()">+</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-5">
+                                    <label class="col-md-2">Adults</label>
+                                    <input type="number" value="2" class=" col-md-10" id="adults">
+                                </div>
+                                <div class="row col-md-7">
+                                    <label class="col-md-1" style="min-width:0">C</label>
+                                    <input type="number" value="0" class=" col-md-2" id="c" style="text-align:right">
+                                    <label class="col-md-1" style="min-width:0">C1</label>
+                                    <input type="number" value="0" class=" col-md-2" id="c1" style="text-align:right">
+                                    <label class="col-md-1" style="min-width:0">C2</label>
+                                    <input type="number" value="0" class="col-md-2" id="c2" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Room Type</label>
+                                    <select class="col-md-9" id="txtRoomType" asp-items="ViewBag.cboRoomType">
+                                    </select>
+
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">RTC</label>
+                                    <select class="col-md-9" id="txtRTC" asp-items="ViewBag.cboRoomType">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="row col-md-8">
+                                    <label class="col-md-3">Room</label>
+                                    <input class="col-md-10" id="roomSelect" readonly />
+                                    <button class="col-md-1" onclick="openModalSearchRoom()" id="btnRoom"><i class="fa-solid fa-ellipsis"></i></button>
+
+
+                                </div>
+                                <div class="row col-md-4">
+                                    <label class="col-md-3" style="min-width:0">RN</label>
+                                    <input class="col-md-9" id="txtRN" style="text-align:right" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="row col-md-8">
+                                    <label class="col-md-3">Rate Code</label>
+                                    <input class="col-md-4" id="txtRateCode" style="text-align:right" readonly />
+                                    <input class="col-md-4" id="txtRateCodeID" style="display:none" readonly />
+
+                                    <button class="col-md-1" onclick="openModalRateCode()"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-2">Rate</label>
+                                    <input class="col-md-3" value="0.00" id="txtRateAmount" style="text-align:right">
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-2">net</label>
+                                    <input class="col-md-3" value="0.00" id="txtNetAmount" style="text-align:right">
+                                </div>
+                            </div>
+                            @*                <div class="row me-1">
+                    <label class="col-md-3">Currency</label>
+                    <select class="col-md-9" asp-items="ViewBag.cboCurrency">
+                    </select>
+                </div> *@
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Packages</label>
+                                    <select class="col-md-9" id="txtPackage" asp-items="ViewBag.cboPackage">
+                                    </select>
+                                </div>
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Allotment</label>
+                                    <input class="col-md-8" id="txtAllotment" readonly />
+                                    <input class="col-md-8" id="txtAllotmentID" readonly style="display:none" />
+
+                                    <button class="col-md-1" onclick="openModalSearchAllotment()"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Disc. Amt</label>
+                                    <input type="text" value="0" class="col-md-3" id="txtDiscountAmount" style="text-align:right">
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-1">%</label>
+                                    <input type="text" value="0" class="col-md-5" id="txtDiscountPercent" style="text-align:right">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Res. Type Section -->
+                        <div class="section">
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Res. Type</label>
+                                    <select class="col-md-9" asp-items="ViewBag.cboReservationType" id="txtResType">
+                                    </select>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Market</label>
+                                    <input class="col-md-8" id="txtMarket" />
+                                    <input class="col-md-8" id="txtMarketID" style="display:none" />
+                                    <button class="col-md-1" onclick="openModalSearchMarket()"><i class="fa-solid fa-ellipsis"></i></button>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Source</label>
+                                    <select class="col-md-9" id="txtSource" asp-items="ViewBag.cboSource">
+                                    </select>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Sale</label>
+                                    <select class="col-md-9" id="txtPersonInCharge" asp-items="ViewBag.cboPersonInCharge">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Payment</label>
+                                    <select class="col-md-9" id="txtPayment" asp-items="ViewBag.cboPaymentMethod">
+                                    </select>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">CRS No</label>
+                                    <input class="col-md-9" type="text">
+                                </div>
+                            </div>
+
+                            <div class="row col-md-8">
+                                <label class="col-md-2">Booker</label>
+                                <input class="col-md-8" id="txtBooker" />
+                                <input class="col-md-8" id="txtBookerID" style="display:none" />
+                                <button class="col-md-1" onclick="openModalSearchBooker()"><i class="fa-solid fa-ellipsis"></i></button>
+
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">ETA</label>
+                                    <input class="col-md-3" type="time" value="06:00" id="txtETA">
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-2">ETD</label>
+                                    <input class="col-md-4" type="time" value="12:00" id="txtETD">
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3" style="min-width:0">Rate</label>
+                                    <div class="col-md-9 row">
+                                        <input type="text" value="0" class="highlighted col-md-5" id="txtRateAfterDiscount" readonly style="text-align:right">
+                                        <span class="col-md-2" style="font-size:12px">+ net</span>
+                                        <input type="text" style="font-size:12px;text-align:right" value="0" class="highlighted col-md-5" id="txtNetAfterDiscount" readonly>
+                                    </div>
+                                </div>
+
+                                @*                                 <div class="col-md-4 row">
+                                    <span style="font-size:10px;color:red">
+                                        Rate  after discount
+                                    </span>
+                                </div> *@
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3" style="min-width:0">Total</label>
+                                    <div class="col-md-9 row">
+                                        <input type="number" value="0" class="highlighted col-md-5" readonly style="text-align:right">
+                                        <span class="col-md-2" style="font-size:12px">+ net</span>
+                                        <input type="number" style="font-size:12px;text-align:right" value="0" class="highlighted col-md-5" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row col-md-8">
+                                <label class="col-md-2">Reason</label>
+                                <select class="col-md-9" id="txtReason" asp-items="ViewBag.cboReason">
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Specials Section -->
+                        <div class="section ">
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Specials</label>
+                                    <input class="col-md-8" id="txtPreference" />
+                                    <button class="col-md-1" onclick="openModalSearchPreference()"><i class="fa-solid fa-ellipsis"></i></button>
+
+                                </div>
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Promotions</label>
+                                    <select class="col-md-9" id="txtPromotion" asp-items="ViewBag.cboPromotion">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-12">
+                                    <label class="col-md-3">Item .Inv</label>
+                                    <select class="col-md-7" id="txtItemInventory" asp-items="ViewBag.cboItem" disabled multiple>
+                                    </select>
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Set Color</label>
+                                    <input class="col-md-9" type="color" id="txtColor">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Folio Bal</label>
+                                    <input class="col-md-9" type="number" value="0" style="text-align:right">
+                                </div>
+                                <div class="row col-md-5">
+                                    <label class="col-md-1" style="font-size:12px;color:red;min-width:0">$</label>
+                                    <input class="col-md-11" type="number" value="0" style="text-align:right">
+                                </div>
+                                <div class="row col-md-1">
+
+                                    <label class="col-md-1" style="font-size:12px;color:red;min-width:0">VND</label>
+                                </div>
+                            </div>
+
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">Print Rate</label>
+                                    <input class="col-md-1" type="checkbox">
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-8">Video C/Out</label>
+                                    <input class="col-md-1" type="checkbox">
+                                </div>
+                            </div>
+
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <label class="col-md-3">No Post</label>
+                                    <input class="col-md-1" type="checkbox">
+                                </div>
+                                <div class="row col-md-6">
+                                    <label class="col-md-8">Confirmation</label>
+                                    <input class="col-md-1" type="checkbox">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-md-2">Comments</label>
+                                <textarea rows="3" class="specials-section col-md-9" id="txtComment"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
         function formatDate(date) {
             let year = date.getFullYear();
@@ -505,6 +968,7 @@
 
 
           $(document).ready(function () {
+              setTomSelect();
         // Khi nhấn nút Filter
         $('#toggleFilterBtn').on('click', function (e) {
             e.stopPropagation(); // Ngăn click lan ra ngoài
@@ -514,6 +978,7 @@
 
         // Click ra ngoài sẽ đóng popup và overlay
         $(document).on('click', function (e) {
+
             const $popup = $('#filterPopup');
             const $button = $('#toggleFilterBtn');
 
@@ -595,6 +1060,54 @@
                     }
                 }
             });
+        }
+         function setTomSelect(){
+            const ids = [
+                   "#txtItemInventory","#txtNameAccompanying"
+                //,
+                //"#txtStateGroup",
+                // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
+                // "#txtVIPGroup", "#txtLanguageContact", "#txtTitleContact", "#txtCityContact",
+                // "#txtStateContact", "#txtCountryContact", "#txtOwnerContact", "#txtTerritoryContact"
+            ];
+
+            for (const id of ids) {
+                if ($(id).length) {
+                    new TomSelect(id, {
+                        allowEmptyOption: true,
+                        create: true
+                    });
+                }
+            }
+         }
+    //       function extractLastName(name) {
+    //     const parts = name.trim().split(/,\s*/);
+    //     return parts[1] || '';
+    // }
+
+    // function validateName(name) {
+    //     // Regex for "FirstName MiddleName, LastName" or "FirstName MiddleName,LastName"
+    //     const namePattern = /^[A-Z][a-z]*\s[A-Z][a-z]*,\s*[A-Z][a-z]*$/;
+    //     return namePattern.test(name.trim());
+    // }
+    // $('#txtName').on('blur', function() {
+    //     const name = $(this).val();
+    //     if (name) {
+    //         if (validateName(name)) {
+    //             const lastName = extractLastName(name);
+    //             $('#txtFirstName').val(lastName);
+    //             $('#nameProfileSearch').val(name);
+    //         } else {
+    //             showToast('Error', 'Invalid name format! Use FirstName MiddleName LastName or FirstName MiddleName,LastName', false);
+    //             $('#txtName').val('');
+    //             $('#txtFirstName').val('');
+    //         }
+    //     } else {
+    //         $('#txtItemInventory').prop('disabled', true); // Keep disabled if name is empty
+    //     }
+    // });
+        function closeModalEdit(){
+           $('#modalEdit').modal('hide');
         }
          function initializeRoomTypeListTomSelect() {
             const el = document.querySelector("#roomType");
@@ -705,7 +1218,7 @@
                 }
             });
         });
-
+       let roomNo, roomtypeid;
       function initializeRoomScheduler(schedulerData, fromDate, toDate) {
         if (!schedulerData || !schedulerData.length) return;
 
@@ -743,7 +1256,10 @@
                     roomID: d.roomID.toString(),
                     type: d.type || "", // 👈 Thêm type vào
                     reservationStatus: d.reservationStatus || "",
+                    reservationID: d.reservationID || "",
+                    roomTypeCode: d.roomTypeCode || "",
                     oooStatus:d.oooStatus || "",
+                      roomNumber:d.roomNumber || "",
                     tooltipData: {
                         company: d.company,
                         agent: d.agent,
@@ -846,6 +1362,62 @@
                     el.attr("style", style.replace(/translate\([^)]+\)/, newTransform));
                 }
             }
+                ,onAppointmentUpdating: async function (e) {
+                const oldData = e.oldData;
+                const newData = e.newData;
+                const idReservation = oldData.reservationID;
+
+                const oldStart = oldData.startDate.getTime();
+                const oldEnd = oldData.endDate.getTime();
+                const newStart = newData.startDate.getTime();
+                const newEnd = newData.endDate.getTime();
+
+                const isMoved =
+                    oldStart !== newStart ||
+                    oldEnd !== newEnd ||
+                    oldData.roomID !== newData.roomID;
+
+                getInfoByProfileIndividualID(idReservation);
+
+                try {
+                    const result = await getRoomID(newData.roomID);
+                    roomNo = result.roomNo;
+                    roomtypeid = result.roomTypeID;
+                    const roomtypecode = result.roomTypeCode;
+
+                    const isSameRoomType = roomtypecode === oldData.roomTypeCode;
+
+                    if (isMoved) {
+                        if (isSameRoomType) {
+                            const action = await askUpdateOrReview();
+
+                            if (action === "cancel") {
+                                e.cancel = true;
+                                return;
+                            } else if (action === "review") {
+                                $('#modalEdit').modal('show');
+                               getReservationByIDReview(idReservation);
+                                return;
+                            } else if (action === "update") {
+                                $('#modalEdit').modal('show');
+                                getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid);
+                            }
+                        } else {
+                            const confirmed = confirm("Are you sure to edit?");
+                            if (!confirmed) {
+                                e.cancel = true;
+                            } else {
+                                $('#modalEdit').modal('show');
+                                getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi lấy room info:", error);
+                    e.cancel = true;
+                }
+            },
+
 
         });
 
@@ -876,7 +1448,510 @@
         }, 200);
     }
 
+        function getRoomID(roomID) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/HouseKeeping/GetRoomID',
+                type: 'get',
+                dataType: 'json',
+                data: { id: roomID },
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (result) {
+                    resolve(result);
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        sessionTimeout();
+                    }
+                    reject(xhr);
+                }
+            });
+        });
+    }
+     function askUpdateOrReview() {
+        return Swal.fire({
+            title: 'Update date only or review rate?',
+            icon: 'question',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Update',
+            denyButtonText: 'Review',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'small-swal'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) return "update";
+            if (result.isDenied) return "review";
+            return "cancel";
+        });
+    }
+      function getReservationByIDReview(ID){
+        $.ajax({
+            url: '/Reservation/GetReservationByID',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                ID: ID
+            },
+            success: function (result) {
 
+                $('#txtAgent').val(result.profileAgentId);
+                $('#txtCompany').val(result.profileCompanyId);
+                $("#txtGroupCode").val('');
+                $('#txtContact').val(result.profileContactId);
+                $("#txtContactPhone").val(result.contactPhone);
+                $("#txtID").val(result.id);
+                // var tomSelectInstance = $('#txtName')[0].tomselect;
+                // tomSelectInstance.setValue(result.profileIndividualId);
+                $("#txtFirstName").val(result.firstName);
+                $("#txtTitleID").val(result.title)
+                $("#txtPhone").val('');
+                $("#txtEmail").val(result.email);
+                $("#txtMemberType").val(result.memberType);
+                $("#txtCardNo").val(result.memberNo);
+                $("#txtAddress").val(result.address);
+                $("#txtCity").val(result.city);
+                $("#txtNationality").val(result.country);
+                $("#arrival").val(result.arrivalDate.split("T")[0]);
+                $("#departure").val(result.departureDate.split("T")[0]);
+                $("#adults").val(result.noOfAdult);
+                $("#c").val(result.noOfChild);
+                $("#c1").val(result.noOfChild1);
+                $("#c2").val(result.noOfChild2);
+                $("#nights").val(result.noOfNight);
+                $("#numRooms").val(result.noOfRoom);
+                $("#txtRoomType").val(result.roomTypeId);
+                $("#txtVIP").val(result.vipId);
+                $("#txtRTC").val(result.rtcId);
+                $("#roomSelect").val(result.roomNo);
+                $("#txtETA").val(result.eta);
+                $("#txtETD").val(result.etd);
+                $("#txtResType").val(result.reservationTypeId);
+                $("#txtMarketID").val(result.marketId);
+                $("#txtMarket").val(result.marketCode);
+                $("#txtSource").val(result.sourceId);
+                $("#txtBookerID").val(result.bookerId);
+                $("#txtBooker").val(result.bookerName);
+                $("#txtComment").val(result.comment);
+                $("#pickedID").val(result.pickupReqdId);
+                $("#pickUpTransportType").val(result.pickupTransportType);
+                $("#pickUpStationCode").val(result.pickupStationCode);
+                $("#pickUpCarrierCode").val(result.pickupCarrierCode);
+                $("#pickUpTime").val(result.pickupTime);
+                $("#pickUpDate").val(result.pickupArrivalDate.split("T")[0]);
+                $("#pickUpTransportNo").val(result.pickupTransportNo);
+                $("#pickUpDescription").val(result.pickupDescription);
+                $("#dropOffId").val(result.dropOffReqdId);
+                $("#dropOffTransportType").val(result.dropOffTransportType);
+                $("#dropOffStationCode").val(result.dropOffStationCode);
+                $("#dropOffCarrierCode").val(result.dropOffCarrierCode);
+                $("#dropOffTime").val(result.dropOffTime);
+                $("#dropOffTransportNo").val(result.dropOffTransportNo);
+                $("#dropOffDate").val(result.dropOffDepartureDate.split("T")[0]);
+                $("#dropOffDescription").val(result.dropOffDescription);
+                $("#txtPackage").val(result.packageId);
+                $("#txtRateCodeID").val(result.rateCodeId);
+                $("#txtRateCode").val(result.rateCode);
+                let amount = result.rate; // Giả sử result.rate là 4409171
+                let formattedAmount = amount.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
+                let amountNet = result.rateAfterTax; // Giả sử result.rate là 4409171
+                let formattedNet = amountNet.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
+                $("#txtRateAmount").val(formattedAmount); // Kết quả: 4,409,171
+                $("#txtNetAmount").val(formattedNet);
+                $('#txtRateAfterDiscount').val(formattedAmount);
+                $('#txtNetAfterDiscount').val(formattedNet);
+                $("#txtColor").val(result.color);
+                // $("#txtItemInventory").val('');
+                // $("#txtPreference").val();
+                $("#txtAllotmentID").val(result.allotmentId);
+                $("#txtAllotment").val(result.allotmentCode);
+                $("#txtPersonInCharge").val(result.personInChargeId);
+                $("#saveClick").hide();
+               $("#clearClick").hide();
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+
+
+     function getInfoByProfileIndividualID(id){
+        $.ajax({
+            url: '/Reservation/GetInfoProfileIndividual',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                id: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+
+                $('#txtID').val(result.id);
+                $('#nameProfileSearch').val(result.account);
+                $('#firstNameProfileSearch').val(result.firstname);
+                $('#cityProfileSearch').val(result.city);
+                $('#txtName').val(result.account);
+                $('#txtItemInventory').prop('disabled', false); // Enable the select element
+                $('#txtFirstName').val(result.firstname);
+                $('#txtTitle').val(result.titleID);
+                $('#txtPhone').val(result.handPhone);
+                $('#txtEmail').val(result.email);
+                $('#txtIdentityCard').val(result.identityCard);
+                $('#txtPassport').val(result.passPort);
+                $('#txtAddress').val(result.address);
+                const formattedDate = result.dateOfBirth.split("T")[0];
+                $('#txtDob').val(formattedDate);
+                $('#txtNationality').val(result.nationalityID);
+                $('#txtCity').val(result.city);
+                $('#txtVIP').val(result.vipID);
+                $('#txtCardNo').val(result.memberNo);
+                $('#txtMemberType').val(result.memberType);
+                $('#txtPrefRoom').val(result.prefRoom);
+
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    function calculateNet(fromDate,toDate,rateCodeID,roomTypeID,currencyID,packageID,day,value,transactionCode,discountPercent,discountAmount) {
+        return $.ajax({
+            url: '/Reservation/CaculateNet',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                fromDate: fromDate,
+                toDate: toDate,
+                rateCodeID: rateCodeID,
+                roomTypeID: roomTypeID,
+                currencyID: currencyID,
+                packageID: packageID,
+                day: day,
+                price:value,
+                transactionCode: transactionCode,
+                discountPercent: discountPercent,
+                discountAmount: discountAmount
+            },
+            success: function (result) {
+                var value = parseFloat(result.priceAfter);
+                    valueFloat =  Math.round(value).toLocaleString('en-US', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            });
+                $('#txtNetAmount').val(valueFloat);
+
+                var valueRateAfter = parseFloat(result.priceDiscount);
+                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                $('#txtRateAfterDiscount').val(valueRateAfterFloat);
+                var valueNetAfter = parseFloat(result.priceAfterDiscount);
+                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                $('#txtNetAfterDiscount').val(valueNetAfterFloat);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    $('#txtRateAmount').on('input', function() {
+        let value = $(this).val();
+
+        // Loại bỏ tất cả ký tự không phải số
+        value = value.replace(/[^0-9]/g, '');
+
+        // Định dạng thành tiền với dấu phẩy
+        if (value) {
+            // Sử dụng toLocaleString để định dạng số
+            let formattedValue = parseInt(value).toLocaleString('vi-VN');
+            // Thay dấu chấm thành dấu phẩy
+            formattedValue = formattedValue.replace(/\./g, ',');
+            $(this).val(formattedValue);
+        } else {
+            // Nếu không có giá trị, đặt lại input thành rỗng
+            $(this).val('');
+        }
+    }).on('keypress', function(event) {
+        // Chỉ cho phép nhập các ký tự số (0-9)
+        let charCode = event.which || event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    });
+
+    $('#txtRateAmount').blur(function() {
+        let value = $(this).val();
+        let cleanValue = value.replace(/[^0-9]/g, '');
+        let valueDiscountPercent = $('#txtDiscountPercent').val();
+        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
+        let valueDiscountAmount = $('#txtDiscountAmount').val();
+        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
+        calculateNet($('#arrival').val(),$('#departure').val(),0,
+        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
+    });
+    $('#txtDiscountAmount').on('input', function() {
+        let value = $(this).val();
+
+        // Loại bỏ tất cả ký tự không phải số
+        value = value.replace(/[^0-9]/g, '');
+
+        // Định dạng thành tiền với dấu phẩy
+        if (value) {
+            // Sử dụng toLocaleString để định dạng số
+            let formattedValue = parseInt(value).toLocaleString('vi-VN');
+            // Thay dấu chấm thành dấu phẩy
+            formattedValue = formattedValue.replace(/\./g, ',');
+            $(this).val(formattedValue);
+        } else {
+            // Nếu không có giá trị, đặt lại input thành rỗng
+            $(this).val('');
+        }
+    }).on('keypress', function(event) {
+        // Chỉ cho phép nhập các ký tự số (0-9)
+        let charCode = event.which || event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    });
+    $('#txtDiscountPercent').on('input', function() {
+        let value = $(this).val();
+
+        // Loại bỏ tất cả ký tự không phải số
+        value = value.replace(/[^0-9]/g, '');
+
+        // Định dạng thành tiền với dấu phẩy
+        if (value) {
+            // Sử dụng toLocaleString để định dạng số
+            let formattedValue = parseInt(value).toLocaleString('vi-VN');
+            // Thay dấu chấm thành dấu phẩy
+            formattedValue = formattedValue.replace(/\./g, ',');
+            $(this).val(formattedValue);
+        } else {
+            // Nếu không có giá trị, đặt lại input thành rỗng
+            $(this).val('');
+        }
+    }).on('keypress', function(event) {
+        // Chỉ cho phép nhập các ký tự số (0-9)
+        let charCode = event.which || event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    });
+    $('#txtDiscountAmount').blur(function() {
+        let value = $('#txtRateAmount').val();
+        let cleanValue = value.replace(/[^0-9]/g, '');
+        let valueDiscountPercent = $('#txtDiscountPercent').val();
+        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
+        let valueDiscountAmount = $(this).val();
+        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
+        calculateNet($('#arrival').val(),$('#departure').val(),0,
+        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
+    });
+    $('#txtDiscountPercent').blur(function() {
+        let value = $('#txtRateAmount').val();
+        let cleanValue = value.replace(/[^0-9]/g, '');
+        let valueDiscountPercent = $(this).val();
+        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
+        let valueDiscountAmount = $('#txtDiscountAmount').val();
+        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
+        calculateNet($('#arrival').val(),$('#departure').val(),0,
+        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
+    });
+
+
+
+        function getReservationByID(ID, startDate, endDate, roomNo,roomtypeid) {
+        $.ajax({
+            url: '/Reservation/GetReservationByID',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                ID: ID
+            },
+            success: function (result) {
+
+                $('#txtAgent').val(result.profileAgentId);
+                $('#txtCompany').val(result.profileCompanyId);
+                $("#txtGroupCode").val('');
+                $('#txtContact').val(result.profileContactId);
+                $("#txtContactPhone").val(result.contactPhone);
+                $("#txtID").val(result.id);
+                // var tomSelectInstance = $('#txtName')[0].tomselect;
+                // tomSelectInstance.setValue(result.profileIndividualId);
+                   $("#txtFirstName").val(result.firstName);
+                $("#txtFirstName").val(result.firstName);
+                $("#txtTitleID").val(result.title)
+                $("#txtPhone").val('');
+                $("#txtEmail").val(result.email);
+                $("#txtMemberType").val(result.memberType);
+                $("#txtCardNo").val(result.memberNo);
+                $("#txtAddress").val(result.address);
+                $("#txtCity").val(result.city);    
+                $("#txtNationality").val(result.country);
+                  $("#arrival").val(formatDate(startDate));
+              $("#departure").val(formatDate(endDate));
+                $("#adults").val(result.noOfAdult);
+                $("#c").val(result.noOfChild);
+                $("#c1").val(result.noOfChild1);
+                $("#c2").val(result.noOfChild2);
+                $("#nights").val(result.noOfNight);
+                $("#numRooms").val(result.noOfRoom);
+                $("#txtRoomType").val(roomtypeid);
+                $("#txtVIP").val(result.vipId);
+                $("#txtRTC").val(result.rtcId);
+                $("#roomSelect").val(roomNo);
+                $("#txtETA").val(result.eta);
+                $("#txtETD").val(result.etd);
+                $("#txtResType").val(result.reservationTypeId);
+                $("#txtMarketID").val(result.marketId);
+                $("#txtMarket").val(result.marketCode);
+                $("#txtSource").val(result.sourceId);
+                $("#txtBookerID").val(result.bookerId);
+                $("#txtBooker").val(result.bookerName);
+                $("#txtComment").val(result.comment);
+                $("#pickedID").val(result.pickupReqdId);
+                $("#pickUpTransportType").val(result.pickupTransportType);
+                $("#pickUpStationCode").val(result.pickupStationCode);
+                $("#pickUpCarrierCode").val(result.pickupCarrierCode);
+                $("#pickUpTime").val(result.pickupTime);
+                $("#pickUpDate").val(result.pickupArrivalDate.split("T")[0]);
+                $("#pickUpTransportNo").val(result.pickupTransportNo);
+                $("#pickUpDescription").val(result.pickupDescription);
+                $("#dropOffId").val(result.dropOffReqdId);
+                $("#dropOffTransportType").val(result.dropOffTransportType);
+                $("#dropOffStationCode").val(result.dropOffStationCode);
+                $("#dropOffCarrierCode").val(result.dropOffCarrierCode);
+                $("#dropOffTime").val(result.dropOffTime);
+                $("#dropOffTransportNo").val(result.dropOffTransportNo);
+                $("#dropOffDate").val(result.dropOffDepartureDate.split("T")[0]);
+                $("#dropOffDescription").val(result.dropOffDescription);
+                $("#txtPackage").val(result.packageId);
+                $("#txtRateCodeID").val(result.rateCodeId);
+                $("#txtRateCode").val(result.rateCode);
+                let amount = result.rate; // Giả sử result.rate là 4409171
+                let formattedAmount = amount.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
+                let amountNet = result.rateAfterTax; // Giả sử result.rate là 4409171
+                let formattedNet = amountNet.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
+                $("#txtRateAmount").val(formattedAmount); // Kết quả: 4,409,171
+                $("#txtNetAmount").val(formattedNet);
+                $('#txtRateAfterDiscount').val(formattedAmount);
+                $('#txtNetAfterDiscount').val(formattedNet);
+                $("#txtColor").val(result.color);
+                // $("#txtItemInventory").val('');
+                // $("#txtPreference").val();
+                $("#txtAllotmentID").val(result.allotmentId);
+                $("#txtAllotment").val(result.allotmentCode);
+                $("#txtPersonInCharge").val(result.personInChargeId);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    //  function getProfileIndividual(){
+    //     $.ajax({
+    //             url: '/Reservation/GetProfileIndividual',
+    //         type: 'get',
+    //         dataType: 'json',
+    //             crossDomain: false,
+    //         headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+    //         success: function (result) {
+    //             if (result.length > 0) {
+    //                 let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
+    //                 select.clear(); // Xóa giá trị hiện tại
+    //                 select.clearOptions(); // Xóa tất cả option cũ
+
+    //                 select.addOption({ value: '0', text: '' });
+    //                 result.forEach(item => {
+    //                     select.addOption({ value: item.id, text: `${item.account}` });
+    //                 });
+
+    //                 select.setValue('0'); // Chọn giá trị mặc định
+
+    //                 let select2 = $('#txtNameAccompanying')[0].tomselect; // Lấy instance của TomSelect
+    //                 select2.clear(); // Xóa giá trị hiện tại
+    //                 select2.clearOptions(); // Xóa tất cả option cũ
+
+    //                 select2.addOption({ value: '0', text: '' });
+    //                 result.forEach(item => {
+    //                     select2.addOption({ value: item.id, text: `${item.account}` });
+    //                 });
+
+    //                 select2.setValue('0'); // Chọn giá trị mặc định
+    //             }
+    //             else{
+    //                 let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
+    //                 select.clear(); // Xóa giá trị hiện tại
+    //                 select.clearOptions(); // Xóa tất cả option cũ
+    //                 select.addOption({ value: '0', text: '' });
+    //                 select.setValue('0');
+
+    //                     let select2 = $('#txtNameAccompanying')[0].tomselect; // Lấy instance của TomSelect
+    //                 select2.clear(); // Xóa giá trị hiện tại
+    //                 select2.clearOptions(); // Xóa tất cả option cũ
+    //                 select2.addOption({ value: '0', text: '' });
+    //                 select2.setValue('0');
+    //             }
+    //         },
+    //         error: function (xhr, statusText, err) {
+    //             if (xhr.status == 401) {
+    //                 sessionTimeout();
+    //             } else {
+    //             }
+    //         }
+    //     });
+    // }
+  
+    // $('#txtName').on('change', function() {
+    //     var value = $(this).val();
+    //     getInfoByProfileIndividualID(value);
+
+    //     // Lấy instance của TomSelect cho #txtItemInventory
+    //     var tomSelectInstance = $('#txtItemInventory')[0].tomselect; // Lấy đối tượng TomSelect
+
+    //     if (value && value !== '0') {
+    //         if (tomSelectInstance) {
+    //             tomSelectInstance.enable(); // Sử dụng API của TomSelect để enable
+    //         } else {
+    //             // Fallback: Thử enable bằng jQuery nếu không tìm thấy TomSelect
+    //             $('#txtItemInventory').prop('disabled', false);
+    //         }
+    //     } else {
+    //         if (tomSelectInstance) {
+    //             tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable
+    //         } else {
+    //             $('#txtItemInventory').prop('disabled', true);
+    //         }
+    //     }
+    // });
+
+     
 
          function initializeRoomPlanGrid(data) {
         const columnWidth = 120;
@@ -916,7 +1991,120 @@
         });
     }
 
+      function EditReservation() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+        let valueDiscountPercent = $('#txtDiscountPercent').val();
+        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
+        let valueDiscountAmount = $('#txtDiscountAmount').val();
+        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
+        formData.append('rsvID', idReservation);
 
+        formData.append('profileAgentID', $('#txtAgent').val());
+        formData.append('agentName', $('#txtAgent').find('option:selected').text());
+        formData.append('profileCompanyID', $('#txtCompany').val());
+        formData.append('companyName', $('#txtCompany').find('option:selected').text());
+        formData.append('groupCode', $("#txtGroupCode").val());
+        formData.append('profileContactID', $('#txtContact').val());
+        formData.append('contactName', $('#txtContact').find('option:selected').text());
+        formData.append('contactPhone', $("#txtContactPhone").val());
+        formData.append('profileIndividualID', $("#txtID").val());
+        const tomSelect = $('#txtName')[0].tomselect;
+        const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
+        formData.append('firstName', $("#txtFirstName").val());
+        formData.append('lastName', selectedText);
+        formData.append('title', $("#txtTitle").val() ?? '');
+        formData.append('phone', $("#txtPhone").val());
+        formData.append('email', $("#txtEmail").val());
+        formData.append('memberType', $("#txtMemberType").val());
+        formData.append('memberNo', $("#txtCardNo").val());
+        formData.append('address', $("#txtAddress").val());
+        formData.append('city', $("#txtCity").val());
+        formData.append('nationality', $("#txtNationality").val());
+        formData.append('arrival', $("#arrival").val());
+        formData.append('departure', $("#departure").val());
+        formData.append('noOfAdult', $("#adults").val());
+        formData.append('noOfChild', $("#c").val());
+        formData.append('noOfChild1', $("#c1").val());
+        formData.append('noOfChild2', $("#c2").val());
+        formData.append('noOfNight', $("#nights").val());
+        formData.append('noOfRoom', $("#numRooms").val());
+        formData.append('roomTypeID', $("#txtRoomType").val());
+        formData.append('vipID', $("#txtVIP").val());
+        formData.append('rtcID', $("#txtRTC").val());
+        formData.append('roomID', $("#roomSelect").val());
+        formData.append('roomNo',$('#roomSelect').find('option:selected').text());
+        formData.append('eta', $("#txtETA").val());
+        formData.append('etd', $("#txtETD").val());
+        formData.append('reservationType', $("#txtResType").val());
+        formData.append('reservationTypeCode', $('#txtResType').find('option:selected').text());
+        formData.append('marketID', $("#txtMarketID").val());
+        formData.append('marketCode', $("#txtMarket").val());
+        formData.append('sourceID', $("#txtSource").val());
+        formData.append('sourceCode',  $('#txtSource').find('option:selected').text());
+        formData.append('bookerID', $("#txtBookerID").val());
+        formData.append('bookerName', $("#txtBooker").val());
+        formData.append('discountAmount',cleanValueDiscountAmount);
+        formData.append('discountRate', cleanValueDiscountPercent);
+        formData.append('comment', $("#txtComment").val());
+        formData.append('pickedId', $("#pickedID").val());
+        formData.append('pickUpTransportType', $("#pickUpTransportType").val());
+        formData.append('pickUpStationCode', $("#pickUpStationCode").val());
+        formData.append('pickUpCarrierCode', $("#pickUpCarrierCode").val());
+        formData.append('pickUpTime', $("#pickUpTime").val());
+        formData.append('pickUpDate', $("#pickUpDate").val());
+        formData.append('pickUpTransportNo', $("#pickUpTransportNo").val());
+        formData.append('pickUpDescription', $("#pickUpDescription").val());
+        formData.append('dropOffId', $("#dropOffId").val());
+        formData.append('dropOffCarrierCode', $("#dropOffCarrierCode").val());
+        formData.append('dropOffTransportType', $("#dropOffTransportType").val());
+        formData.append('dropOffStationCode', $("#dropOffStationCode").val());
+        formData.append('dropOffTime', $("#dropOffTime").val());
+        formData.append('dropOffTransportNo', $("#dropOffTransportNo").val());
+        formData.append('dropOffDate', $("#dropOffDate").val());
+        formData.append('dropOffDescription', $("#dropOffDescription").val());
+        formData.append('packageID', $("#txtPackage").val());
+        formData.append('packages', $('#txtPackage').find('option:selected').text());
+        formData.append('rateCodeID', $("#txtRateCodeID").val());
+        formData.append('rateCode', $("#txtRateCode").val());
+        formData.append('rateAmount', $("#txtRateAmount").val());
+        formData.append('rateAfter', $("#txtNetAmount").val());
+        formData.append('color', $("#txtColor").val());
+        const selectedValues = $("#txtItemInventory").val();
+        selectedValues.forEach(value => {
+            formData.append('itemInventory', value);
+        });
+        formData.append('specials', $("#txtPreference").val());
+        formData.append('allotmentID', $("#txtAllotmentID").val());
+        formData.append('allotmentCode', $("#txtAllotment").val());
+        formData.append('perrsonInCharge', $("#txtPersonInCharge").val());
+        formData.append('roomNight', $("#nights").val());
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+
+        $.ajax({
+            url: '/Reservation/EditReservation',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    resetForm();
+                        showToast('Success', data.msg, true);
+                } else {
+                        showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
 
 
 
