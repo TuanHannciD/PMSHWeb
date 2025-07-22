@@ -30,7 +30,7 @@ namespace Reservation.Commons.Helpers
                 List<NationalityModel> list = PropertyUtils.ConvertToList<NationalityModel>(NationalityBO.Instance.FindByAttribute("Inactive", 0));
                 if (list.Count > 0)
                 {
-                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                    items = list.Select(p => new SelectListItem { Value = p.Code.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
                     items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });

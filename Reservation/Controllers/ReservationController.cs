@@ -457,6 +457,7 @@ namespace Reservation.Controllers
         }
 
         //[ValidateAntiForgeryToken]
+        #region save reservation
         [HttpPost]
         public ActionResult SaveReservation()
         {
@@ -466,7 +467,7 @@ namespace Reservation.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
                 List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-                int memberTypeID = 0;int roomTypeID = 0; int vipID = 0;
+                int memberTypeID = 0; int roomTypeID = 0; int vipID = 0;
                 if (string.IsNullOrEmpty(Request.Form["memberType"].ToString()))
                 {
                     memberTypeID = 0;
@@ -475,9 +476,9 @@ namespace Reservation.Controllers
                 {
                     vipID = 0;
                 }
-                if (string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
+                if (!string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
                 {
-                    roomTypeID = 0;
+                    roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
                 }
                 if (string.IsNullOrEmpty(Request.Form["lastName"].ToString()))
                 {
@@ -487,7 +488,7 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Reservation Type cannot be blank" });
                 }
-                if(decimal.Parse(Request.Form["rateAmount"].ToString()) == 0)
+                if (decimal.Parse(Request.Form["rateAmount"].ToString()) == 0)
                 {
                     return Json(new { code = 1, msg = "Rate cannot be blank " });
 
@@ -496,6 +497,7 @@ namespace Reservation.Controllers
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
                 ReservationModel reservationModel = new ReservationModel();
+
                 #region lưu reservation
                 reservationModel.ConfirmationNo = (ReservationBO.GetTopConfirmationNo() + 1).ToString();
                 reservationModel.ReservationNo = (ReservationBO.GetTopID() + 1).ToString();
@@ -580,9 +582,9 @@ namespace Reservation.Controllers
 
                 reservationModel.BusinessBlockId = 0;
                 reservationModel.BusinessBlockCode = "";
-                reservationModel.Eta = Request.Form["eta"].ToString();
+                reservationModel.Eta = !string.IsNullOrEmpty(Request.Form["eta"].ToString()) ? Request.Form["eta"].ToString() : "";
                 reservationModel.CheckInDate = DateTime.Parse(Request.Form["arrival"].ToString());
-                reservationModel.Etd = Request.Form["etd"].ToString();
+                reservationModel.Etd = !string.IsNullOrEmpty(Request.Form["etd"].ToString()) ? Request.Form["etd"].ToString() : "";
                 reservationModel.CheckOutDate = DateTime.Parse(Request.Form["arrival"].ToString());
                 reservationModel.ReservationTypeId = int.Parse(Request.Form["reservationType"].ToString());
                 reservationModel.ReservationTypeCode = Request.Form["reservationTypeCode"].ToString();
@@ -717,6 +719,29 @@ namespace Reservation.Controllers
                 long reservationID = ReservationBO.Instance.Insert(reservationModel);
                 #endregion
 
+                #region lưu reservation master
+                if (int.Parse(Request.Form["profileAgentID"].ToString()) != 0 || int.Parse(Request.Form["profileCompanyID"].ToString()) != 0)
+                {
+                    ReservationModel reservationMaster = new ReservationModel();
+                    reservationMaster = reservationModel;
+                    reservationMaster.ReservationNo = "0";
+                    reservationMaster.ProfileIndividualId = 0;
+                    reservationMaster.LastName = "* " + reservationMaster.AgentName + ", Master *";
+                    reservationMaster.FirstName = "Master *";
+                    reservationMaster.NoOfAdult = 0;
+                    reservationMaster.NoOfChild = reservationMaster.NoOfChild1 = reservationMaster.NoOfChild2 = 0;
+                    reservationMaster.RoomTypeId = 8;
+                    reservationMaster.RoomType = "DMR";
+                    reservationMaster.RtcId = 8;
+                    reservationMaster.RoomId = 0;
+                    reservationMaster.RoomNo = "";
+                    reservationMaster.PostingMaster = true;
+                    reservationMaster.MainGuest = false;
+                    reservationMaster.ShareRoom = reservationModel.ShareRoom + 1;
+                    ReservationBO.Instance.Insert(reservationMaster);
+                }
+                #endregion
+
                 #region lưu reservation item inventory
                 string itemInventoryString  = Request.Form["itemInventory"].ToString(); 
                 List<int> itemInventory = itemInventoryString.Split(',')
@@ -764,7 +789,7 @@ namespace Reservation.Controllers
 
             }
         }
-
+        #endregion
 
         #region search reservation
         [HttpGet]
@@ -834,9 +859,9 @@ namespace Reservation.Controllers
                 {
                     vipID = 0;
                 }
-                if (string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
+                if (!string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
                 {
-                    roomTypeID = 0;
+                    roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
                 }
                 if (string.IsNullOrEmpty(Request.Form["lastName"].ToString()))
                 {
@@ -855,7 +880,7 @@ namespace Reservation.Controllers
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
                 ReservationModel reservationModel = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
-                #region lưu reservation
+                #region edit reservation
                 reservationModel.ConfirmationNo = (ReservationBO.GetTopConfirmationNo() + 1).ToString();
                 reservationModel.ReservationNo = (ReservationBO.GetTopID() + 1).ToString();
                 reservationModel.ReservationDate = businessDate[0].BusinessDate;
@@ -939,9 +964,9 @@ namespace Reservation.Controllers
 
                 reservationModel.BusinessBlockId = 0;
                 reservationModel.BusinessBlockCode = "";
-                reservationModel.Eta = Request.Form["eta"].ToString();
+                reservationModel.Eta = !string.IsNullOrEmpty(Request.Form["eta"].ToString()) ? Request.Form["eta"].ToString() : "";
                 reservationModel.CheckInDate = DateTime.Parse(Request.Form["arrival"].ToString());
-                reservationModel.Etd = Request.Form["etd"].ToString();
+                reservationModel.Etd = !string.IsNullOrEmpty(Request.Form["etd"].ToString()) ? Request.Form["etd"].ToString() : "";
                 reservationModel.CheckOutDate = DateTime.Parse(Request.Form["arrival"].ToString());
                 reservationModel.ReservationTypeId = int.Parse(Request.Form["reservationType"].ToString());
                 reservationModel.ReservationTypeCode = Request.Form["reservationTypeCode"].ToString();
@@ -1122,6 +1147,7 @@ namespace Reservation.Controllers
         }
         #endregion
 
+        #region cancel reservation
         [HttpPost]
         public ActionResult CancelReservation()
         {
@@ -1175,6 +1201,8 @@ namespace Reservation.Controllers
 
             }
         }
+        #endregion
+
 
         #region registration card
         [HttpGet]

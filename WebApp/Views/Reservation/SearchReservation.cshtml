@@ -388,6 +388,7 @@
                                 <div class="row col-md-8">
                                     <label class="col-md-3">Room</label>
                                     <input class="col-md-10" id="roomSelect" readonly />
+                                    <input class="col-md-10" id="roomID" style="display:none" />
                                     <button class="col-md-1" onclick="openModalSearchRoom()" id="btnRoom"><i class="fa-solid fa-ellipsis"></i></button>
 
 
@@ -1933,6 +1934,7 @@
             onRowDblClick: function(e) {
                 // getInfoByProfileID(e.data.id);
                 $('#roomSelect').val(e.data.roomNo);
+                $('#roomID').val(e.data.roomID);
                 $('#txtRoomType').val(e.data.roomTypeID);
                 $('#txtRTC').val(e.data.roomTypeID);
                 $('#roomNoSearch').val(e.data.roomNo);
@@ -2756,8 +2758,8 @@
         formData.append('roomTypeID', $("#txtRoomType").val());
         formData.append('vipID', $("#txtVIP").val());
         formData.append('rtcID', $("#txtRTC").val());
-        formData.append('roomID', $("#roomSelect").val());
-        formData.append('roomNo',$('#roomSelect').find('option:selected').text());
+        formData.append('roomID', $("#roomID").val());
+        formData.append('roomNo',$('#roomSelect').val());
         formData.append('eta', $("#txtETA").val());
         formData.append('etd', $("#txtETD").val());
         formData.append('reservationType', $("#txtResType").val());
@@ -2815,6 +2817,7 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
+                    searchReservation();
                     resetForm();
                         showToast('Success', data.msg, true);
                 } else {
@@ -3028,6 +3031,7 @@
                 $("#txtRoomType").val(result.roomTypeId);
                 $("#txtVIP").val(result.vipId);
                 $("#txtRTC").val(result.rtcId);
+                $("#roomID").val(result.roomId);
                 $("#roomSelect").val(result.roomNo);
                 $("#txtETA").val(result.eta);
                 $("#txtETD").val(result.etd);
@@ -3103,7 +3107,9 @@
         }
     });
     
-
+    function closeModalEdit(){
+        $('#modalEdit').modal('hide');
+    }
     function openModalCancel(){
         if(idReservation == 0){
             showToast('Error', 'Please choose booking', false);
