@@ -1218,7 +1218,7 @@
                 }
             });
         });
-       let roomNo, roomtypeid;
+       let roomNo, roomtypeid,idReservation;
       function initializeRoomScheduler(schedulerData, fromDate, toDate) {
         if (!schedulerData || !schedulerData.length) return;
 
@@ -1365,7 +1365,7 @@
                 ,onAppointmentUpdating: async function (e) {
                 const oldData = e.oldData;
                 const newData = e.newData;
-                const idReservation = oldData.reservationID;
+                 idReservation = oldData.reservationID;
 
                 const oldStart = oldData.startDate.getTime();
                 const oldEnd = oldData.endDate.getTime();
