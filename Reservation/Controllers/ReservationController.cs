@@ -1,6 +1,8 @@
 ﻿using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using DevExpress.Web.Internal;
+using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Import.Doc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Reservation.Commons.Helpers;
 using Reservation.Services.Interfaces;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -112,6 +115,23 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInfoProfileIndividual(int id)
+        {
+            try
+            {
+                ReservationModel res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(id);
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(res.ProfileIndividualId);
+
+                return Json(profile);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetRateCode(DateTime arrivalDate,DateTime departure,int adults,int roomType)
         {
@@ -1155,5 +1175,190 @@ namespace Reservation.Controllers
 
             }
         }
+
+        #region registration card
+        [HttpGet]
+        public async Task<IActionResult> GetRegistrationCard()
+        {
+            try
+            {
+                List<RegistrationCardModel> result = RegistrationCardBO.GetRegistrationCard();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+
+
+
+
+        #region Reservation Accompanying
+        [HttpGet]
+        public async Task<IActionResult> GetReservationAccompanyingByReservationID(int reservationID)
+        {
+            try
+            {
+
+                var result = ReservationAccompanyBO.GetReservationAccompanyByReservationID(reservationID);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AttachAccompanying()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if (string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Could not find profile attached" });
+                }
+                if (string.IsNullOrEmpty(Request.Form["rsvID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Please choose booking" });
+                }
+                var checkReservationAccompany = ReservationAccompanyBO.GetReservationAccompany(int.Parse(Request.Form["rsvID"].ToString()), int.Parse(Request.Form["profileAgentID"].ToString()));
+                if(checkReservationAccompany.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "This profile has been attached, please choose another profile" });
+
+                }
+                ReservationAccompanyModel model = new ReservationAccompanyModel();
+                model.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                model.ProfileIndividualID = int.Parse(Request.Form["profileAgentID"].ToString());
+                model.UserInsertID = model.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                model.UpdateDate = model.CreateDate = DateTime.Now;
+                ReservationAccompanyBO.Instance.Insert(model);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Profile was attacheđ successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpPost]
+        public ActionResult DettachAccompanying(int id)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if (id == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose profile dettach" });
+                }
+
+
+                ReservationAccompanyBO.Instance.Delete(id);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Profile was dettached successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
+
+
+        #region check in reservation
+        [HttpPost]
+        public ActionResult CheckInBooking()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
+                reservation.Status = 1;
+                reservation.UpdateBy = Request.Form["userName"].ToString();
+                reservation.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
+                reservation.SpecialUpdateBy = Request.Form["userName"].ToString();
+                reservation.SpecialUpdateDate = reservation.UpdateDate =  DateTime.Now;
+                ReservationBO.Instance.Update(reservation);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Check in was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpPost]
+        public ActionResult PrintRegistrationCard(int id)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string url = "";
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(id);
+                XtraReport report = new WebApp.Templates.RegistrationCard.V_RegistrationCard();
+                report.Parameters["ConfirmationNo"].Value = reservation.ConfirmationNo;
+                report.Parameters["ArrivalDate"].Value = reservation.ArrivalDate.ToString();
+                report.Parameters["DepartureDate"].Value = reservation.DepartureDate.ToString();
+                report.CreateDocument();
+
+                using (MemoryStream msPdf = new MemoryStream())
+                {
+                    report.ExportToPdf(msPdf);
+                    string base64Pdf = Convert.ToBase64String(msPdf.ToArray());
+                    url = $"data:application/pdf;base64,{base64Pdf}";
+
+                }
+                pt.CommitTransaction();
+                return Json(url);
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
     }
 }

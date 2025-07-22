@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using HouseKeeping.Commons.Helpers;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -73,6 +74,29 @@ namespace HouseKeeping.Controllers
             ViewBag.RoomList = listroom;
             List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
             ViewBag.FloorList = listfloor;
+            ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
+            ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
+            ViewBag.cboCity = ListItemHelper.GetCityProvider();
+            ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
+            ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
+            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
+            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+            ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
+            ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
+            ViewBag.cboReason = ListItemHelper.GetReasonProvider();
+            ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
+            ViewBag.cboSource = ListItemHelper.GetSourceProvider();
+            ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
+            ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
+            ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
+            ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
+            ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
+            ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
+            ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
+            ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
+            ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
             return View();
         }
         [HttpGet]
@@ -580,6 +604,20 @@ namespace HouseKeeping.Controllers
             modelH.ObjectID = objectID;
             modelH.TableName = tableName;
             RoomStatusHistoryBO.Instance.Insert(modelH);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRoomID(int ID)
+        {
+            try
+            {
+                RoomModel room = (RoomModel)RoomBO.Instance.FindByPrimaryKey(ID);
+                return Json(room);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
         }
         [HttpGet]
         public IActionResult RoomPlanData(DateTime fromDate, DateTime toDate, int orderbyroom, string owner)

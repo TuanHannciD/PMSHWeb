@@ -18,4 +18,10 @@
     <ProjectReference Include="..\BaseBusiness\BaseBusiness.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Templates\RegistrationCard\V_RegistrationCard.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

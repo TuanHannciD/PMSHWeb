@@ -29,6 +29,11 @@
             align-items: center;
             gap: 5px;
         }
+
+    #btnCheckIn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>
 <div class="body">
     <div class="container2">
@@ -42,8 +47,8 @@
                     <button class="mui-button mui-button-edit" onclick="openModalEdit();"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
                     <button class="mui-button mui-button-cancel" onclick="openModalCancel()"><i class="fa-solid fa-ban"></i>Cancel</button>
                     <button class="mui-button mui-button-reinstate"><i class="fa-solid fa-file-import"></i> Reinstate</button>
-                    <button class="mui-button mui-button-card"><i class="fa-solid fa-id-card"></i>  Reg.Card</button>
-                    <button class="mui-button mui-button-new"><i class="fa-solid fa-check-to-slot"></i> Check In</button>
+                    <button class="mui-button mui-button-card" onclick="openModalRegistrationCard();"><i class="fa-solid fa-id-card"></i>  Reg.Card</button>
+                    <button class="mui-button mui-button-new" id="btnCheckIn" onclick="checkIn();"><i class="fa-solid fa-check-to-slot"></i> Check In</button>
                     <button class="mui-button mui-button-profile"><i class="fa-solid fa-id-badge"></i> Profile</button>
                     <button class="mui-button mui-button-search" onclick="openModalOption();"><i class="fa-solid fa-list"></i> Option</button>
                     <button class="mui-button mui-button-group"><i class="fa-solid fa-users-line"></i> Group Admin</button>
@@ -152,184 +157,6 @@
     </div>
 </div>
 
-@* Model option *@
-<div class="modal fade modal-xl" id="modalOption" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Option</h5>
-                <button type="button" class="btn-close" onclick="closeModalOption()"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Tab Navigation -->
-                <ul class="nav nav-tabs border-bottom-0 bg-light rounded-top shadow-sm" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active fw-medium px-3 py-2" id="tab1-tab" type="button" role="tab" aria-controls="accompanying" aria-selected="true">Accompanying</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab2-tab" type="button" role="tab" aria-controls="addOn" aria-selected="false">Add On</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab3-tab" type="button" role="tab" aria-controls="alerts" aria-selected="false">Alerts</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">Billing</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">Change</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">Deposit/DXL</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab7-tab"  type="button" role="tab" aria-controls="fixedCharges" aria-selected="false">Fixed Charges</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab8-tab" data-bs-toggle="tab" data-bs-target="#tab8" type="button" role="tab" aria-controls="tab8" aria-selected="false">History</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab9-tab" data-bs-toggle="tab" data-bs-target="#tab9" type="button" role="tab" aria-controls="tab9" aria-selected="false">New Message</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab10-tab" data-bs-toggle="tab" data-bs-target="#tab10" type="button" role="tab" aria-controls="tab10" aria-selected="false">Messages</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-medium px-3 py-2" id="tab11-tab" data-bs-toggle="tab" data-bs-target="#tab11" type="button" role="tab" aria-controls="tab11" aria-selected="false">Room Move</button>
-                    </li>
-                </ul>
-
-                <!-- Tab Content -->
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="accompanying" role="tabpanel" aria-labelledby="tab1-tab">
-                        <div class="p-3">
-                            <div class="mb-1 mt-2">
-                                <button class="mui-button mui-button-export" id="attach" onclick="getAccomapnying();" ><i class="fa-solid fa-paperclip"></i> Attach</button>
-                                <button class="mui-button mui-button-delete" id="detach" onclick="detach()"><i class="fa-solid fa-xmark" ></i>Detach</button>
-                                <button class="mui-button mui-button-clear"><i class="fa-solid fa-circle-xmark"></i> Close</button>
-                            </div>
-                            <div >
-                                <select  id="txtNameAccompanying"></select>
-                            </div>
-                            <div class="mui-card mt-2">
-                                <div id="gridContainerAccompanying" class="mt-2 gridContainer"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="addOn" role="tabpanel" aria-labelledby="tab2-tab">
-                        <div class="p-3">
-                            <div class="mb-1 mt-1">
-                                <button class="mui-button mui-button-search"><i class="fa-solid fa-magnifying-glass"></i> OK</button>
-                                <button class="mui-button mui-button-clear"><i class="fa-solid fa-circle-xmark"></i> Close</button>
-                            </div>
-                            <div class="bg-light border rounded col-md-6 row">
-                                <p class="mt-2">Which of these reservation attributes do you want to coppy?</p>
-      
-                                <label class="checkbox-label">
-                                <input type="checkbox" name="col1[]"> Payment Method
-                                </label>
-                                <label class="checkbox-label">
-                                <input type="checkbox" name="col1[]"> Specials
-                                </label>
-                                <label class="checkbox-label">
-                                <input type="checkbox" name="col1[]"> Windown/Room Routing Instructions
-                                </label>
-                                <label class="checkbox-label">
-                                <input type="checkbox" name="col2[]"> Comment
-                                </label>
-                                <label class="checkbox-label">
-                                <input type="checkbox" name="col2[]"> Packages
-                                </label>
-                                <label class="checkbox-label">
-                                <input type="checkbox" name="col2[]"> Item Inventory
-                                </label>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="alerts" role="tabpanel" aria-labelledby="tab3-tab">
-                        <div class="p-3">
-                            <div class="mb-1 mt-2">
-                                <button class="mui-button mui-button-new" id="attach"><i class="fa-solid fa-paperclip"></i> Save</button>
-                                <button class="mui-button mui-button-edit" id="detach" ><i class="fa-solid fa-pen-to-square"></i>Edit</button>
-                                <button class="mui-button mui-button-delete" id="detach" ><i class="fa-solid fa-xmark"></i>Delete</button>
-                                <button class="mui-button mui-button-clear"><i class="fa-solid fa-circle-xmark"></i> Close</button>
-                            </div>
-                            <div class="bg-light rounded-top shadow-sm row">
-  @*                               <div class="col-md-2 mb-1">
-                                    <label for="zone" class="form-label">Code</label>
-                                    <select id="codeAlerts" class="form-select"></select>
-                                </div>
-                                <div class="col-md-2 mb-1">
-                                    <label for="roomShare" class="form-label">Include Roomsharer</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" checked type="checkbox" id="roomShareAlerts" name="roomShareAlerts" value="IncludeRS">
-                                    </div>
-                                </div>
-                                <div class="col-md-2 mb-1">
-                                    <label for="zone" class="form-label">Area</label>
-                                    <select id="areaAlerts" class="form-select"></select>
-                                </div>
-                                 <div class="col-md-2 mb-1">
-                                    <label for="name" class="form-label">Warning Day</label>
-                                    <input id="name" type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-2 mb-1">
-                                    <label for="roomShare" class="form-label">Is Active</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" checked type="checkbox" id="activeAlerts" name="activeAlerts" value="IncludeRS">
-                                    </div>
-                                </div>
-                                <div class="col-md-1 mb-1">
-                                    <label for="name" class="form-label">Description</label>
-                                    <textarea id="name" type="text" class="form-control" />
-                                </div> *@
-                            </div>
-                            <div class="mui-card mt-2">
-                                <div id="gridContainerAlerts" class="mt-2 gridContainer"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="fixedCharges" role="tabpanel" aria-labelledby="tab4-tab">
-                        <div class="p-3">
-                            <button class="mui-button mui-button-search"><i class="fa-solid fa-plus"></i> New</button>
-                            <button class="mui-button mui-button-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                            <button class="mui-button mui-button-delete"><i class="fa-solid fa-trash"></i> Delete</button>
-                            <button class="mui-button mui-button-clear"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
-                            <button class="mui-button mui-button-export"><i class="fa-solid fa-file"></i> EB-TA</button>
-                            <button class="mui-button mui-button-export"><i class="fa-solid fa-file"></i> EB-IND</button>
-                            <button class="mui-button mui-button-export"><i class="fa-solid fa-file"></i> CS-TA</button>
-                            <button class="mui-button mui-button-export"><i class="fa-solid fa-file"></i> CS-IND</button>
-                            <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
-                        </div>
-                        <div>
-                            <div class="row">
-                                <div class="col-md-7 mb-2 row">
-                                    <label for="input1" class="form-label col-md-2" style="min-width:0">Name</label>
-                                    <input type="text" class="form-control col-md-10" id="nameProfileFixedcharge"  disabled>
-                                </div>
-                                <div class="col-md-2 mb-2 row">
-                                    <label for="input1" class="form-label col-md-2" style="min-width:0">Arrival</label>
-                                    <input type="text" class="form-control col-md-10" id="arrivalProfileFixedCharge"  disabled>
-                                </div>
-                                <div class="col-md-2 mb-2 row">
-                                    <label for="input1" class="form-label col-md-2" style="min-width:0">Departure</label>
-                                    <input type="text" class="form-control col-md-10" id="departureFixedCharge"  disabled>
-                                </div>
-                                <div class="col-md-1 mb-2 row">
-                                    <label for="input1" class="form-label col-md-2" style="min-width:0">Nights</label>
-                                    <input type="text" class="form-control" id="nightFixedCharge"  disabled>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mui-card mt-2">
-                            <div id="gridContainerFixedCharge" class="mt-2 gridContainer"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @* Model edit *@
 <div class="modal fade modal-xl" id="modalEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -1391,6 +1218,11 @@
         </div>
     </div>
 </div>
+
+@await Html.PartialAsync("Partial/Option")
+@await Html.PartialAsync("Partial/RegistrationCard")
+@await Html.PartialAsync("Partial/CheckIn")
+
 <script>
     $(document).ready(async function () {
         searchReservation();
@@ -1398,20 +1230,7 @@
         getProfileIndividual();
         $('#listFunction').hide();
     });
-    $('.nav-link').click(function(e) {
-        e.preventDefault();
-        $('.nav-link').removeClass('active').attr('aria-selected', 'false');
-        $('.tab-pane').removeClass('show active');
-        $(this).addClass('active').attr('aria-selected', 'true');
-        const targetTab = $(this).attr('aria-controls');
-        if(targetTab == 'accompanying'){
-            initializeDataGridAccompanying(listProfile);
-        }
-        if(targetTab == 'alerts'){
-                initializeDataGridAlerts(listAlerts);
-        }
-        $('#' + targetTab).addClass('show active');
-    });
+
     function searchReservation() {
         $("#loadingSpinner").show();
         const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
@@ -1453,6 +1272,8 @@
     }
     var idReservation = 0;
     var status = '';
+    var roomStatus = ''
+    var roomNo = ''
     function initializeDataGridSearch(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,
@@ -1507,6 +1328,15 @@
                         html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
                 status = e.data.Status;
+                roomStatus = e.data.RoomStatus;
+                roomNo = e.data.RoomNo;
+                const $checkInButton = $('#btnCheckIn');
+
+                if (status !== 'RESVED') {
+                    $checkInButton.prop('disabled', true);
+                } else {
+                    $checkInButton.prop('disabled', false);
+                }
                 $('#moreInfo').append(html);
             }
         });
@@ -2381,11 +2211,7 @@
             }
         });
     }
-    function openModalSearchPreference(){
-        getDataPreference();
-        $('#modalPreference').modal('show');
 
-    }
     function closeModalSearchPreference(){
         $('#modalPreference').modal('hide');
     }
@@ -3264,139 +3090,8 @@
             }
         }
     });
-    function closeModalEdit(){
-        $('#modalEdit').modal('hide');
-    }
-    function openModalOption(){
-        if (idReservation === 0) {
-            showToast('Lỗi', 'Vui lòng chọn booking', false);
-            return;
-        }
-        $('#detach').hide();
-                    initializeDataGridAccompanying(listProfile);
-        $('#modalOption').modal('show');
-    }
-    function closeModalOption(){
-        $('#modalOption').modal('hide');
-    }
-    var listProfile = [];
-    function getAccomapnying(){
-        var value = $('#txtNameAccompanying').val();
-        getInfoByProfileIDAccompanying(value);
-        const tomSelectInstance = $('#txtNameAccompanying')[0].tomselect; 
-        tomSelectInstance.setValue(0);
-    }
-    function getInfoByProfileIDAccompanying(id) {
-        $.ajax({
-            url: '/Reservation/GetInfoProfile',
-            type: 'get',
-            dataType: 'json',
-            data: {
-                profileID: id
-            },
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                // Check if a profile with the same id already exists in listProfile
-                if (!listProfile.some(profile => profile.id == id)) {
-                    listProfile.push(result);
-                }
-                else{
-                    showToast('Error', 'Profile has been attached, please choose another profile', false);
+    
 
-                }
-                initializeDataGridAccompanying(listProfile);
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                }
-            }
-        });
-    }
-    var profileID = 0;
-    function detach(){
-            listProfile = listProfile.filter(item => item.id !== profileID);
-        
-        initializeDataGridAccompanying(listProfile);
-    }
-    function initializeDataGridAccompanying(data) {
-
-        $("#gridContainerAccompanying").dxDataGrid({
-
-        dataSource: data, allowColumnResizing: true,
-            columns: [
-
-
-                { dataField: "id", caption: "ID",  visible: false},
-                { dataField: "account", caption: "Name"  },
-                { dataField: "city", caption: "City"},
-                    { dataField: "dateOfBirth", caption: "Birthday"},
-            ],
-            paging: { pageSize: 15 },
-            scrolling: {
-                rowRenderingMode: 'virtual',
-            },
-            pager: {
-                visible: true,
-                allowedPageSizes: [15, 20, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true,
-            },
-            filterRow: {
-                    visible: true,
-                    applyFilter: "auto"
-            },
-            selection: {
-                mode: "single" // Allows only one row to be selected at a time
-            },
-            onRowClick: function(e) {
-                profileID = e.data.id;
-                $('#detach').show();
-            }
-        });
-    }
-    function getAlerts(){
-
-        initializeDataGridAlerts(listAlerts);
-    }
-    var listAlerts = [];
-    function initializeDataGridAlerts(data) {
-        $("#gridContainerAlerts").dxDataGrid({
-
-        dataSource: data, allowColumnResizing: true,
-            columns: [
-
-
-                { dataField: "id", caption: "ID",  visible: false},
-                { dataField: "code", caption: "Code",},
-
-                { dataField: "account", caption: "Area"  },
-                { dataField: "city", caption: "Description"},
-            ],
-            paging: { pageSize: 15 },
-            scrolling: {
-                rowRenderingMode: 'virtual',
-            },
-            pager: {
-                visible: true,
-                allowedPageSizes: [15, 20, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true,
-            },
-            filterRow: {
-                    visible: true,
-                    applyFilter: "auto"
-            },
-            selection: {
-                mode: "single" // Allows only one row to be selected at a time
-            },
-            onRowClick: function(e) {
-            }
-        });
-    }
     function openModalCancel(){
         if(idReservation == 0){
             showToast('Error', 'Please choose booking', false);

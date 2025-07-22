@@ -1198,24 +1198,29 @@
     }
     // Khởi tạo ngày mặc định
     window.onload = function() {
-        var businessDate = '@ViewBag.businesDate';
-        var dateParts = businessDate.split(' ')[0].split('/'); // Split to get "29", "08", "2024"
-        var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // Create Date object (YYYY, MM-1, DD)
+        // Lấy chuỗi businessDate từ localStorage
+        var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // Chuỗi: "29/08/2024 00:00:00"
 
-        var departureDate = new Date(parsedBusinessDate);
-        departureDate.setDate(parsedBusinessDate.getDate() + 1);
+        // Chuyển chuỗi ngày "29/08/2024 00:00:00" thành đối tượng Date
+        var dateParts = parsedBusinessDate.split(" ")[0].split("/"); // Tách ngày: ["29", "08", "2024"]
+        var timePart = parsedBusinessDate.split(" ")[1]; // Lấy thời gian: "00:00:00"
+        var formattedDateString = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${timePart}`; // Tạo chuỗi: "2024-08-29T00:00:00"
+        var businessDate = new Date(formattedDateString); // Tạo đối tượng Date
+
+        // Tạo ngày departureDate (ngày tiếp theo)
+        var departureDate = new Date(businessDate);
+        departureDate.setDate(businessDate.getDate() + 1);
 
 
-        // Set arrival and departure input values
-        document.getElementById('arrival').value = formatDate(parsedBusinessDate);
-        document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
-
+        // Gán giá trị cho các input arrival và departure
+        document.getElementById('arrival').value = formatDate(businessDate);
+        document.getElementById('pickUpDate').value = formatDate(businessDate);
         document.getElementById('departure').value = formatDate(departureDate);
         document.getElementById('dropOffDate').value = formatDate(departureDate);
 
+        // Gọi hàm updateDates (giả sử đã được định nghĩa)
         updateDates();
     };
-
     // Lắng nghe sự kiện thay đổi ngày
     document.getElementById('arrival').addEventListener('change', function() {
         const today = new Date();
