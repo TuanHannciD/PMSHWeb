@@ -1099,10 +1099,10 @@ namespace Report.Services.Implements
 
             SqlParameter[] param = new SqlParameter[]
             {
-        new SqlParameter("@Date", date),
-        new SqlParameter("@Cashier", cashierParam),
-        new SqlParameter("@TransactionCode", transParam),
-        new SqlParameter("@Type", typeParam)
+                new SqlParameter("@Date", date),
+                new SqlParameter("@Cashier", cashierParam),
+                new SqlParameter("@TransactionCode", transParam),
+                new SqlParameter("@Type", typeParam)
             };
 
             return DataTableHelper.getTableData("spRptCashierAudit_New", param);

@@ -50,7 +50,6 @@
     background-color: #2B4F2B;
     color: white;
 }
-<<<<<<< HEAD
 .button-report-view {
     background-color: #3b9ac6;
     color: white;
@@ -61,7 +60,8 @@
 }
 .button-report-pdf {
     background-color: darkorange;
-=======
+    color: white;
+}
 .mui-button-option {
     background-color: #7f6000;
     color: white;
@@ -76,6 +76,6 @@
 }
 .mui-button-room {
     background-color: #DDC0B4;
->>>>>>> 2c53260ffd26e01b96fe74ed1a8f2a35e12fd3a0
+
     color: white;
 }

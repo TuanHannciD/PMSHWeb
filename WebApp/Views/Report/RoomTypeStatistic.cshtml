@@ -45,10 +45,6 @@
             color: white !important;
         }
 
-    .bold {
-        font-weight: bold !important;
-    }
-
     #gridContainer .dx-datagrid-headers .dx-header-row > td {
         padding: 5px !important;
         height: 24px !important;
@@ -102,23 +98,74 @@
         height: calc(1.1em + .2rem + 2px);
     }
 
-        .filter-panel .ts-control > input {
-            width: 20px !important; /* hoặc 0 */
-            min-width: 40px !important;
-            flex: 0 0 10px !important; /* không cho giãn */
-            padding: 0 !important; /* bỏ khoảng thừa */
-            border: 0; /* ẩn viền nếu có */
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td,
+    #gridContainer .dx-datagrid .dx-summary-row > td,
+    #gridContainer .dx-datagrid .dx-total-footer td,
+    #gridContainer .dx-datagrid .dx-footer-row td {
+        font-size: 11px !important;
+    }
+
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
+    }
+
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
+        }
+
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+    .tomselect-custom {
+        width: 100px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.65rem;
+    }
+        /* Áp dụng font-size nhỏ cho TomSelect dựa vào class gốc .tomselect-custom */
+        .tomselect-custom + .ts-wrapper .ts-control,
+        .tomselect-custom + .ts-wrapper .ts-dropdown,
+        .tomselect-custom + .ts-wrapper .ts-dropdown .option {
+            font-size: 0.65rem !important;
+            min-height: 30px !important;
         }
 </style>
-<!-- TomSelect CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
-
-<!-- TomSelect JS -->
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
-
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-<div class="filter-panel">
+
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <!-- From Date -->
@@ -132,7 +179,7 @@
         </div>
         <div class="d-flex align-items-center me-3">
                 <label class=" d-flex align-items-center me-2 mb-2">Room Type:</label>
-                <select id="roomTypeCsv" name="roomTypeCsv" class="form-control form-control-sm w-auto ms-2" multiple>
+                <select id="roomTypeCsv" name="roomTypeCsv" class="tomselect-custom" multiple>
                 @foreach (var item in roomList)
                 {
                     <option value="@item.Code">@item.Code</option>
@@ -141,7 +188,7 @@
         </div>
     </div>
     </div>
-</div>
+
 <div class=" mb-3 ">
     <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
     <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
