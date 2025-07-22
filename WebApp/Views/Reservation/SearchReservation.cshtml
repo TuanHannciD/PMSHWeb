@@ -29,6 +29,11 @@
             align-items: center;
             gap: 5px;
         }
+
+    #btnCheckIn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>
 <div class="body">
     <div class="container2">
@@ -43,7 +48,7 @@
                     <button class="mui-button mui-button-cancel" onclick="openModalCancel()"><i class="fa-solid fa-ban"></i>Cancel</button>
                     <button class="mui-button mui-button-reinstate"><i class="fa-solid fa-file-import"></i> Reinstate</button>
                     <button class="mui-button mui-button-card" onclick="openModalRegistrationCard();"><i class="fa-solid fa-id-card"></i>  Reg.Card</button>
-                    <button class="mui-button mui-button-new"><i class="fa-solid fa-check-to-slot"></i> Check In</button>
+                    <button class="mui-button mui-button-new" id="btnCheckIn" onclick="checkIn();"><i class="fa-solid fa-check-to-slot"></i> Check In</button>
                     <button class="mui-button mui-button-profile"><i class="fa-solid fa-id-badge"></i> Profile</button>
                     <button class="mui-button mui-button-search" onclick="openModalOption();"><i class="fa-solid fa-list"></i> Option</button>
                     <button class="mui-button mui-button-group"><i class="fa-solid fa-users-line"></i> Group Admin</button>
@@ -1216,6 +1221,7 @@
 
 @await Html.PartialAsync("Partial/Option")
 @await Html.PartialAsync("Partial/RegistrationCard")
+@await Html.PartialAsync("Partial/CheckIn")
 
 <script>
     $(document).ready(async function () {
@@ -1266,6 +1272,8 @@
     }
     var idReservation = 0;
     var status = '';
+    var roomStatus = ''
+    var roomNo = ''
     function initializeDataGridSearch(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,
@@ -1320,6 +1328,15 @@
                         html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
                 status = e.data.Status;
+                roomStatus = e.data.RoomStatus;
+                roomNo = e.data.RoomNo;
+                const $checkInButton = $('#btnCheckIn');
+
+                if (status !== 'RESVED') {
+                    $checkInButton.prop('disabled', true);
+                } else {
+                    $checkInButton.prop('disabled', false);
+                }
                 $('#moreInfo').append(html);
             }
         });
@@ -2194,11 +2211,7 @@
             }
         });
     }
-    function openModalSearchPreference(){
-        getDataPreference();
-        $('#modalPreference').modal('show');
 
-    }
     function closeModalSearchPreference(){
         $('#modalPreference').modal('hide');
     }
@@ -3078,6 +3091,7 @@
         }
     });
     
+
     function openModalCancel(){
         if(idReservation == 0){
             showToast('Error', 'Please choose booking', false);
