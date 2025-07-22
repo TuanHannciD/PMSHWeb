@@ -223,6 +223,8 @@
                     <div class="row col-md-6">
                         <label class="col-md-3">Room</label>
                         <input class="col-md-10" id="roomSelect" readonly />
+                        <input class="col-md-10" id="roomID" style="display:none" />
+
                         <button class="col-md-1" onclick="openModalSearchRoom()" id="btnRoom"><i class="fa-solid fa-ellipsis"></i></button>
 
 
@@ -1601,6 +1603,7 @@
             },
             onRowDblClick: function(e) {
                 // getInfoByProfileID(e.data.id);
+                    $('#roomID').val(e.data.roomID);
                 $('#roomSelect').val(e.data.roomNo);
                 $('#txtRoomType').val(e.data.roomTypeID);
                 $('#txtRTC').val(e.data.roomTypeID);
@@ -2428,8 +2431,8 @@
         formData.append('roomTypeID', $("#txtRoomType").val());
         formData.append('vipID', $("#txtVIP").val());
         formData.append('rtcID', $("#txtRTC").val());
-        formData.append('roomID', $("#roomSelect").val());
-        formData.append('roomNo',$('#roomSelect').find('option:selected').text());
+        formData.append('roomID', $("#roomID").val());
+        formData.append('roomNo',$('#roomSelect').val());
         formData.append('eta', $("#txtETA").val());
         formData.append('etd', $("#txtETD").val());
         formData.append('reservationType', $("#txtResType").val());
