@@ -1,0 +1,160 @@
+﻿
+<!-- Modal billimg-->
+<div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Billing</h5>
+                <button type="button" class="btn-close" onclick="closeModalBilling()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-search" >Post</button>
+                </div>
+                <div class="row" style="margin: 14px 14px; height: auto; justify-content: space-between; display: flex; align-items: stretch;">
+                    <div class="col-md-10 row bg-light border rounded">
+                        <div class="col-md-2 mb-1">
+                            <label for="firstName" class="form-label">RSV Status</label>
+                            <input id="rsvStatusBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="package" class="form-label">Conf.No</label>
+                            <input id="confirmatioNoBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="zone" class="form-label">Balance</label>
+                            <input id="balanceBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="confirmationNo" class="form-label">Total</label>
+                            <input id="totalBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="crsNo" class="form-label">Group</label>
+                            <input id="groupBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="crsNo" class="form-label">Company</label>
+                            <input id="companyBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="arrival" class="form-label">Arrival </label>
+                            <input id="arrivalBilling" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="departure" class="form-label">Departure </label>
+                            <input id="departureBilling" type="text" class="form-control" />
+                        </div>
+
+                        
+                        
+                    </div>
+                    <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px" id="moreInfo">
+                    </div>
+                </div>
+                <div style="background-color:#FEB92F;padding:12px 12px;" class="border rounded">
+                    <span>SITEMIDERR</span>
+                    <div class="row col-md-6 ">
+                        <span class="col-md-4">Balance</span>
+                        <span class="col-md-4">0</span>
+                        <span class="col-md-3">0</span>
+
+                    </div>
+                </div>
+                <div class="col-md-3 mb-1 mt-2 row">
+                    <label for="departure" class="form-label col-md-2">View by </label>
+                    <select id="viewByBilling" type="text" class="form-control col-md-10" >
+                        <option value="0" selected>[1] By Total</option>
+                        <option value="1">[1] By Detail : Include Tax</option>
+                        <option value="0">[1] By Detail: Not Include Tax</option>
+                    </select>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerBilling" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#viewByBilling').on('change', function() {
+        searchFolioDetail();
+    });
+    function searchFolioDetail() {
+
+        $.ajax({
+            url: '/Reservation/GetFolioDetailByFolioID',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                reservationID: idReservation,
+                mode: $('#viewByBilling').val(),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridBilling(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+
+        });
+    }
+    function initializeDataGridBilling(data) {
+
+        $("#gridContainerBilling").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+                { dataField: "date", caption: "Date",},
+                { dataField: "code", caption: "Account", },
+                { dataField: "description", caption: "Description", },
+                { dataField: "invoiceNo", caption: "InvoiceNo",},
+                { dataField: "amount", caption: "Amount", },
+                { dataField: "supplement", caption: "Supplement", },
+                { dataField: "reference", caption: "Reference",  },
+                { dataField: "userName", caption: "User",  },
+                { dataField: "time", caption: "Time",  },
+                { dataField: "groupCode", caption: "Group Code",  },
+                { dataField: "subgroupCode", caption: "Sub Group Code",  },
+                { dataField: "shiftID", caption: "Website", },
+                { dataField: "property", caption: "Property",  },
+                { dataField: "transactionNo", caption: "Transaction No",  },
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+
+                getInfoByProfileID(e.data.id);
+                $('#modalProfile').modal('hide');
+            }
+        });
+    }
+    function openModalBilling(){
+        searchFolioDetail();
+        $('#modalBilling').modal('show');
+    }
+    function closeModalBilling(){
+        $('#modalBilling').modal('hide');
+    }
+</script>

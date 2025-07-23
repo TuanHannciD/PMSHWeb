@@ -45,9 +45,9 @@
                         <button class="nav-link fw-medium px-3 py-2" id="tab11-tab" data-bs-toggle="tab" data-bs-target="#tab11" type="button" role="tab" aria-controls="tab11" aria-selected="false">Room Move</button>
                     </li>
                 </ul>
-
+                
                 <!-- Tab Content -->
-                <div class="tab-content" id="myTabContent">
+                <div class="tab-content mt-1" id="myTabContent">
                     <div class="tab-pane fade show active" id="accompanying" role="tabpanel" aria-labelledby="tab1-tab">
                         <div class="p-3">
                             <div class="mb-1 mt-2">
@@ -138,8 +138,9 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="fixedCharges" role="tabpanel" aria-labelledby="tab4-tab">
-                        <div class="p-3">
-                            <button class="mui-button mui-button-search"><i class="fa-solid fa-plus"></i> New</button>
+                        <div class="mui-divider"></div>
+                        <div >
+                            <button class="mui-button mui-button-search" onclick="openNewFixedCharges();"><i class="fa-solid fa-plus"></i> New</button>
                             <button class="mui-button mui-button-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                             <button class="mui-button mui-button-delete"><i class="fa-solid fa-trash"></i> Delete</button>
                             <button class="mui-button mui-button-clear"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
@@ -149,7 +150,8 @@
                             <button class="mui-button mui-button-export"><i class="fa-solid fa-file"></i> CS-IND</button>
                             <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
                         </div>
-                        <div>
+                        <div class="mui-divider"></div>
+                        <div class="bg-light border rounded" style="display:none" id="filterFixedChargeWrapper">
                             <div class="row">
                                 <div class="col-md-5 mb-2 row">
                                     <label for="input1" class="form-label col-md-2" style="min-width:0">Name</label>
@@ -163,10 +165,71 @@
                                     <label for="input1" class="form-label col-md-5" style="min-width:0">Departure</label>
                                     <input type="text" class="form-control col-md-5" id="departureFixedCharge" disabled>
                                 </div>
-                                <div class="col-md-1 mb-2 row">
-                                    <label for="input1" class="form-label col-md-2" style="min-width:0">Nights</label>
-                                    <input type="text" class="form-control" id="nightFixedCharge" disabled>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-4" style="min-width:0">Nights</label>
+                                    <input type="text" class="form-control col-md-8" id="nightFixedCharge" disabled>
                                 </div>
+                            </div>
+                            <div class="form-group row" style="display:flex">
+                                <div class="form-check col-md-2">
+                                    <input class="form-check-input" type="radio" name="typeDate" value="1">
+                                    <label class="form-check-label" for="hkClean">Everyday</label>
+                                </div>
+                                <div class="form-check col-md-2">
+                                    <input class="form-check-input" type="radio" name="typeDate" value="2">
+                                    <label class="form-check-label" for="hkDirty">Date</label>
+                                </div>
+                                <div class="form-check col-md-2">
+                                    <input class="form-check-input" type="radio" name="typeDate" value="4">
+                                    <label class="form-check-label" for="hkInProgress">Day</label>
+                                </div>
+                                <div class="form-check col-md-2">
+                                    <input class="form-check-input" type="radio" name="typeDate" value="5">
+                                    <label class="form-check-label" for="hkOutOfService">At Check In</label>
+                                </div>
+                                <div class="form-check col-md-2">
+                                    <input class="form-check-input" type="radio" name="typeDate" value="6">
+                                    <label class="form-check-label" for="hkInspected">At Check Out</label>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">Begin Date</label>
+                                    <input type="text" class="form-control col-md-7" id="nameProfileFixedcharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">Nights</label>
+                                    <input type="text" class="form-control col-md-7" id="nightFixedCharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">End Date</label>
+                                    <input type="text" class="form-control col-md-7" id="arrivalProfileFixedCharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">Trans. Code</label>
+                                    <input type="text" class="form-control col-md-7" id="arrivalProfileFixedCharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">Quanitty</label>
+                                    <input type="text" class="form-control col-md-7" id="arrivalProfileFixedCharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">Price</label>
+                                    <input type="text" class="form-control col-md-7" id="arrivalProfileFixedCharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">++net</label>
+                                    <input type="text" class="form-control col-md-7" id="arrivalProfileFixedCharge" disabled>
+                                </div>
+                                <div class="col-md-2 mb-2 row">
+                                    <label for="input1" class="form-label col-md-5" style="min-width:0">Currency</label>
+                                    <input type="text" class="form-control col-md-7" id="arrivalProfileFixedCharge" disabled>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> Save</button>
+                                <button class="mui-button mui-button-cancel" onclick="cancelFixedCharges();"><i class="fa-solid fa-pen-to-square"></i> Cancel</button>
                             </div>
                         </div>
                         <div class="mui-card mt-2">
@@ -189,7 +252,11 @@
             getInfoByProfileIDAccompanying(idReservation);
         }
         if(targetTab == 'alerts'){
-                initializeDataGridAlerts(listAlerts);
+            initializeDataGridAlerts(listAlerts);
+        }
+        if(targetTab == 'fixedCharges'){
+            document.getElementById('filterFixedChargeWrapper').style.display = 'none';
+            GetFixedChargesByReservationID(idReservation);
         }
         $('#' + targetTab).addClass('show active');
     });
@@ -327,6 +394,7 @@
     // end acccompanying option
 
 
+    //begin alerts option
     function getAlerts(){
 
         initializeDataGridAlerts(listAlerts);
@@ -367,4 +435,85 @@
             }
         });
     }
+    // end alerts option
+
+
+    //begin fixed charges option
+    function openNewFixedCharges(){
+        document.getElementById('filterFixedChargeWrapper').style.display = 'block';
+
+    }
+    function cancelFixedCharges(){
+        document.getElementById('filterFixedChargeWrapper').style.display = 'none';
+    }
+    function GetFixedChargesByReservationID(id) {
+        $.ajax({
+            url: '/Reservation/GetFixedChargesByReservationID',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                reservationID: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridFixedCharges(result.reservationFixedCharge);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    function initializeDataGridFixedCharges(data) {
+        var columnWidth = 150;
+        $("#gridContainerFixedCharge").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+                { dataField: "id", caption: "ID",  visible: false},
+                { dataField: "transactionCode", caption: "Code",width:columnWidth-70},
+                { dataField: "description", caption: "Description",width:columnWidth + 70  },
+                { dataField: "quantity", caption: "Qty",width:columnWidth- 100},
+                { dataField: "amount", caption: "Amount",width:columnWidth- 50},
+                { dataField: "amountAfterTax", caption: "Amount Net",width:columnWidth- 50},
+                { dataField: "currencyID", caption: "Currency",width:columnWidth- 50},
+                { dataField: "beginDate", caption: "Begin Date",width:columnWidth- 20,},
+                { dataField: "endDate", caption: "End Date",width:columnWidth- 20},
+                { dataField: "postingDate", caption: "Posting Date",width:columnWidth- 20},
+                { dataField: "postingDay", caption: "Posting Day",width:columnWidth- 20},
+                { dataField: "articlesCode", caption: "Article Code",width:columnWidth- 50},
+                { dataField: "articlesCode", caption: "Article Description",width:columnWidth+ 50},
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" 
+            },
+            onRowClick: function(e) {
+            }
+        });
+    }
+    function setInfoNewFixedCharges(reservation){
+        console.log(reservation);
+        $('#nameProfileFixedcharge').val(reservation.lastName);
+        $('#arrivalProfileFixedCharge').val(reservation.arrivalDate);
+        $('#departureFixedCharge').val(reservation.departureDate);
+        $('#nightFixedCharge').val(reservation.lastName);
+    }
+    //end fixed charges option
 </script>
