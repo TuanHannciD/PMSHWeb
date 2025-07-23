@@ -730,6 +730,7 @@
                                 <div class="row col-md-8">
                                     <label class="col-md-3">Room</label>
                                     <input class="col-md-10" id="roomSelect" readonly />
+                                    <input class="col-md-10" id="roomID" style="display:none" />
                                     <button class="col-md-1" onclick="openModalSearchRoom()" id="btnRoom"><i class="fa-solid fa-ellipsis"></i></button>
 
 
@@ -958,6 +959,175 @@
         </div>
     </div>
 </div>
+<!-- Modal more fields-->
+<div class="modal fade modal-xl" id="modalMoreFields" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">More Fields</h5>
+                <button type="button" class="btn-close" onclick="closeModalMoreFields()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-new" onclick="getAllotment();"> OK</button>
+                </div>
+                <div class="row ">
+                    <div class="col-md-5 mui-card">
+                        <div class="row me-1 mt-2">
+                            <label style="color:#9F0010;font-size:16px">Pickup</label>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Picked Reqd</label>
+                            <select class="col-md-9" id="pickedID">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport Type</label>
+                            <select class="col-md-9" asp-items="ViewBag.cboTransportType" id="pickUpTransportType">
+                            </select>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Station Code</label>
+                            <input class="col-md-9" id="pickUpStationCode" />
+
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Carrier Code</label>
+                            <input class="col-md-9" id="pickUpCarrierCode" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport No.</label>
+                            <input class="col-md-9" id="pickUpTransportNo" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Arrival Date</label>
+                            <input class="col-md-9" type="date" id="pickUpDate" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Pickup Time</label>
+                            <input class="col-md-9" id="pickUpTime" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Description</label>
+                            <input class="col-md-9" id="pickUpDescription" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mui-card">
+                        <div class="row me-1 mt-2">
+                            <label style="color:#9F0010;font-size:16px">Drop Off</label>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Dropoff Reqd</label>
+                            <select class="col-md-9" id="dropOffId">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport Type</label>
+                            <select class="col-md-9" asp-items="ViewBag.cboTransportType" id="dropOffTransportType">
+                            </select>
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Station Code</label>
+                            <input class="col-md-9" id="dropOffStationCode" />
+
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Carrier Code</label>
+                            <input class="col-md-9" id="dropOffCarrierCode" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Transport No.</label>
+                            <input class="col-md-9" id="dropOffTransportNo" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Departure Date</label>
+                            <input class="col-md-9" type="date" id="dropOffDate" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">DropOff Time</label>
+                            <input class="col-md-9" id="dropOffTime" />
+                        </div>
+                        <div class="row me-1">
+                            <label class="col-md-3">Description</label>
+                            <input class="col-md-9" id="dropOffDescription" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchProfle()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mui-card mb-2">
+                    <div class="col-md-2 mb-2">
+                        <label for="input1" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="nameProfileSearch" placeholder="Enter name" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input2" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstNameProfileSearch" placeholder="Enter first name" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input3" class="form-label">View By</label>
+                        <select type="text" class="form-control" id="viewByProfileSearch" disabled style="line-height:1.28">
+                            <option selected value="3">Individual</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input4" class="form-label">City</label>
+                        <select type="text" class="form-control" id="cityProfileSearch" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input5" class="form-label">Key word</label>
+                        <input type="text" class="form-control" id="keywordProfileSearch" placeholder="Enter value" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input6" class="form-label">Code</label>
+                        <input type="text" class="form-control" id="codeProfileSearch" placeholder="Enter value" oninput="filterProfileModal()">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="input4" class="form-label">Property</label>
+                        <select type="text" class="form-control" id="propertyProfileSearch" disabled style="line-height:1.28">
+                            <option selected>PMSh TheArena</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label>Sale in charge</label>
+                        <div>
+                            <input type="checkbox" id="sale" name="myCheckbox">
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchProfile" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
         function formatDate(date) {
             let year = date.getFullYear();
@@ -1106,6 +1276,32 @@
     //         $('#txtItemInventory').prop('disabled', true); // Keep disabled if name is empty
     //     }
     // });
+        function openModalMoreFields(){
+        $('#modalMoreFields').modal('show');
+
+    }
+      function closeModalSearchProfle(){
+        $('#nameProfileSearch').val('');
+        $('#firstNameProfileSearch').val('');
+        $('#cityProfileSearch').val(0);
+        $('#txtName').val('');
+        $('#txtFirstName').val('');
+        $('#txtTitle').val(0);
+        $('#txtPhone').val('');
+        $('#txtEmail').val('');
+        $('#txtIdentityCard').val('');
+        $('#txtPassport').val('');
+        $('#txtAddress').val('');
+        $('#txtDob').val('');
+        $('#txtNationality').val(0);
+        $('#txtCity').val(0);
+        $('#txtVIP').val(0);
+        $('#txtMemberType').val(0);
+        $('#txtCardNo').val('');
+        $('#txtPrefRoom').val('');
+        $('#modalProfile').modal('hide');
+
+    }   
         function closeModalEdit(){
            $('#modalEdit').modal('hide');
         }
@@ -1218,7 +1414,8 @@
                 }
             });
         });
-       let roomNo, roomtypeid,idReservation;
+       let roomNo, roomtypeid,idReservation,roomID;
+       let originalAppointmentData = null;
       function initializeRoomScheduler(schedulerData, fromDate, toDate) {
         if (!schedulerData || !schedulerData.length) return;
 
@@ -1381,11 +1578,11 @@
 
                 try {
                     const result = await getRoomID(newData.roomID);
-                    roomNo = result.roomNo;
+                    roomID = result.id;
+                       roomNo = result.roomNo;
                     roomtypeid = result.roomTypeID;
                     const roomtypecode = result.roomTypeCode;
-                    console.log(roomNo);
-                      console.log(roomtypeid);
+                ;
                     const isSameRoomType = roomtypecode === oldData.roomTypeCode;
 
                     if (isMoved) {
@@ -1393,23 +1590,37 @@
                             const action = await askUpdateOrReview();
 
                             if (action === "cancel") {
-                                e.cancel = true;
-                                return;
-                            } else if (action === "review") {
+                                 e.cancel = true;
+                                e.newData.startDate = oldData.startDate;
+                                e.newData.endDate = oldData.endDate;
+                                e.newData.roomID = oldData.roomID;;
+                                      return;
+                            } else if (action === "review") { 
+                                              originalAppointmentData = oldData;
                                 $('#modalEdit').modal('show');
                                getReservationByIDReview(idReservation);
+                               
+                                      e.cancel = true;
+                                e.newData.startDate = oldData.startDate;
+                                e.newData.endDate = oldData.endDate;
+                                e.newData.roomID = oldData.roomID;
                                 return;
                             } else if (action === "update") {
                                 $('#modalEdit').modal('show');
-                                getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid);
+                                getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid,roomID);
                             }
                         } else {
                             const confirmed = confirm("Are you sure to edit?");
                             if (!confirmed) {
+                          
                                 e.cancel = true;
+                                e.newData.startDate = oldData.startDate;
+                                e.newData.endDate = oldData.endDate;
+                                e.newData.roomID = oldData.roomID;
+                                      return;
                             } else {
                                 $('#modalEdit').modal('show');
-                                getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid);
+                                getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid,roomID);
                             }
                         }
                     }
@@ -1529,6 +1740,7 @@
                 $("#txtRoomType").val(result.roomTypeId);
                 $("#txtVIP").val(result.vipId);
                 $("#txtRTC").val(result.rtcId);
+                $("#roomID").val(result.roomId);
                 $("#roomSelect").val(result.roomNo);
                 $("#txtETA").val(result.eta);
                 $("#txtETD").val(result.etd);
@@ -1583,8 +1795,123 @@
             }
         });
     }
+       function resetForm(){
+            $('#txtAgent').val('');
+            $('#txtCompany').val('')
+            $("#txtGroupCode").val('');
+            $('#txtContact').val('');
+            $("#txtContactPhone").val('');
+            $("#txtID").val('');
+            $("#txtName").val('');
+            $("#txtFirstName").val('');
+            $("#txtTitleID").val('')
+            $("#txtPhone").val('');
+            $("#txtEmail").val('');
+            $("#txtMemberType").val('');
+            $("#txtCardNo").val('');
+            $("#txtAddress").val('');
+            $("#txtCity").val('');
+                $("#txtNationality").val('');
+            $("#arrival").val('');
+                $("#departure").val('');
+                $("#adults").val('');
+            $("#c").val('');
+            $("#c1").val('');
+            $("#c2").val('');
+            $("#nights").val('');
+            $("#numRooms").val('');
+            $("#txtRoomType").val('');
+            $("#txtVIP").val('');
+            $("#txtRTC").val('');
+            $("#roomSelect").val('');
+            $("#txtETA").val('');
+            $("#txtETD").val('');
+            $("#txtResType").val('');
+            $("#txtMarketID").val('');
+            $("#txtMarket").val('');
+            $("#txtSource").val('');
+            $("#txtBookerID").val('');
+            $("#txtBooker").val('');
+            $("#txtComment").val('');
+            $("#pickedID").val('');
+            $("#pickUpTransportType").val('');
+            $("#pickUpStationCode").val('');
+            $("#pickUpCarrierCode").val('');
+            $("#pickUpTime").val('');
+            $("#pickUpDate").val('');
+            $("#pickUpTransportNo").val('');
+            $("#pickUpDescription").val('');
+            $("#dropOffId").val('');
+            $("#txtContactNameCOM").val('');
+            $("#txtEmailCOM").val('');
+            $("#txtWebsiteCOM").val('');
+            $("#dropOffTime").val('');
+            $("#dropOffTransportNo").val('');
+            $("#dropOffDate").val('');
+            $("#dropOffDescription").val('');
+            $("#txtPackage").val('');
+            $("#txtRateCodeID").val('');
+            $("#txtRateCode").val('');
+            $("#txtRateAmount").val('');
+            $("#txtNetAmount").val('');
+            $("#txtColor").val('');
+            $("#txtItemInventory").val('');
+            $("#txtPreference").val('');
+            $("#txtAllotmentID").val('');
+            $("#txtAllotment").val('');
+            $("#txtPersonInCharge").val('');
+            $("#nights").val('');
+                var businessDate = '@ViewBag.businesDate';
+                              var dateOnly = businessDate.split(' ')[0]; // '8/29/2024'
+            var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+
+            // Parse đúng thứ tự: new Date(year, monthIndex, day)
+            var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
 
 
+            var departureDate = new Date(parsedBusinessDate);
+            departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+            // Set arrival and departure input values
+            document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+            document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
+
+            document.getElementById('departure').value = formatDate(departureDate);
+            document.getElementById('dropOffDate').value = formatDate(departureDate);
+
+            updateDates();
+    }
+        function getDayName(date) {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        return days[date.getDay()];
+    }
+     function updateDates() {
+        const arrivalInput = document.getElementById('arrival');
+        const departureInput = document.getElementById('departure');
+        const arrivalDay = document.getElementById('arrival-day');
+        const departureDay = document.getElementById('departure-day');
+
+        const arrivalDate = new Date(arrivalInput.value);
+        const departureDate = new Date(departureInput.value); 
+
+        if (arrivalDate) {
+            arrivalDay.textContent = getDayName(arrivalDate);
+        }
+        if (departureDate) {
+            departureDay.textContent = getDayName(departureDate);
+        }
+        calculateNights();
+    }
+        function calculateNights() {
+        const arrival = new Date(document.getElementById('arrival').value);
+        const departure = new Date(document.getElementById('departure').value);
+        if (arrival && departure) {
+            const diffTime = departure - arrival;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('nights').value = diffDays >= 0 ? diffDays : 0;
+        }
+    }
      function getInfoByProfileIndividualID(id){
         $.ajax({
             url: '/Reservation/GetInfoProfileIndividual',
@@ -1596,7 +1923,8 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-
+                    console.log(result);
+  
                 $('#txtID').val(result.id);
                 $('#nameProfileSearch').val(result.account);
                 $('#firstNameProfileSearch').val(result.firstname);
@@ -1782,7 +2110,7 @@
 
 
 
-        function getReservationByID(ID, startDate, endDate, roomNo,roomtypeid) {
+        function getReservationByID(ID, startDate, endDate, roomNo,roomtypeid,roomID) {
         $.ajax({
             url: '/Reservation/GetReservationByID',
             type: 'get',
@@ -1823,6 +2151,7 @@
                 $("#txtRoomType").val(roomtypeid);
                 $("#txtVIP").val(result.vipId);
                 $("#txtRTC").val(result.rtcId);
+                $("#roomID").val(roomID);
                 $("#roomSelect").val(roomNo);
                 $("#txtETA").val(result.eta);
                 $("#txtETD").val(result.etd);
@@ -2034,8 +2363,8 @@
         formData.append('roomTypeID', $("#txtRoomType").val());
         formData.append('vipID', $("#txtVIP").val());
         formData.append('rtcID', $("#txtRTC").val());
-        formData.append('roomID', $("#roomSelect").val());
-        formData.append('roomNo',$('#roomSelect').find('option:selected').text());
+            formData.append('roomID', $("#roomID").val());  
+        formData.append('roomNo',$('#roomSelect').val());
         formData.append('eta', $("#txtETA").val());
         formData.append('etd', $("#txtETD").val());
         formData.append('reservationType', $("#txtResType").val());
@@ -2085,7 +2414,7 @@
         formData.append('userID',userID);
 
         $.ajax({
-            url: '/Reservation/EditReservation',
+            url: '/Reservation/EditReservationRoomPlan',
             type: 'POST',
             processData: false,
             contentType: false,
@@ -2095,6 +2424,8 @@
                 if (data.code == 0) {
                     resetForm();
                         showToast('Success', data.msg, true);
+                             $("#btnPrint").trigger("click");
+
                 } else {
                         showToast('Error', data.msg, false);
                 }

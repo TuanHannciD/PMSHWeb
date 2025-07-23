@@ -122,19 +122,19 @@
 
             <div class="form-row">
                 <label for="totalRoom">Total Physical Room:</label>
-                <input type="text" id="totalRoom" value="1018" readonly>
+                <input type="text" id="totalRoom" readonly>
             </div>
             <div class="form-row">
                 <label for="outOfOrder">Out of Order:</label>
-                <input type="text" id="outOfOrder" value="0" class="status-box pink" readonly>
+                <input type="text" id="outOfOrder"  class="status-box pink" readonly>
             </div>
             <div class="form-row">
                 <label for="roomToSell">Total Room to Sell:</label>
-                <input type="text" id="roomToSell" value="1018" readonly>
+                <input type="text" id="roomToSell"  readonly>
             </div>
             <div class="form-row">
                 <label for="outOfService">Out of Service:</label>
-                <input type="text" id="outOfService" value="0" class="status-box gray" readonly>
+                <input type="text" id="outOfService"  class="status-box gray" readonly>
             </div>
         </fieldset>
 
@@ -151,73 +151,65 @@
 
             <div class="form-row">
                 <label>Occupancy:</label>
-                <input type="text" value="11" readonly>
-                <input type="text" value="24" readonly>
-                <input type="text" value="0" readonly>
+                <input id="occupancyRoom" type="text" readonly>
+                <input id="occupancyPersons" type="text" readonly>
+                <input id="occupancyvVip" type="text"  readonly>
             </div>
 
             <div class="form-row">
                 <label>% Occupancy:</label>
-                <input type="text" value="1.08" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input type="text"  readonly>
+      
             </div>
 
             <div class="form-row">
                 <label>Min Available Tonight:</label>
-                <input type="text" value="1006" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input type="text"  readonly>
+                
             </div>
 
             <div class="form-row">
                 <label>Max Occ Tonight:</label>
-                <input type="text" value="12" readonly>
-                <input type="text" value="26" readonly>
-                <input type="text" value="0" readonly>
+                <input id="maxaccRoom" type="text"  readonly>
+                <input id="maxaccPerson" type="text"  readonly>
+                <input id ="maxaccVip" type="text"  readonly>
             </div>
 
             <div class="form-row">
                 <label>Max % Occ Tonight:</label>
-                <input type="text" value="1.18" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input type="text"  readonly>
+                
             </div>
 
             <div class="form-row">
                 <label>Individuals:</label>
-                <input type="text" value="7" readonly>
-                <input type="text" value="16" readonly>
-                <input type="text" value="0" readonly>
+                <input id="individualsRoom" type="text"  readonly>
+                <input id="individualsPerson" type="text"  readonly>
+                <input id="individualsVip" type="text"  readonly>
             </div>
 
             <div class="form-row">
                 <label>Groups:</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="groupRoom" type="text"  readonly>
+                <input id="groupPerson" type="text" readonly>
+                <input id="groupVip" type="text"  readonly>
             </div>
 
             <div class="form-row">
                 <label>Comp and HU:</label>
-                <input type="text" value="4" readonly>
-                <input type="text" value="8" readonly>
-                <input type="text" value="0" readonly>
+                <input id="compGroup" type="text"  readonly>
+                <input id="compPerson" type="text"  readonly>
+                <input id="compVip" type="text"  readonly>
             </div>
 
             <div class="form-row">
                 <label>Room Revenue:</label>
-                <input type="text" value="10,405,644" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input id="roomRevennue" type="text"  readonly>
+                <label>AVG:</label>
+                <input id="roomAVG" type="text" readonly>
             </div>
 
-            <div class="form-row">
-                <label>AVG:</label>
-                <input type="text" value="867,137" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
-            </div>
+           
         </fieldset>
 
 
@@ -228,9 +220,10 @@
             <div class="form-row">
                 <label for="roomType">Room Type:</label>
                 <select id="roomtype" name="roomtype" class="tomselect-custom" >
+                    <option value="">--ALL--</option>
                     @foreach (var item in roomtypeList)
                     {
-                        <option value="@item.Code">@item.Code</option>
+                        <option value="@item.ID">@item.Code</option>
                     }
                 </select>
             </div>
@@ -243,7 +236,7 @@
                 <select id="zone" name="zone" class="tomselect-custom" >
                     @foreach (var item in zoneList)
                     {
-                        <option value="@item.Code">@item.Code</option>
+                        <option value="@item.ID">@item.Code</option>
                     }
                 </select>
             </div>
@@ -268,57 +261,57 @@
 
             <div class="form-row">
                 <label for="stayover">Stayovers</label>
-                <input type="text" value="11" readonly>
-                <input type="text" value="24" readonly>
-                <input type="text" value="0" readonly>
+                <input id="stayoverRoom" type="text" >
+                <input id="stayoverPerson" type="text" >
+                <input id="stayoverVip" type="text" >
             </div>
             <div class="form-row">
                 <label for="depExpected">Departures Expected</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="depExpectedRoom" type="text"  readonly>
+                <input id="depExpectedPerson" type="text"  readonly>
+                <input id="depExpectedVip" type="text" readonly>
             </div>
             <div class="form-row">
                 <label for="depActual">Departures Actual</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="actualRoom" type="text"  readonly>
+                <input id="actualPerson" type="text"  readonly>
+                <input id="actualVip" type="text"  readonly>
             </div>
             <div class="form-row">
                 <label for="arrExpected">Arrival Expected</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="arrivalExpectedRoom" type="text"  readonly>
+                <input id="arrivalExpectedPerson" type="text"  readonly>
+                <input id="arrivalExpectedVip" type="text"  readonly>
             </div>
             <div class="form-row">
                 <label for="arrActual">Arrival Actual</label>
-                <input type="text" value="11" readonly>
-                <input type="text" value="24" readonly>
-                <input type="text" value="0" readonly>
+                <input id="arrivalActualRoom" type="text"  readonly>
+                <input id="arrivalActualPerson" type="text"  readonly>
+                <input id="arrivalActualVip" type="text" readonly>
             </div>
             <div class="form-row">
                 <label for="extStay">Extended Stays</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="extendedStaysRoom" type="text"  readonly>
+                <input id="extendedStaysPerson" type="text" readonly>
+                <input id="extendedStaysVip" type="text"  readonly>
             </div>
             <div class="form-row">
                 <label for="earlyDep">Early Departures</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="earlyDeparturesRoom" type="text" readonly>
+                <input id ="earlyDeparturesPerson" type="text"  readonly>
+                <input id="earlyDeparturesVip" type="text"  readonly>
             </div>
             <div class="form-row">
                 <label for="dayUse">Day Use Rooms</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="dayUseRoom" type="text"  readonly>
+                <input id ="dayUsePerson" type="text"  readonly>
+                <input id="dayUseVip" type="text"  readonly>
             </div>
             <div class="form-row">
                 <label for="walkIn">Walk In</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="walkinRoom" type="text" readonly>
+                <input id="walkinPerson" type="text"  readonly>
+                <input id="walkinVip" type="text"  readonly>
             </div>
         </fieldset>
 
@@ -338,57 +331,56 @@
             <!-- Row: Clean -->
             <div class="form-row">
                 <label>Clean</label>
-                <input type="text" value="350" class="status-box green" readonly>
-                <input type="text" value="7" class="status-box green" readonly>
-                <input type="text" value="357" readonly>
+                <input id="cleanVacant" type="text"  class="status-box green" readonly>
+                <input id="cleanOccupied" type="text"  class="status-box green" readonly>
+                <input id="cleanTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Clean Non-Checked -->
             <div class="form-row">
                 <label>Clean Non-Checked</label>
-                <input type="text" value="165" readonly>
-                <input type="text" value="3" readonly>
-                <input type="text" value="168" readonly>
+                <input id="cleannonVacant" type="text"  readonly>
+                <input id="cleannonOccupied" type="text"  readonly>
+                <input id="cleannonTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Dirty -->
             <div class="form-row">
                 <label>Dirty</label>
-                <input type="text" value="14" class="status-box red" readonly>
-                <input type="text" value="1" class="status-box red" readonly>
-                <input type="text" value="15" readonly>
+                <input id="dirtyVacant" type="text"  class="status-box red" readonly>
+                <input id="dirtyOccupied" type="text"  class="status-box red" readonly>
+                <input id="dirtyTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Due Out -->
             <div class="form-row">
                 <label>Due Out</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+
+                <input id="doeoutOccupied" type="text"  readonly>
+         
             </div>
 
             <!-- Row: Total -->
             <div class="form-row">
                 <label>Total</label>
-                <input type="text" value="529" readonly>
-                <input type="text" value="11" readonly>
-                <input type="text" value="540" readonly>
+                <input id="totalVacant" type="text"  readonly>
+                <input id="totalOccupied" type="text" readonly>
+               
             </div>
 
             <!-- Row: Out of Order -->
             <div class="form-row">
                 <label>Out of Order</label>
-                <input type="text" value="187" class="status-box pink" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="187" readonly>
+                <input id="outoforderVacant" type="text"  class="status-box pink" readonly>
+            
             </div>
 
             <!-- Row: Out of Service -->
             <div class="form-row">
                 <label>Out of Service</label>
-                <input type="text" value="0" class="status-box gray" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="outofserviveVacant" type="text"  class="status-box gray" readonly>
+                <input id="outofserviveOccupied" type="text"  readonly>
+            
             </div>
         </fieldset>
 
@@ -420,10 +412,10 @@
 
                     // Parse đúng thứ tự: new Date(year, monthIndex, day)
                     var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-
+                    console.log(parsedBusinessDate);
                     // Gán vào input type="date"
                     $('#datebunisess').val(formatDate(parsedBusinessDate));
-
+                      
                     // Format đúng chuẩn yyyy-MM-dd
                     function formatDate(date) {
                         const year = date.getFullYear();
@@ -452,8 +444,111 @@
                   crossDomain: false,
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
+                console.log(result);
+                $('#totalRoom').val(result.totalPhysicalRoom[0].totalPhysicalRoom);
+                    $('#roomToSell').val(result.totalPhysicalRoom[0].totalPhysicalRoom);
+                     $('#outOfOrder').val(result.outOfOrder[0].outOfOrder);
+                      $('#outOfOrder').val(result.outOfService[0].outOfService);
+                     $('#occupancyRoom').val(result.arrivalActual[0].totalRooms);
+                    $('#occupancyPersons').val(result.arrivalActual[0].totalPersons);
+                     $('#occupancyvVip').val(result.arrivalActualVIP[0].vip);
+                 $('#maxaccRoom').val(result.endOfDayMaxOccTonight[0].totalRooms);
+                  $('#maxaccPerson').val(result.endOfDayMaxOccTonight[0].totalPersons);
+                    $('#maxaccVip').val(result.endOfDayMaxOccTonight[0].vip);
 
-                        $("#loadingSpinner").hide();
+             $('#individualsRoom').val(result.endOfDayIndividual[0].totalRooms);
+              $('#individualsPerson').val(result.endOfDayIndividual[0].totalPersons);
+              $('#individualsVip').val(result.endOfDayIndividualVIP[0].vip);
+
+       $('#groupRoom').val(result.endOfDayGroupAndBlock[0].totalRooms);
+    $('#groupPerson').val(result.endOfDayGroupAndBlock[0].totalPersons);
+        $('#groupVip').val(result.endOfDayGroupAndBlockVIP[0].vip);
+
+           $('#compGroup').val(result.endOfDayCHU[0].totalRooms);
+    $('#compPerson').val(result.endOfDayCHU[0].totalPersons);
+        $('#compVip').val(result.endOfDayCHUVIP[0].vip);
+
+           $('#roomRevennue').val(result.endOfDayRoomRevenue[0].amount);
+        $('#roomAVG').val(result.endOfDayRoomRevenue[0].amount);
+
+             $('#stayoverRoom').val(result.stayOver[0].totalRooms);
+         $('#stayoverPerson').val(result.stayOver[0].totalPersons);
+           $('#stayoverVip').val(result.stayOverVIP[0].vip);
+
+                 $('#depExpectedRoom').val(result.departureExpected[0].totalRooms);
+         $('#depExpectedPerson').val(result.departureExpected[0].totalPersons);
+           $('#depExpectedVip').val(result.departureExpectedVIP[0].vip);
+
+                $('#actualRoom').val(result.departureActual[0].totalRooms);
+         $('#actualPerson').val(result.departureActual[0].totalPersons);
+           $('#actualVip').val(result.departureActualVIP[0].vip);
+
+                $('#arrivalExpectedRoom').val(result.arrivalExpected[0].totalRooms);
+         $('#arrivalExpectedPerson').val(result.arrivalExpected[0].totalPersons);
+           $('#arrivalExpectedVip').val(result.arrivalExpectedVIP[0].vip);
+
+                $('#arrivalActualRoom').val(result.arrivalActual[0].totalRooms);
+         $('#arrivalActualPerson').val(result.arrivalActual[0].totalPersons);
+           $('#arrivalActualVip').val(result.arrivalActualVIP[0].vip);
+
+               $('#extendedStaysRoom').val(result.extendedStay[0].totalRooms);
+         $('#extendedStaysPerson').val(result.extendedStay[0].totalPersons);
+           $('#extendedStaysVip').val(result.extendedStayVIP[0].vip);
+
+                    $('#earlyDeparturesRoom').val(result.earlyDeparture[0].totalRooms);
+         $('#earlyDeparturesPerson').val(result.earlyDeparture[0].totalPersons);
+           $('#earlyDeparturesVip').val(result.earlyDepartureVIP[0].vip);
+
+                    $('#dayUseRoom').val(result.dayUseRoom[0].totalRooms);
+         $('#dayUsePerson').val(result.dayUseRoom[0].totalPersons);
+           $('#dayUseVip').val(result.dayUseRoomVIP[0].vip)
+
+                         $('#walkinRoom').val(result.walkInRoom[0].totalRooms);
+         $('#walkinPerson').val(result.walkInRoom[0].totalPersons);
+           $('#walkinVip').val(result.wakeInRoomVIP[0].vip)
+
+             $('#cleanVacant').val(result.hkInspected[0].vacant);
+            $('#cleanOccupied').val(result.hkInspected[0].occ);
+
+            // Tính tổng và gán vào cleanTotal
+            let vacantIns = parseInt(result.hkInspected[0].vacant) || 0;
+            let occIns = parseInt(result.hkInspected[0].occ) || 0;
+            $('#cleanTotal').val(vacantIns + occIns);
+
+                $('#cleannonVacant').val(result.hkClean[0].vacant);
+               $('#cleannonOccupied').val(result.hkClean[0].occ);
+
+                // Tính tổng và gán vào cleanTotal
+                let vacanthk = parseInt(result.hkClean[0].vacant) || 0;
+                let occhk = parseInt(result.hkClean[0].occ) || 0;
+                $('#cleannonTotal').val(vacanthk + occhk);
+
+
+                  $('#dirtyVacant').val(result.hkDirty[0].vacant);
+               $('#dirtyOccupied').val(result.hkDirty[0].occ);
+
+                // Tính tổng và gán vào cleanTotal
+                let vacanthkD = parseInt(result.hkDirty[0].vacant) || 0;
+                let occhkD = parseInt(result.hkDirty[0].occ) || 0;
+                $('#dirtyTotal').val(vacanthkD + occhkD);
+
+                  
+                 // $('#doeoutOccupied').val(result.hkDirty[0].occ);
+
+                //  let vacantIns = parseInt(result.hkInspected[0].vacant) || 0;
+                //  let occIns = parseInt(result.hkInspected[0].occ) || 0;
+                //   let vacanthk = parseInt(result.hkClean[0].vacant) || 0;
+                // let occhk = parseInt(result.hkClean[0].occ) || 0;
+                //         let vacanthkD = parseInt(result.hkDirty[0].vacant) || 0;
+                // let occhkD = parseInt(result.hkDirty[0].occ) || 0;
+
+                   $('#totalVacant').val(vacantIns + vacanthk+vacanthkD);
+                   $('#totalOccupied').val(occIns + occhk+occhkD);
+
+                   $('#outoforderVacant').val(result.hkOutOfOrder[0].vacant);
+                    $('#outofserviveOccupied').val(result.hkOutOfService[0].vacant);
+                   $('#outofserviveOccupied').val(result.hkOutOfService[0].vacant);
+                $("#loadingSpinner").hide();
                 },
                 error: function () {
                     alert("Eror");

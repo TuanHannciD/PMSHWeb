@@ -404,5 +404,193 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRmgStatusEndOfDayRoomRevenue", param);
             return myTable;
         }
+        public DataTable StatusEndOfDayMaxOccTonightVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusEndOfDayMaxOccTonightVIP", param);
+            return myTable;
+        }
+        public DataTable StatusEndOfDayIndividualVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusEndOfDayIndividualVIP", param);
+            return myTable;
+        }
+        public DataTable StatusEndOfDayGroupAndBlockVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusEndOfDayGroupAndBlockVIP", param);
+            return myTable;
+        }
+
+        public DataTable StatusEndOfDayCHUVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusEndOfDayCHUVIP", param);
+            return myTable;
+        }
+        public DataTable StatusActivityDepartureExpectedVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityDepartureExpectedVIP", param);
+            return myTable;
+        }
+
+        public DataTable StatusActivityStayOverVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityStayOverVIP", param);
+            return myTable;
+        }
+
+        public DataTable StatusActivityDepartureActualVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityDepartureActualVIP", param);
+            return myTable;
+        }
+        public DataTable StatusActivityArrivalExpectedVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityArrivalExpectedVIP", param);
+            return myTable;
+        }
+        public DataTable StatusActivityArrivalActualVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityArrivalActualVIP", param);
+            return myTable;
+        }
+
+        public DataTable StatusActivityExtendedStayVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityExtendedStayVIP", param);
+            return myTable;
+        }
+        public DataTable StatusActivityEarlyDepartureVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityEarlyDepartureVIP", param);
+            return myTable;
+        }
+        public DataTable StatusActivityDayUseRoomVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityDayUseRoomVIP", param);
+            return myTable;
+        }
+
+        public DataTable StatusActivityWakeInRoomVIP(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityWakeInRoomVIP", param);
+            return myTable;
+        }
+
+        public DataTable StatusActivityWalkInRoom(DateTime datebunisess, string roomtype, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomTypeID", roomtype),
+                new SqlParameter("@ZoneID",zone) ,
+                  new SqlParameter("@BusinessDate",datebunisess)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityWalkInRoom", param);
+            return myTable;
+        }
     }
 }

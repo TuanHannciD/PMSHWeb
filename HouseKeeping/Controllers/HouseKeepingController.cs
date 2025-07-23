@@ -257,12 +257,12 @@ namespace HouseKeeping.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult HouseStatusData( DateTime datebunisess,  string roomtype,string zone)
         {
             roomtype = string.IsNullOrEmpty(roomtype) ? "0" : roomtype;
-      
-  
+
+            zone = string.IsNullOrEmpty(zone) ? "0" : zone;
             try
             {
                 DataTable dataTable = _iHouseKeepingService.SummaryTotalPhysicalRoom(roomtype, zone);
@@ -453,16 +453,192 @@ namespace HouseKeeping.Controllers
                                 }).ToList();
 
 
-                //DataTable dataTable21 = _iHouseKeepingService.StatusEndOfDayMaxOccTonightVIP(datebunisess, roomtype, zone);
+                DataTable dataTable21 = _iHouseKeepingService.StatusEndOfDayMaxOccTonightVIP(datebunisess, roomtype, zone);
 
-                //var dataTable21 = (from d in dataTable20.AsEnumerable()
-                //                select new
-                //                {
-                //                    Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"].ToString() : "",
+                var result21 = (from d in dataTable21.AsEnumerable()
+                                   select new
+                                   {
+                                       vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
 
-                //                }).ToList();
+                                   }).ToList();
 
-                return Json(result);
+
+                DataTable dataTable22 = _iHouseKeepingService.StatusEndOfDayMaxOccTonightVIP(datebunisess, roomtype, zone);
+
+                var result22 = (from d in dataTable22.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+                DataTable dataTable23 = _iHouseKeepingService.StatusEndOfDayIndividualVIP(datebunisess, roomtype, zone);
+
+                var result23 = (from d in dataTable23.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+                DataTable dataTable24 = _iHouseKeepingService.StatusEndOfDayGroupAndBlockVIP(datebunisess, roomtype, zone);
+
+                var result24 = (from d in dataTable24.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+
+                DataTable dataTable25 = _iHouseKeepingService.StatusEndOfDayCHUVIP(datebunisess, roomtype, zone);
+
+                var result25 = (from d in dataTable25.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+
+                DataTable dataTable26 = _iHouseKeepingService.StatusActivityDepartureExpectedVIP(datebunisess, roomtype, zone);
+
+                var result26 = (from d in dataTable26.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+                DataTable dataTable27 = _iHouseKeepingService.StatusActivityStayOverVIP(datebunisess, roomtype, zone);
+
+                var result27 = (from d in dataTable27.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+
+                DataTable dataTable28 = _iHouseKeepingService.StatusActivityDepartureActualVIP(datebunisess, roomtype, zone);
+
+                var result28 = (from d in dataTable28.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+
+                DataTable dataTable29 = _iHouseKeepingService.StatusActivityArrivalExpectedVIP(datebunisess, roomtype, zone);
+
+                var result29 = (from d in dataTable29.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+                DataTable dataTable30 = _iHouseKeepingService.StatusActivityArrivalActualVIP(datebunisess, roomtype, zone);
+
+                var result30 = (from d in dataTable30.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+                DataTable dataTable31 = _iHouseKeepingService.StatusActivityExtendedStayVIP(datebunisess, roomtype, zone);
+
+                var result31 = (from d in dataTable31.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+                DataTable dataTable32 = _iHouseKeepingService.StatusActivityEarlyDepartureVIP(datebunisess, roomtype, zone);
+
+                var result32 = (from d in dataTable32.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+
+
+                DataTable dataTable33 = _iHouseKeepingService.StatusActivityDayUseRoomVIP(datebunisess, roomtype, zone);
+
+                var result33 = (from d in dataTable33.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+                DataTable dataTable34 = _iHouseKeepingService.StatusActivityWakeInRoomVIP(datebunisess, roomtype, zone);
+
+                var result34 = (from d in dataTable34.AsEnumerable()
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+
+                                }).ToList();
+                DataTable dataTable35 = _iHouseKeepingService.StatusActivityWalkInRoom(datebunisess, roomtype, zone);
+
+                var result35 = (from d in dataTable35.AsEnumerable()
+                                select new
+                                {
+                                    TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                    TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+
+                                }).ToList();
+
+                return Json(new
+                {
+                    TotalPhysicalRoom = result,
+                    OutOfOrder = result1,
+                    OutOfService = result2,
+                    StayOver = result3,
+                    DepartureExpected = result4,
+                    DepartureActual = result5,
+                    ArrivalExpected = result6,
+                    ArrivalActual = result7,
+                    ExtendedStay = result8,
+                    EarlyDeparture = result9,
+                    DayUseRoom = result10,
+
+                    HKInspected = result11,
+                    HKClean = result12,
+                    HKDirty = result13,
+                    HKOutOfOrder = result14,
+                    HKOutOfService = result15,
+
+                    EndOfDayGroupAndBlock = result16,
+                    EndOfDayIndividual = result17,
+                    EndOfDayCHU = result18,
+                    EndOfDayMaxOccTonight = result19,
+                    EndOfDayRoomRevenue = result20,
+
+                    EndOfDayMaxOccTonightVIP = result21,
+                    EndOfDayMaxOccTonightVIPCount = result22,
+                    EndOfDayIndividualVIP = result23,
+                    EndOfDayGroupAndBlockVIP = result24,
+                    EndOfDayCHUVIP = result25,
+
+                    DepartureExpectedVIP = result26,
+                    StayOverVIP = result27,
+                    DepartureActualVIP = result28,
+                    ArrivalExpectedVIP = result29,
+                    ArrivalActualVIP = result30,
+                    ExtendedStayVIP = result31,
+                    EarlyDepartureVIP = result32,
+                    DayUseRoomVIP = result33,
+                    WakeInRoomVIP = result34,
+
+                    WalkInRoom = result35
+                });
+                
+
+
             }
             catch (Exception ex)
             {

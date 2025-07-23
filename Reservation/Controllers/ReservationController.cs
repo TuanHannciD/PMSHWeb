@@ -1145,6 +1145,209 @@ namespace Reservation.Controllers
 
             }
         }
+
+        [HttpPost]
+        public ActionResult EditReservationRoomPlan(int ID)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                int memberTypeID = 0; int roomTypeID = 0; int vipID = 0;
+                if (string.IsNullOrEmpty(Request.Form["memberType"].ToString()))
+                {
+                    memberTypeID = 0;
+                }
+                if (string.IsNullOrEmpty(Request.Form["vipID"].ToString()))
+                {
+                    vipID = 0;
+                }
+                if (!string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
+                {
+                    roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
+                }
+                if (string.IsNullOrEmpty(Request.Form["lastName"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Profile cannot be blank" });
+                }
+                if (string.IsNullOrEmpty(Request.Form["reservationTypeCode"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Reservation Type cannot be blank" });
+                }
+                if (decimal.Parse(Request.Form["rateAmount"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Rate cannot be blank " });
+
+                }
+                MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
+                VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
+                RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
+                ReservationModel reservationModel = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
+                #region edit reservation
+              
+                reservationModel.ProfileComment = "";
+                reservationModel.ProfileIndividualId = int.Parse(Request.Form["profileIndividualID"].ToString());
+                reservationModel.LastName = Request.Form["lastName"].ToString();
+                reservationModel.FirstName = Request.Form["firstName"].ToString();
+                reservationModel.Phone = Request.Form["phone"].ToString();
+                reservationModel.Email = Request.Form["email"].ToString();
+              
+              
+                reservationModel.ArrivalDate = DateTime.Parse(Request.Form["arrival"].ToString());
+                reservationModel.OriginalArrivalDate = DateTime.Parse(Request.Form["arrival"].ToString());
+                reservationModel.NoOfNight = int.Parse(Request.Form["noOfNight"].ToString());
+                reservationModel.DepartureDate = DateTime.Parse(Request.Form["departure"].ToString());
+                reservationModel.OriginalDepartureDate = DateTime.Parse(Request.Form["departure"].ToString());
+                reservationModel.NoOfAdult = int.Parse(Request.Form["noOfAdult"].ToString());
+                reservationModel.NoOfChild = int.Parse(Request.Form["noOfChild"].ToString());
+                reservationModel.NoOfChild1 = int.Parse(Request.Form["noOfChild1"].ToString());
+                reservationModel.NoOfChild2 = int.Parse(Request.Form["noOfChild2"].ToString());
+                reservationModel.NoOfRoom = int.Parse(Request.Form["noOfRoom"].ToString());
+                if (roomType != null)
+                {
+                    reservationModel.RoomTypeId = roomType.ID;
+                    reservationModel.RoomType = roomType.Code;
+                }
+                else
+                {
+                    reservationModel.RoomTypeId = 0;
+                    reservationModel.RoomType = "";
+                }
+                reservationModel.RtcId = int.Parse(Request.Form["rtcID"].ToString());
+                if (string.IsNullOrEmpty(Request.Form["roomNo"].ToString()))
+                {
+                    reservationModel.RoomId = 0;
+                    reservationModel.RoomNo = "";
+                }
+                else
+                {
+                    reservationModel.RoomId = int.Parse(Request.Form["roomID"].ToString());
+                    reservationModel.RoomNo = Request.Form["roomNo"].ToString();
+                }
+
+                reservationModel.Eta = !string.IsNullOrEmpty(Request.Form["eta"].ToString()) ? Request.Form["eta"].ToString() : "";
+                reservationModel.CheckInDate = DateTime.Parse(Request.Form["arrival"].ToString());
+                reservationModel.Etd = !string.IsNullOrEmpty(Request.Form["etd"].ToString()) ? Request.Form["etd"].ToString() : "";
+                reservationModel.CheckOutDate = DateTime.Parse(Request.Form["arrival"].ToString());
+          
+                if (string.IsNullOrEmpty(Request.Form["marketID"].ToString()))
+                {
+                    reservationModel.MarketId = 0;
+
+                }
+                else
+                {
+                    reservationModel.MarketId = int.Parse(Request.Form["marketID"].ToString());
+
+                }
+          
+                if (string.IsNullOrEmpty(Request.Form["rateCode"].ToString()))
+                {
+                    reservationModel.RateCodeId = 0;
+                    reservationModel.RateCode = "";
+                }
+                else
+                {
+                    reservationModel.RateCodeId = int.Parse(Request.Form["rateCodeID"].ToString());
+                    reservationModel.RateCode = Request.Form["rateCode"].ToString();
+                }
+                reservationModel.Rate = decimal.Parse(Request.Form["rateAmount"].ToString());
+                reservationModel.RateAfterTax = decimal.Parse(Request.Form["rateAfter"].ToString());
+                reservationModel.FixedRate = false;
+                reservationModel.TotalAmount = decimal.Parse(Request.Form["rateAmount"].ToString());
+                reservationModel.CurrencyId = "VND";
+                reservationModel.Party = "";
+                reservationModel.DepositRequest = "";
+                reservationModel.PartyGuest = "";
+                reservationModel.IsPasserBy = false;
+                //reservationModel.Color = Request.Form["color"].ToString();
+                reservationModel.ARNo = "";
+                reservationModel.ShareRoom = ReservationBO.GetTopID() + 1;
+                reservationModel.NoShowStatus = false;
+                reservationModel.ShareRoomName = "";
+                reservationModel.AccompanyName = "";
+                reservationModel.RoutingTransaction = "";
+                reservationModel.RoutingToProfile = Request.Form["firstName"].ToString();
+                reservationModel.FixedCharge = "";
+                reservationModel.CommentGroup = "";
+                reservationModel.IsWalkIn = false;
+                reservationModel.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
+                reservationModel.UpdateDate = DateTime.Now;
+                reservationModel.UpdateBy = Request.Form["userName"].ToString();
+                reservationModel.SpecialUpdateBy = Request.Form["userName"].ToString();
+                reservationModel.SpecialUpdateDate = DateTime.Now;
+                reservationModel.IsAdvanceBill = false;
+                if (string.IsNullOrEmpty(Request.Form["allotmentID"].ToString()))
+                {
+                    reservationModel.AllotmentId = 0;
+                    reservationModel.AllotmentCode = "";
+                }
+                else
+                {
+                    reservationModel.AllotmentId = int.Parse(Request.Form["allotmentID"].ToString());
+                    reservationModel.AllotmentCode = Request.Form["allotmentCode"].ToString();
+                }
+                reservationModel.PinCode = (ReservationBO.GetTopID() + 1).ToString();
+                reservationModel.PersonInChargeId = int.Parse(Request.Form["perrsonInCharge"].ToString());
+                reservationModel.RoomNight = int.Parse(Request.Form["roomNight"].ToString());
+                reservationModel.CardId = "";
+                reservationModel.Breakfast = false;
+                reservationModel.Dinner = false;
+                reservationModel.Lunch = false;
+                reservationModel.FixedMeal = false;
+                reservationModel.VoucherId = "";
+                ReservationBO.Instance.Update(reservationModel);
+                #endregion
+
+                #region lưu reservation item inventory
+                string itemInventoryString = Request.Form["itemInventory"].ToString();
+                List<int> itemInventory = itemInventoryString.Split(',')
+                                                    .Select(x => int.Parse(x)).Where(x => x != 0)
+                                                    .ToList();
+                //if (itemInventory.Count > 0)
+                //{
+                //    foreach (var item in itemInventory)
+                //    {
+                //        ItemModel itemModel = (ItemModel)ItemBO.Instance.FindByPrimaryKey(item);
+                //        if (itemModel != null && itemModel.ID != 0)
+                //        {
+                //            ReservationItemInventoryModel reservationItemInventory = new ReservationItemInventoryModel();
+                //            reservationItemInventory.ReservationID = (int)reservationID;
+                //            reservationItemInventory.ItemID = itemModel.ID;
+                //            reservationItemInventory.Code = itemModel.Code;
+                //            reservationItemInventory.Name = itemModel.Name;
+                //            reservationItemInventory.BeginDate = reservationModel.ArrivalDate;
+                //            reservationItemInventory.EndDate = reservationModel.DepartureDate;
+                //            reservationItemInventory.Quantity = 1;
+                //            reservationItemInventory.RateCode = "";
+                //            reservationItemInventory.PackageID = reservationModel.PackageId;
+                //            reservationItemInventory.Package = reservationModel.Packages;
+                //            reservationItemInventory.ReservationFixedChargeID = 0;
+                //            reservationItemInventory.UserInsertID = reservationItemInventory.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                //            reservationItemInventory.CreateDate = reservationItemInventory.UpdateDate = DateTime.Now;
+                //            ReservationItemInventoryBO.Instance.Insert(reservationItemInventory);
+                //        }
+
+                //    }
+                //}
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Update reservation created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
         #endregion
 
         #region cancel reservation
