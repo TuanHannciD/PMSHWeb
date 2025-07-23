@@ -10,15 +10,18 @@
 
 
 <style>
-
     .containerhs {
         display: flex;
         width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 20px;
+        gap: 20px;
     }
 
     .column {
         width: 50%;
-        padding: 0 10px;
+        padding: 0 15px;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -26,44 +29,82 @@
     }
 
     fieldset {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px 15px;
-        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px 20px;
+
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s ease;
     }
 
+        fieldset:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
     legend {
-        font-weight: bold;
-        padding: 0 5px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+        padding: 0 10px;
+
     }
 
     .form-row {
         display: flex;
         align-items: center;
-        margin-bottom: 8px;
-        gap: 8px;
+        margin-bottom: 10px;
+        gap: 10px;
     }
 
         .form-row label {
-            width: 180px;
-            font-size: 14px;
+            width: 160px;
+            font-size: 0.9rem;
+            color: #444;
+            font-weight: 500;
+            flex-shrink: 0;
         }
 
         .form-row input,
         .form-row select {
-            width: 30%; /* 7 phần của 100% */
-            padding: 3px 5px;
-            font-size: 14px;
+            width: 80px;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             box-sizing: border-box;
+
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
+            .form-row input:focus,
+            .form-row select:focus {
+                border-color: #3b9ac6;
+                box-shadow: 0 0 5px rgba(59, 154, 198, 0.3);
+                outline: none;
+            }
+
+            .form-row input[readonly] {
+            
+                cursor: not-allowed;
+            }
+
+        .form-row.triple-input input {
+            width: 80px;
+            flex: 0 0 80px;
+        }
+
+        .form-row.triple-input span {
+            width: 80px;
+            flex: 0 0 80px;
+        }
 
     .status-box {
         text-align: center;
-        font-weight: bold;
+        font-weight: 600;
         color: white;
-        border-radius: 3px;
-        padding: 3px;
+        border-radius: 4px;
+        padding: 6px 0;
+        font-size: 0.8rem;
     }
 
     .green {
@@ -83,28 +124,74 @@
     }
 
     button {
-        padding: 5px 15px;
-        margin-top: 10px;
+        padding: 8px 20px;
+        margin-top: 12px;
         cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: white;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    .three-cols {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 5px;
-    }
-
-        .three-cols .form-row label {
-            width: auto;
-            flex: 0 0 100px;
+        button:hover {
+            transform: translateY(-1px);
         }
 
-    .tomselect-custom {
-        width: 250px;
-        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
-        font-size: 0.65rem;
+        button:active {
+            transform: translateY(0);
+        }
+
+    #btnPrint {
+        background-color: #3b9ac6;
     }
+
+    #btnExportExcel {
+        background-color: #28a745;
+    }
+
+    #btnExportPdf {
+        background-color: #ff8c00;
+    }
+
+    .tomselect-custom {
+        width: 120px;
+        min-height: 30px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+    }
+
+    .text-center {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 20px;
+    }
+
+    .form-row .form-row-header {
+        font-weight: bold;
+        width: 160px;
+    }
+
+    .form-row.header-row label {
+        font-weight: bold;
+        font-size: 0.85rem;
+        color: #222;
+    }
+
+        .form-row.header-row label:first-child {
+            width: 160px; /* khớp với label của dòng input */
+            flex-shrink: 0;
+        }
+
+        .form-row.header-row label:not(:first-child) {
+            width: 80px; /* khớp với input 3 cột */
+            text-align: center;
+        }
 </style>
+
 
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class=" mb-3 ">
@@ -142,14 +229,14 @@
         <fieldset>
             <legend>End of Day Projection</legend>
 
-            <div class="form-row" style="font-weight: bold;">
+            <div class="form-row  header-row" style="font-weight: bold;">
                 <label style="width: 150px;"></label>
                 <label style="width: 80px;">Rooms</label>
                 <label style="width: 80px;">Persons</label>
                 <label style="width: 80px;">VIP</label>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Occupancy:</label>
                 <input id="occupancyRoom" type="text" readonly>
                 <input id="occupancyPersons" type="text" readonly>
@@ -168,41 +255,41 @@
                 
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Max Occ Tonight:</label>
                 <input id="maxaccRoom" type="text"  readonly>
                 <input id="maxaccPerson" type="text"  readonly>
                 <input id ="maxaccVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Max % Occ Tonight:</label>
                 <input type="text"  readonly>
                 
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Individuals:</label>
                 <input id="individualsRoom" type="text"  readonly>
                 <input id="individualsPerson" type="text"  readonly>
                 <input id="individualsVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Groups:</label>
                 <input id="groupRoom" type="text"  readonly>
                 <input id="groupPerson" type="text" readonly>
                 <input id="groupVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Comp and HU:</label>
                 <input id="compGroup" type="text"  readonly>
                 <input id="compPerson" type="text"  readonly>
                 <input id="compVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Room Revenue:</label>
                 <input id="roomRevennue" type="text"  readonly>
                 <label>AVG:</label>
@@ -252,62 +339,62 @@
         <fieldset>
             <legend>Activity</legend>
 
-            <div class="form-row" style="font-weight: bold;">
+            <div class="form-row header-row" style="font-weight: bold;">
                 <label style="width: 150px;"></label>
                 <label style="width: 80px;">Rooms</label>
                 <label style="width: 80px;">Persons</label>
                 <label style="width: 80px;">VIP</label>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="stayover">Stayovers</label>
                 <input id="stayoverRoom" type="text" >
                 <input id="stayoverPerson" type="text" >
                 <input id="stayoverVip" type="text" >
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="depExpected">Departures Expected</label>
                 <input id="depExpectedRoom" type="text"  readonly>
                 <input id="depExpectedPerson" type="text"  readonly>
                 <input id="depExpectedVip" type="text" readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="depActual">Departures Actual</label>
                 <input id="actualRoom" type="text"  readonly>
                 <input id="actualPerson" type="text"  readonly>
                 <input id="actualVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="arrExpected">Arrival Expected</label>
                 <input id="arrivalExpectedRoom" type="text"  readonly>
                 <input id="arrivalExpectedPerson" type="text"  readonly>
                 <input id="arrivalExpectedVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="arrActual">Arrival Actual</label>
                 <input id="arrivalActualRoom" type="text"  readonly>
                 <input id="arrivalActualPerson" type="text"  readonly>
                 <input id="arrivalActualVip" type="text" readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="extStay">Extended Stays</label>
                 <input id="extendedStaysRoom" type="text"  readonly>
                 <input id="extendedStaysPerson" type="text" readonly>
                 <input id="extendedStaysVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="earlyDep">Early Departures</label>
                 <input id="earlyDeparturesRoom" type="text" readonly>
                 <input id ="earlyDeparturesPerson" type="text"  readonly>
                 <input id="earlyDeparturesVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="dayUse">Day Use Rooms</label>
                 <input id="dayUseRoom" type="text"  readonly>
                 <input id ="dayUsePerson" type="text"  readonly>
                 <input id="dayUseVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="walkIn">Walk In</label>
                 <input id="walkinRoom" type="text" readonly>
                 <input id="walkinPerson" type="text"  readonly>
@@ -321,23 +408,24 @@
             <legend>House Keeping Room Status</legend>
 
             <!-- Header Row -->
-            <div class="form-row" style="font-weight: bold;">
-                <label style="width: 200px;"></label>
-                <label style="width: 100px;">Vacant</label>
-                <label style="width: 100px;">Occupied</label>
-                <label style="width: 100px;">Total</label>
+            <div class="form-row header-row">
+                <label></label>
+                <label>Vacant</label>
+                <label>Occupied</label>
+                <label>Total</label>
             </div>
 
+
             <!-- Row: Clean -->
-            <div class="form-row">
+            <div class="form-row triple-input" >
                 <label>Clean</label>
-                <input id="cleanVacant" type="text"  class="status-box green" readonly>
-                <input id="cleanOccupied" type="text"  class="status-box green" readonly>
+                <input id="cleanVacant" type="text"  class=" green" readonly>
+                <input id="cleanOccupied" type="text"  class=" green" readonly>
                 <input id="cleanTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Clean Non-Checked -->
-            <div class="form-row">
+            <div class="form-row  triple-input">
                 <label>Clean Non-Checked</label>
                 <input id="cleannonVacant" type="text"  readonly>
                 <input id="cleannonOccupied" type="text"  readonly>
@@ -345,21 +433,20 @@
             </div>
 
             <!-- Row: Dirty -->
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Dirty</label>
-                <input id="dirtyVacant" type="text"  class="status-box red" readonly>
-                <input id="dirtyOccupied" type="text"  class="status-box red" readonly>
+                <input id="dirtyVacant" type="text"  class=" red" readonly>
+                <input id="dirtyOccupied" type="text"  class=" red" readonly>
                 <input id="dirtyTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Due Out -->
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Due Out</label>
-
-                <input id="doeoutOccupied" type="text"  readonly>
-         
+                <span></span> <!-- ô Vacant trống -->
+                <input id="doeoutOccupied" type="text" readonly> <!-- ô Occupied -->
+                <span></span> <!-- ô Total trống -->
             </div>
-
             <!-- Row: Total -->
             <div class="form-row">
                 <label>Total</label>
@@ -371,14 +458,14 @@
             <!-- Row: Out of Order -->
             <div class="form-row">
                 <label>Out of Order</label>
-                <input id="outoforderVacant" type="text"  class="status-box pink" readonly>
+                <input id="outoforderVacant" type="text"  class=" pink" readonly>
             
             </div>
 
             <!-- Row: Out of Service -->
             <div class="form-row">
                 <label>Out of Service</label>
-                <input id="outofserviveVacant" type="text"  class="status-box gray" readonly>
+                <input id="outofserviveVacant" type="text"  class=" gray" readonly>
                 <input id="outofserviveOccupied" type="text"  readonly>
             
             </div>
