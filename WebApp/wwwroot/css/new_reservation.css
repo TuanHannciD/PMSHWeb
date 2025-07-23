@@ -274,10 +274,9 @@
         }
 
 .nav-tabs {
-    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
     border-radius: 0.5rem 0.5rem 0 0;
     padding: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
 }
 
     .nav-tabs .nav-link {
@@ -302,10 +301,10 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        .nav-tabs .nav-link:focus {
+/*        .nav-tabs .nav-link:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
+        }*/
 
 @media (max-width: 576px) {
     .nav-tabs .nav-link {

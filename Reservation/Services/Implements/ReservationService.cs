@@ -16,6 +16,7 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Reservation.Services.Implements
 {
@@ -70,6 +71,49 @@ namespace Reservation.Services.Implements
                 priceDiscount = (priceAfterDiscount / (1 + vat / 100)) / (1 + svc / 100);
                 #endregion
                 return (Price, priceAfter, priceDiscount, priceAfterDiscount);
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"Error: {ex.Message}", ex);
+            }
+        }
+
+        public decimal CalculateNetFixedCharge(string transactionCode, decimal price)
+        {
+            try
+            {
+                decimal svc = 0;
+                decimal vat = 0;
+                decimal room = 0;
+                List<GenerateTransactionModel> generateTransactionModels = PropertyUtils.ConvertToList<GenerateTransactionModel>(GenerateTransactionBO.Instance.FindAll()).
+                Where(x => x.TransactionCode == transactionCode).ToList();
+                #region lấy ra phần trăm giá room, svc và vat
+                if (generateTransactionModels.Count > 0)
+                {
+                    foreach (var item in generateTransactionModels)
+                    {
+                        if (item.SubgroupCode == "R_MISC")
+                        {
+                            room = item.Percentage;
+                        }
+                        if (item.SubgroupCode == "SVC")
+                        {
+                            svc = item.Percentage;
+                        }
+                        if (item.SubgroupCode == "Tax")
+                        {
+                            vat = item.Percentage;
+                        }
+                    }
+                }
+                #endregion
+
+                #region tính giá trị net fiexed charge
+                decimal priceAfter = (price + (price * svc / 100) + (price + (price * svc / 100)) * vat / 100);
+                #endregion
+
+                return priceAfter;
             }
             catch (SqlException ex)
             {
