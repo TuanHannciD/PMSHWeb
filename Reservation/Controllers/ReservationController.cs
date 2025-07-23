@@ -1,6 +1,7 @@
 ﻿using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using DevExpress.Data.Filtering.Helpers;
 using DevExpress.Web.Internal;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Import.Doc;
@@ -31,14 +32,16 @@ namespace Reservation.Controllers
         private readonly ILogger<ReservationController> _logger;
         private readonly IMemoryCache _cache;
         private readonly IReservationService _iReservationService;
+        private readonly IFolioDetailService _iFolioDetailService;
 
         public ReservationController(ILogger<ReservationController> logger,
-                IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService)
+                IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iReservationService = iReservationService;
+            _iFolioDetailService = folioDetailService;
         }
         public IActionResult SearchReservation()
         {
@@ -774,6 +777,22 @@ namespace Reservation.Controllers
                     }
                 }
                 #endregion
+
+                #region tạo folio
+                FolioModel folioModel = new FolioModel();
+                folioModel.ARNo = "";
+                folioModel.FolioDate = reservationModel.ReservationDate;
+                folioModel.FolioNo = 1;
+                folioModel.ReservationID = reservationModel.ID;
+                folioModel.ProfileID = reservationModel.ProfileIndividualId;
+                folioModel.AccountName = reservationModel.LastName;
+                folioModel.Status = true;
+                folioModel.ConfirmationNo = reservationModel.ConfirmationNo;
+                folioModel.BalanceUSD = folioModel.BalanceVND = 0;
+                folioModel.CreateDate = folioModel.UpdateDate = DateTime.Now;
+                folioModel.UserInsertID = folioModel.UserUpdateID = reservationModel.UserInsertId;
+                FolioBO.Instance.Insert(folioModel);
+                #endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "New reservation created successfully" });
 
@@ -1385,6 +1404,85 @@ namespace Reservation.Controllers
             {
                 pt.CloseConnection();
 
+            }
+        }
+        #endregion
+
+
+        #region reservation billing
+        [HttpGet]
+        public async Task<IActionResult> GetFolioDetailByFolioID(int reservationID, int mode)
+        {
+            try
+            {
+                int folioID = FolioBO.GetFolioIDByReservationID(reservationID);
+                DataTable myData = _iFolioDetailService.GetFolioDetailByFolioID(folioID, mode);
+
+                var result = (from d in myData.AsEnumerable()
+
+                              select new
+                              {
+                                  Select = d["Select"].ToString(),
+                                  CodePrefix = d["CodePrefix"].ToString(),
+                                  ID = d["ID"].ToString(),
+                                  FolioID = d["FolioID"].ToString(),
+                                  GroupType = d["GroupType"].ToString(),
+                                  GroupCode = d["GroupCode"].ToString(),
+                                  SubgroupCode = d["SubgroupCode"].ToString(),
+                                  PostType = d["PostType"].ToString(),
+                                  RowState = d["RowState"].ToString(),
+                                  IsSplit = d["IsSplit"].ToString(),
+                                  InvoiceNo = d["InvoiceNo"].ToString(),
+                                  TransactionNo = d["TransactionNo"].ToString(),
+                                  Date = d["Date"].ToString(),
+                                  Code = d["Code"].ToString(),
+                                  Description = d["Description"].ToString(),
+                                  Amount = d["Amount"].ToString(),
+                                  Currency = d["Currency"].ToString(),
+                                  Supplement = d["Supplement"].ToString(),
+                                  Reference = d["Reference"].ToString(),
+                                  UserName = d["UserName"].ToString(),
+                                  ShiftID = d["ShiftID"].ToString(),
+                                  ProfitCenterID = d["ProfitCenterID"].ToString(),
+                                  ProfitCenterCode = d["ProfitCenterCode"].ToString(),
+                                  RoomTypeID = d["RoomTypeID"].ToString(),
+                                  RoomType = d["RoomType"].ToString(),
+                                  Property = d["Property"].ToString(),
+                                  CheckNo = d["CheckNo"].ToString(),
+
+
+                              }).ToList();
+
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        #endregion
+
+
+        #region Reservation fixed charges
+        [HttpGet]
+        public async Task<IActionResult> GetFixedChargesByReservationID(int reservationID)
+        {
+            try
+            {
+
+                var result = ReservationFixedChargeBO.Instance.FindByAttribute("ReservationID", reservationID);
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                return Json(new {
+                    reservationFixedCharge = result,
+                    reservation = reservation
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
             }
         }
         #endregion

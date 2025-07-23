@@ -146,6 +146,8 @@ namespace Reservation.Services.Implements
 
         }
 
+
+
         public DataTable GetRateCode(DateTime arrival, DateTime departure, int adults, int roomType)
         {
             try
