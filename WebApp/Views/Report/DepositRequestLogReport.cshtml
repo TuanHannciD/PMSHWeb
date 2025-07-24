@@ -101,7 +101,7 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px">NoShowReport</div>
 <div class="filter-panel">
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
@@ -115,7 +115,7 @@
         </div>
      
     </div>
-        <div class=" mb-3 ">
+        <div class="">
             <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
             <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
             <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -189,7 +189,7 @@
     function initializeDepositRequestLogReportDataGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+    dataSource: data,     height: 500, allowColumnResizing: true,
             columns: [
                { dataField: "roomNo", caption: "Room No", width:columnWidth-80},
                  { dataField: "confirmationNo", caption: "Conf.No", width:columnWidth-70},

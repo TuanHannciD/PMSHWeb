@@ -1393,7 +1393,7 @@
 
         $("#gridContainerSearchProfile").dxDataGrid({
 
-        dataSource: data, allowColumnResizing: true,
+        dataSource: data,  allowColumnResizing: true,
             columns: [
 
 
@@ -1671,7 +1671,7 @@
 
         $("#gridContainerSearchAllotment").dxDataGrid({
 
-            dataSource: data, allowColumnResizing: true,
+            dataSource: data,   allowColumnResizing: true,
             columns: [
 
 
@@ -1744,7 +1744,7 @@
 
         $("#gridContainerSearchAllotmentDetail").dxDataGrid({
 
-            dataSource: data, allowColumnResizing: true,
+            dataSource: data,   allowColumnResizing: true,
             columnAutoWidth: true,
             columnMinWidth: 90,
             paging: { pageSize: 15 },
@@ -1800,7 +1800,7 @@
     }
     function treeListMarket(data) {
         $("#treeListMarket").dxTreeList({
-            dataSource: data,
+            dataSource: data,   
             keyExpr: "id", // Khóa duy nhất cho mỗi node
             parentIdExpr: "parentId", // Trường xác định quan hệ cha-con
             columns: [
@@ -1860,7 +1860,7 @@
     function initializeDataGridSearchPreference(data) {
         $("#gridContainerSearchPreference").dxDataGrid({
 
-            dataSource: data, allowColumnResizing: true,
+            dataSource: data,   allowColumnResizing: true,
                     columns: [
                         { dataField: "ID", caption: "ID",  visible: false},
                         { dataField: "code", caption: "Code", },
@@ -1967,7 +1967,7 @@
 
         $("#gridContainerSearchBooker").dxDataGrid({
 
-        dataSource: data, allowColumnResizing: true,
+        dataSource: data,  allowColumnResizing: true,
             columns: [
 
 
@@ -2110,7 +2110,7 @@
 
     function initializeDataGridSearchRateCode(data) {
         $("#gridContainerRateCode").dxDataGrid({
-            dataSource: data,
+            dataSource: data, 
             allowColumnResizing: true,
             columnAutoWidth: true,
             columnMinWidth: 90,

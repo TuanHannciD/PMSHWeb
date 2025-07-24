@@ -96,7 +96,7 @@
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">From Date:</label>
@@ -109,7 +109,7 @@
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
     </div>
-    <div class=" mb-3 ">
+    <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -179,7 +179,7 @@
           var columnWidth = 390; // Độ rộng muốn đặt cho tất cả các cột
 
           $("#gridContainer").dxDataGrid({
-      dataSource: data, allowColumnResizing: true,  // Dữ liệu từ server
+      dataSource: data,     height: 500, allowColumnResizing: true,  // Dữ liệu từ server
               columns: [
                   { dataField: "byBookingCode", caption: "By Booking Code", width: columnWidth , dataType: "number", format: "#,##0"},
                   { dataField: "byRoom", caption: "By Room", width: columnWidth, dataType: "number", format: "#,##0" },
