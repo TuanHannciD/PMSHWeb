@@ -68,10 +68,15 @@
     }
 
     .tomselect-custom {
-        width: 200px;
+        width: 70px;
         min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
     }
+
+        .tomselect-custom .ts-control {
+            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        }
+
 
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
@@ -99,7 +104,7 @@
         <div class="d-flex flex-column me-3">
 
             <div class="d-flex align-items-center flex-wrap gap-2">
-                <label class="fw-bold mb-0 me-3">Include</label>
+                <label class="fw-bold mb-0 me-3">Include:</label>
                 <!-- Row 1 -->
                 <div class="form-check me-3">
                     <input class="form-check-input include-option" type="checkbox" id="daily" name="includeOptions" value="1" checked>

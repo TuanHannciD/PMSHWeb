@@ -90,6 +90,10 @@
         background-image: none !important;
         padding-right: 10px !important;
     }
+
+    .tomselect-custom .ts-control {
+        padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+    }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
@@ -132,7 +136,7 @@
                 <div class="d-flex align-items-center me-3 ms-2">
                         <label class="me-2 mb-0">Alter Code:</label>
 
-                    <select class="tomselect-custom" style="max-width: 250px;" id="altercode" name="altercode" multiple>
+                    <select class="tomselect-custom" style="width: 80px;" id="altercode" name="altercode" multiple>
 
                             @foreach (var item in alertList)
                             {
@@ -144,7 +148,7 @@
             </div>
         </div>
     </div>
-    <div class=" mb-3 ">
+    <div class=" mb-3 me-2 ">
         <button id="btnPrint" class="mui-button button-report-view"><i class="fa-solid fa-eye"></i>View</button>
         <button id="btnExportExcel" class="mui-button button-report-excel" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button id="btnExportPdf" class="mui-button button-report-pdf" type="button"><i class="fas fa-eraser"></i> PDF</button>

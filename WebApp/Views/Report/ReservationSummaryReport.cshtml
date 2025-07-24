@@ -93,6 +93,8 @@
         font-size: 12px !important;
         line-height: 1.2;
     }
+
+
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
@@ -109,7 +111,7 @@
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
     </div>
-    <div class=" mb-3 ">
+    <div class=" mb-3 me-2 ">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -124,6 +126,7 @@
 </div>
 <script>
     function formatDate(date) {
+
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
@@ -131,6 +134,7 @@
     }
 
     $(document).ready(function () {
+            DevExpress.localization.locale("vi");
              document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -181,9 +185,26 @@
           $("#gridContainer").dxDataGrid({
       dataSource: data, allowColumnResizing: true,  // Dữ liệu từ server
               columns: [
-                  { dataField: "byBookingCode", caption: "By Booking Code", width: columnWidth , dataType: "number", format: "#,##0"},
-                  { dataField: "byRoom", caption: "By Room", width: columnWidth, dataType: "number", format: "#,##0" },
-                  { dataField: "byRoomNight", caption: "By Room Night", width: columnWidth, dataType: "number", format: "#,##0"},
+                  { dataField: "byBookingCode", caption: "By Booking Code", width: columnWidth , dataType: "number" ,
+                    format: {
+                    type: "fixedPoint",
+                    precision: 0
+                    }
+                },
+                  { dataField: "byRoom", caption: "By Room", width: columnWidth, dataType: "number",
+                  format: {
+                    type: "fixedPoint",
+                    precision: 0
+                    }
+               
+                },
+                  { dataField: "byRoomNight", caption: "By Room Night", width: columnWidth, dataType: "number",
+                  format: {
+                    type: "fixedPoint",
+                    precision: 0
+                    }
+                
+                },
                 
               ],
               paging: { pageSize: 10 },

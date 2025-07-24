@@ -77,7 +77,7 @@
     }
 
     .tomselect-custom {
-        width: 300px;
+        width: 200px;
         min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
     }
@@ -108,7 +108,7 @@
             <div class="d-flex align-items-center  me-1">
                 <label class="fw-bold me-3">Filter:</label>
                 <div class="d-flex align-items-center">
-                    <label class="me-2 mb-0">Room Class:</label>
+                    <label class=" ms-2 me-2 mb-0">Room Class:</label>
                     <select id="roomClass" name="roomClass" class="tomselect-custom" multiple>
                         @foreach (var item in rclList)
                         {
@@ -118,8 +118,8 @@
 
                 </div>
 
-                 <div class="d-flex align-items-center ">
-                    <label class="me-2 mb-0">Room Type:</label>
+                 <div class="d-flex align-items-center me-3 ">
+                    <label class="ms-2 me-2 mb-0">Room Type:</label>
                     <select id="roomType" name="roomType" class="tomselect-custom" multiple>
                         @foreach (var item in rtList)
                         {
@@ -208,6 +208,7 @@
     }
 
     $(document).ready(function () {
+            DevExpress.localization.locale("vi");
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -391,7 +392,12 @@
 
                { dataField: "createDate", caption: "Made On", width:  columnWidth-70, dataType: "date", format: "dd/MM/yyyy" },
              { dataField: "rateCode", caption: "Rate Code", width: columnWidth-70},
-            { dataField: "rate", caption: "Rate Amt.", width: columnWidth-60, dataType: "number", format: "#,##0" },
+            { dataField: "rate", caption: "Rate Amt.", width: columnWidth-60, dataType: "number",
+             format: {
+                    type: "fixedPoint",
+                    precision: 0
+                    }
+            },
             { dataField: "packages", caption: "Packages", width:  columnWidth-70 },
              { dataField: "currencyID", caption: "Crr.", width:  columnWidth-90 }
             ],

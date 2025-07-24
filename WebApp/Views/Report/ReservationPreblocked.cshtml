@@ -266,7 +266,7 @@
     }
 
     $(document).ready(function () {
-    
+         DevExpress.localization.locale("vi");
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -356,29 +356,23 @@
             allowColumnResizing: true,
           columnResizingMode: "widget",
             columns: [
-               { dataField: "roomNo", caption: "Room No", width: columnWidth-70},
+            { dataField: "roomNo", caption: "Room No", width: columnWidth-50},
             { dataField: "name", caption: "Name", width: columnWidth},
-                        { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
-                     
-                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
+            { dataField: "vip", caption: "VIP", width: columnWidth-80 },                     
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+            { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
-
-
-            { dataField: "noOfAdult", caption: "Adl.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfChild", caption: "Chl.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-              { dataField: "noOfChild1", caption: "Chl1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "noOfNight", caption: "Nts.", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "hKStatusID", caption: "HK Status", width: columnWidth-70},
-
-               { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
-
+            { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+            { dataField: "noOfAdult", caption: "Adl.",width: columnWidth-80 ,dataType: "number"},
+            { dataField: "noOfChild", caption: "Chl.", width: columnWidth-80 ,dataType: "number" },
+            { dataField: "noOfChild1", caption: "Chl1.", width: columnWidth-80 ,dataType: "number" },
+            { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number" },
+            { dataField: "noOfNight", caption: "Nts.", width:columnWidth-80 ,dataType: "number" },
+            { dataField: "hKStatusID", caption: "HK Status", width: columnWidth-70},
+            { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
             { dataField: "fOStatus", caption: "Status", width: columnWidth-70},
-                { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
-
-                    { dataField: "rate", caption: "Rate Amount", width:columnWidth-50,dataType: "number",
+            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+            { dataField: "rate", caption: "Rate Amount", width:columnWidth-50,dataType: "number",
     format: {
         type: "fixedPoint",
         precision: 2
@@ -386,16 +380,14 @@
     customizeText: function (e) {
         return `${e.valueText}`;
     } },
-                                 { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
-
-                                    { dataField: "", caption: "C/H",  width:columnWidth-70 },
-                  { dataField: "depositReceivedMaster", caption: "Deposit Curr.Recelved ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
-                      { dataField: "depositRsqMaster", caption: "Deposit Curr.Requested ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
-
-                                     { dataField: "resType", caption: "Res Type", width:columnWidth-70 },
+            { dataField: "currencyID", caption: "Curr.",  width:columnWidth-100 },
+            { dataField: "", caption: "C/H",  width:columnWidth-70 },
+            { dataField: "depositReceivedMaster", caption: "Deposit Curr.Recelved ",width: columnWidth-30 ,dataType: "number"},
+            { dataField: "depositRsqMaster", caption: "Deposit Curr.Requested ",width: columnWidth-30 ,dataType: "number" },
+            { dataField: "resType", caption: "Res Type", width:columnWidth-70 },
             { dataField: "agent", caption: "Agent", width: columnWidth},
             { dataField: "company", caption: "Company", width: columnWidth},
-             { dataField: "source", caption: "Source", width: columnWidth},
+            { dataField: "source", caption: "Source", width: columnWidth},
             { dataField: "businessBlockCode", caption: "Block Code", width: columnWidth-70 },
             ],
             paging: { pageSize: 25 },
@@ -416,6 +408,7 @@
          visible: true,
         applyFilter: "auto"
     },
+       
     headerFilter: {
         visible: true
         },summary: {
@@ -423,27 +416,33 @@
                {
                     column: "roomNo", // hoặc bất kỳ cột nào bạn muốn đếm
                     summaryType: "count",
-                    displayFormat: "Total Room: {0}", // thêm {0} để hiển thị số lượng
-                    valueFormat: "#,##0" // tuỳ chọn: định dạng số nếu cần
+                    displayFormat: "Total Room: {0}"
+                 
                 },
 
             {
                 column: "noOfAdult",
                 summaryType: "sum",
-                displayFormat: "Total: {0}",
-                valueFormat: "#,##0"
+                customizeText: function(e) {
+                return "Total: " + e.value.toLocaleString();
+            }
+              
             },
             {
                 column: "noOfChild",
                 summaryType: "sum",
-                displayFormat: "{0}",
-                valueFormat: "#,##0"
+                customizeText: function(e) {
+                return "Total: " + e.value.toLocaleString();
+            }
+            
             },
             {
                 column: "noOfChild1",
                 summaryType: "sum",
-                displayFormat: "{0}",
-                valueFormat: "#,##0"
+                customizeText: function(e) {
+                return "Total: " + e.value.toLocaleString();
+            }
+            
             }
         ]
     },
