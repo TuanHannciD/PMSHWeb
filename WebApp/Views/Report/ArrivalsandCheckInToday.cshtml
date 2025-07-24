@@ -92,6 +92,10 @@
         background-image: none !important;
         padding-right: 10px !important;
     }
+
+    .tomselect-custom .ts-control {
+        padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+    }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
@@ -100,8 +104,8 @@
     <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter_wrapper">
         <!-- RoomClass -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0 fw-bold">Room Class:</label>
-            <select id="roomClass" name="roomClass" class="tomselect-custom" multiple>
+            <label class="me-2 mb-0">Room Class:</label>
+            <select id="roomClass" name="roomClass" class="tomselect-custom" style="width: 80px;" multiple>
                 @foreach (var item in roomclassList)
                 {
                     <option value="@item.Code">@item.Code</option>
@@ -111,8 +115,8 @@
 
         <!-- RoomType -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0 fw-bold">Room Type:</label>
-            <select id="roomtype" name="roomtype" class="tomselect-custom" multiple>
+            <label class="me-2 mb-0">Room Type:</label>
+            <select id="roomtype" name="roomtype" class="tomselect-custom" style="width: 80px;" multiple>
                 @foreach (var item in rtList)
                 {
                     <option value="@item.Code">@item.Code</option>
@@ -122,7 +126,7 @@
 
         <!-- Pay Method -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0 fw-bold">Pay Method:</label>
+            <label class="me-2 mb-0 ">Pay Method:</label>
             <select id="paymethod" name="paymethod" class="tomselect-custom" multiple>
                 @foreach (var item in arList)
                 {
@@ -141,14 +145,12 @@
                     <label class="form-check-label ms-2" for="pseudo">Pseudo Rooms</label>
                 </div>
 
-                <div class="form-check d-flex align-items-center me-3">
-                    <input class="form-check-input" type="checkbox" id="viponlycheck" name="viponlycheck">
-                    <label class="form-check-label ms-2" for="viponlycheck">Vip Only</label>
-                </div>
-
-                <div class="d-flex align-items-center me-3" id="vipDropdownContainer" style="display: none;">
-                    <label class="me-2 mb-0">VIP:</label>
-                    <select id="vip" name="vip" class="tomselect-custom" style="width: 100px;" multiple>
+                <div class="d-flex align-items-center me-3" id="vipContainer">
+                    <div class="form-check me-2 mb-0">
+                        <input class="form-check-input include-option" type="checkbox" id="viponlycheck" name="viponlycheck">
+                        <label class="form-check-label" for="viponlycheck">Vip Only</label>
+                    </div>
+                    <select id="vip" name="vip" class="form-control form-control-sm w-auto" style="width: 100px; display: none;">
                         @foreach (var item in vipList)
                         {
                             <option value="@item.Code">@item.Description</option>
@@ -233,20 +235,16 @@
     }
 
     $(document).ready(function () {
-        function toggleVipDropdown() {
-            if ($('#viponlycheck').is(':checked')) {
-                $('#vipDropdownContainer').css('display', 'flex'); // hoặc .show()
+   
+           $('#viponlycheck').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#vip').show();
             } else {
-                $('#vipDropdownContainer').hide();
+                $('#vip').hide();
+                $('#vip').val('');
             }
-        }
-
-        // Gọi khi checkbox thay đổi
-        $('#viponlycheck').on('change', toggleVipDropdown);
-
-        // Gọi khi trang vừa load xong
-        toggleVipDropdown();
-        
+        });
+       
         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -268,7 +266,7 @@
 
     });
      function initializeTomSelects() {
-        const selectors = ["#roomClass", "#roomtype","#paymethod","#vip"];
+        const selectors = ["#roomClass", "#roomtype","#paymethod"];
 
         for (const id of selectors) {
             const el = document.querySelector(id);
@@ -305,7 +303,7 @@
                 vip: $("#vip").val(),
                 viewBy: $("#viewBy").val(),
                 pseudo: $("#pseudo").is(":checked") ? "1" : "",
-                viponlycheck: $("#chkviponly").is(":checked") ? "1" : "",         
+                viponlycheck: $("#viponlycheck").is(":checked") ? "1" : "",
                 disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" :0,
                 nopost:$('#nopost').is(':checked') ? "1" : ""
             },
@@ -378,7 +376,7 @@
             { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
             { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
 
-                             { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
                                          { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
                { dataField: "etd", caption: "ETD", width: columnWidth-70 },

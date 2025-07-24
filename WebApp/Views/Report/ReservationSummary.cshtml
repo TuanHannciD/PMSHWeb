@@ -96,7 +96,13 @@
         width: 500px;
         min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
+        margin-left: 5px;
     }
+
+        .tomselect-custom .ts-control {
+            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        }
+
 
 
 </style>
@@ -116,9 +122,9 @@
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
        
-        <div class="d-flex align-items-center me-3">
+        <div class="d-flex align-items-center me-1">
             <label class="me-2 mb-0">Room Type:</label>
-            <select id="roomType" name="roomType" class="tomselect-custom " multiple>
+            <select id="roomType" name="roomType" class="tomselect-custom " style="width: 70px;" multiple>
                 @foreach (var item in rtList)
                 {
                     <option value="@item.Code">@item.Code</option>
@@ -126,9 +132,9 @@
             </select>
         </div>
 
-        <div class="d-flex align-items-center me-3">
+        <div class="d-flex align-items-center me-1">
             <label class="me-2 mb-0">Zone:</label>
-            <select id="zone" name="zone" class="tomselect-custom" style="width: 200px;" multiple>
+            <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
                 @foreach (var item in zoneList)
                 {
                     <option value="@item.Code">@item.Code</option>
@@ -139,7 +145,7 @@
 
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Market:</label>
-            <select id="market" name="market" class="tomselect-custom " multiple>           
+            <select id="market" name="market" class="tomselect-custom " style="width: 200px;" multiple>
                 @foreach (var item in mkList)
                 {
                     <option value="@item.Code">@item.Description</option>

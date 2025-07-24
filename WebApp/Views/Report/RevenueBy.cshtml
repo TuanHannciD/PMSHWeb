@@ -99,13 +99,23 @@
         width: 300px;
         min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
+        margin-left: 5px;
     }
+
+        .tomselect-custom .ts-control {
+            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        }
+
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
+<<<<<<< HEAD
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+=======
 <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
         <div class="d-flex align-items-center me-3">
             <label class="fw-bold me-3">Date Range:</label>
 
@@ -120,12 +130,12 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center flex-wrap gap-3 w-100">
+        <div class="d-flex align-items-center flex-wrap gap-3">
 
             <div class="d-flex align-items-center me-1">
                 <label class="fw-bold me-3">Filter:</label>
                 <label class="me-2 mb-0">Room Type:</label>
-                <select id="roomType" class="tomselect-custom" style="width: 450px;" multiple>
+                <select id="roomType" class="tomselect-custom" style="width: 70px;" multiple>
                     @foreach (var rt in rtList)
                     {
                         <option value="@rt.Code">@rt.Code</option>
@@ -135,7 +145,7 @@
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" class="tomselect-custom" style="width: 200px;" multiple>
+                    <select id="zone" class="tomselect-custom" style="width: 70px;" multiple>
                         @foreach (var z in zoneList)
                         {
                             <option value="@z.Code">@z.Code</option>
@@ -145,7 +155,8 @@
             </div>
            
         </div>
-        <label class="fw-bold me-3">Search Criteria:</label>
+        <div class="d-flex align-items-center flex-wrap gap-3 w-100">
+        <label class="fw-bold me-1">Search Criteria:</label>
 
         <div class="d-flex align-items-center me-3">
             <label class="me-1 mb-0">Reservation:</label>
@@ -179,10 +190,14 @@
                 <option value="VND">VND</option>
                 <option value="USD">USD</option>
             </select>
+            </div>
         </div>
-
     </div>
+<<<<<<< HEAD
+    <div class=" mb-1 ">
+=======
     <div class="">
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -195,9 +210,7 @@
 
 <div class="mui-card">
 
-    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
-        <div id="gridContainer"></div>
-    </div>
+    <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -211,6 +224,7 @@
     }
 
     $(document).ready(function () {
+         DevExpress.localization.locale("vi");
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -256,6 +270,17 @@
         }
     }
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+         let selectedZones = $("#zone").val();
+            let zoneParam = "";
+
+            if (!selectedZones || selectedZones.length === 0) {
+                // Nếu không chọn zone nào => tự động lấy toàn bộ zone từ select
+                selectedZones = [];
+                $("#zone option").each(function () {
+                    selectedZones.push($(this).val());
+                });
+            }
+            zoneParam = selectedZones.map(r => r.replace("''")).join("','");
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/ReveunueByData',
@@ -265,7 +290,7 @@
                 toDate: $("#toDate").val(),
                 reservation: $("#reservation").val(),
                 roomType: $("#roomType").val().map(r => r.replace( "''")).join("','") + "",
-                zone: $("#zone").val().map(r => r.replace( "''")).join("','") + "",
+                zone: zoneParam,
                 viewBy: $("#viewBy").val(),
                 sortOrder: $("#sortOrder").val(),
             },
@@ -289,7 +314,8 @@
     function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-   dataSource: data,         height: "auto", allowColumnResizing: true,
+    dataSource: data,     height: 500, allowColumnResizing: true,
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
             columns: [
             { dataField: "folioID", caption: "Folio No", width: columnWidth-90 },
             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-90,dataType: "number" },
@@ -384,14 +410,13 @@
 
         // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
         DevExpress.excelExporter.exportDataGrid({
-            component: grid,
+             component: grid,
             worksheet: worksheet,
             autoFilterEnabled: true,
-            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+            topLeftCell: { row: 7, column: 1 }         
         }).then(function () {
             // Footer
             const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };

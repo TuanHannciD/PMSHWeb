@@ -76,10 +76,16 @@
 
 
     .tomselect-custom {
-        width: 300px;
+        width: 70px;
         font-size: 0.65rem !important; /* áp dụng cho input */
         min-height: 30px;
+        margin-left: 5px;
     }
+
+        .tomselect-custom .ts-control {
+            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        }
+
 
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
@@ -130,6 +136,7 @@
 </div>
 <script>
     function formatDate(date) {
+
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
@@ -184,6 +191,19 @@
         }
     }
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+            let selectedZones = $("#zone").val();
+            let zoneParam = "";
+
+            if (!selectedZones || selectedZones.length === 0) {
+                // Nếu không chọn zone nào => tự động lấy toàn bộ zone từ select
+                selectedZones = [];
+                $("#zone option").each(function () {
+                    selectedZones.push($(this).val());
+                });
+            }
+            zoneParam = selectedZones.map(r => r.replace("''")).join("','");
+
+
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/RoomOccupancyReport',
@@ -191,7 +211,7 @@
             data: {
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
-                zone: $("#zone").val().map(r => r.replace( "''")).join("','") + "",
+                zone: zoneParam,
             },
             traditional: true,
               crossDomain: false,

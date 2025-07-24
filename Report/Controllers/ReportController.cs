@@ -1388,6 +1388,7 @@ namespace Report.Controllers
             chkviponly = chkviponly ?? "";
             individual = individual ?? "";
             blockcode = blockcode ?? "";
+
             preblocked = preblocked ?? "";
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try

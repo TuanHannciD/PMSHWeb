@@ -133,6 +133,7 @@
     }
      
     $(document).ready(function () {
+         DevExpress.localization.locale("vi");
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
       const currentYear = new Date().getFullYear();
         const startYear = 2000;
@@ -405,11 +406,18 @@
             component: grid,
             worksheet: worksheet,
             autoFilterEnabled: true,
-            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+            topLeftCell: { row: 7, column: 1 },
+            customizeCell: function (options) {
+                const { gridCell, excelCell } = options;
+
+                if (gridCell && typeof gridCell.value === "number") {
+                    excelCell.value = gridCell.value; // giữ nguyên kiểu số
+                    excelCell.numFmt = '#,##0'; // hoặc '#,##0.00' nếu cần hiển thị thập phân
+                }
+            }
         }).then(function () {
             // Footer
-            const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            const lastRow = worksheet.lastRow.number + 2;       
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };

@@ -54,7 +54,11 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
+<<<<<<< HEAD
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+=======
 <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
         <div class="d-flex align-items-center me-3">
             <label class="fw-bold me-3">Date Range:</label>
 
@@ -69,69 +73,74 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center flex-wrap gap-3 w-100">
+        <div class="d-flex align-items-center flex-wrap gap-3">
 
             <div class="d-flex align-items-center me-1">
                 <label class="fw-bold me-3">Filter:</label>
                 <label class="me-2 mb-0">Room Type:</label>
-                <select id="roomType" class="tomselect-custom" style="width: 450px;" multiple>
+                <select id="roomType" class="tomselect-custom" style="width: 70px;" multiple>
                     @foreach (var rt in rtList)
                     {
-                        <option value="@rt.ID">@rt.Code</option>
+                        <option value="@rt.Code">@rt.Code</option>
                     }
                 </select>
             </div>
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" class="tomselect-custom" style="width: 200px;" multiple>
+                    <select id="zone" class="tomselect-custom" style="width: 70px;" multiple>
                         @foreach (var z in zoneList)
                         {
-                            <option value="@z.ID">@z.Code</option>
+                            <option value="@z.Code">@z.Code</option>
                         }
                     </select>
                 </div>
             </div>
 
         </div>
-        <label class="fw-bold me-3">Search Criteria:</label>
+        <div class="d-flex align-items-center flex-wrap gap-3 w-100">
+            <label class="fw-bold me-3">Search Criteria:</label>
 
-        <div class="d-flex align-items-center me-3">
-            <label class="me-1 mb-0">Reservation:</label>
-            <select id="reservation" class="form-control form-control-sm w-auto">
-                <option value="0">All Reservation</option>
-                <option value="1">Reservation with Block</option>
-                <option value="2">Reservation with Travel Agent</option>
-                <option value="3">Reservation with Company</option>
-                <option value="4">Reservation with Individual</option>
-                <option value="5">Reservation with Travel Agent</option>
-                <option value="6">Reservation with Menber</option>
-                <option value="7">Reservation with VIP</option>
-            </select>
+            <div class="d-flex align-items-center me-3">
+                <label class="me-1 mb-0">Reservation:</label>
+                <select id="reservation" class="form-control form-control-sm w-auto">
+                    <option value="0">All Reservation</option>
+                    <option value="1">Reservation with Block</option>
+                    <option value="2">Reservation with Travel Agent</option>
+                    <option value="3">Reservation with Company</option>
+                    <option value="4">Reservation with Individual</option>
+                    <option value="5">Reservation with Travel Agent</option>
+                    <option value="6">Reservation with Menber</option>
+                    <option value="7">Reservation with VIP</option>
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center me-3">
+                <label class="me-1 mb-0">Sort Order:</label>
+                <select id="sortOrder" class="form-control form-control-sm w-auto">
+                    <option value="1">Folio No</option>
+                    <option value="0">Alphabetical</option>
+                    <option value="2">Arrival Date</option>
+                    <option value="3">Departure Date</option>
+
+
+                </select>
+            </div>
+
+            <div style="display:none!important" class="d-flex align-items-center me-3">
+                <label class="me-2 mb-0">View By:</label>
+                <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+                    <option value="VND">VND</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
         </div>
-
-        <div class="d-flex align-items-center me-3">
-            <label class="me-1 mb-0">Sort Order:</label>
-            <select id="sortOrder" class="form-control form-control-sm w-auto">
-                <option value="1">Folio No</option>
-                <option value="0">Alphabetical</option>
-                <option value="2">Arrival Date</option>
-                <option value="3">Departure Date</option>
-
-
-            </select>
-        </div>
-
-        <div style="display:none!important" class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">View By:</label>
-            <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
-                <option value="VND">VND</option>
-                <option value="USD">USD</option>
-            </select>
-        </div>
-
     </div>
+<<<<<<< HEAD
+    <div class="button_wrapper">
+=======
     <div class="">
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>        
     </div>
 
