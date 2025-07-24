@@ -70,6 +70,7 @@ namespace Reservation.Controllers
             ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
+            ViewBag.cboTransaction = ListItemHelper.GetTransactionProvider();
             return View();
         }
 
@@ -101,6 +102,7 @@ namespace Reservation.Controllers
             ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
+            
             return View();
         }
         [HttpGet]
@@ -458,6 +460,7 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+
 
         //[ValidateAntiForgeryToken]
         #region save reservation
@@ -1686,6 +1689,114 @@ namespace Reservation.Controllers
             catch (Exception ex)
             {
                 return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CaculateNetFixedCharge(string transactionCode, decimal price)
+        {
+            try
+            {
+
+                 decimal net = _iReservationService.CalculateNetFixedCharge(transactionCode, price);
+
+                return Json(net);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveReservationFixedCharge()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                TransactionsModel tran = (TransactionsModel)TransactionsBO.Instance.FindByAttribute("Code", Request.Form["transCode"].ToString())[0];
+                ReservationFixedChargeModel reservationFixedCharge = new ReservationFixedChargeModel();
+                reservationFixedCharge.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                reservationFixedCharge.TransactionCode = Request.Form["transCode"].ToString();
+                reservationFixedCharge.ArticlesCode = "";
+                reservationFixedCharge.BeginDate = DateTime.Parse(Request.Form["beignDate"].ToString());
+                reservationFixedCharge.EndDate = DateTime.Parse(Request.Form["endDate"].ToString());
+                reservationFixedCharge.Quantity = int.Parse(Request.Form["quantity"].ToString());
+                reservationFixedCharge.Amount = decimal.Parse(Request.Form["amount"].ToString());
+                reservationFixedCharge.AmountAfterTax = decimal.Parse(Request.Form["net"].ToString());
+                reservationFixedCharge.CurrencyID = Request.Form["currency"].ToString();
+                reservationFixedCharge.PostingRhythmID = int.Parse(Request.Form["postingRhythmlID"].ToString());
+                reservationFixedCharge.PostingDate = businessDate[0].BusinessDate;
+                reservationFixedCharge.PostingDay = "";
+                reservationFixedCharge.ProfitCenterID = 0;
+                reservationFixedCharge.Description = tran.Description;
+                reservationFixedCharge.IsTaxInclude = false;
+                reservationFixedCharge.UserInsertID = reservationFixedCharge.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                reservationFixedCharge.UpdateDate = reservationFixedCharge.CreateDate = DateTime.Now;
+                ReservationFixedChargeBO.Instance.Insert(reservationFixedCharge);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "New reservation fixed charge created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveReservationFixedChargeDefault(string keyName,int reservationID)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                ConfigSystemModel config = (ConfigSystemModel)ConfigSystemBO.Instance.FindByAttribute("KeyName", keyName)[0];
+                TransactionsModel tran = (TransactionsModel)TransactionsBO.Instance.FindByAttribute("Code", config.KeyValue)[0];
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                ReservationFixedChargeModel reservationFixedCharge = new ReservationFixedChargeModel();
+                reservationFixedCharge.ReservationID = reservationID;
+                reservationFixedCharge.TransactionCode = tran.Code;
+                reservationFixedCharge.ArticlesCode = "";
+                reservationFixedCharge.BeginDate = reservation.ArrivalDate;
+                reservationFixedCharge.EndDate = reservation.DepartureDate;
+                reservationFixedCharge.Quantity = 1;
+                reservationFixedCharge.Amount = 0;
+                reservationFixedCharge.AmountAfterTax = 0;
+                reservationFixedCharge.CurrencyID = "VND";
+                reservationFixedCharge.PostingRhythmID = 1;
+                reservationFixedCharge.PostingDate = businessDate[0].BusinessDate;
+                reservationFixedCharge.PostingDay = "";
+                reservationFixedCharge.ProfitCenterID = 0;
+                reservationFixedCharge.Description = tran.Description;
+                reservationFixedCharge.IsTaxInclude = false;
+                reservationFixedCharge.UserInsertID = reservationFixedCharge.UserUpdateID = reservation.UserInsertId;
+                reservationFixedCharge.UpdateDate = reservationFixedCharge.CreateDate = DateTime.Now;
+                ReservationFixedChargeBO.Instance.Insert(reservationFixedCharge);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "New reservation fixed charge created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
             }
         }
         #endregion
