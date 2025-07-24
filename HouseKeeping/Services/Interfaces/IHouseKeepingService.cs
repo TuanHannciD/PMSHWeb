@@ -35,5 +35,19 @@ namespace HouseKeeping.Services.Interfaces
         DataTable StatusEndOfDayCHU(DateTime datebunisess, string roomtype, string zone);
         DataTable StatusEndOfDayMaxOccTonight(DateTime datebunisess, string roomtype, string zone);
         DataTable StatusEndOfDayRoomRevenue(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayMaxOccTonightVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayIndividualVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayGroupAndBlockVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusEndOfDayCHUVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityDepartureExpectedVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityStayOverVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityDepartureActualVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityArrivalExpectedVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityArrivalActualVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityExtendedStayVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityEarlyDepartureVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityDayUseRoomVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityWakeInRoomVIP(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityWalkInRoom(DateTime datebunisess, string roomtype, string zone);
     }
 }

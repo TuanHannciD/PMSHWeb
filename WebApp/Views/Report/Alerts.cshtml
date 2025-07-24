@@ -99,7 +99,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
         <div class="d-flex flex-column ">
 
@@ -148,7 +148,11 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
     <div class=" mb-3 me-2 ">
+=======
+    <div class="">
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
         <button id="btnPrint" class="mui-button button-report-view"><i class="fa-solid fa-eye"></i>View</button>
         <button id="btnExportExcel" class="mui-button button-report-excel" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button id="btnExportPdf" class="mui-button button-report-pdf" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -247,7 +251,7 @@
     function initializeBlacklistReportGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+    dataSource: data,     height: 500, allowColumnResizing: true,
             columns: [
         { dataField: "confirmationNo", caption: "Conf.No",width: columnWidth-60 },
         { dataField: "roomNo", caption: "Room No",  width: columnWidth-80  },

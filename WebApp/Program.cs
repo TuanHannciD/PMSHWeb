@@ -53,8 +53,12 @@ builder.Services.AddSingleton<IHouseKeepingService, HouseKeepingService>();
 builder.Services.AddSingleton<IReportService, ReportService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IReservationService, ReservationService>();
+<<<<<<< HEAD
 builder.Services.AddSingleton<IFrontDeskService, FrontDesk.Services.Implements.FrontDeskService>();
 
+=======
+builder.Services.AddSingleton<IFolioDetailService, FolioDetailService>();
+>>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
 
 builder.Services.AddAuthentication(options =>
 {

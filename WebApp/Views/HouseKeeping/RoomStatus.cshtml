@@ -276,7 +276,7 @@
 </script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3 filter-panel">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
         <!-- From Date -->
         <div class="d-flex flex-column">
 
@@ -435,7 +435,7 @@
 
         </div>
     </div>
-    <div class=" mb-3 ">
+    <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px; margin-right: 6px; background-color: indianred" id="btnSelectAll" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-check-square"></i> Select All
@@ -861,7 +861,7 @@
         const columnWidth = 120;
 
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+            dataSource: data,     
             allowColumnResizing: true,
             columnAutoWidth: true,
             columns: [
@@ -1158,7 +1158,7 @@
         const columnWidth = 130;
 
         $("#logGridContainer").dxDataGrid({
-            dataSource: data,
+            dataSource: data,    
             allowColumnResizing: true,
             columnAutoWidth: true,
             showBorders: true,

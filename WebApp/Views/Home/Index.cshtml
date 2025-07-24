@@ -1,7 +1,116 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50vh; text-align: center;">
-    <div style="color:#005f87;font-size:40px;font-weight:1000">PROPERTY MANAGEMENT SYSTEM FOR HOTEL AND REPORT</div>
-    <div>Our profession, value in your success</div>
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+  <div class="mui-card chart-container">
+    <div id="highchartPie" class="chart-fixed-size"></div>
 </div>
+</div>
+<style>
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+
+    .chart-fixed-size {
+        width: 700px;
+        height: 520px;
+    }
+</style>
+
+@* <script src="https://code.highcharts.com/highcharts.js"></script> *@
+<script>
+        function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    $(document).ready(function () {
+        var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // "29/08/2024 00:00:00"
+
+        var dateOnly = parsedBusinessDate.split(' ')[0]; // "29/08/2024"
+        var dateParts = dateOnly.split('/'); // ["29", "08", "2024"]
+
+        var date =  new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
+
+        // Ngày đầu tháng
+        var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+
+        // Ngày cuối tháng
+        var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+        var fromDate = formatDate(firstDay);   // "2024-08-01"
+        var toDate = formatDate(lastDay);      // "2024-08-31"
+        console.log(fromDate);
+         console.log(toDate);
+         $.ajax({
+            url: '/Report/RevenueDetailData',
+            type: 'GET',
+            data: {
+                fromDate: fromDate,
+                toDate: toDate
+            },
+            headers: {
+                "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+            },
+            success: function (data) {
+                console.log(data);
+                const grouped = {};
+                data.forEach(item => {
+                    const group = item.groupCode;
+                    const amount = parseFloat(item.amount) || 0;
+                    if (!grouped[group]) grouped[group] = 0;
+                    grouped[group] += amount;
+                });
+
+                const grandTotal = Object.values(grouped).reduce((acc, val) => acc + val, 0);
+                const pieData = Object.entries(grouped).map(([group, amount]) => {
+                    const percent = grandTotal > 0 ? ((amount / grandTotal) * 100).toFixed(1) : 0;
+                    return {
+                        name: `${group} (${percent}%)`,
+                        y: amount
+                    };
+                });
+
+                renderHighchartPie(pieData);
+  
+            },
+            error: function () {
+                alert("Không thể tải dữ liệu.");
+           
+            }
+        });
+
+         function renderHighchartPie(data) {
+        Highcharts.chart('highchartPie', {
+            chart: { type: 'pie' },
+            title: { text: 'Revenue Summary by Group (Pie)' },
+            tooltip: { pointFormat: 'Amount: <b>{point.y:,.0f}</b>' },
+            legend: {
+                enabled: true,
+                align: 'center',
+                verticalAlign: 'bottom'
+            },
+            plotOptions: {
+                pie: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}: {point.y:,.0f}'
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Amount',
+                colorByPoint: true,
+                data: data
+            }]
+        });
+    }
+    });
+</script>

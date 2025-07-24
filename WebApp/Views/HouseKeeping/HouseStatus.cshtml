@@ -10,15 +10,18 @@
 
 
 <style>
-
     .containerhs {
         display: flex;
         width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 20px;
+        gap: 20px;
     }
 
     .column {
         width: 50%;
-        padding: 0 10px;
+        padding: 0 15px;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -26,44 +29,85 @@
     }
 
     fieldset {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px 15px;
-        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px 20px;
+
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s ease;
     }
 
+        fieldset:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
     legend {
-        font-weight: bold;
-        padding: 0 5px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+        padding: 0 10px;
+
     }
 
     .form-row {
         display: flex;
         align-items: center;
-        margin-bottom: 8px;
-        gap: 8px;
+        margin-bottom: 10px;
+        gap: 10px;
     }
 
         .form-row label {
-            width: 180px;
-            font-size: 14px;
+            width: 160px;
+            font-size: 0.9rem;
+            color: #444;
+            font-weight: 500;
+            flex-shrink: 0;
         }
-
+         #roomAVG {
+      right: 81px;
+    position: relative;
+    }
         .form-row input,
         .form-row select {
-            width: 30%; /* 7 phần của 100% */
-            padding: 3px 5px;
-            font-size: 14px;
+            width: 80px;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             box-sizing: border-box;
+
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
+            .form-row input:focus,
+            .form-row select:focus {
+                border-color: #3b9ac6;
+                box-shadow: 0 0 5px rgba(59, 154, 198, 0.3);
+                outline: none;
+            }
+
+            .form-row input[readonly] {
+            
+                cursor: not-allowed;
+            }
+
+        .form-row.triple-input input {
+            width: 80px;
+            flex: 0 0 80px;
+        }
+
+        .form-row.triple-input span {
+            width: 80px;
+            flex: 0 0 80px;
+        }
 
     .status-box {
         text-align: center;
-        font-weight: bold;
+        font-weight: 600;
         color: white;
-        border-radius: 3px;
-        padding: 3px;
+        border-radius: 4px;
+        padding: 6px 0;
+        font-size: 0.8rem;
     }
 
     .green {
@@ -83,31 +127,77 @@
     }
 
     button {
-        padding: 5px 15px;
-        margin-top: 10px;
+        padding: 8px 20px;
+        margin-top: 12px;
         cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: white;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    .three-cols {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 5px;
-    }
-
-        .three-cols .form-row label {
-            width: auto;
-            flex: 0 0 100px;
+        button:hover {
+            transform: translateY(-1px);
         }
 
-    .tomselect-custom {
-        width: 250px;
-        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
-        font-size: 0.65rem;
+        button:active {
+            transform: translateY(0);
+        }
+
+    #btnPrint {
+        background-color: #3b9ac6;
     }
+
+    #btnExportExcel {
+        background-color: #28a745;
+    }
+
+    #btnExportPdf {
+        background-color: #ff8c00;
+    }
+
+    .tomselect-custom {
+        width: 120px;
+        min-height: 30px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+    }
+
+    .text-center {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 20px;
+    }
+
+    .form-row .form-row-header {
+        font-weight: bold;
+        width: 160px;
+    }
+
+    .form-row.header-row label {
+        font-weight: bold;
+        font-size: 0.85rem;
+        color: #222;
+    }
+
+        .form-row.header-row label:first-child {
+            width: 160px; /* khớp với label của dòng input */
+            flex-shrink: 0;
+        }
+
+        .form-row.header-row label:not(:first-child) {
+            width: 80px; /* khớp với input 3 cột */
+            text-align: center;
+        }
 </style>
 
+
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-<div class=" mb-3 ">
+<div class="">
     <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
     <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
     <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -122,19 +212,19 @@
 
             <div class="form-row">
                 <label for="totalRoom">Total Physical Room:</label>
-                <input type="text" id="totalRoom" value="1018" readonly>
+                <input type="text" id="totalRoom" readonly>
             </div>
             <div class="form-row">
                 <label for="outOfOrder">Out of Order:</label>
-                <input type="text" id="outOfOrder" value="0" class="status-box pink" readonly>
+                <input type="text" id="outOfOrder"  class="status-box pink" readonly>
             </div>
             <div class="form-row">
                 <label for="roomToSell">Total Room to Sell:</label>
-                <input type="text" id="roomToSell" value="1018" readonly>
+                <input type="text" id="roomToSell"  readonly>
             </div>
             <div class="form-row">
                 <label for="outOfService">Out of Service:</label>
-                <input type="text" id="outOfService" value="0" class="status-box gray" readonly>
+                <input type="text" id="outOfService"  class="status-box gray" readonly>
             </div>
         </fieldset>
 
@@ -142,82 +232,74 @@
         <fieldset>
             <legend>End of Day Projection</legend>
 
-            <div class="form-row" style="font-weight: bold;">
+            <div class="form-row  header-row" style="font-weight: bold;">
                 <label style="width: 150px;"></label>
                 <label style="width: 80px;">Rooms</label>
                 <label style="width: 80px;">Persons</label>
                 <label style="width: 80px;">VIP</label>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Occupancy:</label>
-                <input type="text" value="11" readonly>
-                <input type="text" value="24" readonly>
-                <input type="text" value="0" readonly>
+                <input id="occupancyRoom" type="text" readonly>
+                <input id="occupancyPersons" type="text" readonly>
+                <input id="occupancyvVip" type="text"  readonly>
             </div>
 
             <div class="form-row">
                 <label>% Occupancy:</label>
-                <input type="text" value="1.08" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input id="occupancyPercent" type="text"  readonly>
+      
             </div>
 
             <div class="form-row">
                 <label>Min Available Tonight:</label>
-                <input type="text" value="1006" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input id="minAvail" type="text"  readonly>
+                
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Max Occ Tonight:</label>
-                <input type="text" value="12" readonly>
-                <input type="text" value="26" readonly>
-                <input type="text" value="0" readonly>
+                <input id="maxaccRoom" type="text"  readonly>
+                <input id="maxaccPerson" type="text"  readonly>
+                <input id ="maxaccVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Max % Occ Tonight:</label>
-                <input type="text" value="1.18" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input id="maxpercentonight" type="text"  readonly>
+                
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Individuals:</label>
-                <input type="text" value="7" readonly>
-                <input type="text" value="16" readonly>
-                <input type="text" value="0" readonly>
+                <input id="individualsRoom" type="text"  readonly>
+                <input id="individualsPerson" type="text"  readonly>
+                <input id="individualsVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Groups:</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="groupRoom" type="text"  readonly>
+                <input id="groupPerson" type="text" readonly>
+                <input id="groupVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Comp and HU:</label>
-                <input type="text" value="4" readonly>
-                <input type="text" value="8" readonly>
-                <input type="text" value="0" readonly>
+                <input id="compGroup" type="text"  readonly>
+                <input id="compPerson" type="text"  readonly>
+                <input id="compVip" type="text"  readonly>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Room Revenue:</label>
-                <input type="text" value="10,405,644" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
+                <input id="roomRevennue" type="text"  readonly>
+                <label>AVG:</label>
+                <input id="roomAVG" type="text" readonly>
             </div>
 
-            <div class="form-row">
-                <label>AVG:</label>
-                <input type="text" value="867,137" readonly>
-                <input type="text" readonly>
-                <input type="text" readonly>
-            </div>
+           
         </fieldset>
 
 
@@ -228,22 +310,23 @@
             <div class="form-row">
                 <label for="roomType">Room Type:</label>
                 <select id="roomtype" name="roomtype" class="tomselect-custom" >
+                    <option value="">--ALL--</option>
                     @foreach (var item in roomtypeList)
                     {
-                        <option value="@item.Code">@item.Code</option>
+                        <option value="@item.ID">@item.Code</option>
                     }
                 </select>
             </div>
             <div class="form-row">
                 <label for="date">Date:</label>
-                <input type="date" id="datebunisess">
+                <input type="date" style="width: 122px;" id="datebunisess">
             </div>
             <div class="form-row">
                 <label for="zone">Zone:</label>
                 <select id="zone" name="zone" class="tomselect-custom" >
                     @foreach (var item in zoneList)
                     {
-                        <option value="@item.Code">@item.Code</option>
+                        <option value="@item.ID">@item.Code</option>
                     }
                 </select>
             </div>
@@ -259,66 +342,66 @@
         <fieldset>
             <legend>Activity</legend>
 
-            <div class="form-row" style="font-weight: bold;">
+            <div class="form-row header-row" style="font-weight: bold;">
                 <label style="width: 150px;"></label>
                 <label style="width: 80px;">Rooms</label>
                 <label style="width: 80px;">Persons</label>
                 <label style="width: 80px;">VIP</label>
             </div>
 
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="stayover">Stayovers</label>
-                <input type="text" value="11" readonly>
-                <input type="text" value="24" readonly>
-                <input type="text" value="0" readonly>
+                <input id="stayoverRoom" type="text" >
+                <input id="stayoverPerson" type="text" >
+                <input id="stayoverVip" type="text" >
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="depExpected">Departures Expected</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="depExpectedRoom" type="text"  readonly>
+                <input id="depExpectedPerson" type="text"  readonly>
+                <input id="depExpectedVip" type="text" readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="depActual">Departures Actual</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="actualRoom" type="text"  readonly>
+                <input id="actualPerson" type="text"  readonly>
+                <input id="actualVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="arrExpected">Arrival Expected</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="arrivalExpectedRoom" type="text"  readonly>
+                <input id="arrivalExpectedPerson" type="text"  readonly>
+                <input id="arrivalExpectedVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="arrActual">Arrival Actual</label>
-                <input type="text" value="11" readonly>
-                <input type="text" value="24" readonly>
-                <input type="text" value="0" readonly>
+                <input id="arrivalActualRoom" type="text"  readonly>
+                <input id="arrivalActualPerson" type="text"  readonly>
+                <input id="arrivalActualVip" type="text" readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="extStay">Extended Stays</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="extendedStaysRoom" type="text"  readonly>
+                <input id="extendedStaysPerson" type="text" readonly>
+                <input id="extendedStaysVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="earlyDep">Early Departures</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="earlyDeparturesRoom" type="text" readonly>
+                <input id ="earlyDeparturesPerson" type="text"  readonly>
+                <input id="earlyDeparturesVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="dayUse">Day Use Rooms</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="dayUseRoom" type="text"  readonly>
+                <input id ="dayUsePerson" type="text"  readonly>
+                <input id="dayUseVip" type="text"  readonly>
             </div>
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label for="walkIn">Walk In</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="walkinRoom" type="text" readonly>
+                <input id="walkinPerson" type="text"  readonly>
+                <input id="walkinVip" type="text"  readonly>
             </div>
         </fieldset>
 
@@ -328,67 +411,66 @@
             <legend>House Keeping Room Status</legend>
 
             <!-- Header Row -->
-            <div class="form-row" style="font-weight: bold;">
-                <label style="width: 200px;"></label>
-                <label style="width: 100px;">Vacant</label>
-                <label style="width: 100px;">Occupied</label>
-                <label style="width: 100px;">Total</label>
+            <div class="form-row header-row">
+                <label></label>
+                <label>Vacant</label>
+                <label>Occupied</label>
+                <label>Total</label>
             </div>
 
+
             <!-- Row: Clean -->
-            <div class="form-row">
+            <div class="form-row triple-input" >
                 <label>Clean</label>
-                <input type="text" value="350" class="status-box green" readonly>
-                <input type="text" value="7" class="status-box green" readonly>
-                <input type="text" value="357" readonly>
+                <input id="cleanVacant" type="text"  class=" green" readonly>
+                <input id="cleanOccupied" type="text"  class=" green" readonly>
+                <input id="cleanTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Clean Non-Checked -->
-            <div class="form-row">
+            <div class="form-row  triple-input">
                 <label>Clean Non-Checked</label>
-                <input type="text" value="165" readonly>
-                <input type="text" value="3" readonly>
-                <input type="text" value="168" readonly>
+                <input id="cleannonVacant" type="text"  readonly>
+                <input id="cleannonOccupied" type="text"  readonly>
+                <input id="cleannonTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Dirty -->
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Dirty</label>
-                <input type="text" value="14" class="status-box red" readonly>
-                <input type="text" value="1" class="status-box red" readonly>
-                <input type="text" value="15" readonly>
+                <input id="dirtyVacant" type="text"  class=" red" readonly>
+                <input id="dirtyOccupied" type="text"  class=" red" readonly>
+                <input id="dirtyTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Due Out -->
-            <div class="form-row">
+            <div class="form-row triple-input">
                 <label>Due Out</label>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <span></span> <!-- ô Vacant trống -->
+                <input id="doeoutOccupied" type="text" readonly> <!-- ô Occupied -->
+                <span></span> <!-- ô Total trống -->
             </div>
-
             <!-- Row: Total -->
             <div class="form-row">
                 <label>Total</label>
-                <input type="text" value="529" readonly>
-                <input type="text" value="11" readonly>
-                <input type="text" value="540" readonly>
+                <input id="totalVacant" type="text"  readonly>
+                <input id="totalOccupied" type="text" readonly>
+               
             </div>
 
             <!-- Row: Out of Order -->
             <div class="form-row">
                 <label>Out of Order</label>
-                <input type="text" value="187" class="status-box pink" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="187" readonly>
+                <input id="outoforderVacant" type="text"  class=" pink" readonly>
+            
             </div>
 
             <!-- Row: Out of Service -->
             <div class="form-row">
                 <label>Out of Service</label>
-                <input type="text" value="0" class="status-box gray" readonly>
-                <input type="text" value="0" readonly>
-                <input type="text" value="0" readonly>
+                <input id="outofserviveVacant" type="text"  class=" gray" readonly>
+                <input id="outofserviveOccupied" type="text"   class=" gray" readonly>
+            
             </div>
         </fieldset>
 
@@ -420,10 +502,10 @@
 
                     // Parse đúng thứ tự: new Date(year, monthIndex, day)
                     var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-
+                    console.log(parsedBusinessDate);
                     // Gán vào input type="date"
                     $('#datebunisess').val(formatDate(parsedBusinessDate));
-
+                      
                     // Format đúng chuẩn yyyy-MM-dd
                     function formatDate(date) {
                         const year = date.getFullYear();
@@ -452,8 +534,155 @@
                   crossDomain: false,
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
+                console.log(result);
+                                     const totalRoom = parseInt(result.totalPhysicalRoom[0].totalPhysicalRoom) || 0;
+                            const outOfOrder = parseInt(result.outOfOrder[0].outOfOrder) || 0;
 
-                        $("#loadingSpinner").hide();
+                            // Gán giá trị tổng phòng
+                            $('#totalRoom').val(totalRoom);
+
+                            // Gán giá trị phòng Out Of Order
+                            $('#outOfOrder').val(outOfOrder);
+
+                            // Tính số phòng có thể bán
+                            const roomToSell = totalRoom - outOfOrder;
+                            $('#roomToSell').val(roomToSell);
+
+                          let stayOverdepartureExpected = parseInt(result.departureExpected[0].totalRooms ) || 0;
+
+                                 let occupancyPersonsstayOver = parseInt(result.stayOver[0].totalPersons ) || 0;
+                          let occupancyPersonsdepartureExpected = parseInt(result.departureExpected[0].totalPersons ) || 0;
+
+                                 let occupancyRoomstayOver = parseInt(result.stayOver[0].totalRooms ) || 0;
+                      $('#outOfService').val(result.outOfService[0].outOfService);
+                      const occupancyRoom = occupancyRoomstayOver + stayOverdepartureExpected;
+                     $('#occupancyRoom').val(occupancyRoom);
+                     let occupancyPercent = 0;
+                        if (roomToSell > 0) {
+                            occupancyPercent = (occupancyRoom * 100) / roomToSell;
+                         occupancyPercent = parseFloat(occupancyPercent.toFixed(2));// làm tròn 2 chữ số thập phân
+                        }
+
+                        $('#occupancyPercent').val(occupancyPercent.toFixed(2));
+
+                         let maxaccRoom = parseInt(result.endOfDayMaxOccTonight[0].totalRooms) || 0;
+                         $('#minAvail').val(roomToSell-maxaccRoom);
+
+                    $('#occupancyPersons').val(occupancyPersonsstayOver+occupancyPersonsdepartureExpected);
+                     $('#occupancyvVip').val(result.arrivalActualVIP[0].vip);
+                 $('#maxaccRoom').val(maxaccRoom);
+                      let maxoccupancyPercent = 0;
+                    
+                            maxoccupancyPercent = (maxaccRoom * 100) / roomToSell;
+                           maxoccupancyPercent = parseFloat(maxoccupancyPercent.toFixed(2));  // làm tròn 2 chữ số thập phân
+                        
+
+                 $('#maxpercentonight').val(maxoccupancyPercent.toFixed(2));
+                  $('#maxaccPerson').val(result.endOfDayMaxOccTonight[0].totalPersons);
+                    $('#maxaccVip').val(result.endOfDayMaxOccTonightVIP[0].vip);
+
+             $('#individualsRoom').val(result.endOfDayIndividual[0].totalRooms);
+              $('#individualsPerson').val(result.endOfDayIndividual[0].totalPersons);
+              $('#individualsVip').val(result.endOfDayIndividualVIP[0].vip);
+
+       $('#groupRoom').val(result.endOfDayGroupAndBlock[0].totalRooms);
+    $('#groupPerson').val(result.endOfDayGroupAndBlock[0].totalPersons);
+        $('#groupVip').val(result.endOfDayGroupAndBlockVIP[0].vip);
+
+           $('#compGroup').val(result.endOfDayCHU[0].totalRooms);
+    $('#compPerson').val(result.endOfDayCHU[0].totalPersons);
+        $('#compVip').val(result.endOfDayCHUVIP[0].vip);
+
+const amount = parseFloat(result.endOfDayRoomRevenue[0].amount) || 0;
+
+// Làm tròn xuống số nguyên
+const roundedAmount = Math.round(amount);
+
+// Định dạng tiền theo kiểu Việt Nam: 1.234.567
+const formattedAmount = roundedAmount.toLocaleString('vi-VN');
+
+$('#roomRevennue').val(formattedAmount);
+$('#roomAVG').val(formattedAmount);
+
+
+             $('#stayoverRoom').val(result.stayOver[0].totalRooms);
+         $('#stayoverPerson').val(result.stayOver[0].totalPersons);
+           $('#stayoverVip').val(result.stayOverVIP[0].vip);
+
+                 $('#depExpectedRoom').val(result.departureExpected[0].totalRooms);
+         $('#depExpectedPerson').val(result.departureExpected[0].totalPersons);
+           $('#depExpectedVip').val(result.departureExpectedVIP[0].vip);
+
+                $('#actualRoom').val(result.departureActual[0].totalRooms);
+         $('#actualPerson').val(result.departureActual[0].totalPersons);
+           $('#actualVip').val(result.departureActualVIP[0].vip);
+
+                $('#arrivalExpectedRoom').val(result.arrivalExpected[0].totalRooms);
+         $('#arrivalExpectedPerson').val(result.arrivalExpected[0].totalPersons);
+           $('#arrivalExpectedVip').val(result.arrivalExpectedVIP[0].vip);
+
+                $('#arrivalActualRoom').val(result.arrivalActual[0].totalRooms);
+         $('#arrivalActualPerson').val(result.arrivalActual[0].totalPersons);
+           $('#arrivalActualVip').val(result.arrivalActualVIP[0].vip);
+
+               $('#extendedStaysRoom').val(result.extendedStay[0].totalRooms);
+         $('#extendedStaysPerson').val(result.extendedStay[0].totalPersons);
+           $('#extendedStaysVip').val(result.extendedStayVIP[0].vip);
+
+                    $('#earlyDeparturesRoom').val(result.earlyDeparture[0].totalRooms);
+         $('#earlyDeparturesPerson').val(result.earlyDeparture[0].totalPersons);
+           $('#earlyDeparturesVip').val(result.earlyDepartureVIP[0].vip);
+
+                    $('#dayUseRoom').val(result.dayUseRoom[0].totalRooms);
+         $('#dayUsePerson').val(result.dayUseRoom[0].totalPersons);
+           $('#dayUseVip').val(result.dayUseRoomVIP[0].vip)
+
+                         $('#walkinRoom').val(result.walkInRoom[0].totalRooms);
+         $('#walkinPerson').val(result.walkInRoom[0].totalPersons);
+           $('#walkinVip').val(result.wakeInRoomVIP[0].vip)
+
+             $('#cleanVacant').val(result.hkInspected[0].vacant);
+            $('#cleanOccupied').val(result.hkInspected[0].occ);
+
+            // Tính tổng và gán vào cleanTotal
+            let vacantIns = parseInt(result.hkInspected[0].vacant) || 0;
+            let occIns = parseInt(result.hkInspected[0].occ) || 0;
+            $('#cleanTotal').val(vacantIns + occIns);
+
+                $('#cleannonVacant').val(result.hkClean[0].vacant);
+               $('#cleannonOccupied').val(result.hkClean[0].occ);
+
+                // Tính tổng và gán vào cleanTotal
+                let vacanthk = parseInt(result.hkClean[0].vacant) || 0;
+                let occhk = parseInt(result.hkClean[0].occ) || 0;
+                $('#cleannonTotal').val(vacanthk + occhk);
+
+
+                  $('#dirtyVacant').val(result.hkDirty[0].vacant);
+               $('#dirtyOccupied').val(result.hkDirty[0].occ);
+
+                // Tính tổng và gán vào cleanTotal
+                let vacanthkD = parseInt(result.hkDirty[0].vacant) || 0;
+                let occhkD = parseInt(result.hkDirty[0].occ) || 0;
+                $('#dirtyTotal').val(vacanthkD + occhkD);
+
+                  
+          $('#doeoutOccupied').val(result.roomzone.length);
+
+                //  let vacantIns = parseInt(result.hkInspected[0].vacant) || 0;
+                //  let occIns = parseInt(result.hkInspected[0].occ) || 0;
+                //   let vacanthk = parseInt(result.hkClean[0].vacant) || 0;
+                // let occhk = parseInt(result.hkClean[0].occ) || 0;
+                //         let vacanthkD = parseInt(result.hkDirty[0].vacant) || 0;
+                // let occhkD = parseInt(result.hkDirty[0].occ) || 0;
+
+                   $('#totalVacant').val(vacantIns + vacanthk+vacanthkD);
+                   $('#totalOccupied').val(occIns + occhk+occhkD);
+
+                   $('#outoforderVacant').val(result.hkOutOfOrder[0].vacant);
+                    $('#outofserviveVacant').val(result.hkOutOfService[0].vacant);
+                   $('#outofserviveOccupied').val(result.hkOutOfService[0].occ);
+                $("#loadingSpinner").hide();
                 },
                 error: function () {
                     alert("Eror");
