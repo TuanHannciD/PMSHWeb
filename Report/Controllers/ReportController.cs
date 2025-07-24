@@ -80,12 +80,18 @@ namespace Report.Controllers
         }
         public IActionResult ReportNationalityStatistics()
         {
-
+            List<RoomClassModel> list = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
             return View();
 
         }
         public IActionResult OtherReport()
         {
+            List<ConfigSystemModel> list = PropertyUtils.ConvertToList<ConfigSystemModel>(ConfigSystemBO.Instance.FindAll());
+
+            // Tìm dòng có KeyValue = "NameCompany"
+            var companyConfig = list.FirstOrDefault(x => x.KeyValue == "NameCompany");
+            // Gửi dữ liệu qua View
+            ViewBag.CompanyName = companyConfig.Desciption;
             return View();
 
         }

@@ -420,14 +420,14 @@
 
 
         $("#btnExportExcel").click(function () {
-            const grid = $("#gridContainer").dxDataGrid("instance");
+                   const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
             var selectedReport = '@ViewBag.ReportTitle';
             if (!selectedReport) {
                 alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
                 return;
             }
 
-            const workbook = new ExcelJS.Workbook();
+                         const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
             const worksheet = workbook.addWorksheet("Sheet 1");
 
             // === T?o header công ty (dòng 1) ===

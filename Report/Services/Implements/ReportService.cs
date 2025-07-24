@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using BaseBusiness.util;
 using System.Globalization;
 using System.Reflection.Metadata;
+using BaseBusiness.BO;
+using BaseBusiness.Model;
 namespace Report.Services.Implements
 {
     public class ReportService : IReportService
@@ -758,13 +760,14 @@ namespace Report.Services.Implements
 
         public DataTable SalesinChargeReportsForm1Data(DateTime fromDate, string viewBy)
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@Year", fromDate),
                      new SqlParameter("@Currency", viewBy),
                        new SqlParameter("@PersonInCharge", ""),
                          new SqlParameter("@Zone", ""),
-                                  new SqlParameter("@BusDate",DateTime.Now),
+                                  new SqlParameter("@BusDate",businessDateModel[0].BusinessDate),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptSaleInChargeReport", param);

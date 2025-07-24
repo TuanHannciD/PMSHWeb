@@ -312,6 +312,10 @@
         max-width: 81.67%;
     }
 
+    #gridContainer .dx-datagrid-rowsview {
+        max-height: 400px; /* hoặc bao nhiêu tùy bạn */
+        overflow-y: auto !important;
+    }
 </style>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -597,6 +601,12 @@
    
 
    $(document).ready(function () {
+          localStorage.removeItem("CompanyName");
+
+         // Gán giá trị mới từ ViewBag vào localStorage
+         var companyName = '@ViewBag.CompanyName';
+          console.log(companyName);
+         localStorage.setItem("CompanyName", companyName);
 
               const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];
 

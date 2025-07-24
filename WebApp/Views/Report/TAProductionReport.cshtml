@@ -94,29 +94,29 @@
 
             <div class="form-check me-3">
                 <input class="form-check-input" type="checkbox"
-                       id="arrival" value="1,101" checked>
+                       id="arrival" value="1,101" name="includeOptions" checked>
                 <label class="form-check-label" for="arrival">Travel Agents</label>
             </div>
 
             <div class="form-check me-3">
                 <input class="form-check-input" type="checkbox"
-                       id="cancel" value="2,102">
+                       id="cancel" value="2,102" name="includeOptions">
                 <label class="form-check-label" for="cancel">Company</label>
             </div>
         </div>
 
-        <div class="d-flex align-items-center flex-wrap gap-2">
+        <div class="d-flex align-items-center flex-wrap gap-2"> 
             <label class="fw-bold mb-0 me-3">By:</label>
 
             <div class="form-check me-3">
                 <input class="form-check-input" type="checkbox"
-                       id="confirmation" value="0">
+                       id="confirmation" value="0" >
                 <label class="form-check-label" for="confirmation">Confirmation No</label>
             </div>
 
-            <div class="form-check me-3">
+            <div class="form-check me-3"> 
                 <input class="form-check-input" type="checkbox"
-                       id="masterllio" value="3" checked>
+                       id="masterllio" value="3"  checked>
                 <label class="form-check-label" for="masterllio">Master Folio</label>
             </div>
         </div>
@@ -161,8 +161,9 @@
 </div>
 
 <div class="mui-card">
-@*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
+        <div id="gridContainer"></div>
+    </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -295,7 +296,7 @@
     function initializProductActivityGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-    dataSource: data,     height: 500, allowColumnResizing: true,
+   dataSource: data,         height: "auto", allowColumnResizing: true,
             columns: [
                { dataField: "guestNo", caption: "Acc.No", width: columnWidth-50 },
             { dataField: "guestName", caption: "Account", width: columnWidth+40 },
@@ -349,18 +350,18 @@
 
 
     $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");
+               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
         var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
         }
 
-        const workbook = new ExcelJS.Workbook();
+                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
-        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+       worksheet.addRow([companyName]);
         worksheet.mergeCells('A1:E1');
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
@@ -409,20 +410,46 @@
 
 
     // Nút xuất PDF
-       $("#btnExportPdf").click(function () {
-        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+             $("#btnExportPdf").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
 
-        const doc = new jsPDF();
+        // Lấy đối tượng jsPDF từ window
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "A4" });
 
-        DevExpress.pdfExporter.exportDataGrid({
-            jsPDFDocument: doc,
-            component: $("#gridContainer").dxDataGrid("instance"),
-            autoTableOptions: {
-                styles: { cellPadding: 2, fontSize: 8 },
-                margin: { top: 20 }
-            }
-        }).then(() => {
-            doc.save("BaoCao.pdf");
+        const selectedReport = '@ViewBag.ReportTitle';
+        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+
+        grid.getDataSource().load().then(data => {
+            const columns = grid.getVisibleColumns();
+
+            const head = [columns.map(col => col.caption)];
+            const body = data.map(row =>
+                columns.map(col =>
+                    col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField]
+                )
+            );
+
+            doc.setFontSize(14);
+            doc.setFont("Helvetica", "bold");
+            doc.text(companyName, doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "normal");
+            doc.text(selectedReport, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
+
+            // AutoTable
+            doc.autoTable({
+                startY: 80,
+                head: head,
+                body: body,
+                 styles: { fontSize: 9, cellPadding: 4 , lineWidth: 0.5, lineColor: [0, 0, 0]    },
+                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: 20, right: 20 }
+            });
+
+            doc.save(selectedReport + ".pdf");
         });
     });
 </script>

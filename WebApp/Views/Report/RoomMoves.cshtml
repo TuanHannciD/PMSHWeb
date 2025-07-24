@@ -83,8 +83,9 @@
 </div>
 
 <div class="mui-card">
-    <div id="reportTitle" class="mt-1" style="font-size: 20px;"></div>
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
+        <div id="gridContainer"></div>
+    </div>
 </div>
 
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -133,7 +134,7 @@
 
         function initializeDataGrid(data) {
         $('#gridContainer').dxDataGrid({
-    dataSource: data,     height: 500, allowColumnResizing: true,
+   dataSource: data,         height: "auto", allowColumnResizing: true,
             columns: [
                 { dataField: "name", caption: "Name", width: 260 },
                 { dataField: "oldRoom", caption: "Old Room", width: 130, dataType: "number", format: "#,##0" },
@@ -186,18 +187,18 @@
 
 
     $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");
+               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
         var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
         }
 
-        const workbook = new ExcelJS.Workbook();
+                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
-        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+       worksheet.addRow([companyName]);
         worksheet.mergeCells('A1:E1');
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
@@ -244,19 +245,46 @@
         });
     });
 
-    $('#btnExportPdf').click(function () {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+         $("#btnExportPdf").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
 
-        DevExpress.pdfExporter.exportDataGrid({
-            jsPDFDocument: doc,
-            component: $('#gridContainer').dxDataGrid('instance'),
-            autoTableOptions: {
-                styles: { cellPadding: 2, fontSize: 8 },
-                margin: { top: 20 }
-            }
-        }).then(() => {
-            doc.save("BaoCao.pdf");
+        // Lấy đối tượng jsPDF từ window
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "A4" });
+
+        const selectedReport = '@ViewBag.ReportTitle';
+        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+
+        grid.getDataSource().load().then(data => {
+            const columns = grid.getVisibleColumns();
+
+            const head = [columns.map(col => col.caption)];
+            const body = data.map(row =>
+                columns.map(col =>
+                    col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField]
+                )
+            );
+
+            doc.setFontSize(14);
+            doc.setFont("Helvetica", "bold");
+            doc.text(companyName, doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "normal");
+            doc.text(selectedReport, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
+
+            // AutoTable
+            doc.autoTable({
+                startY: 80,
+                head: head,
+                body: body,
+                 styles: { fontSize: 9, cellPadding: 4 , lineWidth: 0.5, lineColor: [0, 0, 0]    },
+                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: 20, right: 20 }
+            });
+
+            doc.save(selectedReport + ".pdf");
         });
     });
 </script>

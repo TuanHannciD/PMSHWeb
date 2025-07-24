@@ -71,7 +71,9 @@
 
 <div class="mui-card">
 @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
+        <div id="gridContainer"></div>
+    </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -134,7 +136,7 @@
     function initializeBookingSourceGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-    dataSource: data,     height: 500, allowColumnResizing: true,
+   dataSource: data,         height: "auto", allowColumnResizing: true,
             columns: [
                { dataField: "source", caption: "Source", width: "17%" },
             { dataField: "rnActual", caption: "RNActual", width: "16%", dataType: "number", format: "#,##0" },
@@ -184,18 +186,18 @@
 
 
     $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");
+               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
         var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
         }
 
-        const workbook = new ExcelJS.Workbook();
+                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
-        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+       worksheet.addRow([companyName]);
         worksheet.mergeCells('A1:E1');
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
