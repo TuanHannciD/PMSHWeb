@@ -111,7 +111,12 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
+<<<<<<< HEAD
     <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+=======
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+
+>>>>>>> 7a3f45314371d830830a988e66faf46ab69aed24
         <div class="d-flex align-items-center me-3">
             <label class="fw-bold me-3">Date Range:</label>
 
@@ -306,8 +311,13 @@
     function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
+<<<<<<< HEAD
     dataSource: data,     height: 500, allowColumnResizing: true,
 >>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
+=======
+    dataSource: data, allowColumnResizing: true,
+    rowRenderingMode: "standard",
+>>>>>>> 7a3f45314371d830830a988e66faf46ab69aed24
             columns: [
             { dataField: "folioID", caption: "Folio No", width: columnWidth-90 },
             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-90,dataType: "number" },
