@@ -48,7 +48,13 @@
     <script src="~/lib/devextreme/dist/js/dx.all.js"></script>
     <script asp-append-version="true" src="~/node_modules/@@devexpress/analytics-core/dist/js/dx-analytics-core.min.js"></script>
     <script asp-append-version="true" src="~/node_modules/devexpress-reporting/dist/js/dx-webdocumentviewer.min.js"></script>
+    <!-- jsPDF core -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- AutoTable Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.2.4/js/pdfExporter.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -197,6 +203,7 @@
                             <a class="nav-link dropdown-toggle" href="#">Front Desk</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="Index">Menu 1</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a></li>
                             </ul>
                         </li>
                          <li class="nav-item dropdown">
@@ -300,12 +307,11 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="HouseStatus">House Status</a></li>
                             </ul>
                         </li>
+                        
                     </ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a id="businessDate" class="nav-link" asp-area="" asp-controller="" asp-action=""></a>
-                        </li>
-                    </ul>
+
+                            <a id="businessDate" style="color:white" class="nav-link" asp-area="" asp-controller="" asp-action=""></a>
+
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a id="user-display" class="nav-link" asp-area="" asp-controller="User" asp-action="Index">[ admin - THOÁT ]</a>

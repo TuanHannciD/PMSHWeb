@@ -167,7 +167,7 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
         <div class="d-flex flex-column ">
 
             <div class="d-flex align-items-center">
@@ -240,19 +240,24 @@
 
             </div>
         </div>
-    </div>
+
 
     </div>
-    <div class=" mb-3 ">
+    <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+    <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid" class="mui-button mui-button-new" type="button">
+        <i class="fa-solid fa-print"></i> Print
+    </button>
     </div>
-
+</div>
 
 <div class="mui-card">
     @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
+        <div id="gridContainer"></div>
+    </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -266,7 +271,7 @@
     }
 
     $(document).ready(function () {
-    
+         DevExpress.localization.locale("vi");
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -352,33 +357,27 @@
     function initializReservationPreblockedyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+   dataSource: data,         height: "auto", allowColumnResizing: true,
             allowColumnResizing: true,
           columnResizingMode: "widget",
             columns: [
-               { dataField: "roomNo", caption: "Room No", width: columnWidth-70},
+            { dataField: "roomNo", caption: "Room No", width: columnWidth-50},
             { dataField: "name", caption: "Name", width: columnWidth},
-                        { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
-                     
-                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
+            { dataField: "vip", caption: "VIP", width: columnWidth-80 },                     
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+            { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
-
-
-            { dataField: "noOfAdult", caption: "Adl.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfChild", caption: "Chl.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-              { dataField: "noOfChild1", caption: "Chl1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "noOfNight", caption: "Nts.", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-             { dataField: "hKStatusID", caption: "HK Status", width: columnWidth-70},
-
-               { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
-
+            { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+            { dataField: "noOfAdult", caption: "Adl.",width: columnWidth-80 ,dataType: "number"},
+            { dataField: "noOfChild", caption: "Chl.", width: columnWidth-80 ,dataType: "number" },
+            { dataField: "noOfChild1", caption: "Chl1.", width: columnWidth-80 ,dataType: "number" },
+            { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number" },
+            { dataField: "noOfNight", caption: "Nts.", width:columnWidth-80 ,dataType: "number" },
+            { dataField: "hKStatusID", caption: "HK Status", width: columnWidth-70},
+            { dataField: "roomType", caption: "Room Type", width:columnWidth-70 },
             { dataField: "fOStatus", caption: "Status", width: columnWidth-70},
-                { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
-
-                    { dataField: "rate", caption: "Rate Amount", width:columnWidth-50,dataType: "number",
+            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+            { dataField: "rate", caption: "Rate Amount", width:columnWidth-50,dataType: "number",
     format: {
         type: "fixedPoint",
         precision: 2
@@ -386,16 +385,14 @@
     customizeText: function (e) {
         return `${e.valueText}`;
     } },
-                                 { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
-
-                                    { dataField: "", caption: "C/H",  width:columnWidth-70 },
-                  { dataField: "depositReceivedMaster", caption: "Deposit Curr.Recelved ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
-                      { dataField: "depositRsqMaster", caption: "Deposit Curr.Requested ",width: columnWidth-30 ,dataType: "number", format: "#,##0" },
-
-                                     { dataField: "resType", caption: "Res Type", width:columnWidth-70 },
+            { dataField: "currencyID", caption: "Curr.",  width:columnWidth-100 },
+            { dataField: "", caption: "C/H",  width:columnWidth-70 },
+            { dataField: "depositReceivedMaster", caption: "Deposit Curr.Recelved ",width: columnWidth-30 ,dataType: "number"},
+            { dataField: "depositRsqMaster", caption: "Deposit Curr.Requested ",width: columnWidth-30 ,dataType: "number" },
+            { dataField: "resType", caption: "Res Type", width:columnWidth-70 },
             { dataField: "agent", caption: "Agent", width: columnWidth},
             { dataField: "company", caption: "Company", width: columnWidth},
-             { dataField: "source", caption: "Source", width: columnWidth},
+            { dataField: "source", caption: "Source", width: columnWidth},
             { dataField: "businessBlockCode", caption: "Block Code", width: columnWidth-70 },
             ],
             paging: { pageSize: 25 },
@@ -416,6 +413,7 @@
          visible: true,
         applyFilter: "auto"
     },
+       
     headerFilter: {
         visible: true
         },summary: {
@@ -423,27 +421,33 @@
                {
                     column: "roomNo", // hoặc bất kỳ cột nào bạn muốn đếm
                     summaryType: "count",
-                    displayFormat: "Total Room: {0}", // thêm {0} để hiển thị số lượng
-                    valueFormat: "#,##0" // tuỳ chọn: định dạng số nếu cần
+                    displayFormat: "Total Room: {0}"
+                 
                 },
 
             {
                 column: "noOfAdult",
                 summaryType: "sum",
-                displayFormat: "Total: {0}",
-                valueFormat: "#,##0"
+                customizeText: function(e) {
+                return "Total: " + e.value.toLocaleString();
+            }
+              
             },
             {
                 column: "noOfChild",
                 summaryType: "sum",
-                displayFormat: "{0}",
-                valueFormat: "#,##0"
+                customizeText: function(e) {
+                return "Total: " + e.value.toLocaleString();
+            }
+            
             },
             {
                 column: "noOfChild1",
                 summaryType: "sum",
-                displayFormat: "{0}",
-                valueFormat: "#,##0"
+                customizeText: function(e) {
+                return "Total: " + e.value.toLocaleString();
+            }
+            
             }
         ]
     },
@@ -462,18 +466,18 @@
 
 
     $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");
+               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
         var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
         }
 
-        const workbook = new ExcelJS.Workbook();
+                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
-        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+       worksheet.addRow([companyName]);
         worksheet.mergeCells('A1:E1');
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
@@ -523,19 +527,96 @@
 
     // Nút xuất PDF
        $("#btnExportPdf").click(function () {
-        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+        const grid = $("#gridContainer").dxDataGrid("instance");
 
-        const doc = new jsPDF();
+        // Lấy đối tượng jsPDF từ window
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "A4" });
 
-        DevExpress.pdfExporter.exportDataGrid({
-            jsPDFDocument: doc,
-            component: $("#gridContainer").dxDataGrid("instance"),
-            autoTableOptions: {
-                styles: { cellPadding: 2, fontSize: 8 },
-                margin: { top: 20 }
+        const selectedReport = '@ViewBag.ReportTitle';
+        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+
+        grid.getDataSource().load().then(data => {
+            const columns = grid.getVisibleColumns();
+
+            const head = [columns.map(col => col.caption)];
+            const body = data.map(row =>
+                columns.map(col =>
+                    col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField]
+                )
+            );
+
+            doc.setFontSize(14);
+            doc.setFont("Helvetica", "bold");
+            doc.text(companyName, doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "normal");
+            doc.text(selectedReport, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
+
+            // AutoTable
+            doc.autoTable({
+                startY: 80,
+                head: head,
+                body: body,
+                 styles: { fontSize: 9, cellPadding: 4 , lineWidth: 0.5, lineColor: [0, 0, 0]    },
+                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: 20, right: 20 }
+            });
+
+            doc.save(selectedReport + ".pdf");
+        });
+    });
+
+            $("#btnPrintGrid").on("click", function () {
+               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
+
+        // Lấy toàn bộ data từ dataSource
+        grid.getDataSource().load().then(function (data) {
+            // Tạo bảng HTML từ dữ liệu
+            let tableHTML = '<table border="1" style="border-collapse: collapse; width: 100%;">';
+
+            // Header
+            const columns = grid.getVisibleColumns();
+            tableHTML += "<thead><tr>";
+            columns.forEach(col => {
+                tableHTML += `<th style="padding: 5px; text-align: center;">${col.caption}</th>`;
+            });
+            tableHTML += "</tr></thead>";
+
+            // Body
+            tableHTML += "<tbody>";
+            data.forEach(row => {
+                tableHTML += "<tr>";
+                columns.forEach(col => {
+                    let value = col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField];
+                    tableHTML += `<td style="padding: 5px;">${value ?? ""}</td>`;
+                });
+                tableHTML += "</tr>";
+            });
+            tableHTML += "</tbody></table>";
+
+            // Mở cửa sổ in với nội dung bảng
+            const printWindow = window.open('', '', 'height=800,width=1000');
+            if (!printWindow) {
+                alert("Trình duyệt đang chặn cửa sổ in.");
+                return;
             }
-        }).then(() => {
-            doc.save("BaoCao.pdf");
+
+           printWindow.document.write('<html><head><title>' + selectedReport2 + '</title>');
+            printWindow.document.write('<style>table { font-family: Arial; font-size: 12px; }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(tableHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+
+            // Chờ nội dung render xong rồi in
+            printWindow.onload = function () {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            };
         });
     });
 </script>

@@ -63,7 +63,10 @@
             font-weight: 500;
             flex-shrink: 0;
         }
-
+         #roomAVG {
+      right: 81px;
+    position: relative;
+    }
         .form-row input,
         .form-row select {
             width: 80px;
@@ -194,7 +197,7 @@
 
 
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-<div class=" mb-3 ">
+<div class="">
     <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
     <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
     <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -245,13 +248,13 @@
 
             <div class="form-row">
                 <label>% Occupancy:</label>
-                <input type="text"  readonly>
+                <input id="occupancyPercent" type="text"  readonly>
       
             </div>
 
             <div class="form-row">
                 <label>Min Available Tonight:</label>
-                <input type="text"  readonly>
+                <input id="minAvail" type="text"  readonly>
                 
             </div>
 
@@ -264,7 +267,7 @@
 
             <div class="form-row triple-input">
                 <label>Max % Occ Tonight:</label>
-                <input type="text"  readonly>
+                <input id="maxpercentonight" type="text"  readonly>
                 
             </div>
 
@@ -316,7 +319,7 @@
             </div>
             <div class="form-row">
                 <label for="date">Date:</label>
-                <input type="date" id="datebunisess">
+                <input type="date" style="width: 122px;" id="datebunisess">
             </div>
             <div class="form-row">
                 <label for="zone">Zone:</label>
@@ -466,7 +469,7 @@
             <div class="form-row">
                 <label>Out of Service</label>
                 <input id="outofserviveVacant" type="text"  class=" gray" readonly>
-                <input id="outofserviveOccupied" type="text"  readonly>
+                <input id="outofserviveOccupied" type="text"   class=" gray" readonly>
             
             </div>
         </fieldset>
@@ -532,16 +535,51 @@
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
                 console.log(result);
-                $('#totalRoom').val(result.totalPhysicalRoom[0].totalPhysicalRoom);
-                    $('#roomToSell').val(result.totalPhysicalRoom[0].totalPhysicalRoom);
-                     $('#outOfOrder').val(result.outOfOrder[0].outOfOrder);
-                      $('#outOfOrder').val(result.outOfService[0].outOfService);
-                     $('#occupancyRoom').val(result.arrivalActual[0].totalRooms);
-                    $('#occupancyPersons').val(result.arrivalActual[0].totalPersons);
+                                     const totalRoom = parseInt(result.totalPhysicalRoom[0].totalPhysicalRoom) || 0;
+                            const outOfOrder = parseInt(result.outOfOrder[0].outOfOrder) || 0;
+
+                            // Gán giá trị tổng phòng
+                            $('#totalRoom').val(totalRoom);
+
+                            // Gán giá trị phòng Out Of Order
+                            $('#outOfOrder').val(outOfOrder);
+
+                            // Tính số phòng có thể bán
+                            const roomToSell = totalRoom - outOfOrder;
+                            $('#roomToSell').val(roomToSell);
+
+                          let stayOverdepartureExpected = parseInt(result.departureExpected[0].totalRooms ) || 0;
+
+                                 let occupancyPersonsstayOver = parseInt(result.stayOver[0].totalPersons ) || 0;
+                          let occupancyPersonsdepartureExpected = parseInt(result.departureExpected[0].totalPersons ) || 0;
+
+                                 let occupancyRoomstayOver = parseInt(result.stayOver[0].totalRooms ) || 0;
+                      $('#outOfService').val(result.outOfService[0].outOfService);
+                      const occupancyRoom = occupancyRoomstayOver + stayOverdepartureExpected;
+                     $('#occupancyRoom').val(occupancyRoom);
+                     let occupancyPercent = 0;
+                        if (roomToSell > 0) {
+                            occupancyPercent = (occupancyRoom * 100) / roomToSell;
+                         occupancyPercent = parseFloat(occupancyPercent.toFixed(2));// làm tròn 2 chữ số thập phân
+                        }
+
+                        $('#occupancyPercent').val(occupancyPercent.toFixed(2));
+
+                         let maxaccRoom = parseInt(result.endOfDayMaxOccTonight[0].totalRooms) || 0;
+                         $('#minAvail').val(roomToSell-maxaccRoom);
+
+                    $('#occupancyPersons').val(occupancyPersonsstayOver+occupancyPersonsdepartureExpected);
                      $('#occupancyvVip').val(result.arrivalActualVIP[0].vip);
-                 $('#maxaccRoom').val(result.endOfDayMaxOccTonight[0].totalRooms);
+                 $('#maxaccRoom').val(maxaccRoom);
+                      let maxoccupancyPercent = 0;
+                    
+                            maxoccupancyPercent = (maxaccRoom * 100) / roomToSell;
+                           maxoccupancyPercent = parseFloat(maxoccupancyPercent.toFixed(2));  // làm tròn 2 chữ số thập phân
+                        
+
+                 $('#maxpercentonight').val(maxoccupancyPercent.toFixed(2));
                   $('#maxaccPerson').val(result.endOfDayMaxOccTonight[0].totalPersons);
-                    $('#maxaccVip').val(result.endOfDayMaxOccTonight[0].vip);
+                    $('#maxaccVip').val(result.endOfDayMaxOccTonightVIP[0].vip);
 
              $('#individualsRoom').val(result.endOfDayIndividual[0].totalRooms);
               $('#individualsPerson').val(result.endOfDayIndividual[0].totalPersons);
@@ -555,8 +593,17 @@
     $('#compPerson').val(result.endOfDayCHU[0].totalPersons);
         $('#compVip').val(result.endOfDayCHUVIP[0].vip);
 
-           $('#roomRevennue').val(result.endOfDayRoomRevenue[0].amount);
-        $('#roomAVG').val(result.endOfDayRoomRevenue[0].amount);
+const amount = parseFloat(result.endOfDayRoomRevenue[0].amount) || 0;
+
+// Làm tròn xuống số nguyên
+const roundedAmount = Math.round(amount);
+
+// Định dạng tiền theo kiểu Việt Nam: 1.234.567
+const formattedAmount = roundedAmount.toLocaleString('vi-VN');
+
+$('#roomRevennue').val(formattedAmount);
+$('#roomAVG').val(formattedAmount);
+
 
              $('#stayoverRoom').val(result.stayOver[0].totalRooms);
          $('#stayoverPerson').val(result.stayOver[0].totalPersons);
@@ -620,7 +667,7 @@
                 $('#dirtyTotal').val(vacanthkD + occhkD);
 
                   
-                 // $('#doeoutOccupied').val(result.hkDirty[0].occ);
+          $('#doeoutOccupied').val(result.roomzone.length);
 
                 //  let vacantIns = parseInt(result.hkInspected[0].vacant) || 0;
                 //  let occIns = parseInt(result.hkInspected[0].occ) || 0;
@@ -633,8 +680,8 @@
                    $('#totalOccupied').val(occIns + occhk+occhkD);
 
                    $('#outoforderVacant').val(result.hkOutOfOrder[0].vacant);
-                    $('#outofserviveOccupied').val(result.hkOutOfService[0].vacant);
-                   $('#outofserviveOccupied').val(result.hkOutOfService[0].vacant);
+                    $('#outofserviveVacant').val(result.hkOutOfService[0].vacant);
+                   $('#outofserviveOccupied').val(result.hkOutOfService[0].occ);
                 $("#loadingSpinner").hide();
                 },
                 error: function () {

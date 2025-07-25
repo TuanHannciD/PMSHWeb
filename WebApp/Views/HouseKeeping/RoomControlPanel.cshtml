@@ -188,7 +188,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3 filter-panel">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
         <!-- From Date -->
         <div class="d-flex flex-column ">
 
@@ -227,7 +227,7 @@
 
 
     </div>
-    <div class=" mb-3 ">
+    <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -378,7 +378,7 @@
         const dateColumns = generateDateColumns(fromDate, toDate);
          console.log(dateColumns);
         $("#gridContainer").dxDataGrid({
-            dataSource: data,
+            dataSource: data,     
             allowColumnResizing: true,
             columnAutoWidth: true,
             columns: [
@@ -420,14 +420,14 @@
 
 
         $("#btnExportExcel").click(function () {
-            const grid = $("#gridContainer").dxDataGrid("instance");
+                   const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
             var selectedReport = '@ViewBag.ReportTitle';
             if (!selectedReport) {
                 alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
                 return;
             }
 
-            const workbook = new ExcelJS.Workbook();
+                         const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
             const worksheet = workbook.addWorksheet("Sheet 1");
 
             // === T?o header công ty (dòng 1) ===

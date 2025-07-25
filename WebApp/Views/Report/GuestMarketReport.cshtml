@@ -68,10 +68,15 @@
     }
 
     .tomselect-custom {
-        width: 200px;
+        width: 70px;
         min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
     }
+
+        .tomselect-custom .ts-control {
+            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        }
+
 
 
 </style>
@@ -79,20 +84,20 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px">Guest Market Report</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">From Date:</label>
+            <label class="mb-0">From Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">To Date:</label>
+            <label class="mb-0">To Date:</label>
             <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
         </div>
 
         <div class="d-flex align-items-center me-3">
-            <label class="me-2 mb-0">Zone:</label>
+            <label class="mb-0">Zone:</label>
             <select id="zonecode" name="zonecode" class="tomselect-custom " multiple>
                 @foreach (var item in zoneList)
                 {
@@ -112,7 +117,7 @@
         </div>
 
     </div>
-    <div class=" mb-3 ">
+    <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
@@ -120,7 +125,9 @@
 </div>
 <div class="mui-card">
 @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
+        <div id="gridContainer"></div>
+    </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -304,7 +311,7 @@
                 }
             }
         $("#gridContainer").dxDataGrid({
-    dataSource: data, allowColumnResizing: true,
+   dataSource: data,         height: "auto", allowColumnResizing: true,
             columns: [
                 { dataField: "code", caption: "Code", width: columnWidth },
                 { dataField: "description", caption: "Description", width: columnWidth },
@@ -465,18 +472,18 @@
 
 
     $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");
+               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
         var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
         }
 
-        const workbook = new ExcelJS.Workbook();
+                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
-        worksheet.addRow(['Công ty Cổ phần Giải pháp Công nghệ CS-Solution']);
+       worksheet.addRow([companyName]);
         worksheet.mergeCells('A1:E1');
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
@@ -525,20 +532,46 @@
 
 
         // Nút xuất PDF
-           $("#btnExportPdf").click(function () {
-            const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+             $("#btnExportPdf").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
 
-            const doc = new jsPDF();
+        // Lấy đối tượng jsPDF từ window
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "A4" });
 
-            DevExpress.pdfExporter.exportDataGrid({
-                jsPDFDocument: doc,
-                component: $("#gridContainer").dxDataGrid("instance"),
-                autoTableOptions: {
-                    styles: { cellPadding: 2, fontSize: 8 },
-                    margin: { top: 20 }
-                }
-            }).then(() => {
-                doc.save("BaoCao.pdf");
+        const selectedReport = '@ViewBag.ReportTitle';
+        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+
+        grid.getDataSource().load().then(data => {
+            const columns = grid.getVisibleColumns();
+
+            const head = [columns.map(col => col.caption)];
+            const body = data.map(row =>
+                columns.map(col =>
+                    col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField]
+                )
+            );
+
+            doc.setFontSize(14);
+            doc.setFont("Helvetica", "bold");
+            doc.text(companyName, doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "normal");
+            doc.text(selectedReport, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
+
+            // AutoTable
+            doc.autoTable({
+                startY: 80,
+                head: head,
+                body: body,
+                 styles: { fontSize: 9, cellPadding: 4 , lineWidth: 0.5, lineColor: [0, 0, 0]    },
+                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: 20, right: 20 }
             });
+
+            doc.save(selectedReport + ".pdf");
         });
+    });
 </script>

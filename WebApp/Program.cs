@@ -1,24 +1,27 @@
+using DevExpress.AspNetCore;
+using DevExpress.AspNetCore.Reporting;
+using DevExpress.CodeParser;
 using DevExpress.XtraCharts;
+using FrontDesk.Controllers;
+using FrontDesk.Services.Interfaces;
+using FrontDesk.Services.Implements;
+using HouseKeeping.Controllers;
+using HouseKeeping.Services.Implements;
+using HouseKeeping.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Extensions.FileProviders;
 using Profile.Controllers;
 using Report.Controllers;
 using Report.Services.Implements;
 using Report.Services.Interfaces;
-using DevExpress.AspNetCore;
-using DevExpress.AspNetCore.Reporting;
-using DevExpress.CodeParser;
-using Microsoft.Extensions.FileProviders;
+using Reservation.Controllers;
+using Reservation.Services.Implements;
+using Reservation.Services.Interfaces;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
-using Reservation.Controllers;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using WebApp.Commons.Containts;
-using Reservation.Services.Interfaces;
-using Reservation.Services.Implements;
-using HouseKeeping.Controllers;
-using HouseKeeping.Services.Interfaces;
-using HouseKeeping.Services.Implements;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,8 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(UserController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ReservationController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(FrontDeskController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -49,9 +54,14 @@ builder.Services.AddSingleton<IHouseKeepingService, HouseKeepingService>();
 builder.Services.AddSingleton<IReportService, ReportService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IReservationService, ReservationService>();
+<<<<<<< HEAD
 builder.Services.AddSingleton<IFolioDetailService, FolioDetailService>();
 builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
+=======
+builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
+
+>>>>>>> f71f80a7c677a182317e5cabf573e1ca6ca530a8
 
 builder.Services.AddAuthentication(options =>
 {

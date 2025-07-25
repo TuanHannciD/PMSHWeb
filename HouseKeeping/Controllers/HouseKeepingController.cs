@@ -15,6 +15,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using HouseKeeping.Commons.Helpers;
+using System.Security.Policy;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -591,7 +592,8 @@ namespace HouseKeeping.Controllers
                                     TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
 
                                 }).ToList();
-
+                List<RoomModel> roomzone = RoomBO.GetRoomZone(roomtype, zone);
+                
                 return Json(new
                 {
                     TotalPhysicalRoom = result,
@@ -634,7 +636,8 @@ namespace HouseKeeping.Controllers
                     DayUseRoomVIP = result33,
                     WakeInRoomVIP = result34,
 
-                    WalkInRoom = result35
+                    WalkInRoom = result35,
+                    Roomzone = roomzone
                 });
                 
 

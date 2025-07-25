@@ -10,7 +10,7 @@
 /* Container ảnh */
 .banner {
     position: relative;
-    width: 100vw;
+/*    width: 100vw;*/
     overflow: hidden;
 }
 

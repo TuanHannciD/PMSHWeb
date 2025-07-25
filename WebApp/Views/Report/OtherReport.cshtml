@@ -273,7 +273,7 @@
         background-color: #f0f0f0;
     }
     .report-list-scrollable {
-    max-height: 300px; /* hoặc bạn chọn chiều cao phù hợp */
+    max-height: 380px; /* hoặc bạn chọn chiều cao phù hợp */
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -304,19 +304,24 @@
 
     .col-custom-2-1 {
         flex: 0 0 18.33%;
-        max-width: 18.33%%;
+        max-width: 18.33%;
     }
 
     .col-custom-9-9 {
         flex: 0 0 81.67%;
         max-width: 81.67%;
     }
+
+    #gridContainer .dx-datagrid-rowsview {
+        max-height: 400px; /* hoặc bao nhiêu tùy bạn */
+        overflow-y: auto !important;
+    }
 </style>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <div class="content_wrapper row">
-    <div class="filter_wrapper col-custom-2-1 mui-card" style="border: 1px solid #005f87;height: fit-content;">
+    <div class="filter_wrapper mui-card col-custom-2-1" style="border: 1px solid #005f87; height:fit-content;">
         <div class="text-center fw-bold py-2" style="font-size: 1.25rem; color: #005f87; border-bottom: 1px solid #ccc;">
             REPORT
         </div>
@@ -428,6 +433,12 @@
             </li>
             <li class="list-group-item">
                 <a style="color:black" id="RoomOccupancyStatistics" class="text-decoration-none report-link" data-report="RoomOccupancyStatistics" data-title="Room Occupancy Statistics">Room Occupancy Statistics</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="ReservationRateCheck" data-title="Reservation Rate Check">Reservation Rate Check</a>
+            </li>
+            <li class="list-group-item">
+                <a style="color:black" class="text-decoration-none report-link" data-report="DepartureExtended" data-title="Departure Extended">Departure Extended</a>
             </li>
             <li class="list-group-item">
                 <a style="color:Green" id="BookingSummaryByStatus" class="text-decoration-none report-link" data-report="BookingSummaryByStatus" data-title="Booking Summary By Status">Booking Summary By Status</a>
@@ -545,7 +556,7 @@
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="CashierAudit" data-title="Cashier Audit">Cashier Audit</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="CashierSummary" data-title="Cashier Summary">Cashier Summary</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="GuestTrialBalance" data-title="Guest Trial Balance">Guest Trial Balance</a></li>
-            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="Fix Charge Report">Fix Charge Report</a></li>
+            <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="FixChargeReport" data-title="Fixed Charge Report">Fixed Charge Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DepositRequestLogReport" data-title="Deposit Request Log Report">Deposit Request Log Report</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueSpa" data-title="Revenue Spa">Revenue Spa</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueReport" data-title="Revenue Reports">Revenue Reports</a></li>
@@ -573,13 +584,16 @@
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="IncurringDepositSummary" data-title="Incurring Deposit Summary">Incurring Deposit Summary</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RoomStatistic" data-title="Room Statistics">Room Statistics</a></li>
             <li class="list-group-item"><a style="color:red" class="text-decoration-none report-link" data-report="DailyRevenueReports" data-title="Daily Revenue Reports">Daily Revenue Reports</a></li>
+            <li class="list-group-item">
+                <a style="color:black" id="RevenueDetail" class="text-decoration-none report-link" data-report="RevenueDetail" data-title="Revenue Detail">Revenue Detail</a>
+            </li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyRevenueReportNew" data-title="Daily Revenue Reports New">Daily Revenue Reports New</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="DailyRevenueReport(V2)" data-title="Daily Revenue Report (V2)">Daily Revenue Report (V2)</a></li>
             <li class="list-group-item"><a style="color:blue" class="text-decoration-none report-link" data-report="ManagerReport" data-title="Manager Report">Manager Report</a></li>
             <li class="list-group-item"><a style="color:blue" class="text-decoration-none report-link" data-report="RoomTypeStatistic" data-title="Room Type Statistics">Room Type Statistics</a></li>
 
         </ul>
-
+        ̣
     </div>
 
     <div class="function_wrapper col-custom-9-9">
@@ -596,6 +610,12 @@
    
 
    $(document).ready(function () {
+          localStorage.removeItem("CompanyName");
+
+         // Gán giá trị mới từ ViewBag vào localStorage
+         var companyName = '@ViewBag.CompanyName';
+          console.log(companyName);
+         localStorage.setItem("CompanyName", companyName);
 
               const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];
 
