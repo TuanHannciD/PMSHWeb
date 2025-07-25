@@ -1,76 +1,60 @@
 ﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
-<style>
-    #loadingSpinnerEdit {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    } 
-
-    .modal-body.loading .container2 {
-        opacity: 0.3;
-        pointer-events: none;
-    }
-/*     .container_checkbox {
-            display: flex;
-            justify-content: space-around;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        } */
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-    #btnCheckIn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.mui-divider {
-    border: none;
-    border-top: 1px solid #005f87;
-    color: #005f87;
-    margin: 8px 0;
-}
-</style>
 <div class="body">
     <div class="container2">
         <div>
             <div class="text-center" style="font-size: 20px;">Search Reservation</div>
-            <div class="mui-divider"></div>
-            <div class="button-group mb-1 mt-2">
-                <div>
-                    <button class="mui-button mui-button-search" onclick="searchReservation();"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-                    <button class="mui-button mui-button-advance"><i class="fa-solid fa-file"></i>Advance</button>
-                    <button class="mui-button mui-button-clear"><i class="fa-solid fa-arrows-rotate"></i>Clear</button>
-                    <button class="mui-button mui-button-edit" onclick="openModalEdit();"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
-                    <button class="mui-button mui-button-cancel" onclick="openModalCancel()"><i class="fa-solid fa-ban"></i>Cancel</button>
-                    <button class="mui-button mui-button-reinstate"><i class="fa-solid fa-file-import"></i> Reinstate</button>
-                    <button class="mui-button mui-button-card" onclick="openModalRegistrationCard();"><i class="fa-solid fa-id-card"></i>  Reg.Card</button>
-                    <button class="mui-button mui-button-new" id="btnCheckIn" onclick="checkIn();"><i class="fa-solid fa-check-to-slot"></i> Check In</button>
-                    <button class="mui-button mui-button-profile"><i class="fa-solid fa-id-badge"></i> Profile</button>
-                    <button class="mui-button mui-button-search" onclick="openModalOption();"><i class="fa-solid fa-list"></i> Option</button>
-                    <button class="mui-button mui-button-group"><i class="fa-solid fa-users-line"></i> Group Admin</button>
-                    <button class="mui-button mui-button-room"><i class="fa-solid fa-building"></i> Room Asg</button>
-                    <button class="mui-button mui-button-export"><i class="fas fa-plus"></i> Export</button>
-                    <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
-
+            <div class="rs-header">
+                <div class="rs-toggle-btn" onclick="toggleCollapse()">
+                    <span class="rs-toggle-icon" id="collapseIcon">−</span>
+                    <span>Hide Unpopulated</span>
                 </div>
-                
-                <div><a href="/Reservation/NewReservation" style="text-decoration:none">New reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
-            <div class="mui-divider"></div>
-            <div class="row" style="margin: 14px 14px; height: auto; justify-content: space-between; display: flex; align-items: stretch;">
-                <div class="col-md-10 row bg-light border rounded">
+            <!-- Content Box -->
+            <div class="rs-content-box" id="infoBox">
+
+
+                <div class="rs-column">
+                    <div class="rs-section">
+                        <h4>Reservation</h4>
+                        <ul class="rs-menu-list">
+                            <li><a href="#" class="rs-bold">Advance</a></li>
+                            <li><a href="#" class="rs-bold">Clear</a></li>
+                            <li><a href="#" class="rs-bold" onclick="openModalEdit();">Edit</a></li>
+                            <li><a href="#" class="rs-bold" onclick="openModalCancel()">Cancel</a></li>
+                            <li><a href="#" class="rs-bold" onclick="openModalRegistrationCard();">Reinstate</a></li>
+                            <li><a href="#" class="rs-bold" onclick="checkIn();">Reg.Card</a></li>
+                            <li><a href="#" class="rs-bold">Check In</a></li>
+                            <li><a href="#" class="rs-bold">Profile</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="rs-column">
+                    <div class="rs-section">
+                        <h4>Billing</h4>
+                        <ul class="rs-menu-list">
+                            <li><a href="#" class="rs-bold">Accompanying</a></li>
+                            <li><a href="#" class="rs-bold">Add On</a></li>
+                            <li><a href="#" class="rs-bold">Alerts</a></li>
+                            <li><a href="#" class="rs-bold">Prepaid Cards</a></li>
+                            <li><a href="#" class="rs-bold">Billing</a></li>
+                            <li><a href="#" class="rs-bold">Change</a></li>
+                            <li><a href="#" onclick="openModalDeposit();">Deposit/DXL</a></li>
+                            <li><a href="#" onclick="openModalFixedCharges();">Fixed Charges</a></li>
+                            <li><a href="#" onclick="openModalRouting();">Routing</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rs-header">
+                <div class="rs-toggle-btn" onclick="toggleCollapseSearch()">
+                    <span class="rs-toggle-icon" id="collapseIconSearch">−</span>
+                    <span>Hide Unpopulated</span>
+                </div>
+            </div>
+            <div class="rs-content-box" id="infoBoxSearch">
+                <div class="col-md-8 row ">
                     <div class="col-md-1 mb-1">
                         <label for="firstName" class="form-label">First Name</label>
                         <input id="firstName" type="text" class="form-control" />
@@ -142,16 +126,17 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px" id="moreInfo">
-
+                <div class="col-md-3 row " style="overflow-y:scroll;font-size:12px" id="moreInfo">
                 </div>
             </div>
+
+
             <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
-            <div class="mui-card">
+            <div class="rs-content-box">
                 <div id="listFunction"  class="mt-1 listFunction">
                     <div >Shares</div>
                     <div >Fixed Charge</div>
@@ -1229,10 +1214,14 @@
     </div>
 </div>
 
-@await Html.PartialAsync("Partial/Option")
+@await Html.PartialAsync("Partial/Deposit")
+@await Html.PartialAsync("Partial/Accompanying")
+@await Html.PartialAsync("Partial/FixedCharges")
 @await Html.PartialAsync("Partial/RegistrationCard")
 @await Html.PartialAsync("Partial/CheckIn")
 @await Html.PartialAsync("Partial/Billing")
+@await Html.PartialAsync("Partial/AddOn")
+@await Html.PartialAsync("Partial/Routing")
 
 <script>
     $(document).ready(async function () {
@@ -1240,8 +1229,38 @@
         await setTomSelect();
         getProfileIndividual();
         $('#listFunction').hide();
+                $('#searchType, #name, #firstName, #resvHolder, #confirmationNo, #crsNo, #roomNo, #roomType, #package, #zone, #arrivalForm, #departureForm, #roomShare, #owner').on('keypress', function (e) {
+            if (e.which === 13) { // Enter key = 13
+                e.preventDefault(); // Ngăn form bị submit nếu có
+                searchReservation();
+            }
+        });
     });
+    function toggleCollapse() {
+        const box = document.getElementById("infoBox");
+        const icon = document.getElementById("collapseIcon");
 
+        if (box.classList.contains("rs-hidden")) {
+        box.classList.remove("rs-hidden");
+        icon.textContent = "−";
+        } else {
+        box.classList.add("rs-hidden");
+        icon.textContent = "+";
+        }
+    }
+
+    function toggleCollapseSearch() {
+        const box = document.getElementById("infoBoxSearch");
+        const icon = document.getElementById("collapseIconSearch");
+
+        if (box.classList.contains("rs-hidden")) {
+        box.classList.remove("rs-hidden");
+        icon.textContent = "−";
+        } else {
+        box.classList.add("rs-hidden");
+        icon.textContent = "+";
+        }
+    }
     function searchReservation() {
         $("#loadingSpinner").show();
         const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
@@ -1283,8 +1302,12 @@
     }
     var idReservation = 0;
     var status = '';
-    var roomStatus = ''
-    var roomNo = ''
+    var roomStatus = '';
+    var roomNo = '';
+    var arivalDate = '';
+    var confirmationNo = '';
+    var night = 0;
+    var rateAmount = 0;
     function initializeDataGridSearch(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,
@@ -1338,9 +1361,13 @@
                 if(e.data.Specials != ''){
                         html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
+                rateAmount = e.data.PriceNet;
+                night = e.data.NoOfNight
                 status = e.data.Status;
                 roomStatus = e.data.RoomStatus;
                 roomNo = e.data.RoomNo;
+                arivalDate = e.data.Arrival;
+                confirmationNo = e.data.ConfirmationNo;
                 const $checkInButton = $('#btnCheckIn');
 
                 if (status !== 'RESVED') {
