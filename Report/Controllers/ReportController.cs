@@ -3658,7 +3658,7 @@ namespace Report.Controllers
             // Tùy thuộc vào tên báo cáo, trả về báo cáo tương ứng
             return PartialView(reportName, title);
         }
-       
+
 
 
 
@@ -3728,7 +3728,134 @@ namespace Report.Controllers
         //    return PartialView("_ReportViewerPartial", report);
         //}
 
+        [HttpGet]
+        public IActionResult DashBoard(DateTime businessDate)
+        {
+            try
+            {
+                int totalDueinCheckedint = 0;
+                int guestInHouseCount = 0;
+                int dueoutCount = 0;
+
+                // Khai báo biến tổng cho các cột cần tính
+                decimal totalA = 0;
+                decimal totalC = 0;
+                decimal totalC1 = 0;
+                decimal totalC2 = 0;
+
+                for (int status = 3; status <= 4; status++)
+                {
+                    DataTable dt = _iReportService.ReservationSearchRSVDate(businessDate,status);
+                    totalDueinCheckedint += dt.Rows.Count;
+
+                    // Tính tổng từng cột
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        if (dt.Columns.Contains("Adults") && row["Adults"] != DBNull.Value)
+                            totalA += Convert.ToDecimal(row["Adults"]);
+
+                        if (dt.Columns.Contains("Child") && row["Child"] != DBNull.Value)
+                            totalC += Convert.ToDecimal(row["Child"]);
+
+                        if (dt.Columns.Contains("Child1") && row["Child1"] != DBNull.Value)
+                            totalC1 += Convert.ToDecimal(row["Child1"]);
+
+                        if (dt.Columns.Contains("Child2") && row["Child2"] != DBNull.Value)
+                            totalC2 += Convert.ToDecimal(row["Child2"]);
+                    }
+                }
+
+                DataTable dtGuestInHouse = _iReportService.ReservationSearchRSVDate(businessDate, 1);
+                guestInHouseCount = dtGuestInHouse.Rows.Count;
+
+                DataTable dtdueoutCount = _iReportService.ReservationSearchRSVDate(businessDate,5);
+                dueoutCount = dtdueoutCount.Rows.Count;
+
+                DataTable dtcheckoutCount = _iReportService.ReservationSearchRSVDate(businessDate, 6);
+                int checkoutCount = dtcheckoutCount.Rows.Count;
+
+
+                DataTable dtrsvCount = _iReportService.ReservationSearchRSVDate(businessDate, 2);
+                int rsvCount = dtrsvCount.AsEnumerable()
+                          .Count(row => !string.IsNullOrWhiteSpace(row["RoomNo"]?.ToString()));
+
+
+
+                List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+                decimal occupancyPercent = 0;
+                foreach (var zone in listzo)
+                {
+                    string zoneCode = zone.Code;
+
+                    // Gọi hàm với từng ZoneCode
+                    DataTable dataTable = _iReportService.RoomFacilityForecastData(businessDate, businessDate, zoneCode);
+
+                    string columnName = businessDate.ToString("yyyy/MM/dd");
+
+                    // Tìm dòng có StatisticName = 'Occupancy %'
+                    var occupancyRow = dataTable.AsEnumerable()
+                        .FirstOrDefault(row => row.Field<string>("StatisticName") == "Occupancy %");
+
+                    if (occupancyRow != null && dataTable.Columns.Contains(columnName))
+                    {
+                        var valueObj = occupancyRow[columnName];
+                        if (valueObj != DBNull.Value)
+                        {
+                             occupancyPercent = Convert.ToDecimal(valueObj);
+           
+                        }
+                    }
+                }
+
+                var chartStatus = new List<object>();
+
+                for (int status = 1; status <= 7; status++)
+                {
+                    // Gọi chung 1 hàm cho tất cả status từ 1 đến 7
+                    DataTable dt = _iReportService.ReservationSearchRSVDate(businessDate,status);
+                    int total = dt.Rows.Count;
+
+                    // Tên tương ứng từng status
+                    string statusN = status switch
+                    {
+                        1 => "Guest in House",
+                        2 => "Reservation",
+                        3 => "Due in",
+                        4 => "Checked in",
+                        5 => "Due out",
+                        6 => "Checked out",
+                        7 => "Cancellation",
+                        _ => "Unknown"
+                    };
+
+                    chartStatus.Add(new
+                    {
+                        status,
+                        statusName = statusN,
+                        total
+                    });
+                }
+
+
+
+                return Json(new
+                {
+                    TotalDueinCheckedint = totalDueinCheckedint,
+                    GuestInHouseCount = guestInHouseCount,
+                    TotalDueoutCheckedoutint = checkoutCount + dueoutCount,
+                    TotalA = totalA,
+                    TotalC = totalC+ totalC1+ totalC2,
+                    OccupancyPercent = occupancyPercent,
+                    RsvCount = rsvCount,
+                    ChartStatus= chartStatus
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
 
     }
-    
+
 }

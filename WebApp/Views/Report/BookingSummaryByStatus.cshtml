@@ -150,21 +150,15 @@
 
     $(document).ready(function () {
          document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
-        const today = new Date();
+           var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // "29/08/2024 00:00:00"
 
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        // Lấy ngày cuối cùng của tháng
-        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            var dateOnly = parsedBusinessDate.split(' ')[0]; // "29/08/2024"
+            var dateParts = dateOnly.split('/'); // ["29", "08", "2024"]
 
-        // Định dạng theo local time
-        const formattedFirstDay = formatDate(firstDayOfMonth);
-        const formattedLastDay = formatDate(lastDayOfMonth);
-
-        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-        // Gán giá trị cho input date
-        document.getElementById('fromDate').value = formattedFirstDay;
-        document.getElementById('toDate').value = formattedLastDay;
+            var businessDate =  new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
+           var parsedBusinessDate =  formatDate(businessDate);
+                       document.getElementById('fromDate').value = parsedBusinessDate;
+                    document.getElementById('toDate').value = parsedBusinessDate;
 
 
 
@@ -182,6 +176,7 @@
               crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
+                        console.log(result);
                 const selectedStyle = $("#chartStyle").val();
 
                     $("#pie").hide();

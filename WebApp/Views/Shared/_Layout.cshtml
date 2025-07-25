@@ -310,7 +310,7 @@
                         
                     </ul>
 
-                            <a id="businessDate" style="color:white" class="nav-link" asp-area="" asp-controller="" asp-action=""></a>
+                            <a id="businessDate" style="color:white" class="nav-link"></a>
 
                     <ul class="navbar-nav">
                         <li class="nav-item">
@@ -356,9 +356,9 @@
 
         // Nếu có tên đăng nhập, gán vào giao diện
         if (loginName) {
-            $("#user-display").text(`[ ${loginName} - THOÁT ]`);
+            $("#user-display").text(`[ ${loginName} - LOGOUT ]`);
         } else {
-            $("#user-display").text("[ CHƯA ĐĂNG NHẬP ]");
+            $("#user-display").text("[ NOT LOGGED IN ]");
         }
 
         const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];

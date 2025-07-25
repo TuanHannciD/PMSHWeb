@@ -206,8 +206,9 @@
 </div>
 
 <div class="mui-card">
-
-    <div id="gridContainer" class="mt-2"></div>
+        <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
+            <div id="gridContainer"></div>
+        </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -311,13 +312,8 @@
     function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-<<<<<<< HEAD
-    dataSource: data,     height: 500, allowColumnResizing: true,
->>>>>>> 06d567ead38c1a386fc78fa70fa244d8aeab926d
-=======
-    dataSource: data, allowColumnResizing: true,
-    rowRenderingMode: "standard",
->>>>>>> 7a3f45314371d830830a988e66faf46ab69aed24
+          dataSource: data,     height: 500, allowColumnResizing: true,
+
             columns: [
             { dataField: "folioID", caption: "Folio No", width: columnWidth-90 },
             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-90,dataType: "number" },
