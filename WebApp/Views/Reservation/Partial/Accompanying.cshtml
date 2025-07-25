@@ -1,0 +1,153 @@
+﻿
+<div class="modal fade modal-xl" id="modalAccompanying" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Fixed charges information</h5>
+                <button type="button" class="btn-close" onclick="closeModalAccompanying()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="">
+                    <button class="mui-button mui-button-search" id="attach" onclick="AttachAccompanying();"><i class="fa-solid fa-paperclip"></i> Attach</button>
+                    <button class="mui-button mui-button-delete" id="detach" onclick="detach()"><i class="fa-solid fa-xmark"></i>Detach</button>
+                    <button class="mui-button mui-button-clear" onclick="closeModalAccompanying();"><i class="fa-solid fa-circle-xmark"></i> Close</button>
+                </div>
+                <div>
+                    <select id="txtNameAccompanying"></select>
+                </div>
+                <div class="mui-card mt-2">
+                    <div id="gridContainerAccompanying" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openModalAccompanying(){
+        if (idReservation === 0) {
+            showToast('Error', 'Please choose booking', false);
+            return;
+        }
+         getInfoByProfileIDAccompanying(idReservation);
+         $('#modalAccompanying').modal('show');
+    }
+    function closeModalAccompanying(){
+         $('#modalAccompanying').modal('hide');
+    }
+
+   function getInfoByProfileIDAccompanying(id) {
+        $.ajax({
+            url: '/Reservation/GetReservationAccompanyingByReservationID',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                reservationID: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridAccompanying(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    var profileID = 0;
+    function detach(){
+        $.ajax({
+            url: '/Reservation/DettachAccompanying',
+            type: 'POST',
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: {id:profileID},
+            success: function (data) {
+                if (data.code == 0) {
+                    getInfoByProfileIDAccompanying(idReservation);
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+
+    function AttachAccompanying() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+        formData.append('rsvID', idReservation);
+        formData.append('profileAgentID', $('#txtNameAccompanying').val());
+        formData.append('userName', userName);
+        formData.append('userID', userID);
+        $.ajax({
+            url: '/Reservation/AttachAccompanying',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    var value = $('#txtNameAccompanying').val();
+                    getInfoByProfileIDAccompanying(idReservation);
+                    const tomSelectInstance = $('#txtNameAccompanying')[0].tomselect;
+                    tomSelectInstance.setValue(0);
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+
+    function initializeDataGridAccompanying(data) {
+
+        $("#gridContainerAccompanying").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "ID", caption: "ID",  visible: false},
+                { dataField: "Account", caption: "Name"  },
+                { dataField: "City", caption: "City"},
+                { dataField: "DateOfBirth", caption: "Birthday"},
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowClick: function(e) {
+                profileID = e.data.ID;
+                $('#detach').show();
+            }
+        });
+    }
+</script>
