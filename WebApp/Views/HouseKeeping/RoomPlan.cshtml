@@ -270,6 +270,17 @@
         transition: all 0.2s ease-in-out;
     }
 
+    .tomselect-custom {
+        width: 300px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.65rem;
+        margin-left: 5px;
+    }
+
+        .tomselect-custom .ts-control {
+            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        }
+
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
@@ -355,7 +366,7 @@
                     <!-- Hàng 1 -->
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Zone:</label>
-                        <select id="zone" name="zone" class="form-control form-control-sm" style="width: 200px" multiple>
+                            <select id="zone" name="zone" class="tomselect-custom" style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in zoneList)
                             {
@@ -366,7 +377,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Room:</label>
-                        <select id="room" name="room" class="form-control form-control-sm" style="width: 200px" multiple>
+                            <select id="room" name="room" class="tomselect-custom" style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in roomList)
                             {
@@ -377,7 +388,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Room Type:</label>
-                        <select id="roomType" name="roomType" class="form-control form-control-sm" style="width: 200px" multiple>
+                            <select id="roomType" name="roomType" class="tomselect-custom" style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in roomtypeList)
                             {
