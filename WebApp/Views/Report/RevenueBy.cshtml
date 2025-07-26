@@ -111,12 +111,9 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-<<<<<<< HEAD
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
-=======
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
 
->>>>>>> 21ad1342126219b9531175f54a38b1ad14640a96
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
+
         <div class="d-flex align-items-center me-3">
             <label class="fw-bold me-3">Date Range:</label>
 
@@ -206,16 +203,8 @@
 </div>
 
 <div class="mui-card">
-<<<<<<< HEAD
 
-    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
-        <div id="gridContainer"></div>
-    </div>
-=======
-        <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
-            <div id="gridContainer"></div>
-        </div>
->>>>>>> 21ad1342126219b9531175f54a38b1ad14640a96
+    <div id="gridContainer" class="mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -319,17 +308,8 @@
     function initializReveunueByGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-<<<<<<< HEAD
-    dataSource: data,     height: 500, allowColumnResizing: true,
-    scrolling: {
-        mode: "standard", 
-        useNative: true,
-        showScrollbar: "always"
-    },
-=======
-          dataSource: data,     height: 500, allowColumnResizing: true,
 
->>>>>>> 21ad1342126219b9531175f54a38b1ad14640a96
+    dataSource: data,     height: 500, allowColumnResizing: true,
             columns: [
             { dataField: "folioID", caption: "Folio No", width: columnWidth-90 },
             { dataField: "confirmationNo", caption: "Conf.No", width: columnWidth-90,dataType: "number" },
