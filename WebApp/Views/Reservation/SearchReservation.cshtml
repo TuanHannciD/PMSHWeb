@@ -19,7 +19,7 @@
             </div>
         </div>
         <!-- Content Box -->
-        <div class="rs-content-box row" id="infoBox" style="display:block">
+        <div class="rs-content-box row" id="infoBox" >
 
 
             <div class="rs-column">
@@ -1248,12 +1248,13 @@
         await setTomSelect();
         getProfileIndividual();
         $('#listFunction').hide();
-                $('#searchType, #name, #firstName, #resvHolder, #confirmationNo, #crsNo, #roomNo, #roomType, #package, #zone, #arrivalForm, #departureForm, #roomShare, #owner').on('keypress', function (e) {
+        $('#searchType, #name, #firstName, #resvHolder, #confirmationNo, #crsNo, #roomNo, #roomType, #package, #zone, #arrivalForm, #departureForm, #roomShare, #owner').on('keypress', function (e) {
             if (e.which === 13) { // Enter key = 13
                 e.preventDefault(); // Ngăn form bị submit nếu có
                 searchReservation();
             }
         });
+        getAllProfiles();
     });
     function toggleCollapse() {
         const box = document.getElementById("infoBox");
@@ -1331,6 +1332,7 @@
     var roomStatus = '';
     var roomNo = '';
     var arivalDate = '';
+    var departureDate = ''; 
     var confirmationNo = '';
     var night = 0;
     var rateAmount = 0;
@@ -1398,6 +1400,7 @@
                 roomStatus = e.data.RoomStatus;
                 roomNo = e.data.RoomNo;
                 arivalDate = e.data.Arrival;
+                departureDate = e.data.Departure;
                 confirmationNo = e.data.ConfirmationNo;
                 const $checkInButton = $('#btnCheckIn');
 
@@ -2989,7 +2992,7 @@
 
     async function setTomSelect(){
         const ids = [
-                "#txtName","#txtItemInventory","#txtNameAccompanying"
+                        "#txtName","#txtItemInventory","#txtNameAccompanying","transactionRouting"
             //,
             //"#txtStateGroup",
             // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
@@ -3233,5 +3236,27 @@
             }
         });
 
+    }
+
+    function getAllProfiles() {
+        $("#loadingSpinner").show();
+        $('#viewByProfileSearch').val(3);
+        $.ajax({
+            url: '/Reservation/GetAllProfiles',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            },
+
+        });
     }
 </script>

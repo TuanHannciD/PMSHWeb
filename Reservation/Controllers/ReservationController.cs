@@ -55,9 +55,9 @@ namespace Reservation.Controllers
             ViewBag.cboCity = ListItemHelper.GetCityProvider();
             ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
             ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
-            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
-            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
-            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+            //ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
+            //ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            //ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
             ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
@@ -65,7 +65,7 @@ namespace Reservation.Controllers
             ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
             ViewBag.cboSource = ListItemHelper.GetSourceProvider();
             ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
-            ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
+            //ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
             ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
             ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
             ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
@@ -154,7 +154,20 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllProfiles()
+        {
+            try
+            {
+                List<ProfileModel> profile = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll());
 
+                return Json(profile);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> GetRateCode(DateTime arrivalDate,DateTime departure,int adults,int roomType)
         {
@@ -2120,6 +2133,66 @@ namespace Reservation.Controllers
             catch (Exception ex)
             {
                 return Json(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult SaveRouting()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                if (int.Parse(Request.Form["transactionCodes"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose transaction" });
+                }
+                ReservationModel res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
+                RoutingModel routing = new RoutingModel();
+                routing.Type = int.Parse(Request.Form["transactionRouting"].ToString());
+                routing.FromReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                routing.ToReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                routing.ToFolioNo = int.Parse(Request.Form["toFolioNo"].ToString());
+                routing.ToRoomID = 0;
+                routing.ProfileID = res.ProfileIndividualId;
+                routing.AccountName = res.LastName;
+                routing.TransactionCodes = Request.Form["transactionCodes"].ToString() + ",";
+                routing.Limit = decimal.Parse(Request.Form["transactionCodes"].ToString());
+                routing.Percents = 0;
+                routing.FromDate = DateTime.Parse(Request.Form["fromDate"].ToString());
+                routing.ToDate = DateTime.Parse(Request.Form["toDate"].ToString());
+                if(Request.Form["entireDate"].ToString() == "1")
+                {
+                    routing.EntireDate = true;
+
+                }
+                else
+                {
+                    routing.EntireDate = false;
+
+                }
+                routing.IsDefault = false;
+                routing.IsMasterFolio = false;
+                routing.ConfirmationNo = res.ConfirmationNo;
+                routing.UserInsertID = routing.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                routing.UpdateDate = routing.CreateDate = DateTime.Now;
+                RoutingBO.Instance.Insert(routing);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Routing transâction was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
             }
         }
         #endregion

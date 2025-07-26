@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<!-- Modal payment-->
+<!-- Modal new-->
 <div class="modal fade modal" id="modalNewRouting" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -34,22 +34,22 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="SaveDepositPayment();"><i class="fa-solid fa-file-circle-check"></i> OK</button>
-                    <button class="mui-button mui-button-clear" onclick="closeModalDepositPayment();"><i class="fa-solid fa-file"></i>Close</button>
+                    <button class="mui-button mui-button-search" onclick="SaveRouting();"><i class="fa-solid fa-file-circle-check"></i> OK</button>
+                    <button class="mui-button mui-button-clear" onclick="closeModalNewRouting();"><i class="fa-solid fa-file"></i>Close</button>
                 </div>
 
                 <div class="mt-2 row bg-light border rounded" style="margin:0 1px">
                     <div class="row">
                         <div class="radio-group col-md-4">
-                            <input type="radio" id="everyday" name="typeRouting" checked value="1">
+                            <input type="radio" id="everyday" name="typeRouting" checked value="0">
                             <label for="everyday" style="text-align:left">Master Folio</label>
                         </div>
                         <div class="radio-group col-md-4 ">
-                            <input type="radio" id="date" name="typeRouting" style="flex:0" value="2">
+                            <input type="radio" id="date" name="typeRouting" style="flex:0" value="1">
                             <label for="everyday" style="text-align:left">Window</label>
                         </div>
                         <div class="radio-group col-md-4 ">
-                            <input type="radio" id="day" name="typeRouting" style="flex:0" value="3">
+                            <input type="radio" id="day" name="typeRouting" style="flex:0" value="2">
                             <label for="everyday" style="text-align:left">Room</label>
                         </div>
                     </div>
@@ -58,17 +58,21 @@
                         <div class="col-md-6 row">
                             <div class="radio-group col-md-12">
                                 <input type="radio" id="everyday" name="dayRouting" checked value="1">
-                                <label for="everyday" style="text-align:left">Master Folio</label>
+                                <label for="everyday" style="text-align:left">Entire Stay</label>
                             </div>
                             <div class="radio-group col-md-12 ">
-                                <input type="radio" id="date" name="dayRouting" style="flex:0" value="2">
-                                <label for="everyday" style="text-align:left">Window</label>
+                                <input type="radio" id="date" name="dayRouting" style="flex:0" value="0">
+                                <label for="everyday" style="text-align:left">OtherDate</label>
                             </div>
                         </div>
                         <div class="col-md-6 row">
-                            <div class="mb-2 row">
+                            <div class="mb-2">
                                 <label for="everyday" class="col-md-2" style="text-align:left;min-width:0">BeginDate</label>
-                                <input type="date" class="form-control col-md-10" id="amountDepositPayment">
+                                <input type="date" class="form-control col-md-10" id="beginDateRouting">
+                            </div>
+                            <div class="mb-2">
+                                <label for="everyday" class="col-md-2" style="text-align:left;min-width:0">EndDate</label>
+                                <input type="date" class="form-control col-md-10" id="endDateRouting">
                             </div>
                         </div>
                     </div>
@@ -76,23 +80,23 @@
                     <div class="row">
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Transaction</label>
-                            <select type="text" class="form-control col-md-10" id="nameProfileFixedcharge" asp-items="ViewBag.cboTransaction"></select>
+                            <select type="text" class="form-control col-md-10" id="transactionRouting" asp-items="ViewBag.cboTransaction" ></select>
                         </div>
                         <div class="col-md-6 mb-2 row">
                             <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Limit</label>
-                            <input type="text" class="form-control col-md-8" id="arrivalProfileFixedCharge" >
+                            <input type="text" class="form-control col-md-8" id="limitRouting" value="0">
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Name</label>
-                            <input type="text" class="form-control col-md-10" id="departureFixedCharge" disabled>
+                            <input type="text" class="form-control col-md-10" id="nameRouting" disabled>
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Address</label>
-                            <input type="text" class="form-control col-md-10" id="nightFixedCharge" disabled>
+                            <input type="text" class="form-control col-md-10" id="addressRouting" disabled>
                         </div>
                         <div class="col-md-6 mb-2 row">
                             <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Window</label>
-                            <select type="text" class="form-control col-md-8" id="nameProfileFixedcharge">
+                            <select type="text" class="form-control col-md-8" id="windowRouting">
                                 <option value="1">--Master Folio--</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -115,6 +119,10 @@
             showToast('Error', 'Please choose booking', false);
             return;
         }
+         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
+        $('#beginDateRouting').val(formattedDate);
+          let formattedDate2 = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
+        $('#endDateRouting').val(formattedDate2);
         GetRoutingByReservationID(idReservation,confirmationNo);
         $('#modalRouting').modal('show');
     }
@@ -122,9 +130,11 @@
         $('#modalRouting').modal('hide');
     }
     function openModalNewRouting(){
+        clearFormAddRouting();
         $('#modalNewRouting').modal('show');
     }
     function closeModalNewRouting(){
+        clearFormAddRouting();
         $('#modalNewRouting').modal('hide');
     }
     function GetRoutingByReservationID(id,confirmationNo) {
@@ -185,5 +195,52 @@
             onRowClick: function(e) {
             }
         });
+    }
+
+    function SaveRouting() {
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+        formData.append('rsvID', idReservation);
+        formData.append('transactionRouting',  $('input[name="typeRouting"]:checked').val());
+        formData.append('toFolioNo', $('#windowRouting').val());
+        // formData.append('toRoom', $('#ruleDepositRequest').val());
+        formData.append('transactionCodes',  $('#transactionRouting').val());
+        formData.append('fromDate', $('#beginDateRouting').val());
+        formData.append('toDate', $('#endDateRouting').val());
+                formData.append('limit', $('#limitRouting').val());
+
+        formData.append('entireDate', $('input[name="typeRouting"]:checked').val());
+        formData.append('userID',userID);
+
+        $.ajax({
+            url: '/Reservation/SaveRouting',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    GetRoutingByReservationID(idReservation,confirmationNo);
+                    closeModalNewRouting();
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+    function clearFormAddRouting(){
+        $('#windowRouting').val(0);
+        $('#transactionRouting').val(0);
+         $('#limit').val('0');
+         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
+        $('#beginDateRouting').val(formattedDate);
+          let formattedDate2 = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
+        $('#endDateRouting').val(formattedDate2);
     }
 </script>
