@@ -1,24 +1,232 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-  <div class="mui-card chart-container">
-    <div id="highchartPie" class="chart-fixed-size"></div>
+<div class="layout-wrapper">
+    <!-- Mục 1: Trên cùng -->
+    <div class="section-top">
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-door-closed"></i></div>
+            <div class="card-content">
+                <div class="card-title">Due in & Checked in</div>
+                <div class="card-value" id="dueInCheckedInCount">0</div>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-door-open"></i></div>
+            <div class="card-content">
+                <div class="card-title">Checked out</div>
+                <div class="card-value" id="checkedOutCount">0</div>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-users"></i></div>
+            <div class="card-content">
+                <div class="card-title">Guest in House</div>
+                <div class="card-value" id="guestInHouseCount">0</div>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-sign-out-alt"></i></div>
+            <div class="card-content">
+                <div class="card-title">Due out</div>
+                <div class="card-value" id="dueoutCount">0</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Mục 2 & 3: Chia đôi bên dưới -->
+    <div class="section-bottom">
+        <div class="section-left mui-card">
+            <div class="info-box">
+                <div class="info-icon"><i class="fas fa-chart-pie"></i></div>
+                <div class="info-content">
+                    <div class="info-title">% Occupancy</div>
+                    <div class="info-value" id="occupancyPercent">0%</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <div class="info-icon"><i class="fas fa-male"></i></div>
+                <div class="info-content">
+                    <div class="info-title">Adults</div>
+                    <div class="info-value" id="totalA">0</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon"><i class="fas fa-child"></i></div>
+                <div class="info-content">
+                    <div class="info-title">Children</div>
+                    <div class="info-value" id="totalC">0</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <div class="info-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="info-content">
+                    <div class="info-title">Assigned</div>
+                    <div class="info-value" id="rsvCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-right mui-card">
+            <div class="form-group">
+                <label style="margin-left: 15px;">
+                    <input type="radio" name="chartType" value="pie" checked> Pie Chart
+                </label>
+                <label>
+                    <input type="radio" name="chartType" value="bar" > Bar Chart
+                </label>
+               
+            </div>
+            <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
+            <div id="highchartPie" class="chart-fixed-sizehigh"></div>
+        </div>   
+    </div>
 </div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
+
+
 <style>
-    .chart-container {
+    .layout-wrapper {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        padding: 20px;
+        flex-direction: column;
+        width: 100%;
+        padding: 24px;
+        gap: 24px;
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .chart-fixed-size {
-        width: 700px;
-        height: 520px;
+    /* --- TOP SECTION --- */
+    .section-top {
+        display: flex;
+        gap: 24px;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
     }
+
+    .card-box {
+        flex: 1;
+        min-width: 220px;
+        background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        padding: 20px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        transition: 0.3s ease;
+    }
+
+        .card-box:hover {
+            transform: translateY(-6px);
+            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        }
+
+    .card-icon {
+        font-size: 36px;
+        margin-right: 18px;
+        color: #4A90E2;
+    }
+
+    .card-title {
+        font-size: 14px;
+        color: #888;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    .card-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    /* --- BOTTOM SECTION --- */
+    .section-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .section-left,
+    .section-right {
+        background-color: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+
+    }
+
+    .section-left {
+        width: 30%;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .section-right {
+        width: 70%;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* --- INFO BOX --- */
+    .info-box {
+        display: flex;
+        align-items: center;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .info-icon {
+        font-size: 32px;
+        color: #17a2b8;
+        margin-right: 16px;
+    }
+
+    .info-title {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .info-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #222;
+    }
+
+    /* --- CHART SECTION --- */
+    .form-group {
+        margin-bottom: 12px;
+        padding-left: 12px;
+    }
+
+        .form-group label {
+            margin-right: 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+    .chart-fixed-sizehigh {
+        flex: 1;
+        width: 100%;
+        min-height: 380px;
+    }
+
+
 </style>
 
 @* <script src="https://code.highcharts.com/highcharts.js"></script> *@
@@ -36,81 +244,144 @@
         var dateOnly = parsedBusinessDate.split(' ')[0]; // "29/08/2024"
         var dateParts = dateOnly.split('/'); // ["29", "08", "2024"]
 
-        var date =  new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
-
-        // Ngày đầu tháng
-        var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-
-        // Ngày cuối tháng
-        var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-
-        var fromDate = formatDate(firstDay);   // "2024-08-01"
-        var toDate = formatDate(lastDay);      // "2024-08-31"
-        console.log(fromDate);
-         console.log(toDate);
+        var businessDate =  new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
+   
+         var parsedBusinessDate =  formatDate(businessDate);
+             $("#loadingSpinner").show();
          $.ajax({
-            url: '/Report/RevenueDetailData',
+            url: '/Report/DashBoard',
             type: 'GET',
             data: {
-                fromDate: fromDate,
-                toDate: toDate
+                businessDate: parsedBusinessDate,
             },
             headers: {
                 "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
             },
             success: function (data) {
-                console.log(data);
-                const grouped = {};
-                data.forEach(item => {
-                    const group = item.groupCode;
-                    const amount = parseFloat(item.amount) || 0;
-                    if (!grouped[group]) grouped[group] = 0;
-                    grouped[group] += amount;
-                });
+              
+               console.log(data);
+                   $("#dueInCheckedInCount").text(data.totalDueinCheckedint);
+                    $("#checkedOutCount").text(data.totaCheckedoutint);
+                    $("#dueoutCount").text(data.totalDueoutint);
+                    $("#guestInHouseCount").text(data.guestInHouseCount);
+                    $("#rsvCount").text(data.rsvCount);
+                    $("#totalA").text(data.totalA);
+                    $("#totalC").text(data.totalC);
+                    $("#occupancyPercent").text(data.occupancyPercent + "%");
+                        renderHighchartBar(data.chartStatus);
+             
+                        renderHighchartPie(data.chartStatus);
 
-                const grandTotal = Object.values(grouped).reduce((acc, val) => acc + val, 0);
-                const pieData = Object.entries(grouped).map(([group, amount]) => {
-                    const percent = grandTotal > 0 ? ((amount / grandTotal) * 100).toFixed(1) : 0;
-                    return {
-                        name: `${group} (${percent}%)`,
-                        y: amount
-                    };
-                });
-
-                renderHighchartPie(pieData);
-  
+                $("#loadingSpinner").hide(); 
             },
             error: function () {
                 alert("Không thể tải dữ liệu.");
-           
+            $("#loadingSpinner").hide();
             }
         });
 
-         function renderHighchartPie(data) {
-        Highcharts.chart('highchartPie', {
-            chart: { type: 'pie' },
-            title: { text: 'Revenue Summary by Group (Pie)' },
-            tooltip: { pointFormat: 'Amount: <b>{point.y:,.0f}</b>' },
-            legend: {
-                enabled: true,
-                align: 'center',
-                verticalAlign: 'bottom'
+    
+    });
+       function renderHighchartBar(data) {
+        const categories = data.map(x => x.statusName);
+        const values = data.map(x => parseInt(x.total));
+
+        Highcharts.chart('highchartBar', {
+            chart: {
+                type: 'column'
             },
-            plotOptions: {
-                pie: {
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.name}: {point.y:,.0f}'
-                    },
-                    showInLegend: true
+            title: {
+                text: 'Booking Summary by Status'
+            },
+            xAxis: {
+                categories: categories,
+                title: {
+                    text: 'Status'
                 }
             },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Total Bookings'
+                }
+            },
+            tooltip: {
+                pointFormat: 'Total: <b>{point.y}</b>'
+            },
             series: [{
-                name: 'Amount',
-                colorByPoint: true,
-                data: data
+                name: 'Bookings',
+                data: values,
+                color: '#7cb5ec'
             }]
         });
     }
+
+     // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
+        function renderHighchartPie(data) {
+        // Tính tổng tất cả giá trị trong dữ liệu
+        const total = data.reduce((sum, x) => sum + parseInt(x.total), 0);
+
+        // Chuyển đổi dữ liệu thành định dạng mà Highcharts cần
+        const chartData = data.map(x => {
+            const y = parseInt(x.total);
+            const percent = total > 0 ? ((y / total) * 100).toFixed(1) : 0;
+            return {
+                name: `${x.statusName} (${percent}%)`,
+                y: y
+            };
+        });
+
+        Highcharts.chart('highchartPie', {
+            chart: {
+                type: 'pie'
+            },
+            title: {
+                text: 'Booking Summary by Status'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.y}</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            legend: {
+                enabled: true, // 🔰 bật legend
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}: {point.y}'
+                    },
+                    showInLegend: true // 🔰 hiển thị dữ liệu trong legend
+                }
+            },
+            series: [{
+                name: 'Total',
+                colorByPoint: true,
+                data: chartData
+            }]
+        });
+    }
+
+
+    // Chart toggle logic
+    $('input[name="chartType"]').on('change', function () {
+        const selected = $(this).val();
+        if (selected === 'bar') {
+            $('#highchartBar').show();
+            $('#highchartPie').hide();
+        } else {
+            $('#highchartBar').hide();
+            $('#highchartPie').show();
+        }
     });
+
 </script>

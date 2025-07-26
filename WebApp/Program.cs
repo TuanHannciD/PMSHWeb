@@ -54,6 +54,9 @@ builder.Services.AddSingleton<IHouseKeepingService, HouseKeepingService>();
 builder.Services.AddSingleton<IReportService, ReportService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IReservationService, ReservationService>();
+builder.Services.AddSingleton<IFolioDetailService, FolioDetailService>();
+builder.Services.AddSingleton<IDepositService, DepositService>();
+builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 
 

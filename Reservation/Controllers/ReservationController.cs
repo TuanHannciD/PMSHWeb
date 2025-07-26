@@ -33,15 +33,19 @@ namespace Reservation.Controllers
         private readonly IMemoryCache _cache;
         private readonly IReservationService _iReservationService;
         private readonly IFolioDetailService _iFolioDetailService;
-
+        private readonly IDepositService _iDepositService;
+        private readonly IRoutingService _iRoutingService;
         public ReservationController(ILogger<ReservationController> logger,
-                IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService)
+                IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService,
+                IDepositService iDepositService, IRoutingService iRoutingService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iReservationService = iReservationService;
             _iFolioDetailService = folioDetailService;
+            _iDepositService = iDepositService;
+            _iRoutingService = iRoutingService;
         }
         public IActionResult SearchReservation()
         {
@@ -120,7 +124,21 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetTransactionPayment(int profileID)
+        {
+            try
+            {
 
+                List<TransactionsModel> trans = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindByAttribute("GroupCode", "PAY"));
+
+                return Json(trans);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> GetInfoProfileIndividual(int id)
         {
@@ -1797,6 +1815,311 @@ namespace Reservation.Controllers
             {
                 pt.CloseConnection();
 
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: deposit
+        [HttpGet]
+        public async Task<IActionResult> GetDepositRequestByReservationID(int reservationID)
+        {
+            try
+            {
+
+                DataTable myData = _iDepositService.SearchDepositRequest(reservationID);
+                DataTable myData2 = _iDepositService.SearchDepositPayment(reservationID,0);
+
+                var result = (from d in myData.AsEnumerable()
+
+                              select new
+                              {
+                                  ResqID = d["RsqID"].ToString(),
+                                  DueDate = d["DueDate"].ToString(),
+                                  ReservationID = d["ReservationID"].ToString(),
+                                  Percentage = d["Percentage"].ToString(),
+                                  Request = d["Request"].ToString(),
+                                  Type = d["Type"].ToString(),
+                                  DueAmount = d["DueAmount"].ToString(),
+                                  PaidAmount = d["PaidAmount"].ToString(),
+                                  Currency = d["Currency"].ToString(),
+                                  Comment = d["Comment"].ToString(),
+                                  RuleCode = d["RuleCode"].ToString(),
+                                  CurrencyID = d["CurrencyID"].ToString(),
+                                  CreateDate = d["CreateDate"].ToString(),
+                              }).ToList();
+
+                var result2 = (from d in myData2.AsEnumerable()
+
+                              select new
+                              {
+                                  PaymentID = d["PaymentID"].ToString(),
+                                  TransactionDate = d["TransactionDate"].ToString(),
+                                  Code = d["Code"].ToString(),
+                                  Description = d["Description"].ToString(),
+                                  Reference = d["Reference"].ToString(),
+                                  Supplement = d["Supplement"].ToString(),
+                                  ReceiptNo = d["ReceiptNo"].ToString(),
+                                  Amount = d["Amount"].ToString(),
+                                  CurrencyID = d["CurrencyID"].ToString(),
+                                  AmountUSD = d["AmountUSD"].ToString(),
+                                  AmountVND = d["AmountVND"].ToString(),
+                                  IsProcess = d["IsProcess"].ToString(),
+                                  ShiftID = d["ShiftID"].ToString(),
+                                  CreateDate = d["CreateDate"].ToString(),
+                                  CreateBy = d["CreatedBy"].ToString(),
+
+                              }).ToList();
+                return Json(new
+                {
+                    request = result,
+                    payment = result2
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetDepositRule()
+        {
+            try
+            {
+                List<DepositRuleModel> depositRules = PropertyUtils.ConvertToList<DepositRuleModel>(DepositRuleBO.Instance.FindByAttribute("Inactive", 0));
+
+                return Json(depositRules);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDepositRuleByID(int id)
+        {
+            try
+            {
+                DepositRuleModel deposit = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(id);
+
+                return Json(deposit);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveDepositRequest()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                if (decimal.Parse(Request.Form["amount"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Deposit amount can be not equal 0" });
+                }
+                DepositRsqModel depositRsq = new DepositRsqModel();
+                depositRsq.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                depositRsq.RequestDate = businessDate[0].BusinessDate;
+                depositRsq.ChargeType = int.Parse(Request.Form["chargeType"].ToString());
+                depositRsq.DepositRuleID = int.Parse(Request.Form["depositeRuleID"].ToString());
+                depositRsq.DueDate = DateTime.Parse(Request.Form["dueDate"].ToString());
+                depositRsq.Amount = decimal.Parse(Request.Form["amount"].ToString());
+                depositRsq.AmountMaster = decimal.Parse(Request.Form["amount"].ToString());
+                depositRsq.CurrencyID = depositRsq.CurrencyMaster = Request.Form["curencyID"].ToString();
+                depositRsq.IsMasterFolio = false;
+                depositRsq.UserInsertID = depositRsq.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                depositRsq.UpdateDate = depositRsq.CreateDate = DateTime.Now;
+                depositRsq.IsAuto = false;
+                depositRsq.RequestType = int.Parse(Request.Form["requestType"].ToString());
+                depositRsq.PaidAmount = 0;
+                depositRsq.DueAmount = decimal.Parse(Request.Form["amount"].ToString());
+                DepositRsqBO.Instance.Insert(depositRsq);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Deposit Payment was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveDepositPayment()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                if (int.Parse(Request.Form["transCode"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Transaction type  can be not equal 0" });
+                }
+                if (decimal.Parse(Request.Form["amount"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Payment amount can be not equal 0" });
+                }
+                #region lấy transaction code thanh toán
+                TransactionsModel trans = (TransactionsModel)TransactionsBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["transCode"].ToString()));
+                #endregion
+                #region insert deposit payment 
+                DepositPaymentModel payment = new DepositPaymentModel();
+                payment.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                payment.DepositRsqID = 0;
+                payment.TransactionDate = DateTime.Parse(Request.Form["dueDate"].ToString());
+                payment.TransactionCode = trans.Code;
+                payment.Reference = Request.Form["reference"].ToString();
+                payment.Description = trans.Description;
+                payment.Supplement = Request.Form["supplement"].ToString();
+                payment.Amount = 0-decimal.Parse(Request.Form["amount"].ToString());
+                payment.CurrencyID = Request.Form["curencyID"].ToString();
+                payment.AmountMaster = 0-decimal.Parse(Request.Form["amount"].ToString());
+                payment.CurrencyMaster = Request.Form["curencyID"].ToString();
+                payment.IsProcess = false;
+                payment.ReceiptNo = "";
+                payment.IsMasterFolio = false;
+                payment.UserID = int.Parse(Request.Form["userID"].ToString());
+                payment.UserName = Request.Form["userName"].ToString();
+                payment.CashierNo = "1";
+                payment.ShiftID = 3;
+                payment.UserInsertID = int.Parse(Request.Form["userID"].ToString());
+                payment.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                payment.CreateDate = DateTime.Now;
+                payment.UpdateDate = DateTime.Now;
+                payment.ReservationTypeID = 2;
+                payment.PaymentCode = trans.Code;
+                long paymentID = DepositPaymentBO.Instance.Insert(payment);
+                #endregion
+
+                #region update lại ReceiptNo của deposit payment  vừa insert
+                DepositPaymentModel paymentModel = (DepositPaymentModel)DepositPaymentBO.Instance.FindByPrimaryKey((int)paymentID);
+                paymentModel.ReceiptNo = paymentModel.ID.ToString();
+                DepositPaymentBO.Instance.Update(paymentModel);
+                #endregion
+
+                #region insert deposit payment default
+                ConfigSystemModel config = PropertyUtils.ConvertToList<ConfigSystemModel>(ConfigSystemBO.Instance.FindByAttribute("KeyName", "DEPOSIT")).FirstOrDefault();
+                DepositPaymentModel paymentDefault = new DepositPaymentModel();
+                paymentDefault.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                paymentDefault.DepositRsqID = 0;
+                paymentDefault.TransactionDate = DateTime.Parse(Request.Form["dueDate"].ToString());
+                paymentDefault.TransactionCode = config.KeyValue;
+                paymentDefault.Reference = Request.Form["reference"].ToString();
+                paymentDefault.Description = trans.Description;
+                paymentDefault.Supplement = Request.Form["supplement"].ToString();
+                paymentDefault.Amount = decimal.Parse(Request.Form["amount"].ToString());
+                paymentDefault.CurrencyID = Request.Form["curencyID"].ToString();
+                paymentDefault.AmountMaster = decimal.Parse(Request.Form["amount"].ToString());
+                paymentDefault.CurrencyMaster = Request.Form["curencyID"].ToString();
+                paymentDefault.IsProcess = false;
+                paymentDefault.ReceiptNo = paymentID.ToString();
+                paymentDefault.IsMasterFolio = false;
+                paymentDefault.UserID = int.Parse(Request.Form["userID"].ToString());
+                paymentDefault.UserName = Request.Form["userName"].ToString();
+                paymentDefault.CashierNo = "1";
+                paymentDefault.ShiftID = 3;
+                paymentDefault.UserInsertID = int.Parse(Request.Form["userID"].ToString());
+                paymentDefault.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                paymentDefault.CreateDate = DateTime.Now;
+                paymentDefault.UpdateDate = DateTime.Now;
+                paymentDefault.ReservationTypeID = 2;
+                paymentDefault.PaymentCode = trans.Code;
+                DepositPaymentBO.Instance.Insert(paymentDefault);
+                #endregion
+
+                #region update lại paid và due của các deposit payment
+                decimal totalDepositAmountPayment = decimal.Parse(Request.Form["amount"].ToString());
+                List <DepositRsqModel> listDepositRequest = PropertyUtils.ConvertToList<DepositRsqModel>(DepositRsqBO.Instance.FindByAttribute("ReservationID",paymentModel.ReservationID));
+                int i = 0;
+                while(i < listDepositRequest.Count && totalDepositAmountPayment > 0)
+                {
+                    if(totalDepositAmountPayment > listDepositRequest[i].Amount)
+                    {
+                        listDepositRequest[i].PaidAmount = listDepositRequest[i].Amount;
+
+                    }
+                    else
+                    {
+                        listDepositRequest[i].PaidAmount = totalDepositAmountPayment;
+
+                    }
+                    listDepositRequest[i].DueAmount = listDepositRequest[i].Amount - listDepositRequest[i].PaidAmount;
+                    DepositRsqBO.Instance.Update(listDepositRequest[i]);
+                    totalDepositAmountPayment = totalDepositAmountPayment - listDepositRequest[i].Amount;
+                    i++;
+                }
+                #endregion
+
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Deposit Payment was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: routing
+        [HttpGet]
+        public async Task<IActionResult> SearchRouting(string reservationID,string confirmationNo)
+        {
+            try
+            {
+
+                DataTable myData = _iRoutingService.SearchRouting(reservationID, confirmationNo);
+
+                var result = (from d in myData.AsEnumerable()
+
+                              select new
+                              {
+                                  AccountName = d["AccountName"].ToString(),
+                                  TransactionCodes = d["TransactionCodes"].ToString(),
+                                  FromDate = d["FromDate"].ToString(),
+                                  ToDate = d["ToDate"].ToString(),
+                                  RoomNo = d["RoomNo"].ToString(),
+                                  ToFolioNo = d["ToFolioNo"].ToString(),
+                                  Limit = d["Limit"].ToString(),
+                                  IsMasterFolio = d["IsMasterFolio"].ToString(),
+                                  UserInsertID = d["UserInsertID"].ToString(),
+                                  CreateDate = d["CreateDate"].ToString(),
+                                  UserUpdateID = d["UserUpdateID"].ToString(),
+                                  UpdateDate = d["UpdateDate"].ToString(),
+                                  ID = d["ID"].ToString(),
+                                  ToReservationID = d["ToReservationID"].ToString(),
+
+                              }).ToList();
+
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
             }
         }
         #endregion

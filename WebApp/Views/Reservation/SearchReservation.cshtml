@@ -1,167 +1,171 @@
 ﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
-<style>
-    #loadingSpinnerEdit {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    } 
-
-    .modal-body.loading .container2 {
-        opacity: 0.3;
-        pointer-events: none;
-    }
-/*     .container_checkbox {
-            display: flex;
-            justify-content: space-around;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        } */
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-    #btnCheckIn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.mui-divider {
-    border: none;
-    border-top: 1px solid #005f87;
-    color: #005f87;
-    margin: 8px 0;
-}
-</style>
 <div class="body">
     <div class="container2">
-        <div>
-            <div class="text-center" style="font-size: 20px;">Search Reservation</div>
-            <div class="mui-divider"></div>
-            <div class="button-group mb-1 mt-2">
-                <div>
-                    <button class="mui-button mui-button-search" onclick="searchReservation();"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-                    <button class="mui-button mui-button-advance"><i class="fa-solid fa-file"></i>Advance</button>
-                    <button class="mui-button mui-button-clear"><i class="fa-solid fa-arrows-rotate"></i>Clear</button>
-                    <button class="mui-button mui-button-edit" onclick="openModalEdit();"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
-                    <button class="mui-button mui-button-cancel" onclick="openModalCancel()"><i class="fa-solid fa-ban"></i>Cancel</button>
-                    <button class="mui-button mui-button-reinstate"><i class="fa-solid fa-file-import"></i> Reinstate</button>
-                    <button class="mui-button mui-button-card" onclick="openModalRegistrationCard();"><i class="fa-solid fa-id-card"></i>  Reg.Card</button>
-                    <button class="mui-button mui-button-new" id="btnCheckIn" onclick="checkIn();"><i class="fa-solid fa-check-to-slot"></i> Check In</button>
-                    <button class="mui-button mui-button-profile"><i class="fa-solid fa-id-badge"></i> Profile</button>
-                    <button class="mui-button mui-button-search" onclick="openModalOption();"><i class="fa-solid fa-list"></i> Option</button>
-                    <button class="mui-button mui-button-group"><i class="fa-solid fa-users-line"></i> Group Admin</button>
-                    <button class="mui-button mui-button-room"><i class="fa-solid fa-building"></i> Room Asg</button>
-                    <button class="mui-button mui-button-export"><i class="fas fa-plus"></i> Export</button>
-                    <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
+        <div class="text-center" style="font-size: 20px;">Search Reservation</div>
+        <div class="rs-header ">
+            <div class="rs-toggle-btn" onclick="toggleCollapse()">
+                <span class="rs-toggle-icon" id="collapseIcon">−</span>
+                <span id="collapseTitle">Hide Functions</span>
+            </div>
+            <div class="rs-column" >
+                <div class="rs-section">
+                    <ul class="rs-menu-list">
+                        <li><a href="/Home/Index" class="rs-bold">Home</a></li>
+                        <li><a href="/Reservation/NewReservation" class="rs-bold">New Reservation</a></li>
+                        <li><a href="/Home/Index" class="rs-bold">Close</a></li>
 
+                    </ul>
                 </div>
-                
-                <div><a href="/Reservation/NewReservation" style="text-decoration:none">New reservation  <i class="fa-solid fa-angles-right"></i></a></div>
             </div>
-            <div class="mui-divider"></div>
-            <div class="row" style="margin: 14px 14px; height: auto; justify-content: space-between; display: flex; align-items: stretch;">
-                <div class="col-md-10 row bg-light border rounded">
-                    <div class="col-md-1 mb-1">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input id="firstName" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="package" class="form-label">Package</label>
-                        <input id="package" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="zone" class="form-label">Zone</label>
-                        <select id="zone" class="form-select" asp-items="ViewBag.cboZone"></select>
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="confirmationNo" class="form-label">Conf. No</label>
-                        <input id="confirmationNo" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="arrival" class="form-label">Arrival </label>
-                        <input id="arrivalForm" type="date" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="departure" class="form-label">Departure </label>
-                        <input id="departureForm" type="date" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="crsNo" class="form-label">CRS No/Gc</label>
-                        <input id="crsNo" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="name" class="form-label">Name</label>
-                        <input id="name" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="roomShare" class="form-label">Room Sharer</label>
-                        <div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" id="roomShare" name="roomShare" value="IncludeRS">
-                        </div>
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="roomNo" class="form-label">Room No</label>
-                        <input id="roomNo" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="resvHolder" class="form-label">Resv. Holder</label>
-                        <input id="resvHolder" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="roomType" class="form-label">Room Type</label>
-                        <select id="roomType" class="form-select" asp-items="ViewBag.cboRoomType"></select>
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="searchType" class="form-label">Search Type</label>
-                        <select id="searchType" class="form-select">
-                            <option value="0">General</option>
-                        </select>
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="reservationOnline" class="form-label">Rsv Online</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
-                        </div>
-                    </div>
-                    <div class="col-md-1 mb-1">
-                        <label for="owner" class="form-label">Owner</label>
-                        <select id="owner" class="form-select">
-                            <option value="">--All--</option>
-                            <option value="--Hotel--">--Hotel--</option>
-                            <option value="--Owner--">--Owner--</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px" id="moreInfo">
+        </div>
+        <!-- Content Box -->
+        <div class="rs-content-box row" id="infoBox" style="display:block">
 
-                </div>
-            </div>
-            <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-            <div class="mui-card">
-                <div id="listFunction"  class="mt-1 listFunction">
-                    <div >Shares</div>
-                    <div >Fixed Charge</div>
-                    <div >Alerts</div>
-                    <div onclick="openModalBilling();">Billing</div>
-                    <div >ItemInventory</div>
 
+            <div class="rs-column">
+                <div class="rs-section">
+                    <h4>Reservation</h4>
+                    <ul class="rs-menu-list">
+                        <li><a href="#" class="rs-bold">Advance</a></li>
+                        <li><a href="#" class="rs-bold">Clear</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalEdit();">Edit</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalCancel()">Cancel</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalRegistrationCard();">Reinstate</a></li>
+                        <li><a href="#" class="rs-bold" onclick="checkIn();">Reg.Card</a></li>
+                        <li><a href="#" class="rs-bold">Check In</a></li>
+                        <li><a href="#" class="rs-bold">Profile</a></li>
+                        <li><a href="#" class="rs-bold">Group Admin</a></li>
+                        <li><a href="#" class="rs-bold">Room Assigment</a></li>
+                        <li><a href="#" class="rs-bold">Export</a></li>
+
+
+                    </ul>
                 </div>
-                <div id="gridContainer" class="mt-2 gridContainer"></div>
             </div>
+
+            <div class="rs-column">
+                <div class="rs-section">
+                    <h4>Options</h4>
+                    <ul class="rs-menu-list">
+                        <li><a href="#" class="rs-bold">Accompanying</a></li>
+                        <li><a href="#" class="rs-bold">Add On</a></li>
+                        <li><a href="#" class="rs-bold">Alerts</a></li>
+                        <li><a href="#" class="rs-bold">Prepaid Cards</a></li>
+                        <li><a href="#" class="rs-bold">Billing</a></li>
+                        <li><a href="#" class="rs-bold">Cance</a></li>
+                        <li><a href="#" class="rs-bold">Change</a></li>
+                        <li><a href="#" class="rs-bold">Delete</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a></li>
+                        <li><a href="#" class="rs-bold" >History</a></li>
+                        <li><a href="#" class="rs-bold" >New Message</a></li>
+                        <li><a href="#" class="rs-bold" >Regis.Card</a></li>
+                        <li><a href="#" class="rs-bold" >Room move</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalRouting();">Routing</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="rs-header ">
+            <div class="rs-toggle-btn" onclick="toggleCollapseSearch()">
+                <span class="rs-toggle-icon" id="collapseIconSearch">−</span>
+                <span id="collapseTitleSearch">Hide Filter</span>
+            </div>
+        </div>
+        <div class="rs-content-box row" id="infoBoxSearch">
+            <div class="col-md-8 row ">
+                <div class="col-md-1 mb-1">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input id="firstName" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="package" class="form-label">Package</label>
+                    <input id="package" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="zone" class="form-label">Zone</label>
+                    <select id="zone" class="form-select" asp-items="ViewBag.cboZone"></select>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="confirmationNo" class="form-label">Conf. No</label>
+                    <input id="confirmationNo" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="arrival" class="form-label">Arrival </label>
+                    <input id="arrivalForm" type="date" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="departure" class="form-label">Departure </label>
+                    <input id="departureForm" type="date" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="crsNo" class="form-label">CRS No/Gc</label>
+                    <input id="crsNo" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="roomShare" class="form-label">Room Sharer</label>
+                    <div class="form-check">
+                        <input class="form-check-input" checked type="checkbox" id="roomShare" name="roomShare" value="IncludeRS">
+                    </div>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="roomNo" class="form-label">Room No</label>
+                    <input id="roomNo" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="resvHolder" class="form-label">Resv. Holder</label>
+                    <input id="resvHolder" type="text" class="form-control" />
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="roomType" class="form-label">Room Type</label>
+                    <select id="roomType" class="form-select" asp-items="ViewBag.cboRoomType"></select>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="searchType" class="form-label">Search Type</label>
+                    <select id="searchType" class="form-select">
+                        <option value="0">General</option>
+                    </select>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="reservationOnline" class="form-label">Rsv Online</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                    </div>
+                </div>
+                <div class="col-md-1 mb-1">
+                    <label for="owner" class="form-label">Owner</label>
+                    <select id="owner" class="form-select">
+                        <option value="">--All--</option>
+                        <option value="--Hotel--">--Hotel--</option>
+                        <option value="--Owner--">--Owner--</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 row " style="overflow-y:scroll;font-size:12px" id="moreInfo">
+            </div>
+        </div>
+
+
+        <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="rs-content-box row" style="gap:0">
+            <div id="listFunction"  class="mt-1 listFunction">
+                <div >Shares</div>
+                <div >Fixed Charge</div>
+                <div >Alerts</div>
+                <div onclick="openModalBilling();">Billing</div>
+                <div >ItemInventory</div>
+
+            </div>
+            <div id="gridContainer" class="mt-2 gridContainer"></div>
         </div>
     </div>
 </div>
@@ -1229,10 +1233,14 @@
     </div>
 </div>
 
-@await Html.PartialAsync("Partial/Option")
+@await Html.PartialAsync("Partial/Deposit")
+@await Html.PartialAsync("Partial/Accompanying")
+@await Html.PartialAsync("Partial/FixedCharges")
 @await Html.PartialAsync("Partial/RegistrationCard")
 @await Html.PartialAsync("Partial/CheckIn")
 @await Html.PartialAsync("Partial/Billing")
+@await Html.PartialAsync("Partial/AddOn")
+@await Html.PartialAsync("Partial/Routing")
 
 <script>
     $(document).ready(async function () {
@@ -1240,8 +1248,45 @@
         await setTomSelect();
         getProfileIndividual();
         $('#listFunction').hide();
+                $('#searchType, #name, #firstName, #resvHolder, #confirmationNo, #crsNo, #roomNo, #roomType, #package, #zone, #arrivalForm, #departureForm, #roomShare, #owner').on('keypress', function (e) {
+            if (e.which === 13) { // Enter key = 13
+                e.preventDefault(); // Ngăn form bị submit nếu có
+                searchReservation();
+            }
+        });
     });
+    function toggleCollapse() {
+        const box = document.getElementById("infoBox");
+        const icon = document.getElementById("collapseIcon");
+        const title = document.getElementById("collapseTitle");
 
+        if (box.classList.contains("rs-hidden")) {
+            box.classList.remove("rs-hidden");
+            icon.textContent = "−";
+            title.textContent = "Hide Functions"
+        } else {
+            box.classList.add("rs-hidden");
+            icon.textContent = "+";
+            title.textContent = "Show Functions"
+        }
+    }
+
+    function toggleCollapseSearch() {
+        const box = document.getElementById("infoBoxSearch");
+        const icon = document.getElementById("collapseIconSearch");
+        const title = document.getElementById("collapseTitleSearch");
+
+        if (box.classList.contains("rs-hidden")) {
+            box.classList.remove("rs-hidden");
+            icon.textContent = "−";
+            title.textContent = "Hide Filter"
+        } else {
+            box.classList.add("rs-hidden");
+            icon.textContent = "+";
+            title.textContent = "Show Filter"
+
+        }
+    }
     function searchReservation() {
         $("#loadingSpinner").show();
         const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
@@ -1283,8 +1328,12 @@
     }
     var idReservation = 0;
     var status = '';
-    var roomStatus = ''
-    var roomNo = ''
+    var roomStatus = '';
+    var roomNo = '';
+    var arivalDate = '';
+    var confirmationNo = '';
+    var night = 0;
+    var rateAmount = 0;
     function initializeDataGridSearch(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,   
@@ -1305,6 +1354,11 @@
             filterRow: {
                 visible: true,
                 applyFilter: "auto"
+            },
+            scrolling: {
+                mode: 'virtual',
+                showScrollbar: 'always',
+                useNative: false,
             },
             selection: {
                 mode: "single"
@@ -1338,9 +1392,13 @@
                 if(e.data.Specials != ''){
                         html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
+                rateAmount = e.data.PriceNet;
+                night = e.data.NoOfNight
                 status = e.data.Status;
                 roomStatus = e.data.RoomStatus;
                 roomNo = e.data.RoomNo;
+                arivalDate = e.data.Arrival;
+                confirmationNo = e.data.ConfirmationNo;
                 const $checkInButton = $('#btnCheckIn');
 
                 if (status !== 'RESVED') {

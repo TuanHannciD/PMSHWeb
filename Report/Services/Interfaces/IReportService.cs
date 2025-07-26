@@ -91,6 +91,10 @@ namespace Report.Services.Interfaces
         DataTable GuestTrialBalance(DateTime date, int isRouting, int isCheckOut, string roomTypeId);
         DataTable DailyMinibarReportData(DateTime fromDate, DateTime toDate, string zone, string room, int viewBy, string article);
         DataTable RevenueRoomReport(DateTime fromDate, DateTime toDate, string roomTypes, int zone);
+        DataTable ReservationSearch( int status);
+        DataTable ReservationSearchDate(DateTime businessDate,int status);
+        DataTable RoomFacilityForecastData(DateTime fromDate, DateTime toDate, string zone);
+        DataTable ReservationSearchRSVDate(DateTime businessDate, int status);
     }
 
 }

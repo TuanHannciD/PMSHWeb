@@ -1172,6 +1172,136 @@ namespace Report.Services.Implements
             };
             return DataTableHelper.getTableData("spRptRevenueRoom", param);
         }
+        public DataTable ReservationSearch(int status)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@SearchType", status),
+                new SqlParameter("@Name", ""),
+                new SqlParameter("@FirstName", ""),
+                new SqlParameter("@ReservationHolder", ""),
+                new SqlParameter("@ConfirmationNo", ""),
+                new SqlParameter("@CRSNo", ""),
+                new SqlParameter("@RoomNo", ""),
+                new SqlParameter("@RoomType", ""),
+                new SqlParameter("@Package", ""),
+                new SqlParameter("@Zone", ""),
+                new SqlParameter("@ArrivalFrom", ""),
+                new SqlParameter("@ArrivalTo", ""),
+                new SqlParameter("@RoomSharer", "IncludeRS"),
+                new SqlParameter("@CreateDate", ""),
+                new SqlParameter("@CreateBy", ""),
+                new SqlParameter("@Departure", ""),
+                new SqlParameter("@StayOn", ""),
+                new SqlParameter("@Market", ""),
+                new SqlParameter("@Source", ""),
+                new SqlParameter("@ReservationType", ""),
+                new SqlParameter("@MemberType", ""),
+                new SqlParameter("@ARNo", ""),
+                new SqlParameter("@BusinessBlock", ""),
+                new SqlParameter("@VIP", ""),
+                new SqlParameter("@ChkVIPOnly", ""),
+                new SqlParameter("@MasterFolio", ""),
+                new SqlParameter("@SpecialUpdatedDate", ""),
+                new SqlParameter("@SaleInChagre", ""),
+                new SqlParameter("@RateCode", ""),
+                new SqlParameter("@IsTransfer", ""),
+                new SqlParameter("@Owner", "")
+            };
+
+            return DataTableHelper.getTableData("spReservationSearch", param);
+        }
+        public DataTable ReservationSearchDate(DateTime businessDate, int status)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@SearchType", status),
+                new SqlParameter("@ArrivalFrom", businessDate),
+                new SqlParameter("@Name", ""),
+                new SqlParameter("@FirstName", ""),
+                new SqlParameter("@ReservationHolder", ""),
+                new SqlParameter("@ConfirmationNo", ""),
+                new SqlParameter("@CRSNo", ""),
+                new SqlParameter("@RoomNo", ""),
+                new SqlParameter("@RoomType", ""),
+                new SqlParameter("@Package", ""),
+                new SqlParameter("@Zone", ""),
+                new SqlParameter("@ArrivalTo", ""),
+                new SqlParameter("@RoomSharer", "IncludeRS"),
+                new SqlParameter("@CreateDate", ""),
+                new SqlParameter("@CreateBy", ""),
+                new SqlParameter("@Departure", ""),
+                new SqlParameter("@StayOn", ""),
+                new SqlParameter("@Market", ""),
+                new SqlParameter("@Source", ""),
+                new SqlParameter("@ReservationType", ""),
+                new SqlParameter("@MemberType", ""),
+                new SqlParameter("@ARNo", ""),
+                new SqlParameter("@BusinessBlock", ""),
+                new SqlParameter("@VIP", ""),
+                new SqlParameter("@ChkVIPOnly", ""),
+                new SqlParameter("@MasterFolio", ""),
+                new SqlParameter("@SpecialUpdatedDate", ""),
+                new SqlParameter("@SaleInChagre", ""),
+                new SqlParameter("@RateCode", ""),
+                new SqlParameter("@IsTransfer", ""),
+                new SqlParameter("@Owner", "")
+            };
+
+            return DataTableHelper.getTableData("spReservationSearch", param);
+        }
+        public DataTable RoomFacilityForecastData(DateTime businessDate, DateTime businessDateto, string zone)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@FromDate", businessDate),
+         new SqlParameter("@ToDate", businessDateto),
+          new SqlParameter("@ZoneCode", zone),
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgRoomFacilityForecastReport", param);
+            return myTable;
+        }
+        public DataTable ReservationSearchRSVDate(DateTime businessDate, int status)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@SearchType", status),
+        new SqlParameter("@Name", ""),
+        new SqlParameter("@FirstName", ""),
+        new SqlParameter("@ReservationHolder", ""),
+        new SqlParameter("@ConfirmationNo", ""),
+        new SqlParameter("@CRSNo", ""),
+        new SqlParameter("@RoomNo", ""),
+        new SqlParameter("@RoomType", ""),
+        new SqlParameter("@Package", ""),
+        new SqlParameter("@Zone", ""),
+        new SqlParameter("@ArrivalFrom", businessDate),
+        new SqlParameter("@ArrivalTo", businessDate),
+        new SqlParameter("@RoomSharer", "IncludeRS"),
+        new SqlParameter("@CreateDate", ""),
+        new SqlParameter("@CreateBy", ""),
+        new SqlParameter("@Departure", ""),
+        new SqlParameter("@StayOn", ""),
+        new SqlParameter("@Market", ""),
+        new SqlParameter("@Source", ""),
+        new SqlParameter("@ReservationType", ""),
+        new SqlParameter("@MemberType", ""),
+        new SqlParameter("@ARNo", ""),
+        new SqlParameter("@BusinessBlock", ""),
+        new SqlParameter("@VIP", ""),
+        new SqlParameter("@ChkVIPOnly", ""),
+        new SqlParameter("@MasterFolio", ""),
+        new SqlParameter("@SpecialUpdatedDate", ""),
+        new SqlParameter("@SaleInChagre", ""),
+        new SqlParameter("@RateCode", ""),
+        new SqlParameter("@IsTransfer", ""),
+        new SqlParameter("@Owner", "")
+            };
+
+            return DataTableHelper.getTableData("spReservationSearch", param);
+        }
 
     }
 }

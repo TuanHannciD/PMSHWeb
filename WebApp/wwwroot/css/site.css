@@ -13,7 +13,13 @@
 /*    width: 100vw;*/
     overflow: hidden;
 }
+.section-left {
+    flex: 0 0 30%;
+}
 
+.section-right {
+    flex: 0 0 70%;
+}
     .banner img {
         width: 100%;
         height: auto;
@@ -41,6 +47,20 @@
     .banner-text {
         font-size: 8px;
         padding: 0 15px;
+    }
+    .section-left,
+    .section-right {
+        width: 100%;
+        padding: 16px;
+    }
+
+    .chart-fixed-sizehigh {
+        min-height: 300px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
     }
 }
 

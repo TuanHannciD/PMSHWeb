@@ -326,3 +326,198 @@
     cursor: pointer;
     transform: scale(1.1);
 }
+#loadingSpinnerEdit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.modal-body.loading .container2 {
+    opacity: 0.3;
+    pointer-events: none;
+}
+/*     .container_checkbox {
+            display: flex;
+            justify-content: space-around;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        } */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btnDisable[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mui-divider {
+    border: none;
+    border-top: 1px solid #bcbcbc;
+    color: #bcbcbc;
+    margin: 8px 0;
+}
+
+.tab-container {
+    display: flex;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    gap: 20px; /* khoảng cách giữa option và tab */
+}
+
+.option-box {
+    padding: 6px 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+}
+
+/*.tab-nav {
+    display: flex;
+}
+
+    .tab-nav a {
+        text-decoration: none;
+        font-weight: bold;
+        color: #007b8a;
+        padding: 0 10px;
+        position: relative;
+    }
+
+
+        .tab-nav a:not(:last-child)::after {
+            content: "|";
+            position: absolute;
+            right: 0;
+            color: #ccc;
+        }
+
+        .tab-nav a:hover {
+            font-size: 16px;*/ /* hoặc lớn hơn chút */
+            /*transform: scale(1.08);*/ /* scale nhẹ để phóng to */
+            /*color: #005f66;*/ /* có thể thay đổi màu nếu muốn */
+        /*}*/
+.body {
+    margin: 0 4px;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #f5f5f5;
+}
+.rs-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 0px;
+    justify-content: space-between;
+}
+
+.rs-toggle-btn {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px 10px;
+    background-color: #007C91;
+    color: white;
+    font-size: 13px;
+    border-radius: 3px;
+    border: 1px solid #007C91;
+    transition: background-color 0.2s ease;
+}
+
+    .rs-toggle-btn:hover {
+        background-color: #005f6b;
+    }
+
+.rs-toggle-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    text-align: center;
+    font-weight: bold;
+    background-color: #fff;
+    color: #007C91;
+    border-radius: 2px;
+    border: 1px solid #007C91;
+    line-height: 14px;
+    font-size: 12px;
+}
+
+.rs-content-box {
+    display: flex;
+    gap: 60px;
+    padding: 10px;
+    background: #fff;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
+.rs-column {
+    flex: 1;
+
+}
+
+.rs-section {
+}
+
+    .rs-section h4 {
+        margin-bottom: 8px;
+        font-size: 15px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 4px;
+    }
+
+ul.rs-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    ul.rs-menu-list li {
+        padding: 6px 12px;
+        border-right: 1px solid #ccc;
+        margin-bottom: 6px;
+        white-space: nowrap;
+    }
+
+        ul.rs-menu-list li:last-child {
+            border-right: none;
+        }
+
+.rs-bold {
+    font-weight: bold;
+    color: #004466;
+}
+
+.rs-alert {
+    color: #cc0000;
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+.rs-hidden {
+    display: none;
+}
