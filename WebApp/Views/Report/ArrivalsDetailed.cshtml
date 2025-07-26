@@ -110,7 +110,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
         <div class="d-flex flex-column ">
 
@@ -166,7 +166,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Room Class:</label>
-                    <select id="roomClass" name="roomClass" class="tomselect-custom" style="width: 100px;" multiple>
+                    <select id="roomClass" name="roomClass" class="tomselect-custom" style="width: 170px;" multiple>
                         @foreach (var item in roomclassList)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -176,7 +176,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Room Type:</label>
-                    <select id="roomtype" name="roomtype" class="tomselect-custom" style="width: 100px;" multiple>
+                    <select id="roomtype" name="roomtype" class="tomselect-custom" style="width: 150px;" multiple>
                         @foreach (var item in rtList)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -186,7 +186,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Market:</label>
-                    <select id="market" name="market" class="tomselect-custom" style="width: 100px;" multiple>
+                    <select id="market" name="market" class="tomselect-custom" style="width: 170px;" multiple>
                         @foreach (var item in listmk)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -196,7 +196,7 @@
 
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Rate Code:</label>
-                    <select id="rateCode" name="rateCode" class="tomselect-custom" style="width: 100px;" multiple>
+                    <select id="rateCode" name="rateCode" class="tomselect-custom" style="width: 170px;" multiple>
                         @foreach (var item in listrc)
                         {
                             <option value="@item.RateCode">@item.RateCode-@item.Descripton</option>
@@ -209,7 +209,7 @@
             <div class="d-flex align-items-center flex-wrap">
                 <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0 fw-bold">Source:</label>
-                    <select id="source" name="source" class="tomselect-custom" style="width: 100px;" multiple>
+                    <select id="source" name="source" class="tomselect-custom" style="width: 170px;" multiple>
                         @foreach (var item in listsrc)
                         {
                             <option value="@item.Code">@item.Code-@item.Description</option>
@@ -222,7 +222,7 @@
                             <input class="form-check-input include-option" type="checkbox" id="viponlycheck" name="viponlycheck">
                         <label class="form-check-label" for="viponlycheck">Vip Only</label>
                     </div>
-                    <select id="vip" name="vip" class="form-control form-control-sm" style="width: 100px; display: none;">
+                    <select id="vip" name="vip" class="form-control form-control-sm" style="width: 150px; display: none;">
                         @foreach (var item in vipList)
                         {
                             <option value="@item.Code">@item.Description</option>
@@ -444,25 +444,24 @@
             url: '/Report/ArrivalsDetailedData',
             type: 'GET',
             data: {
-                     fromDate: $("#fromDate").val(),
-                     toDate: $("#toDate").val(),
-                     roomClass: $("#roomClass").val().map(r => r.replace( "''")).join("','") + "",
-                     roomtype: $("#roomtype").val().map(r => r.replace( "''")).join("','") + "",
-                     market: $("#market").val().map(r => r.replace( "''")).join("','") + "",
-                     rateCode: $("#rateCode").val().map(r => r.replace( "''")).join("','") + "",
-                     source: $("#source").val().map(r => r.replace( "''")).join("','") + "",                 
-                     vip: $("#vip").val(),
-
-                     sortOrder: $("#viewBy").val(),
-                viponlycheck: $("#viponlycheck").is(":checked") ? "1" : "",
-                noPost: $("#noPost").is(":checked") ? "1" : "",
+                    fromDate: $("#fromDate").val(),
+                    toDate: $("#toDate").val(),
+                    roomClass: $("#roomClass").val().map(r => r.replace( "''")).join("','") + "",
+                    roomtype: $("#roomtype").val().map(r => r.replace( "''")).join("','") + "",
+                    market: $("#market").val().map(r => r.replace( "''")).join("','") + "",
+                    rateCode: $("#rateCode").val().map(r => r.replace( "''")).join("','") + "",
+                    source: $("#source").val().map(r => r.replace( "''")).join("','") + "",                 
+                    vip: $("#vip").val(),
+                    sortOrder: $("#viewBy").val(),
+                    viponlycheck: $("#viponlycheck").is(":checked") ? "1" : "",
+                    noPost: $("#noPost").is(":checked") ? "1" : "",
                     pseudo: $("#pseudo").is(":checked") ? "1" : "",
                     checkedInToday: $("#checkedInToday").is(":checked") ? "1" : "",
                     cancellations: $("#cancellations").is(":checked") ? "3" : "",
                     zeroRateOnly: $("#zeroRateOnly").is(":checked") ? "111" : "",
                     disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" : "",
-                      searchCriteria: $("#reservation").val(),
-                       ckhArrivalDate: $("input[name='checkdate']:checked").val(),
+                    searchCriteria: $("#reservation").val(),
+                    ckhArrivalDate: $("input[name='checkdate']:checked").val(),
 
 
             },
@@ -597,36 +596,31 @@
 
             { dataField: "roomClassID", caption: "Rns", width: columnWidth-70},
             { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
-             { dataField: "lastRoom", caption: "LastRoom", width: columnWidth-80 },
+            { dataField: "lastRoom", caption: "LastRoom", width: columnWidth-80 },
             { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
             { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
-
-                               { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
+            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+            { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
-
-               { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
-                     { dataField: "pickupTransportType", caption: "Trans.Type", width:columnWidth-70 },
+            { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+            { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
+            { dataField: "pickupTransportType", caption: "Trans.Type", width:columnWidth-70 },
             { dataField: "noOfAdult", caption: "A.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
             { dataField: "noOfChild", caption: "C.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-              { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-                { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
-                       { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-                             { caption: "Mkt.Code", dataField: "MarketCode", width: columnWidth-70},
-                           { dataField: "packages", caption: "Packages", width: columnWidth-70},
-                              { dataField: "sourceCode", caption: "Source Code", width: columnWidth-70},
-                                     { dataField: "status", caption: "Status", width: columnWidth-70},
-
-
-                    { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
-                               { dataField: "creditCardNo", caption: "Credit Card No.", width: columnWidth-30},
-
-               { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+            { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
+            { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { caption: "Mkt.Code", dataField: "MarketCode", width: columnWidth-70},
+            { dataField: "packages", caption: "Packages", width: columnWidth-70},
+            { dataField: "sourceCode", caption: "Source Code", width: columnWidth-70},
+            { dataField: "status", caption: "Status", width: columnWidth-70},
+            { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
+            { dataField: "creditCardNo", caption: "Credit Card No.", width: columnWidth-30},
+            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
             { dataField: "rate", caption: "Rate Amount",  width:columnWidth-70,dataType: "number", format: "#,##0" },
-             { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
-                  { dataField: "expirationDate", caption: "Exp.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                    { dataField: "", caption: "Deposit Received",  width:columnWidth-70 },
+            { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
+            { dataField: "expirationDate", caption: "Exp.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+            { dataField: "", caption: "Deposit Received",  width:columnWidth-70 },
 
             ],
             paging: { pageSize: 25 },
@@ -709,7 +703,6 @@
         }).then(function () {
             // Footer
             const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };

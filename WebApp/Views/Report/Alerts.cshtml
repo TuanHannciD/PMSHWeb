@@ -99,7 +99,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
         <div class="d-flex flex-column ">
 
@@ -251,20 +251,17 @@
         $("#gridContainer").dxDataGrid({
    dataSource: data,         height: "auto", allowColumnResizing: true,
             columns: [
-        { dataField: "confirmationNo", caption: "Conf.No",width: columnWidth-60 },
-        { dataField: "roomNo", caption: "Room No",  width: columnWidth-80  },
-
-        { dataField: "guestName", caption: "Name", width: columnWidth },
-                      { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                        { dataField: "roomType", caption: "Room Type", width: columnWidth-60},
-
-
-            { dataField: "alertArea", caption: "Alert Area", width: columnWidth-60},
-            { dataField: "alertCode", caption: "Alert Code", width: columnWidth-60 },
-            { dataField: "alertDescription", caption: "Alert Description",width: columnWidth +50},
-            { dataField: "status", caption: "Status",  width: columnWidth-60  }
-            ],
+                    { dataField: "confirmationNo", caption: "Conf.No",width: columnWidth-60 },
+                    { dataField: "roomNo", caption: "Room No",  width: columnWidth-80  },
+                    { dataField: "guestName", caption: "Name", width: columnWidth },
+                    { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+                    { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
+                    { dataField: "roomType", caption: "Room Type", width: columnWidth-60},
+                    { dataField: "alertArea", caption: "Alert Area", width: columnWidth-60},
+                    { dataField: "alertCode", caption: "Alert Code", width: columnWidth-60 },
+                    { dataField: "alertDescription", caption: "Alert Description",width: columnWidth +50},
+                    { dataField: "status", caption: "Status",  width: columnWidth-60  }
+                    ],
             paging: { pageSize: 25 },
              scrolling:  {
                    
@@ -338,7 +335,6 @@
         }).then(function () {
             // Footer
             const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };
