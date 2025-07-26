@@ -101,7 +101,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
         <!-- RoomClass -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Room Class:</label>
@@ -375,23 +375,20 @@
             { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
             { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
             { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
-
             { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-                                         { dataField: "eta", caption: "ETA", width: columnWidth-70 },
+            { dataField: "eta", caption: "ETA", width: columnWidth-70 },
             { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-               { dataField: "etd", caption: "ETD", width: columnWidth-70 },
-
-               { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
+            { dataField: "etd", caption: "ETD", width: columnWidth-70 },
+            { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
             { dataField: "noOfAdult", caption: "A.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
             { dataField: "noOfChild", caption: "C.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-              { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-                { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
-                       { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-
-                    { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
-               { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
+            { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
+            { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
+            { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
+            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
             { dataField: "rate", caption: "Rate Amount",  width:columnWidth-70,dataType: "number", format: "#,##0" },
-             { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
+            { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
         
             ],
             paging: { pageSize: 25 },
@@ -448,7 +445,7 @@
             return;
         }
 
-                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
@@ -486,7 +483,6 @@
         }).then(function () {
             // Footer
             const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };

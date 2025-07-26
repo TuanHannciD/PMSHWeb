@@ -3284,6 +3284,7 @@ namespace Report.Controllers
         {
             try
             {
+                zone = zone ?? "";
                 DateTime toDate = fromDate.AddDays(30); // Tự động tính ngày kết thúc
 
                 List<string> columnNames = new List<string>();

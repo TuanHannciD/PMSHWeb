@@ -94,7 +94,7 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="filter-panel">
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-<div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #625454; border-radius: 6px; padding: 8px;">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
 
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0 ">Year:</label>
@@ -145,13 +145,12 @@
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-<<<<<<< HEAD
         <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid" class="mui-button mui-button-new" type="button">
             <i class="fa-solid fa-print"></i> Print
         </button>
-=======
+
         </div>
->>>>>>> 7a3f45314371d830830a988e66faf46ab69aed24
+
     </div>
 </div>
 <div class="mui-card">
@@ -316,64 +315,62 @@
     }
 
     $("#btnExportExcel").click(function () {
-               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
-        var selectedReport = '@ViewBag.ReportTitle';
-        if (!selectedReport) {
-            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
-            return;
-        }
+         const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
+         var selectedReport = '@ViewBag.ReportTitle';
+         if (!selectedReport) {
+             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+             return;
+         }
 
-                     const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-        const worksheet = workbook.addWorksheet("Sheet 1");
+                      const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+         const worksheet = workbook.addWorksheet("Sheet 1");
 
-        // === Tạo header công ty (dòng 1) ===
-       worksheet.addRow([companyName]);
-        worksheet.mergeCells('A1:E1');
-        worksheet.getRow(1).font = { bold: true };
-        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+         // === Tạo header công ty (dòng 1) ===
+        worksheet.addRow([companyName]);
+         worksheet.mergeCells('A1:E1');
+         worksheet.getRow(1).font = { bold: true };
+         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
 
-        // === Dòng 2: Thời gian xuất (phải) ===
-        const now = new Date();
-        const exportDate = now.toLocaleString("vi-VN");
-        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
-        worksheet.mergeCells('E2:H2');
-        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+         // === Dòng 2: Thời gian xuất (phải) ===
+         const now = new Date();
+         const exportDate = now.toLocaleString("vi-VN");
+         worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+         worksheet.mergeCells('E2:H2');
+         worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
 
-        // === Dòng 3–4: Trống
-        worksheet.addRow([]);
-        worksheet.addRow([]);
+         // === Dòng 3–4: Trống
+         worksheet.addRow([]);
+         worksheet.addRow([]);
 
-        // === Dòng 5: Tên báo cáo ở giữa ===
-        const reportRow = worksheet.addRow(['', '', selectedReport]);
-        worksheet.mergeCells('C5:F5');
-        reportRow.font = { bold: true, size: 14 };
-        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+         // === Dòng 5: Tên báo cáo ở giữa ===
+         const reportRow = worksheet.addRow(['', '', selectedReport]);
+         worksheet.mergeCells('C5:F5');
+         reportRow.font = { bold: true, size: 14 };
+         reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-        // === Dòng 6: Trống trước khi xuất dữ liệu
-        worksheet.addRow([]);
+         // === Dòng 6: Trống trước khi xuất dữ liệu
+         worksheet.addRow([]);
 
-        // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
-        DevExpress.excelExporter.exportDataGrid({
-            component: grid,
-            worksheet: worksheet,
-            autoFilterEnabled: true,
-            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
-        }).then(function () {
-            // Footer
-            const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
-            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
-            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+         // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+         DevExpress.excelExporter.exportDataGrid({
+              component: grid,
+             worksheet: worksheet,
+             autoFilterEnabled: true,
+             topLeftCell: { row: 7, column: 1 }
+         }).then(function () {
+             // Footer
+             const lastRow = worksheet.lastRow.number + 2;
+             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+             worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
-            // Ghi file
-            let fileName = selectedReport + ".xlsx";
-            workbook.xlsx.writeBuffer().then(function (buffer) {
-                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
-            });
-        });
-    });
-
+             // Ghi file
+             let fileName = selectedReport + ".xlsx";
+             workbook.xlsx.writeBuffer().then(function (buffer) {
+                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+             });
+         });
+     });
 
       // Nút xuất PDF
            $("#btnExportPdf").click(function () {

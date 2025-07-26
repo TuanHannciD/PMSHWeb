@@ -36,7 +36,7 @@
 
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
         <div class="d-flex align-items-center">
             <label class="me-2 mb-0 fw-bold">Date:</label>
             <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" max='@DateTime.Now.ToString("yyyy-MM-dd")' />
@@ -195,7 +195,7 @@
         }).then(function () {
             // Footer
             const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };

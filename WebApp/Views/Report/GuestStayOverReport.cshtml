@@ -238,7 +238,7 @@
         }).then(function () {
             // Footer
             const lastRow = worksheet.lastRow.number + 2;
-            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+
             worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
             worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${lastRow}`).font = { italic: true };
