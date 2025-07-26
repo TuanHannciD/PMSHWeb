@@ -3842,7 +3842,8 @@ namespace Report.Controllers
                 {
                     TotalDueinCheckedint = totalDueinCheckedint,
                     GuestInHouseCount = guestInHouseCount,
-                    TotalDueoutCheckedoutint = checkoutCount + dueoutCount,
+                    TotaCheckedoutint = checkoutCount,
+                    TotalDueoutint = dueoutCount,
                     TotalA = totalA,
                     TotalC = totalC+ totalC1+ totalC2,
                     OccupancyPercent = occupancyPercent,

@@ -15,8 +15,8 @@
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-door-open"></i></div>
             <div class="card-content">
-                <div class="card-title">Due out & Checked out</div>
-                <div class="card-value" id="dueOutCheckedOutCount">0</div>
+                <div class="card-title">Checked out</div>
+                <div class="card-value" id="checkedOutCount">0</div>
             </div>
         </div>
 
@@ -29,12 +29,13 @@
         </div>
 
         <div class="card-box">
-            <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="card-icon"><i class="fas fa-sign-out-alt"></i></div>
             <div class="card-content">
-                <div class="card-title">Assigned</div>
-                <div class="card-value" id="rsvCount">0</div>
+                <div class="card-title">Due out</div>
+                <div class="card-value" id="dueoutCount">0</div>
             </div>
         </div>
+
     </div>
 
     <!-- Mục 2 & 3: Chia đôi bên dưới -->
@@ -60,6 +61,13 @@
                 <div class="info-content">
                     <div class="info-title">Children</div>
                     <div class="info-value" id="totalC">0</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <div class="info-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="info-content">
+                    <div class="info-title">Assigned</div>
+                    <div class="info-value" id="rsvCount">0</div>
                 </div>
             </div>
         </div>
@@ -152,7 +160,8 @@
         background-color: #fff;
         border-radius: 16px;
         padding: 24px;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+
     }
 
     .section-left {
@@ -252,7 +261,8 @@
               
                console.log(data);
                    $("#dueInCheckedInCount").text(data.totalDueinCheckedint);
-                    $("#dueOutCheckedOutCount").text(data.totalDueoutCheckedoutint);
+                    $("#checkedOutCount").text(data.totaCheckedoutint);
+                    $("#dueoutCount").text(data.totalDueoutint);
                     $("#guestInHouseCount").text(data.guestInHouseCount);
                     $("#rsvCount").text(data.rsvCount);
                     $("#totalA").text(data.totalA);
