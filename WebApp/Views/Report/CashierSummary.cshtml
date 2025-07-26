@@ -8,6 +8,11 @@
 
 
 <style>
+
+    .bold {
+        font-weight: bold;
+    }
+
     .filter_wrapper {
         /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
@@ -42,45 +47,6 @@
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
             color: white !important;
         }
-
-   
-    /* Tổng theo transaction */
-    .dx-data-row.trn-total-row {
-        background-color: #fff3cd !important;
-        font-weight: bold !important;
-        font-style: italic;
-        color: #000 !important;
-    }
-
-    /* Tổng theo cashier */
-    .dx-data-row.cashier-total-row {
-        background-color: #d1ecf1 !important;
-        font-weight: bold !important;
-        color: #000 !important;
-    }
-
-    /* Grand total */
-    .dx-data-row.grandtotal-row {
-        background-color: #f8d7da !important;
-        font-weight: bold !important;
-        font-style: italic;
-        color: #000 !important;
-    }
-
-    /* Dòng "Summary Total" */
-    .dx-data-row.summarytotal {
-        background-color: #f0f0f0 !important;
-        font-weight: bold !important;
-        font-style: italic;
-        color: #000 !important;
-    }
-
-    /* Từng transaction trong summary */
-    .dx-data-row.summary-total {
-        background-color: #c3e6cb !important;
-        font-weight: bold !important;
-        color: #000 !important;
-    }
 
     #gridContainer .dx-datagrid-headers .dx-header-row > td {
         padding: 5px !important;
@@ -135,11 +101,74 @@
         height: calc(1.1em + .2rem + 2px);
     }
 
+    .sticky-header label,
+    .sticky-header .form-control-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        padding: 5px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td,
+    #gridContainer .dx-datagrid .dx-summary-row > td,
+    #gridContainer .dx-datagrid .dx-total-footer td,
+    #gridContainer .dx-datagrid .dx-footer-row td {
+        font-size: 11px !important;
+    }
+
+    .report-bar {
+        position: relative;
+        margin-bottom: 1rem; /* = mb-3 của bạn */
+    }
+
+        /* Tiêu đề ở giữa, full width để text-center hoạt động */
+        .report-bar #reportTitle {
+            font-size: 20px;
+            margin: 0; /* bỏ margin dưới h4/h5 mặc định */
+            text-align: center;
+        }
+
+        /* Nhóm nút cố định góc phải, canh theo chiều dọc */
+        .report-bar .action-buttons {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+    .tomselect-custom {
+        width: 300px;
+        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 0.65rem;
+    }
+        /* Áp dụng font-size nhỏ cho TomSelect dựa vào class gốc .tomselect-custom */
+        .tomselect-custom + .ts-wrapper .ts-control,
+        .tomselect-custom + .ts-wrapper .ts-dropdown,
+        .tomselect-custom + .ts-wrapper .ts-dropdown .option {
+            font-size: 0.65rem !important;
+            min-height: 30px !important;
+        }
+
 
 
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
-<div class="filter-panel">
+
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
         <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
         <!-- From Date -->
@@ -166,10 +195,10 @@
         </button>
     </div>
     </div>
-</div>
+
 
 <div class="mui-card">
-    @*   <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+ 
     <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
         <div id="gridContainer"></div>
     </div>
@@ -289,7 +318,7 @@
                     currencyID: "",
                     amount: sum(items, "amount"),
                     amountMaster: sum(items, "amountMaster"),
-                    cssClass: "trn-total"
+                    cssClass: "bold trn-total"
                 });
             });
 
@@ -304,7 +333,7 @@
                 currencyID: "",
                 amount: sum(cashierItems, "amount"),
                 amountMaster: sum(cashierItems, "amountMaster"),
-                cssClass: "cashier-total"
+                 cssClass: "bold cashier-total"
             });
         });
         const grandTotalRow = {
@@ -317,7 +346,7 @@
                 currencyID: "",
                 amount: sum(data, "amount"),
                 amountMaster: sum(data, "amountMaster"),
-                cssClass: "grandtotal"
+                 cssClass: "bold grandtotal"
         };
 
             result.push(grandTotalRow);
@@ -331,7 +360,7 @@
                 currencyID: "",
                 amount: "",
                 amountMaster: "",
-                cssClass: "summarytotal"
+                 cssClass: "bold summarytotal"
         };
         result.push(summarytotal);
 
@@ -354,7 +383,7 @@
                 currencyID: "VND",
                 amount: "",
                 amountMaster: "",
-                cssClass: "summary-total"
+                 cssClass: "bold summary-total"
             });
             result.push({
                     cashierNo: "",
@@ -366,7 +395,7 @@
                     currencyID: "",
                     amount: sum(items, "amount"),
                     amountMaster: sum(items, "amountMaster"),
-                    cssClass: "trn-total"
+                     cssClass: "bold trn-total"
                 });
         });
         const grandTotalRoww = {
@@ -379,7 +408,7 @@
                 currencyID: "",
                 amount: sum(data, "amount"),
                 amountMaster: sum(data, "amountMaster"),
-                cssClass: "grandtotal"
+                 cssClass: "bold grandtotal"
         };
         result.push(grandTotalRoww);
 
@@ -407,27 +436,13 @@
             { dataField: "exch", caption: "Exch Rate ", width:columnWidth-50, dataType: "number", format: "#,##0" },
             { dataField: "amountMaster", caption: "Local Amount", width: columnWidth-20, dataType: "number", format: "#,##0"},
                 ],
-              rowPrepared: function (e) {
-                  const css = e.data.cssClass;
-
-        // 🟡 Log để kiểm tra giá trị
-                    console.log("Row:", e.data, "Class:", css);
-                    if (e.rowType === "data") {
-                        const css = e.data.cssClass;
-                        if (css === "trn-total") {
-                            e.rowElement.addClass("trn-total-row");
-                        } else if (css === "cashier-total") {
-                            e.rowElement.addClass("cashier-total-row");
-                        } else if (css === "grandtotal") {
-                            e.rowElement.addClass("grandtotal-row");
-                        } else if (css === "summarytotal") {
-                            e.rowElement.addClass("summarytotal-row");
-                        } else if (css === "summary-total") {
-                            e.rowElement.addClass("summary-total-row");
-                        }
-                    }
-                },
-                
+               rowPrepared: function (e) {
+                 if (e.rowType === "data" && e.data.cssClass) {
+                     e.rowElement.addClass(e.data.cssClass);
+                 }
+             },
+             
+              
             paging: { pageSize: 25 },
                   scrolling:  {
                   
@@ -445,11 +460,16 @@
                 filterRow: {
          visible: true,
         applyFilter: "auto"
-    },
-    headerFilter: {
-        visible: true
-    },
-            showBorders: true,
+        },
+        headerFilter: {
+            visible: true
+        },
+             showBorders: true,
+             onRowPrepared: function (e) {
+         if (e.rowType === "data" && e.data && e.data.cssClass) {
+             $(e.rowElement).addClass(e.data.cssClass);
+         }
+     }
                  
         });
     }
