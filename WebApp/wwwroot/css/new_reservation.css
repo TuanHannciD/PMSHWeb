@@ -420,6 +420,7 @@
     display: flex;
     align-items: center;
     padding: 6px 0px;
+    justify-content: space-between;
 }
 
 .rs-toggle-btn {
@@ -465,6 +466,7 @@
 
 .rs-column {
     flex: 1;
+
 }
 
 .rs-section {

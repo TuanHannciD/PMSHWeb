@@ -41,15 +41,15 @@
                 <div class="mt-2 row bg-light border rounded" style="margin:0 1px">
                     <div class="row">
                         <div class="radio-group col-md-4">
-                            <input type="radio" id="everyday" name="optionFixedCharge" checked value="1">
+                            <input type="radio" id="everyday" name="typeRouting" checked value="1">
                             <label for="everyday" style="text-align:left">Master Folio</label>
                         </div>
                         <div class="radio-group col-md-4 ">
-                            <input type="radio" id="date" name="optionFixedCharge" style="flex:0" value="2">
+                            <input type="radio" id="date" name="typeRouting" style="flex:0" value="2">
                             <label for="everyday" style="text-align:left">Window</label>
                         </div>
                         <div class="radio-group col-md-4 ">
-                            <input type="radio" id="day" name="optionFixedCharge" style="flex:0" value="3">
+                            <input type="radio" id="day" name="typeRouting" style="flex:0" value="3">
                             <label for="everyday" style="text-align:left">Room</label>
                         </div>
                     </div>
@@ -57,18 +57,18 @@
                     <div class="row">
                         <div class="col-md-6 row">
                             <div class="radio-group col-md-12">
-                                <input type="radio" id="everyday" name="optionFixedCharge" checked value="1">
+                                <input type="radio" id="everyday" name="dayRouting" checked value="1">
                                 <label for="everyday" style="text-align:left">Master Folio</label>
                             </div>
                             <div class="radio-group col-md-12 ">
-                                <input type="radio" id="date" name="optionFixedCharge" style="flex:0" value="2">
+                                <input type="radio" id="date" name="dayRouting" style="flex:0" value="2">
                                 <label for="everyday" style="text-align:left">Window</label>
                             </div>
                         </div>
                         <div class="col-md-6 row">
                             <div class="mb-2 row">
-                                <input type="date" class="form-control" id="amountDepositPayment">
-                                <input type="date" class="form-control" id="amountDepositPayment">
+                                <label for="everyday" class="col-md-2" style="text-align:left;min-width:0">BeginDate</label>
+                                <input type="date" class="form-control col-md-10" id="amountDepositPayment">
                             </div>
                         </div>
                     </div>
@@ -111,6 +111,10 @@
 </div>
 <script>
     function openModalRouting(){
+        if (idReservation === 0) {
+            showToast('Error', 'Please choose booking', false);
+            return;
+        }
         GetRoutingByReservationID(idReservation,confirmationNo);
         $('#modalRouting').modal('show');
     }
