@@ -778,14 +778,14 @@
 
          // Gán giá trị mới từ ViewBag vào localStorage
          var companyName = '@ViewBag.CompanyName';
-          console.log(companyName);
+        
          localStorage.setItem("CompanyName", companyName);
 
               const permissionData = JSON.parse(localStorage.getItem("PermissionNames")) || [];
 
     const lowerPermissionNames = permissionData
         .map(x => x.name?.trim().toLowerCase());
-
+          console.log(lowerPermissionNames);
 
 
     // Lặp qua tất cả các report-link
@@ -1141,6 +1141,21 @@
             if (!$('.report-link.active').length) {
                 $link.addClass("active");
                 loadReport(reportName, title);
+            }
+                const parentList = $link.closest("ul"); 
+            const parentListId = parentList.attr("id");
+
+            if (parentListId) {
+                // SlideUp tất cả
+                $("[id$='-report-list']").slideUp();
+                $("[id^='icon-']").removeClass("fa-chevron-down").addClass("fa-chevron-right");
+
+                // SlideDown phần liên quan
+                $("#" + parentListId).slideDown();
+
+                // Mở đúng icon
+                const headerId = parentListId.replace("-report-list", "");
+                $("#icon-" + headerId).removeClass("fa-chevron-right").addClass("fa-chevron-down");
             }
         }
    });

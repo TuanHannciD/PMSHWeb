@@ -2,8 +2,11 @@
     ViewData["Title"] = "Home Page";
 }
 <div class="layout-wrapper">
+  
+
     <!-- Mục 1: Trên cùng -->
     <div class="section-top">
+      
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-door-closed"></i></div>
             <div class="card-content">
@@ -12,19 +15,19 @@
             </div>
         </div>
 
-        <div class="card-box">
-            <div class="card-icon"><i class="fas fa-door-open"></i></div>
-            <div class="card-content">
-                <div class="card-title">Checked out</div>
-                <div class="card-value" id="checkedOutCount">0</div>
-            </div>
-        </div>
-
+    
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-users"></i></div>
             <div class="card-content">
                 <div class="card-title">Guest in House</div>
                 <div class="card-value" id="guestInHouseCount">0</div>
+            </div>
+        </div>
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-door-open"></i></div>
+            <div class="card-content">
+                <div class="card-title">Checked out</div>
+                <div class="card-value" id="checkedOutCount">0</div>
             </div>
         </div>
 
@@ -237,7 +240,7 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
+               
     $(document).ready(function () {
         var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // "29/08/2024 00:00:00"
 
@@ -291,7 +294,7 @@
                 type: 'column'
             },
             title: {
-                text: 'Booking Summary by Status'
+                text: ''
             },
             xAxis: {
                 categories: categories,
@@ -336,7 +339,7 @@
                 type: 'pie'
             },
             title: {
-                text: 'Booking Summary by Status'
+                text: ''
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.y}</b>'

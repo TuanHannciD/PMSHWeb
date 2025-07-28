@@ -95,6 +95,7 @@ namespace Report.Services.Interfaces
         DataTable ReservationSearchDate(DateTime businessDate,int status);
         DataTable RoomFacilityForecastData(DateTime fromDate, DateTime toDate, string zone);
         DataTable ReservationSearchRSVDate(DateTime businessDate, int status);
+        DataTable RoomAvailableNew(DateTime businessDate, string paraDate, string paraDateConvert, string resvType,string Code);
     }
 
 }
