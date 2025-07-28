@@ -34,33 +34,34 @@ namespace FrontDesk.Controllers
         public IActionResult TelephoneBook()
         {
             List<TelephoneBookCategoryModel> tlplist = PropertyUtils.ConvertToList<TelephoneBookCategoryModel>(TelephoneBookCategoryBO.Instance.FindAll());
-            ViewBag.TelephoneBookCategoryList = tlplist;
+            var sortedList = tlplist.OrderBy(x => x.Name).ToList();
+            ViewBag.TelephoneBookCategoryList = sortedList;
             return View();
         }
+
         [HttpGet]
-        public IActionResult TelephoneBook(string categoryId, string categoryCode, string telephoneCode)
+        public IActionResult GetTelephoneBook(string categoryId, string phoneSearch)
         {
-            
             try
             {
-                DataTable dataTable = _iFrontDeskService.TelephoneBook(categoryId, categoryCode, telephoneCode);
-                var result = (from d in dataTable.AsEnumerable()
+                DataTable dt = _iFrontDeskService.GetTelephoneBookByCategory(categoryId, phoneSearch);
+
+                var result = (from DataRow row in dt.Rows
                               select new
                               {
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"].ToString() : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"].ToString() : "",                           
+                                  Name = row["Name"]?.ToString(),
+                                  Telephone = row["Telephone"]?.ToString(),
+                                  Address = row["Address"]?.ToString(),
+                                  Remark = row["Remark"]?.ToString()
                               }).ToList();
 
                 return Json(result);
             }
             catch (Exception ex)
             {
-                return Json(ex.Message);
+                return Json(new { error = ex.Message });
             }
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
     }
 }

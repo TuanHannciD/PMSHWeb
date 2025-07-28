@@ -182,7 +182,7 @@
         const lastYear = thisYear - 1;
         const safeData = Array.isArray(data) ? data : [];
         $('#gridContainer').dxDataGrid({
-        dataSource: safeData, allowColumnResizing: true,
+        dataSource: safeData, height: 500, allowColumnResizing: true,
 
             columns: [
             { dataField: "code", caption: "", width: 70 },

@@ -95,6 +95,17 @@ namespace Report.Controllers
             return View();
 
         }
+        public IActionResult OtherReportChart()
+        {
+            List<ConfigSystemModel> list = PropertyUtils.ConvertToList<ConfigSystemModel>(ConfigSystemBO.Instance.FindAll());
+
+            // Tìm dòng có KeyValue = "NameCompany"
+            var companyConfig = list.FirstOrDefault(x => x.KeyValue == "NameCompany");
+            // Gửi dữ liệu qua View
+            ViewBag.CompanyName = companyConfig.Desciption;
+            return View();
+
+        }
         public IActionResult FreeUpgradeReport()
         {
             return View();
