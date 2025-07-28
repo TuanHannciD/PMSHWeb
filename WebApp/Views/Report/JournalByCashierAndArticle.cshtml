@@ -459,7 +459,7 @@
         $("#gridContainer").html(""); // clear DOM trước khi render mới
     }
         $("#gridContainer").dxDataGrid({
-           dataSource: data,         height: "auto",
+           dataSource: data,        height: 500,
             allowColumnResizing: true,
             columns: [
                 { dataField: "transactionDate", caption: "Date  Time", width: columnWidth - 20,dataType: "date",  format: "dd/MM/yyyy HH:mm:ss"  },

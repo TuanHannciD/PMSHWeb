@@ -46,20 +46,6 @@
             color: white !important;
         }
 
-    #gridContainer .dx-datagrid-headers .dx-header-row > td {
-        padding: 5px !important;
-        height: 24px !important;
-        font-size: 12px !important;
-        line-height: 1.1 !important;
-    }
-
-    #gridContainer .dx-datagrid-rowsview .dx-row > td,
-    #gridContainer .dx-datagrid .dx-summary-row > td,
-    #gridContainer .dx-datagrid .dx-total-footer td,
-    #gridContainer .dx-datagrid .dx-footer-row td {
-        font-size: 11px !important;
-    }
-
     .sticky-header .form-control-sm {
         padding: .1rem .35rem;
         height: calc(1.1em + .2rem + 2px);
@@ -128,6 +114,29 @@
     #gridContainer .dx-datagrid .dx-footer-row td {
         font-size: 11px !important;
     }
+    /* Giảm chiều cao filter row */
+    #gridContainer .dx-datagrid-filter-row {
+        height: 28px !important; /* Hoặc bạn giảm thấp hơn nếu muốn */
+    }
+
+        /* Giảm padding cho từng ô filter */
+        #gridContainer .dx-datagrid-filter-row > td {
+            padding: 2px 4px !important;
+        }
+
+        /* Giảm chiều cao và padding cho input filter */
+        #gridContainer .dx-datagrid-filter-row .dx-texteditor-input {
+            height: 24px !important;
+            padding: 2px 6px !important;
+            font-size: 11px !important;
+            line-height: 1.1 !important;
+        }
+
+        /* Nếu có container bao quanh input */
+        #gridContainer .dx-datagrid-filter-row .dx-editor-cell {
+            padding: 0 !important;
+        }
+
 
     .report-bar {
         position: relative;
