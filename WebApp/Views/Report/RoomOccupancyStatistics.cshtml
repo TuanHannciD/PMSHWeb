@@ -328,7 +328,7 @@
     function initializeRoomOccupancyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-       dataSource: data,         height: "auto", allowColumnResizing: true,
+       dataSource: data,         height: 500, allowColumnResizing: true,
             columns: [
             { dataField: "roomDate", caption: "Date", width:columnWidth,dataType: "date",format: "dd/MM/yyyy" },
             { dataField: "totalRoom", caption: "100%", width:columnWidth-50},

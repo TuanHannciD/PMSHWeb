@@ -285,7 +285,7 @@
     function initializeRoomOccupancyGrid(data) {
         const columnWidth = 180;
         $("#gridContainer").dxDataGrid({
-   dataSource: data,         height: "auto", allowColumnResizing: true,
+    dataSource: data,        height: 500, allowColumnResizing: true,
             columns: [
             { dataField: "fair", caption: "Fair", width:columnWidth-110},
             { dataField: "dow", caption: "", width:columnWidth-80},

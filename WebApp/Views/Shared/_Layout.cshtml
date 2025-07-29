@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebApp</title>
+    <title>@ViewData["Title"] - PMSH</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -210,20 +210,26 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#">Front Desk</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="Index">Menu 1</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a></li>
                             </ul>
                         </li>
-                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button">Report</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#">Report</a>
                             <ul class="dropdown-menu">
-                                <!-- Sale and Forecast Reports -->
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReport">Report</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a></li>
+                            </ul>
+                        </li>
+                         @* <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button">Report</a>
+                            <ul class="dropdown-menu"> *@
+                                @* <!-- Sale and Forecast Reports -->
                                 <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Sale and Forecast</a>
-                                    <ul class="dropdown-menu scrollable-dropdown">
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationSummaryReport">Reservation Summary Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RevenueBy">Revenue By</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="OTAsMonthlyReport">OTAs Monthly Report</a></li>
+                                    <a class="dropdown-item dropdown-toggle" href="#">Sale and Forecast</a> *@
+                                    @* <ul class="dropdown-menu scrollable-dropdown"> *@
+                                        @* <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport">Report</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a></li> *@
+                                        @* <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="OTAsMonthlyReport">OTAs Monthly Report</a></li>
                                         <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomOccupancy">Room Occupancy</a></li>
                                         <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationCancellation">Reservation Cancellations</a></li>
                                         <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationStatistics">Reservation Statistics</a></li>
@@ -245,11 +251,11 @@
                                         <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepositTransferAtCheckIn">Deposit Transferred At Check In</a></li>
                                         <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepositLedger">Deposit Ledger</a></li>
                                         <li><a class="dropdown-item text-success" asp-controller="Report" asp-action="OtherReport" asp-route-name="BookingSummaryByStatus">Booking Summary By Status</a></li>
-                                        <li><a class="dropdown-item text-success" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomOccupancyChart">Room Occupancy Chart</a></li>
-                                    </ul>
-                                </li>
+                                        <li><a class="dropdown-item text-success" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomOccupancyChart">Room Occupancy Chart</a></li> *@
+                                @*     </ul>
+                                </li> *@
 
-                                <!-- Report Reservation -->
+                                @* <!-- Report Reservation -->
                                 <li class="dropdown-submenu">
                                     <a class="dropdown-item dropdown-toggle" href="#">Report Reservation</a>
                                     <ul class="dropdown-menu scrollable-dropdown">
@@ -302,9 +308,9 @@
                                         <li><a class="dropdown-item text-primary" asp-controller="Report" asp-action="OtherReport" asp-route-name="ManagerReport">Manager Report</a></li>
                                         <li><a class="dropdown-item text-primary" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomTypeStatistic">Room Type Statistics</a></li>
                                     </ul>
-                                </li>
-                            </ul>
-                        </li>
+                                </li> *@
+                            @* </ul> *@
+                        @* </li> *@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#">HouseKeeping</a>
                             <ul class="dropdown-menu">

@@ -156,7 +156,7 @@
                     // $("#loadingSpinner").hide();
                          console.log(result);
                 const processed = preparRevenueSummaryData(result);
-    initializeRevenueSummaryGrid(processed.data, processed.grandTotalVND, processed.grandTotalUSD);
+                 initializeRevenueSummaryGrid(processed.data, processed.grandTotalVND, processed.grandTotalUSD);
 
                         $("#loadingSpinner").hide();
                 },
@@ -225,10 +225,10 @@
             return valid.reduce((sum, x) => sum + x[field], 0) / valid.length;
         }
      function initializeRevenueSummaryGrid(data, grandTotalVND, grandTotalUSD) {
-        const columnWidth = 180;
+        const columnWidth = 300;
 
         $("#gridContainer").dxDataGrid({
-           dataSource: data,         height: "auto",
+           dataSource: data,         height: 500,
             allowColumnResizing: true,
             columns: [
                 { dataField: "subGroupDescription", caption: "", width: columnWidth },

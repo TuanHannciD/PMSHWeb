@@ -170,7 +170,9 @@
     // Lọc dữ liệu theo điều kiện totalRoom >= minRoom
     var filteredData = data.filter(item => (parseInt(item.totalRoom) || 0) >= minRoom);
         $("#gridContainer").dxDataGrid({
-            dataSource: filteredData,  // Dữ liệu từ server
+
+            dataSource: filteredData,
+            height: 500,// Dữ liệu từ server
             columns: [
                 { dataField: "confirmationNo", caption: "Con.No", width: columnWidth-60 },
                 { dataField: "crsNo", caption: "CRS.No", width: columnWidth -60},

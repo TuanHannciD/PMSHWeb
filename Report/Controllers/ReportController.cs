@@ -95,6 +95,17 @@ namespace Report.Controllers
             return View();
 
         }
+        public IActionResult OtherReportChart()
+        {
+            List<ConfigSystemModel> list = PropertyUtils.ConvertToList<ConfigSystemModel>(ConfigSystemBO.Instance.FindAll());
+
+            // Tìm dòng có KeyValue = "NameCompany"
+            var companyConfig = list.FirstOrDefault(x => x.KeyValue == "NameCompany");
+            // Gửi dữ liệu qua View
+            ViewBag.CompanyName = companyConfig.Desciption;
+            return View();
+
+        }
         public IActionResult FreeUpgradeReport()
         {
             return View();
@@ -3807,34 +3818,94 @@ namespace Report.Controllers
                         }
                     }
                 }
+                string paraDate = $"[{businessDate.Day}{businessDate.Month}]";
+                string paraDateConvert = $"'Date1' = Convert(nvarchar,sum(isnull({paraDate},0)))";
+
+                List<ReservationTypeModel> listresttype  = PropertyUtils.ConvertToList<ReservationTypeModel>(ReservationTypeBO.Instance.FindAll());
+                var ids = listresttype.Select(x => x.ID.ToString()).ToList();
+                string resvType;
+
+                if (ids.Count == 0)
+                {
+                    resvType = "''"; // Trường hợp rỗng
+                }
+                else if (ids.Count == 1)
+                {
+                    resvType = $"'{ids[0]}'";
+                }
+                else
+                {
+                    var middle = ids.Skip(1).Take(ids.Count - 2)
+                                    .Select(id => $"'{id}'");
+
+                    string first = $"{ids.First()}'";
+                    string last = $"'{ids.Last()}";
+
+                    resvType = string.Join(",", new[] { first }.Concat(middle).Append(last));
+                }
+
+                DataTable roomavl = _iReportService.RoomAvailableNew(businessDate,paraDate, paraDateConvert, resvType, listzo[0].Code);
+
+                //var chartStatus = new List<object>();
+
+                //for (int status = 1; status <= 7; status++)
+                //{
+                //    // Gọi chung 1 hàm cho tất cả status từ 1 đến 7
+                //    DataTable dt = _iReportService.ReservationSearchRSVDate(businessDate,status);
+                //    int total = dt.Rows.Count;
+
+                //    // Tên tương ứng từng status
+                //    string statusN = status switch
+                //    {
+                //        1 => "Guest in House",
+                //        2 => "Reservation",
+                //        3 => "Due in",
+                //        4 => "Checked in",
+                //        5 => "Due out",
+                //        6 => "Checked out",
+                //        7 => "Cancellation",
+                //        _ => "Unknown"
+                //    };
+
+                //    chartStatus.Add(new
+                //    {
+                //        status,
+                //        statusName = statusN,
+                //        total
+                //    });
+                //}
 
                 var chartStatus = new List<object>();
 
-                for (int status = 1; status <= 7; status++)
+                // Lấy danh sách mã roomtype từ DB
+                List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+                var validRoomTypeCodes = new HashSet<string>(listrt.Select(rt => rt.Code));
+
+                if (roomavl != null && roomavl.Rows.Count > 0)
                 {
-                    // Gọi chung 1 hàm cho tất cả status từ 1 đến 7
-                    DataTable dt = _iReportService.ReservationSearchRSVDate(businessDate,status);
-                    int total = dt.Rows.Count;
+                    var groupedData = roomavl.AsEnumerable()
+                        .Where(row => validRoomTypeCodes.Contains(row["Roomtype"]?.ToString()))
+                        .GroupBy(row => new
+                        {
+                            Date = row["Date1"]?.ToString(),
+                            StatusName = row["Roomtype"]?.ToString()
+                        })
+                        .Select(g => new
+                        {
+                            Date = g.Key.Date,
+                            StatusName = g.Key.StatusName,
+                            Total = g.Count()
+                        });
 
-                    // Tên tương ứng từng status
-                    string statusN = status switch
+                    foreach (var item in groupedData)
                     {
-                        1 => "Guest in House",
-                        2 => "Reservation",
-                        3 => "Due in",
-                        4 => "Checked in",
-                        5 => "Due out",
-                        6 => "Checked out",
-                        7 => "Cancellation",
-                        _ => "Unknown"
-                    };
-
-                    chartStatus.Add(new
-                    {
-                        status,
-                        statusName = statusN,
-                        total
-                    });
+                        chartStatus.Add(new
+                        {
+                            date = item.Total,
+                            statusName = item.StatusName,
+                            total = item.Date
+                        });
+                    }
                 }
 
 
@@ -3849,7 +3920,7 @@ namespace Report.Controllers
                     TotalC = totalC+ totalC1+ totalC2,
                     OccupancyPercent = occupancyPercent,
                     RsvCount = rsvCount,
-                    ChartStatus= chartStatus
+                    ChartStatus = chartStatus
                 });
             }
             catch (Exception ex)
