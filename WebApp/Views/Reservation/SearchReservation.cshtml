@@ -2,10 +2,14 @@
 <div class="body">
     <div class="container2">
         <div class="text-center" style="font-size: 20px;">Search Reservation</div>
-        <div class="rs-header ">
+        <div class="rs-header " style="column-gap:8px">
             <div class="rs-toggle-btn" onclick="toggleCollapse()">
                 <span class="rs-toggle-icon" id="collapseIcon">−</span>
                 <span id="collapseTitle">Hide Functions</span>
+            </div>
+            <div class="rs-toggle-btn"accesskey onclick="toggleCollapseSearch()">
+                <span class="rs-toggle-icon" id="collapseIconSearch">−</span>
+                <span id="collapseTitleSearch">Hide Filter</span>
             </div>
             <div class="rs-column" >
                 <div class="rs-section">
@@ -67,12 +71,7 @@
             </div>
         </div>
 
-        <div class="rs-header ">
-            <div class="rs-toggle-btn" onclick="toggleCollapseSearch()">
-                <span class="rs-toggle-icon" id="collapseIconSearch">−</span>
-                <span id="collapseTitleSearch">Hide Filter</span>
-            </div>
-        </div>
+
         <div class="rs-content-box row" id="infoBoxSearch">
             <div class="col-md-8 row ">
                 <div class="col-md-1 mb-1">
@@ -1336,6 +1335,7 @@
     var confirmationNo = '';
     var night = 0;
     var rateAmount = 0;
+    var lastname = '';
     function initializeDataGridSearch(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,   
@@ -1402,6 +1402,7 @@
                 arivalDate = e.data.Arrival;
                 departureDate = e.data.Departure;
                 confirmationNo = e.data.ConfirmationNo;
+                lastname = e.data.GuestName;
                 const $checkInButton = $('#btnCheckIn');
 
                 if (status !== 'RESVED') {
@@ -3248,7 +3249,6 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                console.log(result);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {

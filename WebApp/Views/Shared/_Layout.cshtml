@@ -54,7 +54,13 @@
     <!-- AutoTable Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-
+    @* moment js *@
+    <script src="~/lib/moment.js/moment.js"></script>
+    <script src="~/lib/moment.js/moment.min.js"></script>
+    <a href="~/lib/moment.js/moment.min.js.map"></a>
+    <script src="~/lib/moment.js/moment-with-locales.js"></script>
+    <script src="~/lib/moment.js/moment-with-locales.min.js"></script>
+    <a href="~/lib/moment.js/moment-with-locales.min.js.map"></a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.2.4/js/pdfExporter.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -197,6 +203,8 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a></li>
+
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
