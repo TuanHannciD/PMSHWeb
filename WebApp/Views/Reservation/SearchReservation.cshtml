@@ -1,6 +1,7 @@
 ﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <div class="body">
     <div class="container2">
+
         <div class="text-center" style="font-size: 20px;">Search Reservation</div>
         <div class="rs-header " style="column-gap:8px">
             <div class="rs-toggle-btn" onclick="toggleCollapse()">
@@ -34,9 +35,9 @@
                         <li><a href="#" class="rs-bold">Clear</a></li>
                         <li><a href="#" class="rs-bold" onclick="openModalEdit();">Edit</a></li>
                         <li><a href="#" class="rs-bold" onclick="openModalCancel()">Cancel</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalRegistrationCard();">Reinstate</a></li>
-                        <li><a href="#" class="rs-bold" onclick="checkIn();">Reg.Card</a></li>
-                        <li><a href="#" class="rs-bold">Check In</a></li>
+                        <li><a href="#" class="rs-bold" >Reinstate</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalRegistrationCard();">Reg.Card</a></li>
+                        <li><a href="#" class="rs-bold" onclick="checkIn();">Check In</a></li>
                         <li><a href="#" class="rs-bold">Profile</a></li>
                         <li><a href="#" class="rs-bold">Group Admin</a></li>
                         <li><a href="#" class="rs-bold">Room Assigment</a></li>
@@ -51,20 +52,21 @@
                 <div class="rs-section">
                     <h4>Options</h4>
                     <ul class="rs-menu-list">
-                        <li><a href="#" class="rs-bold">Accompanying</a></li>
-                        <li><a href="#" class="rs-bold">Add On</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalAccompanying();">Accompanying</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalAddOn();">Add On</a></li>
                         <li><a href="#" class="rs-bold">Alerts</a></li>
                         <li><a href="#" class="rs-bold">Prepaid Cards</a></li>
-                        <li><a href="#" class="rs-bold">Billing</a></li>
-                        <li><a href="#" class="rs-bold">Cance</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalBilling();">Billing</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalCancel()">Cancel>Cancel</a></li>
                         <li><a href="#" class="rs-bold">Change</a></li>
                         <li><a href="#" class="rs-bold">Delete</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalShare();">Share</a></li>
                         <li><a href="#" class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a></li>
                         <li><a href="#" class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a></li>
-                        <li><a href="#" class="rs-bold" >History</a></li>
-                        <li><a href="#" class="rs-bold" >New Message</a></li>
-                        <li><a href="#" class="rs-bold" >Regis.Card</a></li>
-                        <li><a href="#" class="rs-bold" >Room move</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openConfirm();">Delete</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalMessage();">Message</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openModalRegistrationCard();">Regis.Card</a></li>
+                        <li><a href="#" class="rs-bold" onclick="openRoomMove();">Room move</a></li>
                         <li><a href="#" class="rs-bold" onclick="openModalRouting();">Routing</a></li>
                     </ul>
                 </div>
@@ -128,6 +130,8 @@
                     <label for="searchType" class="form-label">Search Type</label>
                     <select id="searchType" class="form-select">
                         <option value="0">General</option>
+                        <option value="7">Cancellations</option>
+
                     </select>
                 </div>
                 <div class="col-md-1 mb-1">
@@ -1232,14 +1236,19 @@
     </div>
 </div>
 
-@await Html.PartialAsync("Partial/Deposit")
-@await Html.PartialAsync("Partial/Accompanying")
-@await Html.PartialAsync("Partial/FixedCharges")
-@await Html.PartialAsync("Partial/RegistrationCard")
-@await Html.PartialAsync("Partial/CheckIn")
-@await Html.PartialAsync("Partial/Billing")
-@await Html.PartialAsync("Partial/AddOn")
-@await Html.PartialAsync("Partial/Routing")
+@await Html.PartialAsync("Options/Deposit")
+@await Html.PartialAsync("Options/RoomMove")
+@await Html.PartialAsync("Options/Message")
+@await Html.PartialAsync("Options/Accompanying")
+@await Html.PartialAsync("Options/FixedCharges")
+@await Html.PartialAsync("Options/RegistrationCard")
+@await Html.PartialAsync("Options/CheckIn")
+@await Html.PartialAsync("Options/Billing")
+@await Html.PartialAsync("Options/AddOn")
+@await Html.PartialAsync("Options/Routing")
+@await Html.PartialAsync("Options/Cancel")
+@await Html.PartialAsync("Options/Delete")
+@await Html.PartialAsync("Options/Share")
 
 <script>
     $(document).ready(async function () {
@@ -1255,6 +1264,7 @@
         });
         getAllProfiles();
     });
+
     function toggleCollapse() {
         const box = document.getElementById("infoBox");
         const icon = document.getElementById("collapseIcon");
@@ -1287,43 +1297,78 @@
 
         }
     }
-    function searchReservation() {
-        $("#loadingSpinner").show();
-        const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
-        $.ajax({
-            url: '/Reservation/SearchReservation2',
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
             type: 'get',
             dataType: 'json',
-            data:{
-                searchType: $('#searchType').val(),
-                name: $('#name').val(),
-                firstName : $('#firstName').val(),
-                reservationHolder: $('#resvHolder').val(),
-                confirmationNo : $('#confirmationNo').val(),
-                crsNo: $('#crsNo').val(),
-                roomNo: $('#roomNo').val(),
-                roomType: $('#roomType').find('option:selected').text(),
-                package: $('#package').val(),
-                zone: $('#zone').find('option:selected').text(),
-                arrivalFrom :$('#arrivalForm').val(),
-                arrivalTo: $('#departureForm').val(),
-                roomSharer:checkboxValue,
-                owner: $('owner').val()
-            },
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                initializeDataGridSearch(result);
+                // Lấy ngày từ result (giả sử result có định dạng ISO như 'YYYY-MM-DDTHH:mm:ss')
+                const businessDate = new Date(result);
+                $('#arrivalForm').val(result.split('T')[0]);
+
+                // Cộng 7 ngày
+                const departureDate = new Date(businessDate);
+                departureDate.setDate(businessDate.getDate() + 7);
+
+                // Định dạng ngày thành YYYY-MM-DD
+                const formattedDepartureDate = departureDate.toISOString().split('T')[0];
+                $('#departureForm').val(formattedDepartureDate);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
-                } else {
                 }
             }
-            ,complete: function () {
-                $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
+        });
+    }
+
+    function searchReservation() {
+        $("#loadingSpinner").show();
+        const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
+
+        getBusinessDate().then(function () {
+            $.ajax({
+                url: '/Reservation/SearchReservation2',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    searchType: $('#searchType').val(),
+                    name: $('#name').val(),
+                    firstName: $('#firstName').val(),
+                    reservationHolder: $('#resvHolder').val(),
+                    confirmationNo: $('#confirmationNo').val(),
+                    crsNo: $('#crsNo').val(),
+                    roomNo: $('#roomNo').val(),
+                    roomType: $('#roomType').find('option:selected').text(),
+                    package: $('#package').val(),
+                    zone: $('#zone').find('option:selected').text(),
+                    arrivalFrom: $('#arrivalForm').val(),
+                    arrivalTo: $('#departureForm').val(),
+                    roomSharer: checkboxValue,
+                    owner: $('#owner').val() // Sửa lỗi cú pháp: $('owner') thành $('#owner')
+                },
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    initializeDataGridSearch(result);
+                },
+                error: function (xhr, statusText, err) {
+                    if (xhr.status == 401) {
+                        sessionTimeout();
+                    }
+                },
+                complete: function () {
+                    $("#loadingSpinner").hide();
+                }
+            });
+        }).catch(function (xhr, statusText, err) {
+            if (xhr.status == 401) {
+                sessionTimeout();
             }
+            $("#loadingSpinner").hide();
         });
     }
     var idReservation = 0;
@@ -1608,12 +1653,12 @@
 
         // Set arrival and departure input values
         document.getElementById('arrival').value = formatDate(parsedBusinessDate);
-        document.getElementById('arrivalForm').value = formatDate(parsedBusinessDate);
+        // document.getElementById('arrivalForm').value = formatDate(parsedBusinessDate);
 
         document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
 
         document.getElementById('departure').value = formatDate(departureDate);
-        document.getElementById('departureForm').value = formatDate(departureDate);
+        // document.getElementById('departureForm').value = formatDate(departureDate);
 
         document.getElementById('dropOffDate').value = formatDate(departureDate);
                function formatDate(date) {
@@ -1923,6 +1968,8 @@
         const values = Array.from(checkboxes).map(checkbox => checkbox.value);
         return values.join(","); // Trả về chuỗi dạng 'a,c,v,c'
     }
+
+
 
     function getSelectedRadio(name) {
         const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
@@ -3182,63 +3229,7 @@
     function closeModalEdit(){
         $('#modalEdit').modal('hide');
     }
-    function openModalCancel(){
-        if(idReservation == 0){
-            showToast('Error', 'Please choose booking', false);
-            return;
-        }
-        if(status != 'RESVED'){
-            showToast('Error', 'Cannot cancel because booking is not in Reservation status', false);
-            return;
-        }
-        $('#modalCancel').modal('show');
-    }
-    function closeModalCancel(){
-        clearCancel();
-        $('#modalCancel').modal('hide');
-    }
-
-    $('#reasonCancel').on('change', function() {
-        $('#descriptionCancel').text($(this).find('option:selected').text().split('-')[1]);
-    });
-    function clearCancel(){
-        $('#reasonCancel').val('');
-        $('#descriptionCancel').val('');
-    }
-    function CancelReservation() {
-
-        const userName = JSON.parse(localStorage.getItem("Loginname"));
-        const userID = JSON.parse(localStorage.getItem("userID"));
-        var formData = new FormData();
-        formData.append('rsvID', idReservation);
-        formData.append('reasonCancellation',$('#reasonCancel').find('option:selected').text().split('-')[0]);
-        formData.append('description', $('#reasonCancel').find('option:selected').text().split('-')[1]);
-        formData.append('userID', userID);
-            formData.append('userName', userName);
-        $.ajax({
-            url: '/Reservation/CancelReservation',
-            type: 'POST',
-            processData: false,
-            contentType: false,
-            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data: formData,
-            success: function (data) {
-                if (data.code == 0) {
-                    closeModalCancel();
-                    showToast('Success', data.msg, true);
-                    searchReservation();
-                } else {
-                    showToast('Error', data.msg, false);
-                }
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-
-    }
-
+    
     function getAllProfiles() {
         $("#loadingSpinner").show();
         $('#viewByProfileSearch').val(3);

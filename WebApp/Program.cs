@@ -59,6 +59,8 @@ builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<IGroupReservationService, GroupReservationService>();
+builder.Services.AddSingleton<IMessageService, MessageService>();
+builder.Services.AddSingleton<IShareService, ShareService>();
 
 
 builder.Services.AddAuthentication(options =>

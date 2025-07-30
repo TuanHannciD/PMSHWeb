@@ -37,9 +37,11 @@ namespace Reservation.Controllers
         private readonly IDepositService _iDepositService;
         private readonly IRoutingService _iRoutingService;
         private readonly IGroupReservationService _iGroupReservationService;
+        private readonly IMessageService _iMessageService;
+        private readonly IShareService _iShareService;
         public ReservationController(ILogger<ReservationController> logger,
                 IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService,
-                IDepositService iDepositService, IRoutingService iRoutingService, IGroupReservationService iGroupReservationService)
+                IDepositService iDepositService, IRoutingService iRoutingService, IGroupReservationService iGroupReservationService, IMessageService iMessageService, IShareService iShareService)
         {
             _cache = cache;
             _logger = logger;
@@ -49,6 +51,8 @@ namespace Reservation.Controllers
             _iDepositService = iDepositService;
             _iRoutingService = iRoutingService;
             _iGroupReservationService = iGroupReservationService;
+            _iMessageService = iMessageService;
+            _iShareService = iShareService;
         }
         public IActionResult SearchReservation()
         {
@@ -59,7 +63,7 @@ namespace Reservation.Controllers
             ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
             ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
             //ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
-            //ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            //ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();'
             //ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
@@ -68,6 +72,8 @@ namespace Reservation.Controllers
             ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
             ViewBag.cboSource = ListItemHelper.GetSourceProvider();
             ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
+            ViewBag.cboZone = ListItemHelper.GetZoneProvider();
+
             //ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
             ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
             ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
@@ -124,6 +130,7 @@ namespace Reservation.Controllers
             return View();
         }
 
+        #region DatVP __ Commmon
         [HttpGet]
         public async Task<IActionResult> GetInfoProfile(int profileID)
         {
@@ -508,8 +515,24 @@ namespace Reservation.Controllers
         }
 
 
-        //[ValidateAntiForgeryToken]
-        #region save reservation
+        [HttpGet]
+        public async Task<IActionResult> GetBusinessDate()
+        {
+            try
+            {
+                List<BusinessDateModel> listMarket = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+
+                return Json(listMarket[0].BusinessDate);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region DatVP __ save reservation
         [HttpPost]
         public ActionResult SaveReservation()
         {
@@ -706,7 +729,7 @@ namespace Reservation.Controllers
                 reservationModel.PackageId = int.Parse(Request.Form["packageID"].ToString());
                 reservationModel.Packages = Request.Form["packages"].ToString();
                 reservationModel.Relationship = ReservationBO.GetTopID() + 1;
-                reservationModel.Status = 0;
+                reservationModel.Status = DateTime.Parse(Request.Form["arrival"].ToString()) == businessDate[0].BusinessDate ? 5 : 0;
                 reservationModel.PostingMaster = false;
                 reservationModel.MainGuest = true;
                 if (string.IsNullOrEmpty(Request.Form["rateCode"].ToString()))
@@ -771,6 +794,18 @@ namespace Reservation.Controllers
                 long reservationID = ReservationBO.Instance.Insert(reservationModel);
                 #endregion
 
+
+                #region lưu log activity insert reservation
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.ObjectID = reservationModel.ID;
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "Insert";
+                activityLog.OldValue = activityLog.NewValue = activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+                #endregion
                 #region lưu reservation master
                 if (int.Parse(Request.Form["profileAgentID"].ToString()) != 0 || int.Parse(Request.Form["profileCompanyID"].ToString()) != 0)
                 {
@@ -790,6 +825,7 @@ namespace Reservation.Controllers
                     reservationMaster.PostingMaster = true;
                     reservationMaster.MainGuest = false;
                     reservationMaster.ShareRoom = reservationModel.ShareRoom + 1;
+                    reservationMaster.Status = DateTime.Parse(Request.Form["arrival"].ToString()) == businessDate[0].BusinessDate ? 5 : 0;
                     ReservationBO.Instance.Insert(reservationMaster);
                 }
                 #endregion
@@ -859,7 +895,7 @@ namespace Reservation.Controllers
         }
         #endregion
 
-        #region search reservation
+        #region DatVP __ search reservation
         [HttpGet]
         public async Task<IActionResult> SearchReservation2(int searchType,string name,string firstName,string reservationHolder,string confirmationNo,
             string crsNo,string roomNo,string roomType,string package,string zone,DateTime arrivalFrom, DateTime arrivalTo,string roomSharer,string owner)
@@ -1418,7 +1454,7 @@ namespace Reservation.Controllers
         }
         #endregion
 
-        #region cancel reservation
+        #region DatVp __  Reservation: Cancel
         [HttpPost]
         public ActionResult CancelReservation()
         {
@@ -1434,9 +1470,41 @@ namespace Reservation.Controllers
 
                 }
                 ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
-                if (rsv == null) {
+                if (rsv == null)
+                {
                     return Json(new { code = 1, msg = "Can not find reservation" });
                 }
+                #region  check xem Reservation có deposit không
+                var deposit = DepositPaymentBO.Instance.FindByAttribute("ReservationID", rsv.ID);
+                if(deposit.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "Payment in advance exist on the reservation. You must balance the amount paid before" });
+
+                }
+                #endregion
+
+                #region insert vào  bảng ActivityLog
+                string status = "";
+                if (rsv.Status == 0)
+                {
+                    status = "RESERVED";
+                }
+                if (rsv.Status == 5)
+                {
+                    status = "DUE IN";
+                }
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.ObjectID = rsv.ID;
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "Status";
+                activityLog.NewValue = "CANCEL";
+                activityLog.OldValue = status;
+                activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+                #endregion
                 #region update status reservation
                 rsv.Status = 3;
                 rsv.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
@@ -1475,7 +1543,7 @@ namespace Reservation.Controllers
         #endregion
 
 
-        #region registration card
+        #region DatVP __ registration card
         [HttpGet]
         public async Task<IActionResult> GetRegistrationCard()
         {
@@ -1492,10 +1560,7 @@ namespace Reservation.Controllers
         #endregion
 
 
-
-
-
-        #region Reservation Accompanying
+        #region DatVP __ Reservation: Accompanying
         [HttpGet]
         public async Task<IActionResult> GetReservationAccompanyingByReservationID(int reservationID)
         {
@@ -1589,7 +1654,7 @@ namespace Reservation.Controllers
         #endregion
 
 
-        #region check in reservation
+        #region DatVP __ Reservation : check in
         [HttpPost]
         public ActionResult CheckInBooking()
         {
@@ -1661,7 +1726,7 @@ namespace Reservation.Controllers
         #endregion
 
 
-        #region reservation billing
+        #region DatVP __ reservation billing
         [HttpGet]
         public async Task<IActionResult> GetFolioDetailByFolioID(int reservationID, int mode)
         {
@@ -1717,7 +1782,7 @@ namespace Reservation.Controllers
         #endregion
 
 
-        #region Reservation fixed charges
+        #region DatVP __ Reservation: fixed charges
         [HttpGet]
         public async Task<IActionResult> GetFixedChargesByReservationID(int reservationID)
         {
@@ -2590,6 +2655,153 @@ namespace Reservation.Controllers
 
 
             // Xử lý lưu
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Message
+        [HttpGet]
+        public async Task<IActionResult> SearchMessage(string Name, string ReservationHolder, string ConfirmationNo, string CRSNo, string RoomNo, string Zone, string Status, string Receive, string Print)
+        {
+            try
+            {
+                // Kiểm tra và gán giá trị rỗng nếu tham số là null
+                if (string.IsNullOrEmpty(Name))
+                {
+                    Name = "";
+                }
+                if (string.IsNullOrEmpty(ReservationHolder))
+                {
+                    ReservationHolder = "";
+                }
+                if (string.IsNullOrEmpty(ConfirmationNo))
+                {
+                    ConfirmationNo = "";
+                }
+                if (string.IsNullOrEmpty(CRSNo))
+                {
+                    CRSNo = "";
+                }
+                if (string.IsNullOrEmpty(RoomNo))
+                {
+                    RoomNo = "";
+                }
+                if (string.IsNullOrEmpty(Zone))
+                {
+                    Zone = "";
+                }
+                if (!string.IsNullOrEmpty(Status))
+                {
+                    // Từ "0,5,1,6,2" => "0','5','1','6','2"
+                    Status = string.Join("','", Status.Split(',').Select(s => s.Trim()));
+                }
+                if (!string.IsNullOrEmpty(Print))
+                {
+                    if (Print == "0")
+                    {
+                        // Nếu chỉ là 0 thì gán thành "0','1"
+                        Print = "0','1";
+                    }
+                    else
+                    {
+                        // Nếu là chuỗi khác, ví dụ "0,2" thì tách như bình thường
+                        Print = string.Join("','", Print.Split(',').Select(s => s.Trim()));
+                    }
+                }
+
+
+                var data = _iMessageService.SearchMessage(Name, ReservationHolder, ConfirmationNo, CRSNo, RoomNo, Zone, Status, Receive, Print);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Delete
+        [HttpPost]
+        public ActionResult DeleteReservation()
+        {
+            try
+            {
+
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["reservationID"].ToString()));
+                if(reservation == null || reservation.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find reservation" });
+
+                }
+                ReservationBO.Instance.Delete(int.Parse(Request.Form["reservationID"].ToString()));
+                return Json(new { code = 0, msg = "Delete reservation was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Share
+        [HttpGet]
+        public async Task<IActionResult> SearchShare(int reservationID)
+        {
+            try
+            {
+
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                if(reservation == null || reservation.ID == 0)
+                {
+                    return Json(new
+                    {
+                        code = 1,
+                        msg = "Can not find reservation"
+                    });
+                }
+                var dataRateDetail = _iShareService.ShareRateDetail(reservationID);
+                var dataRoomDetail = _iShareService.ShareRoomDetail(reservationID);
+                var dataReservationDetail = _iShareService.ShareReservationDetail(reservationID, reservation.ShareRoom);
+
+                var resultRateDetail = (from d in dataRateDetail.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                var resultRoomDetail = (from d in dataRoomDetail.AsEnumerable()
+                                        select d.Table.Columns.Cast<DataColumn>()
+                                            .ToDictionary(
+                                                col => col.ColumnName,
+                                                col => d[col.ColumnName]?.ToString()
+                                            )).ToList();
+                var resultReservationDetail = (from d in dataReservationDetail.AsEnumerable()
+                                        select d.Table.Columns.Cast<DataColumn>()
+                                            .ToDictionary(
+                                                col => col.ColumnName,
+                                                col => d[col.ColumnName]?.ToString()
+                                            )).ToList();
+                return Json(new
+                {
+                    code = 0,
+                    msg = "Succesfully",
+                    resultRateDetail = resultRateDetail,
+                    resultRoomDetail = resultRoomDetail,
+                    resultReservationDetail = resultReservationDetail
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
         }
         #endregion
     }
