@@ -3795,29 +3795,29 @@ namespace Report.Controllers
 
                 List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                 decimal occupancyPercent = 0;
-                foreach (var zone in listzo)
-                {
-                    string zoneCode = zone.Code;
+                //foreach (var zone in listzo)
+                //{
+                //    string zoneCode = zone.Code;
 
-                    // Gọi hàm với từng ZoneCode
-                    DataTable dataTable = _iReportService.RoomFacilityForecastData(businessDate, businessDate, zoneCode);
+                //    // Gọi hàm với từng ZoneCode
+                //    DataTable dataTable = _iReportService.RoomFacilityForecastData(businessDate, businessDate, zoneCode);
 
-                    string columnName = businessDate.ToString("yyyy/MM/dd");
+                //    string columnName = businessDate.ToString("yyyy/MM/dd");
 
-                    // Tìm dòng có StatisticName = 'Occupancy %'
-                    var occupancyRow = dataTable.AsEnumerable()
-                        .FirstOrDefault(row => row.Field<string>("StatisticName") == "Occupancy %");
+                //    // Tìm dòng có StatisticName = 'Occupancy %'
+                //    var occupancyRow = dataTable.AsEnumerable()
+                //        .FirstOrDefault(row => row.Field<string>("StatisticName") == "Occupancy %");
 
-                    if (occupancyRow != null && dataTable.Columns.Contains(columnName))
-                    {
-                        var valueObj = occupancyRow[columnName];
-                        if (valueObj != DBNull.Value)
-                        {
-                             occupancyPercent = Convert.ToDecimal(valueObj);
+                //    if (occupancyRow != null && dataTable.Columns.Contains(columnName))
+                //    {
+                //        var valueObj = occupancyRow[columnName];
+                //        if (valueObj != DBNull.Value)
+                //        {
+                //             occupancyPercent = Convert.ToDecimal(valueObj);
            
-                        }
-                    }
-                }
+                //        }
+                //    }
+                //}
                 string paraDate = $"[{businessDate.Day}{businessDate.Month}]";
                 string paraDateConvert = $"'Date1' = Convert(nvarchar,sum(isnull({paraDate},0)))";
 
@@ -3844,68 +3844,56 @@ namespace Report.Controllers
                     resvType = string.Join(",", new[] { first }.Concat(middle).Append(last));
                 }
 
-                DataTable roomavl = _iReportService.RoomAvailableNew(businessDate,paraDate, paraDateConvert, resvType, listzo[0].Code);
+               DataTable roomavl = _iReportService.RoomAvailableNew(businessDate,paraDate, paraDateConvert, resvType, listzo[0].Code);
 
-                //var chartStatus = new List<object>();
-
-                //for (int status = 1; status <= 7; status++)
-                //{
-                //    // Gọi chung 1 hàm cho tất cả status từ 1 đến 7
-                //    DataTable dt = _iReportService.ReservationSearchRSVDate(businessDate,status);
-                //    int total = dt.Rows.Count;
-
-                //    // Tên tương ứng từng status
-                //    string statusN = status switch
-                //    {
-                //        1 => "Guest in House",
-                //        2 => "Reservation",
-                //        3 => "Due in",
-                //        4 => "Checked in",
-                //        5 => "Due out",
-                //        6 => "Checked out",
-                //        7 => "Cancellation",
-                //        _ => "Unknown"
-                //    };
-
-                //    chartStatus.Add(new
-                //    {
-                //        status,
-                //        statusName = statusN,
-                //        total
-                //    });
-                //}
 
                 var chartStatus = new List<object>();
 
-                // Lấy danh sách mã roomtype từ DB
                 List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
                 var validRoomTypeCodes = new HashSet<string>(listrt.Select(rt => rt.Code));
 
+                int totalRoom = 0;
+                int avail = 0;
+                int oooInt = 0;
+                int totaldate1 = 0;
+                int booked = 0;
                 if (roomavl != null && roomavl.Rows.Count > 0)
                 {
+                    // Lọc các dòng có Roomtype hợp lệ
                     var groupedData = roomavl.AsEnumerable()
                         .Where(row => validRoomTypeCodes.Contains(row["Roomtype"]?.ToString()))
-                        .GroupBy(row => new
-                        {
-                            Date = row["Date1"]?.ToString(),
-                            StatusName = row["Roomtype"]?.ToString()
-                        })
-                        .Select(g => new
-                        {
-                            Date = g.Key.Date,
-                            StatusName = g.Key.StatusName,
-                            Total = g.Count()
-                        });
+                        .ToList();
 
-                    foreach (var item in groupedData)
+                    // Tính tổng TotalRooms
+                    totalRoom = groupedData
+                        .Sum(row => Convert.ToInt32(row["TotalRooms"]));
+
+                    // Lấy OOO từ dòng cuối, cột "Date1", ép sang int
+                    object OOO = roomavl.AsEnumerable().Last()["Date1"];
+                    if (OOO != null && int.TryParse(OOO.ToString(), out int parsedValue))
                     {
-                        chartStatus.Add(new
-                        {
-                            date = item.Total,
-                            statusName = item.StatusName,
-                            total = item.Date
-                        });
+                        oooInt = parsedValue;
                     }
+
+                    // Tính avail
+                    avail = totalRoom - oooInt;
+
+                    totaldate1 = groupedData
+                 .Sum(row => Convert.ToInt32(row["Date1"]));
+
+                    booked = avail - totaldate1;
+
+                    chartStatus.Add(new { Label = "OCC", Value = booked });
+                    chartStatus.Add(new { Label = "Available", Value = avail });
+                    chartStatus.Add(new { Label = "OOO", Value = oooInt });
+                    chartStatus.Add(new { Label = "OOS", Value = oooInt });
+                    chartStatus.Add(new { Label = "Total", Value = totalRoom });
+                }
+
+
+                if (totalRoom > 0)
+                {
+                    occupancyPercent = Math.Round((decimal)booked * 100 / totalRoom, 1);
                 }
 
 

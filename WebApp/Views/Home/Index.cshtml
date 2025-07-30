@@ -24,6 +24,13 @@
             </div>
         </div>
         <div class="card-box">
+            <div class="card-icon"><i class="fas fa-sign-out-alt"></i></div>
+            <div class="card-content">
+                <div class="card-title">Due out</div>
+                <div class="card-value" id="dueoutCount">0</div>
+            </div>
+        </div>
+        <div class="card-box">
             <div class="card-icon"><i class="fas fa-door-open"></i></div>
             <div class="card-content">
                 <div class="card-title">Checked out</div>
@@ -31,13 +38,7 @@
             </div>
         </div>
 
-        <div class="card-box">
-            <div class="card-icon"><i class="fas fa-sign-out-alt"></i></div>
-            <div class="card-content">
-                <div class="card-title">Due out</div>
-                <div class="card-value" id="dueoutCount">0</div>
-            </div>
-        </div>
+       
 
     </div>
 
@@ -285,94 +286,99 @@
 
     
     });
-       function renderHighchartBar(data) {
-        const categories = data.map(x => x.statusName);
-        const values = data.map(x => parseInt(x.total));
+      function renderHighchartBar(data) {
+    const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
 
-        Highcharts.chart('highchartBar', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: ''
-            },
-            xAxis: {
-                categories: categories,
-                title: {
-                    text: 'Status'
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Bookings'
-                }
-            },
-            tooltip: {
-                pointFormat: 'Total: <b>{point.y}</b>'
-            },
-            series: [{
-                name: 'Bookings',
-                data: values,
-                color: '#7cb5ec'
-            }]
-        });
-    }
+    const categories = filteredData.map(x => x.label);
+    const values = filteredData.map(x => parseInt(x.value));
+
+    Highcharts.chart('highchartBar', {
+        chart: {
+            type: 'column'
+        },
+        title: { text: '' },
+        xAxis: {
+            categories: categories,
+            title: { text: 'Room summary' }
+        },
+        yAxis: {
+            min: 0,
+            title: { text: 'Number of room' }
+        },
+        tooltip: {
+            pointFormat: 'Total: <b>{point.y}</b>'
+        },
+        series: [{
+            name: '',
+            data: values,
+            color: '#7cb5ec'
+        }],
+        credits: { enabled: false }
+    });
+}
+
 
      // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
-        function renderHighchartPie(data) {
-        // Tính tổng tất cả giá trị trong dữ liệu
-        const total = data.reduce((sum, x) => sum + parseInt(x.total), 0);
+function renderHighchartPie(data) {
+    // Tìm Total
+    const totalObj = data.find(x => x.label === 'Total');
+    const total = totalObj ? parseInt(totalObj.value) : 0;
 
-        // Chuyển đổi dữ liệu thành định dạng mà Highcharts cần
-        const chartData = data.map(x => {
-            const y = parseInt(x.total);
-            const percent = total > 0 ? ((y / total) * 100).toFixed(1) : 0;
+    // Bỏ Total, tính phần trăm từng mục
+    const chartData = data
+        .filter(x => x.label !== 'Total')
+        .map(x => {
+            const y = parseInt(x.value);
+            const percent = total > 0 ? ((y / total) * 100).toFixed(1) : '0.0';
             return {
-                name: `${x.statusName} (${percent}%)`,
+                name: `${x.label} (${percent}%)`,
                 y: y
             };
         });
 
-        Highcharts.chart('highchartPie', {
-            chart: {
-                type: 'pie'
-            },
-            title: {
-                text: ''
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.y}</b>'
-            },
-            accessibility: {
-                point: {
-                    valueSuffix: '%'
-                }
-            },
-            legend: {
-                enabled: true, // 🔰 bật legend
-                align: 'center',
-                verticalAlign: 'bottom',
-                layout: 'horizontal'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.name}: {point.y}'
-                    },
-                    showInLegend: true // 🔰 hiển thị dữ liệu trong legend
-                }
-            },
-            series: [{
-                name: 'Total',
-                colorByPoint: true,
-                data: chartData
-            }]
-        });
-    }
+    Highcharts.chart('highchartPie', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        legend: {
+            enabled: true,
+            align: 'center',
+            verticalAlign: 'bottom',
+            layout: 'horizontal'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y}'
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Total',
+            colorByPoint: true,
+            data: chartData
+        }],
+        credits: {
+            enabled: false
+        }
+    });
+}
+
 
 
     // Chart toggle logic

@@ -10,17 +10,95 @@
 
 
 <style>
+    #logGridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; /* màu xanh ng?c */
+        color: white !important; /* ch? tr?ng */
+    }
+
+        #logGridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGridContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 12px !important;
+        line-height: 24px !important;
+    }
+
+    #logGridContainer .dx-datagrid-headers {
+        background-color: #3b9ac6 !important; /* Màu xanh duong */
+        color: white !important; /* Ch? tr?ng cho d? d?c */
+    }
+
+        #logGridContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            font-size: 12px !important;
+            background-color: #3b9ac6 !important;
+            color: white !important;
+            font-weight: bold;
+            border-right: 1px solid #ddd !important;
+            text-align: center !important;
+        }
+
+        #logGridContainer .dx-datagrid-rowsview td,
+        #logGridContainer .dx-datagrid-headers td {
+            border-right: 1px solid #ddd !important;
+        }
+
+        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        #logGridContainer .dx-datagrid-rowsview tr td:last-child,
+        #logGridContainer .dx-datagrid-headers tr td:last-child {
+            border-right: none !important;
+        }
+
+    #logGridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #logGridContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGridContainer .dx-datagrid-filter-row td .dx-datebox {
+        height: 24px !important;
+        min-height: 24px !important;
+    }
+
+        #logGridContainer .dx-datagrid-filter-row td .dx-datebox input {
+            font-size: 12px !important;
+            height: 24px !important;
+        }
+
+    #logGridContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
+    #logGridContainer .dx-datagrid-filter-row td .dx-texteditor input {
+        height: 24px !important;
+        line-height: 24px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        box-sizing: border-box;
+    }
+
+    #logGridContainer .dx-datagrid-filter-row td .dx-datebox,
+    #logGridContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
+        height: 26px !important;
+        min-height: 26px !important;
+        font-size: 12px !important;
+    }
     .containerhs {
         display: flex;
         width: 100%;
-        max-width: 1500px;
+        max-width: 100%;
         margin: 0 auto;
         padding: 20px;
         gap: 20px;
+        justify-content: center;
     }
 
-    .column {
-        width: 50%;
+    .column-left {
+        width: 37%;
         padding: 0 15px;
         box-sizing: border-box;
         display: flex;
@@ -28,6 +106,14 @@
         gap: 20px;
     }
 
+    .column-right {
+        width: 40%;
+        padding: 0 15px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
     fieldset {
         border: 1px solid #e0e0e0;
         border-radius: 8px;
@@ -77,6 +163,8 @@
             box-sizing: border-box;
 
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            height: 30px;
+           text-align: right;
         }
 
             .form-row input:focus,
@@ -193,30 +281,68 @@
             width: 80px; /* khớp với input 3 cột */
             text-align: center;
         }
+
+    .popup-overlay {
+        display: none; /* Ẩn mặc định */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background-color: white;
+        width: auto;
+        max-width: fit-content;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        position: relative;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
 </style>
 
 
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="">
     <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-    <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-    <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+   
 </div>
 <div class="containerhs">
 
     <!-- LEFT COLUMN -->
-    <div class="column">
+    <div class="column-left">
         <!-- Room Summary -->
         <fieldset>
             <legend>Room Summary</legend>
 
             <div class="form-row">
                 <label for="totalRoom">Total Physical Room:</label>
-                <input type="text" id="totalRoom" readonly>
+                <input type="text" id="totalRoom"  readonly>
             </div>
             <div class="form-row">
                 <label for="outOfOrder">Out of Order:</label>
                 <input type="text" id="outOfOrder"  class="status-box pink" readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             </div>
             <div class="form-row">
                 <label for="roomToSell">Total Room to Sell:</label>
@@ -225,6 +351,7 @@
             <div class="form-row">
                 <label for="outOfService">Out of Service:</label>
                 <input type="text" id="outOfService"  class="status-box gray" readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             </div>
         </fieldset>
 
@@ -336,7 +463,7 @@
     </div>
 
     <!-- RIGHT COLUMN -->
-    <div class="column">
+    <div class="column-right">
 
         <!-- Activity -->
         <fieldset>
@@ -344,7 +471,7 @@
 
             <div class="form-row header-row" style="font-weight: bold;">
                 <label style="width: 150px;"></label>
-                <label style="width: 80px;">Rooms</label>
+                <label style="width: 80px;margin-right: 21px;">Rooms</label>
                 <label style="width: 80px;">Persons</label>
                 <label style="width: 80px;">VIP</label>
             </div>
@@ -352,54 +479,63 @@
             <div class="form-row triple-input">
                 <label for="stayover">Stayovers</label>
                 <input id="stayoverRoom" type="text" >
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="stayoverPerson" type="text" >
                 <input id="stayoverVip" type="text" >
             </div>
             <div class="form-row triple-input">
                 <label for="depExpected">Departures Expected</label>
                 <input id="depExpectedRoom" type="text"  readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="depExpectedPerson" type="text"  readonly>
                 <input id="depExpectedVip" type="text" readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="depActual">Departures Actual</label>
                 <input id="actualRoom" type="text"  readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="actualPerson" type="text"  readonly>
                 <input id="actualVip" type="text"  readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="arrExpected">Arrival Expected</label>
                 <input id="arrivalExpectedRoom" type="text"  readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="arrivalExpectedPerson" type="text"  readonly>
                 <input id="arrivalExpectedVip" type="text"  readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="arrActual">Arrival Actual</label>
                 <input id="arrivalActualRoom" type="text"  readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="arrivalActualPerson" type="text"  readonly>
                 <input id="arrivalActualVip" type="text" readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="extStay">Extended Stays</label>
                 <input id="extendedStaysRoom" type="text"  readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="extendedStaysPerson" type="text" readonly>
                 <input id="extendedStaysVip" type="text"  readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="earlyDep">Early Departures</label>
                 <input id="earlyDeparturesRoom" type="text" readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id ="earlyDeparturesPerson" type="text"  readonly>
                 <input id="earlyDeparturesVip" type="text"  readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="dayUse">Day Use Rooms</label>
                 <input id="dayUseRoom" type="text"  readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id ="dayUsePerson" type="text"  readonly>
                 <input id="dayUseVip" type="text"  readonly>
             </div>
             <div class="form-row triple-input">
                 <label for="walkIn">Walk In</label>
                 <input id="walkinRoom" type="text" readonly>
+                    <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="walkinPerson" type="text"  readonly>
                 <input id="walkinVip" type="text"  readonly>
             </div>
@@ -413,7 +549,7 @@
             <!-- Header Row -->
             <div class="form-row header-row">
                 <label></label>
-                <label>Vacant</label>
+                <label style="margin-right: 21px;">Vacant</label>
                 <label>Occupied</label>
                 <label>Total</label>
             </div>
@@ -423,7 +559,9 @@
             <div class="form-row triple-input" >
                 <label>Clean</label>
                 <input id="cleanVacant" type="text"  class=" green" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="cleanOccupied" type="text"  class=" green" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="cleanTotal" type="text"  readonly>
             </div>
 
@@ -431,7 +569,9 @@
             <div class="form-row  triple-input">
                 <label>Clean Non-Checked</label>
                 <input id="cleannonVacant" type="text"  readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="cleannonOccupied" type="text"  readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="cleannonTotal" type="text"  readonly>
             </div>
 
@@ -439,15 +579,18 @@
             <div class="form-row triple-input">
                 <label>Dirty</label>
                 <input id="dirtyVacant" type="text"  class=" red" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="dirtyOccupied" type="text"  class=" red" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="dirtyTotal" type="text"  readonly>
             </div>
 
             <!-- Row: Due Out -->
             <div class="form-row triple-input">
-                <label>Due Out</label>
+                <label style="margin-right: 24px;">Due Out</label>
                 <span></span> <!-- ô Vacant trống -->
                 <input id="doeoutOccupied" type="text" readonly> <!-- ô Occupied -->
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <span></span> <!-- ô Total trống -->
             </div>
             <!-- Row: Total -->
@@ -462,6 +605,7 @@
             <div class="form-row">
                 <label>Out of Order</label>
                 <input id="outoforderVacant" type="text"  class=" pink" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             
             </div>
 
@@ -469,17 +613,29 @@
             <div class="form-row">
                 <label>Out of Service</label>
                 <input id="outofserviveVacant" type="text"  class=" gray" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <input id="outofserviveOccupied" type="text"   class=" gray" readonly>
+                  <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             
             </div>
         </fieldset>
 
     </div>
 </div>
+<div id="popupLogGrid" style=" display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); width: fit-content; max-width: 90vw; max-height: 600px; overflow-y: auto; ">
 
-<div class="mui-card">
-    <div id="gridContainer" class="mt-2"></div>
+    <div class="d-flex justify-content-between mb-2">
+        <h5 class="mb-0">Detail House Status</h5>
+        <div class="d-flex justify-content-start mb-3 gap-2">
+            <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+            <button onclick="$('#popupLogGrid').hide()" class="btn btn-sm btn-danger" style="background-color: #3b9ac6; border-radius: 4px;">
+                <i class="fa-solid fa-xmark me-1"></i> Close
+            </button>
+        </div>
+    </div>
+    <div id="logGridContainer"></div>
 </div>
+
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
@@ -513,11 +669,386 @@
                         const day = String(date.getDate()).padStart(2, '0');
                         return `${year}-${month}-${day}`;
                     }
+                        $("#btnPrint").trigger("click");
                 };
 
 
 
+          $(document).off("click", ".ellipsis-icon").on("click", ".ellipsis-icon", function () {
+                     
+                        var inputId = $(this).closest(".form-row").find("input").attr("id"); // lấy id của input
 
+                        console.log("ID input:", inputId)
+                $.ajax({
+                        url: '/HouseKeeping/DataHSdetail',
+                    type: 'GET',
+                    data: {
+                        datebunisess: $("#datebunisess").val(),
+                        roomtype: $("#roomtype").val(),
+                        zone: $("#zone").val(),
+                                inputId:inputId,
+                    },
+                    headers: {
+                        "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                    },
+                    success: function (result) {
+                              if (Array.isArray(result)) {
+                                
+                                        initializeLogStatusGrid(result, inputId);
+                                                     $("#popupLogGrid").show();
+                                } else {
+                                    console.error("Dữ liệu trả về không hợp lệ:", result);
+                                    alert("Dữ liệu không đúng định dạng!");
+                                }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Lỗi khi tải dữ liệu chi tiết:", error);
+                    }
+                });
+            });
+
+
+                    function initializeLogStatusGrid(data, inputId) {
+        const columnWidth = 130;
+        let columns = [
+       
+        ];
+    if (inputId === "outOfService") {
+        columns.push(
+            { dataField: "roomName", caption: "Room Name", width: columnWidth },
+            { dataField: "roomType", caption: "Room Type", width: columnWidth },
+            {
+                dataField: "direction",
+                caption: "Direction",
+                width: columnWidth
+            }
+        );
+        } else if (inputId === "outOfOrder") {
+            columns.push(
+                { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                {
+                    dataField: "fromDate",
+                    caption: "From Date",
+                    width: columnWidth + 30,
+                    dataType: "date",
+                    format: "dd/MM/yyyy"
+                },
+                {
+                    dataField: "toDate",
+                    caption: "To Date",
+                    width: columnWidth + 30,
+                    dataType: "date",
+                    format: "dd/MM/yyyy"
+                }
+            );
+            } else if (inputId === "stayoverRoom") {
+                columns.push(
+                            { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                     { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                    { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                { dataField: "guest", caption: "Guest", width: columnWidth },
+                    {
+                            dataField: "arrivalDate",
+                            caption: "Arrival Date",
+                        width: columnWidth + 30,
+                        dataType: "date",
+                        format: "dd/MM/yyyy"
+                    },
+                    {
+                            dataField: "departureDate",
+                            caption: "Departure Date",
+                        width: columnWidth + 30,
+                        dataType: "date",
+                        format: "dd/MM/yyyy"
+                    }
+                    ); }
+                        else if (inputId === "depExpectedRoom") {
+                    columns.push(
+                                { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                         { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                        { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                    { dataField: "guest", caption: "Guest", width: columnWidth },
+                        {
+                                dataField: "arrivalDate",
+                                caption: "Arrival Date",
+                            width: columnWidth + 30,
+                            dataType: "date",
+                            format: "dd/MM/yyyy"
+                        },
+                        {
+                                dataField: "departureDate",
+                                caption: "Departure Date",
+                            width: columnWidth + 30,
+                            dataType: "date",
+                            format: "dd/MM/yyyy"
+                        }
+                    );
+            }
+                     else if (inputId === "actualRoom") {
+                        columns.push(
+                                    { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                             { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                            { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                        { dataField: "guest", caption: "Guest", width: columnWidth },
+                            {
+                                    dataField: "arrivalDate",
+                                    caption: "Arrival Date",
+                                width: columnWidth + 30,
+                                dataType: "date",
+                                format: "dd/MM/yyyy"
+                            },
+                            {
+                                    dataField: "departureDate",
+                                    caption: "Departure Date",
+                                width: columnWidth + 30,
+                                dataType: "date",
+                                format: "dd/MM/yyyy"
+                            }
+                            );}
+                                else if (inputId === "arrivalExpectedRoom") {
+                            columns.push(
+                                        { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                                 { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                            { dataField: "guest", caption: "Guest", width: columnWidth },
+                                                              { dataField: "adult", caption: "Adult", width: columnWidth },
+                                                        { dataField: "child", caption: "Child", width: columnWidth },
+                                {
+                                        dataField: "arrivalDate",
+                                        caption: "Arrival Date",
+                                    width: columnWidth + 30,
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy"
+                                },
+                                {
+                                        dataField: "departureDate",
+                                        caption: "Departure Date",
+                                    width: columnWidth + 30,
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy"
+                                }
+                                );}
+                                else if (inputId === "arrivalActualRoom") {
+                            columns.push(
+                                        { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                                    { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                            { dataField: "guest", caption: "Guest", width: columnWidth },
+                                                                { dataField: "adult", caption: "Adult", width: columnWidth },
+                                                        { dataField: "child", caption: "Child", width: columnWidth },
+                                                                        { dataField: "employeeCI", caption: "Employee CI", width: columnWidth },
+                                {
+                                        dataField: "arrivalDate",
+                                        caption: "Arrival Date",
+                                    width: columnWidth + 30,
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy"
+                                },
+                                {
+                                        dataField: "departureDate",
+                                        caption: "Departure Date",
+                                    width: columnWidth + 30,
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy"
+                                }
+                                    );} else if (inputId === "extendedStaysRoom") {
+                                columns.push(
+                                            { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                                        { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                    { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                                { dataField: "guest", caption: "Guest", width: columnWidth },
+                                                                    { dataField: "adult", caption: "Adult", width: columnWidth },
+                                                            { dataField: "child", caption: "Child", width: columnWidth },
+                                     
+                                    {
+                                            dataField: "arrivalDate",
+                                            caption: "Arrival Date",
+                                        width: columnWidth + 30,
+                                        dataType: "date",
+                                        format: "dd/MM/yyyy"
+                                    },
+                                    {
+                                            dataField: "departureDate",
+                                            caption: "Departure Date",
+                                        width: columnWidth + 30,
+                                        dataType: "date",
+                                        format: "dd/MM/yyyy"
+                                    }
+                                        );} 
+                                else if (inputId === "earlyDeparturesRoom") {
+                            columns.push(
+                                        { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                                    { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                       
+                                            { dataField: "guest", caption: "Guest", width: columnWidth },
+
+                                {
+                                        dataField: "arrivalDate",
+                                        caption: "Arrival Date",
+                                    width: columnWidth + 30,
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy"
+                                },
+                                {
+                                        dataField: "departureDate",
+                                        caption: "Departure Date",
+                                    width: columnWidth + 30,
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy"
+                                }
+                                    );}   else if (inputId === "dayUseRoom") {
+                                columns.push(
+                                            { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                                        { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                                                  { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                                { dataField: "guest", caption: "Guest", width: columnWidth },
+
+                                    {
+                                            dataField: "arrivalDate",
+                                            caption: "Arrival Date",
+                                        width: columnWidth + 30,
+                                        dataType: "date",
+                                        format: "dd/MM/yyyy"
+                                    },
+                                    {
+                                            dataField: "departureDate",
+                                            caption: "Departure Date",
+                                        width: columnWidth + 30,
+                                        dataType: "date",
+                                        format: "dd/MM/yyyy"
+                                    }
+                                        );} else if (inputId === "walkinRoom") {
+                                    columns.push(
+                                                { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                                            { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                                                      { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                                    { dataField: "guest", caption: "Guest", width: columnWidth },
+
+                                        {
+                                                dataField: "arrivalDate",
+                                                caption: "Arrival Date",
+                                            width: columnWidth + 30,
+                                            dataType: "date",
+                                            format: "dd/MM/yyyy"
+                                        },
+                                        {
+                                                dataField: "departureDate",
+                                                caption: "Departure Date",
+                                            width: columnWidth + 30,
+                                            dataType: "date",
+                                            format: "dd/MM/yyyy"
+                                        }
+                                    );}
+                                    else if (inputId === "cleanVacant") {
+                                columns.push(
+                                    { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                                    { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                { dataField: "zone", caption: "Zone", width: columnWidth },
+                                    );}
+                                        else if (inputId === "cleanOccupied") {
+                            columns.push(
+                                { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                                { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                            { dataField: "zone", caption: "Zone", width: columnWidth },
+                                );}
+                                        else if (inputId === "cleannonVacant") {
+                        columns.push(
+                            { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                            { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                        { dataField: "zone", caption: "Zone", width: columnWidth },
+                            );}
+                            else if (inputId === "cleannonOccupied") {
+                columns.push(
+                    { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                    { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                { dataField: "zone", caption: "Zone", width: columnWidth },
+                    );}
+                    else if (inputId === "doeoutOccupied") {
+                    columns.push(
+                                { dataField: "reservationNumber", caption: "Reservation Number", width: columnWidth },
+                                            { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                                                        { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                                    { dataField: "guest", caption: "Guest", width: columnWidth },
+
+                        {
+                                dataField: "arrivalDate",
+                                caption: "Arrival Date",
+                            width: columnWidth + 30,
+                            dataType: "date",
+                            format: "dd/MM/yyyy"
+                        },
+                        {
+                                dataField: "departureDate",
+                                caption: "Departure Date",
+                            width: columnWidth + 30,
+                            dataType: "date",
+                            format: "dd/MM/yyyy"
+                        }
+                    );}
+                                else if (inputId === "dirtyVacant") {
+                    columns.push(
+                        { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                        { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                    { dataField: "zone", caption: "Zone", width: columnWidth },
+                        );}
+                                else if (inputId === "dirtyOccupied") {
+                columns.push(
+                    { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                    { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                { dataField: "zone", caption: "Zone", width: columnWidth },
+                    );}
+                            else if (inputId === "outoforderVacant") {
+                    columns.push(
+                        { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                        { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                    { dataField: "zone", caption: "Zone", width: columnWidth },
+                            );}
+                                else if (inputId === "outofserviveVacant") {
+                        columns.push(
+                            { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                            { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                        { dataField: "zone", caption: "Zone", width: columnWidth },
+                            );}
+                                       else if (inputId === "outofserviveOccupied") {
+                            columns.push(
+                                { dataField: "roomName", caption: "Room Name", width: columnWidth },
+                                { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                            { dataField: "zone", caption: "Zone", width: columnWidth },
+                                );}
+            $("#logGridContainer").dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            showBorders: true,
+                     // width: "100%",
+                     //           height: 500,
+                    columns: columns,
+            paging: { pageSize: 25 },
+            scrolling: {
+                useNative: true,
+                showScrollbar: "always"
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.isTotal) {
+                    e.rowElement.css({
+                        "font-weight": "bold",
+                        "background-color": "#f6f6f6"
+                    });
+                }
+            }
+        });
+    }
 
 
          $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
@@ -666,8 +1197,9 @@ $('#roomAVG').val(formattedAmount);
                 let occhkD = parseInt(result.hkDirty[0].occ) || 0;
                 $('#dirtyTotal').val(vacanthkD + occhkD);
 
-                  
-          $('#doeoutOccupied').val(result.roomzone.length);
+
+               $('#doeoutOccupied').val(result.roomzone ? result.roomzone.length : 0);
+
 
                 //  let vacantIns = parseInt(result.hkInspected[0].vacant) || 0;
                 //  let occIns = parseInt(result.hkInspected[0].occ) || 0;
@@ -690,6 +1222,64 @@ $('#roomAVG').val(formattedAmount);
                 }
             });
         });
-      
+           $("#btnExportExcel").click(function () {
+                       const grid = $("#logGridContainer").dxDataGrid("instance");
+                var selectedReport = 'Detail House Status';
+            if (!selectedReport) {
+                alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+                return;
+            }
+
+                         const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const worksheet = workbook.addWorksheet("Sheet 1");
+
+            // === Tạo header công ty (dòng 1) ===
+           worksheet.addRow([companyName]);
+            worksheet.mergeCells('A1:E1');
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+            // === Dòng 2: Thời gian xuất (phải) ===
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+            worksheet.mergeCells('E2:H2');
+            worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+            // === Dòng 3–4: Trống
+            worksheet.addRow([]);
+            worksheet.addRow([]);
+
+            // === Dòng 5: Tên báo cáo ở giữa ===
+            const reportRow = worksheet.addRow(['', '', selectedReport]);
+            worksheet.mergeCells('C5:F5');
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+            // === Dòng 6: Trống trước khi xuất dữ liệu
+            worksheet.addRow([]);
+
+            // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+            }).then(function () {
+                // Footer
+                const lastRow = worksheet.lastRow.number + 2;
+
+                worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+                // Ghi file
+                let fileName = selectedReport + ".xlsx";
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+                });
+            });
+        });
+
   
 </script>

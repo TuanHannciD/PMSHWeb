@@ -49,5 +49,26 @@ namespace HouseKeeping.Services.Interfaces
         DataTable StatusActivityDayUseRoomVIP(DateTime datebunisess, string roomtype, string zone);
         DataTable StatusActivityWakeInRoomVIP(DateTime datebunisess, string roomtype, string zone);
         DataTable StatusActivityWalkInRoom(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusSummaryOutOfOrderDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusSummaryOutOfServiceDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityStayOverDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityDepartureExpectedDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityDepartureActualDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityArrivalExpectedDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityArrivalActualDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityExtendedStayDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityEarlyDepartureDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityDayUseRoomDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusActivityWalkInRoomDetail(DateTime datebunisess, string roomtype, string zone);
+        DataTable StatusHKVacantCleanDetail(string roomtype, string zone);
+        DataTable StatusHKInspectedOCCDetail(string roomtype, string zone);
+        DataTable StatusHKVCNDetail(string roomtype, string zone);
+        DataTable StatusHKCleanOCCDetail(string roomtype, string zone);
+        DataTable StatusActivityDueOutDetail(string roomtype, string zone);
+        DataTable StatusHKVacantDirtyDetail(string roomtype, string zone);
+        DataTable StatusHKDirtyOCCDetail(string roomtype, string zone);
+        DataTable StatusHKOutOfOrderVacantDetail(string roomtype, string zone);
+        DataTable StatusHKOutOfServiceVacantDetail(string roomtype, string zone);
+        DataTable StatusHKOutOfServiceOCCDetail(string roomtype, string zone);
     }
 }
