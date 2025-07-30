@@ -16,5 +16,11 @@ namespace Reservation.Services.Interfaces
         /// <param name="confirmationNo">confirmation No</param>
         /// <returns>Data table chứa danh sách reouting theo reservation id</returns>
         DataTable SearchRouting(string reservationID, string confirmationNo);
+
+
+        DataTable SearchAllForTrans(string sqlCommand);
+
+
+
     }
 }

@@ -41,43 +41,47 @@
                 <div class="mt-2 row bg-light border rounded" style="margin:0 1px">
                     <div class="row">
                         <div class="radio-group col-md-4">
-                            <input type="radio" id="everyday" name="typeRouting" checked value="0">
-                            <label for="everyday" style="text-align:left">Master Folio</label>
+                            <input type="radio" id="everydayTypeRouting" name="typeRouting" checked value="0">
+                            <label for="everydayTypeRouting" style="text-align:left">Master Folio</label>
                         </div>
                         <div class="radio-group col-md-4 ">
-                            <input type="radio" id="date" name="typeRouting" style="flex:0" value="1">
-                            <label for="everyday" style="text-align:left">Window</label>
+                            <input type="radio" id="dateTypeRouting" name="typeRouting" style="flex:0" value="1">
+                            <label for="dateTypeRouting" style="text-align:left">Window</label>
                         </div>
                         <div class="radio-group col-md-4 ">
-                            <input type="radio" id="day" name="typeRouting" style="flex:0" value="2">
-                            <label for="everyday" style="text-align:left">Room</label>
+                            <input type="radio" id="dayTypeRouting" name="typeRouting" style="flex:0" value="2">
+                            <label for="dayTypeRouting" style="text-align:left">Room</label>
                         </div>
                     </div>
                     <div class="mui-divider"></div>
                     <div class="row">
                         <div class="col-md-6 row">
                             <div class="radio-group col-md-12">
-                                <input type="radio" id="everyday" name="dayRouting" checked value="1">
-                                <label for="everyday" style="text-align:left">Entire Stay</label>
+                                <input type="radio" id="entireStay" name="dayRouting" checked value="1">
+                                <label for="entireStay" style="text-align:left">Entire Stay</label>
                             </div>
                             <div class="radio-group col-md-12 ">
-                                <input type="radio" id="date" name="dayRouting" style="flex:0" value="0">
-                                <label for="everyday" style="text-align:left">OtherDate</label>
+                                <input type="radio" id="otherDate" name="dayRouting" style="flex:0" value="0">
+                                <label for="otherDate" style="text-align:left">Other Date</label>
                             </div>
                         </div>
                         <div class="col-md-6 row">
                             <div class="mb-2">
-                                <label for="everyday" class="col-md-2" style="text-align:left;min-width:0">BeginDate</label>
+                                <label class="col-md-2" style="text-align:left;min-width:0">BeginDate</label>
                                 <input type="date" class="form-control col-md-10" id="beginDateRouting">
                             </div>
                             <div class="mb-2">
-                                <label for="everyday" class="col-md-2" style="text-align:left;min-width:0">EndDate</label>
+                                <label  class="col-md-2" style="text-align:left;min-width:0">EndDate</label>
                                 <input type="date" class="form-control col-md-10" id="endDateRouting">
                             </div>
                         </div>
                     </div>
                     <div class="mui-divider"></div>
                     <div class="row">
+                        <div class="col-md-12 mb-2 row">
+                            <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Room</label>
+                            <select type="text" class="form-control col-md-10" id="roomRouting" disabled></select>
+                        </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Transaction</label>
                             <select type="text" class="form-control col-md-10" id="transactionRouting" asp-items="ViewBag.cboTransaction" ></select>
@@ -97,7 +101,7 @@
                         <div class="col-md-6 mb-2 row">
                             <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Window</label>
                             <select type="text" class="form-control col-md-8" id="windowRouting">
-                                <option value="1">--Master Folio--</option>
+                                <option value="1" selected>--Master Folio--</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
                                 <option value="4">4</option>
@@ -129,8 +133,25 @@
     function closeModalRouting(){
         $('#modalRouting').modal('hide');
     }
-    function openModalNewRouting(){
+    function openModalNewRouting() {
+        searchReservationMaster();
         clearFormAddRouting();
+
+        if (reservationMaster == 0) {
+            console.log('a');
+            $('#windowRouting').prop('disabled', true);
+            $('#everydayTypeRouting').prop('disabled', true);
+
+            $('#everydayTypeRouting').prop('checked', false);
+            $('#dateTypeRouting').prop('checked', true); 
+        } else {
+            console.log('b');
+            $('#windowRouting').prop('disabled', false);
+            $('#everydayTypeRouting').prop('disabled', true);
+
+            $('#everydayTypeRouting').prop('checked', true); 
+        }
+
         $('#modalNewRouting').modal('show');
     }
     function closeModalNewRouting(){
@@ -203,11 +224,11 @@
         formData.append('rsvID', idReservation);
         formData.append('transactionRouting',  $('input[name="typeRouting"]:checked').val());
         formData.append('toFolioNo', $('#windowRouting').val());
-        // formData.append('toRoom', $('#ruleDepositRequest').val());
+        formData.append('toRoom', $('#roomRouting').val());
         formData.append('transactionCodes',  $('#transactionRouting').val());
         formData.append('fromDate', $('#beginDateRouting').val());
         formData.append('toDate', $('#endDateRouting').val());
-                formData.append('limit', $('#limitRouting').val());
+        formData.append('limit', $('#limitRouting').val());
 
         formData.append('entireDate', $('input[name="typeRouting"]:checked').val());
         formData.append('userID',userID);
@@ -235,12 +256,71 @@
 
     }
     function clearFormAddRouting(){
-        $('#windowRouting').val(0);
+        $('#nameRouting').val(lastname);
+        $('#windowRouting').val(1);
         $('#transactionRouting').val(0);
          $('#limit').val('0');
-         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
+        const parsedDate = moment(arivalDate, ['DD/MM/YYYY', 'MM/DD/YYYY']); // Hỗ trợ cả hai định dạng
+        const formattedDate = parsedDate.format('YYYY-MM-DD'); // Chuyển thành yyyy-mm-d        
         $('#beginDateRouting').val(formattedDate);
-          let formattedDate2 = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
+        const parsedDate2 = moment(departureDate, ['DD/MM/YYYY', 'MM/DD/YYYY']); // Hỗ trợ cả hai định dạng
+        const formattedDate2 = parsedDate2.format('YYYY-MM-DD'); // Chuyển thành yyyy-mm-d
         $('#endDateRouting').val(formattedDate2);
+    }
+    function searchRoomRouting(){
+        $.ajax({
+            url: '/Reservation/SearchRoomRouting',
+            type: 'get',
+            dataType: 'json',
+
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log(result);
+                $('#roomRouting').empty();
+                var html = `<option value="0"></option>`;
+                if(result.length > 0){
+                    for(var i = 0;i<result.length;i++){
+                        html += `<option value="${result[i].id}">${result[i].lastName}</option>`
+                    }
+                }
+                $('#roomRouting').append(html);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    $('input[name="typeRouting"]').on('change', function() {
+        let selectedValue = $('input[name="typeRouting"]:checked').val();
+        if(selectedValue == 2){
+            $('#roomRouting').prop('disabled', false);
+            $('#amountDepositRequest').prop('disabled', false);
+            $('#amountDepositRequest').prop('disabled', false);
+            searchRoomRouting();
+        }
+    });
+    var reservationMaster = 0;
+    function searchReservationMaster(){
+        $.ajax({
+            url: '/Reservation/SearchReservationMaster',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                reservationID : idReservation
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                reservationMaster= result;
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
     }
 </script>
