@@ -315,6 +315,7 @@
 .listFunction {
     display: flex;
     column-gap: 4px;
+    padding:0;
 }
 .listFunction div {
     padding: 4px;
@@ -419,8 +420,8 @@
 .rs-header {
     display: flex;
     align-items: center;
-    padding: 6px 0px;
-    justify-content: space-between;
+/*    padding: 6px 0px;
+*/    justify-content: space-between;
 }
 
 .rs-toggle-btn {
@@ -460,7 +461,7 @@
     gap: 60px;
     padding: 10px;
     background: #fff;
-    width: 100%;
+    width: 99%;
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
 
@@ -494,7 +495,12 @@ ul.rs-menu-list {
         margin-bottom: 6px;
         white-space: nowrap;
     }
-
+        ul.rs-menu-list li a {
+            text-decoration: none;
+        }
+        ul.rs-menu-list li a:hover {
+            cursor:pointer
+        }
         ul.rs-menu-list li:last-child {
             border-right: none;
         }
