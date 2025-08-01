@@ -1,0 +1,297 @@
+﻿
+<div id="confirmBoxRoomAssignment" class="confirm-overlay">
+    <div class="confirm-box">
+        <h2>Confirmation Action</h2>
+        <p id="titleSplitReservation">Are you sure you want to Unassign this room?</p>
+        <div class="confirm-buttons">
+            <button class="mui-button mui-button-search" onclick="UnAssignRoom()">OK</button>
+            <button class="mui-button mui-button-clear" onclick="closeConfirmRoomUnAssign()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal search room assignment-->
+<div class="modal fade modal-xl" id="modalRoomAssignment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Available Room Search</h5>
+                <button type="button" class="btn-close" onclick="closeRoomAssignment();"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-search" onclick="getAllRoomsAssignment();"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="row mui-card mb-2">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="input1" class="form-label">RoomType</label>
+                            <select type="text" class="form-control" id="roomTypeSearchAssignment" asp-items="ViewBag.cboRoomType">
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input2" class="form-label">Smoking</label>
+                            <select type="text" class="form-control" id="smokingSearchAssignment">
+                                <option value="2">---Select all ---</option>
+                                <option value="1">Smoking</option>
+                                <option value="0">No Smoking</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input3" class="form-label">RoomNo</label>
+                            <input type="text" class="form-control" id="roomNoSearchAssignment" />
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input4" class="form-label">Floor</label>
+                            <input type="text" class="form-control" id="floorSearchAssignment">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input5" class="form-label">From</label>
+                            <input type="date" class="form-control" id="fromSearchAssignment">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="input6" class="form-label">To</label>
+                            <input type="date" class="form-control" id="toSearchAssignment">
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex">
+                        <label>FO Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="foStatusAssignment" checked value="0">
+                            <label class="form-check-label" >Vacant</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="foStatusAssignment" value="1" disabled>
+                            <label class="form-check-label" >Occupied</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex">
+                        <label>HK Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatusAssignment" value="1">
+                            <label class="form-check-label">Clean Non-checked Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatusAssignment" value="2">
+                            <label class="form-check-label" >Dirty Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatusAssignment" value="4">
+                            <label class="form-check-label">Clean Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatusAssignment" value="5">
+                            <label class="form-check-label" >OOC Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkStatusAssignment" value="6">
+                            <label class="form-check-label">OOS Rooms</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hkDummyAssignment">
+                            <label class="form-check-label">Pseudo (Dummy) Roóm</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingSpinnerRoomAssignment" style="display: none; text-align: center; padding: 20px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="mui-card">
+                    <div id="gridContainerSearchRoomAssignment" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function openConfirmRoomUnAssign() {
+        if(idReservation == 0){
+            showToast('Error', 'Please choose booking', false);
+            return;
+        }
+       document.getElementById("confirmBoxRoomAssignment").style.display = "flex";
+    }
+    function closeConfirmRoomUnAssign() {
+
+       document.getElementById("confirmBoxRoomAssignment").style.display = "none";
+    }
+    function openRoomAssignment(){
+        if (idReservation === 0) {
+            showToast('Error', 'Please choose booking', false);
+            return;
+        }
+
+
+        let parts = arivalDate.split(' ')[0].split('/'); 
+        let formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+
+        $('#fromSearchAssignment').val(formattedDate);
+
+        let parts2 = departureDate.split(' ')[0].split('/');
+        let formattedDate2 = `${parts2[2]}-${parts2[1]}-${parts2[0]}`;
+        $('#toSearchAssignment').val(formattedDate2);
+
+        $('#roomTypeSearchAssignment option').each(function () {
+            if ($(this).text().trim() === roomType) {
+                $('#roomTypeSearchAssignment').val($(this).val()).trigger('change');
+                return false; 
+            }
+        });        
+        getAllRoomsAssignment();
+        $('#modalRoomAssignment').modal('show');
+    }
+    function closeRoomAssignment(){
+        $('#modalRoomAssignment').modal('hide');
+    }
+    function getAllRoomsAssignment() {
+        $("#loadingSpinnerRoomAssignment").show();
+        const selectedHKStatus = getSelectedCheckboxes('hkStatusAssignment');
+        const selectedFOStatus = getSelectedRadio('foStatusAssignment');
+        var check =  $('#hkDummyAssignment').is(':checked') ? 1 : 0;
+        $.ajax({
+            url: '/Reservation/GetAllRooms',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                fromDate : $('#fromSearchAssignment').val(),
+                toDate: $('#toSearchAssignment').val(),
+                floor: $('#floorSearchAssignment').val(),
+                roomTypeID: $('#roomTypeSearchAssignment').val(),
+                smoking: $('#smokingSearchAssignment').val(),
+                foStatus:selectedFOStatus,
+                hkStatus: selectedHKStatus,
+                isDummy:check,
+                roomNo:$('#roomNoSearchAssignment').val()
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearchRoomAssignment(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            },
+            complete: function () {
+                $("#loadingSpinnerRoomAssignment").hide();
+            }
+        });
+    }
+    function initializeDataGridSearchRoomAssignment(data) {
+        var columnWidth = 150;
+
+        $("#gridContainerSearchRoomAssignment").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+
+
+                { dataField: "roomID", caption: "Room ID", width: columnWidth - 80, visible: false},
+                { dataField: "roomNo", caption: "Ro.No", width: columnWidth - 80 },
+                { dataField: "roomType", caption: "Room Type", width: columnWidth * 2 },
+                { dataField: "hkStatus", caption: "HK Status", width: columnWidth },
+                { dataField: "fo", caption: "FO", width: columnWidth },
+                { dataField: "floor", caption: "Floor", width: columnWidth },
+                { dataField: "guestCheckOut", caption: "Back-to-Back", width: columnWidth },
+                { dataField: "connecting", caption: "Connecting", width: columnWidth },
+                { dataField: "balcony", caption: "Balcony", width: columnWidth },
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single" // Allows only one row to be selected at a time
+            },
+            onRowDblClick: function(e) {
+                AssignRoom(e.data.roomID,e.data.roomNo);
+            }
+        });
+    }
+    function AssignRoom(roomID,roomNo) {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+
+        formData.append('rsvID', idReservation);
+        formData.append('roomID',roomID);
+        formData.append('roomNo', roomNo);
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+
+        $.ajax({
+            url: '/Reservation/AssignRoom',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    closeRoomAssignment();
+                    searchReservation();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+    function UnAssignRoom() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+
+        formData.append('rsvID', idReservation);
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+
+        $.ajax({
+            url: '/Reservation/UnAssignRoom',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    closeConfirmRoomUnAssign();
+                    closeRoomAssignment();
+                    searchReservation();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+</script>

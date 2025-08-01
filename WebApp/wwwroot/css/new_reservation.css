@@ -527,3 +527,34 @@ a {
 .rs-hidden {
     display: none;
 }
+.dropdown-toggle {
+    position: relative;
+}
+
+    .dropdown-toggle .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 999;
+        background: #fff;
+        border: 1px solid #ccc;
+        min-width: 140px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 6px 0;
+    }
+
+        .dropdown-toggle .dropdown-menu li {
+            border-right: none;
+            padding: 6px 16px;
+            white-space: nowrap;
+        }
+
+    .dropdown-toggle:hover .dropdown-menu {
+        display: block;
+    }
+
+.dropdown-menu li a:hover {
+    text-decoration: underline;
+    color: #007399;
+}
