@@ -48,7 +48,7 @@
                         <div class="radio-group col-md-2 row">
                             <input type="radio" id="date" name="optionFixedCharge" class="col-md-1" style="flex:0" value="2">
                             <label for="date" style="text-align:left;min-width:0px" class="col-md-3">Date</label>
-                            <input type="date" id="dateInput" value="30/08/24" class="col-md-7" disabled>
+                            <input type="date" id="dateInput"  class="col-md-7" disabled>
                         </div>
                         <div class="radio-group col-md-2 row">
                             <input type="radio" id="day" name="optionFixedCharge" class="col-md-1" style="flex:0" value="3">
@@ -121,6 +121,7 @@
             showToast('Error', 'Please choose booking', false);
             return;
         }
+
         GetFixedChargesByReservationID(idReservation);
         $('#modalFixedCharges').modal('show');
     }
@@ -129,6 +130,10 @@
     }
 
     function openNewFixedCharges(){
+        $('#arrivalProfileFixedCharge').val(arivalDate.split(' ')[0]);
+        $('#departureFixedCharge').val(departureDate.split(' ')[0]);
+        $('#nameProfileFixedcharge').val(lastname);
+        $('#nightFixedCharge').val(night);
         document.getElementById('filterFixedChargeWrapper').style.display = 'block';
 
     }

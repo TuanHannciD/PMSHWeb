@@ -61,6 +61,7 @@ builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<IGroupReservationService, GroupReservationService>();
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddSingleton<IShareService, ShareService>();
+builder.Services.AddSingleton<IGroupAdminService, GroupAdminService>();
 
 
 builder.Services.AddAuthentication(options =>

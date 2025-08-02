@@ -1,16 +1,22 @@
-﻿<script>
+﻿<div>
+
+</div>
+<script>
     function checkIn(){
         if(idReservation == 0){
             showToast('Error', 'Please choose booking', false);
             return;
         }
-        checkInBooking();
+        checkInBooking(roomStatus,roomNo,status);
     }
     function checkInBooking(roomStatus, roomNo, status){
         if(roomNo == ''){
             showToast('ERROR', 'Booking has not room No', false);
             return;
         }
+        if (status != 'RESVED' && status != 'DUE IN' ) {
+            return;
+        } 
         if(roomStatus != 'VD'){
             showToast('ERROR', 'Room Status not in VD status', false);
             return;
@@ -34,7 +40,6 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
-                    closeModalCancel();
                     showToast('Success', data.msg, true);
                     searchReservation();
                 } else {

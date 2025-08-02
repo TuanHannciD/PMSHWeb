@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PMSH</title>
+    <title>oneS-PMSh.Report</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="~/css/button.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/images/logo.png" />
     <link href="~/css/input.css" rel="stylesheet" />
     <link href="~/css/card.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
@@ -170,11 +171,25 @@
             width: 100vw;
         }
 
-
+        html, body {
+            margin: 0; /* Loại bỏ margin mặc định */
+            padding: 0; /* Loại bỏ padding mặc định */
+            height: 100%; /* Đảm bảo body chiếm toàn bộ chiều cao */
+            overflow: auto; /* Cho phép cuộn */
+        }
+            /* Ẩn thanh cuộn trên Chrome, Edge, Safari */
+            html::-webkit-scrollbar, body::-webkit-scrollbar {
+                display: none;
+            }
+        /* Ẩn thanh cuộn trên Firefox */
+        html, body {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer/Edge */
+        }
 
     </style>
 </head>
-<body>
+<body >
     <header>
         <div class="banner">
             <img src="~/images/banner.jpg" alt="Banner Image" class="img-fluid">
@@ -205,6 +220,7 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="GroupAdmin">Group Admin</a></li>
 
                             </ul>
                         </li>
@@ -342,7 +358,7 @@
     </header>
 
     <div>
-        <main role="main" style="background-color:#f5f5f5">
+        <main role="main" style="background-color:#f5f5f5;overflow:hidden">
             @RenderBody()
         </main>
     </div>
