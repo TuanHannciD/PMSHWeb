@@ -38,9 +38,8 @@
                         <li><a  class="rs-bold" onclick="openConfirmReinstate();">Reinstate</a></li>
                         <li><a  class="rs-bold" onclick="openModalRegistrationCard();">Reg.Card</a></li>
                         <li><a  class="rs-bold" onclick="checkIn();">Check In</a></li>
-                        <li><a  class="rs-bold">Profile</a></li>
-                        <li><a class="rs-bold">Group Admin</a></li>
-                        <li><a  class="rs-bold">Room Assigment</a></li>
+                        <li><a  class="rs-bold" onclick="openModalViewProfile();">View Profile</a></li>
+                        <li><a class="rs-bold" id="groupAdmin">Group Admin</a></li>
                         <li><a  class="rs-bold">Export</a></li>
                         <li><a  class="rs-bold" onclick="openModalSplit();">Split</a></li>
                         <li class="dropdown-toggle">
@@ -1257,6 +1256,7 @@
 @await Html.PartialAsync("Options/Reinstate")
 @await Html.PartialAsync("Options/Split")
 @await Html.PartialAsync("Options/RoomAssignment")
+@await Html.PartialAsync("Options/ViewProfile")
 
 <script>
     $(document).ready(async function () {
@@ -1975,7 +1975,7 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                $('#txtID').val(result.id);
+                // $('#txtID').val(result.id);
                 $('#nameProfileSearch').val(result.account);
                 $('#firstNameProfileSearch').val(result.firstname);
                 $('#cityProfileSearch').val(result.city);
@@ -3299,4 +3299,22 @@
 
         });
     }
+
+
+    document.getElementById("groupAdmin").addEventListener("click", async function () {
+
+
+                const response = await fetch('/Reservation/SetDataGroupAdmin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(listReservationByConfirmationNo)
+        });
+
+        const result = await response.json();
+        if (result.redirectUrl) {
+            window.location.href = result.redirectUrl;
+        }
+    });
 </script>

@@ -1,0 +1,603 @@
+﻿
+<!-- Modal group check in-->
+
+<div class="modal fade modal-xl" id="modalViewProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">View Profile</h5>
+                <button type="button" class="btn-close" onclick="closeModalViewProfile();"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs for Stats Info and Contact -->
+                <div class="d-flex mb-3">
+                    <div class="tab-item me-2">Stats Info</div>
+                    <div class="tab-item">Contact</div>
+                </div>
+
+                <!-- Profile Individual -->
+                <div class="main-infor row g-3" id="profile_individual">
+                    <!-- Left Column: Address Information -->
+                    <div class="col-md-6">
+                        <div class="section-box position-relative">
+                            <div class="section-title">Address Information</div>
+                            <div class="row g-3 mt-3">
+                                <!-- Image Section -->
+                                <div class="col-md-4" id="image_wrapper">
+                                    <div class="fw-bold">Image</div>
+                                    <div class="image-placeholder mt-2"></div>
+                                </div>
+                                <!-- Form Fields -->
+                                <div class="col-md-8">
+                                    <div class="form-group row g-2">
+                                        <label class="col-sm-4 col-form-label text-end fw-bold">Code</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtCodeIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end fw-bold">Full Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtFullNameIndividual">
+                                            <div id="errorMessage" class="text-danger mt-1 d-none">
+                                                <strong>Typing format is not correct. Please type as: FirstName Middle, LastName</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">First/Last Name</label>
+                                        <div class="col-sm-8 d-flex gap-2">
+                                            <input type="text" class="form-control" id="txtFirstNameIndividual">
+                                            <input type="text" class="form-control" id="txtLastNameIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Middle Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtMiddleNameIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Language/Title</label>
+                                        <div class="col-sm-8 d-flex gap-2">
+                                            <input type="text" class="form-control" id="txtLanguageIndividual">
+                                            <input type="text" class="form-control" id="txtTitleIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Nationality/Country</label>
+                                        <div class="col-sm-8 d-flex gap-2">
+                                            <input type="text" class="form-control" id="txtNationalityIndividual">
+                                            <input type="text" class="form-control" id="txtCountryIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">City</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtCityIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Postal/State</label>
+                                        <div class="col-sm-8 d-flex gap-2">
+                                            <input type="text" class="form-control" id="txtPostalIndividual">
+                                            <input type="text" class="form-control" id="txtStateIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Religion/Nation</label>
+                                        <div class="col-sm-8 d-flex gap-2">
+                                            <input type="text" class="form-control" id="txtReligionIndividual">
+                                            <input type="text" class="form-control" id="txtNationIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Purpose of Stay</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtPurposeIndividual">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label class="fw-bold">Address</label>
+                                <textarea id="txtAddressIndividual" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Internal Information, Tax, Communications, etc. -->
+                    <div class="col-md-6">
+                        <div class="row g-3">
+                            <!-- Internal Information -->
+                            <div class="col-md-6">
+                                <div class="section-box position-relative">
+                                    <div class="section-title">Internal Information</div>
+                                    <div class="form-group row g-2 mt-3">
+                                        <label class="col-sm-4 col-form-label text-end">Salutation</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtSalutationIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">VIP</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtVIPIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">VIP Reason</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtReasonIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Pref Room</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtPrefRoomIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Other</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtOtherIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Passport</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtPassportIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Identity Card</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtCardIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Date of Birth</label>
+                                        <div class="col-sm-6">
+                                            <input type="date" class="form-control" id="txtDobIndividual" disabled>
+                                        </div>
+                                        <div class="col-sm-2 d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input" id="txtCheckboxDobIndividual" checked>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <div class="col-sm-6">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="txtActiveIndividual" checked>
+                                                <label class="form-check-label">Active</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="txtContactIndividual">
+                                                <label class="form-check-label">Contact</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Keyword</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtKeywordIndividual">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tax and Communications -->
+                            <div class="col-md-6">
+                                <!-- Tax -->
+                                <div class="section-box position-relative">
+                                    <div class="section-title">Tax</div>
+                                    <div class="form-group row g-2 mt-3">
+                                        <label class="col-sm-4 col-form-label text-end">Company</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtCompanyIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Tax Code</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtTaxIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Bus. Address</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtBusAddressIndividual">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Communications -->
+                                <div class="section-box position-relative mt-3">
+                                    <div class="section-title">Communications</div>
+                                    <div class="form-group row g-2 mt-3">
+                                        <label class="col-sm-4 col-form-label text-end">Telephone</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtTelephoneIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Hand Phone</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtHandPhoneIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Fax</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtFaxIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Email</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtEmailIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Website</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtWebsiteIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Company</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtCompany2Individual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2 mt-2">
+                                        <label class="col-sm-4 col-form-label text-end">Business Title</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtBusinessTitleIndividual">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Blacklist and Notes -->
+                            <div class="col-md-12">
+                                <div class="row g-2 mt-3">
+                                    <label class="col-sm-2 col-form-label text-end text-danger">Blacklist</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="blackListIndividual">
+                                    </div>
+                                    <div class="col-sm-2 d-flex align-items-center">
+                                        <input type="checkbox" class="form-check-input" id="txtBlackListIndividual">
+                                    </div>
+                                </div>
+                                <div class="row g-2 mt-3">
+                                    <label class="col-sm-2 col-form-label text-end text-danger">Notes</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" rows="4" id="txtNoteIndividual"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Attributes and History -->
+                            <div class="col-md-12 row g-3">
+                                <div class="col-md-6">
+                                    <div class="section-box position-relative">
+                                        <div class="section-title">Attributes</div>
+                                        <div class="form-group row g-2 mt-3">
+                                            <label class="col-sm-4 col-form-label text-end">Rate Code</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row g-2 mt-2">
+                                            <label class="col-sm-4 col-form-label text-end">A/R No</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row g-2 mt-2">
+                                            <label class="col-sm-4 col-form-label text-end">Member No</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="section-box position-relative">
+                                        <div class="section-title">History Information</div>
+                                        <div class="row g-2 mt-3">
+                                            <label class="col-sm-4 col-form-label text-end">Last Room</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">On</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row g-2 mt-2">
+                                            <label class="col-sm-4 col-form-label text-end">Last Rate</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row g-2 mt-2">
+                                            <label class="col-sm-4 col-form-label text-end">Stay</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* General Reset */
+    .modal-content {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* Tabs Styling */
+    .tab-item {
+        padding: 8px 16px;
+        background-color: #ececec;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .tab-item:hover {
+            background-color: #dcdcdc;
+        }
+
+    /* Section Box */
+    .section-box {
+        padding: 16px;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    /* Section Title */
+    .section-title {
+        position: absolute;
+        top: -12px;
+        left: 12px;
+        background-color: #fff;
+        padding: 0 8px;
+        color: #9F0010;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    /* Image Placeholder */
+    .image-placeholder {
+        height: 200px;
+        background-color: #ececec;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-control {
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-check-input {
+        margin-top: 0.3rem;
+    }
+
+
+    {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .form-group.row {
+        flex-direction: column;
+    }
+
+        .form-group.row .col-sm-4,
+        .form-group.row .col-sm-8 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            text-align: left !important;
+        }
+
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 8px !important;
+    }
+
+    }
+</style>
+
+
+
+<script>
+
+    //  $(document).ready(async  function () {
+
+
+    // });
+
+
+
+
+
+
+
+
+    // function saveProfile() {
+    //     var formData = new FormData();
+    //     formData.append('Type', profileTypeValue);
+    //     // individual profile
+    //     if(profileTypeValue == 0){
+    //         formData.append('CodeIndividual', $("#txtCodeIndividual").val());
+    //         formData.append('AccountIndividual', $("#txtFullNameIndividual").val());
+    //         formData.append('LastNameIndivdual', $("#txtLastNameIndividual").val());
+    //         formData.append('FirstNameIndividual', $("#txtFirstNameIndividual").val());
+    //         formData.append('MiddleNameIndividual', $("#txtMiddleNameIndividual").val());
+    //         formData.append('LanguageIndividual', $("#txtLanguageIndividual").val());
+    //         formData.append('TitleIndividual', $("#txtTitleIndividual").val());
+    //         formData.append('NationalityIndividual', $("#txtNationalityIndividual").val());
+    //         formData.append('CountryIndividual', $("#txtCountryIndividual").val());
+    //         formData.append('CityIndividual', $("#txtCityIndividual").val());
+    //         formData.append('PostalIndividual', $("#txtPostalIndividual").val());
+    //         formData.append('ReligionIndividual', $("#txtReligionIndividual").val());
+    //         formData.append('NationIndividual', $("#txtNationIndividual").val());
+    //         formData.append('StateIndividual', $("#txtStateIndividual").val());
+    //         formData.append('PurposeIndividual', $("#txtPurposeIndividual").val());
+    //         formData.append('AddressIndividual', $("#txtAddressIndividual").val());
+    //         formData.append('SalutationIndividual', $("#txtSalutationIndividual").val());
+    //         formData.append('VIPIndividual', $("#txtVIPIndividual").val());
+    //         formData.append('ReasonIndividual', $("#ReasonIndividual").val());
+    //         formData.append('PrefRoomIndividual', $("#txtPrefRoomIndividual").val());
+    //         formData.append('OtherIndividual', $("#txtOtherIndividual").val());
+    //         formData.append('PassportIndividual', $("#txtPassportIndividual").val());
+    //         formData.append('CardIndividual', $("#txtCardIndividual").val());
+    //         formData.append('DobIndividual', $("#txtDobIndividual").val());
+    //         formData.append('ActiveIndividual', $("#txtActiveIndividual").is(":checked"));
+    //         formData.append('ContactIndividual', $("#txtContactIndividual").is(":checked"));
+    //         formData.append('KeywordIndividual', $("#txtKeywordIndividual").val());
+    //         formData.append('CompanyIndividual', $("#txtCompanyIndividual").val());
+    //         formData.append('TaxIndividual', $("#txtTaxIndividual").val());
+    //         formData.append('BusAddressIndividual', $("#txtBusAddressIndividual").val());
+    //         formData.append('TelephoneIndividual', $("#txtTelephoneIndividual").val());
+    //         formData.append('HandPhoneIndividual', $("#txtHandPhoneIndividual").val());
+    //         formData.append('FaxIndividual', $("#txtFaxIndividual").val());
+    //         formData.append('EmailIndividual', $("#txtEmailIndividual").val());
+    //         formData.append('WebsiteIndividual', $("#txtWebsiteIndividual").val());
+    //         formData.append('Company2Individual', $("#txtTelephtxtCompany2").val());
+    //         formData.append('BusinessTitleIndividual', $("#txtBusinessTitleIndividual").val());
+    //         formData.append('BlackListIndividual', $("#txtBlackListIndividual").is(":checked"));
+    //         formData.append('BlackListReasonIndividual', $("#blackListIndividual").val());
+    //         formData.append('NoteIndividual', $("#txtNoteIndividual").val());
+    //     }
+
+    //     else if(profileTypeValue == 1 || profileTypeValue == 2 || profileTypeValue == 3){
+    //         formData.append('CodeCOM', $("#txtCodeCOM").val());
+    //         formData.append('AccountCOM', $("#txtAccountCOM").val());
+    //         formData.append('AddressCOM', $("#txtAddressCOM").val());
+    //         formData.append('CountryCOM', $("#txtCountryCOM").val());
+    //         formData.append('CityCOM', $("#txtCityCOM").val());
+    //         formData.append('PostalCOM', $("#txtPostalCOM").val());
+    //         formData.append('StateCOM', $("#txtStateCOM").val());
+    //         formData.append('CompanyCOM', $("#txtCompanyCOM").val());
+    //         formData.append('TaxCOM', $("#txtTaxCOM").val());
+    //         formData.append('BusAddressCOM', $("#txtBusAddressCOM").val());
+    //         formData.append('TelephoneCOM', $("#txtTelephoneCOM").val());
+    //         formData.append('ContactNameCOM', $("#txtContactNameCOM").val());
+    //         formData.append('EmailCOM', $("#txtEmailCOM").val());
+    //         formData.append('WebsiteCOM', $("#txtWebsiteCOM").val());
+    //         formData.append('HandPhoneCOM', $("#txtHandPhoneCOM").val());
+    //         formData.append('Company2COM', $("#txtCompany2COM").val());
+    //         formData.append('BusinessTitleCOM', $("#txtBusTitleCOM").val());
+    //         formData.append('OwnerCOM', $("#txtOwnerCOM").val());
+    //         formData.append('TerritoryCOM', $("#txtTerritoryCOM").val());
+    //         formData.append('KeywordCOM', $("#txtKeywordCOM").val());
+    //         formData.append('CompanyTypeCOM', $("#txtCompanyTypeCOM").val());
+    //         formData.append('ARCOM', $("#txtARCOM").val());
+    //         formData.append('CurrencyCOM', $("#txtCurrencyCOM").val());
+    //         formData.append('SaleInChargeCOM', $("#txtSaleInChargeCOM").val());
+    //         formData.append('MarketCOM', $("#txtMarketCOM").val());
+    //         formData.append('ActiveCOM', $("#txtActiveCOM").is(":checked"));
+    //         formData.append('BlackListCOM', $("#txtBlackListCOM").is(":checked"));
+    //         formData.append('BlackListReasonCOM', $("#blackListCOM").val());
+    //         formData.append('NoteCOM', $("#txtNotECOM").val());
+    //     }
+    //     else if(profileTypeValue == 4){
+    //         formData.append('CodeCOM', $("#txtCodeGroup").val());
+    //         formData.append('GroupNameGroup', $("#txtGroupNameGroup").val());
+    //         formData.append('LanguageGruop', $("#txtLanguageGroup").val());
+    //         formData.append('HomeAddressGroup', $("#txtHomeAddressGroup").val());
+    //         formData.append('CityGroup', $("#txtCityGroup").val());
+    //         formData.append('PostalGroup', $("#txtPostalCodeGroup").val());
+    //         formData.append('CountryGroup', $("#txtCountryGroup").val());
+    //         formData.append('StateGroup', $("#txtStateGroup").val());
+    //         formData.append('TelephoneGroup', $("#txtTelephoneGroup").val());
+    //         formData.append('EmailGroup', $("#txtEmailGroup").val());
+    //         formData.append('WebsiteGroup', $("#txtWebsiteGroup").val());
+    //         formData.append('HandPhoneGroup', $("#txtHandPhoneGroup").val());
+    //          formData.append('FaxGroup', $("#txtFaxGroup").val());
+    //         formData.append('ContactNameGroup', $("#txtContactGroup").val());
+    //         formData.append('CurrencyGroup', $("#txtCurrencyGroup").val());
+    //         formData.append('VIPGroup', $("#txtVIPIndividual").val());
+    //         formData.append(' ', $("#txtVIPReasonGroup").val());
+    //         formData.append('HistoryGroup', $("#txtHistory").is(":checked"));
+
+    //     }
+    //     else{
+    //          formData.append('CodeContact', $("#txtCodeContact").val());
+    //         formData.append('AccountContact', $("#txtFullNameContact").val());
+    //         formData.append('LastNameContact', $("#txtLastContact").val());
+    //         formData.append('FirstNameContact', $("#txtFirstNameContact").val());
+    //         formData.append('MiddleNameContact', $("#txtMiddleNameContact").val());
+    //         formData.append('LanguageContact', $("#txtLanguageContact").val());
+    //         formData.append('PositionContact', $("#txtPositionContact").val());
+    //         formData.append('DeptContact', $("#txtDeptContact").val());
+    //         formData.append('TitleContact', $("#txtTitleContact").val());
+    //         formData.append('SalulationContact', $("#txtSalulationContact").val());
+    //         formData.append('AddressContact', $("#txtAddressContact").val());
+    //         formData.append('HomeAddressContact', $("#txtHomeAddressContact").val());
+    //         formData.append('CityContact', $("#txtCityContact").val());
+    //         formData.append('PostalContact', $("#txtPostalCodeContact").val());
+    //         formData.append('CountryContact', $("#txtCountryContact").val());
+    //         formData.append('StateContact', $("#txtStateContact").val());
+    //         formData.append('OwnerContact', $("#txtOwnerContact").val());
+    //         formData.append('TerritoryContact', $("#txtTerritoryContact").val());
+    //         formData.append('ARNoContact', $("#txtARNoContact").val());
+    //         formData.append('DobContact', $("#txtDobContact").val());
+    //          formData.append('TelephoneContact', $("#txtTelephoneContact").val());
+    //         formData.append('FaxContact', $("#txtFaxContact").val());
+    //         formData.append('EmailContact', $("#txtEmailContact").val());
+    //         formData.append('WebsiteContact', $("#txtWebsiteContact").val());
+    //         formData.append('HandPhoneContact', $("#txtHandPhoneContact").val());
+
+    //     }
+    //     $.ajax({
+    //         url: '/Profile/SaveProfile',
+    //         type: 'POST',
+    //         processData: false,
+    //         contentType: false,
+    //         // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+    //         data: formData,
+    //         success: function (data) {
+    //             if (data.code == 0) {
+    //                 resetForm();
+    //                 informBox(TOAST_STATUS.INFO, data.msg);
+    //             } else {
+    //                 informBox(TOAST_STATUS.WARNING, data.msg);
+    //             }
+
+    //         },
+    //         error: function (xhr, statusText, err) {
+
+    //         }
+    //     });
+
+    // }
+    function closeModalViewProfile(){
+        $('#modalViewProfile').modal('hide');
+    }
+    function openModalViewProfile(){
+        $('#modalViewProfile').modal('show');
+    }
+</script>

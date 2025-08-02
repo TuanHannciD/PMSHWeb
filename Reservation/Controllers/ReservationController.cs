@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Reservation.Commons.Helpers;
+using Reservation.Dto;
 using Reservation.Services.Interfaces;
 using System;
 using System.Buffers.Text;
@@ -20,9 +21,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using static log4net.Appender.RollingFileAppender;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Reservation.Controllers
@@ -39,9 +42,11 @@ namespace Reservation.Controllers
         private readonly IGroupReservationService _iGroupReservationService;
         private readonly IMessageService _iMessageService;
         private readonly IShareService _iShareService;
+        private readonly IGroupAdminService _iGroupAdminService;
         public ReservationController(ILogger<ReservationController> logger,
                 IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService,
-                IDepositService iDepositService, IRoutingService iRoutingService, IGroupReservationService iGroupReservationService, IMessageService iMessageService, IShareService iShareService)
+                IDepositService iDepositService, IRoutingService iRoutingService, IGroupReservationService iGroupReservationService,
+                IMessageService iMessageService, IShareService iShareService,IGroupAdminService iGroupAdminService)
         {
             _cache = cache;
             _logger = logger;
@@ -53,6 +58,7 @@ namespace Reservation.Controllers
             _iGroupReservationService = iGroupReservationService;
             _iMessageService = iMessageService;
             _iShareService = iShareService;
+            _iGroupAdminService = iGroupAdminService;
         }
         public IActionResult SearchReservation()
         {
@@ -129,7 +135,26 @@ namespace Reservation.Controllers
 
             return View();
         }
+        [HttpPost]
+        public IActionResult SetDataGroupAdmin([FromBody] List<ReservationSearchDTO> data)
+        {
+            TempData["ListData"] = JsonConvert.SerializeObject(data);
+            return Json(new { redirectUrl = Url.Action("GroupAdmin") });
+        }
 
+        public IActionResult GroupAdmin()
+        {
+            List<ReservationSearchDTO> listData = new List<ReservationSearchDTO>();
+
+            if (TempData["ListData"] != null)
+            {
+                string json = TempData["ListData"].ToString();
+                listData = JsonConvert.DeserializeObject<List<ReservationSearchDTO>>(json);
+            }
+
+            return View(listData);
+
+        }
         #region DatVP __ Commmon
         [HttpGet]
         public async Task<IActionResult> GetInfoProfile(int profileID)
@@ -3721,6 +3746,89 @@ namespace Reservation.Controllers
 
             }
         }
+        #endregion
+
+        #region  DatVP __ Reservation: Group check in
+        [HttpGet]
+        public async Task<IActionResult> SearchGroupCheckInRoom(string confirmationNo,int type)
+        {
+            try
+            {
+                string @Inspected = "", @Clean = "", @AllRooms = "", @CleanAndInspected = "";
+                if(confirmationNo == null || string.IsNullOrEmpty(confirmationNo))
+                {
+                    return Json(0);
+                }
+                if(type == 1)
+                {
+                    @Inspected = confirmationNo;
+                }
+                else if (type == 2) {
+                    @Clean = confirmationNo;
+                }
+                else if (type == 3)
+                {
+                    @AllRooms = confirmationNo;
+                }
+                else 
+                {
+                    @CleanAndInspected = confirmationNo;
+                }
+                var data = _iGroupAdminService.SearchGroupCheckInRoom(confirmationNo, @Inspected, @Clean, @AllRooms, @CleanAndInspected);
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GroupCheckIn([FromBody] List<int> ids)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                for(int i = 0;i < ids.Count; i++)
+                {
+                    ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(ids[i]);
+                    if(reservation == null || reservation.ID == 0)
+                    {
+                        return Json(new { code = 1, msg = "Can not find reservation" });
+
+                    }
+                    reservation.Status = 1;
+                    ReservationBO.Instance.Update(reservation);
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new { code = 0, msg = "Assign Room was successfully!" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
         #endregion
     }
 }
