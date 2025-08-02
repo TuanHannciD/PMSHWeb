@@ -16,6 +16,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using HouseKeeping.Commons.Helpers;
 using System.Security.Policy;
+using DevExpress.XtraCharts.Native;
+using DevExpress.Charts.Native;
+using System.Reflection;
+using Microsoft.IdentityModel.Tokens;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -100,6 +104,76 @@ namespace HouseKeeping.Controllers
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
             return View();
         }
+        public IActionResult FloorPlan()
+        {
+         
+            List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+            ViewBag.RoomTypeList = listrt;
+            
+            List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
+            ViewBag.FloorList = listfloor;
+
+            List<BlockModel> listbl = PropertyUtils.ConvertToList<BlockModel>(BlockBO.Instance.FindAll());
+            ViewBag.BlockList = listbl;
+            return View();
+        }
+
+        public IActionResult AttendantPoint()
+        {
+
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            ViewBag.hkpAttendantList = listatt;
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            return View();
+        }
+        public IActionResult TaskSheetStatus()
+        {
+
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            ViewBag.hkpAttendantList = listatt;
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            return View();
+        }
+        public IActionResult GuestServiceStatus()
+        {
+            List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+
+            // Lọc FOStatus = 1 và sắp xếp theo RoomNo
+            var filteredRoomList = listroom
+                .Where(r => r.FOStatus == 1)
+                .OrderBy(r => r.RoomNo)
+                .ToList();
+            List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
+            ViewBag.RoomList = filteredRoomList;
+            ViewBag.FloorList = listfloor;
+            ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
+            ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
+            ViewBag.cboCity = ListItemHelper.GetCityProvider();
+            ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
+            ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
+            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
+            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+            ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
+            ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
+            ViewBag.cboReason = ListItemHelper.GetReasonProvider();
+            ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
+            ViewBag.cboSource = ListItemHelper.GetSourceProvider();
+            ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
+            ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
+            ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
+            ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
+            ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
+            ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
+            ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
+            ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
+            ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
+            return View();
+        }
+
         [HttpGet]
         public IActionResult RoomControlPanelData(DateTime fromDate, DateTime toDate, string zone)
         {
@@ -146,6 +220,204 @@ namespace HouseKeeping.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpGet]
+        public IActionResult GuestServiceStatusData(string servicestatsu, string room, string roomStatus)
+        {
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.GuestServiceStatusData(servicestatsu, room, roomStatus);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"].ToString() : "",
+                                  Check = d["Check"]?.ToString() ?? "",
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  RoomTypeCode = d["RoomTypeCode"]?.ToString() ?? "",
+                                  hkstatus = d["HKStatus"]?.ToString() ?? "",
+                                  fostatus = d["FOStatus"]?.ToString() ?? "",
+                                  GuestServiceStatus = d["GuestServiceStatus"]?.ToString() ?? "",
+
+                                  Floor = d["Floor"]?.ToString() ?? "",
+                                  ReservationStatus = d["ReservationStatus"]?.ToString() ?? "",
+                                  ResvID = d["ResvID"]?.ToString() ?? "",
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"]?.ToString() ?? "",
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult TaskSheetStatusData(DateTime fromDate, DateTime toDate,string attendant, string room)
+        {
+            attendant = attendant ?? "";
+            room = room ?? "";
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.TaskSheetStatusData(fromDate, toDate, attendant, room);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  colIndex = d["colIndex"]?.ToString() ?? "",
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  hkstatusID = d["HKStatusID"]?.ToString() ?? "",
+                                  fostatus = d["FOStatus"]?.ToString() ?? "",
+                                  Attendant = d["Attendant"]?.ToString() ?? "",
+                                  TaskDate = d["TaskDate"]?.ToString() ?? "",
+                                  TimeIn = d["TimeIn"]?.ToString() ?? "",
+                                  TimeOut = d["TimeOut"]?.ToString() ?? "",
+                                  TasksheetID = d["TasksheetID"]?.ToString() ?? "",
+                                  AttendantID = d["AttendantID"]?.ToString() ?? "",
+                                  Complete = d["Complete"]?.ToString() ?? "",
+                                  Rooms = d["Rooms"]?.ToString() ?? "",
+                                  Credits = d["Credits"]?.ToString() ?? ""
+
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult AttendantPointData(DateTime fromDate, DateTime toDate, string attendant)
+        {
+            try
+            {
+                var attendantPointData = hkpAttendantPointBO.GethkpAttendantPoint(fromDate, toDate, attendant);
+                DataTable dtattendantPoint = PropertyUtils.ConvertToDataTable(attendantPointData);
+
+                var result = (from d in dtattendantPoint.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"].ToString() : "",
+                                  AttendantDate = d["AttendantDate"]?.ToString() ?? "",
+                                  AttendantID = d["AttendantID"]?.ToString() ?? "",
+                                  Points = d["Points"]?.ToString() ?? "",
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"]?.ToString() ?? "",
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult FloorPlanData(string block, string floor, string roomtype, string owner)
+        {
+            try
+            {
+                int maxRoomCount = 0;
+                var tableData = new List<Dictionary<string, object>>();
+                var statusCounts = new Dictionary<string, int>();
+
+                // Lấy danh sách tầng
+                List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
+
+                // Lấy danh sách phòng và convert sang DataTable
+                var roomcount = RoomBO.GetRoomCountPlan();
+                DataTable dtTotalRoom = PropertyUtils.ConvertToDataTable(roomcount);
+
+                // Tính toán các trạng thái phòng
+                statusCounts["OCN"] = dtTotalRoom.Select("HKStatusID=0 AND FOStatus=1").Length;
+                statusCounts["VCN"] = dtTotalRoom.Select("HKStatusID=1 AND FOStatus=1").Length;
+                statusCounts["OOO"] = dtTotalRoom.Select("HKStatusID=5 AND HKFOStatus=FOStatus AND FOPerson=HKPersons").Length;
+                statusCounts["OOS"] = dtTotalRoom.Select("HKStatusID=6 AND HKFOStatus=FOStatus AND FOPerson=HKPersons").Length;
+                statusCounts["VD"] = dtTotalRoom.Select("HKStatusID=2 AND FOStatus=0").Length;
+                statusCounts["VC"] = dtTotalRoom.Select("HKStatusID=4 AND FOStatus=0").Length;
+                statusCounts["OD"] = dtTotalRoom.Select("HKStatusID=2 AND FOStatus=1").Length;
+                statusCounts["OC"] = dtTotalRoom.Select("HKStatusID=4 AND FOStatus=1").Length;
+                statusCounts["DISC"] = dtTotalRoom.Select("HKFOStatus <> FOStatus OR FOPerson <> HKPersons").Length;
+                statusCounts["DO"] = dtTotalRoom.Select("HKStatusID=7").Length;
+                statusCounts["TOTAL"] = statusCounts.Values.Sum();
+
+                // Duyệt từng tầng
+                foreach (var f in listfloor)
+                {
+                    var suffixes = (f.Name == "1") ? new[] { "-A" } : new[] { "-A", "-B" };
+
+                    foreach (var suffix in suffixes)
+                    {
+                        var floorCode = f.Name + suffix;
+
+                        // Lấy danh sách phòng theo tầng
+                        var rooms = RoomBO.GetFloorPlan(block, suffix, floorCode);
+                        if (rooms == null) continue;
+
+                        if (rooms.Count > maxRoomCount)
+                            maxRoomCount = rooms.Count;
+
+                        var row = new Dictionary<string, object>
+                        {
+                            ["Floor"] = floorCode
+                        };
+
+                        // Lọc room theo floor và roomtype nếu có
+                        var filteredRooms = rooms
+                            .Where(r =>
+                                (string.IsNullOrEmpty(floor) || r.Floor == floor) &&
+                                (string.IsNullOrEmpty(roomtype) || r.RoomTypeID.ToString() == roomtype))
+                            .ToList();
+
+                        for (int i = 0; i < maxRoomCount; i++)
+                        {
+                            if (i < filteredRooms.Count)
+                            {
+                                var r = filteredRooms[i];
+
+                                row[(i + 1).ToString()] = new
+                                {
+                                    RoomNo = r.RoomNo,
+                                    HKStatusID = r.HKStatusID,
+                                    FOStatus = r.FOStatus,
+                                    HKFOStatus = r.HKFOStatus,
+                                    FOPerson = r.FOPerson,
+                                    HKPersons = r.HKPersons,
+                                    RoomType = r.RoomName
+                                };
+                            }
+                            else
+                            {
+                                row[(i + 1).ToString()] = null;
+                            }
+                        }
+
+                        tableData.Add(row);
+                    }
+                }
+
+                return Json(new
+                {
+                    MaxRoomCount = maxRoomCount,
+                    Data = tableData,
+                    StatusCounts = statusCounts
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Error = ex.Message });
+            }
+        }
+
+
+
+
 
         [HttpGet]
         public IActionResult RoomFacilityForecastData(DateTime fromDate, DateTime toDate, string zone)
@@ -969,6 +1241,94 @@ namespace HouseKeeping.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpPost]
+        public IActionResult UpdateAttendantPoint(string  ID,DateTime Date, int  AttendantID, string UserName, int Point)
+        {
+            try
+            {
+
+                hkpAttendantPointModel modelH = new hkpAttendantPointModel
+                {
+                    AttendantDate = Date,
+                    AttendantID = AttendantID,
+                    Points = Point,
+                    CreatedBy = UserName,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = UserName,
+                    UpdatedDate = DateTime.Now
+                };
+
+                if (string.IsNullOrEmpty(ID)) 
+                {
+                    hkpAttendantPointBO.Instance.Insert(modelH);
+                }
+                else
+                {
+                    hkpAttendantPointModel modelhkpAtten = (hkpAttendantPointModel)hkpAttendantPointBO.Instance.FindByPrimaryKey(Convert.ToInt32(ID));
+
+
+                        modelhkpAtten.AttendantDate = Date;
+                    modelhkpAtten.UpdatedBy = UserName;
+                    modelhkpAtten.Points = Point;
+                    modelhkpAtten.AttendantID = AttendantID;
+                    hkpAttendantPointBO.Instance.Update(modelhkpAtten);
+                }
+
+
+
+                return Json(new { success = true, message = "AttendantPoint insert successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAttendantPoint(string ID)
+        {
+            try
+            {
+
+                hkpAttendantPointBO.Instance.Delete(Convert.ToInt32(ID));
+
+
+
+                return Json(new { success = true, message = "AttendantPoint delete successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EditGuestService(List<RoomModel> ids,int servicestatus)
+        {
+            try
+            {
+         
+
+                foreach (var id in ids)
+                {
+                    RoomModel modelRoom = (RoomModel)RoomBO.Instance.FindByPrimaryKey(id.ID);
+                    modelRoom.GuestServiceStatus = servicestatus;
+                    modelRoom.TurndownStatus = servicestatus;
+
+
+                    RoomBO.Instance.Update(modelRoom);
+                }
+
+             
+                return Json(new { success = true, message = "Room status updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         [HttpPost]
         public IActionResult UpdateRoomStatus(List<int> ids, int status, string loginName)

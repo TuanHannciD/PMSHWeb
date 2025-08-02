@@ -70,5 +70,7 @@ namespace HouseKeeping.Services.Interfaces
         DataTable StatusHKOutOfOrderVacantDetail(string roomtype, string zone);
         DataTable StatusHKOutOfServiceVacantDetail(string roomtype, string zone);
         DataTable StatusHKOutOfServiceOCCDetail(string roomtype, string zone);
+        DataTable GuestServiceStatusData(string servicestatsu, string room, string roomStatus);
+        DataTable TaskSheetStatusData(DateTime fromDate, DateTime toDate, string attendant, string room);
     }
 }
