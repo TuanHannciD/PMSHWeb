@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using BaseBusiness.bc;
 using System.Collections.Generic;
+using System.Data;
 
 namespace BaseBusiness.util
 {
@@ -61,6 +62,28 @@ namespace BaseBusiness.util
                 if (item.Equals(checkItem)) return true;
             }
             return false;
+        }
+        public static DataTable ConvertToDataTable<T>(List<T> items)
+        {
+            var dataTable = new DataTable(typeof(T).Name);
+            PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var prop in props)
+            {
+                dataTable.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+            }
+
+            foreach (var item in items)
+            {
+                var values = new object[props.Length];
+                for (int i = 0; i < props.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item, null);
+                }
+                dataTable.Rows.Add(values);
+            }
+
+            return dataTable;
         }
 
         public static BaseModel PopulateModel(SqlDataReader dr, string name, ArrayList listPropertyName)

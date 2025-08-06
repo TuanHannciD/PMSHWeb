@@ -38,6 +38,39 @@ namespace BaseBusiness.BO
 
             return instance.GetList<RoomModel>(query);
         }
+        public static List<RoomModel> GetRoomCountPlan()
+        {
+          
+            string query = $@"Select * from Room WITH (NOLOCK) where RoomTypeCode<>'XXX'";
+
+            return instance.GetList<RoomModel>(query);
+        }
+        public static List<RoomModel> GetFloorPlan(string block, string suffix, string name)
+        {
+            string condition = "";
+
+            if (suffix == "-A")
+            {
+                condition = "CONVERT(Int, RoomNo) < 40000";
+            }
+            else
+            {
+                condition = "CONVERT(Int, RoomNo) > 39999";
+            }
+
+            string query = $@"
+        SELECT * 
+        FROM Room 
+        WHERE {condition}
+          AND RoomTypeID != 8
+          AND BlockID = N'{block}'
+          AND floor + '{suffix}' = N'{name}'
+        ORDER BY CONVERT(Int, RoomNo)
+    ";
+
+            return instance.GetList<RoomModel>(query);
+        }
+
 
 
     }
