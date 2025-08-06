@@ -250,6 +250,36 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spTasksheetStatusScreenSearch", param);
             return myTable;
         }
+        public DataTable TaskAssignmentData(DateTime fromDate, string tasksheet, string zone)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@TaskDate", fromDate),
+                new SqlParameter("@TasksheetNo",tasksheet) ,
+                 new SqlParameter("@Status",""),
+                    new SqlParameter("@Zone",zone)
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTaskAssignmentSearch", param);
+            return myTable;
+        }
+        //public DataTable HKPGetTaskSheets(DateTime fromDate, string page )
+        //{
+
+        //    SqlParameter[] param = new SqlParameter[]
+        //    {
+        //       new SqlParameter("@TaskDate", fromDate),
+        //        new SqlParameter("@TasksheetNo",tasksheet) ,
+        //         new SqlParameter("@Status",""),
+        //            new SqlParameter("@Zone",zone)
+
+        //    };
+
+        //    DataTable myTable = DataTableHelper.getTableData("spTaskAssignmentSearch", param);
+        //    return myTable;
+        //}
         public DataTable ActivityExtendedStay(DateTime datebunisess, string roomtype, string zone)
         {
 
@@ -265,7 +295,54 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityExtendedStay", param);
             return myTable;
         }
+        public DataTable RoomAttendantDailyWorkSheet(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string dueoutonly)
+        {
 
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDatere),
+                new SqlParameter("@ToDate",toDatere) ,
+                 new SqlParameter("@FacilityTask",taskcodeexpan),
+                 new SqlParameter("@AttendantID",attendantrepop),
+                 new SqlParameter("@TaskSheetNo",tasksheetpopre),
+                 new SqlParameter("@DueOutOnly",dueoutonly),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptRoomAttendantDailyWorkSheet", param);
+            return myTable;
+        }
+        public DataTable RAWorkSheet(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string dueoutonly)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDatere),
+                new SqlParameter("@ToDate",toDatere) ,
+                 new SqlParameter("@FacilityTask",taskcodeexpan),
+                 new SqlParameter("@AttendantID",attendantrepop),
+                 new SqlParameter("@TaskSheetNo",tasksheetpopre),
+                 new SqlParameter("@DueOutOnly",dueoutonly),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptRAWorkSheet", param);
+            return myTable;
+        }
+        public DataTable SupChecklistFloor(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string dueoutonly)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDatere),
+                new SqlParameter("@ToDate",toDatere) ,
+                 new SqlParameter("@FacilityTask",taskcodeexpan),
+                 new SqlParameter("@AttendantID",attendantrepop),
+                 new SqlParameter("@TaskSheetNo",tasksheetpopre),
+                 new SqlParameter("@DueOutOnly",dueoutonly),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptSupChecklistFloor", param);
+            return myTable;
+        }
         public DataTable ActivityEarlyDeparture(DateTime datebunisess, string roomtype, string zone)
         {
 

@@ -20,6 +20,7 @@ using DevExpress.XtraCharts.Native;
 using DevExpress.Charts.Native;
 using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -136,6 +137,28 @@ namespace HouseKeeping.Controllers
             ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
             return View();
         }
+        public IActionResult TaskAssignment()
+        {
+
+            List<hkpFacilityTaskModel> listhkpft = PropertyUtils.ConvertToList<hkpFacilityTaskModel>(hkpFacilityTaskBO.Instance.FindAll());
+            ViewBag.hkpFacilityTaskList = listhkpft;
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            List<hkpTaskSheetModel> listhkpts = PropertyUtils
+           .ConvertToList<hkpTaskSheetModel>(hkpTaskSheetBO.Instance.FindAll())
+           .Where(x => x.TaskSheetDate.Date == businessDateModel[0].BusinessDate.Date)
+           .ToList();
+            ViewBag.hkpTaskSheetList = listhkpts;
+
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+
+            List<hkpSectionModel> listsshkp = PropertyUtils.ConvertToList<hkpSectionModel>(hkpSectionBO.Instance.FindAll());
+            ViewBag.hkpSectionList = listsshkp;
+            List<hkpAttendantModel> listatt= PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            ViewBag.hkpAttendantList = listatt;
+            return View();
+        }
         public IActionResult GuestServiceStatus()
         {
             List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
@@ -220,6 +243,262 @@ namespace HouseKeeping.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpGet]
+        public IActionResult TaskSheetReport(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string reportstyle,string dueoutonly)
+        {
+            taskcodeexpan = taskcodeexpan ?? "";
+            attendantrepop = attendantrepop ?? "";
+            tasksheetpopre = tasksheetpopre ?? "";
+            reportstyle = reportstyle ?? "";
+            dueoutonly = dueoutonly ?? "";
+            try
+            {
+                DataTable dataTable = new DataTable();
+
+                if (reportstyle == "1")
+                {
+                    dataTable = _iHouseKeepingService.RoomAttendantDailyWorkSheet(fromDatere, toDatere, taskcodeexpan, attendantrepop, tasksheetpopre, dueoutonly);
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      RoomNo = d["Room No."]?.ToString() ?? "",
+                                      RoomType = d["Room Type"]?.ToString() ?? "",
+                                      VC = d["VC"]?.ToString() ?? "",
+                                      OD = d["OD"]?.ToString() ?? "",
+                                      DO = d["DO"]?.ToString() ?? "",
+                                      VD = d["VD"]?.ToString() ?? "",
+                                      OOO = d["OOO"]?.ToString() ?? "",
+                                      OOS = d["OOS"]?.ToString() ?? "",
+                                      IN = d["IN"]?.ToString() ?? "",
+                                      OUT = d["OUT"]?.ToString() ?? "",
+                                      Status = d["Status"]?.ToString() ?? "",
+                                      MW = d["MW"]?.ToString() ?? "",
+                                      BR = d["BR"]?.ToString() ?? "",
+                                      YK = d["YK"]?.ToString() ?? "",
+                                      SL = d["SL"]?.ToString() ?? "",
+                                      BT = d["BT"]?.ToString() ?? "",
+                                      FT = d["FT"]?.ToString() ?? "",
+                                      TB = d["TB"]?.ToString() ?? "",
+                                      TR = d["TR"]?.ToString() ?? "",
+                                      HT = d["HT"]?.ToString() ?? "",
+                                      BM = d["BM"]?.ToString() ?? "",
+                                      AM = d["AM"]?.ToString() ?? "",
+                                      Chocolate = d["Chocolate"]?.ToString() ?? "",
+                                      Note = d["Note"]?.ToString() ?? "",
+                                      TaskSheetDate = d["TaskSheetDate"]?.ToString() ?? "",
+                                      AttendantID = d["AttendantID"]?.ToString() ?? "",
+                                      TaskSheetNo = d["TaskSheetNo"]?.ToString() ?? "",
+                                      EmployeeName = d["EmployeeName"]?.ToString() ?? "",
+                                      MainGuestNationality = d["MainGuestNationality"]?.ToString() ?? "",
+                                      Special = d["Special"]?.ToString() ?? "",
+                                      ItemInventory = d["ItemInventory"]?.ToString() ?? ""
+                                  }).ToList();
+                    return Json(result);
+                }
+                else if (reportstyle == "2")
+                {
+                    dataTable = _iHouseKeepingService.RAWorkSheet(fromDatere, toDatere, taskcodeexpan, attendantrepop, tasksheetpopre, dueoutonly);
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      RoomNo = d["Room No."]?.ToString() ?? "",
+                                      RoomStatus = d["Room Status"]?.ToString() ?? "",
+                                      IN = d["IN"]?.ToString() ?? "",
+                                      OUT = d["OUT"]?.ToString() ?? "",
+                                      StatusChange = d["Status Change"]?.ToString() ?? "",
+                                      Choco = d["Choco."]?.ToString() ?? "",
+                                      EB = d["EB"]?.ToString() ?? "",
+                                      VIP = d["VIP"]?.ToString() ?? "",
+                                      Bath = d["Bath"]?.ToString() ?? "",
+                                      Hand = d["Hand"]?.ToString() ?? "",
+                                      Face = d["Face"]?.ToString() ?? "",
+                                      Mat = d["Mat"]?.ToString() ?? "",
+                                      Remarks = d["Remarks"]?.ToString() ?? "",
+                                      TaskSheetDate = d["TaskSheetDate"]?.ToString() ?? "",
+                                      AttendantID = d["AttendantID"]?.ToString() ?? "",
+                                      TaskSheetNo = d["TaskSheetNo"]?.ToString() ?? "",
+                                      EmployeeName = d["EmployeeName"]?.ToString() ?? ""
+                                  }).ToList();
+                    return Json(result);
+                }
+                else if (reportstyle == "3")
+                {
+                    dataTable = _iHouseKeepingService.SupChecklistFloor(fromDatere, toDatere, taskcodeexpan, attendantrepop, tasksheetpopre, dueoutonly);
+                    var result = (from d in dataTable.AsEnumerable()
+                                  select new
+                                  {
+                                      RoomNo = d["Room No."]?.ToString() ?? "",
+                                      RoomStatus = d["Room Status"]?.ToString() ?? "",
+                                      TimeIn = d["TimeIn"]?.ToString() ?? "",
+                                      TimeOut = d["TimeOut"]?.ToString() ?? "",
+                                      StatusChange = d["Status Change"]?.ToString() ?? "",
+                                      Note = d["Note"]?.ToString() ?? "",
+                                      Floor = d["Floor"]?.ToString() ?? "",
+                                      Country = d["Country"]?.ToString() ?? "",
+                                      Specials = d["Specials"]?.ToString() ?? "",
+                                      RoomType = d["RoomType"]?.ToString() ?? "",
+                                      ItemInventory = d["ItemInventory"]?.ToString() ?? ""
+                                  }).ToList();
+                    return Json(result);
+                }
+
+               
+
+                return Json("");
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult TaskAssignmentData(DateTime fromDate, string tasksheet, string zone)
+        {
+            tasksheet = tasksheet ?? "";
+            zone = zone ?? "";
+            if (string.IsNullOrWhiteSpace(zone))
+            {
+                List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+
+                // Ghép các zone theo định dạng: HT'',''DM'',''A1'',''A2
+                zone = string.Join("','", listzo.Select(z => z.Code));
+            }
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.TaskAssignmentData(fromDate, tasksheet, zone);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  TaskDate = d["TaskDate"].ToString() ?? "",
+                                  TaskSheetNo = d["TaskSheetNo"].ToString() ?? "",
+                                  Section = d["Section"].ToString() ?? "",
+                                  Credits = d["Credits"].ToString() ?? "",
+                                  Rooms = d["Rooms"].ToString() ?? "",
+                                  CompletedOn = d["CompletedOn"].ToString() ?? "",
+                                  Status = d["Status"].ToString() ?? "",
+                                  TaskInstructions = d["TaskInstructions"].ToString() ?? "",
+                                  ID = d["ID"].ToString() ?? "",
+                                  FacilityTaskID = d["FacilityTaskID"].ToString() ?? "",
+                                  Attendant = d["Attendant"].ToString() ?? "",
+                                  Employee = d["Employee"].ToString() ?? "",
+                                  TaskCode = d["TaskCode"].ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult SaveTaskSheetDetail(string taskcodenew, string attendantnew, DateTime businessDate,string userName)
+        {
+            taskcodenew = taskcodenew ?? "";
+            attendantnew = attendantnew ?? "";
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            int attendantId = Convert.ToInt32(attendantnew);
+            var filteredList = listatt.Where(x => x.ID == attendantId).ToList();
+            hkpSectionModel hkpss = (hkpSectionModel)hkpSectionBO.Instance.FindByPrimaryKey(filteredList[0].SectionID);
+
+            List<hkpFacilityTaskModel> listTasks = new List<hkpFacilityTaskModel>();
+
+            var taskCodeList = taskcodenew.Split(',')
+                                          .Where(x => !string.IsNullOrWhiteSpace(x))
+                                          .Select(x => Convert.ToInt32(x.Trim()))
+                                          .ToList();
+
+            foreach (var code in taskCodeList)
+            {
+                var jkpFt = (hkpFacilityTaskModel)hkpFacilityTaskBO.Instance.FindByPrimaryKey(code);
+                if (jkpFt != null)
+                {
+                    listTasks.Add(jkpFt);
+                }
+            }
+
+            // Tạo chuỗi ngăn cách bởi dấu phẩy, ví dụ: "C,F,T"
+            string result = string.Join(",", listTasks.Select(t => t.Code));
+
+            List<hkpTaskSheetModel> listats = PropertyUtils.ConvertToList<hkpTaskSheetModel>(hkpTaskSheetBO.Instance.FindAll());
+
+            var filteredListts = listats
+            .Where(x => x.TaskSheetDate.Date == businessDate)
+            .ToList();
+
+            // Lấy số lớn nhất (nếu có)
+            int maxTaskSheetNo = filteredListts.Any()
+                ? filteredListts.Max(x => x.TaskSheetNo)
+                : 0;
+
+
+            // (Tuỳ chọn) Tạo mã mới tiếp theo
+            int newTaskSheetNo = maxTaskSheetNo + 1;
+            try
+            {
+                hkpTaskSheetModel modelts = new hkpTaskSheetModel
+                {
+                    TaskSheetDate = businessDate,
+                    TaskSheetNote = "",
+                    Status = false,
+                    CreatedBy = userName,
+                    CreatedDate = DateTime.Now,
+                    SessionID = hkpss.ID.ToString(),
+                    SessionName = hkpss.Code,
+                    FacilityTaskID = taskcodenew,
+                    FacilityTask = result,
+                    TaskSheetNo = newTaskSheetNo,
+                    AttendantID = attendantId,
+                    UpdateBy = userName,
+                    UpdateDate = DateTime.Now,
+                };
+                int tasksheetno = (int)hkpTaskSheetBO.Instance.Insert(modelts);
+
+                var jkpFt = (hkpTaskSheetModel)hkpTaskSheetBO.Instance.FindByPrimaryKey(tasksheetno);
+
+                return Json(jkpFt.TaskSheetNo);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        //[HttpGet]
+        //public IActionResult ExpandedTaskSheet(DateTime fromDate)
+        //{
+
+        //    try
+        //    {
+        //        DataTable dataTable = _iHouseKeepingService.HKPGetTaskSheets(fromDate,page);
+
+        //        var result = (from d in dataTable.AsEnumerable()
+        //                      select new
+        //                      {
+        //                          TaskDate = d["TaskDate"].ToString() ?? "",
+        //                          TaskSheetNo = d["TaskSheetNo"].ToString() ?? "",
+        //                          Section = d["Section"].ToString() ?? "",
+        //                          Credits = d["Credits"].ToString() ?? "",
+        //                          Rooms = d["Rooms"].ToString() ?? "",
+        //                          CompletedOn = d["CompletedOn"].ToString() ?? "",
+        //                          Status = d["Status"].ToString() ?? "",
+        //                          TaskInstructions = d["TaskInstructions"].ToString() ?? "",
+        //                          ID = d["ID"].ToString() ?? "",
+        //                          FacilityTaskID = d["FacilityTaskID"].ToString() ?? "",
+        //                          Attendant = d["Attendant"].ToString() ?? "",
+        //                          Employee = d["Employee"].ToString() ?? "",
+        //                          TaskCode = d["TaskCode"].ToString() ?? ""
+        //                      }).ToList();
+
+        //        return Json(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(ex.Message);
+        //    }
+        //}
+
         [HttpGet]
         public IActionResult GuestServiceStatusData(string servicestatsu, string room, string roomStatus)
         {

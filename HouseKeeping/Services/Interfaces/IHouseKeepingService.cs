@@ -72,5 +72,9 @@ namespace HouseKeeping.Services.Interfaces
         DataTable StatusHKOutOfServiceOCCDetail(string roomtype, string zone);
         DataTable GuestServiceStatusData(string servicestatsu, string room, string roomStatus);
         DataTable TaskSheetStatusData(DateTime fromDate, DateTime toDate, string attendant, string room);
+        DataTable TaskAssignmentData(DateTime fromDate, string tasksheet, string zone);
+        DataTable RoomAttendantDailyWorkSheet(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string dueoutonly);
+        DataTable RAWorkSheet(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string dueoutonly);
+        DataTable SupChecklistFloor(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string dueoutonly);
     }
 }

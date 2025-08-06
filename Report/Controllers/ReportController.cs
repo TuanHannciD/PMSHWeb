@@ -3860,7 +3860,7 @@ namespace Report.Controllers
                 if (roomavl != null && roomavl.Rows.Count > 0)
                 {
                     // Lọc các dòng có Roomtype hợp lệ
-                    var groupedData = roomavl.AsEnumerable()
+                 var groupedData = roomavl.AsEnumerable()
                         .Where(row => validRoomTypeCodes.Contains(row["Roomtype"]?.ToString()))
                         .ToList();
 
@@ -3874,14 +3874,22 @@ namespace Report.Controllers
                     {
                         oooInt = parsedValue;
                     }
+                    var row333 = roomavl.AsEnumerable()
+                  .FirstOrDefault(row => row["DisplaySequence"]?.ToString() == "333");
+
+                    if (row333 != null && int.TryParse(row333["Date1"]?.ToString(), out int val))
+                    {
+                        booked = val;
+                    }
+
 
                     // Tính avail
-                    avail = totalRoom - oooInt;
+                    avail = totalRoom - oooInt+ booked;
 
                     totaldate1 = groupedData
                  .Sum(row => Convert.ToInt32(row["Date1"]));
 
-                    booked = avail - totaldate1;
+                    //booked = totaldate1+ booked;
 
                     chartStatus.Add(new { Label = "OCC", Value = booked });
                     chartStatus.Add(new { Label = "Available", Value = avail });

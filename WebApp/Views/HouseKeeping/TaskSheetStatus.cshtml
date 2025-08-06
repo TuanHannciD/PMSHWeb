@@ -502,7 +502,7 @@
                 { dataField: "fostatus", caption: "FOStatus", width: columnWidth },
                 { dataField: "attendant", caption: "Attendant", width: columnWidth, groupIndex: 0 , visible: false}, // <-- Group theo Attendant
                 { dataField: "taskDate", caption: "Task Date", width: columnWidth, dataType: "date", format: "dd/MM/yyyy" },
-                { dataField: "timeIn", caption: "TimeIn", width: columnWidth },
+                { dataField: "timeIn", caption: "Time In", width: columnWidth },
                 { dataField: "timeOut", caption: "Time Out", width: columnWidth },
                 { dataField: "complete", caption: "Status", width: columnWidth }
             ],
@@ -535,16 +535,27 @@
                 selectedRowData = e.data; // lưu dòng được chọn
             },
 
-            onRowPrepared: function (e) {
-                if (e.rowType === "data") {
-                    if (e.data?.isTotal) {
-                        e.rowElement.css({
-                            "font-weight": "bold",
-                            "background-color": "#f6f6f6"
-                        });
+            onCellPrepared: function (e) {
+                    if (e.rowType === "data" && e.column.dataField === "hkstatusID") {
+                        const status = (e.value || "").toLowerCase();
+
+                        if (status.includes("dirty")) {
+                            e.cellElement.css("background-color", "Red"); // d? nh?t
+                              e.cellElement.css("color", "white");
+                        } else if (status.includes("pickup")) {
+                            e.cellElement.css("background-color", "#f740f4"); // tím nh?t
+                        } else if (status.includes("clean non-checked")) {
+                            e.cellElement.css("background-color", "#1bdff5"); // xanh nu?c bi?n nh?t
+                        } else if (status.includes("out of order")) {
+                            e.cellElement.css("background-color", "#d1dfe3"); // h?ng
+                              e.cellElement.css("color", "black");
+                        } else if (status.includes("clean")) {
+                            e.cellElement.css("background-color", "green"); // xanh lá
+                            e.cellElement.css("color", "white"); // ch? tr?ng cho d? nhìn
+                        }
                     }
-                }
-            }
+                },
+
         });
     }
 
