@@ -188,7 +188,7 @@
                             <a class="nav-link dropdown-toggle" href="#">Profile</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="profile" asp-action="index">new profile</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index">new profile</a></li>
                             </ul>
                         </li>
 
@@ -203,6 +203,17 @@
                             <a class="nav-link dropdown-toggle" href="#">Front Desk</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneSwitch">Telephone Switch</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="DialingInformation">Dialing Information</a></li>
+                            </ul>
+                        </li>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#">Cashiering</a>
+                            <ul class="dropdown-menu">                             
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -212,6 +223,7 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a></li>
                             </ul>
                         </li>
+
                          @* <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button">Report</a>
                             <ul class="dropdown-menu"> *@

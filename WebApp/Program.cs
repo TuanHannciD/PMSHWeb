@@ -1,10 +1,13 @@
+using Cashiering.Controllers;
+using Cashiering.Services.Implements;
+using Cashiering.Services.Interfaces;
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
 using DevExpress.CodeParser;
 using DevExpress.XtraCharts;
 using FrontDesk.Controllers;
-using FrontDesk.Services.Interfaces;
 using FrontDesk.Services.Implements;
+using FrontDesk.Services.Interfaces;
 using HouseKeeping.Controllers;
 using HouseKeeping.Services.Implements;
 using HouseKeeping.Services.Interfaces;
@@ -38,6 +41,8 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ReservationController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(FrontDeskController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -58,6 +63,14 @@ builder.Services.AddSingleton<IFolioDetailService, FolioDetailService>();
 builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
+builder.Services.AddSingleton<ICashieringService, CashieringService>();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 
 builder.Services.AddAuthentication(options =>
@@ -72,10 +85,15 @@ builder.Services.AddAuthentication(options =>
                    options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
                    options.Cookie.Path = "/";
                    options.LoginPath = "/User/Index";
-                   options.LoginPath = "/User/Index";
                    options.Cookie.HttpOnly = true;
                    options.Cookie.SameSite = SameSiteMode.Lax;
                });
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
 var app = builder.Build();
@@ -97,6 +115,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

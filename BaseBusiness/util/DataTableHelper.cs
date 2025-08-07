@@ -61,6 +61,23 @@ namespace BaseBusiness.util
                 }
             }
         }
+        public static int ExecuteNonQueryText(string sql, SqlParameter[] parameters)
+        {
+            string str = DBUtils.GetDBConnectionString();
+            using (var connection = new SqlConnection(str))
+            {
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text; // 👉 khác với SP
+                    if (parameters != null)
+                        command.Parameters.AddRange(parameters);
+
+                    connection.Open();
+                    return command.ExecuteNonQuery(); // trả về số rows ảnh hưởng
+                }
+            }
+        }
+
 
         static public DataTable getTableData(string procedureName, SqlParameter[] mySqlParameter)
         {
@@ -104,5 +121,44 @@ namespace BaseBusiness.util
             }
             return table;
         }
+        public static int ExecuteInsertAndReturnId(string sql, SqlParameter[] parameters)
+        {
+            string str = DBUtils.GetDBConnectionString();
+            using (var connection = new SqlConnection(str))
+            {
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text; // vì có SELECT/OUTPUT
+                    if (parameters != null)
+                        command.Parameters.AddRange(parameters);
+
+                    connection.Open();
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+        public static DataTable ExecuteQuery(string sql, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+            string str = DBUtils.GetDBConnectionString();
+
+            using (var connection = new SqlConnection(str))
+            using (var command = new SqlCommand(sql, connection))
+            using (var adapter = new SqlDataAdapter(command))
+            {
+                if (parameters != null)
+                {
+                    command.Parameters.AddRange(parameters);
+                }
+
+                connection.Open();
+                adapter.Fill(table);
+            }
+
+            return table;
+        }
+
+
     }
 }

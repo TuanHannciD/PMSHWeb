@@ -3082,6 +3082,8 @@ namespace Report.Controllers
         {
             try
             {
+                cashierList = cashierList ?? "";
+                transactionCodeList = transactionCodeList ?? "";
                 DataTable dt = _iReportService.CashierAudit(date, cashierList, transactionCodeList, type);
                 var result = (from d in dt.AsEnumerable()
                               select new
