@@ -78,6 +78,7 @@ namespace Reservation.Services.Implements
                 throw new Exception($"Error: {ex.Message}", ex);
             }
         }
+        
 
         public decimal CalculateNetFixedCharge(string transactionCode, decimal price)
         {

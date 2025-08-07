@@ -1,11 +1,16 @@
 ﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
 <div class="body">
     <div class="container2">
+
         <div class="text-center" style="font-size: 20px;">Search Reservation</div>
-        <div class="rs-header ">
+        <div class="rs-header " style="column-gap:8px">
             <div class="rs-toggle-btn" onclick="toggleCollapse()">
                 <span class="rs-toggle-icon" id="collapseIcon">−</span>
                 <span id="collapseTitle">Hide Functions</span>
+            </div>
+            <div class="rs-toggle-btn" onclick="toggleCollapseSearch()">
+                <span class="rs-toggle-icon" id="collapseIconSearch">−</span>
+                <span id="collapseTitleSearch">Hide Filter</span>
             </div>
             <div class="rs-column" >
                 <div class="rs-section">
@@ -19,25 +24,31 @@
             </div>
         </div>
         <!-- Content Box -->
-        <div class="rs-content-box row" id="infoBox" >
+        <div class="rs-content-box row" id="infoBox" style="margin:0 2px">
 
 
             <div class="rs-column">
                 <div class="rs-section">
-                    <h4>Reservation</h4>
+                    <h4>Reservation Functions</h4>
                     <ul class="rs-menu-list">
-                        <li><a href="#" class="rs-bold">Advance</a></li>
-                        <li><a href="#" class="rs-bold">Clear</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalEdit();">Edit</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalCancel()">Cancel</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalRegistrationCard();">Reinstate</a></li>
-                        <li><a href="#" class="rs-bold" onclick="checkIn();">Reg.Card</a></li>
-                        <li><a href="#" class="rs-bold">Check In</a></li>
-                        <li><a href="#" class="rs-bold">Profile</a></li>
-                        <li><a href="#" class="rs-bold">Group Admin</a></li>
-                        <li><a href="#" class="rs-bold">Room Assigment</a></li>
-                        <li><a href="#" class="rs-bold">Export</a></li>
-
+                        <li><a  class="rs-bold">Advance</a></li>
+                        <li><a  class="rs-bold">Clear</a></li>
+                        <li><a  class="rs-bold" onclick="openModalEdit();">Edit</a></li>
+                        <li><a  class="rs-bold" onclick="openModalCancel()">Cancel</a></li>
+                        <li><a  class="rs-bold" onclick="openConfirmReinstate();">Reinstate</a></li>
+                        <li><a  class="rs-bold" onclick="openModalRegistrationCard();">Reg.Card</a></li>
+                        <li><a  class="rs-bold" onclick="checkIn();">Check In</a></li>
+                        <li><a  class="rs-bold" onclick="openModalViewProfile();">View Profile</a></li>
+                        <li><a class="rs-bold" id="groupAdmin">Group Admin</a></li>
+                        <li><a  class="rs-bold">Export</a></li>
+                        <li><a  class="rs-bold" onclick="openModalSplit();">Split</a></li>
+                        <li class="dropdown-toggle">
+                            <a class="rs-bold">Room Assignment</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="rs-bold" onclick="openRoomAssignment();" id="assignRoom">Assignment</a></li>
+                                <li><a class="rs-bold" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a></li>
+                            </ul>
+                        </li>
 
                     </ul>
                 </div>
@@ -47,98 +58,94 @@
                 <div class="rs-section">
                     <h4>Options</h4>
                     <ul class="rs-menu-list">
-                        <li><a href="#" class="rs-bold">Accompanying</a></li>
-                        <li><a href="#" class="rs-bold">Add On</a></li>
-                        <li><a href="#" class="rs-bold">Alerts</a></li>
-                        <li><a href="#" class="rs-bold">Prepaid Cards</a></li>
-                        <li><a href="#" class="rs-bold">Billing</a></li>
-                        <li><a href="#" class="rs-bold">Cance</a></li>
-                        <li><a href="#" class="rs-bold">Change</a></li>
-                        <li><a href="#" class="rs-bold">Delete</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a></li>
-                        <li><a href="#" class="rs-bold" >History</a></li>
-                        <li><a href="#" class="rs-bold" >New Message</a></li>
-                        <li><a href="#" class="rs-bold" >Regis.Card</a></li>
-                        <li><a href="#" class="rs-bold" >Room move</a></li>
-                        <li><a href="#" class="rs-bold" onclick="openModalRouting();">Routing</a></li>
+                        <li><a class="rs-bold" onclick="openModalAccompanying();">Accompanying</a></li>
+                        <li><a  class="rs-bold" onclick="openModalAddOn();">Add On</a></li>
+                        <li><a  class="rs-bold">Alerts</a></li>
+                        <li><a class="rs-bold" onclick="openModalBilling();">Billing</a></li>
+                        <li><a  class="rs-bold" onclick="openModalCancel()">Cancel</a></li>
+                        <li><a class="rs-bold">Change</a></li>
+                        <li><a  class="rs-bold" onclick="openModalShare();">Share</a></li>
+                        <li><a  class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a></li>
+                        <li><a class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a></li>
+                        <li><a  class="rs-bold" onclick="openConfirm();">Delete</a></li>
+                        <li><a  class="rs-bold" onclick="openModalMessage();">Message</a></li>
+                        <li><a  class="rs-bold" onclick="openModalRegistrationCard();">Regis.Card</a></li>
+                        <li><a  class="rs-bold" onclick="openRoomMove();">Room move</a></li>
+                        <li><a class="rs-bold" onclick="openModalRouting();">Routing</a></li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div class="rs-header ">
-            <div class="rs-toggle-btn" onclick="toggleCollapseSearch()">
-                <span class="rs-toggle-icon" id="collapseIconSearch">−</span>
-                <span id="collapseTitleSearch">Hide Filter</span>
-            </div>
-        </div>
-        <div class="rs-content-box row" id="infoBoxSearch">
+
+        <div class="rs-content-box row" id="infoBoxSearch" style="margin:0 2px;justify-content:space-between">
             <div class="col-md-8 row ">
-                <div class="col-md-1 mb-1">
-                    <label for="firstName" class="form-label">First Name</label>
+                <div class="col-md-2 mb-1">
+                    <label for="firstName" class="form-label" style="text-align:left">First Name</label>
                     <input id="firstName" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="package" class="form-label">Package</label>
+                <div class="col-md-2 mb-1">
+                    <label for="package" class="form-label" style="text-align:left">Package</label>
                     <input id="package" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="zone" class="form-label">Zone</label>
+                <div class="col-md-2 mb-1">
+                    <label for="zone" class="form-label" style="text-align:left">Zone</label>
                     <select id="zone" class="form-select" asp-items="ViewBag.cboZone"></select>
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="confirmationNo" class="form-label">Conf. No</label>
+                <div class="col-md-2 mb-1">
+                    <label for="confirmationNo" class="form-label" style="text-align:left">Conf. No</label>
                     <input id="confirmationNo" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="arrival" class="form-label">Arrival </label>
+                <div class="col-md-2 mb-1">
+                    <label for="arrival" class="form-label" style="text-align:left">Arrival </label>
                     <input id="arrivalForm" type="date" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="departure" class="form-label">Departure </label>
+                <div class="col-md-2 mb-1">
+                    <label for="departure" class="form-label" style="text-align:left">Departure </label>
                     <input id="departureForm" type="date" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="crsNo" class="form-label">CRS No/Gc</label>
+                <div class="col-md-2 mb-1">
+                    <label for="crsNo" class="form-label" style="text-align:left">CRS No/Gc</label>
                     <input id="crsNo" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="name" class="form-label">Name</label>
+                <div class="col-md-2 mb-1">
+                    <label for="name" class="form-label" style="text-align:left">Name</label>
                     <input id="name" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="roomShare" class="form-label">Room Sharer</label>
+                <div class="col-md-2 mb-1">
+                    <label for="roomShare" class="form-label" style="text-align:left">Room Sharer</label>
                     <div class="form-check">
                         <input class="form-check-input" checked type="checkbox" id="roomShare" name="roomShare" value="IncludeRS">
                     </div>
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="roomNo" class="form-label">Room No</label>
+                <div class="col-md-2 mb-1">
+                    <label for="roomNo" class="form-label" style="text-align:left">Room No</label>
                     <input id="roomNo" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="resvHolder" class="form-label">Resv. Holder</label>
+                <div class="col-md-2 mb-1">
+                    <label for="resvHolder" class="form-label" style="text-align:left">Resv. Holder</label>
                     <input id="resvHolder" type="text" class="form-control" />
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="roomType" class="form-label">Room Type</label>
+                <div class="col-md-2 mb-1">
+                    <label for="roomType" class="form-label" style="text-align:left">Room Type</label>
                     <select id="roomType" class="form-select" asp-items="ViewBag.cboRoomType"></select>
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="searchType" class="form-label">Search Type</label>
+                <div class="col-md-2 mb-1">
+                    <label for="searchType" class="form-label" style="text-align:left">Search Type</label>
                     <select id="searchType" class="form-select">
                         <option value="0">General</option>
+                        <option value="7">Cancellations</option>
+
                     </select>
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="reservationOnline" class="form-label">Rsv Online</label>
+                <div class="col-md-2 mb-1">
+                    <label for="reservationOnline" class="form-label" style="text-align:left">Rsv Online</label>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
                     </div>
                 </div>
-                <div class="col-md-1 mb-1">
-                    <label for="owner" class="form-label">Owner</label>
+                <div class="col-md-2 mb-1">
+                    <label for="owner" class="form-label" style="text-align:left">Owner</label>
                     <select id="owner" class="form-select">
                         <option value="">--All--</option>
                         <option value="--Hotel--">--Hotel--</option>
@@ -146,7 +153,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-3 row " style="overflow-y:scroll;font-size:12px" id="moreInfo">
+            <div class="col-md-3 row " style="overflow-y:scroll;font-size:12px;" id="moreInfo">
             </div>
         </div>
 
@@ -156,7 +163,7 @@
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-        <div class="rs-content-box row" style="gap:0">
+        <div class="rs-content-box row" style="gap:0;margin:0 2px">
             <div id="listFunction"  class="mt-1 listFunction">
                 <div >Shares</div>
                 <div >Fixed Charge</div>
@@ -1233,14 +1240,23 @@
     </div>
 </div>
 
-@await Html.PartialAsync("Partial/Deposit")
-@await Html.PartialAsync("Partial/Accompanying")
-@await Html.PartialAsync("Partial/FixedCharges")
-@await Html.PartialAsync("Partial/RegistrationCard")
-@await Html.PartialAsync("Partial/CheckIn")
-@await Html.PartialAsync("Partial/Billing")
-@await Html.PartialAsync("Partial/AddOn")
-@await Html.PartialAsync("Partial/Routing")
+@await Html.PartialAsync("Options/Deposit")
+@await Html.PartialAsync("Options/RoomMove")
+@await Html.PartialAsync("Options/Message")
+@await Html.PartialAsync("Options/Accompanying")
+@await Html.PartialAsync("Options/FixedCharges")
+@await Html.PartialAsync("Options/RegistrationCard")
+@await Html.PartialAsync("Options/CheckIn")
+@await Html.PartialAsync("Options/Billing")
+@await Html.PartialAsync("Options/AddOn")
+@await Html.PartialAsync("Options/Routing")
+@await Html.PartialAsync("Options/Cancel")
+@await Html.PartialAsync("Options/Delete")
+@await Html.PartialAsync("Options/Share")
+@await Html.PartialAsync("Options/Reinstate")
+@await Html.PartialAsync("Options/Split")
+@await Html.PartialAsync("Options/RoomAssignment")
+@await Html.PartialAsync("Options/ViewProfile")
 
 <script>
     $(document).ready(async function () {
@@ -1256,6 +1272,7 @@
         });
         getAllProfiles();
     });
+
     function toggleCollapse() {
         const box = document.getElementById("infoBox");
         const icon = document.getElementById("collapseIcon");
@@ -1288,43 +1305,81 @@
 
         }
     }
-    function searchReservation() {
-        $("#loadingSpinner").show();
-        const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
-        $.ajax({
-            url: '/Reservation/SearchReservation2',
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
             type: 'get',
             dataType: 'json',
-            data:{
-                searchType: $('#searchType').val(),
-                name: $('#name').val(),
-                firstName : $('#firstName').val(),
-                reservationHolder: $('#resvHolder').val(),
-                confirmationNo : $('#confirmationNo').val(),
-                crsNo: $('#crsNo').val(),
-                roomNo: $('#roomNo').val(),
-                roomType: $('#roomType').find('option:selected').text(),
-                package: $('#package').val(),
-                zone: $('#zone').find('option:selected').text(),
-                arrivalFrom :$('#arrivalForm').val(),
-                arrivalTo: $('#departureForm').val(),
-                roomSharer:checkboxValue,
-                owner: $('owner').val()
-            },
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                initializeDataGridSearch(result);
+                // Lấy ngày từ result (giả sử result có định dạng ISO như 'YYYY-MM-DDTHH:mm:ss')
+                const businessDate = new Date(result);
+                $('#arrivalForm').val(result.split('T')[0]);
+                $('#dayInput').val(result.split('T')[0]);
+                $('#dateInput').val(result.split('T')[0]);
+
+                // Cộng 7 ngày
+                const departureDate = new Date(businessDate);
+                departureDate.setDate(businessDate.getDate() + 7);
+
+                // Định dạng ngày thành YYYY-MM-DD
+                const formattedDepartureDate = departureDate.toISOString().split('T')[0];
+                $('#departureForm').val(formattedDepartureDate);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
-                } else {
                 }
             }
-            ,complete: function () {
-                $("#loadingSpinner").hide(); // 👉 Hide spinner sau khi hoàn tất
+        });
+    }
+
+    function searchReservation() {
+        $("#loadingSpinner").show();
+        const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
+
+        getBusinessDate().then(function () {
+            $.ajax({
+                url: '/Reservation/SearchReservation2',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    searchType: $('#searchType').val(),
+                    name: $('#name').val(),
+                    firstName: $('#firstName').val(),
+                    reservationHolder: $('#resvHolder').val(),
+                    confirmationNo: $('#confirmationNo').val(),
+                    crsNo: $('#crsNo').val(),
+                    roomNo: $('#roomNo').val(),
+                    roomType: $('#roomType').find('option:selected').text(),
+                    package: $('#package').val(),
+                    zone: $('#zone').find('option:selected').text(),
+                    arrivalFrom: $('#arrivalForm').val(),
+                    arrivalTo: $('#departureForm').val(),
+                    roomSharer: checkboxValue,
+                    owner: $('#owner').val() // Sửa lỗi cú pháp: $('owner') thành $('#owner')
+                },
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    listData = result;
+                    initializeDataGridSearch(result);
+                },
+                error: function (xhr, statusText, err) {
+                    if (xhr.status == 401) {
+                        sessionTimeout();
+                    }
+                },
+                complete: function () {
+                    $("#loadingSpinner").hide();
+                }
+            });
+        }).catch(function (xhr, statusText, err) {
+            if (xhr.status == 401) {
+                sessionTimeout();
             }
+            $("#loadingSpinner").hide();
         });
     }
     var idReservation = 0;
@@ -1336,6 +1391,10 @@
     var confirmationNo = '';
     var night = 0;
     var rateAmount = 0;
+    var lastname = '';
+    var listData = [];
+    var roomType = '';
+    var listReservationByConfirmationNo = [];
     function initializeDataGridSearch(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,   
@@ -1386,7 +1445,7 @@
                 }
                 if(e.data.FixedCharge != ''){
                     html += `<span style="margin:0;padding:0">-${e.data.FixedCharge}</span>`;
-
+                    
                 }
                 if(e.data.ItemInventory != ''){
                     html += `<span style="margin:0;padding:0">-${e.data.ItemInventory}</span>`;
@@ -1394,20 +1453,57 @@
                 if(e.data.Specials != ''){
                         html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
+
+                listReservationByConfirmationNo = listData.filter(item => item.ConfirmationNo === e.data.ConfirmationNo);
                 rateAmount = e.data.PriceNet;
                 night = e.data.NoOfNight
                 status = e.data.Status;
                 roomStatus = e.data.RoomStatus;
+                roomType = e.data.RoomType;
                 roomNo = e.data.RoomNo;
                 arivalDate = e.data.Arrival;
                 departureDate = e.data.Departure;
                 confirmationNo = e.data.ConfirmationNo;
-                const $checkInButton = $('#btnCheckIn');
-
-                if (status !== 'RESVED') {
-                    $checkInButton.prop('disabled', true);
-                } else {
-                    $checkInButton.prop('disabled', false);
+                lastname = e.data.GuestName;
+                if(e.data.NoOfRoom != '1'){
+                    ['assignRoom', 'unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'none';
+                            el.style.color = 'gray';
+                            el.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+                else {
+                    ['assignRoom', 'unAssignRoom', ].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'auto';
+                            el.style.color = '';
+                            el.style.cursor = 'pointer';
+                        }
+                    });
+                }
+                if(e.data.roomID == 0){
+                    ['unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'none';
+                            el.style.color = 'gray';
+                            el.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+                else {
+                    ['unAssignRoom', ].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'auto';
+                            el.style.color = '';
+                            el.style.cursor = 'pointer';
+                        }
+                    });
                 }
                 $('#moreInfo').append(html);
             }
@@ -1607,12 +1703,12 @@
 
         // Set arrival and departure input values
         document.getElementById('arrival').value = formatDate(parsedBusinessDate);
-        document.getElementById('arrivalForm').value = formatDate(parsedBusinessDate);
+        // document.getElementById('arrivalForm').value = formatDate(parsedBusinessDate);
 
         document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
 
         document.getElementById('departure').value = formatDate(departureDate);
-        document.getElementById('departureForm').value = formatDate(departureDate);
+        // document.getElementById('departureForm').value = formatDate(departureDate);
 
         document.getElementById('dropOffDate').value = formatDate(departureDate);
                function formatDate(date) {
@@ -1879,7 +1975,7 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                $('#txtID').val(result.id);
+                // $('#txtID').val(result.id);
                 $('#nameProfileSearch').val(result.account);
                 $('#firstNameProfileSearch').val(result.firstname);
                 $('#cityProfileSearch').val(result.city);
@@ -1922,6 +2018,8 @@
         const values = Array.from(checkboxes).map(checkbox => checkbox.value);
         return values.join(","); // Trả về chuỗi dạng 'a,c,v,c'
     }
+
+
 
     function getSelectedRadio(name) {
         const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
@@ -2611,7 +2709,6 @@
                         if (matchingOption.length > 0) {
                             $('#txtRoomType').val(matchingOption.val());
                         } else {
-                            console.warn("No option found with text: ", columnName);
                         }
 
 
@@ -3181,63 +3278,7 @@
     function closeModalEdit(){
         $('#modalEdit').modal('hide');
     }
-    function openModalCancel(){
-        if(idReservation == 0){
-            showToast('Error', 'Please choose booking', false);
-            return;
-        }
-        if(status != 'RESVED'){
-            showToast('Error', 'Cannot cancel because booking is not in Reservation status', false);
-            return;
-        }
-        $('#modalCancel').modal('show');
-    }
-    function closeModalCancel(){
-        clearCancel();
-        $('#modalCancel').modal('hide');
-    }
-
-    $('#reasonCancel').on('change', function() {
-        $('#descriptionCancel').text($(this).find('option:selected').text().split('-')[1]);
-    });
-    function clearCancel(){
-        $('#reasonCancel').val('');
-        $('#descriptionCancel').val('');
-    }
-    function CancelReservation() {
-
-        const userName = JSON.parse(localStorage.getItem("Loginname"));
-        const userID = JSON.parse(localStorage.getItem("userID"));
-        var formData = new FormData();
-        formData.append('rsvID', idReservation);
-        formData.append('reasonCancellation',$('#reasonCancel').find('option:selected').text().split('-')[0]);
-        formData.append('description', $('#reasonCancel').find('option:selected').text().split('-')[1]);
-        formData.append('userID', userID);
-            formData.append('userName', userName);
-        $.ajax({
-            url: '/Reservation/CancelReservation',
-            type: 'POST',
-            processData: false,
-            contentType: false,
-            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data: formData,
-            success: function (data) {
-                if (data.code == 0) {
-                    closeModalCancel();
-                    showToast('Success', data.msg, true);
-                    searchReservation();
-                } else {
-                    showToast('Error', data.msg, false);
-                }
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-
-    }
-
+    
     function getAllProfiles() {
         $("#loadingSpinner").show();
         $('#viewByProfileSearch').val(3);
@@ -3248,7 +3289,6 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                console.log(result);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -3259,4 +3299,22 @@
 
         });
     }
+
+
+    document.getElementById("groupAdmin").addEventListener("click", async function () {
+
+
+                const response = await fetch('/Reservation/SetDataGroupAdmin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(listReservationByConfirmationNo)
+        });
+
+        const result = await response.json();
+        if (result.redirectUrl) {
+            window.location.href = result.redirectUrl;
+        }
+    });
 </script>

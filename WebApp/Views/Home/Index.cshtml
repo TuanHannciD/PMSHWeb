@@ -2,8 +2,11 @@
     ViewData["Title"] = "Home Page";
 }
 <div class="layout-wrapper">
+  
+
     <!-- Mục 1: Trên cùng -->
     <div class="section-top">
+      
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-door-closed"></i></div>
             <div class="card-content">
@@ -12,6 +15,21 @@
             </div>
         </div>
 
+    
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-users"></i></div>
+            <div class="card-content">
+                <div class="card-title">Guest in House</div>
+                <div class="card-value" id="guestInHouseCount">0</div>
+            </div>
+        </div>
+        <div class="card-box">
+            <div class="card-icon"><i class="fas fa-sign-out-alt"></i></div>
+            <div class="card-content">
+                <div class="card-title">Due out</div>
+                <div class="card-value" id="dueoutCount">0</div>
+            </div>
+        </div>
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-door-open"></i></div>
             <div class="card-content">
@@ -20,21 +38,7 @@
             </div>
         </div>
 
-        <div class="card-box">
-            <div class="card-icon"><i class="fas fa-users"></i></div>
-            <div class="card-content">
-                <div class="card-title">Guest in House</div>
-                <div class="card-value" id="guestInHouseCount">0</div>
-            </div>
-        </div>
-
-        <div class="card-box">
-            <div class="card-icon"><i class="fas fa-sign-out-alt"></i></div>
-            <div class="card-content">
-                <div class="card-title">Due out</div>
-                <div class="card-value" id="dueoutCount">0</div>
-            </div>
-        </div>
+       
 
     </div>
 
@@ -72,19 +76,21 @@
             </div>
         </div>
 
-        <div class="section-right mui-card">
-            <div class="form-group">
-                <label style="margin-left: 15px;">
-                    <input type="radio" name="chartType" value="pie" checked> Pie Chart
-                </label>
-                <label>
-                    <input type="radio" name="chartType" value="bar" > Bar Chart
-                </label>
+  
+            <div class="section-right mui-card">
+                <div class="form-group" id="checkchart">
+                    <label style="margin-left: 15px;">
+                        <input type="radio" name="chartType" value="pie" checked> Pie Chart
+                    </label>
+                    <label>
+                        <input type="radio" name="chartType" value="bar" > Bar Chart
+                    </label>
                
-            </div>
-            <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
-            <div id="highchartPie" class="chart-fixed-sizehigh"></div>
-        </div>   
+                </div>
+                <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
+                <div id="highchartPie" class="chart-fixed-sizehigh"></div>
+            </div>   
+     
     </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -237,7 +243,7 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
+               
     $(document).ready(function () {
         var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // "29/08/2024 00:00:00"
 
@@ -268,9 +274,10 @@
                     $("#totalA").text(data.totalA);
                     $("#totalC").text(data.totalC);
                     $("#occupancyPercent").text(data.occupancyPercent + "%");
-                        renderHighchartBar(data.chartStatus);
-             
-                        renderHighchartPie(data.chartStatus);
+
+                                renderHighchartBar(data.chartStatus);
+                                renderHighchartPie(data.chartStatus);
+                       
 
                 $("#loadingSpinner").hide(); 
             },
@@ -282,52 +289,77 @@
 
     
     });
-       function renderHighchartBar(data) {
-        const categories = data.map(x => x.statusName);
-        const values = data.map(x => parseInt(x.total));
+      function renderHighchartBar(data) {
+    const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
 
-        Highcharts.chart('highchartBar', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Booking Summary by Status'
-            },
-            xAxis: {
-                categories: categories,
-                title: {
-                    text: 'Status'
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Bookings'
-                }
-            },
-            tooltip: {
-                pointFormat: 'Total: <b>{point.y}</b>'
-            },
-            series: [{
-                name: 'Bookings',
-                data: values,
-                color: '#7cb5ec'
-            }]
-        });
-    }
+    const categories = filteredData.map(x => x.label);
+    const values = filteredData.map(x => parseInt(x.value));
+
+    Highcharts.chart('highchartBar', {
+        chart: {
+            type: 'column'
+        },
+        title: { text: '' },
+        xAxis: {
+            categories: categories,
+            title: { text: 'Room summary' }
+        },
+        yAxis: {
+            min: 0,
+            title: { text: 'Number of room' }
+        },
+        tooltip: {
+            pointFormat: 'Total: <b>{point.y}</b>'
+        },
+        series: [{
+            name: '',
+            data: values,
+            color: '#7cb5ec'
+        }],
+        credits: { enabled: false }
+    });
+}
+
 
      // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
-        function renderHighchartPie(data) {
-        // Tính tổng tất cả giá trị trong dữ liệu
-        const total = data.reduce((sum, x) => sum + parseInt(x.total), 0);
+    function renderHighchartPie(data) {
+        const totalObj = data.find(x => x.label === 'Total');
+        const total = totalObj ? parseInt(totalObj.value) : 0;
 
-        // Chuyển đổi dữ liệu thành định dạng mà Highcharts cần
-        const chartData = data.map(x => {
-            const y = parseInt(x.total);
-            const percent = total > 0 ? ((y / total) * 100).toFixed(1) : 0;
+        // Tính phần trăm thực tế chưa làm tròn
+        let items = data
+            .filter(x => x.label !== 'Total')
+            .map(x => {
+                const y = parseInt(x.value);
+                const rawPercent = total > 0 ? (y / total) * 100 : 0;
+                return {
+                    label: x.label,
+                    y: y,
+                    rawPercent: rawPercent
+                };
+            });
+
+        // Làm tròn phần trăm
+        let roundedPercents = items.map(x => Math.round(x.rawPercent * 10) / 10);
+        let sumPercent = roundedPercents.reduce((a, b) => a + b, 0);
+
+        // Tính chênh lệch do làm tròn
+        let diff = +(100.0 - sumPercent).toFixed(1);
+
+        // Nếu có chênh lệch thì điều chỉnh mục có giá trị lớn nhất
+        if (Math.abs(diff) > 0.0) {
+            let maxIndex = items.reduce((maxIdx, item, idx, arr) => {
+                return arr[idx].y > arr[maxIdx].y ? idx : maxIdx;
+            }, 0);
+
+            roundedPercents[maxIndex] = +(roundedPercents[maxIndex] + diff).toFixed(1);
+        }
+
+        // Tạo dữ liệu cho Highcharts
+        const chartData = items.map((x, i) => {
             return {
-                name: `${x.statusName} (${percent}%)`,
-                y: y
+                name: `${x.label} (${roundedPercents[i]}%)`,
+                y: x.y
             };
         });
 
@@ -336,7 +368,7 @@
                 type: 'pie'
             },
             title: {
-                text: 'Booking Summary by Status'
+                text: ''
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.y}</b>'
@@ -347,7 +379,7 @@
                 }
             },
             legend: {
-                enabled: true, // 🔰 bật legend
+                enabled: true,
                 align: 'center',
                 verticalAlign: 'bottom',
                 layout: 'horizontal'
@@ -360,16 +392,21 @@
                         enabled: true,
                         format: '{point.name}: {point.y}'
                     },
-                    showInLegend: true // 🔰 hiển thị dữ liệu trong legend
+                    showInLegend: true
                 }
             },
             series: [{
                 name: 'Total',
                 colorByPoint: true,
                 data: chartData
-            }]
+            }],
+            credits: {
+                enabled: false
+            }
         });
     }
+
+
 
 
     // Chart toggle logic

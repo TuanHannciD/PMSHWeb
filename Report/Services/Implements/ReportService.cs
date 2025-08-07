@@ -1302,6 +1302,24 @@ namespace Report.Services.Implements
 
             return DataTableHelper.getTableData("spReservationSearch", param);
         }
+        public DataTable RoomAvailableNew(DateTime businessDate, string paraDate, string paraDateConvert, string resvType,string Code)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@FromDate", businessDate),
+         new SqlParameter("@ToDate", businessDate),
+          new SqlParameter("@ParaDate", paraDate),
+           new SqlParameter("@ParaDateConvert", paraDateConvert),
+            new SqlParameter("@ResvType", resvType),
+               new SqlParameter("@NonDeduct", "1"),
+                 new SqlParameter("@IncludeOverbook", ""),
+                  new SqlParameter("@IncludeAllotment", "1"),
+                   new SqlParameter("@ViewbyAllotement", "1"),
+                     new SqlParameter("@Zone", Code),
+            };
 
+            DataTable myTable = DataTableHelper.getTableData("spRmgRoomAvailableNew", param);
+            return myTable;
+        }
     }
 }

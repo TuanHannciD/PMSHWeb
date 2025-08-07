@@ -1,0 +1,214 @@
+﻿@using Newtonsoft.Json
+@using Reservation.Dto
+<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
+@model List<ReservationSearchDTO>
+<div class="body">
+    <div class="container2">
+
+        <div class="text-center" style="font-size: 20px;">Group Admin</div>
+        <div class="rs-header " style="column-gap:8px">
+            <div class="rs-toggle-btn" onclick="toggleCollapse()">
+                <span class="rs-toggle-icon" id="collapseIcon">−</span>
+                <span id="collapseTitle">Hide Functions</span>
+            </div>
+            <div class="rs-column">
+                <div class="rs-section">
+                    <ul class="rs-menu-list">
+                        <li><a href="/Home/Index" class="rs-bold">Home</a></li>
+                        <li><a href="/Reservation/NewReservation" class="rs-bold">New Reservation</a></li>
+                        <li><a href="/Reservation/SearchReservation" class="rs-bold">Search Reservation</a></li>
+
+                        <li><a href="/Home/Index" class="rs-bold">Close</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Content Box -->
+        <div class="rs-content-box row" id="infoBox" style="margin:0 2px">
+
+            <div class="rs-column">
+                <div class="rs-section">
+                    <h4>Reservation Functions</h4>
+                    <ul class="rs-menu-list">
+                        <li><a class="rs-bold">Advance</a></li>
+                        <li><a class="rs-bold">Cancel</a></li>
+                        <li><a class="rs-bold" onclick="openModalSplit();">Split</a></li>
+                        <li class="dropdown-toggle">
+                            <a class="rs-bold">Room Assignment</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="rs-bold" onclick="openRoomAssignment();" id="assignRoom">Assignment</a></li>
+                                <li><a class="rs-bold" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown-toggle">
+                            <a class="rs-bold">Check In</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="rs-bold" onclick="openRoomAssignment();" id="assignRoom">Check In</a></li>
+                                <li><a class="rs-bold" onclick="openModalGroupCheckIn();">Group Check In</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+        <div class="rs-content-box row" style="gap:0;margin:0 2px">
+
+            <div id="gridContainer" class="mt-2 gridContainer"></div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("GroupAdmin/GroupCheckIn")
+
+<script>
+    $(document).ready(async function () {
+            var data = @Html.Raw(JsonConvert.SerializeObject(Model));
+            initializeDataGridSearch(data);
+    });
+    var listData = [];
+    function toggleCollapse() {
+        const box = document.getElementById("infoBox");
+        const icon = document.getElementById("collapseIcon");
+        const title = document.getElementById("collapseTitle");
+
+        if (box.classList.contains("rs-hidden")) {
+            box.classList.remove("rs-hidden");
+            icon.textContent = "−";
+            title.textContent = "Hide Functions"
+        } else {
+            box.classList.add("rs-hidden");
+            icon.textContent = "+";
+            title.textContent = "Show Functions"
+        }
+    }
+        var idReservation = 0;
+    var status = '';
+    var roomStatus = '';
+    var roomNo = '';
+    var arivalDate = '';
+    var departureDate = '';
+    var confirmationNo = '';
+    var night = 0;
+    var rateAmount = 0;
+    var lastname = '';
+    var listData = [];
+    var roomType = '';
+    var listReservationByConfirmationNo = [];
+    function initializeDataGridSearch(data) {
+        listData = data;
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            scrolling: {
+                mode: 'virtual',
+                showScrollbar: 'always',
+                useNative: false,
+            },
+            selection: {
+                mode: "single"
+            },
+            onRowDblClick: function(e) {
+                openModalEdit(e.data.id);
+            },
+            onRowClick: function(e) {
+                idReservation = e.data.ID;
+                var html = ``;
+                if(e.data.ProfileComment != ''){
+                    html += `<span style="margin:0;padding:0">-${e.data.ProfileComment}</span>`;
+                }
+                if(e.data.CommentGroup != ''){
+                    html += `<span style="margin:0;padding:0">-${e.data.CommentGroup}</span>`;
+
+                }
+                if(e.data.DepositRequest != ''){
+                    html += `<span style="margin:0;padding:0">-${e.data.DepositRequest}</span>`;
+
+                }
+                if(e.data.FixedCharge != ''){
+                    html += `<span style="margin:0;padding:0">-${e.data.FixedCharge}</span>`;
+
+                }
+                if(e.data.ItemInventory != ''){
+                    html += `<span style="margin:0;padding:0">-${e.data.ItemInventory}</span>`;
+                }
+                if(e.data.Specials != ''){
+                        html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
+                }
+
+                listReservationByConfirmationNo = listData.filter(item => item.ConfirmationNo === e.data.ConfirmationNo);
+                rateAmount = e.data.PriceNet;
+                night = e.data.NoOfNight
+                status = e.data.Status;
+                roomStatus = e.data.RoomStatus;
+                roomType = e.data.RoomType;
+                roomNo = e.data.RoomNo;
+                arivalDate = e.data.Arrival;
+                departureDate = e.data.Departure;
+                confirmationNo = e.data.ConfirmationNo;
+                lastname = e.data.GuestName;
+                if(e.data.NoOfRoom != '1'){
+                    ['assignRoom', 'unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'none';
+                            el.style.color = 'gray';
+                            el.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+                else {
+                    ['assignRoom', 'unAssignRoom', ].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'auto';
+                            el.style.color = '';
+                            el.style.cursor = 'pointer';
+                        }
+                    });
+                }
+                if(e.data.roomID == 0){
+                    ['unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'none';
+                            el.style.color = 'gray';
+                            el.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+                else {
+                    ['unAssignRoom', ].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'auto';
+                            el.style.color = '';
+                            el.style.cursor = 'pointer';
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

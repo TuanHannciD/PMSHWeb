@@ -1,0 +1,618 @@
+﻿<link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
+<style>
+    label {
+    text-align:left;
+    
+}
+</style>
+<div class="body">
+    <div class="container2">
+        <div class="text-center" style="font-size: 20px;">Group Reservation</div>
+        <div class="rs-header " style="column-gap:8px">
+            <div class="rs-toggle-btn" onclick="toggleCollapse()">
+                <span class="rs-toggle-icon" id="collapseIcon">−</span>
+                <span id="collapseTitle">Hide Filter</span>
+            </div>
+            <div class="rs-toggle-btn" onclick="openModalNew();">
+                <span class="rs-toggle-icon" id="">+</span>
+                <span id="collapseTitle">New Group Reservation</span>
+            </div>
+            <div class="rs-column" >
+                <div class="rs-section">
+                    <ul class="rs-menu-list">
+                        <li><a href="/Home/Index" class="rs-bold">Home</a></li>
+                        <li><a href="/Reservation/NewReservation" class="rs-bold">New Reservation</a></li>
+                        <li><a href="/Reservation/SearchReservation" class="rs-bold">Search Reservation</a></li>
+
+                        <li><a href="/Home/Index" class="rs-bold">Close</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Content Box -->
+        <div class="rs-content-box row" id="infoBox" >
+            
+            <div >
+                <div>
+                    <label >From Date</label>
+                    <input type="date" id="fromDateSearch" >
+                </div>
+                <div>
+                    <label>To Date</label>
+                    <input type="date" id="toDateSearch">
+                </div>
+                <div>
+                    <label>Num. of Room (min)</label>
+                    <input type="number" id="numRoomSearch" value="10">
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingSpinner" style="display: none; text-align: center; padding: 20px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="rs-content-box row" style="gap:0">
+
+            <div id="gridContainer" class="mt-2 gridContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal new group reservation-->
+<div class="modal fade modal-xl" id="modalNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Rate Code</h5>
+                <button type="button" class="btn-close" onclick="closeModalNew()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-search" onclick="SaveGroupReservation();">Save</button>
+                    <button class="mui-button mui-button-clear" onclick="clearModelNew();">Clear</button>
+                </div>
+                <div class="col-md-12 row bg-light border rounded" style="margin:0 4px">
+                    <div class="col-md-4 row">
+                        <div class="mb-1 col-md-12 row">
+                            <label class="form-label col-md-4">Book from</label>
+                            <select id="bookForm" class="form-select col-md-8">
+                                <option value="0" selected>Availablity</option>
+                                <option value="1">Allotment</option>
+                                <option value="2">Rate Code</option>
+
+                            </select>
+                        </div>
+                        <div class="mb-1 col-md-12 row">
+                            <label class="form-label col-md-4">Res.Type</label>
+                            <select id="resType" class="form-select col-md-8" asp-items="ViewBag.cboReservationType"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-4 row">
+                        <div class="row col-md-12">
+                            <label class="col-md-1">Arrival</label>
+                            <input type="date" id="arrival" class="col-md-4" value="2024-08-30" style="display:none">
+                            <input type="date" id="arrival2" class="col-md-4" value="2024-08-30">
+
+                            <button class="col-md-1" onclick="changeDate('arrival', -1)">-</button>
+                            <button class="col-md-1" onclick="changeDate('arrival', 1)">+</button>
+                            <span class="col-md-1" style="font-size:12px;color:#9F0010;display:none" id="arrival-day"></span>
+                        </div>
+                        <div class="row col-md-12">
+                            <label class="col-md-1">Departure</label>
+                            <input type="date" id="departure" class="col-md-4" value="2024-02-09" style="display:none">
+                            <input type="date" id="departure2" class="col-md-4" value="2024-09-02">
+
+                            <button class="col-md-1" onclick="changeDate('departure', -1)">-</button>
+                            <button class="col-md-1" onclick="changeDate('departure', 1)">+</button>
+                            <span class="col-md-1" style="font-size:12px;color:#9F0010;display:none" id="departure-day"></span>
+                        </div>
+
+                        <div class="col-md-12 row">
+                            <label class="col-md-3">Nights</label>
+                            <input type="text" id="nights" class="col-md-9"  style="text-align:right">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-1 col-md-12 row">
+                            <label class="form-label col-md-4">Name</label>
+                            <select id="name" class="form-select col-md-8"></select>
+                        </div>
+                        <div class="mb-1 col-md-12 row">
+                            <label class="form-label col-md-4">Currency</label>
+                            <select id="currency" class="form-select col-md-8">
+                                <option value="VND" selected>VND</option>
+                            </select>
+                        </div>
+                        <div class="mb-1 col-md-12 row">
+                            <label class="form-label col-md-4">Package</label>
+                            <select id="package" class="form-select col-md-8" asp-items="ViewBag.cboPackage"></select>
+                        </div>
+                        <div class="mb-1 col-md-12 row">
+                            <label class="form-label col-md-4">Market</label>
+                            <select id="market" class="form-select col-md-8" asp-items="ViewBag.cboMarket"></select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="rs-content-box row" style="gap:0;margin:4px">
+                    <div id="gridContainerRoom" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(async function (){
+        searchGroupReservation();
+        await setTomSelect();
+        getProfileIndividual();
+        document.addEventListener("keydown", function(event) {
+          if (event.key === "Enter") {
+            searchGroupReservation();          
+          }
+        });
+
+    });
+    async function setTomSelect(){
+        const ids = [
+            "#name"
+
+        ];
+
+        for (const id of ids) {
+            if ($(id).length) {
+                new TomSelect(id, {
+                    allowEmptyOption: true,
+                    create: true
+                });
+            }
+        }
+    }
+    // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Hàm lấy tên thứ của ngày bằng tiếng Anh
+    function getDayName(date) {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        return days[date.getDay()];
+    }
+
+    // Hàm tính số đêm
+    function calculateNights() {
+        const arrival = new Date(document.getElementById('arrival').value);
+        const departure = new Date(document.getElementById('departure').value);
+        if (arrival && departure) {
+            const diffTime = departure - arrival;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('nights').value = diffDays >= 0 ? diffDays : 0;
+        }
+    }
+
+
+
+
+    // Hàm cập nhật ngày và thứ
+    function updateDates() {
+        const arrivalInput = document.getElementById('arrival');
+        const departureInput = document.getElementById('departure');
+        const arrivalDay = document.getElementById('arrival-day');
+        const departureDay = document.getElementById('departure-day');
+
+        const arrivalDate = new Date(arrivalInput.value);
+        const departureDate = new Date(departureInput.value);
+
+        if (arrivalDate) {
+            arrivalDay.textContent = getDayName(arrivalDate);
+        }
+        if (departureDate) {
+            departureDay.textContent = getDayName(departureDate);
+        }
+        calculateNights();
+    }
+
+    // Hàm thay đổi ngày khi nhấn nút + hoặc -
+    function changeDate(field, delta) {
+        const input = document.getElementById(field);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
+        const currentDate = new Date(input.value || today);
+        const arrivalDate = new Date(document.getElementById('arrival').value);
+
+        // Kiểm tra nếu giảm ngày và ngày hiện tại nhỏ hơn ngày hôm nay
+        if (delta < 0) {
+            const newDate = new Date(currentDate);
+            newDate.setDate(currentDate.getDate() + delta);
+            if (newDate < today) {
+                return; // Không cho phép giảm ngày nếu nhỏ hơn hôm nay
+            }
+            // Nếu giảm departure, đảm bảo không nhỏ hơn hoặc bằng arrival
+            if (field === 'departure' && newDate <= arrivalDate) {
+                return; // Không cho phép giảm departure nếu nhỏ hơn hoặc bằng arrival
+            }
+        }
+
+        // Cập nhật ngày
+        currentDate.setDate(currentDate.getDate() + delta);
+        input.value = formatDate(currentDate);
+
+        // Nếu thay đổi arrival, cập nhật departure để giữ số đêm cố định
+        if (field === 'arrival') {
+            const nights = parseInt(document.getElementById('nights').value) || 1;
+            const departureDate = new Date(currentDate);
+            departureDate.setDate(currentDate.getDate() + nights);
+            // Đảm bảo departure lớn hơn arrival
+            if (departureDate <= currentDate) {
+                departureDate.setDate(currentDate.getDate() + 1);
+            }
+            document.getElementById('departure').value = formatDate(departureDate);
+        }
+
+        // Nếu thay đổi departure, đảm bảo departure lớn hơn arrival
+        if (field === 'departure') {
+            if (currentDate <= arrivalDate) {
+                const newDeparture = new Date(arrivalDate);
+                newDeparture.setDate(arrivalDate.getDate() + 1);
+                document.getElementById('departure').value = formatDate(newDeparture);
+            }
+        }
+
+        updateDates();
+    }
+      
+    // Khởi tạo ngày mặc định
+    window.onload = function() {
+        // Lấy chuỗi businessDate từ localStorage
+        var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // Chuỗi: "29/08/2024 00:00:00"
+
+            var dateOnly = parsedBusinessDate.split(' ')[0]; // '8/29/2024'
+        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+
+        // Parse đúng thứ tự: new Date(year, monthIndex, day)
+        var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
+
+        // Tạo ngày departureDate (ngày tiếp theo)
+        var departureDate = new Date(parsedBusinessDate);
+            departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+        // Gán giá trị cho các input arrival và departure
+        document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+        document.getElementById('departure').value = formatDate(departureDate);
+        document.getElementById('fromDateSearch').value = formatDate(parsedBusinessDate);
+        document.getElementById('toDateSearch').value = formatDate(departureDate);
+
+        // Gọi hàm updateDates (giả sử đã được định nghĩa)
+        updateDates();
+    };
+    // Lắng nghe sự kiện thay đổi ngày
+    document.getElementById('arrival').addEventListener('change', function() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const arrivalDate = new Date(this.value);
+        if (arrivalDate < today) {
+            this.value = formatDate(today); // Đặt lại ngày hôm nay nếu nhỏ hơn
+        }
+        // Cập nhật departure để giữ số đêm cố định
+        const nights = parseInt(document.getElementById('nights').value) || 1;
+        const newDeparture = new Date(this.value);
+        newDeparture.setDate(newDeparture.getDate() + nights);
+        // Đảm bảo departure lớn hơn arrival
+        if (newDeparture <= arrivalDate) {
+            newDeparture.setDate(arrivalDate.getDate() + 1);
+        }
+        document.getElementById('departure').value = formatDate(newDeparture);
+        updateDates();
+    });
+
+    document.getElementById('departure').addEventListener('change', function() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const departureDate = new Date(this.value);
+        const arrivalDate = new Date(document.getElementById('arrival').value);
+        // Đảm bảo departure không nhỏ hơn ngày hiện tại và lớn hơn arrival
+        if (departureDate <= arrivalDate || departureDate < today) {
+            const newDeparture = new Date(arrivalDate > today ? arrivalDate : today);
+            newDeparture.setDate(newDeparture.getDate() + 1);
+            this.value = formatDate(newDeparture);
+        }
+        updateDates();
+    });
+
+
+
+    function toggleCollapse() {
+        const box = document.getElementById("infoBox");
+        const icon = document.getElementById("collapseIcon");
+        const title = document.getElementById("collapseTitle");
+
+        if (box.classList.contains("rs-hidden")) {
+            box.classList.remove("rs-hidden");
+            icon.textContent = "−";
+            title.textContent = "Hide Filter"
+        } else {
+            box.classList.add("rs-hidden");
+            icon.textContent = "+";
+            title.textContent = "Show Filter"
+        }
+    }
+
+    function getProfileIndividual(){
+        $.ajax({
+                url: '/Reservation/GetProfileIndividual',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                if (result.length > 0) {
+                    let select = $('#name')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+
+                    select.addOption({ value: '0', text: '' });
+                    result.forEach(item => {
+                        select.addOption({ value: item.id, text: `${item.account}` });
+                    });
+
+                    select.setValue('0'); // Chọn giá trị mặc định
+
+
+                }
+                else{
+                    let select = $('#name')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+                    select.addOption({ value: '0', text: '' });
+                    select.setValue('0');
+
+                }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+
+    function searchGroupReservation(){
+        $.ajax({
+            url: '/Reservation/SearchGroupReservation',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                fromDate : $('#fromDateSearch').val(),
+                toDate: $('#toDateSearch').val(),
+                noOfNight: $('#numRoomSearch').val()
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridSearch(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    function initializeDataGridSearch(data) {
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            paging: {
+                pageSize: 15, // Đảm bảo phân trang với 15 bản ghi
+                enabled: true // Bật phân trang
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            scrolling: {
+                mode: 'standard', // Thử chuyển sang standard để đảm bảo phân trang
+                showScrollbar: 'always',
+                useNative: false
+            },
+            selection: {
+                mode: "single"
+            }
+        });
+    }
+    function openModalNew(){
+        clearModelNew();
+        searchRoomAvailale();
+        $('#modalNew').modal('show');
+    }
+    function closeModalNew(){
+        clearModelNew();
+        $('#modalNew').modal('hide');
+    }
+    function clearModelNew(){
+        $('#bookForm').val(0);
+        $('#resType').val(0);
+                // Lấy chuỗi businessDate từ localStorage
+        var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // Chuỗi: "29/08/2024 00:00:00"
+
+            var dateOnly = parsedBusinessDate.split(' ')[0]; // '8/29/2024'
+        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+
+        // Parse đúng thứ tự: new Date(year, monthIndex, day)
+        var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
+
+        // Tạo ngày departureDate (ngày tiếp theo)
+        var departureDate = new Date(parsedBusinessDate);
+            departureDate.setDate(parsedBusinessDate.getDate() + 1);
+
+
+        // Gán giá trị cho các input arrival và departure
+        document.getElementById('arrival').value = formatDate(parsedBusinessDate);
+        document.getElementById('departure').value = formatDate(departureDate);
+        $('#nights').val('1');
+        $('package').val(0);
+        $('#market').val(0);
+        $('#name').val(0);
+
+    }
+
+    function searchRoomAvailale(){
+        $.ajax({
+            url: '/Reservation/GetRoomAvailable',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                fromDate : $('#arrival2').val(),
+                toDate: $('#departure2').val(),
+
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridRoomAvailable(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    function initializeDataGridRoomAvailable(data) {
+        // Thêm Currency và RateCode cho từng dòng (nếu chưa có)
+        data.forEach(item => {
+            item.Currency = "VND";
+            item.RateCode = "0";
+        });
+
+        const columns = [];
+
+        // Tự động lấy danh sách các cột từ data (dựa vào cột đầu tiên)
+        if (data.length > 0) {
+            for (const key of Object.keys(data[0])) {
+                columns.push({
+                    dataField: key,
+                    caption: key,
+                    alignment: typeof data[0][key] === 'number' ? 'right' : 'left'
+                });
+            }
+        }
+
+
+        // 2. Ẩn cột thứ 3 (index = 2)
+        if (columns.length > 2) {
+            columns[2].visible = false;
+        }
+
+        // 3. Thêm cột mới vào vị trí thứ 5 (index = 4)
+        columns.splice(4, 0, {
+            dataField: "NumofRoom",
+            caption: "Num. off Room",
+            alignment: "right"
+        });
+
+        // Tạo grid
+        $("#gridContainerRoom").dxDataGrid({
+            dataSource: data,
+            columns: columns,
+            paging: {
+                pageSize: 15,
+                enabled: true
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            editing: {
+                mode: "cell",
+                allowUpdating: true,
+                allowAdding: false,
+                allowDeleting: false
+            },
+            scrolling: {
+                mode: 'standard',
+                showScrollbar: 'always',
+                useNative: false
+            },
+            selection: {
+                mode: "single"
+            }
+        });
+    }
+
+
+    function SaveGroupReservation() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        const gridData = $("#gridContainerRoom").dxDataGrid("instance").getVisibleRows().map(r => r.data);
+        var formData = new FormData();
+        const tomSelect = $('#name')[0].tomselect;
+        const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
+        formData.append('lastName', selectedText);
+        formData.append('resType', $("#resType").val());
+        formData.append("gridData", JSON.stringify(gridData));
+        formData.append('arrivalDate', $("#arrival2").val());
+        formData.append('departureDate', $("#departure2").val());
+        formData.append('noOfNight', $("#nights").val());
+        formData.append('profileIndividualID', $("#name").val());
+        formData.append('package', $("#package").val());
+        formData.append('packageCode', $("#package").find('option:selected').text());
+
+        formData.append('market', $("#market").val());
+        formData.append('marketCode', $("#market").find('option:selected').text());
+
+        formData.append('resTypeCode', $('#resType').find('option:selected').text());
+
+        
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+
+        $.ajax({
+            url: '/Reservation/SaveGroupReservation',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    closeModalNew();
+                    searchGroupReservation();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+</script>
