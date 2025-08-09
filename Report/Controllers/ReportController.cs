@@ -984,13 +984,14 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
+        public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate, string zone)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
                 commnet = commnet ?? "";
-                DataTable dataTable = _iReportService.ReservationCancellationsReport(fromDate, toDate, commnet, typeDate);
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.ReservationCancellationsReport(fromDate, toDate, commnet, typeDate, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -1061,7 +1062,7 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder,string noOfRoom)
+        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string zone, int  searchCrip, int  sortOrder,string noOfRoom)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
@@ -1069,7 +1070,8 @@ namespace Report.Controllers
                 roomClass = roomClass ?? "";
                 roomType = roomType ?? "";
                 noOfRoom = noOfRoom ?? "";
-                DataTable dataTable = _iReportService.ReservationbyCompanyReport(fromDate, toDate, roomClass, roomType, searchCrip, sortOrder, noOfRoom);
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.ReservationbyCompanyReport(fromDate, toDate, roomClass, roomType, zone, searchCrip, sortOrder, noOfRoom);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -3655,6 +3657,8 @@ namespace Report.Controllers
                 case "ReservationCancellation":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
                     ViewBag.ComList = listcm;
+                    List<ZoneModel> lzone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+                    ViewBag.ZoneList = lzone ;
                     break;
                 
                 case "Alerts":
