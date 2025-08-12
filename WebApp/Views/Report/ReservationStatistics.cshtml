@@ -4,6 +4,7 @@
 *@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
+    var zoneList = ViewBag.ZoneList;
 }
 
 
@@ -104,6 +105,16 @@
             <label class="me-2 mb-0">Month:</label>
             <input type="month" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
         </div>
+        <div class="d-flex align-items-center me-1">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
+                @foreach (var item in zoneList)
+                {
+                    <option value="@item.ID">@item.Code</option>
+                }
+            </select>
+
+        </div>
     </div>
     <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -141,17 +152,44 @@
         console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
         // Gán giá trị cho input date
         document.getElementById('fromDate').value = formattedFirstDay;
-
+           initializeTomSelects();
 
 
     });
+     function initializeTomSelects() {
+        const selectors = ["#zone"];
+
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                // Nếu đã khởi tạo rồi thì destroy
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
             url: '/Report/ReservationStatisticsReport',
             type: 'GET',
             data: {
-                fromDate: $("#fromDate").val()
+                fromDate: $("#fromDate").val(),
+                  zone: $("#zone").val().join(",")
             },
             traditional: true,
               crossDomain: false,

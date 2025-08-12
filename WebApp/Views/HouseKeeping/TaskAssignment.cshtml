@@ -9,6 +9,7 @@
     var listzone = ViewBag.ZoneList;
     var hkpSectionlist = ViewBag.hkpSectionList;
     var  listatt =ViewBag.hkpAttendantList;
+    var  listrt = ViewBag.RoomTypeList;
 }
 
 
@@ -324,6 +325,38 @@
         background-color: hotpink;
     }
 
+    .status-color-box {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+        vertical-align: middle;
+        border: 1px solid #ccc;
+    }
+    .color-clean-uncheck {
+        background-color: cyan;
+    }
+
+    .color-dirty {
+        background-color: red;
+    }
+
+    .color-outoforder {
+        background-color: lightgray;
+    }
+
+    .color-pickup {
+        background-color: yellow;
+    }
+
+    .color-clean {
+        background-color: lime;
+    }
+
+    .color-outofservices {
+        background-color: lightgray;
+    }
+
     #logGridReportContainer .dx-datagrid-rowsview .dx-selection {
         background-color: #005f87 !important; /* màu xanh ng?c */
         color: white !important; /* ch? tr?ng */
@@ -564,6 +597,259 @@
         min-height: 26px !important;
         font-size: 12px !important;
     }
+
+
+
+    #logGriTurndownContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; /* màu xanh ng?c */
+        color: white !important; /* ch? tr?ng */
+    }
+
+        #logGriTurndownContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGriTurndownContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 12px !important;
+        line-height: 24px !important;
+    }
+
+    #logGriTurndownContainer .dx-datagrid-headers {
+        background-color: #3b9ac6 !important; /* Màu xanh duong */
+        color: white !important; /* Ch? tr?ng cho d? d?c */
+    }
+
+        #logGriTurndownContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            font-size: 12px !important;
+            background-color: #3b9ac6 !important;
+            color: white !important;
+            font-weight: bold;
+            border-right: 1px solid #ddd !important;
+            text-align: center !important;
+        }
+
+        #logGriTurndownContainer .dx-datagrid-rowsview td,
+        #logGriTurndownContainer .dx-datagrid-headers td {
+            border-right: 1px solid #ddd !important;
+        }
+
+        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        #logGriTurndownContainer .dx-datagrid-rowsview tr td:last-child,
+        #logGriTurndownContainer .dx-datagrid-headers tr td:last-child {
+            border-right: none !important;
+        }
+
+    #logGriTurndownContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #logGriTurndownContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGriTurndownContainer .dx-datagrid-filter-row td .dx-datebox {
+        height: 24px !important;
+        min-height: 24px !important;
+    }
+
+        #logGriTurndownContainer .dx-datagrid-filter-row td .dx-datebox input {
+            font-size: 12px !important;
+            height: 24px !important;
+        }
+
+    #logGriTurndownContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
+    #logGriTurndownContainer .dx-datagrid-filter-row td .dx-texteditor input {
+        height: 24px !important;
+        line-height: 24px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        box-sizing: border-box;
+    }
+
+    #logGriTurndownContainer .dx-datagrid-filter-row td .dx-datebox,
+    #logGriTurndownContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
+        height: 26px !important;
+        min-height: 26px !important;
+        font-size: 12px !important;
+    }
+
+
+
+
+    #logGridNewContainer {
+        width: 1450px;
+        overflow-x: auto; /* ✅ Scroll ngang */
+    }
+
+    #logGridNewContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; /* màu xanh ng?c */
+        color: white !important; /* ch? tr?ng */
+    }
+
+        #logGridNewContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGridNewContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 12px !important;
+        line-height: 24px !important;
+    }
+
+    #logGridNewContainer .dx-datagrid-headers {
+        background-color: #3b9ac6 !important; /* Màu xanh duong */
+        color: white !important; /* Ch? tr?ng cho d? d?c */
+    }
+
+        #logGridNewContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            font-size: 12px !important;
+            background-color: #3b9ac6 !important;
+            color: white !important;
+            font-weight: bold;
+            border-right: 1px solid #ddd !important;
+            text-align: center !important;
+        }
+
+        #logGridNewContainer .dx-datagrid-rowsview td,
+        #logGridNewContainer .dx-datagrid-headers td {
+            border-right: 1px solid #ddd !important;
+        }
+
+        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        #logGridNewContainer .dx-datagrid-rowsview tr td:last-child,
+        #logGridNewContainer .dx-datagrid-headers tr td:last-child {
+            border-right: none !important;
+        }
+
+    #logGridNewContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important;
+        color: white !important;
+    }
+
+        #logGridNewContainer .dx-datagrid-rowsview .dx-selection * {
+            color: white !important;
+        }
+
+    #logGridNewContainer .dx-datagrid-filter-row td .dx-datebox {
+        height: 24px !important;
+        min-height: 24px !important;
+    }
+
+        #logGridNewContainer .dx-datagrid-filter-row td .dx-datebox input {
+            font-size: 12px !important;
+            height: 24px !important;
+        }
+
+    #logGridNewContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
+    #logGridNewContainer .dx-datagrid-filter-row td .dx-texteditor input {
+        height: 24px !important;
+        line-height: 24px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        box-sizing: border-box;
+    }
+
+    #logGridNewContainer .dx-datagrid-filter-row td .dx-datebox,
+    #logGridNewContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
+        height: 26px !important;
+        min-height: 26px !important;
+        font-size: 12px !important;
+    }
+
+
+
+
+
+    #logGridAddUserContainer {
+        width: 500px;
+        overflow-x: auto; /* ✅ Scroll ngang */
+    }
+
+        #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection {
+            background-color: #005f87 !important; /* màu xanh ng?c */
+            color: white !important; /* ch? tr?ng */
+        }
+
+            #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection * {
+                color: white !important;
+            }
+
+        #logGridAddUserContainer .dx-datagrid-rowsview .dx-row > td {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+            font-size: 12px !important;
+            line-height: 24px !important;
+        }
+
+        #logGridAddUserContainer .dx-datagrid-headers {
+            background-color: #3b9ac6 !important; /* Màu xanh duong */
+            color: white !important; /* Ch? tr?ng cho d? d?c */
+        }
+
+            #logGridAddUserContainer .dx-datagrid-headers .dx-header-row > td {
+                padding-top: 12px !important;
+                padding-bottom: 12px !important;
+                font-size: 12px !important;
+                background-color: #3b9ac6 !important;
+                color: white !important;
+                font-weight: bold;
+                border-right: 1px solid #ddd !important;
+                text-align: center !important;
+            }
+
+            #logGridAddUserContainer .dx-datagrid-rowsview td,
+            #logGridAddUserContainer .dx-datagrid-headers td {
+                border-right: 1px solid #ddd !important;
+            }
+
+            /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+            #logGridAddUserContainer .dx-datagrid-rowsview tr td:last-child,
+            #logGridAddUserContainer .dx-datagrid-headers tr td:last-child {
+                border-right: none !important;
+            }
+
+        #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection {
+            background-color: #01579b !important;
+            color: white !important;
+        }
+
+            #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection * {
+                color: white !important;
+            }
+
+        #logGridAddUserContainer .dx-datagrid-filter-row td .dx-datebox {
+            height: 24px !important;
+            min-height: 24px !important;
+        }
+
+            #logGridAddUserContainer .dx-datagrid-filter-row td .dx-datebox input {
+                font-size: 12px !important;
+                height: 24px !important;
+            }
+
+        #logGridAddUserContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
+        #logGridAddUserContainer .dx-datagrid-filter-row td .dx-texteditor input {
+            height: 24px !important;
+            line-height: 24px !important;
+            padding: 2px 6px !important;
+            font-size: 12px !important;
+            box-sizing: border-box;
+        }
+
+        #logGridAddUserContainer .dx-datagrid-filter-row td .dx-datebox,
+        #logGridAddUserContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
+            height: 26px !important;
+            min-height: 26px !important;
+            font-size: 12px !important;
+        }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
@@ -616,14 +902,12 @@
 
                         <!-- Clean Uncheck -->
                         <div class="form-check me-3">
-                            <span class="status-color-box color-clean-uncheck"></span>
                             <input class="form-check-input" type="checkbox" id="pending" name="includeOptions" value="1" checked>
                             <label class="form-check-label" for="Pending">Pending</label>
                         </div>
 
                         <!-- Dirty -->
                         <div class="form-check me-3">
-                            <span class="status-color-box color-dirty"></span>
                             <input class="form-check-input" type="checkbox" id="completed" name="includeOptions" value="2" checked>
                             <label class="form-check-label" for="completed">Completed</label>
                         </div>
@@ -637,18 +921,39 @@
     </div>
     <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #034f28;" id="btnReport" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file"></i> Report</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #134028;" id="btnExpanded" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-expand"></i> Expanded</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnReport" class="mui-button mui-button-export" type="button"> <i class="fa-solid fa-file"></i> Report</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnExpanded" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-expand"></i> Expanded</button>
 
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddtasksheet" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-plus"></i> New</button>
-
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnDetailtasksheet" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-circle-info"></i>Detail</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddUsertasksheet" class="mui-button mui-button-profile" type="button"><i class="fa-solid fa-user-plus"></i>Add User</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnDeletetasksheet" class="mui-button mui-button-delete" type="button"><i class="fa-solid fa-xmark"></i>Delete</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnCompletetasksheet" class="mui-button mui-button-reinstate" type="button"><i class="fa-solid fa-check"></i>Complete</button>
     </div>
 </div>
 <div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;"></div>
+<div id="popupNewGridAddUser" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 500px; max-height: 800px; overflow-y: auto;">
+
+    <div class="d-flex justify-content-between mb-2">
+        <h5 class="mb-0"> Search Employee</h5>
+
+    </div>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveEmployee" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
+        <button onclick="$('#popupNewGridAddUser').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
+    <div id="logGridAddUserContainer">
+        <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
+    </div>
+</div>
 <div id="popupNewGridNew" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px; max-height: 600px; overflow-y: auto;">
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px; max-height: 800px; overflow-y: auto;">
 
     <div class="d-flex justify-content-between mb-2">
         <h5 id="attendantPointTitle" class="mb-0"> Task Sheet Details</h5>
@@ -657,7 +962,9 @@
     <div class="d-flex justify-content-start mb-3 gap-2">
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddRoomtasksheet" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-plus"></i> New</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnSavetasksheet" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnCompletedetailtasksheet" class="mui-button mui-button-reinstate" type="button"><i class="fa-solid fa-check"></i>Complete</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddUserDetailtasksheet" class="mui-button mui-button-profile" type="button"><i class="fa-solid fa-user-plus"></i>Add User</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnDailytasksheet" class="mui-button mui-button-profile" type="button"><i class="fa-solid fa-calendar-check"></i>Daily</button>
         <button onclick="$('#popupNewGridNew').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
@@ -702,64 +1009,6 @@
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
-<div id="popupNewGridTurndown" style="display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px; max-height: 600px; overflow-y: auto;">
-
-    <div class="d-flex justify-content-between mb-2">
-        <h5 id="attendantPointTitle" class="mb-0">Adding Room, task code to Tasksheet</h5>
-
-    </div>
-    <div class="d-flex justify-content-start mb-3 gap-2">
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveRoomtasksheet" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-
-        <button onclick="$('#popupNewGridTurndown').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
-            <i class="fa-solid fa-xmark me-1"></i> Close
-        </button>
-    </div>
-    <div class="container mb-2">
-        <div class="d-flex align-items-center flex-wrap mb-2">
-            <div class="d-flex align-items-center me-3 mb-2">
-                <label class="me-2 mb-0">Task Date:</label>
-                <input type="date" id="taskdate" name="taskdate" class="form-control form-control-sm w-auto" />
-            </div>
-            <div class="d-flex align-items-center me-3 mb-2">
-                <label class="me-2 mb-0">Task Sheet:</label>
-                <input type="text" id="tasksheetroom" name="tasksheetroom" class="form-control form-control-sm w-auto" disabled />
-            </div>
-            <div class="d-flex align-items-center me-3 mb-2">
-                <label class="me-2 mb-0">Room:</label>
-                <input type="text" id="roomturndown" name="roomturndown" class="form-control form-control-sm w-auto" />
-                <i class="fas fa-ellipsis-h ellipsis-icon ms-2" style="cursor:pointer;"></i>
-            </div>
-            <div class="d-flex align-items-center me-3 mb-2">
-                <label class="me-2 mb-0">Task Code:</label>
-                <select id="taskcodenewroom" name="taskcodenewroom" class="tomselect-custom" multiple>
-                    <option value=""></option>
-                    @foreach (var item in listhkpFT)
-                    {
-                        <option value="@item.ID">@item.Description</option>
-                    }
-                </select>
-
-            </div>
-            <div class="d-flex align-items-center me-3 mb-2">
-                <label class="me-2 mb-0">Max. Credits:</label>
-                <input type="text" id="maxcredit" name="maxcredit" class="form-control form-control-sm w-auto" value="0" />
-            </div>
-            <div class="d-flex align-items-center me-3 mb-2">
-                <label class="me-2 mb-0">Description:</label>
-                <input type="text" id="descriptiontc" name="descriptiontc" class="form-control form-control-sm w-auto" />
-            </div>
-
-        </div>
-
-
-    </div>
-    <div id="logGridAddRoomContainer">
-        <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
-    </div>
-</div>
 
 <div id="popupNewGridAddRoom" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
@@ -789,7 +1038,8 @@
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">Room:</label>
                 <input type="text" id="roomturndown" name="roomturndown" class="form-control form-control-sm w-auto"/>
-                <i class="fas fa-ellipsis-h ellipsis-icon ms-2" style="cursor:pointer;"></i>   
+                <input type="hidden" id="roomturndownHidden" name="roomturndownHidden" />
+                <i id="detailturndowwn" class="fas fa-ellipsis-h ellipsis-icon ms-2" style="cursor:pointer;"></i>   
             </div>
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">Task Code:</label>
@@ -819,7 +1069,185 @@
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
+<div id="popupNewGridTurndown" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 1000px; max-height: 600px; overflow-y: auto;">
 
+    <div class="d-flex justify-content-between mb-2">
+        <h5 id="attendantPointTitle" class="mb-0">Turndown Management</h5>
+
+    </div>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnViewTurndown" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-eye"></i> View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkTurndown" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-check"></i> Ok</button>
+        <button onclick="$('#popupNewGridTurndown').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
+    <div class="sticky-header bg-white p-2 shadow-sm z-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+        <div class="d-flex align-items-center flex-wrap mb-2">
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center me-3">
+                    <label class="mb-1 me-2 fw-bold">Turndown Status: </label>
+
+                    <!-- Clean Uncheck -->
+                    <div class="form-check me-3">
+
+                        <input class="form-check-input" type="checkbox" id="required" name="includeOptionsTurndown" value="1" checked>
+                        <label class="form-check-label" for="required">Required</label>
+                    </div>
+
+                    <!-- Dirty -->
+                    <div class="form-check me-3">
+
+                        <input class="form-check-input" type="checkbox" id="notrequired" name="includeOptionsTurndown" value="2" checked>
+                        <label class="form-check-label" for="notrequired">Not Required</label>
+                    </div>
+
+                    <!-- Out of Order -->
+                    <div class="form-check me-3">
+
+                        <input class="form-check-input" type="checkbox" id="completed" name="includeOptionsTurndown" value="3" checked>
+                        <label class="form-check-label" for="completed">Completed</label>
+                    </div>
+                        <label class="mb-1 me-2 fw-bold">Reservation Status: </label>
+
+                        <!-- Clean Uncheck -->
+                        <div class="form-check me-3">
+
+                            <input class="form-check-input" type="checkbox" id="arrivals" name="includeOptionsReservation" value="5" checked>
+                            <label class="form-check-label" for="arrivals">Arrivals</label>
+                        </div>
+
+                        <!-- Dirty -->
+                        <div class="form-check me-3">
+
+                            <input class="form-check-input" type="checkbox" id="arrived" name="includeOptionsReservationVI" value="1" checked>
+                            <label class="form-check-label" for="arrived">Arrived</label>
+                        </div>
+
+                        <!-- Out of Order -->
+                        <div class="form-check me-3">
+
+                            <input class="form-check-input" type="checkbox" id="stayover" name="includeOptionsReservation" value="1,6" checked>
+                            <label class="form-check-label" for="stayover">Stay Over</label>
+                        </div>
+                </div>
+            </div>
+     
+            
+     
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center me-3">
+                    <label class="mb-1 me-2 fw-bold">Room Status: </label>
+
+                    <!-- Clean Uncheck -->
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-clean-uncheck"></span>
+                            <input class="form-check-input" type="checkbox" id="cleanNoncheck" name="includeOptionsRoom" value="1" checked>
+                        <label class="form-check-label" for="cleanNoncheck">Clean Non-Checked</label>
+                    </div>
+
+                    <!-- Dirty -->
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-dirty"></span>
+                        <input class="form-check-input" type="checkbox" id="dirty" name="includeOptionsRoom" value="2" checked>
+                        <label class="form-check-label" for="dirty">Dirty</label>
+                    </div>
+
+                    <!-- Out of Order -->
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-outoforder"></span>
+                            <input class="form-check-input" type="checkbox" id="outofOrder" name="includeOptionsRoom" value="5" checked>
+                        <label class="form-check-label" for="outofOrder">Out of Order</label>
+                    </div>
+
+                    <!-- Pickup -->
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-pickup"></span>
+                        <input class="form-check-input" type="checkbox" id="pickup" name="includeOptionsRoom" value="3" checked>
+                        <label class="form-check-label" for="pickup">Pickup</label>
+                    </div>
+
+                    <!-- Clean -->
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-clean"></span>
+                            <input class="form-check-input" type="checkbox" id="clean" name="includeOptionsRoom" value="4" checked>
+                        <label class="form-check-label" for="clean">Clean</label>
+                    </div>
+
+                    <!-- Out of Services -->
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-outofservices"></span>
+                            <input class="form-check-input" type="checkbox" id="outofServices" name="includeOptionsRoom" value="6" checked>
+                        <label class="form-check-label" for="outofServices">Out of Services</label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex flex-column">
+                <!-- Row 1 -->
+                <div class="d-flex align-items-center me-3 mb-2">
+                    <label class="mb-1 me-2 fw-bold">Advance Search:</label>
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">From Room:</label>
+                        <input type="text" id="fromRoom" name="fromRoom" class="form-control form-control-sm w-auto" />
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">To Room:</label>
+                        <input type="text" id="toRoom" name="toRoom" class="form-control form-control-sm w-auto" />
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Room Type:</label>
+                        <select id="roomTypead" name="roomTypead" class="tomselect-custom" multiple>
+                            <option value=""></option>
+                            @foreach (var item in listrt)
+                            {
+                                    <option value="@item.Code">@item.Code</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Section & Zone -->
+                <div class="d-flex align-items-center me-3 mb-2">
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Section:</label>
+                        <select id="sectionAd" name="sectionAd" class="tomselect-custom" multiple>
+                            <option value=""></option>
+                            @foreach (var item in hkpSectionlist)
+                            {
+                                <option value="@item.ID">@item.Code</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Zone:</label>
+                        <select id="zoneAd" name="zoneAd" class="tomselect-custom" multiple>
+                            <option value=""></option>
+                            @foreach (var item in listzone)
+                            {
+                                    <option value="@item.Code">@item.Code</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+    <div id="logGriTurndownContainer">
+        <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
+    </div>
+</div>
 <div id="popupNewGridReport" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
     z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px; max-height: 600px; overflow-y: auto;">
@@ -1245,6 +1673,43 @@
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
+<div id="popupFullScreen" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); width: 95vw; max-width: 95vw; max-height: 800px; overflow-y: auto;
+">
+    <h2 style="
+        text-align:center;
+        margin-top:0;
+        padding-top:10px;
+        font-size:20px;
+        font-weight:bold;
+        color:#444;
+    ">
+        Room Attendent Daily Worksheet
+    </h2>
+    <!-- Nút đóng -->
+    <button id="btnClosePopupFG" style="
+        position:absolute;
+        top:10px;
+        right:15px;
+        background:transparent;
+        border:none;
+        font-size:24px;
+        font-weight:bold;
+        cursor:pointer;
+        color:#333;
+        z-index:10000;
+    " title="Đóng">
+        &times;
+    </button>
+
+    <!-- Nội dung -->
+    <div id="popupContent" style="padding:50px 20px 20px;">
+        <!-- Chừa padding-top 50px để nút X không che nội dung -->
+    </div>
+</div>
+
+
 
 <div class="mui-card">
     <div id="gridContainer" class="mt-2"></div>
@@ -1287,7 +1752,10 @@
                  initializeTomSelectshkpSection();
                  initializeTomSelectstasksheetpopre();
                  initializeTomSelecttaskcodenew();
-                    initializeTomSelecttaskcodenewroom();
+                initializeTomSelecttaskcodenewroom();
+                initializeTomSelectRoomtype();
+                        initializeTomSelectSectionAd();
+                         initializeTomSelectZoneAd();
                                $("#btnPrint").trigger("click");
 
         });
@@ -1469,7 +1937,81 @@
 
             }
         }
+         function initializeTomSelectRoomtype() {
+            const selectors = ["#roomTypead"];
 
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
+         function initializeTomSelectSectionAd() {
+            const selectors = ["#sectionAd"];
+
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
+         function initializeTomSelectZoneAd() {
+            const selectors = ["#zoneAd"];
+
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
          $('#btnClosePopup, #overlay').click(function () {
                 $('#popupNewGrid').fadeOut(200);
                 $('#overlay').fadeOut(200);
@@ -1492,7 +2034,257 @@
                     $("#attendantnew").val('');
                         $("#tasksheetnew").val('');
                $("#btnAddRoomtasksheet").hide();
+                            $("#btnSavetasksheet").show();
+                     $("#logGridNewContainer").dxDataGrid({
+                            dataSource: null // or []
+                        });
+           });
+
+              $("#btnDetailtasksheet").on("click", function () {
+                   $('#overlay').fadeIn(200);
+                    $('#popupNewGridNew').fadeIn(200);
+                      $("#taskcodenewshow").hide();
+                    $("#attendantshow").hide();
+                    var tomselectInstance = $("#taskcodenew")[0].tomselect;
+                    if (tomselectInstance) {
+                        tomselectInstance.clear();
+                    }
+                    $("#attendantnew").val('');
+                        $("#tasksheetnew").val(selectedRowDataTS[0].taskSheetNo);
+               $("#btnAddRoomtasksheet").show();
+                            $("#btnSavetasksheet").hide();
+                              if (!selectedRowDataTS) {
+                                alert("Vui lòng chọn một hàng trước khi xem chi tiết.");
+                                return;
+                            }
+                    ViewTaskDetailGrid(selectedRowDataTS[0].id)
+           });
+
+           $("#btnAddUsertasksheet,#btnAddUserDetailtasksheet").on("click", function () {
+                $('#popupNewGridAddUser').css('z-index', 2000);
+                   $('#overlay').fadeIn(200);
+                    $('#popupNewGridAddUser').fadeIn(200);                 
+                              if (!selectedRowDataTS) {
+                               showToast('Error', 'Please select at least one row before deleting.', false);
+                                return;
+                            }
+                    ViewTaskAddUserGrid();
             });
+            $(document).on("click", "#btnClosePopupFG", function () {
+                   $("#popupFullScreen").hide();
+            });
+
+            $(document).on("click", "#btnDailytasksheet", function () {
+                  $("#popupFullScreen").show();
+                var tasksheetnew = $("#tasksheetnew").val();
+
+                $.ajax({
+                    url: '/HouseKeeping/RoomAttendentDailyWorksheet', // thay tên controller vào đây
+                    type: 'GET',
+                    data: { isPopup: true, tasksheetnew: tasksheetnew },
+                    success: function (html) {
+                        $("#popupContent").html(html).show(); 
+                         $("#popupContent script").each(function () {
+                                eval($(this).text() || this.textContent || this.innerHTML || "");
+                            });
+                          
+                    },
+                    error: function (xhr) {
+                        console.error("Lỗi khi load partial view", xhr);
+                    }
+                });
+            });
+
+
+
+
+
+          $("#btnDeletetasksheet").on("click", function () {
+                if (!selectedRowDataTS || selectedRowDataTS.length === 0) {
+                     showToast('Error', 'Please select at least one row before deleting.', false);
+                    return;
+                }
+
+                // Lọc bỏ những hàng Completed
+                const rowsToDelete = selectedRowDataTS.filter(row => row.status !== "Completed");
+
+                if (rowsToDelete.length === 0) {
+                   showToast('Error', 'Cannot delete Tasksheet(s) with status "Completed".', false);
+                    return;
+                }
+
+                const idtsList = rowsToDelete.map(row => row.id);
+                const taskSheetNoList = rowsToDelete.map(row => row.taskSheetNo);
+
+                // Chuỗi hiển thị
+                const taskSheetNosString = taskSheetNoList.join(", ");
+
+                // Xác nhận
+                if (!confirm(`Are you sure you want to delete Tasksheet (${taskSheetNosString})?`)) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/HouseKeeping/Deletetasksheet',
+                    type: 'POST',
+                    data: {
+                        idts: idtsList
+                    },
+                    traditional: true,
+                    crossDomain: false,
+                    headers: {
+                        "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            showToast('Success', result.message, true);
+                               $("#btnPrint").trigger("click");
+                        } else {
+                            showToast('Error', result.message, false);
+                        }
+                        $("#loadingSpinner").hide();
+                    },
+                    error: function () {
+                        alert("Không thể tải báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
+                });
+            });
+             $("#btnCompletetasksheet").on("click", function () {
+                if (!selectedRowDataTS || selectedRowDataTS.length === 0) {
+                     showToast('Error', 'Please select at least one row before deleting.', false);
+                    return;
+                }
+
+                // Lọc bỏ những hàng Completed
+                const rowsToDelete = selectedRowDataTS.filter(row => row.status !== "Completed");
+
+                if (rowsToDelete.length === 0) {
+                   showToast('Error', 'Cannot delete Tasksheet(s) with status "Completed".', false);
+                    return;
+                }
+
+                const idtsList = rowsToDelete.map(row => row.id);
+                const taskSheetNoList = rowsToDelete.map(row => row.taskSheetNo);
+
+                // Chuỗi hiển thị
+                const taskSheetNosString = taskSheetNoList.join(", ");
+
+                // Xác nhận
+                if (!confirm(`Are you sure you want to update status is completed for this Tasksheet (${taskSheetNosString})?`)) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/HouseKeeping/Completedtasksheet',
+                    type: 'POST',
+                    data: {
+                        idts: idtsList
+                    },
+                    traditional: true,
+                    crossDomain: false,
+                    headers: {
+                        "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            showToast('Success', result.message, true);
+                               $("#btnPrint").trigger("click");
+                        } else {
+                            showToast('Error', result.message, false);
+                        }
+                        $("#loadingSpinner").hide();
+                    },
+                    error: function () {
+                        alert("Không thể tải báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
+                });
+            });
+
+                $("#btnCompletedetailtasksheet").on("click", function () {
+                        console.log(selectedRowDatadetail);
+                    if (!selectedRowDatadetail) {
+                        showToast('Error', 'Please select a row before updating.', false);
+                        return;
+                    }
+
+                    // Kiểm tra nếu đã Completed
+                    if (selectedRowDatadetail.status === "Completed") {
+                        showToast('Error', 'Cannot update a Tasksheet that is already "Completed".', false);
+                        return;
+                    }
+
+                    const idts = selectedRowDatadetail.id;
+                    const taskSheetNo = selectedRowDatadetail.taskSheetNo;
+                      const room = selectedRowDatadetail.room;
+                       const hkStatusID_Internal = selectedRowDatadetail.hkStatusID_Internal;
+                    // Xác nhận
+                    if (!confirm(`Are you sure you want to completed room: (${room})?`)) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/HouseKeeping/CompletedDetailtasksheet',
+                        type: 'POST',
+                        data: {
+                            idts: idts,             
+                            taskSheetNo: taskSheetNo ,  
+                             hkStatusID_Internal: hkStatusID_Internal
+                        },
+                        traditional: true,
+                        crossDomain: false,
+                        headers: {
+                            "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                        },
+                        success: function (result) {
+                            if (result.success) {
+                                showToast('Success', result.message, true);
+                                $("#btnDetailtasksheet").trigger("click"); 
+                                $("#btnPrint").trigger("click");
+                            } else {
+                                showToast('Error', result.message, false);
+                            }
+                            $("#loadingSpinner").hide();
+                        },
+                        error: function () {
+                            alert("Không thể tải báo cáo.");
+                            $("#loadingSpinner").hide();
+                        }
+                    });
+                });
+
+
+           $("#btnSaveEmployee").on("click", function () {
+                console.log(selectedRowDataTS);
+                  const idtsList = selectedRowDataTS.map(row => row.id);
+                  const idauList = selectedRowDataAU.map(row => row.id);
+
+                    $.ajax({
+                    url: '/HouseKeeping/SaveEmployeeTaskAss',
+                    type: 'POST',
+                    data: {
+
+                         idts: idtsList,
+                         idau: idauList
+ 
+                    },
+                    traditional: true,
+                        crossDomain: false,
+                        headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                    success: function (result) {
+                           showToast('Success', result.message, true);
+                           $('#popupNewGridAddUser').hide();
+                            $("#loadingSpinner").hide();
+                            $("#btnPrint").trigger("click");
+                    },
+                    error: function () {
+                        alert("Không th? t?i báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
+                });
+     
+           });
 
             $("#btnExpanded").on("click", function () {
                    $('#overlay').fadeIn(200);
@@ -1510,6 +2302,374 @@
                    var tasksheetroom= $("#tasksheetnew").val();
                     $("#tasksheetroom").val(tasksheetroom);
             });
+              $("#detailturndowwn").on("click", function () {
+               $('#overlay').fadeIn(200);
+                   $('#popupNewGridTurndown').fadeIn(200);
+                    $("#logGriTurndownContainer").dxDataGrid({
+                            dataSource: null // or []
+                        });
+                           $("#btnViewTurndown").trigger("click");
+              });
+              $("#btnViewTurndown").on("click", function () {
+                     $("#loadingSpinner").show();
+                    const selectedStatuses = [];
+                    $("input[name='includeOptionsRoom']:checked").each(function () {
+                        selectedStatuses.push($(this).val());
+                    });
+
+                      const selectedReservation = [];
+                    $("input[name='includeOptionsReservation']:checked").each(function () {
+                        selectedReservation.push($(this).val());
+                    });
+
+                           const selectedTurndown = [];
+                    $("input[name='includeOptionsTurndown']:checked").each(function () {
+                        selectedTurndown.push($(this).val());
+                    });
+                    $.ajax({
+                        url: '/HouseKeeping/ViewTurnDown',
+                        type: 'GET',
+                        data: {
+
+                                    roomTypead: $("#roomTypead").val()?.map(r => r.replace("''")).join(",") || "",
+                                      sectionAd: $("#sectionAd").val()?.map(r => r.replace("''")).join(",") || "",
+                                        zoneAd: $("#zoneAd").val()?.map(r => r.replace("''")).join(",") || "",
+                                    fromRoom: $("#fromRoom").val(),
+                                      toRoom: $("#toRoom").val(),
+                                       HKStatusID: selectedStatuses.join(","),
+                                          ReservationStatus: selectedReservation.join(","),
+                                       arrived: $("#arrived").is(":checked") ? "1" : "",
+                                                  turndownStatus: selectedTurndown.join(","),
+                                    
+                        },
+                        traditional: true,
+                            crossDomain: false,
+                            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                        success: function (result) {
+                            // $("#reportViewerContainer").html(result);
+                            // $("#loadingSpinner").hide();
+                                    console.log(result);
+                                         initializeViewTurnDownGrid(result);
+                                $("#loadingSpinner").hide();
+                        },
+                        error: function () {
+                            alert("Không th? t?i báo cáo.");
+                            $("#loadingSpinner").hide();
+                        }
+                    });
+              });
+               function initializeViewTurnDownGrid(data) {
+                    const columnWidth = 120;
+
+                    $("#logGriTurndownContainer").dxDataGrid({
+                        dataSource: data,
+                        allowColumnResizing: true,
+                        columnAutoWidth: true,
+                                   height: "100%",
+                        columns: [
+                              {
+                            dataField: "hkstatusID",
+                            caption: "C",
+                            width: columnWidth - 40,
+                            cellTemplate: function (container, options) {
+                                const colorClass = getStatusColorClass(options.value);
+                                $("<div>")
+                                    .addClass("status-color-box")
+                                    .addClass(colorClass)
+                                    .css({
+                                        width: "20px",
+                                        height: "20px",
+                                        borderRadius: "4px"
+                                    })
+                                    .appendTo(container);
+                            }
+                        },
+
+                            { dataField: "roomNo", caption: "Room", width: columnWidth },
+                            { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                            { dataField: "hkstatusID", caption: "Room Status", width: columnWidth+20 },
+                            { dataField: "vip", caption: "Vip", width: columnWidth },
+                            { dataField: "nationanity", caption: "Nationanity", width: columnWidth },
+                            { dataField: "guestName", caption: "Name", width: columnWidth+40  },
+                            { dataField: "status", caption: "Status", width: columnWidth },
+                            { dataField: "turndownStatus", caption: "Turndown Status", width: columnWidth+40 },
+                        ],
+
+                        paging: { pageSize: 25 },
+                        scrolling: {
+                            useNative: true,
+                            showScrollbar: "always"
+                        },
+                        pager: {
+                            visible: true,
+                            allowedPageSizes: [25, 50, 'all'],
+                            showPageSizeSelector: true,
+                            showInfo: true,
+                            showNavigationButtons: true
+                        },
+                        filterRow: { visible: true, applyFilter: "auto" },
+                        headerFilter: { visible: true },
+                         selection: {
+                            mode: "multiple",
+                            showCheckBoxesMode: "always"
+                        },
+
+                        showBorders: true,
+
+                        onRowClick: function (e) {
+                            selectedRowData = e.data; // lưu dòng được chọn
+                        }
+                    });
+                }
+                  $("#btnSaveRoomtasksheet").on("click", function () {
+                          const roomturndown = $("#roomturndownHidden").val();
+                        const taskCodeNewRoom = $("#taskcodenewroom").val();
+
+                        // Check if a room has been selected
+                        if (!roomturndown  === "") {
+                            showToast('Error', 'Please select a room before saving.', false);
+                            return;
+                        }
+
+                        // Check if a Task Code has been selected
+                        if (!taskCodeNewRoom  === "") {
+                            showToast('Error', 'Please select a Task Code before saving.', false);
+                            return;
+                        }
+                     $("#loadingSpinner").show();
+                const userName = JSON.parse(localStorage.getItem("Loginname"));
+                    $.ajax({
+                        url: '/HouseKeeping/SaveRoomTaskSheetDetail',
+                        type: 'POST',
+                        data: {
+                        roomturndown: $("#roomturndownHidden").val(),
+                            taskdate: $("#taskdate").val(),
+                            tasksheetroom: $("#tasksheetroom").val(),
+                            taskcodenewroom: $("#taskcodenewroom").val(),
+                            maxcredit: $("#maxcredit").val(),
+                             descriptiontc: $("#descriptiontc").val(),
+                             userName:userName
+                        },
+                        traditional: true,
+
+                            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                            success: function (res) {
+                                // $("#reportViewerContainer").html(result);
+                                // $("#loadingSpinner").hide();
+                                 if (res.success) {
+                                   console.log(res.message);
+                                    console.log(res.taskSheetID);
+                                                $('#popupNewGridAddRoom').fadeOut(200);
+                                        $("#roomturndownHidden").val("");
+                                        $("#tasksheetroom").val("");
+                                        $("#taskcodenewroom").val("");
+                                        $("#maxcredit").val(0);
+                                        $("#descriptiontc").val("");
+                                        $("#roomturndown").val("");
+
+                                        ViewTaskDetailGrid(res.taskSheetID)
+                                            var tomselectInstance = $("#taskcodenewroom")[0].tomselect;
+                                            if (tomselectInstance) {
+                                                tomselectInstance.clear();
+                                            }
+                                        $("#loadingSpinner").hide();
+                                } else {
+                                    alert("Lỗi từ server: " + res.message);
+                                }
+                                   
+                            },
+                            error: function () {
+                                alert("Không th? t?i báo cáo.");
+                                $("#loadingSpinner").hide();
+                            }
+                    });
+              });
+             function ViewTaskDetailGrid(data) {
+                $.ajax({
+                        url: '/HouseKeeping/ViewTaskDetailGrid',
+                        type: 'GET',
+                        data: {
+                        roomturndown: $("#roomturndownHidden").val(),
+                            id: data,
+                           
+                        },
+                        traditional: true,
+
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                   success: function (result) {
+                         console.log(result);
+                                  
+                         initializeTaskDetailGrid(result)
+                                         
+                     
+
+                    },
+                    error: function () {
+                        alert("Không th? t?i báo cáo.");
+                    }
+                });
+             }
+
+               function ViewTaskAddUserGrid() {
+                $.ajax({
+                        url: '/HouseKeeping/ViewTaskAddUserGrid',
+                        type: 'GET',
+                        data: {
+                      
+                        },
+                        traditional: true,
+
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                   success: function (result) {
+                         console.log(result);
+
+                         initializeTaskAddUserGrid(result)
+
+
+
+                    },
+                    error: function () {
+                        alert("Không th? t?i báo cáo.");
+                    }
+                });
+             }
+              function initializeTaskAddUserGrid(data) {
+                 const columnWidth = 120;
+
+                 $("#logGridAddUserContainer").dxDataGrid({
+                     dataSource: data,
+                     allowColumnResizing: true,
+                      height: 500,
+                     columnAutoWidth: true,
+                     columns: [
+
+                         { dataField: "id", caption: "ID", width: columnWidth -20},
+                         { dataField: "name", caption: "Name", width: columnWidth +60},
+                        { dataField: "description", caption: "Description", width: columnWidth },
+                     ],
+
+                     paging: { pageSize: 25 },
+                     scrolling: {
+                         useNative: true,
+                         showScrollbar: "always"
+                     },
+                     pager: {
+                         visible: true,
+                         allowedPageSizes: [25, 50, 'all'],
+                         showPageSizeSelector: true,
+                         showInfo: true,
+                         showNavigationButtons: true
+                     },
+                     filterRow: { visible: true, applyFilter: "auto" },
+                     headerFilter: { visible: true },
+                      selection: {
+                         mode: "multiple",
+                         showCheckBoxesMode: "none"
+                     },
+
+                     showBorders: true,
+
+                     // onRowClick: function (e) {
+                     //     selectedRowDataAU = e.data; // lưu dòng được chọn
+                     // },
+                      onSelectionChanged: function (e) {
+                            // Lấy tất cả các dòng đã được chọn
+                            selectedRowDataAU = e.selectedRowsData;
+                            console.log("Danh sách selectedRowDataAU:", selectedRowDataAU);
+                        }
+                 });
+             }
+              function initializeTaskDetailGrid(data) {
+                 const columnWidth = 120;
+
+                 $("#logGridNewContainer").dxDataGrid({
+                     dataSource: data,
+                     allowColumnResizing: true,
+                      height: 500,
+                     columnAutoWidth: true,
+                     columns: [
+                    
+                         { dataField: "room", caption: "Room", width: columnWidth-10 },
+                         { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                         { dataField: "credits", caption: "Credits", width: columnWidth-10  ,dataType: "number", format: "#,##0"},
+                         { dataField: "section", caption: "Section", width: columnWidth },
+                         { dataField: "floor", caption: "Floor", width: columnWidth ,dataType: "number", format: "#,##0" },
+                         { dataField: "hkStatusID_Internal", caption: "Room Status", width: columnWidth },
+                         { dataField: "timeIn", caption: "TimeIn", width: columnWidth-10 },
+                         { dataField: "timeOut", caption: "TimeOut", width: columnWidth -10},
+                         { dataField: "taskCode", caption: "Task Code", width: columnWidth  },
+                         { dataField: "taskNote", caption: "TaskNote", width: columnWidth },
+                         { dataField: "status", caption: "Status", width: columnWidth },
+                          { dataField: "completedStatus", caption: "Completed Status", width: columnWidth+30 },
+                     ],
+
+                     paging: { pageSize: 25 },
+                     scrolling: {
+                         useNative: true,
+                         showScrollbar: "always"
+                     },
+                     pager: {
+                         visible: true,
+                         allowedPageSizes: [25, 50, 'all'],
+                         showPageSizeSelector: true,
+                         showInfo: true,
+                         showNavigationButtons: true
+                     },
+                     filterRow: { visible: true, applyFilter: "auto" },
+                     headerFilter: { visible: true },
+                      selection: {
+                         mode: "multiple",
+                         showCheckBoxesMode: "none"
+                     },
+
+                     showBorders: true,
+
+                     onRowClick: function (e) {
+                         selectedRowDatadetail = e.data; // lưu dòng được chọn
+                     }
+                 });
+             }
+              $("#btnOkTurndown").on("click", function () {
+                    const selectedRows = $("#logGriTurndownContainer").dxDataGrid("instance").getSelectedRowsData();
+
+                    if (selectedRows.length === 0) {
+                        alert("Please select at least one row.");
+                        return;
+                    }
+
+                    // Hiển thị roomNo
+                    const roomNos = selectedRows.map(row => row.roomNo).filter(Boolean);
+                    $("#roomturndown").val(roomNos.join(","));  // textbox dùng để hiển thị
+
+                    // Lưu giá trị thực là roomID (ẩn)
+                    const roomIds = selectedRows.map(row => row.roomID).filter(Boolean);
+                    $("#roomturndownHidden").val(roomIds.join(",")); // bạn phải thêm input hidden này trong HTML
+
+                    $('#overlay').fadeOut(200);
+                    $('#popupNewGridTurndown').fadeOut(200);
+              });
+
+
+              function getStatusColorClass(statusName) {
+                    switch (statusName.trim().toLowerCase()) {
+                        case "clean non-checked":
+                            return "color-clean-uncheck";
+                        case "dirty":
+                            return "color-dirty";
+                        case "pickup":
+                            return "color-pickup";
+                        case "clean":
+                            return "color-clean";
+                        case "out of order":
+                            return "color-outoforder";
+                        case "out of services":
+                            return "color-outofservices";
+                        default:
+                            return "";
+                    }
+                }
+
+
 
             $("#btnSavetasksheet").on("click", function () {
                
@@ -1537,6 +2697,7 @@
                                 $("#attendantshow").hide();
                                 $("#btnAddRoomtasksheet").show();
                                     // initializeTaskSheetStatusPopGrid(result);
+                                        $("#btnSavetasksheet").hide();
                             $("#loadingSpinner").hide();
                     },
                     error: function () {
@@ -1999,6 +3160,9 @@
             }
         });
     }
+    let selectedRowDataTS = null;
+        let selectedRowDataAU = null;
+                let selectedRowDatadetail = null;
     function initializeTaskSheetStatusGrid(data) {
         const columnWidth = 120;
 
@@ -2013,8 +3177,8 @@
                 { dataField: "credits", caption: "Credits", width: columnWidth },
                 { dataField: "completedOn", caption: "Completed On", width: columnWidth },
                 { dataField: "status", caption: "Status", width: columnWidth },
-                { dataField: "taskCode", caption: "TaskCode", width: columnWidth },
-                { dataField: "employee", caption: "Employee", width: columnWidth },
+                { dataField: "taskCode", caption: "Task Code", width: columnWidth },
+                { dataField: "employee", caption: "Employee", width: columnWidth +70},
                 { dataField: "taskInstructions", caption: "Task Instructions", width: columnWidth+20 },
                   { dataField: "attendant", caption: "Attendant", width: columnWidth },
             ],
@@ -2036,8 +3200,14 @@
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
 
-            onRowClick: function (e) {
-                selectedRowData = e.data; // lưu dòng được chọn
+            // onRowClick: function (e) {
+            //     selectedRowDataTS = e.data; // lưu dòng được chọn
+            // },
+             onSelectionChanged: function (e) {
+           
+                selectedRowDataTS= e.selectedRowsData;
+                console.log("Danh sách dòng đã chọn:", selectedRowDataTS);
+
             }
         });
     }

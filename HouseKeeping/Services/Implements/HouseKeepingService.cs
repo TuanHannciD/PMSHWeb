@@ -39,14 +39,14 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRmgRoomFacilityForecastReport", param);
             return myTable;
         }
-        public DataTable GuestServiceStatusData(string servicestatsu, string room, string roomStatus)
+        public DataTable GuestServiceStatusData(string servicestatsu, string room, string roomStatus,string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@roomStatus", roomStatus),
                 new SqlParameter("@serviceStatus", servicestatsu),
                  new SqlParameter("@roomNo", room),
-
+                   new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spGetRoomOCC", param);
@@ -235,7 +235,7 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityArrivalActual", param);
             return myTable;
         }
-        public DataTable TaskSheetStatusData(DateTime fromDate, DateTime toDate, string attendant, string room)
+        public DataTable TaskSheetStatusData(DateTime fromDate, DateTime toDate, string attendant, string room,string zone)
         {
 
             SqlParameter[] param = new SqlParameter[]
@@ -243,8 +243,8 @@ namespace HouseKeeping.Services.Implements
                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate",toDate) ,
                  new SqlParameter("@AttendantID",attendant),
-                    new SqlParameter("@RoomNo",room)
-
+                    new SqlParameter("@RoomNo",room),
+                        new SqlParameter("@Zone",zone)
             };
 
             DataTable myTable = DataTableHelper.getTableData("spTasksheetStatusScreenSearch", param);
@@ -263,6 +263,35 @@ namespace HouseKeeping.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spTaskAssignmentSearch", param);
+            return myTable;
+        }
+
+        public DataTable RoomAttendentDailyWorksheetData(DateTime fromDate, string attendant, string tasksheet, string roomStatus,string facilityCode)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@BusinessDate", fromDate),
+                new SqlParameter("@AttendantID",attendant) ,
+                 new SqlParameter("@TasksheetNo",tasksheet),
+                   new SqlParameter("@HKStatusID",roomStatus),
+                    new SqlParameter("@FacilityCode",facilityCode),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTurndownTasksheetDailySearch", param);
+            return myTable;
+        }
+        public DataTable TurndownTasksheet(DateTime fromDate, string attendant, string roomStatus)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@BusinessDate", fromDate),
+                new SqlParameter("@AttendantID",attendant) ,
+                   new SqlParameter("@HKStatusID",roomStatus),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptTurndownTasksheet", param);
             return myTable;
         }
         //public DataTable HKPGetTaskSheets(DateTime fromDate, string page )
@@ -343,6 +372,26 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptSupChecklistFloor", param);
             return myTable;
         }
+        public DataTable ViewTurnDown(string roomTypead, string sectionAd, string zoneAd, string fromRoom, string toRoom, string HKStatusID, string ReservationStatus, string arrived, string turndownStatus)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@RoomType", roomTypead),
+                new SqlParameter("@Section",sectionAd) ,
+                 new SqlParameter("@Zone",zoneAd),
+                 new SqlParameter("@FromRoom",fromRoom),
+                 new SqlParameter("@ToRoom",toRoom),
+                 new SqlParameter("@HKStatusID",HKStatusID),
+
+                         new SqlParameter("@ReservationStatus",ReservationStatus),
+                 new SqlParameter("@TurndownStatus",turndownStatus),
+                 new SqlParameter("@RsvArrivals",arrived),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTurndownManagement", param);
+            return myTable;
+        }
         public DataTable ActivityEarlyDeparture(DateTime datebunisess, string roomtype, string zone)
         {
 
@@ -356,6 +405,20 @@ namespace HouseKeeping.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRmgStatusActivityEarlyDeparture", param);
+            return myTable;
+        }
+        public DataTable TasksheetDetailsSearch(int ID)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@TasksheetID", ID),
+                new SqlParameter("@AttendantID","") ,
+
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTasksheetDetailsSearch", param);
             return myTable;
         }
         public DataTable ActivityDayUseRoom(DateTime datebunisess, string roomtype, string zone)

@@ -269,14 +269,25 @@
                                 <a  asp-area="" asp-controller="Reservation" asp-action="GroupAdmin">Group Admin</a>
                             </div>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="#">REPORT</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">REPORT</a>
+                            <div class="dropdown-menu-custom">
+                                <a class="dropdown-item" asp-controller="Report" asp-action="OtherReport">Report</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a>
+                            </div>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="#">HOUSE KEEPING</a>
                             <div class="dropdown-menu-custom">
-                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomControlPanel">Room Control Panel</a>
-                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomFacilityForecast">Room Facility Forecast</a>
-                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomStatus">>Room Status</a>
-                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomPlan">Room Plan</a>
-                                <a asp-area="" asp-controller="HouseKeeping" asp-action="HouseStatus">House Status</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomControlPanel">Room Control Panel</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomFacilityForecast">Room Facility Forecast</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomStatus">Room Status</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomPlan">Room Plan</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="HouseStatus">House Status</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="FloorPlan">Floor Plan</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="AttendantPoint">Attendant Point</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="GuestServiceStatus">Guest Service Status</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskSheetStatus">Task Sheet Status</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskAssignment">Task Assignment</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomAttendentDailyWorksheet">Room Attendent Daily Worksheet</a>
                             </div>
                         </li>
                     </ul>

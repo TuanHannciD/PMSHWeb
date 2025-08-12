@@ -565,12 +565,13 @@ namespace Report.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptMarketReportFolio", param);
             return myTable;
         }
-        public DataTable DailyPickupReport(DateTime fromDate, DateTime toDate)
+        public DataTable DailyPickupReport(DateTime fromDate, DateTime toDate,string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@Year", fromDate),
                 new SqlParameter("@YearTo", toDate),
+                  new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptDailyPickup", param);
@@ -668,11 +669,12 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable ReservationStatisticsReport(DateTime fromDate)
+        public DataTable ReservationStatisticsReport(DateTime fromDate,string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@Month", fromDate),
+                   new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReservationStatistic", param);
@@ -703,13 +705,14 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass)
+        public DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass,string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
                new SqlParameter("@dtpFromDate", fromDate),
                   new SqlParameter("@dtpToDate", toDate),
                      new SqlParameter("@RoomClassID", roomClass),
+                                 new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptNoShow", param);
