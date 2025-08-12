@@ -11,7 +11,7 @@
     
 }
 .mui-button-new {
-    background-color: #3b9ac6;
+    background-color: #28a745;
 }
 .mui-button-edit {
     background-color: #b29247;
@@ -56,11 +56,15 @@
     color: white;
 }
 .button-report-excel {
-    background-color: green;
+    background-color: #1D6F42;
     color: white;
 }
 .button-report-pdf {
     background-color: darkorange;
+    color: white;
+}
+.button-report-delete {
+    background-color: #dc3545;
     color: white;
 }
 .mui-button-option {

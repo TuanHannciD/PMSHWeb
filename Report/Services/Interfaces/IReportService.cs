@@ -28,9 +28,9 @@ namespace Report.Services.Interfaces
         DataTable DepartureExtendedReport(DateTime fromDate);
         DataTable RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone);
         DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate);
-        DataTable ReservationStatisticsReport(DateTime fromDate,string zone);
+        DataTable ReservationStatisticsReport(DateTime fromDate);
         DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder, string noOfRoom);
-        DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass,string zone);
+        DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass);
         DataTable ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType, string zone, string viewBy, string market);
         DataTable ProductActivityData(DateTime fromDate, DateTime toDate, string type, string currency);
         DataTable NationalStatisticsData(DateTime fromDate, DateTime toDate, string roomtype, string viewBy);

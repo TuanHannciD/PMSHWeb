@@ -655,7 +655,7 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
+        public DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate, string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
@@ -663,6 +663,7 @@ namespace Report.Services.Implements
                new SqlParameter("@ToDate", toDate),
                new SqlParameter("@Reason", commnet),
                new SqlParameter("@TypeDate", typeDate),
+               new SqlParameter("@Zone", zone),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReservationCancellations", param);
@@ -681,24 +682,24 @@ namespace Report.Services.Implements
             return myTable;
         }
 
-        public DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder, string noOfRoom)
+        public DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string zone, int  searchCrip, int  sortOrder, string noOfRoom)
         {
             SqlParameter[] param = new SqlParameter[]
             {
-                 new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
-               new SqlParameter("@RoomClass", roomClass),
-                   new SqlParameter("@RoomType", roomType),
-                      new SqlParameter("@SearchCrip", searchCrip),
-                   new SqlParameter("@SortOrder", sortOrder),
-                    new SqlParameter("@NoOfRoom", noOfRoom),
-
-                     new SqlParameter("@Company", ""),
-                   new SqlParameter("@Agent", ""),
-                      new SqlParameter("@Source", ""),
-                   new SqlParameter("@Group", ""),
-                    new SqlParameter("@RateCode", ""),
-                      new SqlParameter("@ReservationType", ""),
+                new SqlParameter("@RoomClass", roomClass),
+                new SqlParameter("@RoomType", roomType),
+                new SqlParameter("@Zone", zone),
+                new SqlParameter("@SearchCrip", searchCrip),
+                new SqlParameter("@SortOrder", sortOrder),
+                new SqlParameter("@NoOfRoom", noOfRoom),
+                new SqlParameter("@Company", ""),
+                new SqlParameter("@Agent", ""),
+                new SqlParameter("@Source", ""),
+                new SqlParameter("@Group", ""),
+                new SqlParameter("@RateCode", ""),
+                new SqlParameter("@ReservationType", ""),
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRptReservationByCompany", param);

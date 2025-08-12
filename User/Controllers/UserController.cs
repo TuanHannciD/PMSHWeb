@@ -1,18 +1,19 @@
-﻿using BaseBusiness.BO;
-using BaseBusiness.Model;
-using BaseBusiness.util;
-using DevExpress.ClipboardSource.SpreadsheetML;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BaseBusiness.BO;
+using BaseBusiness.Model;
+using BaseBusiness.util;
+using DevExpress.ClipboardSource.SpreadsheetML;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using User.Services.Interfaces;
 
 namespace User.Controllers
@@ -48,6 +49,9 @@ namespace User.Controllers
                 int UserGroupID = result.UserGroupID;
                 int UserID = result.ID;
                 var result2 = _iUserService.PermissionNames(UserGroupID, UserID);
+                HttpContext.Session.SetInt32("UserID", UserID);
+                HttpContext.Session.SetString("LoginName", loginName);
+
                 var businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
                 int memberTypeID = 0; int roomTypeID = 0; int vipID = 0;
                 var resultname = (from d in result2.AsEnumerable()

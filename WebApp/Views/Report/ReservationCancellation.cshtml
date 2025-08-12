@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var comList = ViewBag.ComList;
+    var lzone = ViewBag.ZoneList;
 }
 
 
@@ -100,9 +101,12 @@
         font-size: 0.75rem !important;
     }
 
-        .tomselect-custom + .ts-dropdown .option {
-            font-size: 0.75rem !important;
-            padding: 4px 4px !important;
+        /* Áp dụng font-size nhỏ cho TomSelect dựa vào class gốc .tomselect-custom */
+        .tomselect-custom + .ts-wrapper .ts-control,
+        .tomselect-custom + .ts-wrapper .ts-dropdown,
+        .tomselect-custom + .ts-wrapper .ts-dropdown .option {
+            font-size: 0.65rem !important;
+            min-height: 30px !important;
         }
 
     /* Nhỏ input khi đã khởi tạo TomSelect */
@@ -118,18 +122,8 @@
         }
 
 </style>
-<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-<script>
-    new TomSelect("#commnet", {
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        },
-        placeholder: "Select reason..."
-    });
-</script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
@@ -145,11 +139,21 @@
         <label class="me-2 mb-0 fw-bold me-1">Filter:</label>
         <div class="d-flex align-items-center me-1">
             <label class="me-2 mb-0">Cancel Reason:</label>
-            <select id="commnet" name="commnet" class="tomselect-custom" style="width: 150px">
-                <option value=""></option>
+            <select id="commnet" name="commnet" class="form-control form-control-sm" style="width: 150px">
+                <option value="" disabled selected hidden>Select reason...</option>
                 @foreach (var item in comList)
                 {
                     <option value="@item.Code">@item.Code - @item.Description</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-1">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="tomselect-custom" style="width: 100px" multiple>
+          
+                @foreach (var item in lzone)
+                {
+                    <option value="@item.ID">@item.Code - @item.Description</option>
                 }
             </select>
         </div>
@@ -203,6 +207,53 @@
         let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
         return `${year}-${month}-${day}`;
     }
+     $(document).ready(function () {
+         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
+        const today = new Date();
+
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        // Lấy ngày cuối cùng của tháng
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        // Định dạng theo local time
+        const formattedFirstDay = formatDate(firstDayOfMonth);
+        const formattedLastDay = formatDate(lastDayOfMonth);
+
+        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+        // Gán giá trị cho input date
+        document.getElementById('fromDate').value = formattedFirstDay;
+        document.getElementById('toDate').value = formattedLastDay;
+        initializeTomSelects();
+
+
+    });
+    function initializeTomSelects() {
+        const selectors = ["#zone"];
+
+        for (const id of selectors) {
+            const el = document.querySelector(id);
+            if (!el) continue;
+
+            // Nếu đã khởi tạo rồi thì destroy
+            if (el.tomselect) el.tomselect.destroy();
+
+            const ts = new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: '',
+                persist: false,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+
+        }
+    }
         $("#arrivalDateChk").on("change", function () {
         if (this.checked) {
             // Bỏ tick Cancel Date
@@ -236,27 +287,8 @@
     });
 
 
-    $(document).ready(function () {
-         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
-        const today = new Date();
-
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        // Lấy ngày cuối cùng của tháng
-        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-        // Định dạng theo local time
-        const formattedFirstDay = formatDate(firstDayOfMonth);
-        const formattedLastDay = formatDate(lastDayOfMonth);
-
-        console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-        console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-        // Gán giá trị cho input date
-        document.getElementById('fromDate').value = formattedFirstDay;
-        document.getElementById('toDate').value = formattedLastDay;
-
-
-
-    });
+   
+    
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
             let typeDate = $("input[name='includeOptions']:checked").attr("id") === "arrivalDateChk" ? 0 : 1;
@@ -265,9 +297,11 @@
             type: 'GET',
             data: {
                 fromDate: $("#fromDate").val(),
-                 toDate: $("#toDate").val(),
-                  commnet: $("#commnet").val(),
-                    typeDate: typeDate
+                toDate: $("#toDate").val(),
+                commnet: $("#commnet").val(),
+                typeDate: typeDate,
+                zone: [].concat($("#zone").val() || []).join(",")
+
             },
             traditional: true,
               crossDomain: false,
@@ -275,8 +309,8 @@
             success: function (result) {
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
-                     console.log(result);
-                initializeReservationCancellationsGrid(result);
+                    console.log(result);
+                    initializeReservationCancellationsGrid(result);
                     $("#loadingSpinner").hide();
             },
             error: function () {
@@ -328,8 +362,10 @@
         totalItems: [
             {
                 column: "roomType",
-                summaryType: "custom", // bất kỳ, chỉ để render dòng
-                displayFormat: "Grand Total"
+                summaryType: "sum", // bất kỳ, chỉ để render dòng
+                customizeText: function() {
+                return "Grand Total";
+            }
             },
             {
                 column: "noOfRoom",

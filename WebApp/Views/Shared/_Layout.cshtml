@@ -79,7 +79,7 @@
 </head>
 <body class="dx-viewport">
 
-@*         <div class="banner">
+        @*  <div class="banner">
             <img src="~/images/banner.jpg" alt="Banner Image" class="img-fluid">
            <div class="banner-text">PROPERTY MANAGEMENT SYSTEM FOR HOTEL AND RESORT</div>
         </div>
@@ -98,7 +98,7 @@
                             <a class="nav-link dropdown-toggle" href="#">Profile</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="profile" asp-action="index">new profile</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index">new profile</a></li>
                             </ul>
                         </li>
 
@@ -116,6 +116,17 @@
                             <a class="nav-link dropdown-toggle" href="#">Front Desk</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneSwitch">Telephone Switch</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="DialingInformation">Dialing Information</a></li>
+                            </ul>
+                        </li>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#">Cashiering</a>
+                            <ul class="dropdown-menu">                             
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -124,8 +135,8 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReport">Report</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a></li>
                             </ul>
-                        </li>
-                         <li class="nav-item dropdown">
+                        </li> *@
+                         @* <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button">Report</a>
                             <ul class="dropdown-menu">
                                 <!-- Sale and Forecast Reports -->
@@ -215,8 +226,8 @@
                                     </ul>
                                 </li>
                             </ul>
-                        </li>
-                        <li class="nav-item dropdown">
+                        </li>*@
+        @*                 <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#">HouseKeeping</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomControlPanel">Room Control Panel </a></li>
@@ -243,7 +254,7 @@
                     </ul>
                 </div>
             </div>
-        </nav> *@
+        </nav>  *@
     <div class="container-fluid">
         <div class="banner">
             <img src="/images/banner.PNG" alt="Banner Image" class="img-fluid">
@@ -269,6 +280,7 @@
                                 <a  asp-area="" asp-controller="Reservation" asp-action="GroupAdmin">Group Admin</a>
                             </div>
                         </li>
+<<<<<<< HEAD
                         <li class="nav-item"><a class="nav-link" href="#">REPORT</a>
                             <div class="dropdown-menu-custom">
                                 <a class="dropdown-item" asp-controller="Report" asp-action="OtherReport">Report</a>
@@ -288,6 +300,39 @@
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskSheetStatus">Task Sheet Status</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskAssignment">Task Assignment</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomAttendentDailyWorksheet">Room Attendent Daily Worksheet</a>
+=======
+                        <li class="nav-item"><a class="nav-link" href="#">FRONTDESK</a>                                                                                
+                            <div class="dropdown-menu-custom">
+                                <a  asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a>
+                                <a  asp-area="" asp-controller="FrontDesk" asp-action="TelephoneSwitch">Telephone Switch</a>
+                                <a  asp-area="" asp-controller="FrontDesk" asp-action="DialingInformation">Dialing Information</a>
+                            </div>
+                        </li>
+                        
+                
+                        <li class="nav-item"><a class="nav-link" href="#">CASHIERING</a>                           
+                            <div class="dropdown-menu-custom">
+                                <a asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a>
+                                <a asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a>
+                                <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a>                                          
+                            </div>                        
+                        </li>
+
+                        <li class="nav-item"><a class="nav-link" href="#">REPORT</a>
+                            <div class="dropdown-menu-custom">
+                                <a asp-area="" asp-controller="Report" asp-action="OtherReport">Report</a>
+                                <a asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item"><a class="nav-link" href="#">HOUSE KEEPING</a>
+                            <div class="dropdown-menu-custom">
+                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomControlPanel">Room Control Panel</a>
+                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomFacilityForecast">Room Facility Forecast</a>
+                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomStatus">Room Status</a>
+                                <a asp-area="" asp-controller="HouseKeeping" asp-action="RoomPlan">Room Plan</a>
+                                <a asp-area="" asp-controller="HouseKeeping" asp-action="HouseStatus">House Status</a>
+>>>>>>> 83b8af50291d7b0707c5c8ef9913b7e489ff4999
                             </div>
                         </li>
                     </ul>
@@ -326,7 +371,7 @@
             </div>
         </div>
     </div>
-
+  
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
