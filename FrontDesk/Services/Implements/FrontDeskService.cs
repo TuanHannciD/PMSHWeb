@@ -50,6 +50,74 @@ namespace FrontDesk.Services.Implements
 
             return DataTableHelper.getTableData("spSearchAllForTrans", param);
         }
+        public DataTable TelephoneSwitch(string roomNo, int foStatus)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@RoomNo", string.IsNullOrEmpty(roomNo) ? (object)DBNull.Value : roomNo),
+                new SqlParameter("@FOStatus", foStatus)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTelephoneSwitchSearch", param);
+            return myTable;
+        }
+        public int InsertRoomStatusHistory(int objectId, string tableName, string userName, string roomNo,
+                           string action, string computerName, string oldValue, string newValue, DateTime changeDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@ObjectID", objectId),
+                new SqlParameter("@TableName", tableName),
+                new SqlParameter("@UserName", userName),
+                new SqlParameter("@RoomNo", roomNo),
+                new SqlParameter("@Action", action),
+                new SqlParameter("@ComputerName", computerName),
+                new SqlParameter("@OldValue", oldValue),
+                new SqlParameter("@NewValue", newValue),
+                new SqlParameter("@ChangeDate", changeDate)
+            };
+
+            string sql = @"
+                INSERT INTO RoomStatusHistory (ObjectID,TableName,UserName,RoomNo,Action,ComputerName,OldValue,NewValue,ChangeDate) 
+                OUTPUT INSERTED.ID
+                VALUES (@ObjectID,@TableName,@UserName,@RoomNo,@Action,@ComputerName,@OldValue,@NewValue,@ChangeDate);";
+
+            int newId = DataTableHelper.ExecuteInsertAndReturnId(sql, param);
+            return newId;
+        }
+
+        public int InsertTelephoneSwitch(string roomNo, string guestName, int status, DateTime createDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@RoomNo", roomNo),
+                new SqlParameter("@GuestName", guestName),
+                new SqlParameter("@Status", status),
+                new SqlParameter("@CreateDate", createDate)
+            };
+
+            string sql = @"
+                INSERT INTO TelephoneSwitch (RoomNo, GuestName, Status, CreateDate)
+                OUTPUT INSERTED.ID
+                VALUES (@RoomNo, @GuestName, @Status, @CreateDate);";
+
+            int newId = DataTableHelper.ExecuteInsertAndReturnId(sql, param);
+            return newId;
+        }
+        public DataTable DialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@PhoneNo", phoneNo ?? ""),
+                new SqlParameter("@View", view)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spDialInformationExt", param);
+            return myTable;
+        }
+
 
 
 

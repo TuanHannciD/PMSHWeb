@@ -20,7 +20,7 @@ namespace Report.Services.Interfaces
         DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode);
          DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode);
         DataTable OTAMonthlyReport(DateTime fromDate, string Number, string type, string currencyID);
-        DataTable DailyPickupReport(DateTime fromDate, DateTime toDate);
+        DataTable DailyPickupReport(DateTime fromDate, DateTime toDate,string zone);
         DataTable DailyBreakfastDetail(DateTime fromDate);
         DataTable FreeUpgradeReport(DateTime fromDate, DateTime toDate, string viewBy, string status);
         DataTable FixChargeReport(DateTime fromDate, DateTime toDate, string trancode, string status);

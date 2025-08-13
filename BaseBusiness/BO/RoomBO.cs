@@ -45,10 +45,10 @@ namespace BaseBusiness.BO
 
             return instance.GetList<RoomModel>(query);
         }
-        public static List<RoomModel> GetFloorPlan(string block, string suffix, string name)
+        public static List<RoomModel> GetFloorPlan(string block, string suffix, string name,string zone)
         {
             string condition = "";
-
+            string safeZone = zone?.Replace("'", "''") ?? "";
             if (suffix == "-A")
             {
                 condition = "CONVERT(Int, RoomNo) < 40000";
@@ -59,13 +59,20 @@ namespace BaseBusiness.BO
             }
 
             string query = $@"
-        SELECT * 
-        FROM Room 
+        SELECT r.*
+        FROM Room r
+        JOIN RoomType rt ON r.RoomTypeCode = rt.Code
         WHERE {condition}
-          AND RoomTypeID != 8
-          AND BlockID = N'{block}'
-          AND floor + '{suffix}' = N'{name}'
-        ORDER BY CONVERT(Int, RoomNo)
+          AND r.RoomTypeID != 8
+          AND r.BlockID = N'{block}'
+          AND r.floor + '{suffix}' = N'{name}'
+          AND (
+                '{safeZone}' = '' 
+                OR rt.ZoneCode IN (
+                    SELECT value FROM STRING_SPLIT('{safeZone}', ',')
+                )
+              )
+        ORDER BY CONVERT(Int, r.RoomNo)
     ";
 
             return instance.GetList<RoomModel>(query);

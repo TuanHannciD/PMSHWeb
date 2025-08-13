@@ -325,9 +325,9 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="">
     <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-    <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid" class="mui-button mui-button-new" type="button">
+@*     <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid" class="mui-button mui-button-new" type="button">
         <i class="fa-solid fa-print"></i> Print
-    </button>
+    </button> *@
    
 </div>
 <div class="containerhs">
@@ -646,7 +646,7 @@
 
 
         $(document).ready(function () {
-             document.getElementById("reportTitle").innerText = 'Room Facility Forecast';
+                 document.getElementById("reportTitle").innerText = 'House Status';
 
 
 
@@ -1136,7 +1136,7 @@ const roundedAmount = Math.round(amount);
 const formattedAmount = roundedAmount.toLocaleString('vi-VN');
 
 $('#roomRevennue').val(formattedAmount);
-$('#roomAVG').val(formattedAmount);
+    $('#roomAVG').val((formattedAmount/maxaccRoom).toFixed(3));
 
 
              $('#stayoverRoom').val(result.stayOver[0].totalRooms);

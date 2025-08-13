@@ -582,12 +582,12 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult DailyPickupReport(DateTime fromDate, DateTime toDate)
+        public IActionResult DailyPickupReport(DateTime fromDate, DateTime toDate,string zone)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
-                DataTable dataTable = _iReportService.DailyPickupReport(fromDate, toDate);
+                DataTable dataTable = _iReportService.DailyPickupReport(fromDate, toDate, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -605,7 +605,6 @@ namespace Report.Controllers
                                   MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
                                   RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
                                   CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
                                 
 
                               }).ToList();
@@ -984,13 +983,14 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate)
+        public IActionResult ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate, string zone)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
                 commnet = commnet ?? "";
-                DataTable dataTable = _iReportService.ReservationCancellationsReport(fromDate, toDate, commnet, typeDate);
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.ReservationCancellationsReport(fromDate, toDate, commnet, typeDate, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -1024,12 +1024,13 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationStatisticsReport(DateTime fromDate)
+        public IActionResult ReservationStatisticsReport(DateTime fromDate,string zone)
         {
+            zone = zone ?? "";
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
-                DataTable dataTable = _iReportService.ReservationStatisticsReport(fromDate);
+                DataTable dataTable = _iReportService.ReservationStatisticsReport(fromDate, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -1061,7 +1062,7 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, int  searchCrip, int  sortOrder,string noOfRoom)
+        public IActionResult ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string zone, int  searchCrip, int  sortOrder,string noOfRoom)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
@@ -1069,7 +1070,8 @@ namespace Report.Controllers
                 roomClass = roomClass ?? "";
                 roomType = roomType ?? "";
                 noOfRoom = noOfRoom ?? "";
-                DataTable dataTable = _iReportService.ReservationbyCompanyReport(fromDate, toDate, roomClass, roomType, searchCrip, sortOrder, noOfRoom);
+                zone = zone ?? "";
+                DataTable dataTable = _iReportService.ReservationbyCompanyReport(fromDate, toDate, roomClass, roomType, zone, searchCrip, sortOrder, noOfRoom);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -1341,12 +1343,13 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass)
+        public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass,string zone )
         {
+            zone = zone ?? "";
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
-                DataTable dataTable = _iReportService.NoShowReportData(fromDate, toDate, roomClass);
+                DataTable dataTable = _iReportService.NoShowReportData(fromDate, toDate, roomClass, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -3082,6 +3085,8 @@ namespace Report.Controllers
         {
             try
             {
+                cashierList = cashierList ?? "";
+                transactionCodeList = transactionCodeList ?? "";
                 DataTable dt = _iReportService.CashierAudit(date, cashierList, transactionCodeList, type);
                 var result = (from d in dt.AsEnumerable()
                               select new
@@ -3586,7 +3591,7 @@ namespace Report.Controllers
                 case "IncurringDepositPaymentPlan":
                 case "JournalByCashierAndArticle":
                 case "ArticleByRoom":
-
+                case "ReservationStatistics":
                 case "RoomOccupancyStatistics":
                 case "DeparturesReport":
                 case "ArrivalsDetailed":
@@ -3614,7 +3619,8 @@ namespace Report.Controllers
                 case "ReservationbyCompany":
                 case "LeadTimeReport":
                 case "RatecodeReport":
-                case "ArrivalsAndCheckInToday":                   
+                case "ArrivalsAndCheckInToday":
+                case "DailyPickupReport":
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
@@ -3653,6 +3659,8 @@ namespace Report.Controllers
                 case "ReservationCancellation":
                     List<CommentModel> listcm = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
                     ViewBag.ComList = listcm;
+                    List<ZoneModel> lzone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+                    ViewBag.ZoneList = lzone ;
                     break;
                 
                 case "Alerts":
@@ -3860,7 +3868,7 @@ namespace Report.Controllers
                 if (roomavl != null && roomavl.Rows.Count > 0)
                 {
                     // Lọc các dòng có Roomtype hợp lệ
-                    var groupedData = roomavl.AsEnumerable()
+                 var groupedData = roomavl.AsEnumerable()
                         .Where(row => validRoomTypeCodes.Contains(row["Roomtype"]?.ToString()))
                         .ToList();
 
@@ -3874,14 +3882,22 @@ namespace Report.Controllers
                     {
                         oooInt = parsedValue;
                     }
+                    var row333 = roomavl.AsEnumerable()
+                  .FirstOrDefault(row => row["DisplaySequence"]?.ToString() == "333");
+
+                    if (row333 != null && int.TryParse(row333["Date1"]?.ToString(), out int val))
+                    {
+                        booked = val;
+                    }
+
 
                     // Tính avail
-                    avail = totalRoom - oooInt;
+                    avail = totalRoom - oooInt+ booked;
 
                     totaldate1 = groupedData
                  .Sum(row => Convert.ToInt32(row["Date1"]));
 
-                    booked = avail - totaldate1;
+                    //booked = totaldate1+ booked;
 
                     chartStatus.Add(new { Label = "OCC", Value = booked });
                     chartStatus.Add(new { Label = "Available", Value = avail });

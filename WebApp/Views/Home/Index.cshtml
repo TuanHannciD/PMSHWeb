@@ -76,19 +76,21 @@
             </div>
         </div>
 
-        <div class="section-right mui-card">
-            <div class="form-group">
-                <label style="margin-left: 15px;">
-                    <input type="radio" name="chartType" value="pie" checked> Pie Chart
-                </label>
-                <label>
-                    <input type="radio" name="chartType" value="bar" > Bar Chart
-                </label>
+  
+            <div class="section-right mui-card">
+                <div class="form-group" id="checkchart">
+                    <label style="margin-left: 15px;">
+                        <input type="radio" name="chartType" value="pie" checked> Pie Chart
+                    </label>
+                    <label>
+                        <input type="radio" name="chartType" value="bar" > Bar Chart
+                    </label>
                
-            </div>
-            <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
-            <div id="highchartPie" class="chart-fixed-sizehigh"></div>
-        </div>   
+                </div>
+                <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
+                <div id="highchartPie" class="chart-fixed-sizehigh"></div>
+            </div>   
+     
     </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -272,9 +274,10 @@
                     $("#totalA").text(data.totalA);
                     $("#totalC").text(data.totalC);
                     $("#occupancyPercent").text(data.occupancyPercent + "%");
-                        renderHighchartBar(data.chartStatus);
-             
-                        renderHighchartPie(data.chartStatus);
+
+                                renderHighchartBar(data.chartStatus);
+                                renderHighchartPie(data.chartStatus);
+                       
 
                 $("#loadingSpinner").hide(); 
             },
@@ -319,65 +322,90 @@
 
 
      // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
-function renderHighchartPie(data) {
-    // Tìm Total
-    const totalObj = data.find(x => x.label === 'Total');
-    const total = totalObj ? parseInt(totalObj.value) : 0;
+    function renderHighchartPie(data) {
+        const totalObj = data.find(x => x.label === 'Total');
+        const total = totalObj ? parseInt(totalObj.value) : 0;
 
-    // Bỏ Total, tính phần trăm từng mục
-    const chartData = data
-        .filter(x => x.label !== 'Total')
-        .map(x => {
-            const y = parseInt(x.value);
-            const percent = total > 0 ? ((y / total) * 100).toFixed(1) : '0.0';
+        // Tính phần trăm thực tế chưa làm tròn
+        let items = data
+            .filter(x => x.label !== 'Total')
+            .map(x => {
+                const y = parseInt(x.value);
+                const rawPercent = total > 0 ? (y / total) * 100 : 0;
+                return {
+                    label: x.label,
+                    y: y,
+                    rawPercent: rawPercent
+                };
+            });
+
+        // Làm tròn phần trăm
+        let roundedPercents = items.map(x => Math.round(x.rawPercent * 10) / 10);
+        let sumPercent = roundedPercents.reduce((a, b) => a + b, 0);
+
+        // Tính chênh lệch do làm tròn
+        let diff = +(100.0 - sumPercent).toFixed(1);
+
+        // Nếu có chênh lệch thì điều chỉnh mục có giá trị lớn nhất
+        if (Math.abs(diff) > 0.0) {
+            let maxIndex = items.reduce((maxIdx, item, idx, arr) => {
+                return arr[idx].y > arr[maxIdx].y ? idx : maxIdx;
+            }, 0);
+
+            roundedPercents[maxIndex] = +(roundedPercents[maxIndex] + diff).toFixed(1);
+        }
+
+        // Tạo dữ liệu cho Highcharts
+        const chartData = items.map((x, i) => {
             return {
-                name: `${x.label} (${percent}%)`,
-                y: y
+                name: `${x.label} (${roundedPercents[i]}%)`,
+                y: x.y
             };
         });
 
-    Highcharts.chart('highchartPie', {
-        chart: {
-            type: 'pie'
-        },
-        title: {
-            text: ''
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.y}</b>'
-        },
-        accessibility: {
-            point: {
-                valueSuffix: '%'
+        Highcharts.chart('highchartPie', {
+            chart: {
+                type: 'pie'
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.y}</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            legend: {
+                enabled: true,
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}: {point.y}'
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Total',
+                colorByPoint: true,
+                data: chartData
+            }],
+            credits: {
+                enabled: false
             }
-        },
-        legend: {
-            enabled: true,
-            align: 'center',
-            verticalAlign: 'bottom',
-            layout: 'horizontal'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}: {point.y}'
-                },
-                showInLegend: true
-            }
-        },
-        series: [{
-            name: 'Total',
-            colorByPoint: true,
-            data: chartData
-        }],
-        credits: {
-            enabled: false
-        }
-    });
-}
+        });
+    }
+
 
 
 

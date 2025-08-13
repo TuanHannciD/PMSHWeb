@@ -7,6 +7,7 @@
     var roomTypeList = ViewBag.RoomTypeList;
     var floorList = ViewBag.FloorList;
     var blockList = ViewBag.BlockList;
+      var zoneList = ViewBag.ZoneList;
 }
 
 
@@ -235,6 +236,16 @@
 
                     </select>
                 </div>
+                <div class="d-flex align-items-center me-1">
+                    <label class="me-2 mb-0">Zone:</label>
+                    <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
+                        @foreach (var item in zoneList)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
+
+                </div>
             </div>
         </div>
         <div class="d-flex flex-column ">
@@ -308,10 +319,36 @@
 
 
         $(document).ready(function () {
+                      document.getElementById("reportTitle").innerText = 'Floor Plan';
                 $("#btnPrint").trigger("click");
-
+                     initializeTomSelects();
         });
-     
+            function initializeTomSelects() {
+            const selectors = ["#zone"];
+
+                for (const id of selectors) {
+                    const el = document.querySelector(id);
+                    if (!el) continue;
+
+                    // Nếu đã khởi tạo rồi thì destroy
+                    if (el.tomselect) el.tomselect.destroy();
+
+                    const ts = new TomSelect(el, {
+                        plugins: ['remove_button'],
+                        create: false,
+                        maxItems: null,
+                        allowEmptyOption: true,
+                        placeholder: '',
+                        persist: false,
+                        render: {
+                            option: function (data, escape) {
+                                return `<div>${escape(data.text)}</div>`;
+                            }
+                        }
+                    });
+
+                }
+            }
         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
             $.ajax({
@@ -322,7 +359,8 @@
                     floor: $("#floor").val(),
                     roomtype: $("#roomtype").val(),
                     owner: $("#owner").val(),
-                },
+                            zone: $("#zone").val().join(",")
+                    },
                 traditional: true,
                   crossDomain: false,
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },

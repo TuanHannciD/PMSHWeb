@@ -5,7 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var listatt = ViewBag.hkpAttendantList;
-
+    var zoneList = ViewBag.ZoneList;
 }
 
 
@@ -287,6 +287,16 @@
                     <input type="text" id="room" name="room" class="form-control form-control-sm w-auto" />
 
                 </div>
+                <div class="d-flex align-items-center me-1">
+                    <label class="me-2 mb-0">Zone:</label>
+                    <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
+                        @foreach (var item in zoneList)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
+
+                </div>
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">From Date:</label>
                     <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
@@ -364,6 +374,7 @@
                       $('#toDate').val(formatDate(parsedBusinessDate));
                         $('#fromDatenew').val(formatDate(parsedBusinessDate));
                initializeTomSelects();
+               initializeTomSelectszone();
                                $("#btnPrint").trigger("click");
 
         });
@@ -377,6 +388,32 @@
                 $('#overlay').fadeOut(200);
 
             });
+                function initializeTomSelectszone() {
+            const selectors = ["#zone"];
+
+                for (const id of selectors) {
+                    const el = document.querySelector(id);
+                    if (!el) continue;
+
+                    // Nếu đã khởi tạo rồi thì destroy
+                    if (el.tomselect) el.tomselect.destroy();
+
+                    const ts = new TomSelect(el, {
+                        plugins: ['remove_button'],
+                        create: false,
+                        maxItems: null,
+                        allowEmptyOption: true,
+                        placeholder: '',
+                        persist: false,
+                        render: {
+                            option: function (data, escape) {
+                                return `<div>${escape(data.text)}</div>`;
+                            }
+                        }
+                    });
+
+                }
+            }
         function initializeTomSelects() {
                 const selectors = ["#attendant"];
 
@@ -412,7 +449,8 @@
                     fromDate: $("#fromDate").val(),
                     toDate: $("#toDate").val(),
                     attendant: $("#attendant").val(),
-                              room: $("#room").val()
+                              room: $("#room").val(),
+                                zone: $("#zone").val().join(",")
                 },
                 traditional: true,
                   crossDomain: false,
@@ -502,7 +540,7 @@
                 { dataField: "fostatus", caption: "FOStatus", width: columnWidth },
                 { dataField: "attendant", caption: "Attendant", width: columnWidth, groupIndex: 0 , visible: false}, // <-- Group theo Attendant
                 { dataField: "taskDate", caption: "Task Date", width: columnWidth, dataType: "date", format: "dd/MM/yyyy" },
-                { dataField: "timeIn", caption: "TimeIn", width: columnWidth },
+                { dataField: "timeIn", caption: "Time In", width: columnWidth },
                 { dataField: "timeOut", caption: "Time Out", width: columnWidth },
                 { dataField: "complete", caption: "Status", width: columnWidth }
             ],
@@ -535,16 +573,27 @@
                 selectedRowData = e.data; // lưu dòng được chọn
             },
 
-            onRowPrepared: function (e) {
-                if (e.rowType === "data") {
-                    if (e.data?.isTotal) {
-                        e.rowElement.css({
-                            "font-weight": "bold",
-                            "background-color": "#f6f6f6"
-                        });
+            onCellPrepared: function (e) {
+                    if (e.rowType === "data" && e.column.dataField === "hkstatusID") {
+                        const status = (e.value || "").toLowerCase();
+
+                        if (status.includes("dirty")) {
+                            e.cellElement.css("background-color", "Red"); // d? nh?t
+                              e.cellElement.css("color", "white");
+                        } else if (status.includes("pickup")) {
+                            e.cellElement.css("background-color", "#f740f4"); // tím nh?t
+                        } else if (status.includes("clean non-checked")) {
+                            e.cellElement.css("background-color", "#1bdff5"); // xanh nu?c bi?n nh?t
+                        } else if (status.includes("out of order")) {
+                            e.cellElement.css("background-color", "#d1dfe3"); // h?ng
+                              e.cellElement.css("color", "black");
+                        } else if (status.includes("clean")) {
+                            e.cellElement.css("background-color", "green"); // xanh lá
+                            e.cellElement.css("color", "white"); // ch? tr?ng cho d? nhìn
+                        }
                     }
-                }
-            }
+                },
+
         });
     }
 

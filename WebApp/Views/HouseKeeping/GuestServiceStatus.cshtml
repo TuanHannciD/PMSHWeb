@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var roomList = ViewBag.RoomList;
+    var zoneList = ViewBag.ZoneList;
 }
 
 <link href="~/css/new_reservation.css" rel="stylesheet" asp-append-version="true" />
@@ -274,7 +275,16 @@
                     </select>
 
                 </div>
-              
+                <div class="d-flex align-items-center me-1">
+                    <label class="me-2 mb-0">Zone:</label>
+                    <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
+                        @foreach (var item in zoneList)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
+
+                </div>
             </div>
         </div>
         <div class="d-flex flex-column">
@@ -855,10 +865,35 @@
              document.getElementById("reportTitle").innerText = 'Guest Service Status';
 
                initializeTomSelects();
-
+               initializeTomSelectszone();
                $("#btnPrint").trigger("click");
         });
-   
+    function initializeTomSelectszone() {
+            const selectors = ["#zone"];
+
+                for (const id of selectors) {
+                    const el = document.querySelector(id);
+                    if (!el) continue;
+
+                    // Nếu đã khởi tạo rồi thì destroy
+                    if (el.tomselect) el.tomselect.destroy();
+
+                    const ts = new TomSelect(el, {
+                        plugins: ['remove_button'],
+                        create: false,
+                        maxItems: null,
+                        allowEmptyOption: true,
+                        placeholder: '',
+                        persist: false,
+                        render: {
+                            option: function (data, escape) {
+                                return `<div>${escape(data.text)}</div>`;
+                            }
+                        }
+                    });
+
+                }
+            }
           function closeModalEdit(){
            $('#modalEdit').modal('hide');
         }
@@ -901,7 +936,8 @@
                     data: {
                         servicestatsu: $("#servicestatsu").val(),
                         room: $("#room").val(),
-                        roomStatus: selectedStatuses
+                        roomStatus: selectedStatuses,
+                             zone: $("#zone").val().join(",")
                     },
                     traditional: true,
                       crossDomain: false,
