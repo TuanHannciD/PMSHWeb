@@ -257,15 +257,15 @@
                 </button>
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" href="#">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">HOME</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">PROFILE</a></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">RESERVATION</a>
+                            <a class="nav-link" asp-controller="Reservation" asp-action="SearchReservation">RESERVATION</a>                            
                             <div class="dropdown-menu-custom">
-                                <a  asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a>
-                                <a  asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a>
-                                <a  asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a>
-                                <a  asp-area="" asp-controller="Reservation" asp-action="GroupAdmin">Group Admin</a>
+                                <a asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a>
+                                <a asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a>
+                                <a asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a>
+
                             </div>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="#">REPORT</a></li>
@@ -286,6 +286,8 @@
                             <span class="notification-badge">3</span>
                         </div>
                         <span class="user-name" id="user-display"></span>
+                        <i class="fas fa-sign-out-alt logout-icon" title="Logout" onclick="window.location.href='/User/Index'"></i>
+
                     </div>
                 </div>
             </div>
@@ -297,11 +299,7 @@
             </main>
         </div>
 
-        @*     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
+
 
         <!-- Toast Container -->
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -357,6 +355,22 @@
         // lấy businessDate
         const businessDate = JSON.parse(localStorage.getItem("businessDate"));
         $("#businessDate").text(`Business Date : ${businessDate.split(' ')[0]}`);
+
+        const currentPath = window.location.pathname.toLowerCase();
+        $('.navbar-nav .nav-link').each(function () {
+            const linkPath = $(this).attr('href')?.toLowerCase();
+            $(this).removeClass('active'); // Xóa lớp active khỏi tất cả các liên kết
+            if (linkPath && currentPath.includes(linkPath)) {
+                $(this).addClass('active'); // Thêm lớp active cho liên kết tương ứng
+            }
+        });
+
+        // Xử lý sự kiện nhấp chuột
+        $('.navbar-nav .nav-link').on('click', function () {
+            $('.navbar-nav .nav-link').removeClass('active');
+            $(this).addClass('active');
+        });
+
     });
 </script>
 
