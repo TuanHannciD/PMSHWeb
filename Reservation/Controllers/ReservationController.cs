@@ -60,8 +60,42 @@ namespace Reservation.Controllers
             _iShareService = iShareService;
             _iGroupAdminService = iGroupAdminService;
         }
+
+        public IActionResult NewReservation()
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
+            ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
+            ViewBag.cboCity = ListItemHelper.GetCityProvider();
+            ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
+            ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
+            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
+            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+            ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
+            ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
+            ViewBag.cboReason = ListItemHelper.GetReasonProvider();
+            ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
+            ViewBag.cboSource = ListItemHelper.GetSourceProvider();
+            ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
+            ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
+            ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
+            ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
+            ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
+            ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
+            ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
+            ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
+            ViewBag.businesDate = businessDateModel[0].BusinessDate;
+            ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
+
+            return View();
+        }
+
+
         public IActionResult SearchReservation()
         {
+
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
             ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
@@ -93,37 +127,6 @@ namespace Reservation.Controllers
             return View();
         }
 
-
-        public IActionResult NewReservation()
-        {
-            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-            ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
-            ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
-            ViewBag.cboCity = ListItemHelper.GetCityProvider();
-            ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
-            ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
-            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
-            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
-            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
-            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
-            ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
-            ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
-            ViewBag.cboReason = ListItemHelper.GetReasonProvider();
-            ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
-            ViewBag.cboSource = ListItemHelper.GetSourceProvider();
-            ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
-            ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
-            ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
-            ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
-            ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
-            ViewBag.cboPromotion = ListItemHelper.GetPromotionProvider();
-            ViewBag.cboGroupPreferenceProvider = ListItemHelper.GetGroupPreferenceProvider();
-            ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
-            ViewBag.businesDate = businessDateModel[0].BusinessDate;
-            ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
-            
-            return View();
-        }
 
         public IActionResult GroupReservation()
         {
@@ -539,7 +542,6 @@ namespace Reservation.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetBusinessDate()
         {
@@ -621,6 +623,15 @@ namespace Reservation.Controllers
                 reservationModel.Title = Request.Form["title"].ToString();
                 reservationModel.Phone = Request.Form["phone"].ToString();
                 reservationModel.Email = Request.Form["email"].ToString();
+                if(int.Parse(Request.Form["walkIn"].ToString()) == 1)
+                {
+                    reservationModel.IsWalkIn = true;
+                }
+                else
+                {
+                    reservationModel.IsWalkIn = false;
+
+                }
                 if (memberType != null)
                 {
                     reservationModel.MemberType = memberType.Code;
@@ -787,7 +798,6 @@ namespace Reservation.Controllers
                 reservationModel.RoutingToProfile = Request.Form["firstName"].ToString();
                 reservationModel.FixedCharge = "";
                 reservationModel.CommentGroup = "";
-                reservationModel.IsWalkIn = false;
                 reservationModel.UserInsertId = int.Parse(Request.Form["userID"].ToString());
                 reservationModel.CreateDate = DateTime.Now;
                 reservationModel.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
@@ -842,6 +852,7 @@ namespace Reservation.Controllers
                     reservationMaster.FirstName = "Master *";
                     reservationMaster.NoOfAdult = 0;
                     reservationMaster.NoOfChild = reservationMaster.NoOfChild1 = reservationMaster.NoOfChild2 = 0;
+                    reservationMaster.IsWalkIn = reservationMaster.IsWalkIn;
                     reservationMaster.RoomTypeId = 8;
                     reservationMaster.RoomType = "DMR";
                     reservationMaster.RtcId = 8;
@@ -924,7 +935,7 @@ namespace Reservation.Controllers
         [HttpGet]
         public async Task<IActionResult> SearchReservation2(int searchType,string name,string firstName,string reservationHolder,string confirmationNo,
             string crsNo,string roomNo,string roomType,string package,string zone,DateTime arrivalFrom, DateTime arrivalTo,string roomSharer,string owner)
-        {
+       {
             try
             {
                 var data = _iReservationService.SearchReservation( searchType,  name,  firstName,  reservationHolder,  confirmationNo,
@@ -3830,5 +3841,21 @@ namespace Reservation.Controllers
         }
 
         #endregion
+
+        #region DatVP __ Reservation: View Profile
+        [HttpGet]
+        public async Task<IActionResult> ViewProfileByID(int profileID)
+        {
+            try
+            {
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(profileID);
+                return Json(profile);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion 
     }
 }

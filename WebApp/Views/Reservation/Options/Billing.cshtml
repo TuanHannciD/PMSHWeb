@@ -1,15 +1,62 @@
 ﻿
 <!-- Modal billimg-->
-<div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelBilling" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Billing</h5>
+                <h5 class="modal-title" id="staticBackdropLabelBilling">Billing</h5>
                 <button type="button" class="btn-close" onclick="closeModalBilling()"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-2">
                     <button class="mui-button mui-button-search" >Post</button>
+                </div>
+                <div id="tab-filter" class="tab-pane active">
+                    <div class="filter-section">
+                        <h4>Guest Information & Reservation Details</h4>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-control" placeholder="Enter first name" id="firstName">
+                        </div>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-control" placeholder="Enter full name" id="name">
+                        </div>
+                        <div class="form-group">
+                            <label>Owner</label>
+                            <i class="fas fa-user-tie"></i>
+                            <select class="form-select" id="owner">
+                                <option value="">--All--</option>
+                                <option value="--Hotel--">--Hotel--</option>
+                                <option value="--Owner--">--Owner--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Conf. No</label>
+                            <i class="fas fa-ticket-alt"></i>
+                            <input type="text" class="form-control" placeholder="Enter confirmation number" id="confirmationNo">
+                        </div>
+                        <div class="form-group">
+                            <label>Resv. No</label>
+                            <i class="fas fa-ticket-alt"></i>
+                            <input type="text" class="form-control" placeholder="Enter reservation number" id="resvHolder">
+                        </div>
+                        <div class="form-group">
+                            <label>CRS No/GC</label>
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" class="form-control" placeholder="Enter CRS or group code" id="crsNo">
+                        </div>
+                        <div class="form-group">
+                            <label>Search Type</label>
+                            <i class="fas fa-search"></i>
+                            <select class="form-select" id="searchType">
+                                <option value="0">General</option>
+                                <option value="7">Cancellations</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="row" style="margin: 14px 14px; height: auto; justify-content: space-between; display: flex; align-items: stretch;">
                     <div class="col-md-10 row bg-light border rounded">
@@ -152,6 +199,7 @@
     }
     function openModalBilling(){
         searchFolioDetail();
+        $('#staticBackdropLabelBilling').text('Billing [' + lastname + '] - ' + roomNo);
         $('#modalBilling').modal('show');
     }
     function closeModalBilling(){
