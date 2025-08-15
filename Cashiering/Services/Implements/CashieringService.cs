@@ -108,7 +108,7 @@ namespace Cashiering.Services.Implements
                {
                 new SqlParameter("@ShiftID", shiftID),
                 new SqlParameter("@Type", type)
-           
+
                };
 
             return DataTableHelper.getTableData("spSearchTransactionCloseShift_New", param);
@@ -133,6 +133,19 @@ namespace Cashiering.Services.Implements
         ")
             });
         }
+        public DataTable ExchangeCurrency(string account, string passPort, string roomNo, DateTime fromDate, DateTime toDate, int isDelete)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Account", account ?? ""),
+                new SqlParameter("@PassPort", passPort ?? ""),
+                new SqlParameter("@RoomNo", roomNo ?? ""),
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@IsDelete", isDelete)
+            };
+            return DataTableHelper.getTableData("spExchangeCurrencySearch", param);
 
-    }
+        }
+    } 
 }
