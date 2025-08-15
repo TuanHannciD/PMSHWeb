@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var rtList = ViewBag.RoomClassList;
+    var zoneList = ViewBag.ZoneList;
 }
 
 
@@ -132,6 +133,16 @@
             </select>
 
         </div>
+        <div class="d-flex align-items-center me-1">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
+                @foreach (var item in zoneList)
+                {
+                    <option value="@item.ID">@item.Code</option>
+                }
+            </select>
+
+        </div>
     </div>
     <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
@@ -176,8 +187,34 @@
         document.getElementById('toDate').value = formattedLastDay;
        
 
-
+        initializeTomSelects();
     });
+      function initializeTomSelects() {
+        const selectors = ["#zone"];
+
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                // Nếu đã khởi tạo rồi thì destroy
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
         $("#loadingSpinner").show();
         $.ajax({
@@ -187,6 +224,7 @@
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
                 roomClass: $("#roomClass").val(),
+                zone: $("#zone").val().join(",") 
             },
             traditional: true,
               crossDomain: false,

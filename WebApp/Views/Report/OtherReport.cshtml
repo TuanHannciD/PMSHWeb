@@ -627,6 +627,9 @@
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="RevenueBy" data-title="Revenue By">Revenue By</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="HistoryAndForecast" data-title="History And Forecast">History And Forecast</a></li>
             <li class="list-group-item"><a style="color:black" class="text-decoration-none report-link" data-report="Revenuebyroom" data-title="Revenue by room">Revenue by room</a></li>
+            <li class="list-group-item">
+                <a style="color:black" id="DailyPickupReport" class="text-decoration-none report-link" data-report="DailyPickupReport" data-title="Daily Pickup Report">Daily Pickup Report</a>
+            </li>
         </ul>
         @* <div class="filter-header" id="header-reservation" style="font-size: 14px;">
             <span>Report reservation</span>
@@ -794,6 +797,11 @@
     $(".report-link").each(function () {
         const reportName = $(this).data("report")?.toString().trim().toLowerCase();
 
+        // Bỏ qua nếu là DailyPickupReport
+        if (reportName === "dailypickupreport") {
+            return;
+        }
+
         if (!lowerPermissionNames.includes(reportName)) {
             $(this).addClass("disabled-link");
             $(this).css({
@@ -802,6 +810,7 @@
             });
         }
     });
+
 
 
 

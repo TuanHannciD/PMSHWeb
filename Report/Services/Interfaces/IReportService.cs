@@ -20,7 +20,7 @@ namespace Report.Services.Interfaces
         DataTable RatecodebyDate(DateTime fromDate, DateTime toDate, string ratecode);
          DataTable GuestMarketReport(DateTime fromDate, DateTime toDate, string currency, string zonecode);
         DataTable OTAMonthlyReport(DateTime fromDate, string Number, string type, string currencyID);
-        DataTable DailyPickupReport(DateTime fromDate, DateTime toDate);
+        DataTable DailyPickupReport(DateTime fromDate, DateTime toDate,string zone);
         DataTable DailyBreakfastDetail(DateTime fromDate);
         DataTable FreeUpgradeReport(DateTime fromDate, DateTime toDate, string viewBy, string status);
         DataTable FixChargeReport(DateTime fromDate, DateTime toDate, string trancode, string status);
@@ -28,9 +28,9 @@ namespace Report.Services.Interfaces
         DataTable DepartureExtendedReport(DateTime fromDate);
         DataTable RoomOccupancyReport(DateTime fromDate, DateTime toDate, string zone);
         DataTable ReservationCancellationsReport(DateTime fromDate, DateTime toDate, string commnet, string typeDate, string zone);
-        DataTable ReservationStatisticsReport(DateTime fromDate);
-        DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string zone, int  searchCrip, int  sortOrder, string noOfRoom);
-        DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass);
+        DataTable ReservationStatisticsReport(DateTime fromDate,string zone);
+        DataTable ReservationbyCompanyReport(DateTime fromDate, DateTime toDate, string roomClass, string roomType, string zone,int  searchCrip, int  sortOrder, string noOfRoom);
+        DataTable NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass, string zone);
         DataTable ReservationSummaryData(DateTime fromDate, DateTime toDate, string roomType, string zone, string viewBy, string market);
         DataTable ProductActivityData(DateTime fromDate, DateTime toDate, string type, string currency);
         DataTable NationalStatisticsData(DateTime fromDate, DateTime toDate, string roomtype, string viewBy);

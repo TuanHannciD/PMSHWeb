@@ -5,7 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var listatt = ViewBag.hkpAttendantList;
-    var zoneList = ViewBag.ZoneList;
+    var listhkpTS = ViewBag.hkpTaskSheetList;
 }
 
 
@@ -87,6 +87,7 @@
         min-height: 26px !important;
         font-size: 12px !important;
     }
+
     #gridContainer .dx-datagrid-rowsview .dx-selection {
         background-color: #005f87 !important; /* màu xanh ng?c */
         color: white !important; /* ch? tr?ng */
@@ -260,6 +261,69 @@
         background-image: none !important;
         padding-right: 10px !important;
     }
+
+    .status-color-box {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+        vertical-align: middle;
+        border: 1px solid #ccc;
+    }
+
+    .color-clean-uncheck {
+        background-color: cyan;
+    }
+
+    .color-dirty {
+        background-color: red;
+    }
+
+    .color-outoforder {
+        background-color: lightgray;
+    }
+
+    .color-pickup {
+        background-color: yellow;
+    }
+
+    .color-clean {
+        background-color: lime;
+    }
+
+    .color-outofservices {
+        background-color: lightgray;
+    }
+
+    .hk-clean-uncheck {
+        background-color: cyan;
+        color: black;
+    }
+
+    .hk-dirty {
+        background-color: red;
+        color: white;
+    }
+
+    .hk-outoforder {
+        background-color: lightgray;
+        color: black;
+    }
+
+    .hk-pickup {
+        background-color: yellow;
+        color: black;
+    }
+
+    .hk-clean {
+        background-color: lime;
+        color: black;
+    }
+
+    .hk-outofservices {
+        background-color: lightgray;
+        color: black;
+    }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
@@ -267,7 +331,53 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
         <!-- From Date -->
+        <div class="d-flex flex-column">
+            <div class="d-flex align-items-center me-3">
+                <label class="mb-1 me-2">Room Status: </label>
 
+                <!-- Clean Uncheck -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-clean-uncheck"></span>
+                    <input class="form-check-input" type="checkbox" id="cleanUncheck" name="includeOptions" value="1" checked>
+                    <label class="form-check-label" for="cleanUncheck">Clean Non-Checked</label>
+                </div>
+
+                <!-- Dirty -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-dirty"></span>
+                    <input class="form-check-input" type="checkbox" id="dirty" name="includeOptions" value="2" checked>
+                    <label class="form-check-label" for="dirty">Dirty</label>
+                </div>
+
+                <!-- Out of Order -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-outoforder"></span>
+                    <input class="form-check-input" type="checkbox" id="outofOrder" name="includeOptions" value="5" checked>
+                    <label class="form-check-label" for="outofOrder">Out of Order</label>
+                </div>
+
+                <!-- Pickup -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-pickup"></span>
+                    <input class="form-check-input" type="checkbox" id="pickup" name="includeOptions" value="3" checked>
+                    <label class="form-check-label" for="pickup">Pickup</label>
+                </div>
+
+                <!-- Clean -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-clean"></span>
+                    <input class="form-check-input" type="checkbox" id="clean" name="includeOptions" value="4" checked>
+                    <label class="form-check-label" for="clean">Clean</label>
+                </div>
+
+                <!-- Out of Services -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-outofservices"></span>
+                    <input class="form-check-input" type="checkbox" id="outofServices" name="includeOptions" value="6" checked>
+                    <label class="form-check-label" for="outofServices">Out of Services</label>
+                </div>
+            </div>
+        </div>
         <div class="d-flex flex-column ">
 
             <div class="d-flex align-items-center">
@@ -282,29 +392,21 @@
                     </select>
 
                 </div>
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Room:</label>
-                    <input type="text" id="room" name="room" class="form-control form-control-sm w-auto" />
-
-                </div>
+             
                 <div class="d-flex align-items-center me-1">
-                    <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" name="zone" class="tomselect-custom" style="width: 70px;" multiple>
-                        @foreach (var item in zoneList)
+                    <label class="me-2 mb-0">Task Sheet:</label>
+                    <select id="tasksheet" name="tasksheet" class="form-select form-select-sm w-auto" style="width: 70px;" >
+                        <option value=""></option>
+                        @foreach (var item in listhkpTS)
                         {
-                            <option value="@item.Code">@item.Code</option>
+                            <option value="@item.TaskSheetNo">@item.TaskSheetNo</option>
                         }
                     </select>
 
                 </div>
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">From Date:</label>
+                <div class="d-flex align-items-center me-3" style="display:none !important">
+                    <label class="me-2 mb-0">Task Date:</label>
                     <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-                </div>
-
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">To Date:</label>
-                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
                 </div>
             </div>
         </div>
@@ -323,10 +425,10 @@
 
 <div id="popupNewGrid" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3);   width: 100vw; max-width: 100vw; max-height: 800px; overflow-y: auto;">
 
     <div class="d-flex justify-content-between mb-2">
-        <h5 id="attendantPointTitle" class="mb-0">Report</h5>
+        <h5 id="attendantPointTitle" class="mb-0">Turndown Tasksheet</h5>
 
     </div>
     <div class="d-flex justify-content-start mb-3 gap-2">
@@ -336,7 +438,7 @@
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
     </div>
-   
+
 
 
     <div id="logGridContainer"></div>
@@ -355,11 +457,11 @@
             let day = date.getDate().toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
             return `${year}-${month}-${day}`;
         }
-
+   
             let parsedBusinessDate = null;
         $(document).ready(function () {
 
-             document.getElementById("reportTitle").innerText = 'Task Sheet Status';
+             document.getElementById("reportTitle").innerText = 'Room Attendent Daily Worksheet';
               var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
                    console.log(businessDateStr);
                     // Lấy phần ngày tháng năm
@@ -371,11 +473,20 @@
 
                     // Gán vào input type="date"
                     $('#fromDate').val(formatDate(parsedBusinessDate));
-                      $('#toDate').val(formatDate(parsedBusinessDate));
-                        $('#fromDatenew').val(formatDate(parsedBusinessDate));
+                  
                initializeTomSelects();
-               initializeTomSelectszone();
-                               $("#btnPrint").trigger("click");
+               // initializeTomSelectstasksheet();
+                var taskSheetNew = '@(ViewBag.TaskSheetNew ?? "")';
+  
+               if (   taskSheetNew && taskSheetNew.trim() !== "" && $("#tasksheet option[value='" + taskSheetNew + "']").length) {
+                                 console.log(taskSheetNew);
+                    $('#tasksheet').val(taskSheetNew);
+                     $("#btnExportExcel, #btnReport").attr("style", "display: none !important");
+                } else {
+                    console.log("Không tìm thấy option khớp với", taskSheetNew);
+                    $('#tasksheet').val('').trigger('change');
+                }
+                                           $("#btnPrint").trigger("click");
 
         });
              $("#btnReport").on("click", function () {
@@ -387,33 +498,33 @@
                 $('#popupNewGrid').fadeOut(200);
                 $('#overlay').fadeOut(200);
 
-            });
-                function initializeTomSelectszone() {
-            const selectors = ["#zone"];
+            }); 
+            // function initializeTomSelectstasksheet() {
+            //     const selectors = ["#tasksheet"];
 
-                for (const id of selectors) {
-                    const el = document.querySelector(id);
-                    if (!el) continue;
+            //     for (const id of selectors) {
+            //         const el = document.querySelector(id);
+            //         if (!el) continue;
 
-                    // Nếu đã khởi tạo rồi thì destroy
-                    if (el.tomselect) el.tomselect.destroy();
+            //         // Nếu đã khởi tạo rồi thì destroy
+            //         if (el.tomselect) el.tomselect.destroy();
 
-                    const ts = new TomSelect(el, {
-                        plugins: ['remove_button'],
-                        create: false,
-                        maxItems: null,
-                        allowEmptyOption: true,
-                        placeholder: '',
-                        persist: false,
-                        render: {
-                            option: function (data, escape) {
-                                return `<div>${escape(data.text)}</div>`;
-                            }
-                        }
-                    });
+            //         const ts = new TomSelect(el, {
+            //             plugins: ['remove_button'],
+            //             create: false,
+            //             maxItems: null,
+            //             allowEmptyOption: true,
+            //             placeholder: '',
+            //             persist: false,
+            //             render: {
+            //                 option: function (data, escape) {
+            //                     return `<div>${escape(data.text)}</div>`;
+            //                 }
+            //             }
+            //         });
 
-                }
-            }
+            //     }
+            // }
         function initializeTomSelects() {
                 const selectors = ["#attendant"];
 
@@ -442,25 +553,28 @@
 
         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
+               var selectedStatuses = $("input[name='includeOptions']:checked")
+                .map(function () {
+                    return this.value;
+                }).get().join(",");
             $.ajax({
-                url: '/HouseKeeping/TaskSheetStatusData',
+                url: '/HouseKeeping/RoomAttendentDailyWorksheetData',
                 type: 'GET',
                 data: {
                     fromDate: $("#fromDate").val(),
-                    toDate: $("#toDate").val(),
-                    attendant: $("#attendant").val(),
-                              room: $("#room").val(),
-                                zone: $("#zone").val().join(",")
+                    attendant: $("#attendant").val().join(","),
+                    tasksheet: $("#tasksheet").val(),
+                     roomStatus: selectedStatuses,
                 },
                 traditional: true,
                   crossDomain: false,
                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
+                success: function (data) {
                     // $("#reportViewerContainer").html(result);
                     // $("#loadingSpinner").hide();
-                            console.log(result);
-                          initializeTaskSheetStatusGrid(result);
-                             initializeTaskSheetStatusPopGrid(result);
+                             console.log(data);
+                            initializeRoomAttendentDailyWorksheetGrid(data.result1);
+                            initializeTurndownTasksheetGrid(data.result2);
                         $("#loadingSpinner").hide();
                 },
                 error: function () {
@@ -470,87 +584,82 @@
             });
         });
 
-            function initializeTaskSheetStatusPopGrid(data) {
-        const columnWidth = 120;
-
-        $("#logGridContainer").dxDataGrid({
-            dataSource: data,
-            allowColumnResizing: true,
-            columnAutoWidth: true,
-            columns: [
-                { dataField: "colIndex", caption: "No", width: columnWidth },
-                { dataField: "roomNo", caption: "RoomNo", width: columnWidth },
-                { dataField: "roomType", caption: "RoomType", width: columnWidth },
-                { dataField: "hkstatusID", caption: "Room Status", width: columnWidth },
-                { dataField: "fostatus", caption: "FOStatus", width: columnWidth },
-                        { dataField: "attendant", caption: "Attendant", width: columnWidth},
-                { dataField: "taskDate", caption: "Task Date", width: columnWidth, dataType: "date", format: "dd/MM/yyyy" },
-                { dataField: "timeIn", caption: "TimeIn", width: columnWidth },
-                { dataField: "timeOut", caption: "Time Out", width: columnWidth },
-                { dataField: "complete", caption: "Status", width: columnWidth }
-            ],
-
-
-            paging: { pageSize: 25 },
-            scrolling: {
-                useNative: true,
-                showScrollbar: "always"
-            },
-            pager: {
-                visible: true,
-                allowedPageSizes: [25, 50, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true
-            },
-            filterRow: { visible: true, applyFilter: "auto" },
-            headerFilter: { visible: true },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true,
-
-            onRowClick: function (e) {
-                selectedRowData = e.data; // lưu dòng được chọn
-            },
-
-            onRowPrepared: function (e) {
-                if (e.rowType === "data") {
-                    if (e.data?.isTotal) {
-                        e.rowElement.css({
-                            "font-weight": "bold",
-                            "background-color": "#f6f6f6"
-                        });
-                    }
-                }
-            }
-        });
-    }
-
-    function initializeTaskSheetStatusGrid(data) {
+            function initializeRoomAttendentDailyWorksheetGrid(data) {
         const columnWidth = 120;
 
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             allowColumnResizing: true,
             columnAutoWidth: true,
+             height: 600,
             columns: [
-                { dataField: "colIndex", caption: "No", width: columnWidth },
-                { dataField: "roomNo", caption: "RoomNo", width: columnWidth },
-                { dataField: "roomType", caption: "RoomType", width: columnWidth },
-                { dataField: "hkstatusID", caption: "Room Status", width: columnWidth },
-                { dataField: "fostatus", caption: "FOStatus", width: columnWidth },
-                { dataField: "attendant", caption: "Attendant", width: columnWidth, groupIndex: 0 , visible: false}, // <-- Group theo Attendant
-                { dataField: "taskDate", caption: "Task Date", width: columnWidth, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "colIndex", caption: "No", width: columnWidth-40 },
+                 {dataField: "hkstatusID_color",
+                        caption: "C",
+                        width: columnWidth-40,
+                        cellTemplate: function (container, options) {
+                            let colorClass = "";
+                            switch (options.value) {
+                                case "Clean Non-Checked":
+                                    colorClass = "hk-clean-uncheck";
+                                    break;
+                                case "Dirty":
+                                    colorClass = "hk-dirty";
+                                    break;
+                                case "Out Of Order":
+                                    colorClass = "hk-outoforder";
+                                    break;
+                                case "Pickup":
+                                    colorClass = "hk-pickup";
+                                    break;
+                                case "Clean":
+                                    colorClass = "hk-clean";
+                                    break;
+                                case "Out Of Services":
+                                    colorClass = "hk-outofservices";
+                                    break;
+                                default:
+                                    colorClass = "";
+                            }
+
+                            $(container)
+                            .addClass(colorClass)
+                            .css({
+                                "text-align": "center",
+                                "color": "#000" // màu chữ
+                            });
+                        }
+                    },
+                { dataField: "roomNo", caption: "Room No", width: columnWidth },
+                  { dataField: "attendant", caption: "Attendant", width: columnWidth, groupIndex: 0 , visible: false}, // <-- Group theo Attendant
+                { dataField: "roomType", caption: "Room Type", width: columnWidth },
+                { dataField: "credits", caption: "Credits", width: columnWidth , dataType: "number", format: "#,##0" },
+                { dataField: "facilityTask", caption: "Facility Task", width: columnWidth },
+                { dataField: "hkstatusID_color", caption: "HKStatusID", width: columnWidth},
                 { dataField: "timeIn", caption: "Time In", width: columnWidth },
                 { dataField: "timeOut", caption: "Time Out", width: columnWidth },
+                { dataField: "fostatus", caption: "FOStatus", width: columnWidth },
+
+                 { dataField: "chocolate", caption: "Chocolate", width: columnWidth },
+                { dataField: "mw", caption: "MW", width: columnWidth -50},
+                { dataField: "br", caption: "BR", width: columnWidth-50 },
+
+                  { dataField: "yk", caption: "YK", width: columnWidth-50 },
+                { dataField: "sl", caption: "SL", width: columnWidth -50},
+                { dataField: "bt", caption: "BT", width: columnWidth -50},
+
+                { dataField: "ht", caption: "HT", width: columnWidth -50},
+                 { dataField: "bm", caption: "BM", width: columnWidth -50},
+                 { dataField: "ft", caption: "FT", width: columnWidth -50},
+
+
+                { dataField: "tb", caption: "TB", width: columnWidth -50},
+                 { dataField: "tr", caption: "TR", width: columnWidth -50},
+                 { dataField: "am", caption: "AM", width: columnWidth -50},
+                    { dataField: "description", caption: "Description", width: columnWidth },
                 { dataField: "complete", caption: "Status", width: columnWidth }
             ],
 
-            grouping: {
-                autoExpandAll: true // Tự động mở rộng group
-            },
-            groupPanel: {
-                visible: false // Hiện panel kéo thả group
-            },
 
             paging: { pageSize: 25 },
             scrolling: {
@@ -571,37 +680,115 @@
 
             onRowClick: function (e) {
                 selectedRowData = e.data; // lưu dòng được chọn
-            },
+            }
+            // , onCellPrepared: function (e) {
+            //         if (e.rowType === "data" && e.column.dataField === "hkstatusID_color") {
+            //             const status = (e.value || "").toLowerCase();
 
-            onCellPrepared: function (e) {
-                    if (e.rowType === "data" && e.column.dataField === "hkstatusID") {
-                        const status = (e.value || "").toLowerCase();
+            //             if (status.includes("dirty")) {
+            //                 e.cellElement.css("background-color", "Red"); // d? nh?t
+            //                   e.cellElement.css("color", "white");
+            //             } else if (status.includes("pickup")) {
+            //                 e.cellElement.css("background-color", "#f740f4"); // tím nh?t
+            //             } else if (status.includes("clean non-checked")) {
+            //                 e.cellElement.css("background-color", "#1bdff5"); // xanh nu?c bi?n nh?t
+            //             } else if (status.includes("out of order")) {
+            //                 e.cellElement.css("background-color", "#d1dfe3"); // h?ng
+            //                   e.cellElement.css("color", "black");
+            //             } else if (status.includes("clean")) {
+            //                 e.cellElement.css("background-color", "green"); // xanh lá
+            //                 e.cellElement.css("color", "white"); // ch? tr?ng cho d? nhìn
+            //             }
+            //         }
+            //     },
+        });
+    }
+    function initializeTurndownTasksheetGrid(data) {
+        const columnWidth = 120;
 
-                        if (status.includes("dirty")) {
-                            e.cellElement.css("background-color", "Red"); // d? nh?t
-                              e.cellElement.css("color", "white");
-                        } else if (status.includes("pickup")) {
-                            e.cellElement.css("background-color", "#f740f4"); // tím nh?t
-                        } else if (status.includes("clean non-checked")) {
-                            e.cellElement.css("background-color", "#1bdff5"); // xanh nu?c bi?n nh?t
-                        } else if (status.includes("out of order")) {
-                            e.cellElement.css("background-color", "#d1dfe3"); // h?ng
-                              e.cellElement.css("color", "black");
-                        } else if (status.includes("clean")) {
-                            e.cellElement.css("background-color", "green"); // xanh lá
-                            e.cellElement.css("color", "white"); // ch? tr?ng cho d? nhìn
-                        }
+        $("#logGridContainer").dxDataGrid({
+            dataSource: data,
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            height: 600,
+            columns: [
+                { dataField: "roomNo", caption: "RoomNo", width: columnWidth },
+                { dataField: "hkStatusID", caption: "Room Status", width: columnWidth + 20 },
+                { dataField: "foStatus", caption: "FOStatus", width: columnWidth },
+                   {
+                dataField: "attendant",
+                caption: "Attendant",
+                width: columnWidth,
+                groupIndex: 0,
+                visible: false,
+                groupCellTemplate: function (cellElement, cellInfo) {
+                    const groupAttendant = cellInfo.value;
+                    const groupData = cellInfo.data.items || [];
+
+                    if (groupData.length > 0) {
+                        const firstItem = groupData[0];
+                        const taskDate = firstItem.taskDate ? DevExpress.localization.formatDate(new Date(firstItem.taskDate), "dd/MM/yyyy") : "";
+                        const taskSheetNo = firstItem.taskSheetNo || "";
+
+                        // Tạo HTML nhiều dòng
+                        const html = `
+                            <div><strong>Task Date:</strong> ${taskDate}</div>
+                            <div><strong>Attendant ID and Name:</strong> ${groupAttendant}</div>
+                            <div><strong>Task Sheet No.:</strong> ${taskSheetNo}</div>
+                        `;
+                        cellElement.html(html);
+                    } else {
+                        cellElement.text(groupAttendant);
                     }
-                },
-
+                }
+            } ,
+                { dataField: "credits", caption: "Credits", width: columnWidth, dataType: "number", format: "#,##0" },
+                { dataField: "section", caption: "Section", width: columnWidth },
+                { dataField: "status", caption: "Status", width: columnWidth },
+                { dataField: "turndownStatus", caption: "Turndown Status", width: columnWidth + 30 },
+                { dataField: "lastName", caption: "Name", width: columnWidth + 40 },
+                { dataField: "arrivalDate", caption: "Arr.", width: columnWidth, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "arrivalTime", caption: "Arrival Time", width: columnWidth },
+                { dataField: "departureDate", caption: "Dep.", width: columnWidth, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "vip", caption: "VIP", width: columnWidth },
+                { dataField: "adult", caption: "A", width: columnWidth, dataType: "number", format: "#,##0" },
+                { dataField: "child", caption: "C", width: columnWidth, dataType: "number", format: "#,##0" },
+                { dataField: "specials", caption: "Specials", width: columnWidth },
+                { dataField: "facilityTask", caption: "Facility Task", width: columnWidth },
+            ],
+            grouping: { autoExpandAll: true },
+            groupPanel: { visible: false },
+            paging: { pageSize: 25 },
+            scrolling: { useNative: true, showScrollbar: "always" },
+            pager: {
+                visible: true,
+                allowedPageSizes: [25, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            headerFilter: { visible: true },
+            selection: { mode: "multiple", showCheckBoxesMode: "none" },
+            showBorders: true,
+            summary: {
+                groupItems: [
+                    { column: "roomNo", summaryType: "count", displayFormat: "Total Room :{0}", showInGroupFooter: true },
+                    { column: "adult", summaryType: "sum", displayFormat: "{0}", showInGroupFooter: true },
+                    { column: "child", summaryType: "sum", displayFormat: "{0}", showInGroupFooter: true },
+                    { column: "credits", summaryType: "sum", displayFormat: "{0}", showInGroupFooter: true }
+                ]
+            }
         });
     }
 
 
 
+
+
         $("#btnExportExcel").click(function () {
                    const grid = $("#gridContainer").dxDataGrid("instance");
-            var selectedReport = 'Task Sheet Status Group';
+            var selectedReport = 'Room Attendent Daily Worksheet';
             if (!selectedReport) {
                 alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
                 return;
@@ -659,7 +846,7 @@
         });
                $("#btnExportpopExcel").click(function () {
                    const grid = $("#logGridContainer").dxDataGrid("instance");
-            var selectedReport = 'Task Sheet Status Report';
+            var selectedReport = 'Turndown Tasksheet Report';
             if (!selectedReport) {
                 alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
                 return;

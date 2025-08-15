@@ -582,12 +582,12 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult DailyPickupReport(DateTime fromDate, DateTime toDate)
+        public IActionResult DailyPickupReport(DateTime fromDate, DateTime toDate,string zone)
         {
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
-                DataTable dataTable = _iReportService.DailyPickupReport(fromDate, toDate);
+                DataTable dataTable = _iReportService.DailyPickupReport(fromDate, toDate, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -605,7 +605,6 @@ namespace Report.Controllers
                                   MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
                                   RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
                                   CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
                                 
 
                               }).ToList();
@@ -1025,12 +1024,13 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReservationStatisticsReport(DateTime fromDate)
+        public IActionResult ReservationStatisticsReport(DateTime fromDate,string zone)
         {
+            zone = zone ?? "";
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
-                DataTable dataTable = _iReportService.ReservationStatisticsReport(fromDate);
+                DataTable dataTable = _iReportService.ReservationStatisticsReport(fromDate, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -1343,12 +1343,13 @@ namespace Report.Controllers
         }
 
         [HttpGet]
-        public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass)
+        public IActionResult NoShowReportData(DateTime fromDate, DateTime toDate, int roomClass,string zone )
         {
+            zone = zone ?? "";
             //XtraReport report = new OneSPMSh.Report.GuestStayReport();
             try
             {
-                DataTable dataTable = _iReportService.NoShowReportData(fromDate, toDate, roomClass);
+                DataTable dataTable = _iReportService.NoShowReportData(fromDate, toDate, roomClass, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -3590,7 +3591,7 @@ namespace Report.Controllers
                 case "IncurringDepositPaymentPlan":
                 case "JournalByCashierAndArticle":
                 case "ArticleByRoom":
-
+                case "ReservationStatistics":
                 case "RoomOccupancyStatistics":
                 case "DeparturesReport":
                 case "ArrivalsDetailed":
@@ -3618,7 +3619,8 @@ namespace Report.Controllers
                 case "ReservationbyCompany":
                 case "LeadTimeReport":
                 case "RatecodeReport":
-                case "ArrivalsAndCheckInToday":                   
+                case "ArrivalsAndCheckInToday":
+                case "DailyPickupReport":
                     List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
                     ViewBag.ZoneList = listzo;
                     List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
