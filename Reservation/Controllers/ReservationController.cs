@@ -1328,7 +1328,6 @@ namespace Reservation.Controllers
                 #region edit reservation
               
                 reservationModel.ProfileComment = "";
-                reservationModel.ProfileIndividualId = int.Parse(Request.Form["profileIndividualID"].ToString());
                 reservationModel.LastName = Request.Form["lastName"].ToString();
                 reservationModel.FirstName = Request.Form["firstName"].ToString();
                 reservationModel.Phone = Request.Form["phone"].ToString();
