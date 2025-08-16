@@ -12,12 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Billing\Billing.csproj" />
     <ProjectReference Include="..\Cashiering\Cashiering.csproj" />
     <ProjectReference Include="..\FrontDesk\FrontDesk.csproj" />
     <ProjectReference Include="..\HouseKeeping\HouseKeeping.csproj" />
     <ProjectReference Include="..\Profile\Profile.csproj" />
     <ProjectReference Include="..\Report\Report.csproj" />
     <ProjectReference Include="..\Reservation\Reservation.csproj" />
+    <ProjectReference Include="..\RoomManagement\RoomManagement.csproj" />
     <ProjectReference Include="..\User\User.csproj" />
   </ItemGroup>
 

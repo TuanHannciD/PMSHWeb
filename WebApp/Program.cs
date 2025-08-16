@@ -1,3 +1,6 @@
+using Billing.Controllers;
+using Billing.Services.Implements;
+using Billing.Services.Interfaces;
 using Cashiering.Controllers;
 using Cashiering.Services.Implements;
 using Cashiering.Services.Interfaces;
@@ -21,9 +24,12 @@ using Report.Services.Interfaces;
 using Reservation.Controllers;
 using Reservation.Services.Implements;
 using Reservation.Services.Interfaces;
+using RoomManagement.Services.Implements;
+using RoomManagement.Services.Interfaces;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
+using RoomManagement.Controllers;
 using WebApp.Commons.Containts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +49,10 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(FrontDeskController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
+builder.Services.AddControllersWithViews()
+ .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
+
+builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -64,6 +74,10 @@ builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<ICashieringService, CashieringService>();
+ 
+builder.Services.AddSingleton<IPostService, PostService>();
+
+builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

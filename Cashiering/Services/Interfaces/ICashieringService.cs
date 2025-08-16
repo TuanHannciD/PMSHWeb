@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data;
+using BaseBusiness.BO;
 namespace Cashiering.Services.Interfaces
 {
     public interface ICashieringService
@@ -43,6 +44,7 @@ namespace Cashiering.Services.Interfaces
       
         public DataTable ShiftDetail(int shiftID, int type);
         public DataTable ExchangeRate();
+        public DataTable ExchangeCurrency(string account, string passPort, string roomNo, DateTime fromDate, DateTime toDate, int isDelete);
 
     }
 }

@@ -23,5 +23,11 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
+        public static List<TransactionsModel> GetList()
+        {
+
+            string query = $"select * from Transactions where IsActive = 1 ";
+            return instance.GetList<TransactionsModel>(query);
+        }
     }
 }
