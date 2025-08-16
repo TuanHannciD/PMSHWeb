@@ -544,8 +544,47 @@ public IActionResult GetShiftDetail(int shiftID)
                 return BadRequest(new { error = ex.Message });
             }
         }
+        [HttpGet]
+        public IActionResult GetExchangeCurrency(string account, string passPort, string roomNo, DateTime fromDate, DateTime toDate, int isDelete)
+        {
+            try
+            {
+                DataTable dataTable = _iCashieringService.ExchangeCurrency(account, passPort, roomNo, fromDate, toDate, isDelete);
 
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ProfileID = !string.IsNullOrEmpty(d["ProfileID"].ToString()) ? d["ProfileID"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  Account = !string.IsNullOrEmpty(d["Account"].ToString()) ? d["Account"] : "",
+                                  PassPort = !string.IsNullOrEmpty(d["PassPort"].ToString()) ? d["PassPort"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  TotalAmount = !string.IsNullOrEmpty(d["TotalAmount"].ToString()) ? d["TotalAmount"] : "",
+                                  Address = !string.IsNullOrEmpty(d["Address"].ToString()) ? d["Address"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  CashierName = !string.IsNullOrEmpty(d["CashierName"].ToString()) ? d["CashierName"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  Createddate = !string.IsNullOrEmpty(d["Createddate"].ToString()) ? d["Createddate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ExchangeCurrencyID = !string.IsNullOrEmpty(d["ExchangeCurrencyID"].ToString()) ? d["ExchangeCurrencyID"] : "",
+                                  StatusText = !string.IsNullOrEmpty(d["StatusText"].ToString()) ? d["StatusText"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",                                
+                              }).ToList();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        public IActionResult ExchangeCurrency()
+        {
 
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
 
 
 
