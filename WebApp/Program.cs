@@ -50,11 +50,9 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
 builder.Services.AddControllersWithViews()
-<<<<<<< HEAD
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
-=======
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
->>>>>>> c20c09804554db62cd62640a39ba9c8af8ffb089
+ .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
+
+builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -76,12 +74,10 @@ builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<ICashieringService, CashieringService>();
-<<<<<<< HEAD
+ 
 builder.Services.AddSingleton<IPostService, PostService>();
 
-=======
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
->>>>>>> c20c09804554db62cd62640a39ba9c8af8ffb089
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
