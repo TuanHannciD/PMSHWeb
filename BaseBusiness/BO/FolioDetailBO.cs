@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,21 @@ namespace BaseBusiness.BO
         public static FolioDetailBO Instance
         {
             get { return instance; }
+        }
+        public static int GetTopInvoiceNo()
+        {
+            string query = "select max(cast(InvoiceNo as int)) as InvoiceNo from FolioDetail";
+            return instance.GetFirst<int>(query);
+        }
+        public static int GetTopTransactioNo()
+        {
+            string query = "select max(cast(TransactionNo as int)) as InvoiceNo from FolioDetail";
+            return instance.GetFirst<int>(query);
+        }
+        public static FolioDetailModel GetFolioDetailMaster(string transactionNo)
+        {
+            string query = $"select top 1 * from FolioDetail where TransactionNo = '{transactionNo}' and (RowState in (2,1) and IsSplit = 1)";
+            return instance.GetFirst<FolioDetailModel>(query);
         }
     }
 }

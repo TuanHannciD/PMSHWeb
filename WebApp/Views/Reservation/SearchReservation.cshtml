@@ -1274,7 +1274,6 @@
         if (document.getElementById(`function-${functionId}`)) {
           document.getElementById(`function-${functionId}`).classList.add('active');
         } else {
-          console.log(`Function content for ${functionId} not found.`);
         }
       });
     });
@@ -1402,7 +1401,6 @@
         }
 
         function searchReservation() {
-            console.log('search');
             $("#loadingSpinnerForm").show();
             const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
 
@@ -1453,6 +1451,7 @@
         var status = '';
         var roomStatus = '';
         var roomNo = '';
+        var roomID = 0;
         var arivalDate = '';
         var departureDate = '';
         var confirmationNo = '';
@@ -1526,6 +1525,7 @@
                 listReservationByConfirmationNo = listData.filter(item => item.ConfirmationNo === e.data.ConfirmationNo);
                 rateAmount = e.data.PriceNet;
                 night = e.data.NoOfNight;
+                roomID = e.data.RoomID;
                 status = e.data.Status;
                 roomStatus = e.data.RoomStatus;
                 roomType = e.data.RoomType;
@@ -1563,6 +1563,7 @@
                             el.style.cursor = 'not-allowed';
                         }
                     });
+
                 } else {
                     ['unAssignRoom'].forEach(id => {
                         const el = document.getElementById(id);
@@ -2044,7 +2045,6 @@
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
                     // $('#txtID').val(result.id);
-                    console.log(result);
                     $('#nameProfileSearch').val(result.account);
                     $('#firstNameProfileSearch').val(result.firstname);
                     $('#cityProfileSearch').val(result.city);

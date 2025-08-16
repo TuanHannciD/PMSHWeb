@@ -271,8 +271,8 @@
             transform: translateY(-50%);
             width: 1px;
             height: 60%;
-            background-color: #d1d5db;
-        }
+            margin-top:6px;
+      }
 
         .function-menu a:hover,
         .function-menu a.active,
