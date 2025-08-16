@@ -21,6 +21,9 @@ using DevExpress.Charts.Native;
 using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using DevExpress.Data.ODataLinq;
+using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
+using DevExpress.DataAccess.DataFederation;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -187,6 +190,9 @@ namespace HouseKeeping.Controllers
             ViewBag.hkpAttendantList = listatt;
             List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
             ViewBag.RoomTypeList = listrt;
+
+            List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
+            ViewBag.FloorList = listfloor;
             return View();
         }
         public IActionResult GuestServiceStatus()
@@ -1952,7 +1958,7 @@ namespace HouseKeeping.Controllers
 
 
 
-                return Json(new { success = true, message = "TaskSheet update  successfully." });
+                return Json(new { success = true, message = "Add user successfully." });
             }
             catch (Exception ex)
             {
@@ -2186,8 +2192,698 @@ namespace HouseKeeping.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        string _ListRoomNotAss = "";
+        [HttpPost]
+        public IActionResult AutoTasksheet(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        {
+            includeroomAS = includeroomAS ?? "";
+            vcAuto = vcAuto ?? "";
+            vcnAuto = vcnAuto ?? "";
+            vdAuto = vdAuto ?? "";
+            doAuto = doAuto ?? "";
+            ocAuto = ocAuto ?? "";
+            ocnAuto = ocnAuto ?? "";
+            odAuto = odAuto ?? "";
+            oooAuto = oooAuto ?? "";
+            oosAuto = oosAuto ?? "";
+            arrivalOnly = arrivalOnly ?? "";
+            floorauto = floorauto ?? "";
+            roomTypeauto = roomTypeauto ?? "";
+            zonecodeauto = zonecodeauto ?? "";
+            subzonecodeauto = subzonecodeauto ?? "";
+            taskcodeauto = taskcodeauto ?? "";
+            attendantauto = attendantauto ?? "";
+            maxcreditauto = maxcreditauto ?? "";
+            descriptionauto = descriptionauto ?? "";
+            userName = userName ?? "";
+            try
+            {
+                if (!string.IsNullOrEmpty(attendantauto))
+                    return Process_by_Attendant(taskdateauto, includeroomAS, vcAuto, vcnAuto, vdAuto, doAuto, ocAuto, ocnAuto, odAuto, oooAuto, oosAuto, arrivalOnly, floorauto, roomTypeauto, zonecodeauto, subzonecodeauto, taskcodeauto, attendantauto, maxcreditauto, descriptionauto, userName);
+                else
+                    return Process(taskdateauto, includeroomAS, vcAuto, vcnAuto, vdAuto, doAuto, ocAuto, ocnAuto, odAuto, oooAuto, oosAuto, arrivalOnly, floorauto, roomTypeauto, zonecodeauto, subzonecodeauto, taskcodeauto, attendantauto, maxcreditauto, descriptionauto, userName);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private IActionResult Process_by_Attendant(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        {
+            #region Room & FO Status
+            string IsDueOut = "";
+            string HKStatusID = "";
+            string FOStatus = "";
+
+            string HK_FO = "";
+            if (vcAuto == "1")
+                HK_FO = " AND( (a.HKStatusID = 4 AND a.FOStatus = 0)";
+            if (vcnAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 1 AND a.FOStatus = 0)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 1 AND a.FOStatus = 0)";
+            if (vdAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 2 AND a.FOStatus = 0)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 2 AND a.FOStatus = 0)";
+            if (doAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 7 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 7 AND a.FOStatus = 1)";
+            if (ocAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 4 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 4 AND a.FOStatus = 1)";
+            if (ocnAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 1 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 1 AND a.FOStatus = 1)";
+            if (odAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 2 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 2 AND a.FOStatus = 1)";
+            if (oosAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 6)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 6)";
+            if (oooAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 5)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 5)";
+
+            if (HK_FO != "")
+                HK_FO = HK_FO + ")";
+            #endregion
+
+            #region Get Room Not Ass
+            if (includeroomAS == "1")
+            {
+                ProcessIncludeAssigned(taskdateauto, taskcodeauto);
+            }
+           string  floorautop = GetSplitString(floorauto);
+            string roomTypeautop = GetSplitString(roomTypeauto);
+            string zonecodeautop = GetSplitString(zonecodeauto);
+            string subzonecodeautop = GetSplitString(subzonecodeauto);
+            _ListRoomNotAss = GetSplitString(_ListRoomNotAss);
+            #endregion
+            DataTable Source = _iHouseKeepingService.TasksheetAutomatically(HK_FO,taskdateauto, floorautop, roomTypeautop, zonecodeautop, subzonecodeautop, includeroomAS,arrivalOnly, _ListRoomNotAss);
+            if (Source.Rows.Count == 0)
+            {
+                return Json(new { success = false, message = "Room not available for your requests" });
+            }
+            int[] _AttendantID = null;
+            if (!string.IsNullOrWhiteSpace(attendantauto))
+            {
+                _AttendantID = attendantauto
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out int val) ? val : 0)
+                    .Where(val => val > 0)
+                    .ToArray();
+            }
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+
+            // Lọc SectionID theo AttendantID
+            int[] _aSectionID = null;
+            if (_AttendantID != null && _AttendantID.Length > 0)
+            {
+                _aSectionID = listatt
+                    .Where(a => _AttendantID.Contains(a.ID))
+                    .Select(a => a.SectionID)
+                    .Distinct() // tránh trùng
+                    .ToArray();
+            }
+
+            #region 3.Update datatable 
+            int _NoOfRoom = 0;
+            decimal _pRoom = Convert.ToDecimal(Source.Rows.Count.ToString()) / Convert.ToDecimal(_AttendantID.Length);
+            _NoOfRoom = Convert.ToInt32(_pRoom);
+            for (int i = 0; i < _AttendantID.Length; i++)
+            {
+                int Count = 0;
+                for (int k = 0; k < Source.Rows.Count; k++)
+                {
+                    if (_aSectionID[i] == TextUtils.ToInt(Source.Rows[k]["SectionID"].ToString()))
+                    {
+                        Count = Count + 1;
+                        Source.Rows[k]["AttendantID"] = _AttendantID[i].ToString();
+                    }
+                    if (Count == _NoOfRoom)
+                        break;
+                }
+            }
 
 
+            #endregion
+
+            #region 5.Process
+
+            #region Model
+            int[] _TaskCode = null;
+            if (!string.IsNullOrWhiteSpace(taskcodeauto))
+            {
+                _TaskCode = taskcodeauto
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out int val) ? val : 0)
+                    .Where(val => val > 0)
+                    .ToArray();
+            }
+
+            // Lấy danh sách tất cả FacilityTask
+            List<hkpFacilityTaskModel> listhkpft = PropertyUtils.ConvertToList<hkpFacilityTaskModel>(
+                hkpFacilityTaskBO.Instance.FindAll()
+            );
+
+            // Lọc lấy Instructions và nối thành chuỗi
+            string instructionsList = "";
+            if (_TaskCode != null && _TaskCode.Length > 0)
+            {
+                instructionsList = string.Join(", ",
+                    listhkpft
+                        .Where(t => _TaskCode.Contains(t.ID)) // hoặc TaskCode nếu model có
+                        .Select(t => t.Instructions)
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                );
+            }
+            string codeList = "";
+            if (_TaskCode != null && _TaskCode.Length > 0)
+            {
+                codeList = string.Join(", ",
+                    listhkpft
+                        .Where(t => _TaskCode.Contains(t.ID)) // lọc theo ID
+                        .Select(t => t.Code) // lấy Code
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                );
+            }
+            hkpTaskSheetModel mTS = new hkpTaskSheetModel();
+            mTS.TaskSheetDate = taskdateauto;
+            mTS.TaskSheetNote = descriptionauto;
+            mTS.Status = false;
+            mTS.CreatedBy = mTS.UpdateBy = userName;
+            mTS.CreatedDate = mTS.UpdateDate = DateTime.Now;
+
+            //mTS.SessionID = _secID.ToString();
+            //if (Source.Rows.Count > 0)
+            //    mTS.SessionName = Source.Rows[0]["Section"].ToString();
+
+            mTS.FacilityTaskID = taskcodeauto;
+            mTS.FacilityTask = codeList;
+            
+
+
+            mTS.FacilityInstructions = instructionsList;
+
+            hkpTaskSheetDetailModel mTSD = new hkpTaskSheetDetailModel();
+            mTSD.CreatedBy = mTSD.UpdatedBy = userName;
+            mTSD.CreatedDate = mTSD.UpdatedDate = DateTime.Now;
+            mTSD.IsCompleted = false;
+            mTSD.Status = 0;
+            mTSD.TaskNote = descriptionauto.Trim();
+            mTSD.TimeIn = "";
+            mTSD.TimeOut = "";
+            mTSD.FacilityTaskID = taskcodeauto;
+            mTSD.FacilityTask = codeList;
+            mTSD.Credit = decimal.Parse(maxcreditauto);
+            mTSD.CompletedStatus = "";
+            #endregion
+
+            //Mở conn
+            ProcessTransactions pt = new ProcessTransactions();
+            pt.OpenConnection();
+            pt.BeginTransaction();
+            try
+            {
+                for (int j = 0; j < _AttendantID.Length; j++)
+                {
+                    string _tempSecID = "";
+                    string _tempSecName = "";
+                    int Count = 0;
+                    //Insert to hkpTasksheet
+                    mTS.TaskSheetNo = GetMaxTasksheetNo(taskdateauto);
+                    mTS.AttendantID = _AttendantID[j];
+                    int _tsID = TextUtils.ToInt(pt.Insert(mTS).ToString());
+
+                    #region Insert to hkpTasksheetDetail
+                    for (int k = 0; k < Source.Rows.Count; k++)
+                    {
+                        if ((_AttendantID[j] == TextUtils.ToInt(Source.Rows[k]["AttendantID"].ToString()) && TextUtils.ToInt(Source.Rows[k]["flag"].ToString()) == 0)
+                            || (j == _AttendantID.Length - 1 && TextUtils.ToInt(Source.Rows[k]["flag"].ToString()) == 0))
+                        {
+                            if (_tempSecID != "")
+                            {
+                                _tempSecID = _tempSecID + "," + Source.Rows[k]["SectionID"].ToString();
+                                _tempSecName = _tempSecName + "," + Source.Rows[k]["Section"].ToString();
+                            }
+                            else
+                            {
+                                _tempSecID = Source.Rows[k]["SectionID"].ToString();
+                                _tempSecName = Source.Rows[k]["Section"].ToString();
+                            }
+
+                            mTSD.TaskSheetID = _tsID;
+                            mTSD.RoomNo = Source.Rows[k]["RoomNo"].ToString();
+                            mTSD.RoomType = Source.Rows[k]["RoomTypeCode"].ToString();
+                            mTSD.HKStatusID = TextUtils.ToInt(Source.Rows[k]["HKStatusID"].ToString());
+                            mTSD.FOStatus = TextUtils.ToInt(Source.Rows[k]["FOStatus"].ToString());
+                            pt.Insert(mTSD);
+                            //Update Datatable
+                            Source.Rows[k]["flag"] = "1";
+                            Count = Count + 1;
+                            if (Count == _NoOfRoom && j < _AttendantID.Length - 1)
+                                break;
+                        }
+                    }
+                    #endregion
+
+                    #region If is less than --> Continue
+                    if (Count < _NoOfRoom)
+                    {
+                        int _Co = 0;
+                        for (int l = 0; l < Source.Rows.Count; l++)
+                        {
+                            if (TextUtils.ToInt(Source.Rows[l]["AttendantID"].ToString()) == 0 && TextUtils.ToInt(Source.Rows[l]["flag"].ToString()) == 0)
+                            {
+                                if (_tempSecID != "")
+                                {
+                                    _tempSecID = _tempSecID + "," + Source.Rows[l]["SectionID"].ToString();
+                                    _tempSecName = _tempSecName + "," + Source.Rows[l]["Section"].ToString();
+                                }
+                                else
+                                {
+                                    _tempSecID = Source.Rows[l]["SectionID"].ToString();
+                                    _tempSecName = Source.Rows[l]["Section"].ToString();
+                                }
+
+                                mTSD.TaskSheetID = _tsID;
+                                mTSD.RoomNo = Source.Rows[l]["RoomNo"].ToString();
+                                mTSD.RoomType = Source.Rows[l]["RoomTypeCode"].ToString();
+                                mTSD.HKStatusID = TextUtils.ToInt(Source.Rows[l]["HKStatusID"].ToString());
+                                mTSD.FOStatus = TextUtils.ToInt(Source.Rows[l]["FOStatus"].ToString());
+                                pt.Insert(mTSD);
+                                //Update Datatable
+                                Source.Rows[l]["flag"] = "1";
+                                Source.Rows[l]["AttendantID"] = _AttendantID[j].ToString();
+                                _Co = _Co + 1;
+                                if (_Co == _NoOfRoom - Count && j < _AttendantID.Length - 1)
+                                    break;
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region Update section to hkpTasksheet
+                    if (_tempSecID != "" && _tempSecName != "")
+                    {
+                        mTS.ID = _tsID;
+                        mTS.SessionID = GetSection(_tempSecID.Split(','));
+                        mTS.SessionName = GetSection(_tempSecName.Split(','));
+                        pt.Update(mTS);
+                    }
+                    #endregion
+
+                }
+                //Nếu không bị lỗi - ghi dữ liệu vào bảng
+                pt.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                //Đóng connection
+                pt.CloseConnection();
+
+                return Json(new { success = false, message = "False" });
+            }
+            //Nếu bị lỗi Rollback lại dữ liệu đã ghi
+            finally
+            {
+                pt.CloseConnection();
+            }
+            #endregion
+            return Json(new { success = true, message = "Rooms retrieved successfully" });
+        }
+        private int GetMaxTasksheetNo(DateTime taskdateauto)
+        {
+
+            var getmax = hkpTaskSheetBO.GetMaxTasksheetNo(taskdateauto);
+            DataTable dt = PropertyUtils.ConvertToDataTable(getmax);
+
+            return TextUtils.ToInt(dt.Rows[0]["TaskSheetNo"].ToString()) + 1;
+        }
+        private static string GetSection(string[] _Sec)
+        {
+            string pSection = "";
+            string pListSec = "";
+            for (int j = 0; j < _Sec.Length; j++)
+            {
+                if (j == 0)
+                {
+                    pSection = _Sec[0].ToString();
+                    pListSec = _Sec[0].ToString();
+                }
+                else
+                {
+                    if (_Sec[j].ToString() != pSection)
+                    {
+                        string[] _arr = pListSec.Split(',');
+                        if (Array.IndexOf(_arr, _Sec[j].ToString()) < 0)
+                            pListSec = pListSec + "," + _Sec[j].ToString();
+
+                        pSection = _Sec[j].ToString();
+                    }
+                }
+            }
+            return pListSec;
+        }
+        int[] _AttendantID = null;
+        string[] _SectionID = null;
+        string _ListSection = "";
+        string _ListAttendant = "";
+        private IActionResult Process(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        {
+            #region Room & FO Status
+            string IsDueOut = "";
+            string HKStatusID = "";
+            string FOStatus = "";
+
+            string HK_FO = "";
+            if (vcAuto == "1")
+                HK_FO = " AND( (a.HKStatusID = 4 AND a.FOStatus = 0)";
+            if (vcnAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 1 AND a.FOStatus = 0)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 1 AND a.FOStatus = 0)";
+            if (vdAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 2 AND a.FOStatus = 0)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 2 AND a.FOStatus = 0)";
+            if (doAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 7 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 7 AND a.FOStatus = 1)";
+            if (ocAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 4 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 4 AND a.FOStatus = 1)";
+            if (ocnAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 1 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 1 AND a.FOStatus = 1)";
+            if (odAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 2 AND a.FOStatus = 1)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 2 AND a.FOStatus = 1)";
+            if (oosAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 6)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 6)";
+            if (oooAuto == "1")
+                if (HK_FO != "")
+                    HK_FO = HK_FO + " OR (a.HKStatusID = 5)";
+                else
+                    HK_FO = " AND( (a.HKStatusID = 5)";
+
+            if (HK_FO != "")
+                HK_FO = HK_FO + ")";
+            #endregion
+
+            #region Get Room Not Ass
+            if (includeroomAS == "1")
+            {
+                ProcessIncludeAssigned(taskdateauto, taskcodeauto);
+            }
+            string floorautop = GetSplitString(floorauto);
+            string roomTypeautop = GetSplitString(roomTypeauto);
+            string zonecodeautop = GetSplitString(zonecodeauto);
+            string subzonecodeautop = GetSplitString(subzonecodeauto);
+            _ListRoomNotAss = GetSplitString(_ListRoomNotAss);
+            #endregion
+            DataTable Source = _iHouseKeepingService.TasksheetAutomatically(HK_FO, taskdateauto, floorautop, roomTypeautop, zonecodeautop, subzonecodeautop, includeroomAS, arrivalOnly, _ListRoomNotAss);
+            if (Source.Rows.Count == 0)
+            {
+                return Json(new { success = false, message = "Room not available for your requests" });
+            }
+            if (_AttendantID == null)
+            {
+                _SectionID = Section(Source, ref _ListSection);
+                _AttendantID = GetAttendant(ref _ListAttendant);
+            }
+            #region 2.Process Attendant by Section
+            for (int i = 0; i < _SectionID.Length; i++)
+            {
+                ProcessSource(Source,int.Parse(_SectionID[i].ToString()), taskdateauto, floorauto, roomTypeauto, zonecodeauto, subzonecodeauto, taskcodeauto, attendantauto, maxcreditauto, descriptionauto, userName);
+            }
+            #endregion
+            return Json(new { success = true, message = "Rooms retrieved successfully" }); 
+        }
+        private IActionResult ProcessSource(DataTable Source,int _secID, DateTime taskdateauto, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        {
+            int[] _TaskCode = null;
+            if (!string.IsNullOrWhiteSpace(taskcodeauto))
+            {
+                _TaskCode = taskcodeauto
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out int val) ? val : 0)
+                    .Where(val => val > 0)
+                    .ToArray();
+            }
+
+            // Lấy danh sách tất cả FacilityTask
+            List<hkpFacilityTaskModel> listhkpft = PropertyUtils.ConvertToList<hkpFacilityTaskModel>(
+                hkpFacilityTaskBO.Instance.FindAll()
+            );
+
+            // Lọc lấy Instructions và nối thành chuỗi
+            string instructionsList = "";
+            if (_TaskCode != null && _TaskCode.Length > 0)
+            {
+                instructionsList = string.Join(", ",
+                    listhkpft
+                        .Where(t => _TaskCode.Contains(t.ID)) // hoặc TaskCode nếu model có
+                        .Select(t => t.Instructions)
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                );
+            }
+            string codeList = "";
+            if (_TaskCode != null && _TaskCode.Length > 0)
+            {
+                codeList = string.Join(", ",
+                    listhkpft
+                        .Where(t => _TaskCode.Contains(t.ID)) // lọc theo ID
+                        .Select(t => t.Code) // lấy Code
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                );
+            }
+            //DataTable dt = TextUtils.Select("SELECT DISTINCT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID = " + _secID + " AND ID IN ('" + ClassReservation.GetSplitString(_ListAttendant) + "') ");
+            var getdetailts = hkpAttendantBO.GethkpAttendantProcessSource(_secID, GetSplitString(_ListAttendant));
+            DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
+            if (dt.Rows.Count > 0)
+            {
+                int _NoOfRoom = 0;
+                decimal _pRoom = 0;
+                decimal a = 0;
+                DataTable dtTemp = null;
+                GetDataTable_By(Source, _secID.ToString(), ref dtTemp);
+                _pRoom = Convert.ToDecimal(dtTemp.Rows.Count.ToString()) / Convert.ToDecimal(dt.Rows.Count.ToString());
+                _NoOfRoom = Convert.ToInt32(_pRoom);
+                //_NoOfRoom = dtTemp.Rows.Count / dt.Rows.Count;  
+
+                #region 4.Model
+                hkpTaskSheetModel mTS = new hkpTaskSheetModel();
+                mTS.TaskSheetDate = taskdateauto;
+                mTS.TaskSheetNote = descriptionauto.Trim();
+                mTS.Status = false;
+                mTS.CreatedBy = mTS.UpdateBy = userName;
+                mTS.CreatedDate = mTS.UpdateDate = DateTime.Now;
+                mTS.SessionID = _secID.ToString();
+                if (dtTemp.Rows.Count > 0)
+                    mTS.SessionName = dtTemp.Rows[0]["Section"].ToString();
+
+                mTS.FacilityTaskID = taskcodeauto;
+                mTS.FacilityTask = codeList;
+                mTS.FacilityInstructions = instructionsList;
+
+                hkpTaskSheetDetailModel mTSD = new hkpTaskSheetDetailModel();
+                mTSD.CreatedBy = mTSD.UpdatedBy = userName;
+                mTSD.CreatedDate = mTSD.UpdatedDate = DateTime.Now;
+                mTSD.IsCompleted = false;
+                mTSD.Status = 0;
+                mTSD.TaskNote = descriptionauto.Trim();
+                mTSD.TimeIn = "";
+                mTSD.TimeOut = "";
+                mTSD.FacilityTaskID = taskcodeauto;
+                mTSD.FacilityTask = codeList;
+                mTSD.Credit = decimal.Parse(maxcreditauto);
+                mTSD.CompletedStatus = "";
+                #endregion
+
+                //Mở conn
+                ProcessTransactions pt = new ProcessTransactions();
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                try
+                {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        if (i == dtTemp.Rows.Count)
+                            break;
+                        //Insert to hkpTasksheet
+                        mTS.TaskSheetNo = GetMaxTasksheetNo(taskdateauto);
+                        mTS.AttendantID = TextUtils.ToInt(dt.Rows[i][0].ToString());
+                        int _tsID = TextUtils.ToInt(pt.Insert(mTS).ToString());
+
+                        int count = 0;
+                        //Insert to hkpTasksheetDetail
+                        for (int j = 0; j < dtTemp.Rows.Count; j++)
+                        {
+                            if (dtTemp.Rows[j]["flag"].ToString() == "0")
+                            {
+                                mTSD.TaskSheetID = _tsID;
+                                mTSD.RoomNo = dtTemp.Rows[j]["RoomNo"].ToString();
+                                mTSD.RoomType = dtTemp.Rows[j]["RoomTypeCode"].ToString();
+                                mTSD.HKStatusID = TextUtils.ToInt(dtTemp.Rows[j]["HKStatusID"].ToString());
+                                mTSD.FOStatus = TextUtils.ToInt(dtTemp.Rows[j]["FOStatus"].ToString());
+                                pt.Insert(mTSD);
+                                //Update Datatable
+                                dtTemp.Rows[j]["flag"] = "1";
+                                count = count + 1;
+                                if (count == _NoOfRoom && i < dt.Rows.Count - 1)
+                                    break;
+                            }
+                        }
+                    }
+                    //Nếu không bị lỗi - ghi dữ liệu vào bảng
+                    pt.CommitTransaction();
+                 
+                }
+                catch (Exception ex)
+                {
+                    //Đóng connection
+                    pt.CloseConnection();
+                    return Json(new { success = false, message = "False" });
+                }
+                //Nếu bị lỗi Rollback lại dữ liệu đã ghi
+                finally
+                {
+                    pt.CloseConnection();
+                }
+               
+            }
+            return Json(new { success = true, message = "Rooms retrieved successfully" });
+        }
+        private void GetDataTable_By(DataTable _Origin, string _para, ref DataTable dt)
+        {
+            dt = _Origin.Clone();
+            foreach (DataRow drow in _Origin.Select("SectionID='" + _para + "'"))
+            {
+                dt.ImportRow(drow);
+            }
+        }
+        private int[] GetAttendant(ref string _ListAtt)
+        {
+            //DataTable dt = TextUtils.Select("SELECT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID IN ('" + ClassReservation.GetSplitString(_ListSection) + "') ");
+            var getdetailts = hkpAttendantBO.GethkpAttendantbySect(GetSplitString(_ListSection));
+            DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
+            if (dt.Rows.Count > 0)
+            {
+                _AttendantID = new int[dt.Rows.Count];
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    _AttendantID[i] = int.Parse(dt.Rows[i][0].ToString());
+                    if (i == 0)
+                        _ListAtt = dt.Rows[i][0].ToString();
+                    else
+                        _ListAtt = _ListAtt + "," + dt.Rows[i][0].ToString();
+                }
+            }
+            return _AttendantID;
+        }
+        private static string[] Section(DataTable dt, ref string _ListSec)
+        {
+            string pSection = "";
+            for (int j = 0; j < dt.Rows.Count; j++)
+            {
+                if (j == 0)
+                {
+                    pSection = dt.Rows[0]["SectionID"].ToString();
+                    _ListSec = pSection;
+                }
+                else
+                {
+                    if (dt.Rows[j]["SectionID"].ToString() != pSection)
+                    {
+                        string[] _arr = _ListSec.Split(',');
+                        if (Array.IndexOf(_arr, dt.Rows[j]["SectionID"].ToString()) < 0)
+                            _ListSec = _ListSec + "," + dt.Rows[j]["SectionID"].ToString();
+                        pSection = dt.Rows[j]["SectionID"].ToString();
+                    }
+                }
+            }
+            return _ListSec.Split(',');
+        }
+        private void ProcessIncludeAssigned(DateTime taskdateauto,string taskcodeauto)
+        {
+            var getdetailts = hkpTaskSheetDetailBO.GethkpTaskSheetDetail(taskdateauto);
+            DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
+
+           
+            _ListRoomNotAss = "";
+            if (dt.Rows.Count > 0)
+            {
+                if (taskcodeauto != "")
+                {
+                    string[] _arrTaskCode = taskcodeauto.Split(',');
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string[] _arrRo = dt.Rows[i]["FacilityTask"].ToString().Split(',');
+                        for (int j = 0; j < _arrTaskCode.Length; j++)
+                        {
+                            if (Array.IndexOf(_arrRo, _arrTaskCode[j].ToString()) >= 0)
+                            {
+                                if (_ListRoomNotAss == "")
+                                    _ListRoomNotAss = dt.Rows[i]["RoomNo"].ToString();
+                                else
+                                    _ListRoomNotAss = _ListRoomNotAss + "," + dt.Rows[i]["RoomNo"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public static string GetSplitString(string Name)
+        {
+            string paraName;
+            string[] arrConfirmationNo = null;
+            paraName = "";
+            if (Name != "")
+            {
+                arrConfirmationNo = Name.Split(',');
+                if (arrConfirmationNo.Length > 0)
+                {
+                    for (int i = 0; i < arrConfirmationNo.Length; i++)
+                    {
+                        if (i != 0)
+                            paraName = paraName + "'" + "," + "'" + arrConfirmationNo[i].ToString().Trim();
+                        else
+                            paraName = arrConfirmationNo[i].ToString().Trim();
+                    }
+                }
+            }
+            return paraName;
+        }
         [HttpPost]
         public IActionResult UpdateRoomStatusPopup(int status, List<int> roomIds, int isFromTo, string loginName)
         {

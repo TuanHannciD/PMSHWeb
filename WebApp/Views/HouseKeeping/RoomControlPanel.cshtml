@@ -7,11 +7,11 @@
     var zoneList = ViewBag.ZoneList;
 }
 
-
+<link asp-append-version="true" href="~/css/reservation.css" rel="stylesheet" />
 <style>
-    #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+   /*  #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important;
+        color: white !important; 
     }
 
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -37,8 +37,8 @@
     }
 
     #gridContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #gridContainer .dx-datagrid-headers .dx-header-row > td {
@@ -60,7 +60,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+       
         #gridContainer .dx-datagrid-rowsview tr td:last-child,
         #gridContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -99,7 +99,7 @@
         height: 26px !important;
         min-height: 26px !important;
         font-size: 12px !important;
-    }
+    } */
 
 
     .filter_wrapper {
@@ -127,15 +127,15 @@
         background-color: #4CAF50; /* Màu xanh */
         color: white;
     }
-
+/* 
     #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #01579b !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+        background-color: #01579b !important; 
+        color: white !important; 
     }
 
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
             color: white !important;
-        }
+        } */
 
     .sticky-header .form-control-sm {
         padding: .1rem .35rem;
@@ -236,7 +236,7 @@
 
 <div class="mui-card">
     @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridContainer" class="gridContainer mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
