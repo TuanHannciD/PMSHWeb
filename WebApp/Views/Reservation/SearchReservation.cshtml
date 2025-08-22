@@ -1237,7 +1237,23 @@
                 }
             });
             getAllProfiles();
+             const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+            if (id) {
+                // Gọi function xử lý id
+                loadReservationById(id);
+            }
         });
+
+            function loadReservationById(id) {
+                 if (id === 0) {
+                    showToast('Lỗi', 'Please choose booking', false);
+                    return;
+                }
+
+                $('#modalEdit').modal('show');
+                getReservationByID(id);
+            }
 
         function toggleCollapse() {
             const box = document.getElementById("infoBox");

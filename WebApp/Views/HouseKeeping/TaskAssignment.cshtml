@@ -2442,6 +2442,26 @@
                         if (result.success) {
                             showToast('Success', result.message, true);
                                $("#btnPrint").trigger("click");
+                                var floorSelect = $("#floorauto")[0]?.tomselect;
+                                if (floorSelect) floorSelect.clear();
+
+                                var roomTypeSelect = $("#roomTypeauto")[0]?.tomselect;
+                                if (roomTypeSelect) roomTypeSelect.clear();
+
+                                var zoneSelect = $("#zonecodeauto")[0]?.tomselect;
+                                if (zoneSelect) zoneSelect.clear();
+
+                              
+
+                                var taskSelect = $("#taskcodeauto")[0]?.tomselect;
+                                if (taskSelect) taskSelect.clear();
+
+                                var attendantSelect = $("#attendantauto")[0]?.tomselect;
+                                if (attendantSelect) attendantSelect.clear();
+
+                                // ✅ Clear input / textarea
+                                $("#maxcreditauto").val("");
+                                $("#descriptionauto").val("");
                         } else {
                             showToast('Error', result.message, false);
                         }
