@@ -38,5 +38,10 @@ namespace BaseBusiness.BO
             string query = $"select top 1 * from FolioDetail where TransactionNo = '{transactionNo}' and (RowState in (2,1) and IsSplit = 1)";
             return instance.GetFirst<FolioDetailModel>(query);
         }
+        public static decimal CalculateBalance(int reservationID)
+        {
+            string query = $"select sum(AmountMaster) as Amount from FolioDetail where ReservationID = {reservationID} and RowState = 1 AND Status = 0";
+            return instance.GetFirst<decimal>(query);
+        }
     }
 }

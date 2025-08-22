@@ -24,5 +24,8 @@ namespace Billing.Services.Interfaces
         /// <param name="price">giá trị tiền</param>
         /// <returns>Giá trị net</returns>
         decimal CalculatePrice(string transactionCode, decimal price);
+
+
+
     }
 }
