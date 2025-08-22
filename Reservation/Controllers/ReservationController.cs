@@ -1763,12 +1763,11 @@ namespace Reservation.Controllers
 
         #region DatVP __ reservation billing
         [HttpGet]
-        public async Task<IActionResult> GetFolioDetailByFolioID(int reservationID, int mode)
+        public async Task<IActionResult> GetFolioDetailByFolioID(int mode, int folioNo)
         {
             try
             {
-                int folioID = FolioBO.GetFolioIDByReservationID(reservationID);
-                DataTable myData = _iFolioDetailService.GetFolioDetailByFolioID(folioID, mode);
+                DataTable myData = _iFolioDetailService.GetFolioDetailByFolioID(folioNo, mode);
 
                 var result = (from d in myData.AsEnumerable()
 

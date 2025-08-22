@@ -74,8 +74,8 @@ builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<ICashieringService, CashieringService>();
- 
 builder.Services.AddSingleton<IPostService, PostService>();
+builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
 
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddDistributedMemoryCache();

@@ -1285,6 +1285,8 @@
                     $('#arrivalForm').val(result.split('T')[0]);
                     // $('#dayInput').val(result.split('T')[0]);
                     // $('#dateInput').val(result.split('T')[0]);
+                    $('#expDatePaymentBilling').val(result.split('T')[0]);
+                    $('#transDatePaymentBilling').val(result.split('T')[0]);
 
                     // Cộng 7 ngày
                     const departureDate = new Date(businessDate);
@@ -1364,6 +1366,7 @@
         var roomType = '';
         var listReservationByConfirmationNo = [];
         var profileID = 0;
+        var folioNoID = 0;
             function initializeDataGridSearch(data) {
         // Kiểm tra dữ liệu đầu vào
 
@@ -1424,6 +1427,8 @@
                 if (e.data.Specials) {
                     html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
+                getFolioNo();
+
                 listReservationByConfirmationNo = listData.filter(item => item.ConfirmationNo === e.data.ConfirmationNo);
                 rateAmount = e.data.PriceNet;
                 night = e.data.NoOfNight;
@@ -1437,6 +1442,14 @@
                 confirmationNo = e.data.ConfirmationNo;
                 lastname = e.data.GuestName;
                 profileID = e.data.ProfileIndividualID;
+                $('#rsvStatusBilling').text(e.data.Status);
+                $('#conNoBilling').text(e.data.ConfirmationNo);
+                $('#groupBillingg').text('');
+                $('#companyBilling').text('');
+                $('#arivalBilling').text(e.data.Arrival.split(' ')[0]);
+                $('#departureBilling').text(e.data.Departure.split(' ')[0]);
+                $('#balanceBilling').text(formatNumberBilling(e.data.BalanceVND.split('.')[0]));
+                $('#totalBilling').text(formatNumberBilling(e.data.BalanceVND.split('.')[0]));
                 if (e.data.NoOfRoom != '1') {
                     ['assignRoom', 'unAssignRoom'].forEach(id => {
                         const el = document.getElementById(id);
@@ -1491,7 +1504,9 @@
         }
 
 
-
+    function formatNumberBilling(number) {
+      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
         // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
         function formatDate(date) {
             const year = date.getFullYear();
