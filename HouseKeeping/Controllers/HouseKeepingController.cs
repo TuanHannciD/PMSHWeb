@@ -42,12 +42,16 @@ namespace HouseKeeping.Controllers
         }
         public IActionResult RoomControlPanel()
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
             ViewBag.ZoneList = listzo;
             return View();
         }
         public IActionResult RoomFacilityForecast()
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
             ViewBag.ZoneList = listzo;
             return View();
@@ -145,6 +149,28 @@ namespace HouseKeeping.Controllers
             return View();
         }
 
+        public IActionResult MakeupServiceRoom()
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+
+            List<hkpSectionModel> listsshkp = PropertyUtils.ConvertToList<hkpSectionModel>(hkpSectionBO.Instance.FindAll());
+            ViewBag.hkpSectionList = listsshkp;
+          
+            List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
+            ViewBag.RoomTypeList = listrt;
+
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            ViewBag.hkpAttendantList = listatt;
+
+            List<hkpFacilityTaskModel> listhkpft = PropertyUtils.ConvertToList<hkpFacilityTaskModel>(hkpFacilityTaskBO.Instance.FindAll());
+            ViewBag.hkpFacilityTaskList = listhkpft;
+
+            return View();
+        }
+
         public IActionResult RoomAttendentDailyWorksheet(bool isPopup = false, string tasksheetnew = null)
         {
             List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
@@ -167,7 +193,18 @@ namespace HouseKeeping.Controllers
 
             return View();
         }
+        public IActionResult TurndownTasksheet()
+        {
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            ViewBag.hkpAttendantList = listatt;
 
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+
+           
+
+            return View();
+        }
         public IActionResult TaskAssignment()
         {
 
@@ -281,6 +318,232 @@ namespace HouseKeeping.Controllers
                 return Json(ex.Message);
             }
         }
+
+        [HttpPost]
+        public IActionResult AutoMakeupServiceRoom(DateTime taskdateauto, string taskcodeauto, string attendantauto,string maxcreditauto,string userName,string roomIDs)
+        {
+            taskcodeauto = taskcodeauto ?? "";
+            attendantauto = attendantauto ?? "";
+            maxcreditauto = maxcreditauto ?? "";
+            userName = userName ?? "";
+            roomIDs = roomIDs ?? "";
+            string[] _pSectionID = attendantauto
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToArray();
+
+            // Lấy toàn bộ danh sách Attendant từ DB
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(
+                hkpAttendantBO.Instance.FindAll()
+            );
+
+            // ✅ Lấy SectionID theo AttendantID trong _pSectionID
+            var sectionIDs = listatt
+                .Where(a => _pSectionID.Contains(a.ID.ToString()))
+                .Select(a => a.SectionID)
+                .Distinct()
+                .ToList();
+            var sectionIDsArray = sectionIDs.Select(x => x.ToString()).ToArray();
+
+            SplitSection(sectionIDsArray);
+            roomIDs = GetSplitString(roomIDs);
+            string _ListSection = "";
+            _ListSection = GetSplitString(_ListSection);
+            try
+            {
+                DataTable Source = _iHouseKeepingService.AutoMakeupServiceRoom(roomIDs, _ListSection);
+                if (Source.Rows.Count == 0)
+                {
+                    return Json(new { success = false, message = "Please choose attendant other" });
+                }
+                int[] _AttendantID = null;
+
+                if (!string.IsNullOrEmpty(attendantauto))
+                {
+                    _AttendantID = attendantauto
+                        .Split(',')                // tách thành ["1","2","3"]
+                        .Select(x => int.Parse(x)) // convert sang int
+                        .ToArray();                // ra int[]
+                }
+                if (_AttendantID == null)
+                {
+                    _SectionID = Section(Source, ref _ListSection);
+                    _AttendantID = GetAttendant(ref attendantauto);
+                }
+
+                #region 2.Process Attendant by Section
+                for (int i = 0; i < _SectionID.Length; i++)
+                {
+                    ProcessSourceAutoMakeupServiceRoom(Source,int.Parse(_SectionID[i].ToString()), attendantauto, taskdateauto, userName, taskcodeauto, maxcreditauto);
+                }
+                #endregion
+                return Json(new { success = true, message = "Successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        private IActionResult ProcessSourceAutoMakeupServiceRoom(DataTable Source, int _secID,string attendantauto,DateTime taskdateauto, string userName,string taskcodeauto,string maxcreditauto)
+        {
+            var getdetailts = hkpAttendantBO.GethkpAttendantProcessSource(_secID, GetSplitString(attendantauto));
+            DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
+          //  DataTable dt = TextUtils.Select("SELECT DISTINCT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID = " + _secID + " AND ID IN ('" + ClassReservation.GetSplitString(_ListAttendant) + "') ");
+            if (dt.Rows.Count > 0)
+            {
+                int _NoOfRoom = 0;
+                decimal _pRoom = 0;
+                DataTable dtTemp = null;
+                GetDataTable_By(Source, _secID.ToString(), ref dtTemp);
+                _pRoom = Convert.ToDecimal(dtTemp.Rows.Count.ToString()) / Convert.ToDecimal(dt.Rows.Count.ToString());
+                _NoOfRoom = Convert.ToInt32(_pRoom);
+                //_NoOfRoom = dtTemp.Rows.Count / dt.Rows.Count;
+                int[] _TaskCode = null;
+                if (!string.IsNullOrWhiteSpace(taskcodeauto))
+                {
+                    _TaskCode = taskcodeauto
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => int.TryParse(id, out int val) ? val : 0)
+                        .Where(val => val > 0)
+                        .ToArray();
+                }
+
+                // Lấy danh sách tất cả FacilityTask
+                List<hkpFacilityTaskModel> listhkpft = PropertyUtils.ConvertToList<hkpFacilityTaskModel>(
+                    hkpFacilityTaskBO.Instance.FindAll()
+                );
+
+                // Lọc lấy Instructions và nối thành chuỗi
+                string instructionsList = "";
+                if (_TaskCode != null && _TaskCode.Length > 0)
+                {
+                    instructionsList = string.Join(", ",
+                        listhkpft
+                            .Where(t => _TaskCode.Contains(t.ID)) // hoặc TaskCode nếu model có
+                            .Select(t => t.Instructions)
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                    );
+                }
+                string codeList = "";
+                if (_TaskCode != null && _TaskCode.Length > 0)
+                {
+                    codeList = string.Join(", ",
+                        listhkpft
+                            .Where(t => _TaskCode.Contains(t.ID)) // lọc theo ID
+                            .Select(t => t.Code) // lấy Code
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                    );
+                }
+                #region 4.Model
+                hkpTaskSheetModel mTS = new hkpTaskSheetModel();
+                mTS.TaskSheetDate = taskdateauto;
+                //mTS.TaskSheetNote = txtDescription.Text.Trim();
+                mTS.Status = false;
+                mTS.CreatedBy = mTS.UpdateBy = userName;
+                mTS.CreatedDate = mTS.UpdateDate =DateTime.Now;
+                mTS.SessionID = _secID.ToString();
+                if (_secID > 0)
+                {
+                    hkpSectionModel mSec = (hkpSectionModel)hkpSectionBO.Instance.FindByPrimaryKey(_secID);
+                    if (mSec != null)
+                        mTS.SessionName = mSec.Code;
+                }
+                mTS.FacilityTaskID = taskcodeauto;
+                mTS.FacilityTask = codeList;
+                mTS.FacilityInstructions = instructionsList;
+
+                hkpTaskSheetDetailModel mTSD = new hkpTaskSheetDetailModel();
+                mTSD.CreatedBy = mTSD.UpdatedBy = userName;
+                mTSD.CreatedDate = mTSD.UpdatedDate = DateTime.Now;
+                mTSD.IsCompleted = false;
+                mTSD.Status = 0;
+                //mTSD.TaskNote = txtDescription.Text.Trim();
+                mTSD.TimeIn = "";
+                mTSD.TimeOut = "";
+                mTSD.FacilityTaskID = taskcodeauto;
+                mTSD.FacilityTask = codeList;
+                mTSD.Credit = Convert.ToDecimal(maxcreditauto);
+                mTSD.CompletedStatus = "";
+                #endregion
+
+                //Mở conn
+                ProcessTransactions pt = new ProcessTransactions();
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                try
+                {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        if (i == dtTemp.Rows.Count)
+                            break;
+                        //Insert to hkpTasksheet
+                        mTS.TaskSheetNo = GetMaxTasksheetNo(taskdateauto);
+                        mTS.AttendantID = TextUtils.ToInt(dt.Rows[i][0].ToString());
+                        int _tsID = TextUtils.ToInt(pt.Insert(mTS).ToString());
+
+                        int count = 0;
+                        //Insert to hkpTasksheetDetail
+                        for (int j = 0; j < dtTemp.Rows.Count; j++)
+                        {
+                            if (dtTemp.Rows[j]["flag"].ToString() == "0")
+                            {
+                                mTSD.TaskSheetID = _tsID;
+                                mTSD.RoomNo = dtTemp.Rows[j]["RoomNo"].ToString();
+                                mTSD.RoomType = dtTemp.Rows[j]["RoomTypeCode"].ToString();
+                                mTSD.HKStatusID = TextUtils.ToInt(dtTemp.Rows[j]["HKStatusID"].ToString());
+                                mTSD.FOStatus = TextUtils.ToInt(dtTemp.Rows[j]["FOStatus"].ToString());
+                                pt.Insert(mTSD);
+                                //Update Datatable
+                                dtTemp.Rows[j]["flag"] = "1";
+                                count = count + 1;
+                                if (count == _NoOfRoom && i < dt.Rows.Count - 1)
+                                    break;
+                            }
+                        }
+                    }
+                    //Nếu không bị lỗi - ghi dữ liệu vào bảng
+                    pt.CommitTransaction();
+                }
+                catch (Exception ex)
+                {
+                    //Đóng connection
+                    pt.CloseConnection();
+                    return Json(new { success = false, message = "False" });
+                }
+                //Nếu bị lỗi Rollback lại dữ liệu đã ghi
+                finally
+                {
+                    pt.CloseConnection();
+                }
+
+            }
+            return Json(new { success = true, message = "Rooms retrieved successfully" });
+        }
+        private void SplitSection(string[] _SecID)
+        {
+            string pSection = "";
+            for (int j = 0; j < _SecID.Length; j++)
+            {
+                if (j == 0)
+                {
+                    pSection = _SecID[0].ToString();
+                    _ListSection = _SecID[0].ToString();
+                }
+                else
+                {
+                    if (_SecID[j].ToString() != pSection)
+                    {
+                        string[] _arr = _ListSection.Split(',');
+                        if (Array.IndexOf(_arr, _SecID[j].ToString()) < 0)
+                            _ListSection = _ListSection + "," + _SecID[j].ToString();
+                        pSection = _SecID[j].ToString();
+                    }
+                }
+            }
+            _SectionID = _ListSection.Split(',');
+        }
+
         [HttpGet]
         public IActionResult TaskSheetReport(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string reportstyle,string dueoutonly)
         {
@@ -692,6 +955,49 @@ namespace HouseKeeping.Controllers
                                   CreatedDate = d["CreatedDate"]?.ToString() ?? "",
                                   UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
                                   UpdatedDate = d["UpdatedDate"]?.ToString() ?? ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult TurndownTasksheetData(DateTime fromDate, string attendant, string IsDueOut, string roomStatus)
+        {
+            attendant = attendant ?? "";
+            roomStatus = roomStatus ?? "";
+            IsDueOut = IsDueOut ?? "";
+            attendant= FormatIdList(attendant);
+            roomStatus = FormatIdList(roomStatus);
+
+            try
+            {
+                DataTable dataTable = _iHouseKeepingService.TurndownTasksheetData(fromDate, attendant, IsDueOut, roomStatus);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  TasksheetNo = d["TasksheetNo"]?.ToString() ?? "",
+                                  RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                  RoomType = d["RoomType"]?.ToString() ?? "",
+                                  Credits = d["Credits"]?.ToString() ?? "",
+                                  FacilityTask = d["FacilityTask"]?.ToString() ?? "",
+                                  hkstatusID_color = d["HKStatusID"]?.ToString() ?? "",
+                                  FOStatus = d["FOStatus"]?.ToString() ?? "",
+                                  Attendant = d["Attendant"]?.ToString() ?? "",
+                                  AttendantID = d["AttendantID"]?.ToString() ?? "",
+                                  TasksheetID = d["TasksheetID"]?.ToString() ?? "",
+                                  ReservationID = d["ReservationID"]?.ToString() ?? "",
+                                  Color = d["Color"]?.ToString() ?? "",
+                                  TimeIn = d["TimeIn"]?.ToString() ?? "",
+                                  TimeOut = d["TimeOut"]?.ToString() ?? "",
+                                  RoomID = d["RoomID"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  TasksheetDetailID = d["TasksheetDetailID"]?.ToString() ?? ""
                               }).ToList();
 
                 return Json(result);

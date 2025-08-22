@@ -249,24 +249,21 @@
             return `${year}-${month}-${day}`;
         }
 
-
+                let parsedBusinessDate = null;
         $(document).ready(function () {
              document.getElementById("reportTitle").innerText = 'Room Control Panel';
-            const today = new Date();
+        var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
+                   console.log(businessDateStr);
+                    // Lấy phần ngày tháng năm
+                    var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
+                    var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
 
-            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            // L?y ngày cu?i cùng c?a tháng
-            const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    // Parse đúng thứ tự: new Date(year, monthIndex, day)
+                     parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
 
-            // Ð?nh d?ng theo local time
-            const formattedFirstDay = formatDate(firstDayOfMonth);
-            const formattedLastDay = formatDate(lastDayOfMonth);
-
-            console.log(formattedFirstDay); // Ki?m tra giá tr? dúng chua
-            console.log(formattedLastDay); // Ki?m tra giá tr? dúng chua
-            // Gán giá tr? cho input date
-            document.getElementById('fromDate').value = formattedFirstDay;
-            document.getElementById('toDate').value = formattedLastDay;
+                    // Gán vào input type="date"
+                    $('#fromDate').val(formatDate(parsedBusinessDate));
+                      $('#toDate').val(formatDate(parsedBusinessDate));
             initializeTomSelects();
 
 

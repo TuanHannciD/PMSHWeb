@@ -294,6 +294,19 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spRptTurndownTasksheet", param);
             return myTable;
         }
+        public DataTable AutoMakeupServiceRoom( string roomIDs, string _ListSection)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@SectionID", _ListSection),
+                new SqlParameter("@RoomNo",roomIDs) ,
+            
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTurndownTasksheets", param);
+            return myTable;
+        }
         //public DataTable HKPGetTaskSheets(DateTime fromDate, string page )
         //{
 
@@ -1021,6 +1034,20 @@ namespace HouseKeeping.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spRmgStatusHKOutOfServiceOCCDetail", param);
+            return myTable;
+        }
+        public DataTable TurndownTasksheetData(DateTime fromDate, string attendant, string IsDueOut, string roomStatus)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@BusinessDate", fromDate),
+                new SqlParameter("@AttendantID",attendant) ,
+                  new SqlParameter("@IsDueOut", IsDueOut),
+                new SqlParameter("@HKStatusID",roomStatus) ,
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spTurndownTasksheetSearch", param);
             return myTable;
         }
         public DataTable TasksheetAutomatically(string HK_FO, DateTime taskdateauto,string floorauto,string roomTypeauto,string zonecodeauto,string subzonecodeauto,string includeroomAS,string arrivalOnly,string _ListRoomNotAss)

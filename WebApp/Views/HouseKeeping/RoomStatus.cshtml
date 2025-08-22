@@ -403,8 +403,13 @@
                 </div>
             </div>
 
-            <!-- Hàng 2: Change Status xu?ng dòng -->
-            <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+           
+        </div>
+
+        <div class="d-flex flex-column">
+
+          
+            <div class="d-flex align-items-center flex-wrap mb-2">
                 <label class="fw-bold me-3 mb-1">Change Status:</label>
 
                 <div class="form-check me-3">
@@ -742,7 +747,10 @@
 
             $('#popupRoomFrom, #popupRoomTo').prop('disabled', useList);
         }
-
+         $("#btnFlorrflan").on("click", function () {
+                window.location.href = "/HouseKeeping/FloorPlan";
+       
+        });
 
         function initializePopupRoomListTomSelect() {
             const el = document.querySelector("#popupRoomList");
@@ -864,7 +872,7 @@
         { dataField: "floor", caption: "Floor", width: columnWidth, dataType: "number", format: "#,##0" },
                 { dataField: "roomClass", caption: "Room Class", width: columnWidth  },
                 { dataField: "reservationStatus", caption: "Resv.Type", width: columnWidth  },
-                 { dataField: "arrival", caption: "Arrivals", width: columnWidth  },
+                 { dataField: "arrival", caption: "Arrivals", width: columnWidth , dataType: "date", format: "dd/MM/yyyy" },
             ],
 
             paging: { pageSize: 25 },

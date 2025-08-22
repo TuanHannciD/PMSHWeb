@@ -285,214 +285,216 @@
 
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
+
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
      background-color: rgba(0, 0, 0, 0.3); z-index: 1040;"></div>
 
-    <div id="filterPopup" class="filter-popup shadow p-3 bg-white rounded border" style="display: none; position: absolute; top: 50px; left: 10px; z-index: 1050; width: 95%; max-height: 80vh; overflow-y: auto;">
-
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
-        <!-- From Date -->
-        <div class="d-flex flex-column ">
-
-            <div class="d-flex align-items-center flex-wrap">
-                <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
-                    <!-- Checkbox Group -->
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="cleannonupop" name="masterllioup" value="1" checked>
-                        <label class="form-check-label" for="cleannonupop">Clean Non-Checked</label>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="dirtyupop" name="masterllioup" value="1" checked>
-                        <label class="form-check-label" for="dirtyupop">Dirty</label>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="cleanupop" name="masterllioup" value="1"checked>
-                        <label class="form-check-label" for="cleanupop">Clean</label>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="ooos" name="masterllioup" value="1" checked>
-                        <label class="form-check-label" for="ooos">OOO/S</label>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="dueout" name="masterllioup" value="1" checked>
-                        <label class="form-check-label" for="dueout">Due Out</label>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="occupied" name="masterllioup" value="1" checked>
-                        <label class="form-check-label" for="occupied">Occupied</label>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" id="vacant" name="masterllioup" value="1" checked>
-                        <label class="form-check-label" for="vacant">Vacant</label>
-                    </div>
-                </div>
-                <div class="d-flex flex-wrap align-items-center gap-3">
-
-                    <div class="d-flex align-items-center me-3">
-                        <div style="width: 20px; height: 12px; background-color: #A82F19;" class="me-2 rounded"></div>
-                        <span>OOO</span>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <div style="width: 20px; height: 12px; background-color: red;" class="me-2 rounded"></div>
-                        <span>OOS</span>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <div style="width: 20px; height: 12px; background-color: purple;" class="me-2 rounded"></div>
-                        <span>Due Out</span>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <div style="width: 20px; height: 12px; background-color: yellow;" class="me-2 rounded border"></div>
-                        <span>Expected</span>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <div style="width: 20px; height: 12px; background-color: #4CAF50;" class="me-2 rounded"></div>
-                        <span>Check In</span>
-                    </div>
-
-                </div>
-
-
-                <!-- Select Groups (2 hàng, mỗi hàng 3 select) -->
-                <div class="w-100 mt-3 d-flex flex-wrap gap-4">
-                    <!-- Hàng 1 -->
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Zone:</label>
-                            <select id="zone" name="zone" class="tomselect-custom" style="width: 200px" multiple>
-                            <option value=""></option>
-                            @foreach (var item in zoneList)
-                            {
-                                <option value="@item.Code">@item.Code</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Room:</label>
-                            <select id="room" name="room" class="tomselect-custom" style="width: 200px" multiple>
-                            <option value=""></option>
-                            @foreach (var item in roomList)
-                            {
-                                <option value="@item.RoomNo">@item.RoomNo</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Room Type:</label>
-                            <select id="roomType" name="roomType" class="tomselect-custom" style="width: 200px" multiple>
-                            <option value=""></option>
-                            @foreach (var item in roomtypeList)
-                            {
-                                <option value="@item.Code">@item.Code</option>
-                            }
-                        </select>
-                    </div>
-
-                    <!-- Hàng 2 -->
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Owner:</label>
-                        <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
-                            <option value="">--ALL--</option>
-                            <option value="--Hotel--">--Hotel--</option>
-                            <option value="--Owner--">--Owner--</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Smoking:</label>
-                        <select id="smoking" name="smoking" class="form-control form-control-sm w-auto">
-                            <option value="">--ALL--</option>
-                            <option value="1">--Yes--</option>
-                            <option value="0">--No--</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Floor:</label>
-                        <select id="floor" name="floor" class="form-control form-control-sm" style="width: 100px">
-                            <option value="">--ALL--</option>
-                            @foreach (var item in roomFloor)
-                            {
-                                <option value="@item.Code">@item.Code</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="d-flex align-items-center me-3">
-                        <label class="me-2 mb-0">Special:</label>
-                        <select id="special" name="special" class="form-control form-control-sm w-auto">
-                            <option value="0">--ALL--</option>
-                            <option value="1">Connecting-Door</option>
-                            <option value="2">Without-Balcony</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex flex-column ">
-
-                        <div class="d-flex align-items-center">
-                            <div class="d-flex align-items-center me-3">
-                                <label class="me-2 mb-0">Min Date :</label>
-                                <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
-                            </div>
-
-                            <div class="d-flex align-items-center me-3">
-                                <label class="me-2 mb-0">Max Date :</label>
-                                <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-column mt-2">
-
-
-                        <!-- Dòng chứa các checkbox -->
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <label class="fw-bold mb-2">Order By:</label>
-                            <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
-                                <label class="form-check-label" for="cleannonup">Room No</label>
-                            </div>
-
-                            <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
-                                <label class="form-check-label" for="dirtyup">Room Type</label>
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center ms-3">
-                        <label class="fw-bold mb-0 me-2">Zoom:</label>
-                        <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-
-    </div>
-    </div>
+  
     <div>
         <div class="">
             <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="toggleFilterBtn"  class="mui-button mui-button-new"  >
+            <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+           @*  <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button> *@
+            <button style="border-radius: 4px;  margin-right: 6px;" id="toggleFilterBtn" class="mui-button mui-button-search">
                 <i class="fa fa-filter"></i> Filter
             </button>
+        </div>
+        <div id="filterPopup" class="filter-popup shadow p-3 bg-white rounded border mt-2" style="display: none; width: 100%;">
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+                <!-- From Date -->
+                <div class="d-flex flex-column ">
+
+                    <div class="d-flex align-items-center flex-wrap">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                            <!-- Checkbox Group -->
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="cleannonupop" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="cleannonupop">Clean Non-Checked</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="dirtyupop" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="dirtyupop">Dirty</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="cleanupop" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="cleanupop">Clean</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="ooos" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="ooos">OOO/S</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="dueout" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="dueout">Due Out</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="occupied" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="occupied">Occupied</label>
+                            </div>
+
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="vacant" name="masterllioup" value="1" checked>
+                                <label class="form-check-label" for="vacant">Vacant</label>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-3">
+
+                            <div class="d-flex align-items-center me-3">
+                                <div style="width: 20px; height: 12px; background-color: #A82F19;" class="me-2 rounded"></div>
+                                <span>OOO</span>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <div style="width: 20px; height: 12px; background-color: red;" class="me-2 rounded"></div>
+                                <span>OOS</span>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <div style="width: 20px; height: 12px; background-color: purple;" class="me-2 rounded"></div>
+                                <span>Due Out</span>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <div style="width: 20px; height: 12px; background-color: yellow;" class="me-2 rounded border"></div>
+                                <span>Expected</span>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <div style="width: 20px; height: 12px; background-color: #4CAF50;" class="me-2 rounded"></div>
+                                <span>Check In</span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Select Groups (2 hàng, mỗi hàng 3 select) -->
+                        <div class="w-100 mt-3 d-flex flex-wrap gap-4">
+                            <!-- Hàng 1 -->
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Zone:</label>
+                                <select id="zone" name="zone" class="tomselect-custom" style="width: 200px" multiple>
+                                    <option value=""></option>
+                                    @foreach (var item in zoneList)
+                                    {
+                                        <option value="@item.Code">@item.Code</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Room:</label>
+                                <select id="room" name="room" class="tomselect-custom" style="width: 200px" multiple>
+                                    <option value=""></option>
+                                    @foreach (var item in roomList)
+                                    {
+                                        <option value="@item.RoomNo">@item.RoomNo</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Room Type:</label>
+                                <select id="roomType" name="roomType" class="tomselect-custom" style="width: 200px" multiple>
+                                    <option value=""></option>
+                                    @foreach (var item in roomtypeList)
+                                    {
+                                        <option value="@item.Code">@item.Code</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Hàng 2 -->
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Owner:</label>
+                                <select id="viewBy" name="viewBy" class="form-control form-control-sm w-auto">
+                                    <option value="">--ALL--</option>
+                                    <option value="--Hotel--">--Hotel--</option>
+                                    <option value="--Owner--">--Owner--</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Smoking:</label>
+                                <select id="smoking" name="smoking" class="form-control form-control-sm w-auto">
+                                    <option value="">--ALL--</option>
+                                    <option value="1">--Yes--</option>
+                                    <option value="0">--No--</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Floor:</label>
+                                <select id="floor" name="floor" class="form-control form-control-sm" style="width: 100px">
+                                    <option value="">--ALL--</option>
+                                    @foreach (var item in roomFloor)
+                                    {
+                                        <option value="@item.Code">@item.Code</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center me-3">
+                                <label class="me-2 mb-0">Special:</label>
+                                <select id="special" name="special" class="form-control form-control-sm w-auto">
+                                    <option value="0">--ALL--</option>
+                                    <option value="1">Connecting-Door</option>
+                                    <option value="2">Without-Balcony</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex flex-column ">
+
+                                <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center me-3">
+                                        <label class="me-2 mb-0">Min Date :</label>
+                                        <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                                    </div>
+
+                                    <div class="d-flex align-items-center me-3">
+                                        <label class="me-2 mb-0">Max Date :</label>
+                                        <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column mt-2">
+
+
+                                <!-- Dòng chứa các checkbox -->
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <label class="fw-bold mb-2">Order By:</label>
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
+                                        <label class="form-check-label" for="cleannonup">Room No</label>
+                                    </div>
+
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
+                                        <label class="form-check-label" for="dirtyup">Room Type</label>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center ms-3">
+                                <label class="fw-bold mb-0 me-2">Zoom:</label>
+                                <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
         </div>
 
     </div>
@@ -1089,11 +1091,15 @@
           $(document).ready(function () {
               setTomSelect();
         // Khi nhấn nút Filter
-        $('#toggleFilterBtn').on('click', function (e) {
-            e.stopPropagation(); // Ngăn click lan ra ngoài
-            $('#filterPopup').toggle();
-            $('#overlay').toggle();
-        });
+          $('#toggleFilterBtn').on('click', function (e) {
+        e.stopPropagation();
+
+        // Gắn filterPopup ngay sau nút
+        $(this).after($('#filterPopup'));
+
+        // Toggle hiển thị
+        $('#filterPopup').toggle();
+    });
 
         // Click ra ngoài sẽ đóng popup và overlay
         $(document).on('click', function (e) {
