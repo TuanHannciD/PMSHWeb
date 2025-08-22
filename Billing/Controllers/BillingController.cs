@@ -143,7 +143,7 @@ namespace Billing.Controllers
                 string invoiceNo = (FolioDetailBO.GetTopInvoiceNo() + 1).ToString();
                 foreach (var itemTrans in itemList)
                 {
-                    string transactionNo = (FolioDetailBO.GetTopTransactioNo() + 1).ToString();
+                    string transactionNo = (FolioDetailBO.GetTopTransactioNo()).ToString();
 
                     string tranCode = itemTrans.transCode;
                     if (string.IsNullOrEmpty(tranCode))
@@ -706,7 +706,7 @@ namespace Billing.Controllers
                 }
                 TransactionsModel trans = (TransactionsModel)TransactionsBO.Instance.FindByPrimaryKey(transID);
                 string invoiceNo = (FolioDetailBO.GetTopInvoiceNo() + 1).ToString();
-                string transactionNo = (FolioDetailBO.GetTopTransactioNo() + 1).ToString();
+                string transactionNo = (FolioDetailBO.GetTopTransactioNo()).ToString();
 
                 #region insert vào folio detail
                 FolioDetailModel folioDetail = new FolioDetailModel();
@@ -1441,7 +1441,7 @@ namespace Billing.Controllers
         }
         #endregion
 
-        #region DatVP __ Transfer Transaction
+        #region DatVP __ Billing: Transfer Transaction
 
         [HttpGet]
         public async Task<IActionResult> SearchGuestInRoom(string room,string name)
@@ -1579,6 +1579,9 @@ namespace Billing.Controllers
 
             }
         }
+        #endregion
+
+        #region DatVP __ Billing: Adjust Transaction
         #endregion
     }
 }

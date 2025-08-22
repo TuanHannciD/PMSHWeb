@@ -30,7 +30,7 @@ namespace BaseBusiness.BO
         }
         public static int GetTopTransactioNo()
         {
-            string query = "select max(cast(TransactionNo as int)) as InvoiceNo from FolioDetail";
+            string query = "SELECT TOP 1 TransactionNo + (SELECT COUNT(*) \r\n                             FROM FolioDetail \r\n                             WHERE TransactionNo = (SELECT TOP 1 TransactionNo \r\n                                                   FROM FolioDetail \r\n                                                   ORDER BY id DESC)) AS NextTransactionNo\r\nFROM FolioDetail\r\nORDER BY id DESC;";
             return instance.GetFirst<int>(query);
         }
         public static FolioDetailModel GetFolioDetailMaster(string transactionNo)
