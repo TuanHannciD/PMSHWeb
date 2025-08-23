@@ -16,6 +16,6 @@ namespace FrontDesk.Services.Interfaces
         public DataTable TelephoneBook(string categoryId, string categoryCode, string telephoneCode);
         public DataTable GetTelephoneBookByCategory(string categoryId, string searchTerm);
         public DataTable TelephoneSwitch(string roomNo, int foStatus);
-        public DataTable DialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view);
+        public DataTable DialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view, string zone);
     }
 }

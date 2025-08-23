@@ -367,7 +367,7 @@
         const grid = $("#gridContainer").dxDataGrid("instance");
         const row = grid.getSelectedRowsData()[0];
         if (!row) {
-            alert("Vui lòng chọn 1 phòng trước khi bật On.");
+            showToast("Warning","Please select a room first before turning it On.",true);
             return;
         }
         updateTelephoneSwitch(row, "On");
@@ -377,7 +377,7 @@
         const grid = $("#gridContainer").dxDataGrid("instance");
         const row = grid.getSelectedRowsData()[0];
         if (!row) {
-            alert("Vui lòng chọn 1 phòng trước khi bật Off.");
+            showToast("Warning","Please select a room first before turning it Off.",true);
             return;
         }
         updateTelephoneSwitch(row, "Off");
@@ -396,14 +396,14 @@
             contentType: "application/json; charset=utf-8",
             success: function (res) {
                 if (res.success) {
-                    alert("Cập nhật thành công!");
+                    showToast("Success","Update successfully!",true);
                     loadTelephoneSwitch(); // reload lại grid
                 } else {
-                    alert("Cập nhật thất bại!");
+                    showToast("Error","Update failed!");
                 }
             },
             error: function () {
-                alert("Có lỗi xảy ra khi cập nhật.");
+                showToast("Error","Update failed due to an error.");
             }
         });
     }

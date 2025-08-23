@@ -47,7 +47,10 @@ namespace RoomManagement.Services.Interfaces
                 DateTime fourtheenDate,
                 DateTime fiftheenDate);
         DataTable ItemResvDetail(int itemID, DateTime day);
+        DataTable ItemSearch(string groupID, string name);
+        DataTable OOOSload(int status, string roomNo, int roomClassID, DateTime fromDate, DateTime toDate, string zone);
 
+        DataTable AvailableRoomsSearchOOO(string isDummy, string smoking,string floor, string roomTypeCode,string foStatus,string hkStatusID, string roomNo , DateTime fromDate, DateTime toDate, string zoneCode);
 
     }
     }

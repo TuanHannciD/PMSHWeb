@@ -476,10 +476,25 @@
             { dataField: "foPersons", caption: "FO Persons", allowEditing: false },
             { dataField: "discrepancy", caption: "Discrepancy", allowEditing: false }
         ],
-        scrolling: { mode: "standard", showScrollbar: "always", scrollByContent: true },
-        paging: { pageSize: 20 },
-        filterRow: { visible: true, applyFilter: "auto" },
-        showBorders: true
+            scrolling: {
+                        mode: "standard", // Không dùng virtual để footer hiển thị đúng
+                        showScrollbar: "always",
+                        scrollByContent: true
+                    },
+                    paging: {
+                        pageSize: 50
+                    },
+                    pager: {
+                        visible: true,
+                        allowedPageSizes: [50, 100, 'all'],
+                        showPageSizeSelector: true,
+                        showInfo: true,
+                        showNavigationButtons: true
+                    },
+                        filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
     });
 
             $('#btnSave').click(function() {

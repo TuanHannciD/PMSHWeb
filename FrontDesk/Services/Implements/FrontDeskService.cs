@@ -104,14 +104,15 @@ namespace FrontDesk.Services.Implements
             int newId = DataTableHelper.ExecuteInsertAndReturnId(sql, param);
             return newId;
         }
-        public DataTable DialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view)
+        public DataTable DialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view, string zone)
         {
             SqlParameter[] param = new SqlParameter[]
             {
                 new SqlParameter("@FromDate", fromDate),
                 new SqlParameter("@ToDate", toDate),
                 new SqlParameter("@PhoneNo", phoneNo ?? ""),
-                new SqlParameter("@View", view)
+                new SqlParameter("@View", view),
+                new SqlParameter("@Zone", zone ?? "")
             };
 
             DataTable myTable = DataTableHelper.getTableData("spDialInformationExt", param);
