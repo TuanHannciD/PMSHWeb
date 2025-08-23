@@ -8,11 +8,11 @@
     var roomtypeList = ViewBag.RoomTypeList;
 }
 
-
+<link asp-append-version="true" href="~/css/reservation.css" rel="stylesheet" />
 <style>
-    #logGridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+   /*  #logGridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; 
+        color: white !important; 
     }
 
         #logGridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -27,8 +27,8 @@
     }
 
     #logGridContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGridContainer .dx-datagrid-headers .dx-header-row > td {
@@ -47,7 +47,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGridContainer .dx-datagrid-rowsview tr td:last-child,
         #logGridContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -86,7 +86,7 @@
         height: 26px !important;
         min-height: 26px !important;
         font-size: 12px !important;
-    }
+    } */
     .containerhs {
         display: flex;
         width: 100%;
@@ -174,7 +174,7 @@
                 outline: none;
             }
 
-            .form-row input[readonly] {
+            .form-row input[disabled] {
             
                 cursor: not-allowed;
             }
@@ -340,20 +340,20 @@
 
             <div class="form-row">
                 <label for="totalRoom">Total Physical Room:</label>
-                <input type="text" id="totalRoom"  readonly>
+                <input type="text" id="totalRoom"  disabled>
             </div>
             <div class="form-row">
                 <label for="outOfOrder">Out of Order:</label>
-                <input type="text" id="outOfOrder"  class="status-box pink" readonly>
+                <input type="text" id="outOfOrder"  class="status-box pink" disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             </div>
             <div class="form-row">
                 <label for="roomToSell">Total Room to Sell:</label>
-                <input type="text" id="roomToSell"  readonly>
+                <input type="text" id="roomToSell"  disabled>
             </div>
             <div class="form-row">
                 <label for="outOfService">Out of Service:</label>
-                <input type="text" id="outOfService"  class="status-box gray" readonly>
+                <input type="text" id="outOfService"  class="status-box gray" disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             </div>
         </fieldset>
@@ -371,62 +371,62 @@
 
             <div class="form-row triple-input">
                 <label>Occupancy:</label>
-                <input id="occupancyRoom" type="text" readonly>
-                <input id="occupancyPersons" type="text" readonly>
-                <input id="occupancyvVip" type="text"  readonly>
+                <input id="occupancyRoom" type="text" disabled>
+                <input id="occupancyPersons" type="text" disabled>
+                <input id="occupancyvVip" type="text"  disabled>
             </div>
 
             <div class="form-row">
                 <label>% Occupancy:</label>
-                <input id="occupancyPercent" type="text"  readonly>
+                <input id="occupancyPercent" type="text"  disabled>
       
             </div>
 
             <div class="form-row">
                 <label>Min Available Tonight:</label>
-                <input id="minAvail" type="text"  readonly>
+                <input id="minAvail" type="text"  disabled>
                 
             </div>
 
             <div class="form-row triple-input">
                 <label>Max Occ Tonight:</label>
-                <input id="maxaccRoom" type="text"  readonly>
-                <input id="maxaccPerson" type="text"  readonly>
-                <input id ="maxaccVip" type="text"  readonly>
+                <input id="maxaccRoom" type="text"  disabled>
+                <input id="maxaccPerson" type="text"  disabled>
+                <input id ="maxaccVip" type="text"  disabled>
             </div>
 
             <div class="form-row triple-input">
                 <label>Max % Occ Tonight:</label>
-                <input id="maxpercentonight" type="text"  readonly>
+                <input id="maxpercentonight" type="text"  disabled>
                 
             </div>
 
             <div class="form-row triple-input">
                 <label>Individuals:</label>
-                <input id="individualsRoom" type="text"  readonly>
-                <input id="individualsPerson" type="text"  readonly>
-                <input id="individualsVip" type="text"  readonly>
+                <input id="individualsRoom" type="text"  disabled>
+                <input id="individualsPerson" type="text"  disabled>
+                <input id="individualsVip" type="text"  disabled>
             </div>
 
             <div class="form-row triple-input">
                 <label>Groups:</label>
-                <input id="groupRoom" type="text"  readonly>
-                <input id="groupPerson" type="text" readonly>
-                <input id="groupVip" type="text"  readonly>
+                <input id="groupRoom" type="text"  disabled>
+                <input id="groupPerson" type="text" disabled>
+                <input id="groupVip" type="text"  disabled>
             </div>
 
             <div class="form-row triple-input">
                 <label>Comp and HU:</label>
-                <input id="compGroup" type="text"  readonly>
-                <input id="compPerson" type="text"  readonly>
-                <input id="compVip" type="text"  readonly>
+                <input id="compGroup" type="text"  disabled>
+                <input id="compPerson" type="text"  disabled>
+                <input id="compVip" type="text"  disabled>
             </div>
 
             <div class="form-row triple-input">
                 <label>Room Revenue:</label>
-                <input id="roomRevennue" type="text"  readonly>
+                <input id="roomRevennue" type="text"  disabled>
                 <label>AVG:</label>
-                <input id="roomAVG" type="text" readonly>
+                <input id="roomAVG" type="text" disabled>
             </div>
 
            
@@ -488,59 +488,59 @@
             </div>
             <div class="form-row triple-input">
                 <label for="depExpected">Departures Expected</label>
-                <input id="depExpectedRoom" type="text"  readonly>
+                <input id="depExpectedRoom" type="text"  disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="depExpectedPerson" type="text"  readonly>
-                <input id="depExpectedVip" type="text" readonly>
+                <input id="depExpectedPerson" type="text"  disabled>
+                <input id="depExpectedVip" type="text" disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="depActual">Departures Actual</label>
-                <input id="actualRoom" type="text"  readonly>
+                <input id="actualRoom" type="text"  disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="actualPerson" type="text"  readonly>
-                <input id="actualVip" type="text"  readonly>
+                <input id="actualPerson" type="text"  disabled>
+                <input id="actualVip" type="text"  disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="arrExpected">Arrival Expected</label>
-                <input id="arrivalExpectedRoom" type="text"  readonly>
+                <input id="arrivalExpectedRoom" type="text"  disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="arrivalExpectedPerson" type="text"  readonly>
-                <input id="arrivalExpectedVip" type="text"  readonly>
+                <input id="arrivalExpectedPerson" type="text"  disabled>
+                <input id="arrivalExpectedVip" type="text"  disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="arrActual">Arrival Actual</label>
-                <input id="arrivalActualRoom" type="text"  readonly>
+                <input id="arrivalActualRoom" type="text"  disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="arrivalActualPerson" type="text"  readonly>
-                <input id="arrivalActualVip" type="text" readonly>
+                <input id="arrivalActualPerson" type="text"  disabled>
+                <input id="arrivalActualVip" type="text" disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="extStay">Extended Stays</label>
-                <input id="extendedStaysRoom" type="text"  readonly>
+                <input id="extendedStaysRoom" type="text"  disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="extendedStaysPerson" type="text" readonly>
-                <input id="extendedStaysVip" type="text"  readonly>
+                <input id="extendedStaysPerson" type="text" disabled>
+                <input id="extendedStaysVip" type="text"  disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="earlyDep">Early Departures</label>
-                <input id="earlyDeparturesRoom" type="text" readonly>
+                <input id="earlyDeparturesRoom" type="text" disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id ="earlyDeparturesPerson" type="text"  readonly>
-                <input id="earlyDeparturesVip" type="text"  readonly>
+                <input id ="earlyDeparturesPerson" type="text"  disabled>
+                <input id="earlyDeparturesVip" type="text"  disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="dayUse">Day Use Rooms</label>
-                <input id="dayUseRoom" type="text"  readonly>
+                <input id="dayUseRoom" type="text"  disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id ="dayUsePerson" type="text"  readonly>
-                <input id="dayUseVip" type="text"  readonly>
+                <input id ="dayUsePerson" type="text"  disabled>
+                <input id="dayUseVip" type="text"  disabled>
             </div>
             <div class="form-row triple-input">
                 <label for="walkIn">Walk In</label>
-                <input id="walkinRoom" type="text" readonly>
+                <input id="walkinRoom" type="text" disabled>
                     <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="walkinPerson" type="text"  readonly>
-                <input id="walkinVip" type="text"  readonly>
+                <input id="walkinPerson" type="text"  disabled>
+                <input id="walkinVip" type="text"  disabled>
             </div>
         </fieldset>
 
@@ -561,53 +561,53 @@
             <!-- Row: Clean -->
             <div class="form-row triple-input" >
                 <label>Clean</label>
-                <input id="cleanVacant" type="text"  class=" green" readonly>
+                <input id="cleanVacant" type="text"  class=" green" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="cleanOccupied" type="text"  class=" green" readonly>
+                <input id="cleanOccupied" type="text"  class=" green" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="cleanTotal" type="text"  readonly>
+                <input id="cleanTotal" type="text"  disabled>
             </div>
 
             <!-- Row: Clean Non-Checked -->
             <div class="form-row  triple-input">
                 <label>Clean Non-Checked</label>
-                <input id="cleannonVacant" type="text"  readonly>
+                <input id="cleannonVacant" type="text"  disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="cleannonOccupied" type="text"  readonly>
+                <input id="cleannonOccupied" type="text"  disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="cleannonTotal" type="text"  readonly>
+                <input id="cleannonTotal" type="text"  disabled>
             </div>
 
             <!-- Row: Dirty -->
             <div class="form-row triple-input">
                 <label>Dirty</label>
-                <input id="dirtyVacant" type="text"  class=" red" readonly>
+                <input id="dirtyVacant" type="text"  class=" red" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="dirtyOccupied" type="text"  class=" red" readonly>
+                <input id="dirtyOccupied" type="text"  class=" red" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="dirtyTotal" type="text"  readonly>
+                <input id="dirtyTotal" type="text"  disabled>
             </div>
 
             <!-- Row: Due Out -->
             <div class="form-row triple-input">
                 <label style="margin-right: 24px;">Due Out</label>
                 <span></span> <!-- ô Vacant trống -->
-                <input id="doeoutOccupied" type="text" readonly> <!-- ô Occupied -->
+                <input id="doeoutOccupied" type="text" disabled> <!-- ô Occupied -->
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
                 <span></span> <!-- ô Total trống -->
             </div>
             <!-- Row: Total -->
             <div class="form-row">
                 <label>Total</label>
-                <input id="totalVacant" type="text"  readonly>
-                <input id="totalOccupied" type="text" readonly>
+                <input id="totalVacant" type="text"  disabled>
+                <input id="totalOccupied" type="text" disabled>
                
             </div>
 
             <!-- Row: Out of Order -->
             <div class="form-row">
                 <label>Out of Order</label>
-                <input id="outoforderVacant" type="text"  class=" pink" readonly>
+                <input id="outoforderVacant" type="text"  class=" pink" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             
             </div>
@@ -615,9 +615,9 @@
             <!-- Row: Out of Service -->
             <div class="form-row">
                 <label>Out of Service</label>
-                <input id="outofserviveVacant" type="text"  class=" gray" readonly>
+                <input id="outofserviveVacant" type="text"  class=" gray" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
-                <input id="outofserviveOccupied" type="text"   class=" gray" readonly>
+                <input id="outofserviveOccupied" type="text"   class=" gray" disabled>
                   <i class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
             
             </div>
@@ -636,7 +636,7 @@
             </button>
         </div>
     </div>
-    <div id="logGridContainer"></div>
+    <div id="logGridContainer" class="gridContainer mt-2"></div>
 </div>
 
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -1025,7 +1025,7 @@
             columnAutoWidth: true,
             showBorders: true,
                      // width: "100%",
-                     //           height: 500,
+               height: 500,
                     columns: columns,
             paging: { pageSize: 25 },
             scrolling: {

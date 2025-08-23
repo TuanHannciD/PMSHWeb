@@ -10,13 +10,15 @@
     var hkpSectionlist = ViewBag.hkpSectionList;
     var  listatt =ViewBag.hkpAttendantList;
     var  listrt = ViewBag.RoomTypeList;
+    var listflo = ViewBag.FloorList;
 }
 
+<link asp-append-version="true" href="~/css/reservation.css" rel="stylesheet" />
 
 <style>
-    #logGridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+/*     #logGridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important;
+        color: white !important; 
     }
 
         #logGridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -31,8 +33,8 @@
     }
 
     #logGridContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGridContainer .dx-datagrid-headers .dx-header-row > td {
@@ -51,7 +53,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGridContainer .dx-datagrid-rowsview tr td:last-child,
         #logGridContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -93,8 +95,8 @@
     }
 
     #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+        background-color: #005f87 !important; 
+        color: white !important;
     }
 
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
@@ -120,8 +122,8 @@
     }
 
     #gridContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #gridContainer .dx-datagrid-headers .dx-header-row > td {
@@ -143,7 +145,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+      
         #gridContainer .dx-datagrid-rowsview tr td:last-child,
         #gridContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -182,7 +184,7 @@
         height: 26px !important;
         min-height: 26px !important;
         font-size: 12px !important;
-    }
+    } */
 
 
     .filter_wrapper {
@@ -211,10 +213,10 @@
         color: white;
     }
 
-    #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #01579b !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
-    }
+  /*   #gridContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #01579b !important; 
+        color: white !important; 
+    } */
 
         #gridContainer .dx-datagrid-rowsview .dx-selection * {
             color: white !important;
@@ -357,9 +359,9 @@
         background-color: lightgray;
     }
 
-    #logGridReportContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+  /*   #logGridReportContainer .dx-datagrid-rowsview .dx-selection {
+        background-color: #005f87 !important; 
+        color: white !important; 
     }
 
         #logGridReportContainer .dx-datagrid-rowsview .dx-selection * {
@@ -374,8 +376,8 @@
     }
 
     #logGridReportContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGridReportContainer .dx-datagrid-headers .dx-header-row > td {
@@ -394,7 +396,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGridReportContainer .dx-datagrid-rowsview tr td:last-child,
         #logGridReportContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -439,8 +441,8 @@
 
 
     #logGridReportContainer2 .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+        background-color: #005f87 !important; 
+        color: white !important; 
     }
 
         #logGridReportContainer2 .dx-datagrid-rowsview .dx-selection * {
@@ -455,8 +457,8 @@
     }
 
     #logGridReportContainer2 .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGridReportContainer2 .dx-datagrid-headers .dx-header-row > td {
@@ -475,7 +477,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGridReportContainer2 .dx-datagrid-rowsview tr td:last-child,
         #logGridReportContainer2 .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -521,8 +523,8 @@
 
 
     #logGridReportContainer3 .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+        background-color: #005f87 !important; 
+        color: white !important; 
     }
 
         #logGridReportContainer3 .dx-datagrid-rowsview .dx-selection * {
@@ -537,8 +539,8 @@
     }
 
     #logGridReportContainer3 .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGridReportContainer3 .dx-datagrid-headers .dx-header-row > td {
@@ -557,7 +559,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGridReportContainer3 .dx-datagrid-rowsview tr td:last-child,
         #logGridReportContainer3 .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -601,8 +603,8 @@
 
 
     #logGriTurndownContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+        background-color: #005f87 !important; 
+        color: white !important; 
     }
 
         #logGriTurndownContainer .dx-datagrid-rowsview .dx-selection * {
@@ -617,8 +619,8 @@
     }
 
     #logGriTurndownContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGriTurndownContainer .dx-datagrid-headers .dx-header-row > td {
@@ -637,7 +639,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGriTurndownContainer .dx-datagrid-rowsview tr td:last-child,
         #logGriTurndownContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -679,16 +681,16 @@
     }
 
 
-
+ */
 
     #logGridNewContainer {
         width: 1450px;
         overflow-x: auto; /* ✅ Scroll ngang */
     }
-
+/* 
     #logGridNewContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ng?c */
-        color: white !important; /* ch? tr?ng */
+        background-color: #005f87 !important; 
+        color: white !important; 
     }
 
         #logGridNewContainer .dx-datagrid-rowsview .dx-selection * {
@@ -703,8 +705,8 @@
     }
 
     #logGridNewContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh duong */
-        color: white !important; /* Ch? tr?ng cho d? d?c */
+        background-color: #3b9ac6 !important; 
+        color: white !important; 
     }
 
         #logGridNewContainer .dx-datagrid-headers .dx-header-row > td {
@@ -723,7 +725,7 @@
             border-right: 1px solid #ddd !important;
         }
 
-        /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+        
         #logGridNewContainer .dx-datagrid-rowsview tr td:last-child,
         #logGridNewContainer .dx-datagrid-headers tr td:last-child {
             border-right: none !important;
@@ -763,7 +765,7 @@
         min-height: 26px !important;
         font-size: 12px !important;
     }
-
+ */
 
 
 
@@ -773,9 +775,9 @@
         overflow-x: auto; /* ✅ Scroll ngang */
     }
 
-        #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection {
-            background-color: #005f87 !important; /* màu xanh ng?c */
-            color: white !important; /* ch? tr?ng */
+      /*   #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection {
+            background-color: #005f87 !important; 
+            color: white !important; 
         }
 
             #logGridAddUserContainer .dx-datagrid-rowsview .dx-selection * {
@@ -790,8 +792,8 @@
         }
 
         #logGridAddUserContainer .dx-datagrid-headers {
-            background-color: #3b9ac6 !important; /* Màu xanh duong */
-            color: white !important; /* Ch? tr?ng cho d? d?c */
+            background-color: #3b9ac6 !important; 
+            color: white !important; 
         }
 
             #logGridAddUserContainer .dx-datagrid-headers .dx-header-row > td {
@@ -810,7 +812,7 @@
                 border-right: 1px solid #ddd !important;
             }
 
-            /* Lo?i b? vi?n ph?i ? c?t cu?i cùng (tùy ch?n) */
+            
             #logGridAddUserContainer .dx-datagrid-rowsview tr td:last-child,
             #logGridAddUserContainer .dx-datagrid-headers tr td:last-child {
                 border-right: none !important;
@@ -849,7 +851,7 @@
             height: 26px !important;
             min-height: 26px !important;
             font-size: 12px !important;
-        }
+        } */
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
@@ -922,7 +924,7 @@
     <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnReport" class="mui-button mui-button-export" type="button"> <i class="fa-solid fa-file"></i> Report</button>
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnExpanded" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-expand"></i> Expanded</button>
+        <button style="border-radius: 4px;  margin-right: 6px;display:none;" id="btnExpanded" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-expand"></i> Expanded</button>
 
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddtasksheet" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-plus"></i> New</button>
@@ -930,6 +932,7 @@
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddUsertasksheet" class="mui-button mui-button-profile" type="button"><i class="fa-solid fa-user-plus"></i>Add User</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnDeletetasksheet" class="mui-button mui-button-delete" type="button"><i class="fa-solid fa-xmark"></i>Delete</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnCompletetasksheet" class="mui-button mui-button-reinstate" type="button"><i class="fa-solid fa-check"></i>Complete</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnAutotasksheet" class="mui-button mui-button-option" type="button"><i class="fa-solid fa-gear"></i>Auto</button>
     </div>
 </div>
 <div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;"></div>
@@ -947,7 +950,7 @@
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
     </div>
-    <div id="logGridAddUserContainer">
+    <div id="logGridAddUserContainer" class="gridContainer mt-2">
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
@@ -965,6 +968,7 @@
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnCompletedetailtasksheet" class="mui-button mui-button-reinstate" type="button"><i class="fa-solid fa-check"></i>Complete</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnAddUserDetailtasksheet" class="mui-button mui-button-profile" type="button"><i class="fa-solid fa-user-plus"></i>Add User</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnDailytasksheet" class="mui-button mui-button-profile" type="button"><i class="fa-solid fa-calendar-check"></i>Daily</button>
+        
         <button onclick="$('#popupNewGridNew').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
@@ -1005,7 +1009,7 @@
 
 
     </div>
-    <div id="logGridNewContainer">
+    <div id="logGridNewContainer" class="gridContainer mt-2">
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
@@ -1065,7 +1069,7 @@
 
 
     </div>
-    <div id="logGridAddRoomContainer">
+    <div id="logGridAddRoomContainer" class="gridContainer mt-2">
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
@@ -1244,7 +1248,7 @@
 
         </div>
     </div>
-    <div id="logGriTurndownContainer">
+    <div id="logGriTurndownContainer" class="gridContainer mt-2">
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
@@ -1319,7 +1323,7 @@
                     <label class="mb-1 me-2">Due Outs Only</label>            
                     <!-- Dirty -->
                     <div class="form-check me-3">
-                        <span class="status-color-box color-dirty"></span>
+                       
                         <input class="form-check-input" type="checkbox" id="dueoutonly" name="includeOptions" value="1" >
                     </div>
 
@@ -1437,7 +1441,7 @@
     <!-- PHẦN BẢNG SCROLL -->
     <!-- PHẦN BẢNG SCROLL (sửa lại calc) -->
     <div style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 230px);">
-        <div id="logGridReportContainer"></div>
+        <div id="logGridReportContainer" class="gridContainer mt-2"></div>
     </div>
 
 </div>
@@ -1511,7 +1515,7 @@
     </div>
 
     <div style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 230px);">
-        <div id="logGridReportContainer2"></div>
+        <div id="logGridReportContainer2" class="gridContainer mt-2"></div>
     </div>
 
 </div>
@@ -1563,7 +1567,7 @@
     </div>
 
     <div style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 125px);">
-        <div id="logGridReportContainer3"></div>
+        <div id="logGridReportContainer3" class="gridContainer mt-2"></div>
     </div>
 
 </div>
@@ -1669,7 +1673,7 @@
     </div>
 
 
-    <div id="logGridReportContainer" class="popup-scroll-container">
+    <div id="logGridReportContainer" class="gridContainer mt-2 popup-scroll-container">
         <!-- Nội dung bảng hoặc grid sẽ được render tại đây -->
     </div>
 </div>
@@ -1708,11 +1712,204 @@
         <!-- Chừa padding-top 50px để nút X không che nội dung -->
     </div>
 </div>
+<div id="popupAuTo" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px; max-height: 800px; overflow-y: auto;">
 
+    <div class="d-flex justify-content-between mb-2">
+        <h5 class="mb-0"> Automatic Generation of Tasks</h5>
+
+    </div>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
+        <button onclick="$('#popupAuTo').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
+    <div class="sticky-header bg-white p-2 shadow-sm z-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+            <div class="d-flex align-items-center flex-wrap mb-2">
+                <div class="d-flex flex-column">
+                    <div class="d-flex align-items-center me-3">
+                       <div class="d-flex align-items-center me-3 mb-2">
+                            <label class="me-2 mb-0">Task Date:</label>
+                            <input type="date" id="taskdateauto" name="taskdateauto" class="form-control form-control-sm w-auto" />
+                        </div>
+
+                        <!-- Clean Uncheck -->
+                        <div class="form-check me-3">
+
+                            <input class="form-check-input" type="checkbox" id="includeroomAS" name="includeOptionsAssigned" value="1" >
+                            <label class="form-check-label" for="required">Include Room Assigned</label>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="d-flex flex-column">
+                    <div class="d-flex align-items-center me-3">
+                      
+
+                        <!-- Clean Uncheck -->
+                        <div class="form-check me-3">
+                        
+                            <input class="form-check-input" type="checkbox" id="vcAuto" name="includeOptionsAuto" value="1" >
+                            <label class="form-check-label" for="cleanNoncheck">VC</label>
+                        </div>
+
+                        <!-- Dirty -->
+                        <div class="form-check me-3">
+                      
+                            <input class="form-check-input" type="checkbox" id="vcnAuto" name="includeOptionsAuto" value="2" >
+                            <label class="form-check-label" for="dirty">VCN</label>
+                        </div>
+
+                        <!-- Out of Order -->
+                        <div class="form-check me-3">
+                        
+                            <input class="form-check-input" type="checkbox" id="vdAuto" name="includeOptionsAuto" value="5" >
+                            <label class="form-check-label" for="outofOrder">VD</label>
+                        </div>
+
+                      
+                        <div class="form-check me-3">
+                     
+                            <input class="form-check-input" type="checkbox" id="doAuto" name="includeOptionsAuto" value="4" checked>
+                            <label class="form-check-label" for="clean">DO</label>
+                        </div>
+
+                        <!-- Out of Services -->
+                        <div class="form-check me-3">
+                          
+                            <input class="form-check-input" type="checkbox" id="ocAuto" name="includeOptionsAuto" value="6" >
+                            <label class="form-check-label" for="outofServices">OC</label>
+                        </div>
+                        <!-- Out of Services -->
+                        <div class="form-check me-3">
+                        
+                            <input class="form-check-input" type="checkbox" id="ocnAuto" name="includeOptionsAuto" value="6" >
+                            <label class="form-check-label" for="outofServices">OCN</label>
+                        </div>
+                        <div class="form-check me-3">
+                           
+                            <input class="form-check-input" type="checkbox" id="odAuto" name="includeOptionsAuto" value="6"checked >
+                            <label class="form-check-label" for="outofServices">OD</label>
+                        </div>
+                        <div class="form-check me-3">
+                        
+                            <input class="form-check-input" type="checkbox" id="oooAuto" name="includeOptionsAuto" value="6" >
+                            <label class="form-check-label" for="outofServices">OOO</label>
+                        </div>
+                          <div class="form-check me-3">
+                           
+                            <input class="form-check-input" type="checkbox" id="oosAuto" name="includeOptionsAuto" value="6" >
+                            <label class="form-check-label" for="outofServices">OOS</label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="d-flex flex-column">
+                    <!-- Row 1 -->
+                    <div class="d-flex align-items-center me-3 mb-2">
+                        <div class="form-check me-3">
+                           
+                            <input class="form-check-input" type="checkbox" id="arrivalOnly" name="includeOptionsRoomstatus" value="1" checked>
+                            <label class="form-check-label" for="outofServices">Arrival Only</label>
+                        </div>
+                        <div class="d-flex align-items-center me-3">
+                            <label class="me-2 mb-0">Floor:</label>
+                            <select id="floorauto" name="floorauto" class="tomselect-custom" multiple>
+                                <option value=""></option>
+                                @foreach (var item in listflo)
+                                {
+                                    <option value="@item.ID">@item.Code</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center me-3">
+                            <label class="me-2 mb-0">Room Type:</label>
+                            <select id="roomTypeauto" name="roomTypeauto" class="tomselect-custom" multiple>
+                                <option value=""></option>
+                                @foreach (var item in listrt)
+                                {
+                                    <option value="@item.Code">@item.Code</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center me-3">
+                            <label class="me-2 mb-0">Zone:</label>
+                            <select id="zonecodeauto" name="zonecodeauto" class="tomselect-custom" multiple>
+                                <option value=""></option>
+                                @foreach (var item in listzone)
+                                {
+                                    <option value="@item.Code">@item.Code</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center me-3">
+                            <label class="me-2 mb-0">Sub Zone:</label>
+                            <select id=">subzonecodeauto" name="subzonecodeauto" class="form-control form-control-sm" style="width:80px">
+                                <option value=""></option>
+                                
+                            </select>
+                        </div>
+                    </div>
+
+                   
+                </div>
+                <div class="d-flex flex-column">
+                    <!-- Row 1 -->
+                    <div class="d-flex align-items-center me-3 mb-2">
+                       
+                     
+                        <div class="d-flex align-items-center me-3 mb-2">
+                            <label class="me-2 mb-0">Task Code:</label>
+                            <select id="taskcodeauto" name="taskcodeauto" class="tomselect-custom" multiple>
+                                <option value=""></option>
+                                @foreach (var item in listhkpFT)
+                                {
+                                    <option value="@item.ID">@item.Description</option>
+                                }
+                            </select>
+
+                        </div>
+                        
+                      
+                        <div class="d-flex align-items-center me-3 mb-2">
+                            <label class="me-2 mb-0"> Attendant ID:</label>
+                            <select id="attendantauto" name="attendantauto" class="tomselect-custom" multiple>
+                                <option value=""></option>
+                                @foreach (var item in listatt)
+                                {
+                                    <option value="@item.ID">@item.Name</option>
+                                }
+                            </select>
+
+                        </div>
+                        <div class="d-flex align-items-center me-3 mb-2">
+                            <label class="me-2 mb-0">Max. Credits:</label>
+                            <input type="text" id="maxcreditauto" name="maxcreditauto" class="form-control form-control-sm w-auto" value="0" />
+                        </div>
+                        <div class="d-flex align-items-center me-3 mb-2">
+                            <label class="me-2 mb-0">Description:</label>
+                            <input type="text" id="descriptionauto" name="descriptionauto" class="form-control form-control-sm w-auto" />
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+ 
+</div>
 
 
 <div class="mui-card">
-    <div id="gridContainer" class="mt-2"></div>
+    <div id="gridContainer" class="gridContainer mt-2"></div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -1746,6 +1943,7 @@
                    $('#datepopreport2').text(formatDate(parsedBusinessDate));
                     $('#datepopreport3').text(formatDate(parsedBusinessDate));
                    $('#taskdate').val(formatDate(parsedBusinessDate));
+                     $('#taskdateauto').val(formatDate(parsedBusinessDate));
                initializeTomSelects();
                  initializeTomSelectstasksheet();
                  initializeTomSelectzone();
@@ -1761,7 +1959,7 @@
         });
              
         function initializeTomSelects() {
-                const selectors = ["#taskcode"];
+                   const selectors = ["#taskcode", "#taskcodeauto", "#floorauto","#zonecodeauto","#attendantauto"];
 
                 for (const id of selectors) {
                     const el = document.querySelector(id);
@@ -1938,7 +2136,7 @@
             }
         }
          function initializeTomSelectRoomtype() {
-            const selectors = ["#roomTypead"];
+              const selectors = ["#roomTypead", "#roomTypeauto"];
 
             for (const id of selectors) {
                 const el = document.querySelector(id);
@@ -2020,6 +2218,10 @@
               $("#btnReport").on("click", function () {
                    $('#overlay').fadeIn(200);
                     $('#popupNewGridReport').fadeIn(200);
+            });
+                  $("#btnAutotasksheet").on("click", function () {
+                   $('#overlay').fadeIn(200);
+                    $('#popupAuTo').fadeIn(200);
             });
 
               $("#btnAddtasksheet").on("click", function () {
@@ -2160,7 +2362,7 @@
                 const rowsToDelete = selectedRowDataTS.filter(row => row.status !== "Completed");
 
                 if (rowsToDelete.length === 0) {
-                   showToast('Error', 'Cannot delete Tasksheet(s) with status "Completed".', false);
+                   showToast('Error', 'Cannot  Tasksheet(s) with status "Completed".', false);
                     return;
                 }
 
@@ -2190,6 +2392,76 @@
                         if (result.success) {
                             showToast('Success', result.message, true);
                                $("#btnPrint").trigger("click");
+                        } else {
+                            showToast('Error', result.message, false);
+                        }
+                        $("#loadingSpinner").hide();
+                    },
+                    error: function () {
+                        alert("Không thể tải báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
+                });
+            });
+
+               $("#btnSaveAuto").on("click", function () {
+              
+                      const userName = JSON.parse(localStorage.getItem("Loginname"));
+                $.ajax({
+                    url: '/HouseKeeping/AutoTasksheet',
+                    type: 'POST',
+                    data: {
+                        taskdateauto: $("#taskdateauto").val(),
+                        includeroomAS: $("#includeroomAS").is(':checked') ? 1 : 0,
+                        vcAuto: $("#vcAuto").is(':checked') ? 1 : 0,
+                        vcnAuto: $("#vcnAuto").is(':checked') ? 1 : 0,
+                        vdAuto: $("#vdAuto").is(':checked') ? 1 : 0,
+                        doAuto: $("#doAuto").is(':checked') ? 1 : 0,
+                        ocAuto: $("#ocAuto").is(':checked') ? 1 : 0,
+                        ocnAuto: $("#ocnAuto").is(':checked') ? 1 : 0,
+                        odAuto: $("#odAuto").is(':checked') ? 1 : 0,
+                        oooAuto: $("#oooAuto").is(':checked') ? 1 : 0,
+                        oosAuto: $("#oooAuto").is(':checked') ? 1 : 0,
+                        arrivalOnly: $("#arrivalOnly").is(':checked') ? 1 : 0,
+                        floorauto: $("#floorauto").val()?.map(r => r.replace("''")).join(",") || "",
+                        roomTypeauto: $("#roomTypeauto").val()?.map(r => r.replace("''")).join(",") || "",
+                        zonecodeauto: $("#zonecodeauto").val()?.map(r => r.replace("''")).join(",") || "",
+                        subzonecodeauto: $("#subzonecodeauto").val(),
+                        taskcodeauto: $("#taskcodeauto").val()?.map(r => r.replace("''")).join(",") || "",
+                        attendantauto: $("#attendantauto").val()?.map(r => r.replace("''")).join(",") || "",
+                        maxcreditauto: $("#maxcreditauto").val(),
+                        descriptionauto: $("#descriptionauto").val(),
+                        userName:userName
+                    },
+                    traditional: true,
+                    crossDomain: false,
+                    headers: {
+                        "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            showToast('Success', result.message, true);
+                               $("#btnPrint").trigger("click");
+                                var floorSelect = $("#floorauto")[0]?.tomselect;
+                                if (floorSelect) floorSelect.clear();
+
+                                var roomTypeSelect = $("#roomTypeauto")[0]?.tomselect;
+                                if (roomTypeSelect) roomTypeSelect.clear();
+
+                                var zoneSelect = $("#zonecodeauto")[0]?.tomselect;
+                                if (zoneSelect) zoneSelect.clear();
+
+                              
+
+                                var taskSelect = $("#taskcodeauto")[0]?.tomselect;
+                                if (taskSelect) taskSelect.clear();
+
+                                var attendantSelect = $("#attendantauto")[0]?.tomselect;
+                                if (attendantSelect) attendantSelect.clear();
+
+                                // ✅ Clear input / textarea
+                                $("#maxcreditauto").val("");
+                                $("#descriptionauto").val("");
                         } else {
                             showToast('Error', result.message, false);
                         }

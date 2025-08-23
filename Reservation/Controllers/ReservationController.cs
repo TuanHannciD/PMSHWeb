@@ -1328,7 +1328,6 @@ namespace Reservation.Controllers
                 #region edit reservation
               
                 reservationModel.ProfileComment = "";
-                reservationModel.ProfileIndividualId = int.Parse(Request.Form["profileIndividualID"].ToString());
                 reservationModel.LastName = Request.Form["lastName"].ToString();
                 reservationModel.FirstName = Request.Form["firstName"].ToString();
                 reservationModel.Phone = Request.Form["phone"].ToString();
@@ -1764,12 +1763,11 @@ namespace Reservation.Controllers
 
         #region DatVP __ reservation billing
         [HttpGet]
-        public async Task<IActionResult> GetFolioDetailByFolioID(int reservationID, int mode)
+        public async Task<IActionResult> GetFolioDetailByFolioID(int mode, int folioNo)
         {
             try
             {
-                int folioID = FolioBO.GetFolioIDByReservationID(reservationID);
-                DataTable myData = _iFolioDetailService.GetFolioDetailByFolioID(folioID, mode);
+                DataTable myData = _iFolioDetailService.GetFolioDetailByFolioID(folioNo, mode);
 
                 var result = (from d in myData.AsEnumerable()
 
@@ -3856,6 +3854,10 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
-        #endregion 
+        #endregion
+
+        #region DatVP __ Resserrvation: Add On
+        #endregion
+
     }
 }

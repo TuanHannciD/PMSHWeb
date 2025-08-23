@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,22 @@ namespace BaseBusiness.BO
         public static hkpAttendantBO Instance
         {
             get { return instance; }
+        }
+        public static List<hkpAttendantModel> GethkpAttendantbySect(string _ListSection)
+        {
+
+
+            string query = $@"SELECT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID IN ('" + _ListSection + "') ";
+
+            return instance.GetList<hkpAttendantModel>(query);
+        }
+        public static List<hkpAttendantModel> GethkpAttendantProcessSource(int  _secID,string _ListAttendant)
+        {
+
+
+            string query = $@"SELECT DISTINCT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID = " + _secID + " AND ID IN ('" + _ListAttendant + "') ";
+
+            return instance.GetList<hkpAttendantModel>(query);
         }
     }
 }

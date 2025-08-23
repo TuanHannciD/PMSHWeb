@@ -1,3 +1,6 @@
+using Billing.Controllers;
+using Billing.Services.Implements;
+using Billing.Services.Interfaces;
 using Cashiering.Controllers;
 using Cashiering.Services.Implements;
 using Cashiering.Services.Interfaces;
@@ -47,7 +50,9 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
 builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
+ .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
+
+builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -74,6 +79,9 @@ builder.Services.AddSingleton<IDepositService, DepositService>();
 builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<ICashieringService, CashieringService>();
+builder.Services.AddSingleton<IPostService, PostService>();
+builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
+
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

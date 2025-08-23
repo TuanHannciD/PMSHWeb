@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 
 namespace BaseBusiness.BO
 {
@@ -21,6 +22,12 @@ namespace BaseBusiness.BO
         public static TransactionSubGroupBO Instance
         {
             get { return instance; }
+        }
+        public static List<TransactionSubGroupModel> GetList()
+        {
+
+            string query = $"select * from TransactionSubGroup ";
+            return instance.GetList<TransactionSubGroupModel>(query);
         }
     }
 }

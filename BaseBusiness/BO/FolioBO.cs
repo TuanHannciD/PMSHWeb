@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +23,17 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
-        public static int GetFolioIDByReservationID(int reservationID)
+
+        public static List<FolioModel> GetFolioNo(int reservationID)
         {
-            string query = $"select top 1 ID from Folio where ReservationID = {reservationID}";
-            return instance.GetFirst<int>(query);
+            string query = $"select * from Folio where ReservationID = {reservationID}";
+            return instance.GetList<FolioModel>(query);
+        }
+
+        public static List<FolioModel> GetFolioNoByReservationID(int reservationID,int folioNo)
+        {
+            string query = $"select * from Folio where ReservationID = {reservationID} and FolioNo = {folioNo}";
+            return instance.GetList<FolioModel>(query);
         }
     }
 }
