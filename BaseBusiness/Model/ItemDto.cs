@@ -1,5 +1,4 @@
-﻿using BaseBusiness.bc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace BaseBusiness.Model
 {
-    public class ItemModel : BaseModel
+    public class ItemDto
     {
-        public int ID {  get; set; }
+        public int ID { get; set; }
+
         public string Code { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string TransactionCode { get;set; }
+        public string TransactionCode { get; set; }
         public string ArticleCode { get; set; }
         public string Cost { get; set; }
         public int RateCodeID { get; set; }
@@ -27,7 +27,7 @@ namespace BaseBusiness.Model
         public string AvailableFrom { get; set; }
         public string AvailableTo { get; set; }
         public string Traces { get; set; }
-        public string Attribute { get;set; }
+        public string Attribute { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
         public int UserInsertID { get; set; }

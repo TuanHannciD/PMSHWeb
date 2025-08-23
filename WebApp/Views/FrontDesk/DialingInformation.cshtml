@@ -3,6 +3,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    var listz = ViewBag.ZoneList;
     var selectedReport = @ViewBag.ReportHeader;
 }
 
@@ -240,7 +241,7 @@
     }
 
     .tomselect-custom {
-        width: 250px;
+        width: 100px;
         min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
         font-size: 0.65rem;
     }
@@ -301,6 +302,15 @@
                 <option value="2">--Ext--</option>
             </select>
         </div>
+        <div class="d-flex align-items-center me-2">
+            <label class="me-2 mb-0">Zone:</label>
+            <select id="zone" class="tomselect-custom" multiple>
+                @foreach (var sg in ViewBag.ZoneList)
+                {
+                    <option value="@sg.Code">@sg.Code</option>
+                }
+            </select>
+        </div>
         
     </div>
     <div class="">
@@ -344,8 +354,35 @@
             // Gán giá trị cho input date
             document.getElementById('fromDate').value = formattedFirstDay;
             document.getElementById('toDate').value = formattedLastDay;
+            initializeTomSelects();
+            loadTelephoneGrid();
 
     });
+    function initializeTomSelects() {
+                const selectors = ["#zone"];
+
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
         $("#phoneNo").on("input", function () {
         const value = $(this).val();
         const grid = $("#gridContainer").dxDataGrid("instance");
@@ -366,6 +403,7 @@
                             toDate: $("#toDate").val(),
                             phoneNo: $("#phoneNo").val(),
                             view: $("#viewBy").val(),
+                            zone: ($("#zone").val() || []).join(","),
                     },
                     success: function (data) {
                         console.log(data);

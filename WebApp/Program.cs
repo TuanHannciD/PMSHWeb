@@ -59,6 +59,11 @@ builder.Services.ConfigureReportingServices(configurator => {
         viewerconfigurator.UseCachedReportSourceBuilder();
     });
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IHouseKeepingService, HouseKeepingService>();
 builder.Services.AddSingleton<IReportService, ReportService>();
