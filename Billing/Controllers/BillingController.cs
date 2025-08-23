@@ -6,6 +6,7 @@ using Billing.Services.Interfaces;
 using DevExpress.Office.Utils;
 using DevExpress.Web.Internal;
 using DevExpress.XtraReports.Design;
+using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Fields;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -48,6 +49,49 @@ namespace Billing.Controllers
             _iTransferTransactionService = transferTransactionService;
         }
 
+
+        #region DatVP __ Billing: Print
+        [HttpPost] 
+        public ActionResult PrintBilling(string arrivalDate,string departureDate,string folioNo,string confirmationNo,string roomNo,List<DataBillingRecord> dataBilling)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string url = "";
+                XtraReport report = new Billing.Templates.Preview.PreviewBilling();
+                report.Parameters["arrival_date"].Value = arrivalDate;
+                report.Parameters["departure_date"].Value = departureDate;
+                report.Parameters["folio_no"].Value = folioNo;
+                report.Parameters["confirmation_no"].Value = confirmationNo;
+                report.Parameters["room_no"].Value = roomNo;
+
+                report.DataSource = dataBilling;
+                report.CreateDocument();
+
+                using (MemoryStream msPdf = new MemoryStream())
+                {
+                    report.ExportToPdf(msPdf);
+                    string base64Pdf = Convert.ToBase64String(msPdf.ToArray());
+                    url = $"data:application/pdf;base64,{base64Pdf}";
+
+                }
+                pt.CommitTransaction();
+                return Json(url);
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
 
         #region DatVP __ Billing: Common
         [HttpGet]

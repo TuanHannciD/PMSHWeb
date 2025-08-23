@@ -117,19 +117,19 @@
                         <a href="#" onclick="openModalPosting();">Posting</a>
                         <a href="#" onclick="openModalEditPosting();">Edit</a>
                         <div class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Print</a>
+                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Preview && Print</a>
                             <div class="dropdown-menu-custom">
-                                <a href="#" onclick="openBilling1();" >Style: Billing Information</a>
-                                <a href="#" onclick="openBilling2();">Style: Billing Information (selected transaction)</></a>
+                                <a href="#" onclick="PrintAndPreview(1);">Style: Billing Information</a>
+                                <a href="#" onclick="PrintAndPreview(2);">Style: Billing Information (selected transaction)</></a>
                             </div>
                         </div>
-                        <div class="dropdown">
+                        @* <div class="dropdown">
                             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Preview</a>
                             <div class="dropdown-menu-custom">
                                 <a href="#" onclick="openBilling1();" >Style: Billing Information</a>
                                 <a href="#" onclick="openBilling2();" >Style: Billing Information (selected transaction)</a>
                             </div>
-                        </div>
+                        </div> *@
                         <a href="#" onclick="openModalPaymentBilling();">Payment</a>
                         <a href="#" onclick="openModalEditPosting();">Deposit</a>
 
@@ -698,4 +698,57 @@
         });
     }
 
+
+    function PrintAndPreview(type) {
+        const grid = $("#gridContainerBilling").dxDataGrid("instance");
+        let data;
+
+        if (type === 1) {
+            data = grid.option("dataSource");
+        } else if (type === 2) {
+            data = grid.getSelectedRowsData();
+        }
+        console.log(data);
+        $.ajax({
+            url: '/Billing/PrintBilling',
+            type: 'POST',
+            data:{
+                arrivalDate:arivalDate.split(' ')[0],
+                departureDate:departureDate.split(' ')[0],
+                folioNo:folioNoID,
+                confirmationNo:' ',
+                roomNo: roomNo,
+                dataBilling: data
+            },
+            success: function (data) {
+                try {
+                    // Nếu data có prefix, tách ra phần base64
+                    let base64String = data;
+
+                    // Nếu có tiền tố "data:application/pdf;base64," thì tách ra
+                    if (base64String.startsWith('data:')) {
+                        base64String = base64String.split(',')[1];
+                    }
+
+                    // Giải mã base64
+                    const byteCharacters = atob(base64String);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+                    // Tạo URL và mở trong cửa sổ mới
+                    const blobUrl = URL.createObjectURL(blob);
+                    window.open(blobUrl);
+                } catch (e) {
+                    console.error("Base64 decode error:", e);
+                }
+            },
+            error: function (xhr, statusText, err) {
+                console.error("AJAX error:", err);
+            }
+        });
+    }
 </script>
