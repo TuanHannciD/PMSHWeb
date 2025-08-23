@@ -708,7 +708,6 @@
         } else if (type === 2) {
             data = grid.getSelectedRowsData();
         }
-        console.log(data);
         $.ajax({
             url: '/Billing/PrintBilling',
             type: 'POST',
@@ -718,7 +717,8 @@
                 folioNo:folioNoID,
                 confirmationNo:' ',
                 roomNo: roomNo,
-                dataBilling: data
+                dataBilling: data,
+                customerName: lastname
             },
             success: function (data) {
                 try {

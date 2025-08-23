@@ -25,8 +25,7 @@
                     <!-- Tab menu -->
                     <div class="tab-menu">
                         <div class="tab active" data-tab="tab-filter">Filter <i class="fas fa-minus tab-icon"></i></div>
-                        <div class="tab" data-tab="tab-functions">Functions <i class="fas fa-plus tab-icon"></i></div>
-                        <div class="tab" data-tab="tab-options">Options <i class="fas fa-plus tab-icon"></i></div>
+                        <div class="tab" data-tab="tab-functions">Functions & Options<i class="fas fa-plus tab-icon"></i></div>
                     </div>
                     <!-- Tab nội dung -->
                     <div class="tab-content mt-2">
@@ -122,6 +121,19 @@
                                     <a href="#" id="groupAdmin">Group Admin</a>
                                     <a href="#" data-function="export">Export</a>
                                     <a href="#" onclick="openModalSplit();">Split</a>
+                                    <a class="rs-bold" onclick="openModalAccompanying();">Accompanying</a>
+                                    <a class="rs-bold" onclick="openModalAddOn();">Add On</a>
+                                    <a class="rs-bold">Alerts</a>
+                                    <a class="rs-bold" onclick="openModalBilling();">Billing</a>
+                                    <a class="rs-bold">Change</a>
+                                    <a class="rs-bold" onclick="openModalShare();">Share</a>
+                                    <a class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a>
+                                    <a class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a>
+                                    <a class="rs-bold" onclick="openConfirm();">Delete</a>
+                                    <a class="rs-bold" onclick="openModalMessage();">Message</a>
+                                    <a class="rs-bold" onclick="openModalRegistrationCard();">Regis.Card</a>
+                                    <a class="rs-bold" onclick="openRoomMove();">Room move</a>
+                                    <a class="rs-bold" onclick="openModalRouting();">Routing</a>
                                     <div class="dropdown">
 
                                         <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Room Assignment</a>
@@ -133,27 +145,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- OPTIONS -->
-                        <div id="tab-options" class="tab-pane" style="display: none;">
-                            <div class="functions-pane">
-                                <div class="function-menu">
-                                    <a class="rs-bold" onclick="openModalAccompanying();">Accompanying</a>
-                                    <a class="rs-bold" onclick="openModalAddOn();">Add On</a>
-                                    <a class="rs-bold">Alerts</a>
-                                    <a class="rs-bold" onclick="openModalBilling();">Billing</a>
-                                    <a class="rs-bold" onclick="openModalCancel()">Cancel</a>
-                                    <a class="rs-bold">Change</a>
-                                    <a class="rs-bold" onclick="openModalShare();">Share</a>
-                                    <a class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a>
-                                    <a class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a>
-                                    <a class="rs-bold" onclick="openConfirm();">Delete</a>
-                                    <a class="rs-bold" onclick="openModalMessage();">Message</a>
-                                    <a class="rs-bold" onclick="openModalRegistrationCard();">Regis.Card</a>
-                                    <a class="rs-bold" onclick="openRoomMove();">Room move</a>
-                                    <a class="rs-bold" onclick="openModalRouting();">Routing</a>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
 
                     <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">

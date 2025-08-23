@@ -52,7 +52,7 @@ namespace Billing.Controllers
 
         #region DatVP __ Billing: Print
         [HttpPost] 
-        public ActionResult PrintBilling(string arrivalDate,string departureDate,string folioNo,string confirmationNo,string roomNo,List<DataBillingRecord> dataBilling)
+        public ActionResult PrintBilling(string arrivalDate,string departureDate,string folioNo,string confirmationNo,string roomNo,List<DataBillingRecord> dataBilling,string customerName)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -66,6 +66,7 @@ namespace Billing.Controllers
                 report.Parameters["folio_no"].Value = folioNo;
                 report.Parameters["confirmation_no"].Value = confirmationNo;
                 report.Parameters["room_no"].Value = roomNo;
+                report.Parameters["name_customer"].Value = customerName;
 
                 report.DataSource = dataBilling;
                 report.CreateDocument();
