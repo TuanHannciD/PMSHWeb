@@ -97,6 +97,7 @@ builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionSe
 
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
+=======
 builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
 
 builder.Services.AddDistributedMemoryCache();
