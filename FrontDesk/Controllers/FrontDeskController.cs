@@ -274,14 +274,16 @@ namespace FrontDesk.Controllers
         }
         public IActionResult DialingInformation()
         {
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }
         [HttpGet]
-        public IActionResult GetDialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view)
+        public IActionResult GetDialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view, string zone)
         {
             try
             {
-                DataTable dataTable = _iFrontDeskService.DialingInformation(fromDate, toDate, phoneNo, view);
+                DataTable dataTable = _iFrontDeskService.DialingInformation(fromDate, toDate, phoneNo, view, zone);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {

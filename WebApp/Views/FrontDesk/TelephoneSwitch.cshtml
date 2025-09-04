@@ -275,7 +275,7 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px">Telephone Switch</div>
 
 <div class="sticky-header bg-white p-2 shadow-sm z-3" >
-<div class="d-flex align-items-center gap-3 p-2" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+    <div class="d-flex align-items-center gap-3 p-2" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
 
     <!-- Room No -->
     <div class="d-flex align-items-center">
@@ -296,7 +296,7 @@
     </div>
 
 
-    <div class="ms-3">
+    <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #6c757d;" id="btnOn" class="mui-button button-report-view">On</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #6c757d;" id="btnOff" class="mui-button button-report-view">Off</button>
        
@@ -306,7 +306,8 @@
 </div>
 <div class="mui-card" >
    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
-        <div id="gridContainer" style="padding: 8px"></div>
+        <div id="gridContainer"></div>
+
     </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -367,7 +368,7 @@
         const grid = $("#gridContainer").dxDataGrid("instance");
         const row = grid.getSelectedRowsData()[0];
         if (!row) {
-            alert("Vui lòng chọn 1 phòng trước khi bật On.");
+            showToast("Warning","Please select a room first before turning it On.",true);
             return;
         }
         updateTelephoneSwitch(row, "On");
@@ -377,7 +378,7 @@
         const grid = $("#gridContainer").dxDataGrid("instance");
         const row = grid.getSelectedRowsData()[0];
         if (!row) {
-            alert("Vui lòng chọn 1 phòng trước khi bật Off.");
+            showToast("Warning","Please select a room first before turning it Off.",true);
             return;
         }
         updateTelephoneSwitch(row, "Off");
@@ -396,14 +397,14 @@
             contentType: "application/json; charset=utf-8",
             success: function (res) {
                 if (res.success) {
-                    alert("Cập nhật thành công!");
+                    showToast("Success","Update successfully!",true);
                     loadTelephoneSwitch(); // reload lại grid
                 } else {
-                    alert("Cập nhật thất bại!");
+                    showToast("Error","Update failed!");
                 }
             },
             error: function () {
-                alert("Có lỗi xảy ra khi cập nhật.");
+                showToast("Error","Update failed due to an error.");
             }
         });
     }
@@ -413,16 +414,18 @@
         
             $("#gridContainer").dxDataGrid({
                 dataSource: result,
-                height: 400,
-                allowColumnResizing: true,               
-          
+                height: 500,
+                width: "100%",
+                columnAutoWidth: false,
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
                 columns: [
-                    { dataField: "roomNo", caption: "Room No", width: columnWidth  },
-                    { dataField: "guestName", caption: "Guest Name", width: columnWidth + 50 },
-                    { dataField: "foStatus", caption: "FO Status", width: columnWidth  },
-                    { dataField: "roomType", caption: "Room Type", width: columnWidth },
-                    { dataField: "checkInDate", caption: "Check In Date", width: columnWidth },
-                    { dataField: "checkOutDate", caption: "Check Out Date", width: columnWidth -2 }
+                    { dataField: "roomNo", caption: "Room No", width: "15%" },
+                    { dataField: "guestName", caption: "Guest Name", width: "25%" },
+                    { dataField: "foStatus", caption: "FO Status", width: "15%" },
+                    { dataField: "code", caption: "Room Type", width: "15%" },
+                    { dataField: "checkInDate", caption: "Check In Date", width: "15%" },
+                    { dataField: "checkOutDate", caption: "Check Out Date", width: "15%" }
                 ],
                 paging: { pageSize: 25 },
                 scrolling: { useNative: true, showScrollbar: "always" },
@@ -446,8 +449,9 @@
                         $(e.rowElement).addClass(e.data.cssClass);
                     }
                 },
-                        onSelectionChanged: function (e) {
+                onSelectionChanged: function (e) {
      
+
                 $("#btnOn").prop("disabled", true);
                 $("#btnOff").prop("disabled", true);
 

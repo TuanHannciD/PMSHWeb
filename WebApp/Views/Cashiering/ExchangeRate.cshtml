@@ -680,6 +680,25 @@
                 { dataField: "updateBy", caption: "Updated By",width: 80 },
                 { dataField: "updateDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy HH:mm" }
             ],
+            scrolling: {
+                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
+                    showScrollbar: "always",
+                    scrollByContent: true
+                },
+                paging: {
+                    pageSize: 50
+                },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [50, 100, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                    filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
             // 🔥 Quan trọng: gán selectedRowData khi click chọn
             onSelectionChanged: function (e) {
                 if (e.selectedRowsData.length > 0) {

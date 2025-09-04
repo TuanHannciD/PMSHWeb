@@ -26,6 +26,9 @@ using Reservation.Services.Implements;
 using Reservation.Services.Interfaces;
 using RoomManagement.Services.Implements;
 using RoomManagement.Services.Interfaces;
+using Miscellaneous.Controllers;
+using Miscellaneous.Services.Implements;
+using Miscellaneous.Services.Interfaces;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
@@ -57,6 +60,9 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddControllersWithViews()
  .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
 builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
+
+builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(MiscellaneousController).Assembly));
+
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -68,6 +74,11 @@ builder.Services.ConfigureReportingServices(configurator => {
         viewerconfigurator.UseCachedReportSourceBuilder();
     });
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IHouseKeepingService, HouseKeepingService>();
 builder.Services.AddSingleton<IReportService, ReportService>();
@@ -85,7 +96,11 @@ builder.Services.AddSingleton<IInvoicingService, InvoicingService>();
 builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
 
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
+<<<<<<< HEAD
 builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
+=======
+builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
+>>>>>>> f820c0dc30f29f7c296db2287f0de07b2d6b6465
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

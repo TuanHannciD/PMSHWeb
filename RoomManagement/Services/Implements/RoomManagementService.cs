@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using RoomManagement.Services.Interfaces;
 
@@ -217,7 +218,83 @@ namespace RoomManagement.Services.Implements
             return resultTable;
         }
 
+        public DataTable ItemSearch(string groupID, string name)
 
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@GroupID", groupID),
+                new SqlParameter("@Name", name ?? "")
+            };
+
+            DataTable resultTable = DataTableHelper.getTableData("spItemSearch", parameters);
+
+            return resultTable;
+        }
+        public DataTable OOOSload(int status, string roomNo, int roomClassID, DateTime fromDate, DateTime toDate, string zone)
+
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Status", status),
+                new SqlParameter("@RoomNo", roomNo ?? ""),
+                new SqlParameter("@RoomClassID", roomClassID ),
+                new SqlParameter("@FromDate", fromDate ),
+                new SqlParameter("@ToDate", toDate ),
+                new SqlParameter("@Zone", zone ?? "" )
+            };
+
+            DataTable resultTable = DataTableHelper.getTableData("spOOOSload", parameters);
+
+            return resultTable;
+        }
+        public DataTable AvailableRoomsSearchOOO(string isDummy, string smoking, string floor, string roomTypeCode, string foStatus, string hkStatusID, string roomNo, DateTime fromDate, DateTime toDate, string zoneCode)
+
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@IsDummy", isDummy ?? ""),
+                new SqlParameter("@Smoking", smoking ?? ""),
+                new SqlParameter("@Floor", floor ?? ""),
+                new SqlParameter("@RoomTypeCode", roomTypeCode ?? ""),
+                new SqlParameter("@FOStatus", foStatus ?? ""),
+                new SqlParameter("@HKStatusID", hkStatusID ?? ""),
+                new SqlParameter("@RoomNo", roomNo ?? ""),
+                new SqlParameter("@FromDate", fromDate ),
+                new SqlParameter("@ToDate", toDate ),
+                new SqlParameter("@ZoneCode", zoneCode ?? "" )
+            };
+
+            DataTable resultTable = DataTableHelper.getTableData("spAvailableRoomsSearchOOO", parameters);
+
+            return resultTable;
+        }
+        public DataTable RoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName)
+
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@RoomNo", roomNo ?? ""),
+                new SqlParameter("@FromDate", fromDate ),
+                new SqlParameter("@ToDate", toDate ),
+                new SqlParameter("@UserName", userName ?? "" )
+            };
+
+            DataTable resultTable = DataTableHelper.getTableData("spRoomStatusHistoryOOO", parameters);
+
+            return resultTable;
+        }
+        public DataTable SearchAllForTrans(string sqlCommand)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+        new SqlParameter("@sqlCommand", sqlCommand ?? "")
+            };
+
+            DataTable resultTable = DataTableHelper.getTableData("spSearchAllForTrans", parameters);
+
+            return resultTable;
+        }
 
     }
 }

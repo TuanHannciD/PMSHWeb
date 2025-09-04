@@ -101,9 +101,9 @@ namespace RoomManagement.Controllers
                     conn.Open();
 
                     string sql = @"
-                UPDATE Room
-                SET HKFOStatus = @NewHKFOStatus
-                WHERE RoomNo = @RoomNo
+                        UPDATE Room
+                        SET HKFOStatus = @NewHKFOStatus
+                        WHERE RoomNo = @RoomNo
                   ";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -353,8 +353,424 @@ namespace RoomManagement.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult GetItemSearch(string groupID, string name)
+        {
+            try
+            {
+                DataTable dataTable = _iRoomManagementService.ItemSearch(groupID, name);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Group = !string.IsNullOrEmpty(d["Group"].ToString()) ? d["Group"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  TransactionCode = !string.IsNullOrEmpty(d["Transaction Code"].ToString()) ? d["Transaction Code"] : "",
+                                  Cost = !string.IsNullOrEmpty(d["Cost"].ToString()) ? d["Cost"] : "",
+                                  RateAmount = !string.IsNullOrEmpty(d["RateAmount"].ToString()) ? d["RateAmount"] : "",
+                                  Department = !string.IsNullOrEmpty(d["Department"].ToString()) ? d["Department"] : "",
+                                  QinStock = !string.IsNullOrEmpty(d["Q in Stock"].ToString()) ? d["Q in Stock"] : "",
+                                  DefaultQ = !string.IsNullOrEmpty(d["Default Q"].ToString()) ? d["Default Q"] : "",
+                                  SetupTime = !string.IsNullOrEmpty(d["Setup Time"].ToString()) ? d["Setup Time"] : "",
+                                  SetdownTime = !string.IsNullOrEmpty(d["Setdown Time"].ToString()) ? d["Setdown Time"] : "",
+                                  AvailFrom = !string.IsNullOrEmpty(d["Avail From"].ToString()) ? d["Avail From"] : "",
+                                  AvailTo = !string.IsNullOrEmpty(d["Avail To"].ToString()) ? d["Avail To"] : "",
+                                  Traces = !string.IsNullOrEmpty(d["Traces"].ToString()) ? d["Traces"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult ItemSearch()
+        {
+            List<TransactionsModel> listpmtr = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
+            ViewBag.TransactionsList = listpmtr;
+            List<DepartmentModel> listdpm = PropertyUtils.ConvertToList<DepartmentModel>(DepartmentBO.Instance.FindAll());
+            ViewBag.DepartmentList = listdpm;
+            return View();
+        }
+        [HttpPost]
+        [HttpPost]
+        public int InsertItem([FromBody] ItemDto model)
+        {
+            using (SqlConnection conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+            {
+                conn.Open();
+                var userId = HttpContext.Session.GetInt32("UserID") ?? 0;
+                using (SqlCommand cmd = new SqlCommand("sp_executesql", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    string sqlInsert = @"
+                INSERT INTO Item 
+                (Code, Name, Description, TransactionCode, ArticleCode, Cost, RateCodeID, RateAmount, ItemGroupID, DepartmentID, QuantityStock, QuantityDefault, SetupTime, SetDownTime, AvailableFrom, AvailableTo, Traces, Attribute, CreateDate, UpdateDate, UserInsertID, UserUpdateID) 
+                VALUES 
+                (@Code, @Name, @Description, @TransactionCode, @ArticleCode, @Cost, @RateCodeID, @RateAmount, @ItemGroupID, @DepartmentID, @QuantityStock, @QuantityDefault, @SetupTime, @SetDownTime, @AvailableFrom, @AvailableTo, @Traces, @Attribute, @CreateDate, @UpdateDate, @UserInsertID, @UserUpdateID); 
+                SELECT @@IDENTITY AS 'ID'";
+
+                    string parameterDefs = @"
+                @Code nvarchar(1),
+                @Name nvarchar(1),
+                @Description nvarchar(1),
+                @TransactionCode nvarchar(9),
+                @ArticleCode nvarchar(4000),
+                @Cost nvarchar(4000),
+                @RateCodeID int,
+                @RateAmount decimal(1,0),
+                @ItemGroupID int,
+                @DepartmentID int,
+                @QuantityStock int,
+                @QuantityDefault int,
+                @SetupTime nvarchar(1),
+                @SetDownTime nvarchar(1),
+                @AvailableFrom nvarchar(10),
+                @AvailableTo nvarchar(10),
+                @Traces nvarchar(1),
+                @Attribute nvarchar(4000),
+                @CreateDate datetime,
+                @UpdateDate datetime,
+                @UserInsertID int,
+                @UserUpdateID int";
+
+                    cmd.Parameters.AddWithValue("@stmt", sqlInsert);
+                    cmd.Parameters.AddWithValue("@params", parameterDefs);
+                    cmd.Parameters.AddWithValue("@Code", model.Code);
+                    cmd.Parameters.AddWithValue("@Name", model.Name);
+                    cmd.Parameters.AddWithValue("@Description", model.Description);
+                    cmd.Parameters.AddWithValue("@TransactionCode", model.TransactionCode);
+                    cmd.Parameters.AddWithValue("@ArticleCode", model.ArticleCode);
+                    cmd.Parameters.AddWithValue("@Cost", model.Cost);
+                    cmd.Parameters.AddWithValue("@RateCodeID", model.RateCodeID);
+                    cmd.Parameters.AddWithValue("@RateAmount", model.RateAmount);
+                    cmd.Parameters.AddWithValue("@ItemGroupID", model.ItemGroupID);
+                    cmd.Parameters.AddWithValue("@DepartmentID", model.DepartmentID);
+                    cmd.Parameters.AddWithValue("@QuantityStock", model.QuantityStock);
+                    cmd.Parameters.AddWithValue("@QuantityDefault", model.QuantityDefault);
+                    cmd.Parameters.AddWithValue("@SetupTime", model.SetupTime);
+                    cmd.Parameters.AddWithValue("@SetDownTime", model.SetDownTime);
+                    cmd.Parameters.AddWithValue("@AvailableFrom", model.AvailableFrom);
+                    cmd.Parameters.AddWithValue("@AvailableTo", model.AvailableTo);
+                    cmd.Parameters.AddWithValue("@Traces", model.Traces);
+                    cmd.Parameters.AddWithValue("@Attribute", model.Attribute);
+                    cmd.Parameters.AddWithValue("@CreateDate", model.CreateDate);
+                    cmd.Parameters.AddWithValue("@UpdateDate", model.UpdateDate);
+                    cmd.Parameters.AddWithValue("@UserInsertID", userId);
+                    cmd.Parameters.AddWithValue("@UserUpdateID", model.UserUpdateID);
+
+                    object result = cmd.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+        [HttpPost]
+        public IActionResult UpdateItem([FromBody] ItemModel item)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand(@"
+                UPDATE Item SET 
+                    Code = @Code,
+                    Name = @Name,
+                    Description = @Description,
+                    TransactionCode = @TransactionCode,
+                    ArticleCode = @ArticleCode,
+                    Cost = @Cost,
+                    RateCodeID = @RateCodeID,
+                    RateAmount = @RateAmount,
+                    ItemGroupID = @ItemGroupID,
+                    DepartmentID = @DepartmentID,
+                    QuantityStock = @QuantityStock,
+                    QuantityDefault = @QuantityDefault,
+                    SetupTime = @SetupTime,
+                    SetDownTime = @SetDownTime,
+                    AvailableFrom = @AvailableFrom,
+                    AvailableTo = @AvailableTo,
+                    Traces = @Traces,
+                    Attribute = @Attribute,
+                    CreateDate = @CreateDate,
+                    UpdateDate = @UpdateDate,
+                    UserInsertID = @UserInsertID,
+                    UserUpdateID = @UserUpdateID
+                WHERE ID = @ID", conn);
+
+                    cmd.Parameters.AddWithValue("@ID", item.ID);
+                    cmd.Parameters.AddWithValue("@Code", item.Code ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Name", item.Name ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Description", item.Description ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@TransactionCode", item.TransactionCode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ArticleCode", item.ArticleCode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Cost", item.Cost ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@RateCodeID", item.RateCodeID);
+                    cmd.Parameters.AddWithValue("@RateAmount", item.RateAmount);
+                    cmd.Parameters.AddWithValue("@ItemGroupID", item.ItemGroupID);
+                    cmd.Parameters.AddWithValue("@DepartmentID", item.DepartmentID);
+                    cmd.Parameters.AddWithValue("@QuantityStock", item.QuantityStock);
+                    cmd.Parameters.AddWithValue("@QuantityDefault", item.QuantityDefault);
+                    cmd.Parameters.AddWithValue("@SetupTime", item.SetupTime ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@SetDownTime", item.SetDownTime ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@AvailableFrom", string.IsNullOrEmpty(item.AvailableFrom) ? (object)DBNull.Value : item.AvailableFrom);
+                    cmd.Parameters.AddWithValue("@AvailableTo", string.IsNullOrEmpty(item.AvailableTo) ? (object)DBNull.Value : item.AvailableTo);
+                    cmd.Parameters.AddWithValue("@Traces", item.Traces ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Attribute", item.Attribute ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@CreateDate", item.CreateDate);
+                    cmd.Parameters.AddWithValue("@UpdateDate", item.UpdateDate);
+                    cmd.Parameters.AddWithValue("@UserInsertID", item.UserInsertID);
+                    cmd.Parameters.AddWithValue("@UserUpdateID", item.UserUpdateID);
+
+                    int rows = cmd.ExecuteNonQuery();
+
+                    return Ok(rows > 0 ? "Update thành công" : "Không có dòng nào được cập nhật");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi khi cập nhật: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [HttpPost]
+        public IActionResult DeleteItem(int id)
+        {
+            try
+            {
+                string sql = "DELETE FROM Item WHERE ID = @ID";
+
+                SqlParameter[] parameters = {
+                new SqlParameter("@ID", id)
+        };
+
+                int rows = DataTableHelper.ExecuteNonQueryText(sql, parameters);
+
+                return Json(new { deleted = rows });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetOOOSload(int status, string roomNo, int roomClassID, DateTime fromDate, DateTime toDate, string zone)
+        {
+            try
+            {
+                DataTable dataTable = _iRoomManagementService.OOOSload(status, roomNo, roomClassID, fromDate, toDate,zone);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",                         
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["Room No"].ToString()) ? d["Room No"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
+                                  Floor = !string.IsNullOrEmpty(d["Floor"].ToString()) ? d["Floor"] : "",
+                                  Zone = !string.IsNullOrEmpty(d["Zone"].ToString()) ? d["Zone"] : "",
+                                  FromDate = !string.IsNullOrEmpty(d["From Date"].ToString()) ? d["From Date"] : "",
+                                  ToDate = !string.IsNullOrEmpty(d["To Date"].ToString()) ? d["To Date"] : "",
+                                  NoOfNights = !string.IsNullOrEmpty(d["No Of Nights"].ToString()) ? d["No Of Nights"] : "",
+                                  ReasonCode = !string.IsNullOrEmpty(d["Reason Code"].ToString()) ? d["Reason Code"] : "",
+                                  Reason = !string.IsNullOrEmpty(d["Reason"].ToString()) ? d["Reason"] : "",
+                                  ReturnStatus = !string.IsNullOrEmpty(d["Return Status"].ToString()) ? d["Return Status"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  UserCreate = !string.IsNullOrEmpty(d["User Create"].ToString()) ? d["User Create"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["Created Date"].ToString()) ? d["Created Date"] : "",
+                                  UserUpdate = !string.IsNullOrEmpty(d["User Update"].ToString()) ? d["User Update"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["Updated Date"].ToString()) ? d["Updated Date"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult OOOSload()
+        {
+            List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+            ViewBag.RoomList = listroom;
+            List<ZoneModel> listzone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzone;
+            List<RoomClassModel> listrclass = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
+            ViewBag.RoomClassList = listrclass;
+            List<CommentModel> listcmt = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
+            ViewBag.CommentList = listcmt;
+            return View();
+        }
 
 
+        #region out of order/service management
+        [HttpGet]
+        public IActionResult GetAvailableRoomsSearchOOO(string isDummy, string smoking, string floor, string roomTypeCode, string foStatus, string hkStatusID, string roomNo, DateTime fromDate, DateTime toDate, string zoneCode)
+        {
+            try
+            {
+                DataTable dataTable = _iRoomManagementService.AvailableRoomsSearchOOO(isDummy, smoking, floor, roomTypeCode, foStatus, hkStatusID, roomNo, fromDate, toDate, zoneCode);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  RoomID = !string.IsNullOrEmpty(d["RoomID"].ToString()) ? d["RoomID"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
+                                  RoomTypeName = !string.IsNullOrEmpty(d["Room Type Name"].ToString()) ? d["Room Type Name"] : "",
+                                  HKStatus = !string.IsNullOrEmpty(d["HK Status"].ToString()) ? d["HK Status"] : "",
+                                  FO = !string.IsNullOrEmpty(d["FO"].ToString()) ? d["FO"] : "",
+                                  Floor = !string.IsNullOrEmpty(d["Floor"].ToString()) ? d["Floor"] : "",
+                                  Smoking = !string.IsNullOrEmpty(d["Smoking"].ToString()) ? d["Smoking"] : "",
+                                  RoomTypeID = !string.IsNullOrEmpty(d["RoomTypeID"].ToString()) ? d["RoomTypeID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        [HttpGet]
+        public IActionResult GetRoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName)
+        {
+            try
+            {
+                DataTable dataTable = _iRoomManagementService.RoomStatusHistoryOOO(roomNo, fromDate, toDate, userName);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  OldValue = !string.IsNullOrEmpty(d["OldValue"].ToString()) ? d["OldValue"] : "",
+                                  NewValue = !string.IsNullOrEmpty(d["NewValue"].ToString()) ? d["NewValue"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  Action = !string.IsNullOrEmpty(d["Action"].ToString()) ? d["Action"] : "",
+                                  ComputerName = !string.IsNullOrEmpty(d["ComputerName"].ToString()) ? d["ComputerName"] : "",
+                                  ChangeDate = !string.IsNullOrEmpty(d["ChangeDate"].ToString()) ? d["ChangeDate"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+
+
+        //[HttpPost]
+        //public ActionResult SaveOOOS()
+        //{
+        //    ProcessTransactions pt = new ProcessTransactions();
+        //    try
+        //    {
+        //        pt.OpenConnection();
+        //        pt.BeginTransaction();
+        //        string rooomSelectString = Request.Form["roomSelect"].ToString();
+        //        List<int> roomSelect = rooomSelectString.Split(',')
+        //                                            .Select(x => int.Parse(x)).Where(x => x != 0)
+
+        //                                            .ToList();
+        //        // check  chon  room
+        //        if(roomSelect.Count < 1)
+        //        {
+        //            return Json(new { code = 1, msg = "New item out of order/service created successfully" });
+
+        //        }
+
+        //        DateTime toDate = DateTime.Parse(Request.Form["itemToDate"].ToString());
+        //        DateTime fromDate = DateTime.Parse(Request.Form["itemFromDate"].ToString());
+
+        //        for(int i = 0; i < roomSelect.Count; i++)
+        //        {
+        //            if()
+        //            BusinessBlockModel BusinessBlock = new BusinessBlockModel();
+
+        //        }
+        //        #endregion
+        //        pt.CommitTransaction();
+        //        return Json(new { code = 0, msg = "New item out of order/service created successfully" });
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        pt.RollBack();
+        //        return Json(new { code = 1, msg = ex.Message });
+        //    }
+        //    finally
+        //    {
+        //        pt.CloseConnection();
+
+        //    }
+        //}
+        #endregion
+        [HttpPost]
+        [HttpPost]
+        public IActionResult DeleteBusinessBlock(int id)
+        {
+            try
+            {
+                string sql = "DELETE FROM BusinessBlock WHERE ID = @ID";
+
+                SqlParameter[] parameters = {
+                new SqlParameter("@ID", id)
+        };
+
+                int rows = DataTableHelper.ExecuteNonQueryText(sql, parameters);
+
+                return Json(new { deleted = rows });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetCards()
+        {
+            string sql = @"SELECT a.*, N'Card Hotel' AS CardType, 
+                    CASE 
+                        WHEN a.Status = 0 THEN N'Inactive' 
+                        WHEN a.Status = 1 THEN N'Active' 
+                        ELSE N'Other' 
+                    END AS StatusText 
+                    FROM Card a WITH (NOLOCK)";
+
+            var dt = _iRoomManagementService.SearchAllForTrans(sql);
+
+            return Json(dt);
+        }
 
     }
+
+
 }
+
