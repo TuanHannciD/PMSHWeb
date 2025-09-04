@@ -269,8 +269,32 @@ namespace RoomManagement.Services.Implements
 
             return resultTable;
         }
+        public DataTable RoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName)
 
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@RoomNo", roomNo ?? ""),
+                new SqlParameter("@FromDate", fromDate ),
+                new SqlParameter("@ToDate", toDate ),
+                new SqlParameter("@UserName", userName ?? "" )
+            };
 
+            DataTable resultTable = DataTableHelper.getTableData("spRoomStatusHistoryOOO", parameters);
+
+            return resultTable;
+        }
+        public DataTable SearchAllForTrans(string sqlCommand)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+        new SqlParameter("@sqlCommand", sqlCommand ?? "")
+            };
+
+            DataTable resultTable = DataTableHelper.getTableData("spSearchAllForTrans", parameters);
+
+            return resultTable;
+        }
 
     }
 }

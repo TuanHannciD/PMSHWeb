@@ -26,6 +26,9 @@ using Reservation.Services.Implements;
 using Reservation.Services.Interfaces;
 using RoomManagement.Services.Implements;
 using RoomManagement.Services.Interfaces;
+using Miscellaneous.Controllers;
+using Miscellaneous.Services.Implements;
+using Miscellaneous.Services.Interfaces;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
@@ -53,6 +56,9 @@ builder.Services.AddControllersWithViews()
  .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
 
 builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
+
+builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(MiscellaneousController).Assembly));
+
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -83,6 +89,8 @@ builder.Services.AddSingleton<IPostService, PostService>();
 builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
 
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
+builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

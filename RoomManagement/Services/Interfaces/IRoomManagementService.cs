@@ -51,6 +51,7 @@ namespace RoomManagement.Services.Interfaces
         DataTable OOOSload(int status, string roomNo, int roomClassID, DateTime fromDate, DateTime toDate, string zone);
 
         DataTable AvailableRoomsSearchOOO(string isDummy, string smoking,string floor, string roomTypeCode,string foStatus,string hkStatusID, string roomNo , DateTime fromDate, DateTime toDate, string zoneCode);
-
+        DataTable RoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName);
+        DataTable SearchAllForTrans(string sqlCommand);
     }
     }

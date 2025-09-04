@@ -101,9 +101,9 @@ namespace RoomManagement.Controllers
                     conn.Open();
 
                     string sql = @"
-                UPDATE Room
-                SET HKFOStatus = @NewHKFOStatus
-                WHERE RoomNo = @RoomNo
+                        UPDATE Room
+                        SET HKFOStatus = @NewHKFOStatus
+                        WHERE RoomNo = @RoomNo
                   ";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -617,6 +617,9 @@ namespace RoomManagement.Controllers
             ViewBag.CommentList = listcmt;
             return View();
         }
+
+
+        #region out of order/service management
         [HttpGet]
         public IActionResult GetAvailableRoomsSearchOOO(string isDummy, string smoking, string floor, string roomTypeCode, string foStatus, string hkStatusID, string roomNo, DateTime fromDate, DateTime toDate, string zoneCode)
         {
@@ -626,13 +629,13 @@ namespace RoomManagement.Controllers
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
-                                  RoomID = !string.IsNullOrEmpty(d["RoomID"].ToString()) ? d["RoomID"] : "",                                 
+                                  RoomID = !string.IsNullOrEmpty(d["RoomID"].ToString()) ? d["RoomID"] : "",
                                   RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
                                   RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
                                   RoomTypeName = !string.IsNullOrEmpty(d["Room Type Name"].ToString()) ? d["Room Type Name"] : "",
                                   HKStatus = !string.IsNullOrEmpty(d["HK Status"].ToString()) ? d["HK Status"] : "",
-                                  FO = !string.IsNullOrEmpty(d["FO"].ToString()) ? d["FO"] : "",                   
-                                  Floor = !string.IsNullOrEmpty(d["Floor"].ToString()) ? d["Floor"] : "",                   
+                                  FO = !string.IsNullOrEmpty(d["FO"].ToString()) ? d["FO"] : "",
+                                  Floor = !string.IsNullOrEmpty(d["Floor"].ToString()) ? d["Floor"] : "",
                                   Smoking = !string.IsNullOrEmpty(d["Smoking"].ToString()) ? d["Smoking"] : "",
                                   RoomTypeID = !string.IsNullOrEmpty(d["RoomTypeID"].ToString()) ? d["RoomTypeID"] : "",
                               }).ToList();
@@ -649,9 +652,125 @@ namespace RoomManagement.Controllers
 
             // return PartialView("_ReportViewerPartial", report);
         }
+        [HttpGet]
+        public IActionResult GetRoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName)
+        {
+            try
+            {
+                DataTable dataTable = _iRoomManagementService.RoomStatusHistoryOOO(roomNo, fromDate, toDate, userName);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  OldValue = !string.IsNullOrEmpty(d["OldValue"].ToString()) ? d["OldValue"] : "",
+                                  NewValue = !string.IsNullOrEmpty(d["NewValue"].ToString()) ? d["NewValue"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  Action = !string.IsNullOrEmpty(d["Action"].ToString()) ? d["Action"] : "",
+                                  ComputerName = !string.IsNullOrEmpty(d["ComputerName"].ToString()) ? d["ComputerName"] : "",
+                                  ChangeDate = !string.IsNullOrEmpty(d["ChangeDate"].ToString()) ? d["ChangeDate"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
 
 
+        //[HttpPost]
+        //public ActionResult SaveOOOS()
+        //{
+        //    ProcessTransactions pt = new ProcessTransactions();
+        //    try
+        //    {
+        //        pt.OpenConnection();
+        //        pt.BeginTransaction();
+        //        string rooomSelectString = Request.Form["roomSelect"].ToString();
+        //        List<int> roomSelect = rooomSelectString.Split(',')
+        //                                            .Select(x => int.Parse(x)).Where(x => x != 0)
 
+        //                                            .ToList();
+        //        // check  chon  room
+        //        if(roomSelect.Count < 1)
+        //        {
+        //            return Json(new { code = 1, msg = "New item out of order/service created successfully" });
+
+        //        }
+
+        //        DateTime toDate = DateTime.Parse(Request.Form["itemToDate"].ToString());
+        //        DateTime fromDate = DateTime.Parse(Request.Form["itemFromDate"].ToString());
+
+        //        for(int i = 0; i < roomSelect.Count; i++)
+        //        {
+        //            if()
+        //            BusinessBlockModel BusinessBlock = new BusinessBlockModel();
+
+        //        }
+        //        #endregion
+        //        pt.CommitTransaction();
+        //        return Json(new { code = 0, msg = "New item out of order/service created successfully" });
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        pt.RollBack();
+        //        return Json(new { code = 1, msg = ex.Message });
+        //    }
+        //    finally
+        //    {
+        //        pt.CloseConnection();
+
+        //    }
+        //}
+        #endregion
+        [HttpPost]
+        [HttpPost]
+        public IActionResult DeleteBusinessBlock(int id)
+        {
+            try
+            {
+                string sql = "DELETE FROM BusinessBlock WHERE ID = @ID";
+
+                SqlParameter[] parameters = {
+                new SqlParameter("@ID", id)
+        };
+
+                int rows = DataTableHelper.ExecuteNonQueryText(sql, parameters);
+
+                return Json(new { deleted = rows });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetCards()
+        {
+            string sql = @"SELECT a.*, N'Card Hotel' AS CardType, 
+                    CASE 
+                        WHEN a.Status = 0 THEN N'Inactive' 
+                        WHEN a.Status = 1 THEN N'Active' 
+                        ELSE N'Other' 
+                    END AS StatusText 
+                    FROM Card a WITH (NOLOCK)";
+
+            var dt = _iRoomManagementService.SearchAllForTrans(sql);
+
+            return Json(dt);
+        }
 
     }
+
+
 }
+

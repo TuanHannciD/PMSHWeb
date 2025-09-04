@@ -1075,5 +1075,17 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spTasksheetAutomatically", param);
             return myTable;
         }
+        public DataTable LostAndFound(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+               new SqlParameter("@ToDate", toDate),
+              
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSearchLostAndFound", param);
+            return myTable;
+        }
     }
 }
