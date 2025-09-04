@@ -26,8 +26,22 @@ namespace BaseBusiness.util
 		{
 			return (obj == null) ? "" : obj.ToString();
 		}
+        public static int CompareDate(DateTime date1, DateTime date2)
+        {
+            if (date1.Day == date2.Day && date1.Month == date2.Month && date1.Year == date2.Year)
+                return 0;
+            if (date1.Year < date2.Year || (date1.Year == date2.Year && date1.Month < date2.Month) || (date1.Year == date2.Year && date1.Month == date2.Month && date1.Day < date2.Day))
+                return -1;
+            else
+                return 1;
 
-		public static int ToInt(string x)
+        }
+        public static string GetHostName()
+        {
+            return System.Environment.MachineName; //System.Net.Dns.GetHostName();
+
+        }
+        public static int ToInt(string x)
 		{
 			try
 			{
@@ -38,7 +52,17 @@ namespace BaseBusiness.util
 				return -1;
 			}
 		}
-
+        public static Decimal ToDecimal(string x)
+        {
+            try
+            {
+                return Decimal.Parse(x);
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
+        }
 
         public static string DateFormatEnVi(DateTime dtDate,int EnVi,  string dtFormat)
         {
@@ -553,5 +577,7 @@ namespace BaseBusiness.util
 			}
 			return JSONString.ToString();
 		}
-	}
+
+
+    }
 }

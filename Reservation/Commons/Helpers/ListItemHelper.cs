@@ -30,7 +30,7 @@ namespace Reservation.Commons.Helpers
                 List<NationalityModel> list = PropertyUtils.ConvertToList<NationalityModel>(NationalityBO.Instance.FindByAttribute("Inactive", 0));
                 if (list.Count > 0)
                 {
-                    items = list.Select(p => new SelectListItem { Value = p.Code.ToString(), Text = p.Name, Selected = false }).ToList();
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
                 }
                 if (defaultValue)
                     items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
@@ -73,7 +73,29 @@ namespace Reservation.Commons.Helpers
                 return new List<SelectListItem>();
             }
         }
+        public static List<SelectListItem> GetTitleProviderRSV(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
+                var items = new List<SelectListItem>();
+                List<TitleModel> list = PropertyUtils.ConvertToList<TitleModel>(TitleBO.Instance.FindByAttribute("Inactive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
         /// <summary>
         /// Lấy tất cả danh sách City inactive cho dropdown
         /// </summary>

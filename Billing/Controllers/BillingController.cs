@@ -23,7 +23,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Transactions;
-using User.Services.Interfaces;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Billing.Controllers
@@ -34,19 +33,20 @@ namespace Billing.Controllers
         private readonly ILogger<BillingController> _logger;
         private readonly IMemoryCache _cache;
         private readonly IPostService _iPostService;
-        private readonly IUserService _iUserService;
         private readonly ITransferTransactionService _iTransferTransactionService;
-
+        private readonly ICrashierService _iCrashierService;
+        private readonly IInvoicingService _invoicingService;
 
         public BillingController(ILogger<BillingController> logger,
-                IMemoryCache cache, IConfiguration configuration, IPostService iPostService, IUserService iUserService,ITransferTransactionService transferTransactionService)
+                IMemoryCache cache, IConfiguration configuration, IPostService iPostService, ITransferTransactionService transferTransactionService, ICrashierService iCrashierService, IInvoicingService invoicingService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iPostService = iPostService;
-            _iUserService = iUserService;
             _iTransferTransactionService = transferTransactionService;
+            _iCrashierService = iCrashierService;
+            _invoicingService = invoicingService;
         }
 
 
@@ -1627,6 +1627,71 @@ namespace Billing.Controllers
         #endregion
 
         #region DatVP __ Billing: Adjust Transaction
+        #endregion
+
+        #region DatVP __ Billing: Shift Login
+        [HttpPost]
+        public async Task<IActionResult> ShiftLogin()
+        {
+            try
+            {
+                string loginName = Request.Form["LoginName"].ToString();
+                string password = Request.Form["Password"].ToString();
+                var model = _iCrashierService.Login(loginName, password);
+                return Json(model);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new ShiftModel());
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCrashierInShift()
+        {
+            try
+            {
+                int userID = int.Parse(Request.Form["userID"].ToString());
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                var model = ShiftBO.GetShiftByUser(businessDateModel[0].BusinessDate,userID);
+                return Json(model);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new ShiftModel());
+            }
+
+        }
+        #endregion
+
+        #region DatVP __ Invoicing: Billing
+        [HttpGet]
+        public async Task<IActionResult> SearchFolio(int guestStatus, int folioStatus, int folioType, string name, string room, string folioNo, string confirmationNo, string date)
+        {
+            try
+            {
+                // Kiểm tra và xử lý giá trị date
+                DateTime? parsedDate = string.IsNullOrEmpty(date) ? (DateTime?)null : DateTime.TryParse(date, out DateTime tempDate) ? tempDate : (DateTime?)null;
+
+                // Gọi dịch vụ với date đã xử lý
+                var data = _invoicingService.SearchFolio(guestStatus, folioStatus, folioType, name, room, folioNo, confirmationNo, parsedDate?.ToString() ?? "");
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
         #endregion
     }
 }

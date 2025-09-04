@@ -22,5 +22,16 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
+
+        public static string GetConfigETA()
+        {
+            string query = " select KeyValue from ConfigSystem where KeyName = 'ETA'";
+            return instance.GetFirst<string>(query);
+        }
+        public static string GetConfigETD()
+        {
+            string query = " select KeyValue from ConfigSystem where KeyName = 'ETD'";
+            return instance.GetFirst<string>(query);
+        }
     }
 }

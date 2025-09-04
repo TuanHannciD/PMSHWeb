@@ -7,7 +7,10 @@
                 <button class="toggle-btn"><i class="fas fa-bars"></i></button>
                 <a class="menu-item " href="/Reservation/NewReservation">NEW RESERVATION</a>
                 <a class="menu-item active">SEARCH RESERVATION</a>
-                <a class="menu-item " href="/Reservation/GroupReservation" >GROUP RESERVATION</a>
+                <a class="menu-item " asp-area="" asp-controller="Reservation" asp-action="GroupReservation">GROUP RESERVATION</a>
+                <a class="menu-item " href="/Reservation/WaitList" >WAIT LIST</a>
+                <a class="menu-item " href="/Reservation/OverBooking">OVER BOOKING</a>
+
             </div>
         </div>
 
@@ -33,75 +36,77 @@
                         <div id="tab-filter" class="tab-pane active">
                             <div class="filter-section">
                                 <h4>Guest Information & Reservation Details</h4>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter first name" id="firstName">
+                                    <input type="text"  id="firstName">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter full name" id="name">
+                                    <input type="text"  id="name">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Owner</label>
-                                    <select class="form-select" id="owner">
+                                    <select id="owner">
                                         <option value="">--All--</option>
                                         <option value="--Hotel--">--Hotel--</option>
                                         <option value="--Owner--">--Owner--</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Conf. No</label>
-                                    <input type="text" class="form-control" placeholder="Enter confirmation number" id="confirmationNo">
+                                    <input type="text"id="confirmationNo">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Resv. No</label>
-                                    <input type="text" class="form-control" placeholder="Enter reservation number" id="resvHolder">
+                                    <input type="text" id="resvHolder">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>CRS No/GC</label>
-                                    <input type="text" class="form-control" placeholder="Enter CRS or group code" id="crsNo">
+                                    <input type="text" id="crsNo">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Search Type</label>
-                                    <select class="form-select" id="searchType">
+                                    <select  id="searchType">
                                         <option value="0">General</option>
+                                        <option value="1">Guest In House</option>
+
                                         <option value="7">Cancellations</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="filter-section">
                                 <h4>Room Information & Dates</h4>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Package</label>
-                                    <input type="text" class="form-control" placeholder="Enter package name" id="package">
+                                    <input type="text"  id="package">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Zone</label>
-                                    <select class="form-select" id="zone" asp-items="ViewBag.cboZone">
+                                    <select id="zone" asp-items="ViewBag.cboZone">
                                     </select>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Room No</label>
-                                    <input type="text" class="form-control" placeholder="Enter room number" id="roomNo">
+                                    <input type="text"   id="roomNo">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Room Type</label>
-                                    <select class="form-select" id="roomType" asp-items="ViewBag.cboRoomType">
+                                    <select  id="roomType" asp-items="ViewBag.cboRoomType">
                                     </select>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Arrival</label>
-                                    <input type="date" class="form-control" id="arrivalForm">
+                                    <input type="date"  id="arrivalForm">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group-new-reservation">
                                     <label>Departure</label>
-                                    <input type="date" class="form-control" id="departureForm">
+                                    <input type="date"  id="departureForm">
                                 </div>
-                                <div class="form-group checkbox-group">
+                                <div class="form-group-new-reservation">
                                     <label>Rsv Online</label>
                                     <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
                                 </div>
-                                <div class="form-group checkbox-group">
+                                <div class="form-group-new-reservation">
                                     <label>Room Sharer</label>
                                     <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
                                 </div>
@@ -115,7 +120,6 @@
                                     <a href="#" onclick="openModalEdit();">Edit</a>
                                     <a href="#" onclick="openModalCancel()">Cancel</a>
                                     <a href="#" onclick="openConfirmReinstate();">Reinstate</a>
-                                    <a href="#" onclick="openModalRegistrationCard();">Reg.Card</a>
                                     <a href="#" onclick="checkIn();">Check In</a>
                                     <a href="#" onclick="openModalViewProfile();">View Profile</a>
                                     <a href="#" id="groupAdmin">Group Admin</a>
@@ -125,6 +129,8 @@
                                     <a class="rs-bold" onclick="openModalAddOn();">Add On</a>
                                     <a class="rs-bold">Alerts</a>
                                     <a class="rs-bold" onclick="openModalBilling();">Billing</a>
+                                    <a class="rs-bold" onclick="openModalInvoicing();">Invoicing</a>
+
                                     <a class="rs-bold">Change</a>
                                     <a class="rs-bold" onclick="openModalShare();">Share</a>
                                     <a class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a>
@@ -134,12 +140,23 @@
                                     <a class="rs-bold" onclick="openModalRegistrationCard();">Regis.Card</a>
                                     <a class="rs-bold" onclick="openRoomMove();">Room move</a>
                                     <a class="rs-bold" onclick="openModalRouting();">Routing</a>
+                                    <a class="rs-bold" onclick="openModalWaitList();">WaitList</a>
+
                                     <div class="dropdown">
 
                                         <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Room Assignment</a>
                                         <div class="dropdown-menu-custom">
                                             <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
                                             <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown">
+
+                                        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Check Out</a>
+                                        <div class="dropdown-menu-custom">
+                                            <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
+                                            <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
+                                            <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
                                         </div>
                                     </div>
                                 </div>
@@ -614,75 +631,75 @@
                     <button class="mui-button mui-button-new" onclick="getAllRooms();"><i class="fas fa-search"></i> Search</button>
                     <button class="mui-button mui-button-new" onclick="clearModelSearchRoom();"><i class="fas fa-eraser"></i> Clear</button>
                 </div>
-                <div class="row mui-card mb-2">
-                    <div class="row">
-                        <div class="col-md-2 mb-2">
-                            <label for="input1" class="form-label">RoomType</label>
-                            <select type="text" class="form-control" id="roomTypeSearch" asp-items="ViewBag.cboRoomType">
+                <div class="mb-2">
+                    <div >
+                        <div class="form-group-new-reservation">
+                            <label for="input1" >RoomType</label>
+                            <select type="text" id="roomTypeSearch" asp-items="ViewBag.cboRoomType">
                             </select>
                         </div>
-                        <div class="col-md-2 mb-2">
-                            <label for="input2" class="form-label">Smoking</label>
-                            <select type="text" class="form-control" id="smokingSearch">
+                        <div  class="form-group-new-reservation">
+                            <label for="input2" >Smoking</label>
+                            <select type="text"  id="smokingSearch">
                                 <option value="2">---Select all ---</option>
                                 <option value="1">Smoking</option>
                                 <option value="0">No Smoking</option>
 
                             </select>
                         </div>
-                        <div class="col-md-2 mb-2">
-                            <label for="input3" class="form-label">RoomNo</label>
-                            <input type="text" class="form-control" id="roomNoSearch" />
+                        <div  class="form-group-new-reservation">
+                            <label for="input3" >RoomNo</label>
+                            <input type="text" id="roomNoSearch" />
                         </div>
-                        <div class="col-md-2 mb-2">
-                            <label for="input4" class="form-label">Floor</label>
-                            <input type="text" class="form-control" id="floorSearch">
+                        <div  class="form-group-new-reservation">
+                            <label for="input4" >Floor</label>
+                            <input type="text"  id="floorSearch">
                         </div>
-                        <div class="col-md-2 mb-2">
-                            <label for="input5" class="form-label">From</label>
-                            <input type="date" class="form-control" id="fromSearch">
+                        <div  class="form-group-new-reservation">
+                            <label for="input5" >From</label>
+                            <input type="date"  id="fromSearch">
                         </div>
-                        <div class="col-md-2 mb-2">
-                            <label for="input6" class="form-label">To</label>
-                            <input type="date" class="form-control" id="toSearch">
+                        <div  class="form-group-new-reservation">
+                            <label for="input6" >To</label>
+                            <input type="date" id="toSearch">
                         </div>
                     </div>
                     <div class="form-group" style="display:flex">
                         <label>FO Status</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="foStatus" checked value="0">
-                            <label class="form-check-label" for="foActive">Vacant</label>
+                        <div class="form-group-new-reservation">
+                            <input  type="radio" name="foStatus" checked value="0">
+                            <label for="foActive">Vacant</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="foStatus" value="1">
-                            <label class="form-check-label" for="foInactive">Occupied</label>
+                        <div class="form-group-new-reservation">
+                            <input type="radio" name="foStatus" value="1">
+                            <label for="foInactive">Occupied</label>
                         </div>
                     </div>
                     <div class="form-group" style="display:flex">
                         <label>HK Status</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus" value="1">
-                            <label class="form-check-label" for="hkClean">Clean Non-checked Rooms</label>
+                        <div class="form-group-new-reservation">
+                            <input  type="checkbox" name="hkStatus" value="1">
+                            <label  for="hkClean">Clean Non-checked Rooms</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus" value="2">
-                            <label class="form-check-label" for="hkDirty">Dirty Rooms</label>
+                        <div  class="form-group-new-reservation">
+                            <input   type="checkbox" name="hkStatus" value="2">
+                            <label  for="hkDirty">Dirty Rooms</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus" value="4">
-                            <label class="form-check-label" for="hkInProgress">Clean Rooms</label>
+                        <div  class="form-group-new-reservation">
+                            <input type="checkbox" name="hkStatus" value="4">
+                            <label for="hkInProgress">Clean Rooms</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus" value="5">
-                            <label class="form-check-label" for="hkOutOfService">OOC Rooms</label>
+                        <div  class="form-group-new-reservation">
+                            <input  type="checkbox" name="hkStatus" value="5">
+                            <label  for="hkOutOfService">OOC Rooms</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus" value="6">
-                            <label class="form-check-label" for="hkInspected">OOS Rooms</label>
+                        <div  class="form-group-new-reservation">
+                            <input  type="checkbox" name="hkStatus" value="6">
+                            <label  for="hkInspected">OOS Rooms</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkDummy">
-                            <label class="form-check-label" for="hkOccupied">Pseudo (Dummy) Roóm</label>
+                        <div  class="form-group-new-reservation">
+                            <input  type="checkbox" name="hkDummy">
+                            <label for="hkOccupied">Pseudo (Dummy) Roóm</label>
                         </div>
                     </div>
                 </div>
@@ -1147,6 +1164,7 @@
 @await Html.PartialAsync("Options/RegistrationCard")
 @await Html.PartialAsync("Options/CheckIn")
 @await Html.PartialAsync("Options/Billing")
+@await Html.PartialAsync("Options/Invoicing")
 @await Html.PartialAsync("Options/AddOn")
 @await Html.PartialAsync("Options/Routing")
 @await Html.PartialAsync("Options/Cancel")
@@ -1156,6 +1174,11 @@
 @await Html.PartialAsync("Options/Split")
 @await Html.PartialAsync("Options/RoomAssignment")
 @await Html.PartialAsync("Options/ViewProfile")
+@await Html.PartialAsync("Options/WaitList")
+@await Html.PartialAsync("Options/CheckOutAll")
+@await Html.PartialAsync("Options/CheckOutZero")
+@await Html.PartialAsync("Options/CheckOut")
+
 <script>
         // Function menu click handler
     document.querySelectorAll('.function-menu a, .function-menu .dropdown-menu-custom a').forEach(item => {
@@ -1375,7 +1398,8 @@
         var listReservationByConfirmationNo = [];
         var profileID = 0;
         var folioNoID = 0;
-            function initializeDataGridSearch(data) {
+        var reservationStatus = 0;
+    function initializeDataGridSearch(data) {
         // Kiểm tra dữ liệu đầu vào
 
         // Nếu cần giới hạn tổng số bản ghi, ví dụ 100 bản ghi
@@ -1413,7 +1437,8 @@
                 openModalEdit(e.data.id);
             },
             onRowClick: function(e) {
-                $('#listFunction').show();
+                
+                $('#listFunction').show(); 
                 idReservation = e.data.ID;
                 $('#moreInfo').empty();
                 let html = ``;
@@ -1435,6 +1460,7 @@
                 if (e.data.Specials) {
                     html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
                 }
+                reservationStatus = e.data.ReservationStatus;
                 getFolioNo();
                 listReservationByConfirmationNo = listData.filter(item => item.ConfirmationNo === e.data.ConfirmationNo);
                 rateAmount = e.data.PriceNet;
@@ -1968,7 +1994,7 @@
                 crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
-                    // $('#txtID').val(result.id);
+                    $('#txtID').val(result.id);
                     $('#nameProfileSearch').val(result.account);
                     $('#firstNameProfileSearch').val(result.firstname);
                     $('#cityProfileSearch').val(result.city);
@@ -3247,7 +3273,10 @@
         }
         $('#txtName').on('change', function() {
             var value = $(this).val();
-            getInfoByProfileID(value);
+            if(value != 0){
+                            getInfoByProfileID(value);
+
+            }
 
             // Lấy instance của TomSelect cho #txtItemInventory
             var tomSelectInstance = $('#txtItemInventory')[0].tomselect; // Lấy đối tượng TomSelect
@@ -3294,20 +3323,20 @@
         }
 
 
-        // document.getElementById("groupAdmin").addEventListener("click", async function () {
+        document.getElementById("groupAdmin").addEventListener("click", async function () {
 
 
-        //             const response = await fetch('/Reservation/SetDataGroupAdmin', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(listReservationByConfirmationNo)
-        //     });
+                    const response = await fetch('/Reservation/SetDataGroupAdmin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(listReservationByConfirmationNo)
+            });
 
-        //     const result = await response.json();
-        //     if (result.redirectUrl) {
-        //         window.location.href = result.redirectUrl;
-        //     }
-        // });
+            const result = await response.json();
+            if (result.redirectUrl) {
+                window.location.href = result.redirectUrl;
+            }
+        });
 </script>

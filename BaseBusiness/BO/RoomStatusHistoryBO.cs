@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,20 @@ namespace BaseBusiness.BO
         public static RoomStatusHistoryBO Instance
         {
             get { return instance; }
+        }
+        public  static void InsertHistory(string roomNo, string oldValue, string newValue, DateTime systemDate, string computerName, string action, int objectID, string tableName,string userName)
+        {
+            RoomStatusHistoryModel modelH = new RoomStatusHistoryModel();
+            modelH.ChangeDate = systemDate;
+            modelH.OldValue = oldValue;
+            modelH.NewValue = newValue;
+            modelH.RoomNo = roomNo;
+            modelH.ComputerName = computerName;
+            modelH.UserName = userName;
+            modelH.Action = action;
+            modelH.ObjectID = objectID;
+            modelH.TableName = tableName;
+            RoomStatusHistoryBO.instance.Insert(modelH);
         }
     }
 }

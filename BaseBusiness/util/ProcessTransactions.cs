@@ -10,12 +10,19 @@ using BaseBusiness.Utils;
 using System.Linq;
 using log4net;
 using System.Xml;
+using BaseBusiness.BO;
+using BaseBusiness.Model;
 
 
 namespace BaseBusiness.util
 {
     public class ProcessTransactions
     {
+        public string HistoryContent = "";
+        int CountTransaction = 0;
+        string Header_UpdateCommand = "UPDATE_COM : ";
+        int[] NUMBER_OF_EXCEPTION = { 1025, -2 };
+        int NUMBER_OF_DEADLOCK = 1025;
 
         #region Khai bao cac bien dung chung
         protected string strcon;
@@ -23,6 +30,9 @@ namespace BaseBusiness.util
         private SqlTransaction tran;
         private SqlCommand cmd;
         //private SqlDataAdapter da;
+        private EventsLogErrorModel mELE;
+        string Header_Update = "UPDATE : ";
+        string[] DESCRIPTION_OF_EXCEPTION = { "Server busy or network is slower !!!", "Time Out or Row is Locked !!!" };
 
         #endregion
 
@@ -967,7 +977,7 @@ namespace BaseBusiness.util
         /// Lay ve ngay thang cua he thong.
         /// </summary>
         /// <returns></returns>
-        public DateTime GetSystemDate()
+        public  DateTime GetSystemDate()
         {
             try
             {
@@ -1027,5 +1037,143 @@ namespace BaseBusiness.util
         }
 
         #endregion
+
+        /// <summary>
+        /// Lấy ngày Business Date
+        /// -- Duongna --, 03/09/09
+        /// <returns> BusinessDate </returns>
+        public  DateTime GetBusinessDate()
+        {
+            DateTime DateTimeValue = DateTime.Today;
+            DateTimeValue = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate;
+            return DateTimeValue;
+            //return Global.GetBusinessDate;
+        }
+
+        public  DateTime GetBusinessDateTime()
+        {
+            try
+            {
+                #region Lay ra ngay he thong ,gio he thong
+                DateTime B_Date = GetBusinessDate();
+                DateTime S_Date = GetSystemDate();
+                #endregion
+
+                #region Gan Time
+                DateTime dt = new DateTime(B_Date.Year, B_Date.Month, B_Date.Day, S_Date.Hour, S_Date.Minute, S_Date.Second, S_Date.Millisecond);
+                #endregion
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public  decimal ExchangeCurrency(DateTime date, string FromCurrencyID, string ToCurrencyID, decimal Amount)
+        {
+            try
+            {
+                return Convert.ToDecimal(getTable("spExchangeCurrency", "Table", new SqlParameter("@DateTime", date),
+                      new SqlParameter("@FromCurrency", FromCurrencyID),
+                      new SqlParameter("@ToCurrency", ToCurrencyID),
+                      new SqlParameter("@Amount", Amount)).Rows[0][0].ToString());
+            }
+            catch { return 0; }
+        }
+        private void SetHistory(string Table, string Function, string Content)
+        {
+            HistoryContent += "" + (CountTransaction + 1) + "." + Function + " " + Table + " : " + Content + "\r\n";
+            CountTransaction++;
+        }
+        private void InsertHistory()
+        {
+            try
+            {
+                mELE = new EventsLogErrorModel();
+                mELE.MessageCode = "DeadLock";
+                mELE.ComputerName = System.Net.Dns.GetHostName();
+                mELE.ErrorDate = DateTime.Now;
+                mELE.EventName = "";
+                mELE.FormName = "";
+                mELE.ErrorContent = HistoryContent;
+                EventsLogErrorBO.Instance.Insert(mELE);
+            }
+            catch
+            { return; }
+        }
+        public void UpdateCommand(string command)
+        {
+            try
+            {
+                cmd = new SqlCommand("spSearchAllForTrans", cnn, tran);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add(new SqlParameter("@sqlCommand", command));
+
+                // Ghi váo history để sư dụng tra cứu DeadLock.
+                SetHistory("", Header_UpdateCommand, command);
+                // Excute
+                cmd.ExecuteNonQuery();
+            }
+            catch (SqlException se)
+            {
+                // Rollback Transaction.
+                RollBack();
+                // Lấy ra index nếu lỗi đã được định nghĩa.
+                int Index = Array.IndexOf(NUMBER_OF_EXCEPTION, se.Number);
+                // Nếu mã lỗi đã được định nghĩa
+                if (Index != -1)
+                {
+                    // Nếu là lỗi Deadlock -> Insert vào Log.
+                    if (se.Number == NUMBER_OF_DEADLOCK)
+                    { InsertHistory(); }
+                    // Throw 1 lỗi đã được định nghĩa.
+                    throw new Exception(Header_Update + DESCRIPTION_OF_EXCEPTION[Index]);
+                }
+                // Nếu mã lỗi chưa được định nghĩa -> Throw 1 exception.
+                else { throw new Exception(Header_Update + se.Message); }
+            }
+            catch (Exception ex)
+            { RollBack(); throw new Exception(Header_Update + ex.Message); }
+        }
+
+        public  void UpdateDataBase(string command)
+        {
+            SqlConnection cnn = new SqlConnection(DBUtils.GetDBConnectionString());
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                cnn.Open();
+                cmd = new SqlCommand("spSearchAllForTrans", cnn);
+                //cmd.CommandTimeout = 6000;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add(new SqlParameter("@sqlCommand", command));
+                cmd.ExecuteNonQuery();
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Update error :" + ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+        }
+
+        public  string GetSystemTime()
+        {
+            try
+            {
+                DateTime S_Date = GetSystemDate();
+                string st = S_Date.Hour + ":" + S_Date.Minute + ":" + S_Date.Second;
+                return st;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
+
 }

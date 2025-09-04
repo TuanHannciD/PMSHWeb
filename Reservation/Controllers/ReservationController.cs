@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Policy;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Transactions;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
@@ -65,7 +66,7 @@ namespace Reservation.Controllers
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
-            ViewBag.cboTitle = ListItemHelper.GetTitleProvider();
+            ViewBag.cboTitle = ListItemHelper.GetTitleProviderRSV();
             ViewBag.cboCity = ListItemHelper.GetCityProvider();
             ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
             ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
@@ -79,7 +80,6 @@ namespace Reservation.Controllers
             ViewBag.cboReservationType = ListItemHelper.GetReservationTypeProvider();
             ViewBag.cboSource = ListItemHelper.GetSourceProvider();
             ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
-            ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
             ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
             ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
             ViewBag.cboPaymentMethod = ListItemHelper.GetPaymentMethodProvider();
@@ -88,7 +88,8 @@ namespace Reservation.Controllers
             ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
-
+            ViewBag.configETA = _iReservationService.GetConfigETA();
+            ViewBag.configETD = _iReservationService.GetConfigETD();
             return View();
         }
 
@@ -138,6 +139,11 @@ namespace Reservation.Controllers
 
             return View();
         }
+        public IActionResult WaitList()
+        {
+
+            return View();
+        }
         [HttpPost]
         public IActionResult SetDataGroupAdmin([FromBody] List<ReservationSearchDTO> data)
         {
@@ -156,6 +162,14 @@ namespace Reservation.Controllers
             }
 
             return View(listData);
+
+        }
+        public IActionResult OverBooking()
+        {
+
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+
+            return View();
 
         }
         #region DatVP __ Commmon
@@ -557,6 +571,69 @@ namespace Reservation.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReasonWaitList()
+        {
+            try
+            {
+                List<CommentModel> ressult = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindByAttribute("CommentTypeID",3));
+
+
+                return Json(ressult);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPriority()
+        {
+            try
+            {
+                List<PriorityModel> ressult = PropertyUtils.ConvertToList<PriorityModel>(PriorityBO.Instance.FindByAttribute("Inactive", 0));
+
+
+                return Json(ressult);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRoomType()
+        {
+            try
+            {
+                List<RoomTypeModel> ressult = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindByAttribute("Inactive", 0));
+
+
+                return Json(ressult);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetMarket()
+        {
+            try
+            {
+                List<MarketModel> ressult = PropertyUtils.ConvertToList<MarketModel>(MarketBO.Instance.FindByAttribute("Inactive", 0));
+
+
+                return Json(ressult);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
         #endregion
 
         #region DatVP __ save reservation
@@ -582,7 +659,7 @@ namespace Reservation.Controllers
                 {
                     roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
                 }
-                if (string.IsNullOrEmpty(Request.Form["lastName"].ToString()))
+                if (string.IsNullOrEmpty(Request.Form["profileCompanyID"].ToString()))
                 {
                     return Json(new { code = 1, msg = "Profile cannot be blank" });
                 }
@@ -590,16 +667,11 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Reservation Type cannot be blank" });
                 }
-                if (decimal.Parse(Request.Form["rateAmount"].ToString()) == 0)
-                {
-                    return Json(new { code = 1, msg = "Rate cannot be blank " });
 
-                }
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
                 ReservationModel reservationModel = new ReservationModel();
-
                 #region lưu reservation
                 reservationModel.ConfirmationNo = (ReservationBO.GetTopConfirmationNo() + 1).ToString();
                 reservationModel.ReservationNo = (ReservationBO.GetTopID() + 1).ToString();
@@ -620,7 +692,16 @@ namespace Reservation.Controllers
                 reservationModel.ProfileIndividualId = int.Parse(Request.Form["profileIndividualID"].ToString());
                 reservationModel.LastName = Request.Form["lastName"].ToString();
                 reservationModel.FirstName = Request.Form["firstName"].ToString();
-                reservationModel.Title = Request.Form["title"].ToString();
+                if(Request.Form["title"].ToString() != "0")
+                {
+                    TitleModel title = (TitleModel)TitleBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["title"].ToString()));
+                    reservationModel.Title = title.Code;
+                }
+                else
+                {
+                    reservationModel.Title = Request.Form["title"].ToString();
+
+                }
                 reservationModel.Phone = Request.Form["phone"].ToString();
                 reservationModel.Email = Request.Form["email"].ToString();
                 if(int.Parse(Request.Form["walkIn"].ToString()) == 1)
@@ -657,7 +738,16 @@ namespace Reservation.Controllers
                 reservationModel.City = Request.Form["city"].ToString();
                 reservationModel.Zip = "";
                 reservationModel.State = "";
-                reservationModel.Country = Request.Form["nationality"].ToString();
+                if (Request.Form["nationality"].ToString() != "0")
+                {
+                    NationalityModel nationality = (NationalityModel)NationalityBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["nationality"].ToString()));
+                    reservationModel.Country = nationality.Code;
+                }
+                else
+                {
+                    reservationModel.Country = "";
+
+                }
                 reservationModel.Language = "";
                 reservationModel.ArrivalDate = DateTime.Parse(Request.Form["arrival"].ToString());
                 reservationModel.OriginalArrivalDate = DateTime.Parse(Request.Form["arrival"].ToString());
@@ -728,7 +818,7 @@ namespace Reservation.Controllers
 
                 reservationModel.BookerDetails = "";
                 reservationModel.NoPost = false;
-                reservationModel.PrintRate = true;
+                reservationModel.PrintRate = false;
                 reservationModel.ConfirmationStatus = true;
                 reservationModel.VideoCheckOutStatus = false;
                 reservationModel.CRSNo = "";
@@ -737,7 +827,7 @@ namespace Reservation.Controllers
                 reservationModel.DiscountReason = "";
                 reservationModel.Comment = Request.Form["comment"].ToString();
                 reservationModel.BalanceUSD = 0;
-                reservationModel.BalanceVND = 0;
+                reservationModel.BalanceVND = decimal.Parse(Request.Form["rateAfter"].ToString());
                 reservationModel.ApprovalCode = "";
                 reservationModel.ApprovalAmount = 0;
                 reservationModel.SuiteWith = "";
@@ -904,18 +994,18 @@ namespace Reservation.Controllers
                 folioModel.ARNo = "";
                 folioModel.FolioDate = reservationModel.ReservationDate;
                 folioModel.FolioNo = 1;
-                folioModel.ReservationID = reservationModel.ID;
+                folioModel.ReservationID = (int)reservationID;
                 folioModel.ProfileID = reservationModel.ProfileIndividualId;
                 folioModel.AccountName = reservationModel.LastName;
                 folioModel.Status = true;
                 folioModel.ConfirmationNo = reservationModel.ConfirmationNo;
-                folioModel.BalanceUSD = folioModel.BalanceVND = 0;
+                folioModel.BalanceUSD = folioModel.BalanceVND = reservationModel.RateAfterTax;
                 folioModel.CreateDate = folioModel.UpdateDate = DateTime.Now;
                 folioModel.UserInsertID = folioModel.UserUpdateID = reservationModel.UserInsertId;
                 FolioBO.Instance.Insert(folioModel);
                 #endregion
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "New reservation created successfully" });
+                return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNP : {reservationModel.ConfirmationNo}" });
 
             }
             catch (Exception ex)
@@ -938,6 +1028,7 @@ namespace Reservation.Controllers
        {
             try
             {
+
                 var data = _iReservationService.SearchReservation( searchType,  name,  firstName,  reservationHolder,  confirmationNo,
                 crsNo,  roomNo,  roomType,  package,  zone,  arrivalFrom,  arrivalTo,  roomSharer,  owner);
 
@@ -3859,5 +3950,406 @@ namespace Reservation.Controllers
         #region DatVP __ Resserrvation: Add On
         #endregion
 
+        #region DatVP __  Wait List
+        [HttpGet]
+        public async Task<IActionResult> SearchWaitList(string name, string priority, string market, string roomType, string reason, string rateCode, string phone, string date)
+        {
+            try
+            {
+                DateTime parsedDate;
+                if (!string.IsNullOrEmpty(date) && DateTime.TryParse(date, out parsedDate))
+                {
+                    var data = _iReservationService.SearchWaitlist(name, priority, market, roomType, reason, rateCode, phone, parsedDate);
+                    var result = (from d in data.AsEnumerable()
+                                  select d.Table.Columns.Cast<DataColumn>()
+                                      .ToDictionary(
+                                          col => col.ColumnName,
+                                          col => d[col.ColumnName]?.ToString()
+                                      )).ToList();
+                    return Json(result);
+                }
+                else
+                {
+                    return BadRequest("Invalid date format");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveWaitList()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
+                if (rsv == null || rsv.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Could not find Reservation" });
+
+                }
+                #region update status của reservation về trạng thái wait list
+                rsv.Status = 4;
+                rsv.UserInsertId  = int.Parse(Request.Form["userID"].ToString());
+                rsv.UpdateBy = rsv.SpecialUpdateBy = Request.Form["userName"].ToString();
+                rsv.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
+                ReservationBO.Instance.Update(rsv);
+                #endregion
+
+                #region insert vào bảng wait list
+                WaitListModel waitList = new WaitListModel();
+                waitList.ReservationID = rsv.ID;
+                waitList.ReasonID = int.Parse(Request.Form["reasoneID"].ToString());
+                waitList.PriorityID = int.Parse(Request.Form["priorityID"].ToString());
+                waitList.TelephoneNumber = Request.Form["telephone"].ToString();
+                waitList.Description = Request.Form["description"].ToString();
+                waitList.UserUpdateID = waitList.UserInsertID = int.Parse(Request.Form["userID"].ToString());
+                waitList.CreateDate = waitList.UpdateDate = DateTime.Now;
+                WaitListBO.Instance.Insert(waitList);
+                #endregion
+
+                #region ghi log activity log
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.ObjectID = rsv.ID;
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "WaitList";
+                activityLog.OldValue =  "";
+                activityLog.NewValue = $"[ReasonID]{waitList.ReasonID}[PriorityID]{waitList.PriorityID}[TelephoneNumber]{waitList.TelephoneNumber}[Description]{waitList.Description}";
+                activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "New wait list was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetWaitListByID(int waitListID)
+        {
+            try
+            {
+                WaitListModel waitList = (WaitListModel)WaitListBO.Instance.FindByPrimaryKey(waitListID);
+                return Json(waitList);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region DatVP __ OverBooking: Search
+        [HttpGet]
+        public async Task<IActionResult> SearchOverBooking()
+        {
+            try
+            {
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+                string sqlCommand = $"SELECT Date, RoomType, Quantity, OverBookLevel AS [NotoSell], CASE WHEN [Type] = 0 THEN (OverBookLevel - Quantity) ELSE '' END AS Overbooking, CASE WHEN [Type] = 0 THEN 'Number' ELSE 'Percentage' END AS [Type], CreateBy, CreateDate , UpdateBy, UpdateDate, ID, RoomTypeID FROM OverBooking WITH (NOLOCK)WHERE DATEDIFF(day,Date, '{businessDateModel[0].BusinessDate}') <= 0 ORDER BY Date ";
+                    var data = _iReservationService.SearchOverBooking(sqlCommand);
+                    var result = (from d in data.AsEnumerable()
+                                  select d.Table.Columns.Cast<DataColumn>()
+                                      .ToDictionary(
+                                          col => col.ColumnName,
+                                          col => d[col.ColumnName]?.ToString()
+                                      )).ToList();
+                    return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+
+        #region DatVP __ OverBooking: New
+        [HttpGet]
+        public async Task<IActionResult> GetCNumberOfRoom(int roomTypeID)
+        {
+            try
+            {
+                var result = RoomBO.GetNumberOfRoom(roomTypeID);
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveOverBooking()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                // Lấy chuỗi JSON từ Request.Form
+                var daysJson = Request.Form["days"].ToString();
+                List<string> days;
+
+                // Kiểm tra daysJson có rỗng hoặc không hợp lệ
+                if (!string.IsNullOrEmpty(daysJson))
+                {
+                    days = System.Text.Json.JsonSerializer.Deserialize<List<string>>(daysJson);
+                }
+                else
+                {
+                    return Json(new { code = 1, msg = "No days selected" });
+                }
+
+                var fromDateStr = Request.Form["fromDate"].ToString();
+                var toDateStr = Request.Form["toDate"].ToString();
+                var roomType = Request.Form["roomType"].ToString();
+                var obLevel = Request.Form["obLevel"].ToString();
+                var noToSell = Request.Form["noToSell"].ToString();
+                var type = Request.Form["type"].ToString();
+                var userName = Request.Form["userName"].ToString();
+                var userID = Request.Form["userID"].ToString();
+                RoomTypeModel roomTypeModel = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(int.Parse(roomType));
+                // Kiểm tra ngày từ fromDate đến toDate
+                if (!DateTime.TryParse(fromDateStr, out DateTime fromDate) || !DateTime.TryParse(toDateStr, out DateTime toDate))
+                {
+                    return Json(new { code = 1, msg = "Invalid date format." });
+                }
+
+                var dayNames = new List<string> { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+                var currentDate = fromDate;
+                while (currentDate <= toDate)
+                {
+                    var dayName = dayNames[(int)currentDate.DayOfWeek];
+                    currentDate = currentDate.AddDays(1);
+                    if (!days.Contains(dayName))
+                    {
+                        continue;
+                    }
+                    if(OverbookingBO.CheckOverBooking(int.Parse(roomType),currentDate) > 0)
+                    {
+                        return Json(new { code = 1, msg = "Invalid" });
+                    }
+                    OverbookingModel overBooking = new OverbookingModel();
+                    overBooking.RoomTypeID = roomTypeModel.ID;
+                    overBooking.RoomType = roomTypeModel.Code;
+                    overBooking.Quantity = int.Parse(noToSell);
+                    overBooking.Date = currentDate;
+                    overBooking.OverbookLevel = int.Parse(noToSell) + int.Parse(obLevel);
+                    overBooking.Type = 1;
+
+                    if (type == "Number")
+                    {
+                        overBooking.Type =0;
+
+                    }
+                    overBooking.CreateBy = overBooking.UpdateBy = userName;
+                    overBooking.CreateDate = overBooking.UpdateDate = DateTime.Now;
+                    OverbookingBO.Instance.Insert(overBooking);
+
+
+                }
+                ActivityLogModel activity = new ActivityLogModel();
+                activity.TableName = "Overbooking";
+                activity.ObjectID = 0;
+                activity.UserID = int.Parse(userID);
+                activity.UserName = userName;
+                activity.ChangeDate = DateTime.Now;
+                activity.Change = "Insert";
+                activity.OldValue = "";
+                activity.NewValue = $"Ro.Type: {roomTypeModel.Code} - Qty: {int.Parse(noToSell) + int.Parse(obLevel)} - On:${fromDate} - {toDate}";
+                ActivityLogBO.Instance.Insert(activity);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Over Booking was created successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ OverBooking: Activity Log
+        [HttpGet]
+        public async Task<IActionResult> GetActivityLogOverBooking()
+        {
+            try
+            {
+
+                string sqlCommand = $"SELECT UserName,  Convert(varchar,ChangeDate, 108) Time, ChangeDate Date, Change, OldValue, NewValue, Description FROM ActivityLog WITH (NOLOCK)WHERE TableName = 'Overbooking' ORDER BY ChangeDate";
+                var data = _iReservationService.ActivityLogOverbooking(sqlCommand);
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: CheckOutAll/Zero
+
+        [HttpPost]
+        public ActionResult CheckOutAll(List<CheckOutDTO> listItem,int userID, string userName)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if(listItem.Count > 0)
+                {
+                    foreach (var item in listItem)
+                    {
+                        ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(item.id));
+
+                        if (int.Parse(item.reservationStatus) == 1)
+                        {
+                            item.coStatus = "Not OK";
+                            item.message = "Today not equal departure date";
+                            continue;
+                        }
+                        List<FolioModel> folios = PropertyUtils.ConvertToList<FolioModel>(FolioBO.Instance.FindByAttribute("ReservationID",int.Parse(item.id)));
+                        if(folios.Count > 0)
+                        {
+                            foreach(var folio in folios)
+                            {
+                                if(folio.BalanceVND != 0)
+                                {
+
+                                    item.coStatus = "Not OK";
+                                    item.message = "Folio Not Balance with currency VND";
+                                    continue;
+                                }
+                            }
+                        }
+                        item.coStatus = "OK";
+                        item.message = "Checked Out";
+
+                        rsv.Status = 2;
+                        ReservationBO.Instance.Update(rsv);
+
+                        #region thêm log activity log
+                        ActivityLogModel activityLog = new ActivityLogModel();
+                        activityLog.TableName = "Reservation";
+                        activityLog.ObjectID = rsv.ID;
+                        activityLog.UserID = userID;
+                        activityLog.UserName = userName;
+                        activityLog.ChangeDate = DateTime.Now;
+                        activityLog.Change = "Status";
+                        activityLog.OldValue = "DUE OUT";
+                        activityLog.NewValue = "CHECKED OUT";
+                        activityLog.Description = "";
+                        ActivityLogBO.Instance.Insert(activityLog);
+                        #endregion
+                    }
+                }
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Check out all was  successfully",data = listItem });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: CheckOutAll
+
+        [HttpPost]
+        public ActionResult CheckOut(int userID, string userName,int reservationID)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                if (rsv == null  || rsv.ID == 0)
+                {
+                    return Json(new { code = 1, msg = " Could not find Reservation"});
+
+                }
+                List<FolioModel> folios = PropertyUtils.ConvertToList<FolioModel>(FolioBO.Instance.FindByAttribute("ReservationID", rsv.ID));
+                if(folios.Count > 0)
+                {
+                    for(int i = 0; i < folios.Count; i++)
+                    {
+                        if (folios[i].BalanceVND != 0)
+                        {
+                            return Json(new { code = 1, msg = "Folio not balance with currency VND" });
+
+                        }
+                    }
+                }
+                rsv.Status = 6;
+                ReservationBO.Instance.Update(rsv);
+
+                #region thêm log activity log
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.ObjectID = rsv.ID;
+                activityLog.UserID = userID;
+                activityLog.UserName = userName;
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "Status";
+                activityLog.OldValue = "DUE OUT";
+                activityLog.NewValue = "CHECKED OUT";
+                activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Check out was successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
     }
 }

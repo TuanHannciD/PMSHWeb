@@ -31,6 +31,9 @@ using User.Services.Implements;
 using User.Services.Interfaces;
 using RoomManagement.Controllers;
 using WebApp.Commons.Containts;
+using NightAudit.Controllers;
+using NightAudit.Services.Implements;
+using NightAudit.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,7 +54,8 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
 builder.Services.AddControllersWithViews()
  .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
-
+builder.Services.AddControllersWithViews()
+ .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
 builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
@@ -75,9 +79,14 @@ builder.Services.AddSingleton<IRoutingService, RoutingService>();
 builder.Services.AddSingleton<IFrontDeskService, FrontDeskService>();
 builder.Services.AddSingleton<ICashieringService, CashieringService>();
 builder.Services.AddSingleton<IPostService, PostService>();
+builder.Services.AddSingleton<ICrashierService, CrashierService>();
+builder.Services.AddSingleton<IInvoicingService, InvoicingService>();
+
 builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
 
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
+builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
