@@ -490,7 +490,9 @@
         font-weight: 600 !important;
     }
 
-
+.dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
+    display: none;
+}
 
 
 
