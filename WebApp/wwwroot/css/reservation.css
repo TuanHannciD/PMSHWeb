@@ -192,7 +192,6 @@
         }
 
         .form-group input[type="checkbox"] {
-            width: auto;
             padding: 0;
             margin-top: 2px;
         }
@@ -699,6 +698,7 @@ label {
 }
 
 input, select, textarea {
+    height:35px;
     padding: 8px;
     border: 1px solid #e2e8f0;
     border-radius: 4px;

@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Cashiering\Cashiering.csproj" />
     <ProjectReference Include="..\FrontDesk\FrontDesk.csproj" />
     <ProjectReference Include="..\HouseKeeping\HouseKeeping.csproj" />
+    <ProjectReference Include="..\NightAudit\NightAudit.csproj" />
     <ProjectReference Include="..\Miscellaneous\Miscellaneous.csproj" />
     <ProjectReference Include="..\Profile\Profile.csproj" />
     <ProjectReference Include="..\Report\Report.csproj" />

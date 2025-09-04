@@ -1,0 +1,320 @@
+﻿<link href="~/css/reservation.css" rel="stylesheet" />
+<div class="mt-3">
+    <div class="row">
+        <!-- Menu trái -->
+        <div class="col-md-2 mb-2">
+            <div class="menu-left">
+                <button class="toggle-btn"><i class="fas fa-bars"></i></button>
+                <a class="menu-item " href="/Reservation/NewReservation">NEW RESERVATION</a>
+                <a class="menu-item " href="/Reservation/SearchReservation">SEARCH RESERVATION</a>
+                <a class="menu-item " href="/Reservation/GroupReservation">GROUP RESERVATION</a>
+                <a class="menu-item " href="/Reservation/WaitList">WAIT LIST</a>
+                <a class="menu-item active" >OVER BOOKING</a>
+
+            </div>
+        </div>
+
+        <!-- Nội dung bên phải -->
+        <div class="col-md-10">
+            <div class="content-right">
+                <div class="header">
+                    <h3 id="content-title">
+                        OverBooking
+
+                    </h3>
+                    <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
+                </div>
+                <div>
+                    <div style="display:flex;column-gap:12px">
+                        <button class="submit-button-clear-reservation" onclick="searchReservation()">Search</button>
+
+                        <button class="submit-button-clear-reservation" onclick="openModalOverBooking()">New</button>
+                        <button class="submit-button-clear-reservation" onclick="getActivityLog()">Activity Log</button>
+
+                    </div>
+                </div>
+                <div>
+
+                    <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- DevExtreme DataGrid -->
+                    <div id="gridContainer" class="gridContainer mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal room move-->
+<div class="modal fade modal" id="modalActivityLog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Activity Log Overbooking</h5>
+                <button type="button" class="btn-close" onclick="closeActivityLog();"></button>
+            </div>
+            <div class="modal-body">
+                <div id="gridContainerActivityLog" class="gridContainer mt-2"></div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+            searchReservation();
+
+    });
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+
+                // Lấy ngày từ result (giả sử result có định dạng ISO như 'YYYY-MM-DDTHH:mm:ss')
+                const businessDate = new Date(result);
+                $('#fromDate').val(result.split('T')[0]);
+                $('#toDate').val(result.split('T')[0]);
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    function searchReservation() {
+        $("#loadingSpinnerForm").show();
+
+        $.ajax({
+            url: '/Reservation/SearchOverBooking',
+            type: 'get',
+            dataType: 'json',
+
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listData = result;
+                initializeDataGridSearch(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            },
+            complete: function () {
+                $("#loadingSpinnerForm").hide();
+            }
+        });
+
+    }
+    function initializeDataGridSearch(data) {
+        // Kiểm tra dữ liệu đầu vào
+
+        // Nếu cần giới hạn tổng số bản ghi, ví dụ 100 bản ghi
+        const limitedData = data.slice(0, 100);
+
+        $("#gridContainer").dxDataGrid({
+            dataSource: limitedData, // Sử dụng dữ liệu đã giới hạn
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: {
+                enabled: true, // Bật phân trang
+                pageSize: 15 // Mỗi trang 15 bản ghi
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 30], // Chỉ các kích thước trang cố định
+                showPageSizeSelector: true,
+                showInfo: true, // Hiển thị thông tin phân trang
+                showNavigationButtons: true
+            },
+            scrolling: {
+                mode: 'standard', // Thay 'virtual' bằng 'standard' để kiểm tra
+                showScrollbar: 'always',
+                useNative: false
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            onRowClick: function(e) {
+                waitListID = e.data.WaitListID;
+                $('#companyWaitList').val(e.data.Company);
+                $('#sourceWaitList').val(e.data.Source);
+                $('#phoneWaitList').val(e.data.Phone);
+                $('#agentWaitList').val(e.data.Agent);
+                $('#groupWaitList').val(e.data.Group);
+                $('#vipWaitList').val("");
+
+            },
+
+        });
+    }
+    function openModalOverBooking(){
+        getBusinessDate();
+        $('#modalOverBooking').modal('show');
+    }
+    function closeModalOverBooking(){
+        $('#modalOverBooking').modal('hide');
+
+    }
+    function getNumberOfRoom() {
+        return $.ajax({
+            url: '/Reservation/GetCNumberOfRoom',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            data:{roomTypeID : $('#roomType').val()},
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#noToSell').val(result);
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    function SaveOverBooking() {
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        // Chuyển days thành mảng các ngày được chọn
+        const days = [];
+        if ($('#sun').is(':checked')) days.push('sun');
+        if ($('#mon').is(':checked')) days.push('mon');
+        if ($('#tue').is(':checked')) days.push('tue');
+        if ($('#wed').is(':checked')) days.push('wed');
+        if ($('#thu').is(':checked')) days.push('thu');
+        if ($('#fri').is(':checked')) days.push('fri');
+        if ($('#sat').is(':checked')) days.push('sat');
+
+        const roomType = $('#roomType').val();
+        const obLevel = $('#obLevel').val();
+        const noToSell = $('#noToSell').val();
+        const type = $('input[name="type"]:checked').next('label').text().trim();
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+
+        var formData = new FormData();
+        formData.append('fromDate', fromDate);
+        formData.append('toDate', toDate);
+        // Gửi days dưới dạng JSON string của mảng
+        formData.append('days', JSON.stringify(days));
+        formData.append('roomType', roomType);
+        formData.append('obLevel', obLevel);
+        formData.append('noToSell', noToSell);
+        formData.append('type', type);
+        formData.append('userName', userName);
+        formData.append('userID', userID);
+
+        $.ajax({
+            url: '/Reservation/SaveOverBooking',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    closeModalOverBooking();
+                    searchReservation();
+                    clearForm();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+            },
+            error: function (xhr, statusText, err) {
+                // Xử lý lỗi
+            }
+        });
+    }
+    function clearForm(){
+        $('#roomType').val(0);
+        $('#obLevel').val('');
+       $('#noToSell').val('');
+       getBusinessDate();
+    }
+
+    function getActivityLog() {
+
+        $.ajax({
+            url: '/Reservation/GetActivityLogOverBooking',
+            type: 'get',
+            dataType: 'json',
+
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridActivityLog(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            },
+            complete: function () {
+                $("#loadingSpinnerForm").hide();
+            }
+        });
+        $('#modalActivityLog').modal('show');
+    }
+    function initializeDataGridActivityLog(data) {
+        // Kiểm tra dữ liệu đầu vào
+
+        // Nếu cần giới hạn tổng số bản ghi, ví dụ 100 bản ghi
+        const limitedData = data.slice(0, 100);
+
+        $("#gridContainerActivityLog").dxDataGrid({
+            dataSource: limitedData, // Sử dụng dữ liệu đã giới hạn
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: {
+                enabled: true, // Bật phân trang
+                pageSize: 15 // Mỗi trang 15 bản ghi
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 30], // Chỉ các kích thước trang cố định
+                showPageSizeSelector: true,
+                showInfo: true, // Hiển thị thông tin phân trang
+                showNavigationButtons: true
+            },
+            scrolling: {
+                mode: 'standard', // Thay 'virtual' bằng 'standard' để kiểm tra
+                showScrollbar: 'always',
+                useNative: false
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+
+
+        });
+    }
+    function closeActivityLog(){
+                $('#modalActivityLog').modal('hide');
+
+    }
+</script>

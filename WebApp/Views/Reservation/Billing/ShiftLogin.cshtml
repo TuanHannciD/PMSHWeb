@@ -16,21 +16,16 @@
                         <label for="passwordInput" class="form-label">Password</label>
                         <input type="password" class="form-control" id="passwordInput"  >
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <button type="submit" class="btn btn-primary w-100" onclick="crashierLogin();">Login</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    const crashierID = JSON.parse(localStorage.getItem("crashierID"));
-    const crashierNo = JSON.parse(localStorage.getItem("crashierNo"));
-    const isCrashierLogin = JSON.parse(localStorage.getItem("isCrashierLogin"));
-    function openModalShilftLogin(){
-        if(isCrashierLogin == "0"){
-            $('#modalShiftLogin').modal('show');
 
-        }
+    function openModalShilftLogin(){
+            $('#modalShiftLogin').modal('show');
     }
     function closeModalShilftLogin(){
         $('#modalShiftLogin').modal('hide');
@@ -38,18 +33,25 @@
 
     function crashierLogin() {
         var formData = new FormData();
-        formData.append('LoginName', $('#txtLoginName').val());
-        formData.append('Password', $('#txtPassword').val());
+        formData.append('LoginName', $('#crashierNoInput').val());
+        formData.append('Password', $('#passwordInput').val());
 
         $.ajax({
-            url: '/User/Login',
+            url: '/Billing/ShiftLogin',
             type: 'POST',
             processData: false,
             contentType: false,
             // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             data: formData,
             success: function (data) {
+                if(data.userID == 0){
+                    showToast('Error', "Login Name or Password is not correct!", false);
 
+                }
+                else{
+                    getCrashierInShift();
+                    closeModalShilftLogin();
+                }
 
             },
             error: function (xhr, statusText, err) {
@@ -57,5 +59,29 @@
             }
         });
 
+    }
+    function getCrashierInShift(){
+        var formData = new FormData();
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        formData.append('userID', userID);
+
+        $.ajax({
+            url: '/Billing/GetCrashierInShift',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                console.log(data);
+                    localStorage.setItem("shiftID", data[0].id);
+                    localStorage.setItem("shittName", data[0].userName);
+                    localStorage.setItem("crashierLogin", "InShift");
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
     }
 </script>

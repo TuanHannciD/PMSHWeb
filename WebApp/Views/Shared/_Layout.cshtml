@@ -277,6 +277,8 @@
                                 <a asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a>
+                                <a asp-area="" asp-controller="Reservation" asp-action="WaitList">Wait List</a>
+                                <a asp-area="" asp-controller="Reservation" asp-action="OverBooking">Over Booking</a>
 
                             </div>
                         </li>
@@ -300,6 +302,7 @@
                 
                         <li class="nav-item"><a class="nav-link" href="#">CASHIERING</a>                           
                             <div class="dropdown-menu-custom">
+
                                 <a asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a>   
@@ -311,6 +314,14 @@
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="Report" asp-action="OtherReport">View Report</a>
                                 <a asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a>
+                            </div>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#">NIGHT AUDIT</a>
+                            <div class="dropdown-menu-custom">
+                                <a asp-area="" asp-controller="NightAudit" asp-action="RoomRate">Room Rate</a>
+                                <a asp-area="" asp-controller="Report" asp-action="OtherReportChart">Fixed Charge</a>
+                                <a asp-area="" asp-controller="NightAudit" asp-action="RunNightAudit">Run Night Audit</a>
+
                             </div>
                         </li>
 

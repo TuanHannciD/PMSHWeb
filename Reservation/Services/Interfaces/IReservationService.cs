@@ -58,10 +58,26 @@ namespace Reservation.Services.Interfaces
         /// <summary>
         /// DatVP: search reservation
         /// </summary>
-        /// <returns>Giá trị net</returns>
+        /// <returns>datâtble list reservation</returns>
         DataTable SearchReservation(int searchType, string name, string firstName, string reservationHolder, string confirmationNo,
             string crsNo, string roomNo, string roomType, string package, string zone, DateTime arrivalFrom, DateTime arrivalTo, string roomSharer, string owner);
 
 
+        /// <summary>
+        /// DatVP: search waitt list
+        /// </summary>
+        /// <returns>datatable list wait lít</returns>
+        DataTable SearchWaitlist(string name, string priority, string market, string roomType,  string reason, string rateCode, string phone, DateTime date);
+
+        /// <summary>
+        /// DatVP: se
+        /// </summary>
+        /// <returns>datatable list wait lít</returns>
+        DataTable SearchOverBooking(string sqlCommand);
+
+        DataTable ActivityLogOverbooking(string sqlCommand);
+
+        string GetConfigETA();
+        string GetConfigETD();
     }
 }
