@@ -15,6 +15,7 @@ namespace Miscellaneous.Services.Interfaces
         DataTable ReportCustom(DateTime fromDate, DateTime toDate, string mealShiftID, string roomNo);
         DataTable ReportCancelMeal(DateTime fromDate, DateTime toDate);
         DataTable ReportWaiveMeal(DateTime fromDate, DateTime toDate, string mealShift, string roomNo);
+       
         DataTable ReportUsedBreakFastMeal(DateTime fromDate, DateTime toDate, string roomNo);
         DataTable ReportUseBreakFastMeal(DateTime fromDate, DateTime toDate, string roomNo);
         DataTable IssuingCardToGuests(string firstName, string confirmationNo, string crsNo, string roomNo, string zone, string guestName, string rsvHolder, string isShowRS, string isShowCard, DateTime arrFrom, DateTime arrTo, string status, string ci_Day, string co_Day, string findCardID, string reservationID);

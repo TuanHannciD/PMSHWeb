@@ -455,11 +455,11 @@
 
         $.when.apply($, requests).done(function () {
             $("#loadingSpinnerRateCode").hide();
-            alert("Tất cả card đã được hủy thành công!");
+            showToast("Success", "Card Canceled successfully!", true);
             reloadGrid();
         }).fail(function () {
             $("#loadingSpinnerRateCode").hide();
-            alert("Có lỗi xảy ra khi hủy card!");
+            showToast("Error", "Card Canceled error!", false);
         });
     }
 

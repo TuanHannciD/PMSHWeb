@@ -7,8 +7,9 @@ using BaseBusiness.bc;
 
 namespace BaseBusiness.Model
 {
-    public class LostAndFoundModel : BaseModel
+    public class lafLostAndFoundModel : BaseModel
     {
+   
         public int ID { get; set; }
         public int StatusID { get; set; }
         public DateTime TransactionDate { get; set; }

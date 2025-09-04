@@ -3402,118 +3402,272 @@ namespace HouseKeeping.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //public IActionResult Insertlaf(int id, LostAndFoundModel model)
+        //{
+        //    var username = HttpContext.Session.GetString("LoginName") ?? "";
+
+        //    model.CreatedBy = username;
+        //    model.UpdatedBy = username;
+
+
+        //    using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+        //    {
+        //        conn.Open();
+        //        using (var cmd = new SqlCommand(@"
+        //        insert into lafLostAndFound 
+        //        (StatusID, TransactionDate, Description, ZoneID, Location, Finder, SurrenderBy, SignatureName, PlaceStore, SendDate, SendName, QualityTypeID, Notes, CreatedBy, CreatedDate, UpdatedBy, UpdateDate) 
+        //        values 
+        //        (@StatusID, @TransactionDate, @Description, @ZoneID, @Location, @Finder, @SurrenderBy, @SignatureName, @PlaceStore, @SendDate, @SendName, @QualityTypeID, @Notes, @CreatedBy, @CreatedDate, @UpdatedBy, @UpdateDate);
+        //        SELECT SCOPE_IDENTITY();", conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@StatusID", model.StatusID);
+        //            cmd.Parameters.AddWithValue("@TransactionDate", model.TransactionDate);
+        //            cmd.Parameters.AddWithValue("@Description", model.Description ?? "");
+        //            cmd.Parameters.AddWithValue("@ZoneID", model.ZoneID);
+        //            cmd.Parameters.AddWithValue("@Location", model.Location ?? "");
+        //            cmd.Parameters.AddWithValue("@Finder", model.Finder ?? "");
+        //            cmd.Parameters.AddWithValue("@SurrenderBy", model.SurrenderBy ?? "");
+        //            cmd.Parameters.AddWithValue("@SignatureName", model.SignatureName ?? "");
+        //            cmd.Parameters.AddWithValue("@PlaceStore", model.PlaceStore ?? "");
+        //            cmd.Parameters.AddWithValue("@SendDate", model.SendDate == DateTime.MinValue ? new DateTime(1900, 1, 1) : model.SendDate);
+        //            cmd.Parameters.AddWithValue("@SendName", model.SendName ?? "");
+        //            cmd.Parameters.AddWithValue("@QualityTypeID", model.QualityTypeID);
+        //            cmd.Parameters.AddWithValue("@Notes", model.Notes ?? "");
+        //            cmd.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
+        //            cmd.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+        //            cmd.Parameters.AddWithValue("@UpdatedBy", model.UpdatedBy);
+        //            cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+
+        //            var newId = Convert.ToInt32(cmd.ExecuteScalar());
+        //            return Json(new { success = true, id = newId });
+        //        }
+        //    }
+        //}
+
+        //            using (SqlCommand cmd = new SqlCommand(sql, conn))
+        //            {
+        //                // Gán tham số
+        //                cmd.Parameters.Add("@StatusID", SqlDbType.Int).Value = model.StatusID;
+        //                cmd.Parameters.Add("@TransactionDate", SqlDbType.DateTime).Value = model.TransactionDate != DateTime.MinValue ? model.TransactionDate : (object)DBNull.Value;
+        //                cmd.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = model.Description ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@ZoneID", SqlDbType.Int).Value = model.ZoneID;
+        //                cmd.Parameters.Add("@Location", SqlDbType.NVarChar, 4000).Value = model.Location ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@Finder", SqlDbType.NVarChar, 4000).Value = model.Finder ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@SurrenderBy", SqlDbType.NVarChar, 4000).Value = model.SurrenderBy ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@SignatureName", SqlDbType.NVarChar, 4000).Value = model.SignatureName ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@PlaceStore", SqlDbType.NVarChar, 4000).Value = model.PlaceStore ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@SendDate", SqlDbType.DateTime).Value = model.SendDate != DateTime.MinValue ? model.SendDate : (object)DBNull.Value;
+        //                cmd.Parameters.Add("@SendName", SqlDbType.NVarChar, 4000).Value = model.SendName ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@QualityTypeID", SqlDbType.Int).Value = model.QualityTypeID;
+        //                cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 4000).Value = model.Notes ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@UpdatedBy", SqlDbType.NVarChar, 20).Value = model.UpdatedBy ?? (object)DBNull.Value;
+        //                cmd.Parameters.Add("@UpdateDate", SqlDbType.DateTime).Value = model.UpdateDate != DateTime.MinValue ? model.UpdateDate : (object)DBNull.Value;
+        //                cmd.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+
+        //                int rowsAffected = cmd.ExecuteNonQuery();
+
+        //                if (rowsAffected > 0)
+        //                    return Json(new { success = true, message = "Cập nhật thành công" });
+        //                else
+        //                    return Json(new { success = false, message = "Không tìm thấy bản ghi để cập nhật" });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log lỗi ở đây nếu cần
+        //        return Json(new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpPost]
+        //public IActionResult Deletelaf(int id, LostAndFoundModel model)
+        //{
+        //    var username = HttpContext.Session.GetString("LoginName") ?? "";
+
+        //    using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+        //    {
+        //        conn.Open();
+
+        //        // Check xem Card có tồn tại chưa
+        //        string checkSql = "SELECT COUNT(*) FROM lafLostAndFound WHERE ID = @ID";
+        //        using (var checkCmd = new SqlCommand(checkSql, conn))
+        //        {
+        //            checkCmd.Parameters.AddWithValue("@ID", model.ID);
+        //            int count = (int)checkCmd.ExecuteScalar();
+        //            if (count == 0)
+        //            {
+        //                return NotFound(new { success = false, message = "LAF ID không tồn tại trong DB" });
+        //            }
+        //        }
+
+        //        // Xóa bản ghi
+        //        string sql = "DELETE FROM lafLostAndFound WHERE ID = @ID";
+        //        using (var cmd = new SqlCommand(sql, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@ID", model.ID);
+
+        //            int rows = cmd.ExecuteNonQuery();
+        //            return Ok(new { success = rows > 0, id = model.ID });
+        //        }
+        //    }
+        //}
         [HttpPost]
-        public IActionResult Insertlaf(int id, LostAndFoundModel model)
+        public ActionResult InsertLostAndFound()
         {
-            var username = HttpContext.Session.GetString("LoginName") ?? "";
-
-            model.CreatedBy = username;
-            model.UpdatedBy = username;
-
-
-            using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+            ProcessTransactions pt = new ProcessTransactions();
+            try
             {
-                conn.Open();
-                using (var cmd = new SqlCommand(@"
-                insert into lafLostAndFound 
-                (StatusID, TransactionDate, Description, ZoneID, Location, Finder, SurrenderBy, SignatureName, PlaceStore, SendDate, SendName, QualityTypeID, Notes, CreatedBy, CreatedDate, UpdatedBy, UpdateDate) 
-                values 
-                (@StatusID, @TransactionDate, @Description, @ZoneID, @Location, @Finder, @SurrenderBy, @SignatureName, @PlaceStore, @SendDate, @SendName, @QualityTypeID, @Notes, @CreatedBy, @CreatedDate, @UpdatedBy, @UpdateDate);
-                SELECT SCOPE_IDENTITY();", conn))
-                {
-                    cmd.Parameters.AddWithValue("@StatusID", model.StatusID);
-                    cmd.Parameters.AddWithValue("@TransactionDate", model.TransactionDate);
-                    cmd.Parameters.AddWithValue("@Description", model.Description ?? "");
-                    cmd.Parameters.AddWithValue("@ZoneID", model.ZoneID);
-                    cmd.Parameters.AddWithValue("@Location", model.Location ?? "");
-                    cmd.Parameters.AddWithValue("@Finder", model.Finder ?? "");
-                    cmd.Parameters.AddWithValue("@SurrenderBy", model.SurrenderBy ?? "");
-                    cmd.Parameters.AddWithValue("@SignatureName", model.SignatureName ?? "");
-                    cmd.Parameters.AddWithValue("@PlaceStore", model.PlaceStore ?? "");
-                    cmd.Parameters.AddWithValue("@SendDate", model.SendDate == DateTime.MinValue ? new DateTime(1900, 1, 1) : model.SendDate);
-                    cmd.Parameters.AddWithValue("@SendName", model.SendName ?? "");
-                    cmd.Parameters.AddWithValue("@QualityTypeID", model.QualityTypeID);
-                    cmd.Parameters.AddWithValue("@Notes", model.Notes ?? "");
-                    cmd.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
-                    cmd.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@UpdatedBy", model.UpdatedBy);
-                    cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+                pt.OpenConnection();
+                pt.BeginTransaction();
 
-                    var newId = Convert.ToInt32(cmd.ExecuteScalar());
-                    return Json(new { success = true, id = newId });
-                }
-            }
-        }
+                lafLostAndFoundModel lafModel = new lafLostAndFoundModel();
 
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
-                    {
-                        // Gán tham số
-                        cmd.Parameters.Add("@StatusID", SqlDbType.Int).Value = model.StatusID;
-                        cmd.Parameters.Add("@TransactionDate", SqlDbType.DateTime).Value = model.TransactionDate != DateTime.MinValue ? model.TransactionDate : (object)DBNull.Value;
-                        cmd.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = model.Description ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@ZoneID", SqlDbType.Int).Value = model.ZoneID;
-                        cmd.Parameters.Add("@Location", SqlDbType.NVarChar, 4000).Value = model.Location ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@Finder", SqlDbType.NVarChar, 4000).Value = model.Finder ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@SurrenderBy", SqlDbType.NVarChar, 4000).Value = model.SurrenderBy ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@SignatureName", SqlDbType.NVarChar, 4000).Value = model.SignatureName ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@PlaceStore", SqlDbType.NVarChar, 4000).Value = model.PlaceStore ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@SendDate", SqlDbType.DateTime).Value = model.SendDate != DateTime.MinValue ? model.SendDate : (object)DBNull.Value;
-                        cmd.Parameters.Add("@SendName", SqlDbType.NVarChar, 4000).Value = model.SendName ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@QualityTypeID", SqlDbType.Int).Value = model.QualityTypeID;
-                        cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 4000).Value = model.Notes ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@UpdatedBy", SqlDbType.NVarChar, 20).Value = model.UpdatedBy ?? (object)DBNull.Value;
-                        cmd.Parameters.Add("@UpdateDate", SqlDbType.DateTime).Value = model.UpdateDate != DateTime.MinValue ? model.UpdateDate : (object)DBNull.Value;
-                        cmd.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+                // Lấy dữ liệu từ form (dùng .ToString())
+                lafModel.StatusID = !string.IsNullOrEmpty(Request.Form["statusID"].ToString())
+                                    ? int.Parse(Request.Form["statusID"].ToString())
+                                    : 0;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                lafModel.TransactionDate = !string.IsNullOrEmpty(Request.Form["transactionDate"].ToString())
+                                           ? DateTime.Parse(Request.Form["transactionDate"].ToString())
+                                           : DateTime.Now;
 
-                        if (rowsAffected > 0)
-                            return Json(new { success = true, message = "Cập nhật thành công" });
-                        else
-                            return Json(new { success = false, message = "Không tìm thấy bản ghi để cập nhật" });
-                    }
-                }
+                lafModel.Description = Request.Form["description"].ToString();
+                lafModel.ZoneID = !string.IsNullOrEmpty(Request.Form["zoneID"].ToString())
+                                  ? int.Parse(Request.Form["zoneID"].ToString())
+                                  : 0;
+
+                lafModel.Location = Request.Form["location"].ToString();
+                lafModel.Finder = Request.Form["finder"].ToString();
+                lafModel.SurrenderBy = Request.Form["surrenderBy"].ToString();
+                lafModel.SignatureName = Request.Form["signatureName"].ToString();
+                lafModel.PlaceStore = Request.Form["placeStore"].ToString();
+
+                lafModel.SendDate = !string.IsNullOrEmpty(Request.Form["sendDate"].ToString())
+                                    ? DateTime.Parse(Request.Form["sendDate"].ToString())
+                                    : DateTime.MinValue;
+
+                lafModel.SendName = Request.Form["sendName"].ToString();
+                lafModel.QualityTypeID = !string.IsNullOrEmpty(Request.Form["qualityTypeID"].ToString())
+                                         ? int.Parse(Request.Form["qualityTypeID"].ToString())
+                                         : 0;
+
+                lafModel.Notes = Request.Form["notes"].ToString();
+
+                // Thông tin người dùng
+                lafModel.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                lafModel.UpdatedBy = lafModel.CreatedBy;
+                lafModel.CreatedDate = DateTime.Now;
+                lafModel.UpdateDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long lafId = lafLostAndFoundBO.Instance.Insert(lafModel);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = lafId });
             }
             catch (Exception ex)
             {
-                // Log lỗi ở đây nếu cần
+                pt.RollBack();
                 return Json(new { success = false, message = ex.Message });
             }
-        }
-
-        [HttpPost]
-        public IActionResult Deletelaf(int id, LostAndFoundModel model)
-        {
-            var username = HttpContext.Session.GetString("LoginName") ?? "";
-
-            using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+            finally
             {
-                conn.Open();
-
-                // Check xem Card có tồn tại chưa
-                string checkSql = "SELECT COUNT(*) FROM lafLostAndFound WHERE ID = @ID";
-                using (var checkCmd = new SqlCommand(checkSql, conn))
-                {
-                    checkCmd.Parameters.AddWithValue("@ID", model.ID);
-                    int count = (int)checkCmd.ExecuteScalar();
-                    if (count == 0)
-                    {
-                        return NotFound(new { success = false, message = "LAF ID không tồn tại trong DB" });
-                    }
-                }
-
-                // Xóa bản ghi
-                string sql = "DELETE FROM lafLostAndFound WHERE ID = @ID";
-                using (var cmd = new SqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ID", model.ID);
-
-                    int rows = cmd.ExecuteNonQuery();
-                    return Ok(new { success = rows > 0, id = model.ID });
-                }
+                pt.CloseConnection();
             }
         }
+        [HttpPost]
+        public ActionResult UpdateLostAndFound()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
 
+                lafLostAndFoundModel lafModel = new lafLostAndFoundModel();
+
+                lafModel.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                  ? int.Parse(Request.Form["id"])
+                  : 0;
+
+                // Lấy dữ liệu từ form (dùng .ToString())
+                lafModel.StatusID = !string.IsNullOrEmpty(Request.Form["statusID"].ToString())
+                                    ? int.Parse(Request.Form["statusID"].ToString())
+                                    : 0;
+
+                lafModel.TransactionDate = !string.IsNullOrEmpty(Request.Form["transactionDate"].ToString())
+                                           ? DateTime.Parse(Request.Form["transactionDate"].ToString())
+                                           : DateTime.Now;
+
+                lafModel.Description = Request.Form["description"].ToString();
+                lafModel.ZoneID = !string.IsNullOrEmpty(Request.Form["zoneID"].ToString())
+                                  ? int.Parse(Request.Form["zoneID"].ToString())
+                                  : 0;
+
+                lafModel.Location = Request.Form["location"].ToString();
+                lafModel.Finder = Request.Form["finder"].ToString();
+                lafModel.SurrenderBy = Request.Form["surrenderBy"].ToString();
+                lafModel.SignatureName = Request.Form["signatureName"].ToString();
+                lafModel.PlaceStore = Request.Form["placeStore"].ToString();
+
+                lafModel.SendDate = !string.IsNullOrEmpty(Request.Form["sendDate"].ToString())
+                                    ? DateTime.Parse(Request.Form["sendDate"].ToString())
+                                    : DateTime.MinValue;
+
+                lafModel.SendName = Request.Form["sendName"].ToString();
+                lafModel.QualityTypeID = !string.IsNullOrEmpty(Request.Form["qualityTypeID"].ToString())
+                                         ? int.Parse(Request.Form["qualityTypeID"].ToString())
+                                         : 0;
+
+                lafModel.Notes = Request.Form["notes"].ToString();
+
+                // Thông tin người dùng
+                lafModel.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                lafModel.UpdatedBy = lafModel.CreatedBy;
+                lafModel.CreatedDate = DateTime.Now;
+                lafModel.UpdateDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                lafLostAndFoundBO.Instance.Update(lafModel);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteLostAndFound()
+        {
+            try
+            {
+
+                lafLostAndFoundModel lafModel = (lafLostAndFoundModel)lafLostAndFoundBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (lafModel == null || lafModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Lost And Found" });
+
+                }
+                lafLostAndFoundBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Lost And Found was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
 
     }
 }

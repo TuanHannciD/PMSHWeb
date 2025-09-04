@@ -378,7 +378,7 @@
         const formData = $("#lostFoundForm").serialize();
 
         $.ajax({
-            url: "/HouseKeeping/Insertlaf",
+            url: "/HouseKeeping/InsertLostAndFound",
             type: "POST",
             data: formData,
             success: function (res) {
@@ -397,13 +397,16 @@
         });
     });
 
-        // Xử lý update (delegated binding)
-    $(document).on("click", "#btnUpdateLostFound", function () {
-        
-        const formData = $("#lostFoundForm").serialize();
-        const id = selectedRowData.id;
+       $(document).on("click", "#btnUpdateLostFound", function () {
+        let formData = $("#lostFoundForm").serialize();
+
+        // Thêm ID vào formData (nếu API cần ID để update)
+        if (selectedRowData && selectedRowData.id) {
+            formData += "&ID=" + encodeURIComponent(selectedRowData.id);
+        }
+
         $.ajax({
-            url: "/HouseKeeping/Updatelaf?id=" + id,
+            url: "/HouseKeeping/UpdateLostAndFound",
             type: "POST",
             data: formData,
             success: function (res) {
@@ -412,14 +415,16 @@
                     $("#lostFoundModal").modal("hide");
                     reloadGrid(); // reload lại grid
                 } else {
-                     showToast("Error", "Update failed!", false);
+                    showToast("Error", res.message || "Update failed!", false);
                 }
             },
-            error: function (xhr) {
-               showToast("Error", "Update error!", false);
+                error: function (xhr) {
+                console.error("Update error detail:", xhr.responseText);
+                showToast("Error", "Update error! " + xhr.responseText, false);
             }
         });
     });
+
             $("#btnDelete").click(function () {
         if (!selectedRowData) {
             DevExpress.ui.notify("Please select a row first!", "warning", 2000);
@@ -443,16 +448,17 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // AJAX xóa chỉ chạy khi người dùng confirm
-                $.ajax({
-                    url: "/HouseKeeping/Deletelaf?id=" + id,
-                    type: "POST", // hoặc DELETE nếu backend hỗ trợ
+                    $.ajax({
+                    url: "/HouseKeeping/DeleteLostAndFound",
+                    type: "POST",
+                    data: { id: id }, // 👈 gửi đúng key "id"
                     success: function(res) {
-                        if (res.success) {
-                            showToast("Success", "Deleted successfully!", true);
-                            reloadGrid(); // reload lại grid
-                            selectedRowData = null; // reset
+                        if (res.code === 0) {
+                            showToast("Success", res.msg, true);
+                            reloadGrid();
+                            selectedRowData = null;
                         } else {
-                            showToast("Error", "Delete failed: " + res.message, false);
+                            showToast("Error", res.msg, false);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -460,6 +466,7 @@
                         showToast("Error", "Delete error!", false);
                     }
                 });
+
             }
         });
     });
