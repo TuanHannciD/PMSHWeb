@@ -49,7 +49,7 @@ namespace BaseBusiness.BO
         }
         public static List<ReservationModel> GetReservationMaster(int reservationID)
         {
-            string query = $"sselect * from Reservation where Relationship = {reservationID} and ReservationNo = 0";
+            string query = $"select * from Reservation where Relationship = {reservationID} and ReservationNo = 0";
             return instance.GetList<ReservationModel>(query);
         }
         public static List<ReservationModel> GetReservationByConfirmationNo(string confirmationNo)

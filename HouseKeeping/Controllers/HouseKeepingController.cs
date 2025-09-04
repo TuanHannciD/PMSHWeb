@@ -3402,10 +3402,161 @@ namespace HouseKeeping.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult InsertLostAndFound()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
 
+                lafLostAndFoundModel lafModel = new lafLostAndFoundModel();
 
-     
+                // Lấy dữ liệu từ form (dùng .ToString())
+                lafModel.StatusID = !string.IsNullOrEmpty(Request.Form["statusID"].ToString())
+                                    ? int.Parse(Request.Form["statusID"].ToString())
+                                    : 0;
 
+                lafModel.TransactionDate = !string.IsNullOrEmpty(Request.Form["transactionDate"].ToString())
+                                           ? DateTime.Parse(Request.Form["transactionDate"].ToString())
+                                           : DateTime.Now;
+
+                lafModel.Description = Request.Form["description"].ToString();
+                lafModel.ZoneID = !string.IsNullOrEmpty(Request.Form["zoneID"].ToString())
+                                  ? int.Parse(Request.Form["zoneID"].ToString())
+                                  : 0;
+
+                lafModel.Location = Request.Form["location"].ToString();
+                lafModel.Finder = Request.Form["finder"].ToString();
+                lafModel.SurrenderBy = Request.Form["surrenderBy"].ToString();
+                lafModel.SignatureName = Request.Form["signatureName"].ToString();
+                lafModel.PlaceStore = Request.Form["placeStore"].ToString();
+
+                lafModel.SendDate = !string.IsNullOrEmpty(Request.Form["sendDate"].ToString())
+                                    ? DateTime.Parse(Request.Form["sendDate"].ToString())
+                                    : DateTime.MinValue;
+
+                lafModel.SendName = Request.Form["sendName"].ToString();
+                lafModel.QualityTypeID = !string.IsNullOrEmpty(Request.Form["qualityTypeID"].ToString())
+                                         ? int.Parse(Request.Form["qualityTypeID"].ToString())
+                                         : 0;
+
+                lafModel.Notes = Request.Form["notes"].ToString();
+
+                // Thông tin người dùng
+                lafModel.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                lafModel.UpdatedBy = lafModel.CreatedBy;
+                lafModel.CreatedDate = DateTime.Now;
+                lafModel.UpdateDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long lafId = lafLostAndFoundBO.Instance.Insert(lafModel);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = lafId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateLostAndFound()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                lafLostAndFoundModel lafModel = new lafLostAndFoundModel();
+
+                lafModel.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                  ? int.Parse(Request.Form["id"])
+                  : 0;
+
+                // Lấy dữ liệu từ form (dùng .ToString())
+                lafModel.StatusID = !string.IsNullOrEmpty(Request.Form["statusID"].ToString())
+                                    ? int.Parse(Request.Form["statusID"].ToString())
+                                    : 0;
+
+                lafModel.TransactionDate = !string.IsNullOrEmpty(Request.Form["transactionDate"].ToString())
+                                           ? DateTime.Parse(Request.Form["transactionDate"].ToString())
+                                           : DateTime.Now;
+
+                lafModel.Description = Request.Form["description"].ToString();
+                lafModel.ZoneID = !string.IsNullOrEmpty(Request.Form["zoneID"].ToString())
+                                  ? int.Parse(Request.Form["zoneID"].ToString())
+                                  : 0;
+
+                lafModel.Location = Request.Form["location"].ToString();
+                lafModel.Finder = Request.Form["finder"].ToString();
+                lafModel.SurrenderBy = Request.Form["surrenderBy"].ToString();
+                lafModel.SignatureName = Request.Form["signatureName"].ToString();
+                lafModel.PlaceStore = Request.Form["placeStore"].ToString();
+
+                lafModel.SendDate = !string.IsNullOrEmpty(Request.Form["sendDate"].ToString())
+                                    ? DateTime.Parse(Request.Form["sendDate"].ToString())
+                                    : DateTime.MinValue;
+
+                lafModel.SendName = Request.Form["sendName"].ToString();
+                lafModel.QualityTypeID = !string.IsNullOrEmpty(Request.Form["qualityTypeID"].ToString())
+                                         ? int.Parse(Request.Form["qualityTypeID"].ToString())
+                                         : 0;
+
+                lafModel.Notes = Request.Form["notes"].ToString();
+
+                // Thông tin người dùng
+                lafModel.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                lafModel.UpdatedBy = lafModel.CreatedBy;
+                lafModel.CreatedDate = DateTime.Now;
+                lafModel.UpdateDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                lafLostAndFoundBO.Instance.Update(lafModel);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteLostAndFound()
+        {
+            try
+            {
+
+                lafLostAndFoundModel lafModel = (lafLostAndFoundModel)lafLostAndFoundBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (lafModel == null || lafModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Lost And Found" });
+
+                }
+                lafLostAndFoundBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Lost And Found was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
 
     }
 }
