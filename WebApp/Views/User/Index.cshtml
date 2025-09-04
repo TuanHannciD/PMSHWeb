@@ -222,6 +222,7 @@
 
                     // Gán dữ liệu mới vào localStorage (dưới dạng chuỗi JSON)
                     localStorage.setItem("PermissionNames", JSON.stringify(data.data));
+                    localStorage.setItem("crashierLogin", "NotYet");
 
                         localStorage.removeItem("Loginname");
 
@@ -242,9 +243,7 @@
 
     }
     $(document).ready(function () {
-        localStorage.setItem("crashierID", "0"); //id crashier
-        localStorage.setItem("crashierNo", "0"); // crashier no
-        localStorage.setItem("isCrashierLogin", "0"); // 1: crashier đã login,0: crashier chưa login
+
         $('#txtLoginName, #txtPassword').on('keypress', function (e) {
             if (e.which === 13) { // phím Enter
                 login();

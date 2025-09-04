@@ -3,28 +3,30 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Security.Policy;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using DevExpress.Charts.Native;
+using DevExpress.Data.ODataLinq;
+using DevExpress.DataAccess.DataFederation;
+using DevExpress.XtraCharts.Native;
+using HouseKeeping.Commons.Helpers;
 using HouseKeeping.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using HouseKeeping.Commons.Helpers;
-using System.Security.Policy;
-using DevExpress.XtraCharts.Native;
-using DevExpress.Charts.Native;
-using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using DevExpress.Data.ODataLinq;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using DevExpress.DataAccess.DataFederation;
-using System.Collections;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -115,10 +117,10 @@ namespace HouseKeeping.Controllers
         }
         public IActionResult FloorPlan()
         {
-         
+
             List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
             ViewBag.RoomTypeList = listrt;
-            
+
             List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
             ViewBag.FloorList = listfloor;
 
@@ -159,7 +161,7 @@ namespace HouseKeeping.Controllers
 
             List<hkpSectionModel> listsshkp = PropertyUtils.ConvertToList<hkpSectionModel>(hkpSectionBO.Instance.FindAll());
             ViewBag.hkpSectionList = listsshkp;
-          
+
             List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
             ViewBag.RoomTypeList = listrt;
 
@@ -189,7 +191,7 @@ namespace HouseKeeping.Controllers
             if (isPopup)
             {
                 ViewBag.TaskSheetNew = tasksheetnew;
-                return PartialView("RoomAttendentDailyWorksheet"); 
+                return PartialView("RoomAttendentDailyWorksheet");
             }
 
             return View();
@@ -202,7 +204,7 @@ namespace HouseKeeping.Controllers
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
 
-           
+
 
             return View();
         }
@@ -224,7 +226,7 @@ namespace HouseKeeping.Controllers
 
             List<hkpSectionModel> listsshkp = PropertyUtils.ConvertToList<hkpSectionModel>(hkpSectionBO.Instance.FindAll());
             ViewBag.hkpSectionList = listsshkp;
-            List<hkpAttendantModel> listatt= PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
+            List<hkpAttendantModel> listatt = PropertyUtils.ConvertToList<hkpAttendantModel>(hkpAttendantBO.Instance.FindAll());
             ViewBag.hkpAttendantList = listatt;
             List<RoomTypeModel> listrt = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindAll());
             ViewBag.RoomTypeList = listrt;
@@ -321,7 +323,7 @@ namespace HouseKeeping.Controllers
         }
 
         [HttpPost]
-        public IActionResult AutoMakeupServiceRoom(DateTime taskdateauto, string taskcodeauto, string attendantauto,string maxcreditauto,string userName,string roomIDs)
+        public IActionResult AutoMakeupServiceRoom(DateTime taskdateauto, string taskcodeauto, string attendantauto, string maxcreditauto, string userName, string roomIDs)
         {
             taskcodeauto = taskcodeauto ?? "";
             attendantauto = attendantauto ?? "";
@@ -375,7 +377,7 @@ namespace HouseKeeping.Controllers
                 #region 2.Process Attendant by Section
                 for (int i = 0; i < _SectionID.Length; i++)
                 {
-                    ProcessSourceAutoMakeupServiceRoom(Source,int.Parse(_SectionID[i].ToString()), attendantauto, taskdateauto, userName, taskcodeauto, maxcreditauto);
+                    ProcessSourceAutoMakeupServiceRoom(Source, int.Parse(_SectionID[i].ToString()), attendantauto, taskdateauto, userName, taskcodeauto, maxcreditauto);
                 }
                 #endregion
                 return Json(new { success = true, message = "Successfully" });
@@ -386,11 +388,11 @@ namespace HouseKeeping.Controllers
             }
         }
 
-        private IActionResult ProcessSourceAutoMakeupServiceRoom(DataTable Source, int _secID,string attendantauto,DateTime taskdateauto, string userName,string taskcodeauto,string maxcreditauto)
+        private IActionResult ProcessSourceAutoMakeupServiceRoom(DataTable Source, int _secID, string attendantauto, DateTime taskdateauto, string userName, string taskcodeauto, string maxcreditauto)
         {
             var getdetailts = hkpAttendantBO.GethkpAttendantProcessSource(_secID, GetSplitString(attendantauto));
             DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
-          //  DataTable dt = TextUtils.Select("SELECT DISTINCT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID = " + _secID + " AND ID IN ('" + ClassReservation.GetSplitString(_ListAttendant) + "') ");
+            //  DataTable dt = TextUtils.Select("SELECT DISTINCT ID FROM dbo.hkpAttendant WITH (NOLOCK) WHERE SectionID = " + _secID + " AND ID IN ('" + ClassReservation.GetSplitString(_ListAttendant) + "') ");
             if (dt.Rows.Count > 0)
             {
                 int _NoOfRoom = 0;
@@ -442,7 +444,7 @@ namespace HouseKeeping.Controllers
                 //mTS.TaskSheetNote = txtDescription.Text.Trim();
                 mTS.Status = false;
                 mTS.CreatedBy = mTS.UpdateBy = userName;
-                mTS.CreatedDate = mTS.UpdateDate =DateTime.Now;
+                mTS.CreatedDate = mTS.UpdateDate = DateTime.Now;
                 mTS.SessionID = _secID.ToString();
                 if (_secID > 0)
                 {
@@ -546,7 +548,7 @@ namespace HouseKeeping.Controllers
         }
 
         [HttpGet]
-        public IActionResult TaskSheetReport(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string reportstyle,string dueoutonly)
+        public IActionResult TaskSheetReport(DateTime fromDatere, DateTime toDatere, string taskcodeexpan, string attendantrepop, string tasksheetpopre, string reportstyle, string dueoutonly)
         {
             taskcodeexpan = taskcodeexpan ?? "";
             attendantrepop = attendantrepop ?? "";
@@ -644,7 +646,7 @@ namespace HouseKeeping.Controllers
                     return Json(result);
                 }
 
-               
+
 
                 return Json("");
             }
@@ -696,7 +698,7 @@ namespace HouseKeeping.Controllers
             }
         }
         [HttpGet]
-        public IActionResult SaveTaskSheetDetail(string taskcodenew, string attendantnew, DateTime businessDate,string userName)
+        public IActionResult SaveTaskSheetDetail(string taskcodenew, string attendantnew, DateTime businessDate, string userName)
         {
             taskcodenew = taskcodenew ?? "";
             attendantnew = attendantnew ?? "";
@@ -856,9 +858,9 @@ namespace HouseKeeping.Controllers
                         TaskNote = descriptiontc,
                         Credit = Convert.ToInt32(maxcredit),
                         RoomNo = room.RoomNo,
-                        RoomType=room.RoomTypeCode,
-                        HKStatusID=room.HKStatusID,
-                        FOStatus=room.FOStatus,
+                        RoomType = room.RoomTypeCode,
+                        HKStatusID = room.HKStatusID,
+                        FOStatus = room.FOStatus,
 
                     };
 
@@ -888,7 +890,7 @@ namespace HouseKeeping.Controllers
                 //                  FOStatus = d["FOStatus"]?.ToString() ?? ""
                 //              }).ToList()
 
-                return Json(new { success = true, message = "TasksheetDetails insert successfully." , taskSheetID = listhkpts[0].ID });
+                return Json(new { success = true, message = "TasksheetDetails insert successfully.", taskSheetID = listhkpts[0].ID });
             }
             catch (Exception ex)
             {
@@ -932,7 +934,7 @@ namespace HouseKeeping.Controllers
         }
 
         [HttpGet]
-        public IActionResult GuestServiceStatusData(string servicestatsu, string room, string roomStatus,string zone)
+        public IActionResult GuestServiceStatusData(string servicestatsu, string room, string roomStatus, string zone)
         {
             try
             {
@@ -972,7 +974,7 @@ namespace HouseKeeping.Controllers
             attendant = attendant ?? "";
             roomStatus = roomStatus ?? "";
             IsDueOut = IsDueOut ?? "";
-            attendant= FormatIdList(attendant);
+            attendant = FormatIdList(attendant);
             roomStatus = FormatIdList(roomStatus);
 
             try
@@ -1015,7 +1017,7 @@ namespace HouseKeeping.Controllers
             attendant = attendant ?? "";
             tasksheet = tasksheet ?? "";
             roomStatus = roomStatus ?? "";
-           
+
             try
             {
 
@@ -1074,7 +1076,7 @@ namespace HouseKeeping.Controllers
                 var result2 = (from d in dataTable2.AsEnumerable()
                                let attendantIdStr = Convert.ToString(d["AttendantID"]) ?? ""
                                let attendantIdInt = int.TryParse(attendantIdStr, out var tempId) ? tempId : 0
-                               let taskSheetNo = taskSheetList.FirstOrDefault(ts => ts.AttendantID == attendantIdInt).TaskSheetNo 
+                               let taskSheetNo = taskSheetList.FirstOrDefault(ts => ts.AttendantID == attendantIdInt).TaskSheetNo
                                select new
                                {
                                    TaskDate = d["TaskDate"]?.ToString() ?? "",
@@ -1118,7 +1120,7 @@ namespace HouseKeeping.Controllers
         }
 
         [HttpGet]
-        public IActionResult ViewTurnDown(string roomTypead, string sectionAd, string zoneAd,string fromRoom,string toRoom,string HKStatusID,string ReservationStatus, string arrived,string turndownStatus)
+        public IActionResult ViewTurnDown(string roomTypead, string sectionAd, string zoneAd, string fromRoom, string toRoom, string HKStatusID, string ReservationStatus, string arrived, string turndownStatus)
         {
             roomTypead = roomTypead ?? "";
             sectionAd = sectionAd ?? "";
@@ -1170,7 +1172,7 @@ namespace HouseKeeping.Controllers
         }
 
         [HttpGet]
-        public IActionResult TaskSheetStatusData(DateTime fromDate, DateTime toDate,string attendant, string room,string zone)
+        public IActionResult TaskSheetStatusData(DateTime fromDate, DateTime toDate, string attendant, string room, string zone)
         {
             attendant = attendant ?? "";
             room = room ?? "";
@@ -1264,7 +1266,7 @@ namespace HouseKeeping.Controllers
             }
         }
         [HttpGet]
-        public IActionResult FloorPlanData(string block, string floor, string roomtype, string owner,string zone)
+        public IActionResult FloorPlanData(string block, string floor, string roomtype, string owner, string zone)
         {
             try
             {
@@ -1504,7 +1506,7 @@ namespace HouseKeeping.Controllers
                               {
                                   RoomName = d["Room Name"]?.ToString() ?? "",
                                   RoomType = d["Room Type"]?.ToString() ?? "",
-                                 
+
                                   FromDate = d["From Date"]?.ToString() ?? "",
                                   ToDate = d["To Date"]?.ToString() ?? ""
                               }).ToList<object>();
@@ -1587,7 +1589,7 @@ namespace HouseKeeping.Controllers
                                   Adult = d["Adult"]?.ToString() ?? "",
                                   Child = d["Child"]?.ToString() ?? "",
                                   EmployeeCI = d["Employee CI"]?.ToString() ?? "",
-                              
+
                               }).ToList<object>();
                 }
                 else if (inputId == "extendedStaysRoom")
@@ -1605,7 +1607,7 @@ namespace HouseKeeping.Controllers
                                   DepartureDate = d["Dep Date"]?.ToString() ?? "",
                                   Adult = d["Adult"]?.ToString() ?? "",
                                   Child = d["Child"]?.ToString() ?? "",
-                        
+
 
                               }).ToList<object>();
                 }
@@ -1616,14 +1618,14 @@ namespace HouseKeeping.Controllers
                               select new
                               {
                                   Guest = d["Guest"]?.ToString() ?? "",
-                                
+
 
                                   ReservationNumber = d["Reservation Number"]?.ToString() ?? "",
                                   RoomNo = d["Room No"]?.ToString() ?? "",
                                   ArrivalDate = d["Arr Date"]?.ToString() ?? "",
                                   DepartureDate = d["Dep Date"]?.ToString() ?? "",
-                               
-                                 
+
+
 
                               }).ToList<object>();
                 }
@@ -1669,7 +1671,7 @@ namespace HouseKeeping.Controllers
                     result = (from d in dataTable.AsEnumerable()
                               select new
                               {
-                                
+
                                   RoomName = d["Room Name"]?.ToString() ?? "",
                                   RoomType = d["Room Type"]?.ToString() ?? "",
                                   Zone = d["Zone"]?.ToString() ?? "",
@@ -1795,7 +1797,7 @@ namespace HouseKeeping.Controllers
 
 
         [HttpGet]
-        public IActionResult HouseStatusData( DateTime datebunisess,  string roomtype,string zone)
+        public IActionResult HouseStatusData(DateTime datebunisess, string roomtype, string zone)
         {
             roomtype = string.IsNullOrEmpty(roomtype) ? "0" : roomtype;
 
@@ -1807,16 +1809,16 @@ namespace HouseKeeping.Controllers
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
-                                  TotalPhysicalRoom = !string.IsNullOrEmpty(d["TotalPhysicalRoom"].ToString()) ? d["TotalPhysicalRoom"].ToString() : "",                                
+                                  TotalPhysicalRoom = !string.IsNullOrEmpty(d["TotalPhysicalRoom"].ToString()) ? d["TotalPhysicalRoom"].ToString() : "",
                               }).ToList();
 
-                DataTable dataTable1 = _iHouseKeepingService.StatusSummaryOutOfOrder(datebunisess,roomtype, zone);
+                DataTable dataTable1 = _iHouseKeepingService.StatusSummaryOutOfOrder(datebunisess, roomtype, zone);
 
                 var result1 = (from d in dataTable1.AsEnumerable()
-                              select new
-                              {
-                                  OutOfOrder = !string.IsNullOrEmpty(d["OutOfOrder"].ToString()) ? d["OutOfOrder"].ToString() : "",
-                              }).ToList();
+                               select new
+                               {
+                                   OutOfOrder = !string.IsNullOrEmpty(d["OutOfOrder"].ToString()) ? d["OutOfOrder"].ToString() : "",
+                               }).ToList();
 
                 DataTable dataTable2 = _iHouseKeepingService.SummaryOutOfService(datebunisess, roomtype, zone);
 
@@ -1892,13 +1894,13 @@ namespace HouseKeeping.Controllers
                 DataTable dataTable10 = _iHouseKeepingService.ActivityDayUseRoom(datebunisess, roomtype, zone);
 
                 var result10 = (from d in dataTable10.AsEnumerable()
-                               select new
-                               {
-                                   TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
-                                   TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
-                               }).ToList();
+                                select new
+                                {
+                                    TotalRooms = !string.IsNullOrEmpty(d["TotalRooms"].ToString()) ? d["TotalRooms"].ToString() : "",
+                                    TotalPersons = !string.IsNullOrEmpty(d["TotalPersons"].ToString()) ? d["TotalPersons"].ToString() : "",
+                                }).ToList();
 
-                DataTable dataTable11 = _iHouseKeepingService.StatusHKInspected( roomtype, zone);
+                DataTable dataTable11 = _iHouseKeepingService.StatusHKInspected(roomtype, zone);
 
                 var result11 = (from d in dataTable11.AsEnumerable()
                                 select new
@@ -1944,7 +1946,7 @@ namespace HouseKeeping.Controllers
                                     occ = !string.IsNullOrEmpty(d["OCC"].ToString()) ? d["OCC"].ToString() : "",
                                 }).ToList();
 
-                DataTable dataTable16 = _iHouseKeepingService.StatusEndOfDayGroupAndBlock( datebunisess, roomtype, zone);
+                DataTable dataTable16 = _iHouseKeepingService.StatusEndOfDayGroupAndBlock(datebunisess, roomtype, zone);
 
                 var result16 = (from d in dataTable16.AsEnumerable()
                                 select new
@@ -1986,18 +1988,18 @@ namespace HouseKeeping.Controllers
                                 select new
                                 {
                                     Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"].ToString() : "",
-                                   
+
                                 }).ToList();
 
 
                 DataTable dataTable21 = _iHouseKeepingService.StatusEndOfDayMaxOccTonightVIP(datebunisess, roomtype, zone);
 
                 var result21 = (from d in dataTable21.AsEnumerable()
-                                   select new
-                                   {
-                                       vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
+                                select new
+                                {
+                                    vip = !string.IsNullOrEmpty(d["vip"].ToString()) ? d["vip"].ToString() : "",
 
-                                   }).ToList();
+                                }).ToList();
 
 
                 DataTable dataTable22 = _iHouseKeepingService.StatusEndOfDayMaxOccTonightVIP(datebunisess, roomtype, zone);
@@ -2177,7 +2179,7 @@ namespace HouseKeeping.Controllers
                     WalkInRoom = result35,
                     Roomzone = roomzone
                 });
-                
+
 
 
             }
@@ -2187,7 +2189,7 @@ namespace HouseKeeping.Controllers
             }
         }
         [HttpPost]
-        public IActionResult UpdateAttendantPoint(string  ID,DateTime Date, int  AttendantID, string UserName, int Point)
+        public IActionResult UpdateAttendantPoint(string ID, DateTime Date, int AttendantID, string UserName, int Point)
         {
             try
             {
@@ -2203,7 +2205,7 @@ namespace HouseKeeping.Controllers
                     UpdatedDate = DateTime.Now
                 };
 
-                if (string.IsNullOrEmpty(ID)) 
+                if (string.IsNullOrEmpty(ID))
                 {
                     hkpAttendantPointBO.Instance.Insert(modelH);
                 }
@@ -2212,7 +2214,7 @@ namespace HouseKeeping.Controllers
                     hkpAttendantPointModel modelhkpAtten = (hkpAttendantPointModel)hkpAttendantPointBO.Instance.FindByPrimaryKey(Convert.ToInt32(ID));
 
 
-                        modelhkpAtten.AttendantDate = Date;
+                    modelhkpAtten.AttendantDate = Date;
                     modelhkpAtten.UpdatedBy = UserName;
                     modelhkpAtten.Points = Point;
                     modelhkpAtten.AttendantID = AttendantID;
@@ -2307,7 +2309,7 @@ namespace HouseKeeping.Controllers
             }
         }
         [HttpPost]
-        public IActionResult CompletedDetailtasksheet(int idts,string taskSheetNo,string hkStatusID_Internal)
+        public IActionResult CompletedDetailtasksheet(int idts, string taskSheetNo, string hkStatusID_Internal)
         {
             try
             {
@@ -2423,11 +2425,11 @@ namespace HouseKeeping.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditGuestService(List<RoomModel> ids,int servicestatus)
+        public IActionResult EditGuestService(List<RoomModel> ids, int servicestatus)
         {
             try
             {
-         
+
 
                 foreach (var id in ids)
                 {
@@ -2439,7 +2441,7 @@ namespace HouseKeeping.Controllers
                     RoomBO.Instance.Update(modelRoom);
                 }
 
-             
+
                 return Json(new { success = true, message = "Room status updated successfully." });
             }
             catch (Exception ex)
@@ -2501,7 +2503,7 @@ namespace HouseKeeping.Controllers
         }
         string _ListRoomNotAss = "";
         [HttpPost]
-        public IActionResult AutoTasksheet(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        public IActionResult AutoTasksheet(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto, string userName)
         {
             includeroomAS = includeroomAS ?? "";
             vcAuto = vcAuto ?? "";
@@ -2536,7 +2538,7 @@ namespace HouseKeeping.Controllers
             }
         }
 
-        private IActionResult Process_by_Attendant(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        private IActionResult Process_by_Attendant(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto, string userName)
         {
             #region Room & FO Status
             string IsDueOut = "";
@@ -2596,13 +2598,13 @@ namespace HouseKeeping.Controllers
             {
                 ProcessIncludeAssigned(taskdateauto, taskcodeauto);
             }
-           string  floorautop = GetSplitString(floorauto);
+            string floorautop = GetSplitString(floorauto);
             string roomTypeautop = GetSplitString(roomTypeauto);
             string zonecodeautop = GetSplitString(zonecodeauto);
             string subzonecodeautop = GetSplitString(subzonecodeauto);
             _ListRoomNotAss = GetSplitString(_ListRoomNotAss);
             #endregion
-            DataTable Source = _iHouseKeepingService.TasksheetAutomatically(HK_FO,taskdateauto, floorautop, roomTypeautop, zonecodeautop, subzonecodeautop, includeroomAS,arrivalOnly, _ListRoomNotAss);
+            DataTable Source = _iHouseKeepingService.TasksheetAutomatically(HK_FO, taskdateauto, floorautop, roomTypeautop, zonecodeautop, subzonecodeautop, includeroomAS, arrivalOnly, _ListRoomNotAss);
             if (Source.Rows.Count == 0)
             {
                 return Json(new { success = false, message = "Room not available for your requests" });
@@ -2703,7 +2705,7 @@ namespace HouseKeeping.Controllers
 
             mTS.FacilityTaskID = taskcodeauto;
             mTS.FacilityTask = codeList;
-            
+
 
 
             mTS.FacilityInstructions = instructionsList;
@@ -2872,7 +2874,7 @@ namespace HouseKeeping.Controllers
         string[] _SectionID = null;
         string _ListSection = "";
         string _ListAttendant = "";
-        private IActionResult Process(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        private IActionResult Process(DateTime taskdateauto, string includeroomAS, string vcAuto, string vcnAuto, string vdAuto, string doAuto, string ocAuto, string ocnAuto, string odAuto, string oooAuto, string oosAuto, string arrivalOnly, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto, string userName)
         {
             #region Room & FO Status
             string IsDueOut = "";
@@ -2951,12 +2953,12 @@ namespace HouseKeeping.Controllers
             #region 2.Process Attendant by Section
             for (int i = 0; i < _SectionID.Length; i++)
             {
-                ProcessSource(Source,int.Parse(_SectionID[i].ToString()), taskdateauto, floorauto, roomTypeauto, zonecodeauto, subzonecodeauto, taskcodeauto, attendantauto, maxcreditauto, descriptionauto, userName);
+                ProcessSource(Source, int.Parse(_SectionID[i].ToString()), taskdateauto, floorauto, roomTypeauto, zonecodeauto, subzonecodeauto, taskcodeauto, attendantauto, maxcreditauto, descriptionauto, userName);
             }
             #endregion
-            return Json(new { success = true, message = "Rooms retrieved successfully" }); 
+            return Json(new { success = true, message = "Rooms retrieved successfully" });
         }
-        private IActionResult ProcessSource(DataTable Source,int _secID, DateTime taskdateauto, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto,string userName)
+        private IActionResult ProcessSource(DataTable Source, int _secID, DateTime taskdateauto, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string taskcodeauto, string attendantauto, string maxcreditauto, string descriptionauto, string userName)
         {
             int[] _TaskCode = null;
             if (!string.IsNullOrWhiteSpace(taskcodeauto))
@@ -3074,7 +3076,7 @@ namespace HouseKeeping.Controllers
                     }
                     //Nếu không bị lỗi - ghi dữ liệu vào bảng
                     pt.CommitTransaction();
-                 
+
                 }
                 catch (Exception ex)
                 {
@@ -3087,7 +3089,7 @@ namespace HouseKeeping.Controllers
                 {
                     pt.CloseConnection();
                 }
-               
+
             }
             return Json(new { success = true, message = "Rooms retrieved successfully" });
         }
@@ -3141,12 +3143,12 @@ namespace HouseKeeping.Controllers
             }
             return _ListSec.Split(',');
         }
-        private void ProcessIncludeAssigned(DateTime taskdateauto,string taskcodeauto)
+        private void ProcessIncludeAssigned(DateTime taskdateauto, string taskcodeauto)
         {
             var getdetailts = hkpTaskSheetDetailBO.GethkpTaskSheetDetail(taskdateauto);
             DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
 
-           
+
             _ListRoomNotAss = "";
             if (dt.Rows.Count > 0)
             {
@@ -3245,7 +3247,7 @@ namespace HouseKeeping.Controllers
 
                     foreach (var modelRoom in selectedRooms)
                     {
-                       
+
 
                         InsertHistory(modelRoom.RoomNo, modelRoom.HKStatusID.ToString(), status.ToString(), DateTime.Now, hostName, "Manual", modelRoom.ID, "Room", loginName);
 
@@ -3271,7 +3273,7 @@ namespace HouseKeeping.Controllers
         }
 
 
-        public static void InsertHistory(string roomNo, string oldValue, string newValue, DateTime systemDate, string computerName, string action, int objectID, string tableName,string loginName)
+        public static void InsertHistory(string roomNo, string oldValue, string newValue, DateTime systemDate, string computerName, string action, int objectID, string tableName, string loginName)
         {
             RoomStatusHistoryModel modelH = new RoomStatusHistoryModel();
             modelH.ChangeDate = systemDate;
@@ -3349,321 +3351,170 @@ namespace HouseKeeping.Controllers
                 return Json(ex.Message);
             }
         }
-        private void loadSearch()
+        [HttpGet]
+        public IActionResult GetLostAndFound(DateTime fromDate, DateTime toDate)
         {
             try
             {
-                //string[] arrParaNames = new string[] { "@CurrentDate", "@Smoking", "@Floor", "@Owner", "@ZoneID", "@RoomTypeID", "@Clean", "@Dirty", "@Pickup", "@Inspected","@OOO","@OOS", "@Vacant", "@Occupied" };
-                //// Other
-                //if (chkClean.Checked == true) clean = "1"; else clean = "";
-                //if (chkDirty.Checked == true) dirty = "2"; else dirty = "";
-                //if (chkPickup.Checked == true) pickup = "3"; else pickup = "";
-                //if (chkInspected.Checked == true) inspected = "4"; else inspected = "";
-                //if (chkVacant.Checked == true) vacant = "0"; else vacant = "";
-
-                //if (chkOccupied.Checked == true) occupied = "1"; else occupied = "";
-                //if (chkOOO.Checked == true) ooo = "5"; else ooo = "";
-                //if (chkOOS.Checked == true) oos = "6"; else oos = "";
-                dataGridViewFloorPlan.DefaultCellStyle.Font = new Font("Tahoma", 10);
-                dataGridViewFloorPlan.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 10);
-                dataGridViewFloorPlan.RowHeadersDefaultCellStyle.Font = new Font("Tahoma", 10);
-                var number = 0;
-                var numberB = 0;
-                var number11A = 0;
-                var number11AB = 0;
-                string smoking = "0";
-                int zoneID = 0;
-                string floor = "";
-                string owner = "";
-                var queryFloor = "";
-                var queryRoomType = "";
-                var queryOwner = "";
-                int intRoomTypeID = 0;
-                string roomTypeID = intRoomTypeID.ToString();
-
-                // RoomType
-                if (cboRoomType.SelectedIndex == -1) intRoomTypeID = 0;
-                else
-                {
-                    if (cboRoomType.SelectedIndex == 0) { intRoomTypeID = 0; }
-                    else
-                    {
-                        intRoomTypeID = int.Parse(cboRoomType.SelectedValue.ToString());
-                        queryRoomType = "AND RoomTypeID='" + intRoomTypeID + "'";
-                    }
-                }
-                // Floor
-                if (cboFloor.SelectedIndex > 0)
-                {
-                    floor = cboFloor.Text;
-                    queryFloor = "AND 'F'+Floor='" + floor + "'";
-                }
 
 
-                // Zone
-                if (cboZone.SelectedIndex > -1)
-                {
-                    DataTable dtZone = TextUtils.Select(@"Select ID from Block with (nolock) where Code<>'DM' and Name=N'" + cboZone.Text + "'");
-                    zoneID = Convert.ToInt32(dtZone.Rows[0][0]);
-                }
-                // Owner
-                if (cboOwner.Text == "--Hotel--")
-                {
-                    owner = cboOwner.Text;
-                    queryOwner = "AND RoomNo not in (Select RoomNo from RoomOwnerProfile with (nolock))";
-                }
-                else if ((cboOwner.Text == "--Owner--"))
-                {
-                    owner = cboOwner.Text;
-                    queryOwner = "AND RoomNo in (Select RoomNo from RoomOwnerProfile with (nolock))";
-                }
-                // rào lại vì ko dùng sp
-                //object[] arrParaValues1 = new object[] { _businessDate, smoking, floor, owner, zoneID, roomTypeID, clean, dirty, pickup, inspected, ooo, oos, vacant, occupied };
-                //dtRoom = RoomBO.Instance.LoadDataFromSP("spRmgFloorPlanVPL", "tbRoom", arrParaNames, arrParaValues1);
+                DataTable dataTable = _iHouseKeepingService.LostAndFound(fromDate, toDate);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
 
-                #region Tìm Max Phòng
-                // Chỉ lấy 6 số , điều kiện bên dưới
-                string sqlmaxRoom = "Select * from Room  with(nolock) where BlockID=N'" + zoneID + "' " + queryFloor + "" + queryRoomType + "" + queryOwner + "and RoomTypeID !=8 and floor <> '11A' order by CONVERT(Int ,floor) asc";
-                lsRoom = TextUtils.ExecuteSQL(sqlmaxRoom, "RoomModel");
-                #endregion
-
-                #region Tìm số lượng phòng lớn nhất / tầng
-                // đánh số dãy A và B nên số tầng gấp đôi
-                string sqlsotang = "Select * from Floor  with(nolock)";
-                lsFloor = TextUtils.ExecuteSQL(sqlsotang, "FloorModel");
-                string sqlFU = "Select * from Floor  with(nolock) Where ID=0";
-                lsFloorUprage = TextUtils.ExecuteSQL(sqlFU, "FloorModel");
-                var NumberofFloor = lsFloor.Count;
-                for (int z = 1; z < NumberofFloor; z++)
-                {
-                    FloorModel ModelF = new FloorModel();
-                    ModelF.Name = "F" + (z + 1) + "-B";
-                    if ((ModelF.Name).ToString() == "F12-B")
-                    {
-                        ModelF.Name = "F11A-B";
-                    }
-                    if ((ModelF.Name).ToString() == "F13-B")
-                    {
-                        ModelF.Name = "F12-B";
-                    }
-                    ModelF.ID = z + 20;
-                    lsFloor.Insert(z * 2, ModelF);
-                }
-                for (int fu = 0; fu < lsFloor.Count; fu++)
-                {
-                    var charFU = (((FloorModel)lsFloor[fu]).Name).ToString();
-                    var lastcharFU = charFU[charFU.Length - 1];
-                    ArrayList _fu = new ArrayList(lsFloor);
-                    if (lastcharFU.ToString() != "B")
-                    {
-                        ((FloorModel)_fu[fu]).Name = ((FloorModel)_fu[fu]).Name + "-A";
-                    }
-                    if (lastcharFU.ToString() == "B")
-                    {
-                        ((FloorModel)_fu[fu]).Name = (((FloorModel)_fu[fu]).Name).Remove(0, 1);
-                    }
-                    if (((FloorModel)_fu[fu]).Name == "F1-A")
-                    {
-                        ((FloorModel)_fu[fu]).Name = "";
-                    }
-                    lsFloorUprage.Insert(fu, ((FloorModel)_fu[fu]));
-                }
-                DataTable _dtmaxRoom = new DataTable();
-                // tính max phòng để tìm số cột
-                int _MaxRoom = 0;
-                for (int maxRoom = 1; maxRoom < (Convert.ToInt32(lsFloor.Count)); maxRoom++)
-                {
-                    var charFloor = (((FloorModel)lsFloorUprage[maxRoom]).Name).ToString();
-                    var lastCharFloor = charFloor[charFloor.Length - 1];
-                    if (lastCharFloor.ToString() == "B")
-                    {
-                        string roomNoCondition = zoneID == "1"
-                            ? "CONVERT(Int,RoomNo) > 019999"
-                            : "CONVERT(Int,RoomNo) > 039999";
-
-                        _dtmaxRoom = TextUtils.Select($@"
-        SELECT * 
-        FROM Room 
-        WHERE {roomNoCondition}
-          AND RoomTypeID != 8 
-          AND BlockID = N'{zoneID}' 
-          AND floor + '-B' = '{((FloorModel)lsFloorUprage[maxRoom]).Name}' 
-        ORDER BY CONVERT(Int,RoomNo)");
-
-                        if (_MaxRoom < _dtmaxRoom.Rows.Count)
-                        {
-                            _MaxRoom = _dtmaxRoom.Rows.Count;
-                        }
-                    }
-                    else // lastCharFloor != "B"
-                    {
-                        string roomNoCondition = zoneID == "1"
-                            ? "CONVERT(Int,RoomNo) < 020000"
-                            : "CONVERT(Int,RoomNo) < 040000";
-
-                        _dtmaxRoom = TextUtils.Select($@"
-        SELECT * 
-        FROM Room 
-        WHERE {roomNoCondition}
-          AND RoomTypeID != 8  
-          AND BlockID = N'{zoneID}' 
-          AND floor + '-A' = '{((FloorModel)lsFloorUprage[maxRoom]).Name}' 
-        ORDER BY CONVERT(Int,RoomNo)");
-
-                        if (_MaxRoom < _dtmaxRoom.Rows.Count)
-                        {
-                            _MaxRoom = _dtmaxRoom.Rows.Count;
-                        }
-                    }
-
-
-                }
-                #endregion
-
-                #region Tạo ma trận từ maxRoom - còn thiếu trạng thái status đổi màu
-                if (_MaxRoom == 0)
-                {
-                    dataGridViewFloorPlan.DataSource = null;
-                    return;
-                }
-                DataTable t = new DataTable();
-                for (int i = 0; i < _MaxRoom; i++)
-                    t.Columns.Add("" + (i + 1));
-                String[][] matrix = new String[lsFloor.Count][];
-
-                int[][] status = new int[lsFloor.Count][];
-
-                for (int i = 0; i < lsFloor.Count; i++)
-                {
-                    matrix[i] = new String[_MaxRoom];
-                    status[i] = new int[_MaxRoom];
-                    for (int j = 0; j < _MaxRoom; j++)
-                    {
-                        matrix[i][j] = String.Empty;
-                        status[i][j] = -1;
-                    }
-                }
-                // Tách phòng A và B, đang rào 11A
-                var a = "02";// số tầng bắt đầu từ tầng 2 và tăng dần
-                var aB = "04";// là tầng B , dùng làm điều kiện loại B
-                for (int k = 0; k < lsRoom.Count; k++)
-                {
-                    var RN = ((RoomModel)lsRoom[k]).RoomNo.Trim();
-                    for (int l = 0; l < lsFloor.Count; l++)
-                    {
-                        if (RN.Length == 6)
-                        {
-                            if ((((RoomModel)lsRoom[k]).Floor) + "-A" == (((FloorModel)lsFloor[l]).Name).ToString() && aB != (RN.Remove(2, 4)))
-                            {
-                                if (a == (RN.Remove(0, 2).Remove(2, 2)))
-                                {
-                                    matrix[l][number] = RN;
-                                    status[l][number] = FindStatus(k, lsRoom);
-                                    number = number + 1;
-                                }
-                                else
-                                {
-                                    a = (RN.Remove(0, 2).Remove(2, 2));
-                                    number = 0;
-                                    matrix[l][number] = RN;
-                                    status[l][number] = FindStatus(k, lsRoom);
-                                    number = number + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-                for (int k = 0; k < lsRoom.Count; k++)
-                {
-                    var RN = ((RoomModel)lsRoom[k]).RoomNo.Trim();
-                    for (int l = 0; l < lsFloor.Count; l++)
-                    {
-                        if (RN.Length == 6)
-                        {
-                            if ((((RoomModel)lsRoom[k]).Floor) + "-B" == (((FloorModel)lsFloorUprage[l]).Name).ToString() && aB == (RN.Remove(2, 4)))
-                            {
-                                if (a == (RN.Remove(0, 2).Remove(2, 2)))
-                                {
-                                    matrix[l][numberB] = RN;
-                                    status[l][numberB] = FindStatus(k, lsRoom);
-                                    numberB = numberB + 1;
-
-                                }
-                                else
-                                {
-                                    a = (RN.Remove(0, 2).Remove(2, 2));
-                                    numberB = 0;
-                                    matrix[l][numberB] = RN;
-                                    status[l][numberB] = FindStatus(k, lsRoom);
-                                    numberB = numberB + 1;
-
-                                }
-                            }
-                        }
-
-                    }
-                }
-                // Gán cứng trường hợp tầng 11A
-                string sql11A = "Select * from Room  with(nolock) where BlockID=N'" + zoneID + "' " + queryFloor + "" + queryRoomType + "" + queryOwner + "and RoomTypeID !=8 and floor = '11A' order by CONVERT(Int ,RoomNo) asc";
-                lsRoom11A = TextUtils.ExecuteSQL(sql11A, "RoomModel");
-                for (int R11A = 0; R11A < lsRoom11A.Count; R11A++)
-                {
-                    var RN11A = ((RoomModel)lsRoom11A[R11A]).RoomNo.Trim();
-                    if ((Convert.ToInt32(RN11A) < Convert.ToInt32("040000")) && (RN11A.Remove(0, 2).Remove(2, 2)) == "22")
-                    {
-                        matrix[21][number11A] = RN11A;
-                        status[21][number11A] = FindStatus(R11A, lsRoom11A);
-                        number11A = number11A + 1;
-                    }
-                    else if ((Convert.ToInt32(RN11A) > Convert.ToInt32("039999")) && (RN11A.Remove(0, 2).Remove(2, 2)) == "22")
-                    {
-                        matrix[22][number11AB] = RN11A;
-                        status[22][number11AB] = FindStatus(R11A, lsRoom11A);
-                        number11AB = number11AB + 1;
-                    }
-                }
-                for (int i = 0; i < Convert.ToInt32(lsFloor.Count); i++)
-                {
-                    t.Rows.Add(matrix[i]);
-                }
-                #endregion
-
-                #region Fill dữ liệu ra gridview
-                dataGridViewFloorPlan.DataSource = t;
-                for (int i = 0; i < Convert.ToInt32(lsFloor.Count); i++)
-                {
-                    // fill dòng tức tên tầng chia làm 2 dãy A B
-                    dataGridViewFloorPlan.Rows[i].HeaderCell.Value = ((FloorModel)lsFloorUprage[i]).Name;
-                    for (int j = 0; j < _MaxRoom; j++)
-                    {
-                        // fill màu theo status đã set từ trước, hàm findStatus
-                        dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor = getColorStatus(status[i][j]);//color
-
-                        // tuân thêm màu chữ khi nền màu tối 13_01_2016
-                        if (dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor == System.Drawing.Color.Blue ||
-                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor == System.Drawing.Color.Green ||
-                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor == System.Drawing.Color.PaleVioletRed)
-                        {
-                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.ForeColor = System.Drawing.Color.White;
-                        }
-                        else
-                        {
-                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.ForeColor = System.Drawing.Color.Black;
-                        }
-
-                        // tooltip
-                        dataGridViewFloorPlan.Rows[i].Cells[j].ToolTipText = getUnitInfor(dataGridViewFloorPlan.Rows[i].Cells[j].Value.ToString());
-                    }
-
-                }
-                #endregion
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Location = !string.IsNullOrEmpty(d["Location"].ToString()) ? d["Location"] : "",
+                                  Finder = !string.IsNullOrEmpty(d["Finder"].ToString()) ? d["Finder"] : "",
+                                  SurrenderBy = !string.IsNullOrEmpty(d["SurrenderBy"].ToString()) ? d["SurrenderBy"] : "",
+                                  SignatureName = !string.IsNullOrEmpty(d["SignatureName"].ToString()) ? d["SignatureName"] : "",
+                                  PlaceStore = !string.IsNullOrEmpty(d["PlaceStore"].ToString()) ? d["PlaceStore"] : "",
+                                  SendDate = !string.IsNullOrEmpty(d["SendDate"].ToString()) ? d["SendDate"] : "",
+                                  SendName = !string.IsNullOrEmpty(d["SendName"].ToString()) ? d["SendName"] : "",
+                                  CodeQualityType = !string.IsNullOrEmpty(d["CodeQualityType"].ToString()) ? d["CodeQualityType"] : "",
+                                  Notes = !string.IsNullOrEmpty(d["Notes"].ToString()) ? d["Notes"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdateDate = !string.IsNullOrEmpty(d["UpdateDate"].ToString()) ? d["UpdateDate"] : "",
+                              }).ToList();
+                return Json(result);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.StackTrace.ToString());
-                return;
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult LostAndFound()
+        {
+            List<lafZoneModel> listzone = PropertyUtils.ConvertToList<lafZoneModel>(lafZoneBO.Instance.FindAll());
+            ViewBag.lafZoneList = listzone;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Insertlaf(int id, LostAndFoundModel model)
+        {
+            var username = HttpContext.Session.GetString("LoginName") ?? "";
+
+            model.CreatedBy = username;
+            model.UpdatedBy = username;
+
+
+            using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+            {
+                conn.Open();
+                using (var cmd = new SqlCommand(@"
+                insert into lafLostAndFound 
+                (StatusID, TransactionDate, Description, ZoneID, Location, Finder, SurrenderBy, SignatureName, PlaceStore, SendDate, SendName, QualityTypeID, Notes, CreatedBy, CreatedDate, UpdatedBy, UpdateDate) 
+                values 
+                (@StatusID, @TransactionDate, @Description, @ZoneID, @Location, @Finder, @SurrenderBy, @SignatureName, @PlaceStore, @SendDate, @SendName, @QualityTypeID, @Notes, @CreatedBy, @CreatedDate, @UpdatedBy, @UpdateDate);
+                SELECT SCOPE_IDENTITY();", conn))
+                {
+                    cmd.Parameters.AddWithValue("@StatusID", model.StatusID);
+                    cmd.Parameters.AddWithValue("@TransactionDate", model.TransactionDate);
+                    cmd.Parameters.AddWithValue("@Description", model.Description ?? "");
+                    cmd.Parameters.AddWithValue("@ZoneID", model.ZoneID);
+                    cmd.Parameters.AddWithValue("@Location", model.Location ?? "");
+                    cmd.Parameters.AddWithValue("@Finder", model.Finder ?? "");
+                    cmd.Parameters.AddWithValue("@SurrenderBy", model.SurrenderBy ?? "");
+                    cmd.Parameters.AddWithValue("@SignatureName", model.SignatureName ?? "");
+                    cmd.Parameters.AddWithValue("@PlaceStore", model.PlaceStore ?? "");
+                    cmd.Parameters.AddWithValue("@SendDate", model.SendDate == DateTime.MinValue ? new DateTime(1900, 1, 1) : model.SendDate);
+                    cmd.Parameters.AddWithValue("@SendName", model.SendName ?? "");
+                    cmd.Parameters.AddWithValue("@QualityTypeID", model.QualityTypeID);
+                    cmd.Parameters.AddWithValue("@Notes", model.Notes ?? "");
+                    cmd.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
+                    cmd.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@UpdatedBy", model.UpdatedBy);
+                    cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+
+                    var newId = Convert.ToInt32(cmd.ExecuteScalar());
+                    return Json(new { success = true, id = newId });
+                }
             }
         }
 
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        // Gán tham số
+                        cmd.Parameters.Add("@StatusID", SqlDbType.Int).Value = model.StatusID;
+                        cmd.Parameters.Add("@TransactionDate", SqlDbType.DateTime).Value = model.TransactionDate != DateTime.MinValue ? model.TransactionDate : (object)DBNull.Value;
+                        cmd.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = model.Description ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@ZoneID", SqlDbType.Int).Value = model.ZoneID;
+                        cmd.Parameters.Add("@Location", SqlDbType.NVarChar, 4000).Value = model.Location ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Finder", SqlDbType.NVarChar, 4000).Value = model.Finder ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@SurrenderBy", SqlDbType.NVarChar, 4000).Value = model.SurrenderBy ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@SignatureName", SqlDbType.NVarChar, 4000).Value = model.SignatureName ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@PlaceStore", SqlDbType.NVarChar, 4000).Value = model.PlaceStore ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@SendDate", SqlDbType.DateTime).Value = model.SendDate != DateTime.MinValue ? model.SendDate : (object)DBNull.Value;
+                        cmd.Parameters.Add("@SendName", SqlDbType.NVarChar, 4000).Value = model.SendName ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@QualityTypeID", SqlDbType.Int).Value = model.QualityTypeID;
+                        cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 4000).Value = model.Notes ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@UpdatedBy", SqlDbType.NVarChar, 20).Value = model.UpdatedBy ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@UpdateDate", SqlDbType.DateTime).Value = model.UpdateDate != DateTime.MinValue ? model.UpdateDate : (object)DBNull.Value;
+                        cmd.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                            return Json(new { success = true, message = "Cập nhật thành công" });
+                        else
+                            return Json(new { success = false, message = "Không tìm thấy bản ghi để cập nhật" });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi ở đây nếu cần
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Deletelaf(int id, LostAndFoundModel model)
+        {
+            var username = HttpContext.Session.GetString("LoginName") ?? "";
+
+            using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
+            {
+                conn.Open();
+
+                // Check xem Card có tồn tại chưa
+                string checkSql = "SELECT COUNT(*) FROM lafLostAndFound WHERE ID = @ID";
+                using (var checkCmd = new SqlCommand(checkSql, conn))
+                {
+                    checkCmd.Parameters.AddWithValue("@ID", model.ID);
+                    int count = (int)checkCmd.ExecuteScalar();
+                    if (count == 0)
+                    {
+                        return NotFound(new { success = false, message = "LAF ID không tồn tại trong DB" });
+                    }
+                }
+
+                // Xóa bản ghi
+                string sql = "DELETE FROM lafLostAndFound WHERE ID = @ID";
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ID", model.ID);
+
+                    int rows = cmd.ExecuteNonQuery();
+                    return Ok(new { success = rows > 0, id = model.ID });
+                }
+            }
+        }
+
+
     }
 }
+

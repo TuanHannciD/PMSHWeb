@@ -1,0 +1,481 @@
+﻿@using DevExpress.XtraReports.UI
+@{
+    var listzone = ViewBag.ZoneList;
+}
+<style>
+    #toDate:disabled {
+        background-color: #f5f5f5;
+        color: #999;
+        cursor: not-allowed;
+    }
+
+    #fromDate:disabled {
+        background-color: #f5f5f5;
+        color: #999;
+        cursor: not-allowed;
+    }
+
+    .form-label {
+        min-width: 80px;
+        text-align: right;
+        margin-right: 8px;
+    }
+
+    .border-box {
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        padding: 12px;
+        margin: 8px; /* tạo khoảng cách giữa các box */
+        background: #fff;
+    }
+
+    .col-4-5 {
+        flex: 0 0 37.5%;
+        max-width: 37.5%;
+    }
+</style>
+<link href="~/css/reservation.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+<div class="text-center" id="reportTitle" style="font-size: 20px">
+    Issuing Card To Guests
+</div>
+
+<div class="content-right">
+
+    <div class="row" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
+        <div class="col-md-6 border-box">
+            <!-- Tổng khối chiếm 6 cột -->
+            <div class="row">
+                <!-- Border bao quanh cả 2 khối -->
+                <!-- Khối 1: col-md-2 -->
+                <div class="col-md-4">
+                    <!-- Đổi 2/6 thành 4/12 để cân đối -->
+                    <div class="row">
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="firstName" class="form-label">Fst.Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="confNo" class="form-label">Conf.No</label>
+                            <input type="text" id="confNo" name="confNo" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="crsNoorGC" class="form-label">CRS No/GC</label>
+                            <input type="text" id="crsNoorGC" name="crsNoorGC" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="roomNo" class="form-label">Room No</label>
+                            <input type="text" id="roomNo" name="roomNo" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="zone" class="form-label">Zone</label>
+                            <select id="zone" name="zone" class="form-select" multiple>
+                                @foreach (var sg in ViewBag.ZoneList)
+                                {
+                                    <option value="@sg.Code">@sg.Code</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="searchcardID" class="form-label">CardID</label>
+                            <input type="text" id="searchcardID" name="searchcardID" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Khối 2: col-md-4 -->
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6 mb-2 d-flex align-items-center">
+                            <label for="fromDate" class="form-label">Arr.From</label>
+                            <input type="date" id="fromDate" name="fromDate" class="form-control" />
+                            <span class="input-group-text">
+                                <input type="checkbox" id="chkfromDate" class="form-check-input mt-0" checked />
+                            </span>
+                        </div>
+                        <div class="col-md-6 mb-2 d-flex align-items-center">
+                            <label for="toDate" class="form-label">Arr.To</label>
+                            <input type="date" id="toDate" name="toDate" class="form-control" />
+                            <span class="input-group-text">
+                                <input type="checkbox" id="chktoDate" class="form-check-input mt-0" checked />
+                            </span>
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="name" class="form-label me-2">Name</label>
+                            <input type="text" id="name" name="name" class="form-control me-3" />
+                            <input type="checkbox" id="roomSharer" name="roomSharer" class="form-check-input me-1" checked />
+                            <label for="roomSharer" class="form-check-label mb-0">Room Sharer</label>
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="resvHolder" class="form-label">Resv.Holder</label>
+                            <input type="text" id="resvHolder" name="resvHolder" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2 d-flex align-items-center">
+                            <label for="searchType" class="form-label">Search Type</label>
+                            <input type="text" id="searchType" name="searchType" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2 ms-5 d-flex align-items-center">
+                            <input type="checkbox" id="guesthascard" name="guesthascard" class="form-check-input me-1" checked />
+                            <label for="guesthascard" class="form-check-label">Show more guest has card</label>
+                        </div>
+                        <div class="col-12 mb-2 ms-5 d-flex align-items-center">
+                            <input type="checkbox" id="bycardIDfromCardReader" name="bycardIDfromCardReader" class="form-check-input me-1" />
+                            <label for="bycardIDfromCardReader" class="form-check-label">Search by card ID from Card reader. Click this checkbox</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-1 border-box">
+            <div class="row">             
+                <div class="col-12 mb-2d-flex align-items-center">
+                    <input type="checkbox" id="addCard" name="addCard" class="form-check-input me-1" checked />
+                    <label for="addCard" class="form-check-label">Add Card</label>
+                </div>
+                <div class="col-12 mb-2 d-flex align-items-center">
+                    <input type="checkbox" id="cutKey" name="cutKey" class="form-check-input me-1" disabled/>
+                    <label for="cutKey" class="form-check-label">Cut Key</label>
+
+                </div>  
+            </div>
+        </div>
+        <div class="col-4-5 border-box">
+            <div class="row">
+
+                <div class="col-12 mb-2d-flex align-items-center">
+                    <label class="form-check-label">1. Select guest list to add card or cutkey</label>
+                </div>
+                <div class="col-12 mb-2 d-flex align-items-center">
+                    <label class="form-check-label">2. Insert card to card reader --> Add card for guests</label>
+                </div>
+                <div class="col-12 mb-2 d-flex align-items-center">
+                    <label class="form-check-label">3. Options: Choose add card or cutkey or both</label>
+                </div>
+                <div class="col-12 mb-2 d-flex align-items-center">
+                    <label class="form-check-label">4. Click OK to confirm --> Add card for guests</label>
+                </div>
+                <div class="col-12 mb-2 d-flex align-items-center">
+                    <label class="form-check-label">(After issuing, card will be used for meals)</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- Buttons -->
+    <div class="mt-3 d-flex flex-wrap gap-2">
+        <button class="btn btn-secondary" id="btnView"><i class="fa-solid fa-eye me-1"></i>View</button>
+        <button class="btn btn-success" id="btnCheckAll" type="button"><i class="fa-solid fa-plus me-1"></i>New</button>
+        <button class="btn btn-primary" id="btnOK" type="button"><i class="fa-solid fa-pen-to-square me-1"></i>OK</button>
+        <button class="btn btn-danger" id="btnCancelCard" type="button"><i class="fa-solid fa-trash me-1"></i>Delete</button>
+
+    <div class="d-flex align-items-center ms-auto me-auto">
+        <label for="cardID" class="form-label">Input CardID</label>
+        <input type="text" id="cardID" name="cardID" class="form-control" />
+    </div>
+
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinnerRateCode" style="display: none; text-align: center; padding: 20px;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+<!-- Grid -->
+<div class="mui-card mt-3">
+    <div id="gridContainerRateCode" class="gridContainer"></div>
+</div>
+<script>
+     const statusMap = {
+        "Done": 1,
+        "Pending": 2,
+        "Transferred": 3
+        };
+
+        // Map QualityType code -> ID
+        const qualityTypeMap = {
+            "NV": 1, // None Value
+            "V": 2  // Value
+        };
+
+
+
+    DevExpress.localization.locale("vi");
+    let selectedRowData = null;
+
+      function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+            let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
+            return `${year}-${month}-${day}`;
+        }
+
+      $(document).ready(function () {
+                const today = new Date();
+                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                // Lấy ngày cuối cùng của tháng
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+              // Định dạng theo local time
+                const formattedFirstDay = formatDate(firstDayOfMonth);
+                const formattedLastDay = formatDate(lastDayOfMonth);
+                console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
+                console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
+                // Gán giá trị cho input date
+                document.getElementById('fromDate').value = formattedFirstDay;
+                document.getElementById('toDate').value = formattedLastDay;
+
+                    $("#fromDate").prop("disabled", !$("#chkfromDate").is(":checked"));
+                    $("#toDate").prop("disabled", !$("#chktoDate").is(":checked"));
+
+                    // Sự kiện change
+                    $("#chkfromDate").change(function () {
+                        if ($(this).is(":checked")) {
+                            $("#fromDate").prop("disabled", false);
+                            $("#fromDate").val(new Date().toISOString().split('T')[0]);
+                        } else {
+                            $("#fromDate").prop("disabled", true).val("");
+                        }
+                    });
+
+                    $("#chktoDate").change(function () {
+                        if ($(this).is(":checked")) {
+                            $("#toDate").prop("disabled", false);
+                            $("#toDate").val(new Date().toISOString().split('T')[0]);
+                        } else {
+                            $("#toDate").prop("disabled", true).val("");
+                        }
+                    });
+                     $("#cardID").on("input", function () {
+                let value = $(this).val();
+
+                // Kiểm tra nếu đủ 8 số và toàn là số
+                if (value.length === 8 && /^\d+$/.test(value)) {
+                    insertCard(value);
+                }
+                });
+
+                $("#searchcardID").on("input", function () {
+                let value = $(this).val();
+
+                // Kiểm tra nếu đủ 8 số và toàn là số
+                if (value.length === 8 && /^\d+$/.test(value)) {
+                    insertCard(value);
+                }
+                });
+                     initializeTomSelects();
+                reloadGrid();
+        });
+         function initializeTomSelects() {
+                const selectors = ["#zone"];
+
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+            }
+        }
+
+              function loadGrid(data) {
+        $("#gridContainerRateCode").dxDataGrid({
+            dataSource: data,
+            height: 500,
+            width: "100%",
+            columnAutoWidth: true,
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            selection: { mode: "multiple" },
+            columns: [        
+                { dataField: "cardID", caption: "CardID", width: "11%" },
+                { dataField: "confirmationNo", caption: "Conf.No", width: "11%" },
+
+                { dataField: "mainGuest", caption: "M", width: "11%" },
+                { dataField: "nat", caption: "Nat", width: "11%" },
+
+                { dataField: "title", caption: "Title", width:"11%" },
+                { dataField: "account", caption: "Guest Name", width: "11%" },
+
+                { dataField: "dateOfBirth", caption: "Date Of Birth", dataType: "date", format: "dd/MM/yyyy", width: "11%" },
+                { dataField: "passPort", caption: "Pass Port", width: "11%" },
+
+                { dataField: "identityCard", caption: "Identity Card", width: "11%" },
+                { dataField: "roomNo", caption: "Ro.No", width: "11%" },
+
+                { dataField: "roomType", caption: "Ro.Type", width: "11%" },
+                { dataField: "arrivalDate", caption: "Arr.Date", dataType: "date", format: "dd/MM/yyyy", width: "11%" },
+
+                { dataField: "noOfNight", caption: "N", width: "11%" },
+                { dataField: "departureDate", caption: "Dep.Date", dataType: "date", format: "dd/MM/yyyy", width: "11%" },
+
+                { dataField: "package", caption: "Package", width: "11%" },
+                { dataField: "noOfAdult", caption: "A", width: "11%" },
+
+                { dataField: "noOfChild", caption: "C", width: "11%" },
+                { dataField: "noOfChild1", caption: "C1", width: "11%" },
+
+                { dataField: "noOfChild2", caption: "C2", width: "11%" },
+                { dataField: "statusText", caption: "Status", width: "11%" },
+
+                { dataField: "reservationHolder", caption: "Reservation Holder", width: "11%" },
+                { dataField: "address", caption: "Address", width: "11%" },
+            ],
+            filterRow: { visible:true, applyFilter:"auto" },
+            paging: { pageSize:20 },
+            pager: {
+                visible:true,
+                allowedPageSizes:[20,50,'all'],
+                showPageSizeSelector:true,
+                showInfo:true,
+                showNavigationButtons:true
+            },
+            scrolling: { mode:"standard", showScrollbar:"always", scrollByContent:true },
+            onSelectionChanged: function(e){
+                selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+                console.log("Selected Row:", selectedRowData);
+            }
+        });
+    }
+
+        // Reload grid với filter từ form
+        function reloadGrid() {
+            $("#loadingSpinnerRateCode").show();
+                    let fromDate = $("#chkfromDate").is(":checked") ? $("#fromDate").val() : null;
+                    let toDate   = $("#chktoDate").is(":checked") ? $("#toDate").val() : null;
+            $.ajax({
+                url: '/Miscellaneous/GetIssuingCardToGuests',
+                type: 'GET',
+                data: {
+                    firstName: $("#firstName").val(),
+                    confirmationNo: $("#confNo").val(),
+                    crsNo: $("#crsNoorGC").val(),
+                    roomNo: $("#roomNo").val(),
+                    zone: $("#zone").val(),
+                    guestName: $("#name").val(),
+                    rsvHolder: $("#resvHolder").val(),
+                    isShowRS: $("#roomSharer").is(":checked") ? "" : "Y",
+                    isShowCard: $("#guesthascard").is(":checked") ? "" : "Y",
+                    arrFrom:    fromDate,
+                    arrTo: toDate,
+                    status: $("#searchType").val(),
+                    findCardID: $("#cardID").val(),
+
+               },
+                success: function(data){
+                    console.log(data);
+                    loadGrid(data);
+                    $("#loadingSpinnerRateCode").hide();
+                },
+                error: function(xhr, status, error){
+                    alert("Không thể tải dữ liệu");
+                    $("#loadingSpinnerRateCode").hide();
+                }
+            });
+        }
+
+        // Nút view click
+        $("#btnView").click(function(){
+            reloadGrid();
+        });
+            // Hàm gọi AddCard API
+    function insertCard(cardID) {
+        if (!selectedRowData) {
+            alert("Vui lòng chọn 1 guest trong danh sách trước khi thêm card!");
+            return;
+        }
+        const gridData = $("#gridContainerRateCode").dxDataGrid("instance").option("dataSource");
+        const exists = gridData.some(row => row.cardID === cardID);
+        if (exists) {
+            alert("CardID này đã tồn tại trong danh sách. Vui lòng kiểm tra lại!");
+            return; // không thêm nữa
+        }
+  
+        const requestData = {
+            Reservation: {
+                ID: selectedRowData.reservationID,
+                CardId: cardID
+            },
+        };
+
+        $("#loadingSpinnerRateCode").show();
+
+        $.ajax({
+            url: '/Miscellaneous/AddCard', // đường dẫn tới action
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestData),
+            success: function(response) {
+                $("#loadingSpinnerRateCode").hide();
+                showToast("Success", "Card added successfully!", true);
+         
+                 $("#cardID").val('');
+                reloadGrid();
+            },
+            error: function(xhr, status, error) {
+                $("#loadingSpinnerRateCode").hide();
+
+                showToast("Error", "Card added error!", false);
+            }
+        });
+    }
+    function CancelCard(cardID) {
+        if (!selectedRowData) {
+            alert("Vui lòng chọn 1 guest trong danh sách trước khi cancel card!");
+            return;
+        }
+
+        const requestData = {
+            Reservation: {
+                ID: selectedRowData.reservationID,
+                CardId: cardID
+            },
+        };
+
+        $("#loadingSpinnerRateCode").show();
+
+        $.ajax({
+            url: '/Miscellaneous/CancelCard', // đường dẫn tới action
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestData),
+            success: function(response) {
+                $("#loadingSpinnerRateCode").hide();
+                showToast("Success", "Card Canceled successfully!", true);
+              
+                 $("#cardID").val('');
+                reloadGrid();
+            },
+            error: function(xhr, status, error) {
+                $("#loadingSpinnerRateCode").hide();
+                showToast("Error", "Card Canceled error!", false);               
+            }
+        });
+    }
+        $("#btnOK").click(function() {
+        CancelCard(selectedRowData.cardID);
+        reloadGrid()
+    });
+
+
+</script>

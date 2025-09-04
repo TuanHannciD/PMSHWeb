@@ -22,8 +22,25 @@ namespace Reservation.Services.Implements
 {
     public class ReservationService : IReservationService
     {
+        public DataTable ActivityLogOverbooking(string sqlCommand)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@sqlCommand", sqlCommand),
 
+                };
 
+                DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
 
         public (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNet(decimal Price, string TransactionCode, decimal DiscountAmount, decimal DiscountPercent)
         {
@@ -191,7 +208,31 @@ namespace Reservation.Services.Implements
 
         }
 
+        public string GetConfigETA()
+        {
+            try
+            {
+                return ConfigSystemBO.GetConfigETA();
+            }
+            catch (SqlException ex)
+            {
 
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public string GetConfigETD()
+        {
+            try
+            {
+                return ConfigSystemBO.GetConfigETD();
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
 
         public DataTable GetRateCode(DateTime arrival, DateTime departure, int adults, int roomType)
         {
@@ -348,6 +389,28 @@ namespace Reservation.Services.Implements
 
         }
 
+        public DataTable SearchOverBooking(string sqlCommand)
+        {
+
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@sqlCommand", sqlCommand),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        
+        }
+
         public DataTable SearchReservation(int searchType, string name, string firstName, string reservationHolder, string confirmationNo,
             string crsNo, string roomNo, string roomType, string package, string zone, DateTime arrivalFrom, DateTime arrivalTo, string roomSharer, string owner)
         {
@@ -366,8 +429,9 @@ namespace Reservation.Services.Implements
                     new SqlParameter("@RoomType", roomType ?? ""),
                     new SqlParameter("@Package", package ?? ""),
                     new SqlParameter("@Zone", zone ?? ""),
-                    new SqlParameter("@ArrivalFrom", arrivalFrom),
-                    new SqlParameter("@ArrivalTo", arrivalTo),
+
+                    new SqlParameter("@ArrivalFrom", searchType != 1 ? arrivalFrom : ""),
+                    new SqlParameter("@ArrivalTo", searchType !=1 ? arrivalTo: ""),
                     new SqlParameter("@RoomSharer", roomSharer),
                     new SqlParameter("@CreateDate", ""),
                     new SqlParameter("@CreateBy", ""),
@@ -391,6 +455,35 @@ namespace Reservation.Services.Implements
                 };
 
                 DataTable myTable = DataTableHelper.getTableData("spReservationSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"ERROR: {ex.Message}", ex);
+
+
+            }
+        }
+
+        public DataTable SearchWaitlist(string name, string priority, string market, string roomType,  string reason, string rateCode, string phone, DateTime date)
+        {
+            try
+            {
+
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@Name", name ?? ""),
+                    new SqlParameter("@Priority", priority ?? ""),
+                    new SqlParameter("@Market", market ?? ""),
+                    new SqlParameter("@RoomType", roomType ?? ""),
+                    new SqlParameter("@Reason", reason ?? ""),
+                    new SqlParameter("@RateCode", rateCode ?? ""),
+                    new SqlParameter("@Phone", phone ?? ""),
+                    new SqlParameter("@Date", date),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationWaitList", param);
                 return myTable;
             }
             catch (SqlException ex)

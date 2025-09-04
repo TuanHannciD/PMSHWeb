@@ -38,6 +38,11 @@ namespace BaseBusiness.BO
 
             return instance.GetList<RoomModel>(query);
         }
+        public static int GetNumberOfRoom(int roomTypeID)
+        {
+            string query = $"select count(*) from Room where RoomTypeID = {roomTypeID}";
+            return instance.GetFirst<int>(query);
+        }
         public static List<RoomModel> GetRoomCountPlan()
         {
           

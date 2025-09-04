@@ -83,5 +83,6 @@ namespace HouseKeeping.Services.Interfaces
         DataTable TasksheetAutomatically(string HK_FO, DateTime taskdateauto, string floorauto, string roomTypeauto, string zonecodeauto, string subzonecodeauto, string includeroomAS, string arrivalOnly, string _ListRoomNotAss);
         DataTable TurndownTasksheetData(DateTime fromDate, string attendant, string IsDueOut, string roomStatus);
         DataTable AutoMakeupServiceRoom(string roomIDs, string _ListSection);
+        DataTable LostAndFound(DateTime fromDate, DateTime toDate);
     }
 }

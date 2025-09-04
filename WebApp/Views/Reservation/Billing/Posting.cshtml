@@ -222,11 +222,18 @@
 <script>
     var postType = 1;
     function openModalPosting() {
-        $('#winNoPostBilling').val(folioPosting);
-        setGroupTransactionPosting();
-        setSubGroupTransactionPosting($('#transactionGroupIDPosting').val());
-        getTransactionPosting($('#transactionGroupIDPosting').val(), $('#subTransactionGroupIDPosting').val());
-        $('#modalPosting').modal('show');
+        const crashierLogin = localStorage.getItem("crashierLogin");
+        if(crashierLogin == "NotYet"){
+            openModalShilftLogin();
+        }
+        else{
+            $('#winNoPostBilling').val(folioPosting);
+            setGroupTransactionPosting();
+            setSubGroupTransactionPosting($('#transactionGroupIDPosting').val());
+            getTransactionPosting($('#transactionGroupIDPosting').val(), $('#subTransactionGroupIDPosting').val());
+            $('#modalPosting').modal('show');
+        }
+
     }
       let selectedProductName = ''; // Store selected transaction name globally
     let isFiltersVisible = false; // Track filter visibility state
