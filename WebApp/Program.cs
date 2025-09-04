@@ -96,11 +96,8 @@ builder.Services.AddSingleton<IInvoicingService, InvoicingService>();
 builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
 
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
-<<<<<<< HEAD
 builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
-=======
 builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
->>>>>>> f820c0dc30f29f7c296db2287f0de07b2d6b6465
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
