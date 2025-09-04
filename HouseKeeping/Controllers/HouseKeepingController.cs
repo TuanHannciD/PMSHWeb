@@ -26,6 +26,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
+using DevExpress.DataAccess.DataFederation;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -3443,36 +3444,6 @@ namespace HouseKeeping.Controllers
                 }
             }
         }
-        [HttpPost]
-        public ActionResult Updatelaf(int id, LostAndFoundModel model)
-        {
-            try
-            {
-                var username = HttpContext.Session.GetString("LoginName") ?? "";
-                model.UpdatedBy = username;
-                model.UpdateDate = DateTime.Now;
-                using (var conn = new SqlConnection(DBUtils.GetDBConnectionString()))
-                {
-                    conn.Open();
-
-                    string sql = @"
-                UPDATE lafLostAndFound
-                SET StatusID=@StatusID,
-                    TransactionDate=@TransactionDate,
-                    Description=@Description,
-                    ZoneID=@ZoneID,
-                    Location=@Location,
-                    Finder=@Finder,
-                    SurrenderBy=@SurrenderBy,
-                    SignatureName=@SignatureName,
-                    PlaceStore=@PlaceStore,
-                    SendDate=@SendDate,
-                    SendName=@SendName,
-                    QualityTypeID=@QualityTypeID,
-                    Notes=@Notes,
-                    UpdatedBy=@UpdatedBy,
-                    UpdateDate=@UpdateDate
-                WHERE ID=@ID";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
