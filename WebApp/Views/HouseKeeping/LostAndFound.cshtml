@@ -283,17 +283,23 @@
         $("#btnView").click(function(){
             reloadGrid();
         });
-           $("#btnNew").click(function () {
-          // reset form
-          $("#lostFoundForm")[0].reset();
+            $("#btnNew").click(function () {
+            // reset form
+            $("#lostFoundForm")[0].reset();
 
-          // set default Transaction Date = hôm nay
-          const today = new Date().toISOString().split('T')[0];
-          $("#transactionDate").val(today);
-          $("#sendDate").val("1900-01-01");
+            // set default Transaction Date = hôm nay
+            const today = new Date().toISOString().split('T')[0];
+            $("#transactionDate").val(today);
+            $("#sendDate").val("1900-01-01");
 
-          $("#lostFoundModal").modal("show");
+            // ✅ Reset nút: chỉ hiển thị Save, ẩn Update
+            $("#btnSaveLostFound").show();
+            $("#btnUpdateLostFound").hide();
+
+            // mở modal
+            $("#lostFoundModal").modal("show");
         });
+
         function parseDateString(dateStr) {
         if (!dateStr) return null;
 
