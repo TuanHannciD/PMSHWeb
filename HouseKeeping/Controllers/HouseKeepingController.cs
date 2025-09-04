@@ -24,6 +24,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using DevExpress.Data.ODataLinq;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using DevExpress.DataAccess.DataFederation;
+using System.Collections;
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -3346,6 +3347,321 @@ namespace HouseKeeping.Controllers
             catch (Exception ex)
             {
                 return Json(ex.Message);
+            }
+        }
+        private void loadSearch()
+        {
+            try
+            {
+                //string[] arrParaNames = new string[] { "@CurrentDate", "@Smoking", "@Floor", "@Owner", "@ZoneID", "@RoomTypeID", "@Clean", "@Dirty", "@Pickup", "@Inspected","@OOO","@OOS", "@Vacant", "@Occupied" };
+                //// Other
+                //if (chkClean.Checked == true) clean = "1"; else clean = "";
+                //if (chkDirty.Checked == true) dirty = "2"; else dirty = "";
+                //if (chkPickup.Checked == true) pickup = "3"; else pickup = "";
+                //if (chkInspected.Checked == true) inspected = "4"; else inspected = "";
+                //if (chkVacant.Checked == true) vacant = "0"; else vacant = "";
+
+                //if (chkOccupied.Checked == true) occupied = "1"; else occupied = "";
+                //if (chkOOO.Checked == true) ooo = "5"; else ooo = "";
+                //if (chkOOS.Checked == true) oos = "6"; else oos = "";
+                dataGridViewFloorPlan.DefaultCellStyle.Font = new Font("Tahoma", 10);
+                dataGridViewFloorPlan.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 10);
+                dataGridViewFloorPlan.RowHeadersDefaultCellStyle.Font = new Font("Tahoma", 10);
+                var number = 0;
+                var numberB = 0;
+                var number11A = 0;
+                var number11AB = 0;
+                string smoking = "0";
+                int zoneID = 0;
+                string floor = "";
+                string owner = "";
+                var queryFloor = "";
+                var queryRoomType = "";
+                var queryOwner = "";
+                int intRoomTypeID = 0;
+                string roomTypeID = intRoomTypeID.ToString();
+
+                // RoomType
+                if (cboRoomType.SelectedIndex == -1) intRoomTypeID = 0;
+                else
+                {
+                    if (cboRoomType.SelectedIndex == 0) { intRoomTypeID = 0; }
+                    else
+                    {
+                        intRoomTypeID = int.Parse(cboRoomType.SelectedValue.ToString());
+                        queryRoomType = "AND RoomTypeID='" + intRoomTypeID + "'";
+                    }
+                }
+                // Floor
+                if (cboFloor.SelectedIndex > 0)
+                {
+                    floor = cboFloor.Text;
+                    queryFloor = "AND 'F'+Floor='" + floor + "'";
+                }
+
+
+                // Zone
+                if (cboZone.SelectedIndex > -1)
+                {
+                    DataTable dtZone = TextUtils.Select(@"Select ID from Block with (nolock) where Code<>'DM' and Name=N'" + cboZone.Text + "'");
+                    zoneID = Convert.ToInt32(dtZone.Rows[0][0]);
+                }
+                // Owner
+                if (cboOwner.Text == "--Hotel--")
+                {
+                    owner = cboOwner.Text;
+                    queryOwner = "AND RoomNo not in (Select RoomNo from RoomOwnerProfile with (nolock))";
+                }
+                else if ((cboOwner.Text == "--Owner--"))
+                {
+                    owner = cboOwner.Text;
+                    queryOwner = "AND RoomNo in (Select RoomNo from RoomOwnerProfile with (nolock))";
+                }
+                // rào lại vì ko dùng sp
+                //object[] arrParaValues1 = new object[] { _businessDate, smoking, floor, owner, zoneID, roomTypeID, clean, dirty, pickup, inspected, ooo, oos, vacant, occupied };
+                //dtRoom = RoomBO.Instance.LoadDataFromSP("spRmgFloorPlanVPL", "tbRoom", arrParaNames, arrParaValues1);
+
+                #region Tìm Max Phòng
+                // Chỉ lấy 6 số , điều kiện bên dưới
+                string sqlmaxRoom = "Select * from Room  with(nolock) where BlockID=N'" + zoneID + "' " + queryFloor + "" + queryRoomType + "" + queryOwner + "and RoomTypeID !=8 and floor <> '11A' order by CONVERT(Int ,floor) asc";
+                lsRoom = TextUtils.ExecuteSQL(sqlmaxRoom, "RoomModel");
+                #endregion
+
+                #region Tìm số lượng phòng lớn nhất / tầng
+                // đánh số dãy A và B nên số tầng gấp đôi
+                string sqlsotang = "Select * from Floor  with(nolock)";
+                lsFloor = TextUtils.ExecuteSQL(sqlsotang, "FloorModel");
+                string sqlFU = "Select * from Floor  with(nolock) Where ID=0";
+                lsFloorUprage = TextUtils.ExecuteSQL(sqlFU, "FloorModel");
+                var NumberofFloor = lsFloor.Count;
+                for (int z = 1; z < NumberofFloor; z++)
+                {
+                    FloorModel ModelF = new FloorModel();
+                    ModelF.Name = "F" + (z + 1) + "-B";
+                    if ((ModelF.Name).ToString() == "F12-B")
+                    {
+                        ModelF.Name = "F11A-B";
+                    }
+                    if ((ModelF.Name).ToString() == "F13-B")
+                    {
+                        ModelF.Name = "F12-B";
+                    }
+                    ModelF.ID = z + 20;
+                    lsFloor.Insert(z * 2, ModelF);
+                }
+                for (int fu = 0; fu < lsFloor.Count; fu++)
+                {
+                    var charFU = (((FloorModel)lsFloor[fu]).Name).ToString();
+                    var lastcharFU = charFU[charFU.Length - 1];
+                    ArrayList _fu = new ArrayList(lsFloor);
+                    if (lastcharFU.ToString() != "B")
+                    {
+                        ((FloorModel)_fu[fu]).Name = ((FloorModel)_fu[fu]).Name + "-A";
+                    }
+                    if (lastcharFU.ToString() == "B")
+                    {
+                        ((FloorModel)_fu[fu]).Name = (((FloorModel)_fu[fu]).Name).Remove(0, 1);
+                    }
+                    if (((FloorModel)_fu[fu]).Name == "F1-A")
+                    {
+                        ((FloorModel)_fu[fu]).Name = "";
+                    }
+                    lsFloorUprage.Insert(fu, ((FloorModel)_fu[fu]));
+                }
+                DataTable _dtmaxRoom = new DataTable();
+                // tính max phòng để tìm số cột
+                int _MaxRoom = 0;
+                for (int maxRoom = 1; maxRoom < (Convert.ToInt32(lsFloor.Count)); maxRoom++)
+                {
+                    var charFloor = (((FloorModel)lsFloorUprage[maxRoom]).Name).ToString();
+                    var lastCharFloor = charFloor[charFloor.Length - 1];
+                    if (lastCharFloor.ToString() == "B")
+                    {
+                        string roomNoCondition = zoneID == "1"
+                            ? "CONVERT(Int,RoomNo) > 019999"
+                            : "CONVERT(Int,RoomNo) > 039999";
+
+                        _dtmaxRoom = TextUtils.Select($@"
+        SELECT * 
+        FROM Room 
+        WHERE {roomNoCondition}
+          AND RoomTypeID != 8 
+          AND BlockID = N'{zoneID}' 
+          AND floor + '-B' = '{((FloorModel)lsFloorUprage[maxRoom]).Name}' 
+        ORDER BY CONVERT(Int,RoomNo)");
+
+                        if (_MaxRoom < _dtmaxRoom.Rows.Count)
+                        {
+                            _MaxRoom = _dtmaxRoom.Rows.Count;
+                        }
+                    }
+                    else // lastCharFloor != "B"
+                    {
+                        string roomNoCondition = zoneID == "1"
+                            ? "CONVERT(Int,RoomNo) < 020000"
+                            : "CONVERT(Int,RoomNo) < 040000";
+
+                        _dtmaxRoom = TextUtils.Select($@"
+        SELECT * 
+        FROM Room 
+        WHERE {roomNoCondition}
+          AND RoomTypeID != 8  
+          AND BlockID = N'{zoneID}' 
+          AND floor + '-A' = '{((FloorModel)lsFloorUprage[maxRoom]).Name}' 
+        ORDER BY CONVERT(Int,RoomNo)");
+
+                        if (_MaxRoom < _dtmaxRoom.Rows.Count)
+                        {
+                            _MaxRoom = _dtmaxRoom.Rows.Count;
+                        }
+                    }
+
+
+                }
+                #endregion
+
+                #region Tạo ma trận từ maxRoom - còn thiếu trạng thái status đổi màu
+                if (_MaxRoom == 0)
+                {
+                    dataGridViewFloorPlan.DataSource = null;
+                    return;
+                }
+                DataTable t = new DataTable();
+                for (int i = 0; i < _MaxRoom; i++)
+                    t.Columns.Add("" + (i + 1));
+                String[][] matrix = new String[lsFloor.Count][];
+
+                int[][] status = new int[lsFloor.Count][];
+
+                for (int i = 0; i < lsFloor.Count; i++)
+                {
+                    matrix[i] = new String[_MaxRoom];
+                    status[i] = new int[_MaxRoom];
+                    for (int j = 0; j < _MaxRoom; j++)
+                    {
+                        matrix[i][j] = String.Empty;
+                        status[i][j] = -1;
+                    }
+                }
+                // Tách phòng A và B, đang rào 11A
+                var a = "02";// số tầng bắt đầu từ tầng 2 và tăng dần
+                var aB = "04";// là tầng B , dùng làm điều kiện loại B
+                for (int k = 0; k < lsRoom.Count; k++)
+                {
+                    var RN = ((RoomModel)lsRoom[k]).RoomNo.Trim();
+                    for (int l = 0; l < lsFloor.Count; l++)
+                    {
+                        if (RN.Length == 6)
+                        {
+                            if ((((RoomModel)lsRoom[k]).Floor) + "-A" == (((FloorModel)lsFloor[l]).Name).ToString() && aB != (RN.Remove(2, 4)))
+                            {
+                                if (a == (RN.Remove(0, 2).Remove(2, 2)))
+                                {
+                                    matrix[l][number] = RN;
+                                    status[l][number] = FindStatus(k, lsRoom);
+                                    number = number + 1;
+                                }
+                                else
+                                {
+                                    a = (RN.Remove(0, 2).Remove(2, 2));
+                                    number = 0;
+                                    matrix[l][number] = RN;
+                                    status[l][number] = FindStatus(k, lsRoom);
+                                    number = number + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int k = 0; k < lsRoom.Count; k++)
+                {
+                    var RN = ((RoomModel)lsRoom[k]).RoomNo.Trim();
+                    for (int l = 0; l < lsFloor.Count; l++)
+                    {
+                        if (RN.Length == 6)
+                        {
+                            if ((((RoomModel)lsRoom[k]).Floor) + "-B" == (((FloorModel)lsFloorUprage[l]).Name).ToString() && aB == (RN.Remove(2, 4)))
+                            {
+                                if (a == (RN.Remove(0, 2).Remove(2, 2)))
+                                {
+                                    matrix[l][numberB] = RN;
+                                    status[l][numberB] = FindStatus(k, lsRoom);
+                                    numberB = numberB + 1;
+
+                                }
+                                else
+                                {
+                                    a = (RN.Remove(0, 2).Remove(2, 2));
+                                    numberB = 0;
+                                    matrix[l][numberB] = RN;
+                                    status[l][numberB] = FindStatus(k, lsRoom);
+                                    numberB = numberB + 1;
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+                // Gán cứng trường hợp tầng 11A
+                string sql11A = "Select * from Room  with(nolock) where BlockID=N'" + zoneID + "' " + queryFloor + "" + queryRoomType + "" + queryOwner + "and RoomTypeID !=8 and floor = '11A' order by CONVERT(Int ,RoomNo) asc";
+                lsRoom11A = TextUtils.ExecuteSQL(sql11A, "RoomModel");
+                for (int R11A = 0; R11A < lsRoom11A.Count; R11A++)
+                {
+                    var RN11A = ((RoomModel)lsRoom11A[R11A]).RoomNo.Trim();
+                    if ((Convert.ToInt32(RN11A) < Convert.ToInt32("040000")) && (RN11A.Remove(0, 2).Remove(2, 2)) == "22")
+                    {
+                        matrix[21][number11A] = RN11A;
+                        status[21][number11A] = FindStatus(R11A, lsRoom11A);
+                        number11A = number11A + 1;
+                    }
+                    else if ((Convert.ToInt32(RN11A) > Convert.ToInt32("039999")) && (RN11A.Remove(0, 2).Remove(2, 2)) == "22")
+                    {
+                        matrix[22][number11AB] = RN11A;
+                        status[22][number11AB] = FindStatus(R11A, lsRoom11A);
+                        number11AB = number11AB + 1;
+                    }
+                }
+                for (int i = 0; i < Convert.ToInt32(lsFloor.Count); i++)
+                {
+                    t.Rows.Add(matrix[i]);
+                }
+                #endregion
+
+                #region Fill dữ liệu ra gridview
+                dataGridViewFloorPlan.DataSource = t;
+                for (int i = 0; i < Convert.ToInt32(lsFloor.Count); i++)
+                {
+                    // fill dòng tức tên tầng chia làm 2 dãy A B
+                    dataGridViewFloorPlan.Rows[i].HeaderCell.Value = ((FloorModel)lsFloorUprage[i]).Name;
+                    for (int j = 0; j < _MaxRoom; j++)
+                    {
+                        // fill màu theo status đã set từ trước, hàm findStatus
+                        dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor = getColorStatus(status[i][j]);//color
+
+                        // tuân thêm màu chữ khi nền màu tối 13_01_2016
+                        if (dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor == System.Drawing.Color.Blue ||
+                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor == System.Drawing.Color.Green ||
+                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.BackColor == System.Drawing.Color.PaleVioletRed)
+                        {
+                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.ForeColor = System.Drawing.Color.White;
+                        }
+                        else
+                        {
+                            dataGridViewFloorPlan.Rows[i].Cells[j].Style.ForeColor = System.Drawing.Color.Black;
+                        }
+
+                        // tooltip
+                        dataGridViewFloorPlan.Rows[i].Cells[j].ToolTipText = getUnitInfor(dataGridViewFloorPlan.Rows[i].Cells[j].Value.ToString());
+                    }
+
+                }
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace.ToString());
+                return;
             }
         }
 
