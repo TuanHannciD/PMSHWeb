@@ -738,12 +738,14 @@ namespace Billing.Controllers
 
                 int reservationID = int.Parse(Request.Form["rsvID"].ToString());
                 int transID = int.Parse(Request.Form["transID"].ToString());
+                int folioID = int.Parse(Request.Form["folioNoID"].ToString());
+
                 if (transID == 0)
                 {
                     return Json(new { code = 0, msg = "Could not find payment code" });
 
                 }
-                List<FolioModel> folio = PropertyUtils.ConvertToList<FolioModel>(FolioBO.Instance.FindByAttribute("ReservationID", reservationID));
+                List<FolioModel> folio = PropertyUtils.ConvertToList<FolioModel>(FolioBO.Instance.FindByAttribute("ReservationID", reservationID)).Where(x => x.ID == int.Parse(Request.Form["folioNoID"].ToString())).ToList();
                 if (folio.Count < 1)
                 {
                     return Json(new { code = 1, msg = $"Could not find Folio. Please check Folio" });
@@ -1627,6 +1629,39 @@ namespace Billing.Controllers
         #endregion
 
         #region DatVP __ Billing: Adjust Transaction
+        [HttpGet]
+        public async Task<IActionResult> CheckAdjustCode(string transactionCode)
+        {
+            try
+            {
+                List<TransactionsModel> trans = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindByAttribute("Code", transactionCode));
+                if(trans.Count < 1)
+                {
+                    return Json(new
+                    {
+                        code = 1,
+                        msg = "Could not find transactions"
+                    });
+                }
+                if (trans[0].AdjustmentCode == "" || string.IsNullOrEmpty(trans[0].AdjustmentCode))
+                {
+                    return Json(new
+                    {
+                        code = 1,
+                        msg = "Adjustment Code could not find"
+                    });
+                }
+                return Json(new
+                {
+                    code = 0,
+                    msg = ""
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         #endregion
 
         #region DatVP __ Billing: Shift Login
@@ -1666,6 +1701,8 @@ namespace Billing.Controllers
 
         }
         #endregion
+
+
 
         #region DatVP __ Invoicing: Billing
         [HttpGet]

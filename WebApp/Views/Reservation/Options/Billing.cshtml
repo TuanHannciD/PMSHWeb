@@ -223,7 +223,7 @@
                                     </div>
                                 </div>
                                 <a href="#" onclick="openModalSplitTransaction();">Split Transactions</a>
-
+                                <a href="#" onclick="adjustTransaction();">Adjust Transactions</a>
                                 <a href="#" id="deleteTransactionBilling">Delete Transactions</a>
 
                                 <a href="#" onclick="ExportExcelBilling();">Export to Excel</a>
@@ -258,6 +258,7 @@
 @await Html.PartialAsync("Billing/EditPosting")
 @await Html.PartialAsync("Billing/SplitTransaction")
 @await Html.PartialAsync("Billing/TransferTransaction")
+@await Html.PartialAsync("Billing/AdjustTransaction")
 
 <script>
 
@@ -355,7 +356,7 @@
         return data.reduce((total, item) => total + (parseFloat(item.amount) || 0), 0);
     }
     var folioDetailID = 0;
-
+    var transCodeBilling = "";
     function initializeDataGridBilling(data) {
         totalAmountBilling = getTotalAmount(data);
         $('#balanceBillingMaster').text(totalAmountBilling.toLocaleString('en-US'));
@@ -751,4 +752,5 @@
             }
         });
     }
+
 </script>

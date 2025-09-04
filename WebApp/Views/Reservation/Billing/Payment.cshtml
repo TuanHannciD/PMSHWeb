@@ -120,7 +120,7 @@
         formData.append('reference', $('#creditCardNoPaymentBilling').val());
         formData.append('userName', userName);
         formData.append('userID', userID);
-
+        formData.append('folioNoID', folioNoID);
         $.ajax({
             url: '/Billing/PostPayment',
             type: 'POST',
@@ -140,4 +140,6 @@
             error: function (xhr, statusText, err) { }
         });
     }
+
+
 </script>

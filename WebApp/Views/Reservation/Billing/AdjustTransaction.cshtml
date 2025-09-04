@@ -1,0 +1,74 @@
+﻿<div class="modal fade" id="modalAdjustTransaction" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border: 1px solid #bcbcbc">
+            <div class="modal-header">
+                <h5 class="modal-title" >Adjustment Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModalAdjustTransaction();"></button>
+            </div>
+            <div class="button-group">
+                <button type="button" class="mui-button mui-button-search" onclick="PostingPayment();">Post</button>
+                <button type="button" class="mui-button mui-button-clear" onclick="closeModalAdjustTransaction();">Close</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="code" class="form-label">TransCode</label>
+                    <input type="text" class="form-control small-input" id="transCodeAdjust" style="text-align:right" readonly>
+                </div>
+                <hr class="hr">
+                <div class="form-group-new-reservation">
+                    <label >By Amount</label>
+                    <input type="radio" >
+                    <input type="text"  style="text-align:right">
+
+                    <input type="text"   style="text-align:right">
+                </div>
+                <hr class="hr">
+                <div class="form-group-new-reservation">
+                    <label for="input3">RoomNo</label>
+                    <input type="text" id="roomNoSearchAssignment" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function adjustTransaction() {
+        var grid = $("#gridContainerBilling").dxDataGrid("instance");
+        var selectedRows = grid.getSelectedRowsData();
+        var selectedIds = selectedRows.map(row => row.code);
+        if(selectedIds.length)
+        $.ajax({
+            url: '/Billing/CheckAdjustCode',
+            type: 'get',
+            dataType: 'json',
+
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                transactionCode: selectedIds[0]
+            },
+            success: function (result) {
+                if(result.code == 1){
+                    showToast('Error', data.msg, false);
+                    return;
+                }
+                else{
+                    openModalAdjustTransaction();
+                }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+
+        });
+    }
+    function openModalAdjustTransaction(){
+        $('#modalAdjustTransaction').modal('show');
+    }
+    function closeModalAdjustTransaction(){
+        $('#modalAdjustTransaction').modal('hide');
+    }
+</script>
