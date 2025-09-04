@@ -3121,7 +3121,7 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
                 //Cap nhat trang thai cho khach DUEIN trong bang RESERVATION -- Status = 5 
-                string sqlUpdate_DI = "UPDATE Reservation WITH (NOLOCK) SET Status = 5 WHERE Status = 0 And DateDiff(day,ArrivalDate,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ";
+                string sqlUpdate_DI = "UPDATE Reservation SET Status = 5 WHERE Status = 0 And DateDiff(day,ArrivalDate,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ";
                 SqlHelper.ExecuteNonQuery(DBUtils.GetDBConnectionString(), CommandType.Text, sqlUpdate_DI);
             }
             catch (Exception ex)
@@ -4523,7 +4523,10 @@ namespace NightAudit.Controllers
                     _EndNightAudit(ref _IsOK);
                     return Json(new { code = 1, msg = "Loi Posting chnage room status 2" });
                 }
+                pt.CloseConnection();
 
+                pt.OpenConnection();
+                pt.BeginTransaction();
                 // B9.4. Chuyển trạng thái phiếu đặt phòng về DO đối với phòng sẽ đi ngày hôm sau
                 _ChangeRsvStatus_2(ref _IsOK, int.Parse(userID), userName);
                 if (!_IsOK)
@@ -4532,15 +4535,20 @@ namespace NightAudit.Controllers
                     return Json(new { code = 1, msg = "Loi Posting chnage room status 4" });
                 }
 
+                pt.CloseConnection();
 
                 // B9.5. Chuyển trạng thái phiếu đặt phòng về NS đối với phòng đến ngày hnay nhưng không đến
+                pt.OpenConnection();
+                pt.BeginTransaction();
                 _ChangeRsvStatus_3(ref _IsOK);
                 if (!_IsOK)
                 {
                     _EndNightAudit(ref _IsOK);
                     return Json(new { code = 1, msg = "Loi Posting chnage room status 5" });
                 }
-
+                pt.CloseConnection();
+                pt.OpenConnection();
+                pt.BeginTransaction();
                 // B9.6. Xử lý xung đột trạng thái phòng - 27.09.2018
                 _ChangeRsvStatus_4(ref _IsOK, userID);
                 if (!_IsOK)
