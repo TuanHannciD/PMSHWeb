@@ -848,3 +848,120 @@ textarea {
         gap: 15px;
     }
 }
+.toolbar-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    top: 0;
+}
+
+    .toolbar-menu a, .toolbar-menu .dropdown {
+        flex: 0 0 auto;
+        min-width: 80px; /* Minimum width to prevent overly small buttons */
+        text-align: center;
+    }
+
+    .toolbar-menu a {
+        padding: 6px 12px;
+        background: #ffffff;
+        color: #1f2937;
+        text-decoration: none;
+        display: block;
+    }
+
+        .toolbar-menu a:hover {
+            background: #2b6cb0;
+            color: #ffffff;
+        }
+
+.submenu {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    min-width: 120px;
+    display: none;
+    position: absolute;
+    z-index: 20;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.dropdown:hover .submenu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.submenu a {
+    color: #1f2937;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    background: transparent;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+    .submenu a:hover {
+        background: #f1f5f9;
+        color: #60a5fa;
+    }
+
+.font-semibold {
+    font-weight: 500;
+}
+
+.menu-toggle::after {
+    margin-left: 0.5rem;
+    content: '\25BC';
+    font-size: 0.8rem;
+}
+@media (prefers-color-scheme: dark) {
+    .toolbar-menu {
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    }
+
+        .toolbar-menu a {
+            background: #4b5563;
+            color: #e5e7eb;
+        }
+
+            .toolbar-menu a:hover {
+                background: #60a5fa;
+                color: #ffffff;
+                box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4);
+            }
+
+    .submenu {
+        background: #374151;
+        border: 1px solid #6b7280;
+    }
+
+        .submenu a {
+            color: #e5e7eb;
+        }
+
+            .submenu a:hover {
+                background: #4b5563;
+                color: #bfdbfe;
+            }
+
+
+}
+
+@media (max-width: 640px) {
+    .toolbar-menu {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .toolbar-menu a, .toolbar-menu .dropdown {
+            min-width: 100%;
+        }
+
+    .submenu {
+        width: 100%;
+        position: static;
+    }
+}

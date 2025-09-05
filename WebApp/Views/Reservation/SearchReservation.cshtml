@@ -1,4 +1,12 @@
 ﻿<link href="~/css/reservation.css" rel="stylesheet" asp-append-version="true" />
+<style>
+
+
+    
+
+    
+    
+</style>
 <div class="mt-3">
     <div class="row">
         <!-- Menu trái -->
@@ -23,7 +31,8 @@
                             Search Reservation
 
                         </h3>
-                        <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
+                        <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
+                        <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
                     </div>
 
                     <div class="header2">
@@ -184,9 +193,8 @@
                     <div id="gridContainer" class="gridContainer mt-2"></div>
                 </div> *@
 
-                <div id="tab-filter" class="tab-pane ">
+                <div id="filter" class="tab-pane ">
                     <div class="filter-section">
-                        <h4>Guest Information & Reservation Details</h4>
                         <div class="form-group-new-reservation">
                             <label>First Name</label>
                             <input type="text" id="firstName">
@@ -224,9 +232,6 @@
                                 <option value="7">Cancellations</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="filter-section">
-                        <h4>Room Information & Dates</h4>
                         <div class="form-group-new-reservation">
                             <label>Package</label>
                             <input type="text" id="package">
@@ -274,9 +279,61 @@
                 </div>
             </div>
         </div>
-        <div class=col-md-2 style="background-color:red">
-            
+        <div class="col-md-2">
+            <div class="header" >
+                <h3 id="content-title">
+                    Functions & Options
+
+                </h3>
+                <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
+                <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
+            </div>
+            <div class="toolbar-menu max-w-7xl mt-2 " id="functionAndOption">
+                <a href="#" class="font-semibold">Advance</a>
+                <a href="#" class="font-semibold">Clear</a>
+                <a href="#" onclick="openModalEdit();" class="font-semibold">Edit</a>
+                <a href="#" onclick="openModalCancel()" class="font-semibold">Cancel</a>
+                <a href="#" onclick="openConfirmReinstate();" class="font-semibold">Reinstate</a>
+                <a href="#" onclick="checkIn();" class="font-semibold">Check In</a>
+                <a href="#" onclick="openModalViewProfile();" class="font-semibold">View Profile</a>
+                <a href="#" id="groupAdmin" class="font-semibold">Group Admin</a>
+                <a href="#" data-function="export" class="font-semibold">Export</a>
+                <a href="#" onclick="openModalSplit();" class="font-semibold">Split</a>
+                <a onclick="openModalAccompanying();" class="font-semibold">Accompanying</a>
+                <a onclick="openModalAddOn();" class="font-semibold">Add On</a>
+                <a class="font-semibold">Alerts</a>
+                <a onclick="openModalBilling();" class="font-semibold">Billing</a>
+                <a onclick="openModalInvoicing();" class="font-semibold">Invoicing</a>
+                <a class="font-semibold">Change</a>
+                <a onclick="openModalShare();" class="font-semibold">Share</a>
+                <a onclick="openModalDeposit();" class="font-semibold">Deposit/DXL</a>
+                <a onclick="openModalFixedCharges();" class="font-semibold">Fixed Charges</a>
+                <a onclick="openConfirm();" class="font-semibold">Delete</a>
+                <a onclick="openModalMessage();" class="font-semibold">Message</a>
+                <a onclick="openModalRegistrationCard();" class="font-semibold">Regis.Card</a>
+                <a onclick="openRoomMove();" class="font-semibold">Room Move</a>
+                <a onclick="openModalRouting();" class="font-semibold">Routing</a>
+                <a onclick="openModalWaitList();" class="font-semibold">WaitList</a>
+
+                <div class="dropdown relative">
+                    <a href="#" class="menu-toggle font-semibold">Room Assignment</a>
+                    <div class="submenu absolute z-10 mt-2">
+                        <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                        <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                    </div>
+                </div>
+
+                <div class="dropdown relative">
+                    <a href="#" class="menu-toggle font-semibold">Check Out</a>
+                    <div class="submenu absolute z-10 mt-2">
+                        <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
+                        <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
+                        <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
+                    </div>
+                </div>
+            </div>
         </div>
+        
     </div>
 </div>
 
@@ -1341,8 +1398,33 @@
       menuLeft.classList.toggle('collapsed');
     });
 
+    function setupDefaultCaret(){
+        $('#caretDownFunctionAndOption').hide();
+        $('#caretDownFilter').hide();
 
+    }
+    function clickCaretDownFunctionAndOption(){
+        $('#caretUpFunctionAndOption').show();
+        $('#caretDownFunctionAndOption').hide();
+        $('#functionAndOption').show();
+    }
+    function clickCaretUpFunctionAndOption(){
+        $('#caretUpFunctionAndOption').hide();
+        $('#caretDownFunctionAndOption').show();
+        $('#functionAndOption').hide();
+    }
+    function clickCaretDownFilter(){
+        $('#caretUpFilter').show();
+        $('#caretDownFilter').hide();
+        $('#filter').show();
+    }
+    function clickCaretUpFilter(){
+        $('#caretUpFilter').hide();
+        $('#caretDownFilter').show();
+        $('#filter').hide();
+    }
     $(document).ready(async function () {
+        setupDefaultCaret();
             searchReservation();
             await setTomSelect();
             getProfileIndividual();
