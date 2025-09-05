@@ -1,4 +1,4 @@
-﻿<link href="~/css/reservation.css" rel="stylesheet" />
+﻿<link href="~/css/reservation.css" rel="stylesheet" asp-append-version="true" />
 <div class="mt-3">
     <div class="row">
         <!-- Menu trái -->
@@ -15,16 +15,26 @@
         </div>
 
         <!-- Nội dung bên phải -->
-        <div class="col-md-10">
+        <div class="col-md-8">
             <div class="content-right">
-                <div class="header">
-                    <h3 id="content-title">Search Reservation
-             
-                    </h3>
-                    <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
+                <div class="header" style="justify-content:space-between">
+                    <div class="header2" style="margin-bottom:-40px">
+                        <h3 id="content-title">
+                            Search Reservation
+
+                        </h3>
+                        <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
+                    </div>
+
+                    <div class="header2">
+                        <button class="submit-button-clear-reservation" onclick="searchReservation">Search</button>
+
+                        <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
+                    </div>
                 </div>
 
-                <div id="partial-content">
+
+@*                 <div id="partial-content">
                     <!-- Tab menu -->
                     <div class="tab-menu">
                         <div class="tab active" data-tab="tab-filter">Filter <i class="fas fa-minus tab-icon"></i></div>
@@ -172,8 +182,100 @@
                     </div>
                     <!-- DevExtreme DataGrid -->
                     <div id="gridContainer" class="gridContainer mt-2"></div>
+                </div> *@
+
+                <div id="tab-filter" class="tab-pane ">
+                    <div class="filter-section">
+                        <h4>Guest Information & Reservation Details</h4>
+                        <div class="form-group-new-reservation">
+                            <label>First Name</label>
+                            <input type="text" id="firstName">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Name</label>
+                            <input type="text" id="name">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Owner</label>
+                            <select id="owner">
+                                <option value="">--All--</option>
+                                <option value="--Hotel--">--Hotel--</option>
+                                <option value="--Owner--">--Owner--</option>
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Conf. No</label>
+                            <input type="text" id="confirmationNo">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Resv. No</label>
+                            <input type="text" id="resvHolder">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>CRS No/GC</label>
+                            <input type="text" id="crsNo">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Search Type</label>
+                            <select id="searchType">
+                                <option value="0">General</option>
+                                <option value="1">Guest In House</option>
+
+                                <option value="7">Cancellations</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Room Information & Dates</h4>
+                        <div class="form-group-new-reservation">
+                            <label>Package</label>
+                            <input type="text" id="package">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Zone</label>
+                            <select id="zone" asp-items="ViewBag.cboZone">
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Room No</label>
+                            <input type="text" id="roomNo">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Room Type</label>
+                            <select id="roomType" asp-items="ViewBag.cboRoomType">
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Arrival</label>
+                            <input type="date" id="arrivalForm">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Departure</label>
+                            <input type="date" id="departureForm">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Rsv Online</label>
+                            <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                        </div>
+                        <div class="form-group-new-reservation">
+                            <label>Room Sharer</label>
+                            <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- DevExtreme DataGrid -->
+                    <div id="gridContainer" class="gridContainer mt-2"></div>
                 </div>
             </div>
+        </div>
+        <div class=col-md-2 style="background-color:red">
+            
         </div>
     </div>
 </div>

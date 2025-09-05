@@ -1,5 +1,6 @@
 ﻿
 <style>
+
     .folio-container {
         background-color: var(--accent-color);
         border-radius: 8px;
@@ -88,7 +89,6 @@
             transform: scale(1.2);
         }
 
-
 </style>
 <!-- Modal billimg-->
 <div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelBilling" aria-hidden="true">
@@ -110,17 +110,25 @@
                             <div class="dropdown-menu-custom">
                                 <a href="#" onclick="openBilling0();">By Total</a>
                                 <a href="#" onclick="openBilling1();">By Detail : Include Tax</a>
-                                <a href="#" onclick="openBilling2();" >By Detail : Not Include Tax</a>
+                                <a href="#" onclick="openBilling2();">By Detail : Not Include Tax</a>
                             </div>
                         </div>
-@*                         <a href="#" onclick="openModalBillingPost();">Post</a>
- *@                        <a href="#" onclick="openModalPosting();">Posting</a>
+                        <a href="#" onclick="openModalPosting();">Posting</a>
                         <a href="#" onclick="openModalEditPosting();">Edit</a>
                         <div class="dropdown">
                             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Preview && Print</a>
                             <div class="dropdown-menu-custom">
                                 <a href="#" onclick="PrintAndPreview(1);">Style: Billing Information</a>
                                 <a href="#" onclick="PrintAndPreview(2);">Style: Billing Information (selected transaction)</></a>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Screen View</a>
+                            <div class="dropdown-menu-custom">
+                                <a href="#">Full</a>
+                                <a href="#">Split</a>
+                                <a href="#">Quad</a>
+
                             </div>
                         </div>
                         @* <div class="dropdown">
@@ -144,17 +152,17 @@
                                 1. Reservation Information
                             </h3>
                             <div class="row">
-                                <label class="form-label col-md-2" style="width:auto">1.1. RSV Status: <span id="rsvStatusBilling"></span></label>
-                                <label class="form-label  col-md-2" style="width:auto">1.2. Conf.No: <span id="conNoBilling"></span></label>
-                                <label  class="form-label  col-md-2" style="width:auto">1.3. Group: <span id="groupBilling"></span></label>
-                                <label  class="form-label  col-md-2" style="width:auto">1.4. Company: <span id="companyBilling"></span></label>
-                                <label  class="form-label  col-md-2" style="width:auto">1.5. Arrival: <span id="arivalBilling"></span></label>
-                                <label  class="form-label  col-md-2" style="width:auto">1.6 Departure: <span id="departureBilling"></span> </label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.1. RSV Status: <span id="rsvStatusBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.2. Conf.No: <span id="conNoBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.3. Group: <span id="groupBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.4. Company: <span id="companyBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.5. Arrival: <span id="arivalBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto;color:#006600">1.6 Departure: <span id="departureBilling"></span></label>
                             </div>
 
                         </div>
                     </div>
-@*                     <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px;display:none" id="moreInfo">
+                    @*                     <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px;display:none" id="moreInfo">
                     </div> *@
                 </div>
 
@@ -166,8 +174,8 @@
                                 2. Folio Information
                             </h3>
                             <div class="row">
-                                <label  class="form-label col-md-2" style="width:auto">2.1. Balance: <span id="balanceBilling"></span></label>
-                                <label  class="form-label  col-md-2" style="width:auto">2.2. Total: <span id="totalBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto;border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">2.1. Balance: <span id="balanceBilling"></span></label>
+                                <label class="form-label  col-md-2" style="width:auto;color:#006600">2.2. Total: <span id="totalBilling"></span></label>
 
                             </div>
 
@@ -190,10 +198,10 @@
                             <div>
                                 <span id="infoBillingName" style="font-size:18px;color:#0055b8"></span>
                                 <div style="display:flex">
-                                    <span >
-                                        Balance:  
+                                    <span>
+                                        Balance:
                                     </span>
-                                    <label  id="balanceBillingMaster"></label>
+                                    <label id="balanceBillingMaster"></label>
                                 </div>
                             </div>
                             <div class="function-menu">
@@ -234,7 +242,7 @@
                                     </div>
                                 </div>
                                 <a href="#" onclick="openModalTransferTransaction();">Transfer Transaction</a>
-                                
+
                             </div>
 
                         </div>

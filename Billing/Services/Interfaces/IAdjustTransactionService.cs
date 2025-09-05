@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseBusiness.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,12 @@ namespace Billing.Services.Interfaces
 {
     public interface IAdjustTransactionService
     {
+
+        /// <summary>
+        /// DatVP: Lấy danh sách reason adjust transaction
+        /// </summary>
+    
+        /// <returns>Danh sách reason adjustment transaction</returns>
+        List<CommentModel> GetReasonAdjust();
     }
 }

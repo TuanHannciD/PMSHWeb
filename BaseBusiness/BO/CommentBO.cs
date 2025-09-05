@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,12 @@ namespace BaseBusiness.BO
         public static CommentBO Instance
         {
             get { return instance; }
+        }
+
+        public static List<CommentModel> GetReasonAdjust()
+        {
+            string query = $"SELECT * FROM Comment where CommentTypeID = 8 and Inactive = 0";
+            return instance.GetList<CommentModel>(query);
         }
     }
 }

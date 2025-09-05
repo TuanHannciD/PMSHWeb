@@ -108,11 +108,11 @@
     }
 
 .tab-pane {
-    padding: 15px;
-    background-color: var(--accent-color);
+    padding: 15px 0px;
+/*    background-color: var(--accent-color);
     border-radius: 8px;
     border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);*/
 }
 .header2 {
     display: flex;
@@ -158,8 +158,8 @@
         font-weight: 600;
         color: var(--main-color);
         margin-bottom: 10px;
-        padding-bottom: 6px;
-        border-bottom: 2px solid var(--main-color);
+        padding-bottom: 2px;
+        border-bottom: 1px solid var(--main-color);
     }
 .modal-body{
     padding-top:0px;
