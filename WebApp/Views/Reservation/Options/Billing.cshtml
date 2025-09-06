@@ -152,12 +152,12 @@
                                 1. Reservation Information
                             </h3>
                             <div class="row">
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.1. RSV Status: <span id="rsvStatusBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.2. Conf.No: <span id="conNoBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.3. Group: <span id="groupBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.4. Company: <span id="companyBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">1.5. Arrival: <span id="arivalBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto;color:#006600">1.6 Departure: <span id="departureBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.1. RSV Status: <span id="rsvStatusBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.2. Conf.No: <span id="conNoBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.3. Group: <span id="groupBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.4. Company: <span id="companyBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.5. Arrival: <span id="arivalBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto;color:#2b6cb0">1.6 Departure: <span id="departureBilling"></span></label>
                             </div>
 
                         </div>
@@ -174,8 +174,8 @@
                                 2. Folio Information
                             </h3>
                             <div class="row">
-                                <label class="form-label col-md-2" style="width:auto;border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#006600">2.1. Balance: <span id="balanceBilling"></span></label>
-                                <label class="form-label  col-md-2" style="width:auto;color:#006600">2.2. Total: <span id="totalBilling"></span></label>
+                                <label class="form-label col-md-2" style="width:auto;border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">2.1. Balance: <span id="balanceBilling"></span></label>
+                                <label class="form-label  col-md-2" style="width:auto;color:#2b6cb0">2.2. Total: <span id="totalBilling"></span></label>
 
                             </div>
 
@@ -242,6 +242,7 @@
                                     </div>
                                 </div>
                                 <a href="#" onclick="openModalTransferTransaction();">Transfer Transaction</a>
+                                <a href="#" onclick="openModalSelectOption();">Select Option</a>
 
                             </div>
 
@@ -267,6 +268,7 @@
 @await Html.PartialAsync("Billing/SplitTransaction")
 @await Html.PartialAsync("Billing/TransferTransaction")
 @await Html.PartialAsync("Billing/AdjustTransaction")
+@await Html.PartialAsync("Billing/SelectOption")
 
 <script>
 
@@ -365,11 +367,13 @@
     }
     var folioDetailID = 0;
     var transCodeBilling = "";
-    function initializeDataGridBilling(data) {
+        function initializeDataGridBilling(data) {
         totalAmountBilling = getTotalAmount(data);
         $('#balanceBillingMaster').text(totalAmountBilling.toLocaleString('en-US'));
+
         $("#gridContainerBilling").dxDataGrid({
             dataSource: data,
+            keyExpr: "id", // Khóa chính của grid là id
             allowColumnResizing: true,
             columns: [
                 {
@@ -420,16 +424,26 @@
                 folioDetailID = e.data.id;
                 $("#transactionInfoSplit").text(e.data.code + ' - ' + e.data.description);
                 $("#amountTtoalSplit").text(formatNumberBilling(e.data.amount.split('.')[0]));
-
                 $("#valueSplitTransaction").val(formatNumberBilling(e.data.amount.split('.')[0]));
-                if(e.data.amount == '0.00'){
+                if (e.data.amount == '0.00') {
                     $("#amountTtoalSplit").text('0');
-
-                $("#valueSplitTransaction").val('0');
+                    $("#valueSplitTransaction").val('0');
                 }
                 // Chọn dòng được click
                 const grid = $("#gridContainerBilling").dxDataGrid("instance");
                 grid.selectRows([e.key], false);
+            },
+            onContentReady: function(e) {
+                // Tìm các dòng trong data có code trùng với TransactionCode trong selectedCodesFromResult
+                const keysToSelect = data
+                    .filter(item => selectedCodesFromResult.includes(item.code))
+                    .map(item => item.id)
+                    .filter(id => id !== undefined && id !== null);
+                // Tích chọn các dòng có id tương ứng
+                if (keysToSelect.length > 0) {
+                    const grid = e.component;
+                    grid.selectRows(keysToSelect, false);
+                }
             }
         });
     }
@@ -469,6 +483,9 @@
     var subGroupTransaction = [];
     var transactionList = [];
     var articleList = [];
+        var groupTransactionSelectOption = [];
+    var subGroupTransactionSelectOption = [];
+    var transactionListSelectOption = [];
     // hàm lấy transaction group, transaction sub group, transactions, articles
     function getInforServices(){
         $.ajax({
@@ -481,6 +498,9 @@
                 groupTransaction = result.groupTransaction;
                 subGroupTransaction = result.groupSubTransaction;
                 transactionList = result.transactions;
+                groupTransactionSelectOption = result.groupTransaction;
+                subGroupTransactionSelectOption = result.groupSubTransaction;
+                transactionListSelectOption = result.transactions;
                 articleList = result.articles
 
             },

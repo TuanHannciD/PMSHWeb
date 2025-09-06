@@ -43,5 +43,20 @@ namespace BaseBusiness.BO
             string query = $"select sum(AmountMaster) as Amount from FolioDetail where ReservationID = {reservationID} and RowState = 1 AND Status = 0";
             return instance.GetFirst<decimal>(query);
         }
+
+        public static List<string> GetTransactionCodeBySelectOption(DateTime fromDate, DateTime toDate, int groupID, int subGroup, string transCode, string cashierNo, string checkNo, int rsvID, List<int> userIDs)
+        {
+            string userIDsString = string.Join(",", userIDs);
+            string query = "select distinct TransactionCode from FolioDetail\r\n" +
+                           $"where CAST(TransactionDate as Date) >= cast('{fromDate:yyyy-MM-dd}' as date) and CAST(TransactionDate as date) <= cast('{toDate:yyyy-MM-dd}' as date)\r\n" +
+                           $"and TransactionGroupID = {groupID}\r\n" +
+                           $"and TransactionSubgroupID = {subGroup}\r\n" +
+                           (string.IsNullOrEmpty(transCode) ? "" : $"and TransactionCode = '{transCode}'\r\n") +
+                           (string.IsNullOrEmpty(cashierNo) ? "" : $"and CashierNo = '{cashierNo}'\r\n") +
+                           (string.IsNullOrEmpty(checkNo) ? "" : $"and CheckNo = '{checkNo}'\r\n") +
+                           $"and ReservationID = {rsvID}\r\n" +
+                           (string.IsNullOrEmpty(userIDsString) || userIDsString == "0" ? "" : $"and UserInsertID IN ({userIDsString})\r\n");
+            return instance.GetList<string>(query);
+        }
     }
 }

@@ -857,7 +857,6 @@ textarea {
 
     .toolbar-menu a, .toolbar-menu .dropdown {
         flex: 0 0 auto;
-        min-width: 80px; /* Minimum width to prevent overly small buttons */
         text-align: center;
     }
 

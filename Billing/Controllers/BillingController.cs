@@ -120,6 +120,23 @@ namespace Billing.Controllers
                 return Json(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            try
+            {
+
+                List<UsersModel> users = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+
+                return Json(users);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetFolioNo(int reservationID)
         {
@@ -134,7 +151,6 @@ namespace Billing.Controllers
                 return Json(ex.Message);
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetReasonAdjustmentTransaction()
@@ -2052,8 +2068,6 @@ namespace Billing.Controllers
         }
         #endregion
 
-
-
         #region DatVP __ Invoicing: Billing
         [HttpGet]
         public async Task<IActionResult> SearchFolio(int guestStatus, int folioStatus, int folioType, string name, string room, string folioNo, string confirmationNo, string date)
@@ -2077,6 +2091,53 @@ namespace Billing.Controllers
             catch (Exception ex)
             {
                 return Json(new { error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region DatVP __ Billing: Select Option
+        [HttpPost]
+        public ActionResult GetTransactionBySelectOption()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                
+                #region lưu reservation item inventory
+                string itemInventoryString = Request.Form["users"].ToString();
+                List<int> userIDs = new List<int>();
+
+                if (!string.IsNullOrEmpty(itemInventoryString))
+                {
+                    userIDs = itemInventoryString.Split(',')
+                                                    .Select(x => int.Parse(x)).Where(x => x != 0)
+                                                    .ToList();
+                }
+                DateTime fromDate = DateTime.Parse(Request.Form["fromDate"].ToString());
+                DateTime toDate = DateTime.Parse(Request.Form["toDate"].ToString());
+                int groupID = int.Parse(Request.Form["group"].ToString());
+                int subGroupID = int.Parse(Request.Form["subGroup"].ToString());
+                string transCodeID = Request.Form["code"].ToString();
+                string shiftNo = Request.Form["shiftNo"].ToString();
+                string checkNo = Request.Form["checkNo"].ToString();
+                int rsvID = int.Parse(Request.Form["rsvID"].ToString());
+                var result = FolioDetailBO.GetTransactionCodeBySelectOption(fromDate, toDate, groupID, subGroupID, transCodeID, shiftNo, checkNo, rsvID,userIDs);
+                #endregion
+                pt.CommitTransaction();
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
             }
         }
         #endregion
