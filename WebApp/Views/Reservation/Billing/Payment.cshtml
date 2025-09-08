@@ -110,6 +110,8 @@
     function PostingPayment() {
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
+        const shiftID = localStorage.getItem("shiftID");
+        const shiftName = localStorage.getItem("shiftName");
         var formData = new FormData();
         formData.append('rsvID', idReservation);
         formData.append('transID', $('#paymentCodePaymentBilling').val());
@@ -120,7 +122,9 @@
         formData.append('reference', $('#creditCardNoPaymentBilling').val());
         formData.append('userName', userName);
         formData.append('userID', userID);
-
+        formData.append('folioNoID', folioNoID);
+        formData.append('shiftID', shiftID);
+        formData.append('shiftName', shiftName);
         $.ajax({
             url: '/Billing/PostPayment',
             type: 'POST',
@@ -140,4 +144,6 @@
             error: function (xhr, statusText, err) { }
         });
     }
+
+
 </script>

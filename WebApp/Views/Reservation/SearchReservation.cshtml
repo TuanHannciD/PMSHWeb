@@ -1,8 +1,109 @@
-﻿<link href="~/css/reservation.css" rel="stylesheet" />
+﻿<link href="~/css/reservation.css" rel="stylesheet" asp-append-version="true" />
+<style>
+
+
+    
+    
+</style>
+
 <div class="mt-3">
+
     <div class="row">
         <!-- Menu trái -->
         <div class="col-md-2 mb-2">
+            <div class="header" style="justify-content:space-between">
+                <div class="header2" >
+                    <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
+
+                    <h3 id="content-title">
+                        Filter
+
+                    </h3>
+                    <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
+                    <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
+                </div>
+
+                <div class="header2">
+                    <i class="fa-solid fa-magnifying-glass" onclick="searchReservation();"></i>
+
+                </div>
+            </div>
+
+            <div id="filter" class="tab-pane ">
+                <div class="row">
+                    <div class="form-group-new-reservation col-md-6" style="display:none">
+                        <label>First Name</label>
+                        <input type="text" id="firstName">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Name</label>
+                        <input type="text" id="name">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Owner</label>
+                        <select id="owner">
+                            <option value="">--All--</option>
+                            <option value="--Hotel--">--Hotel--</option>
+                            <option value="--Owner--">--Owner--</option>
+                        </select>
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Conf. No</label>
+                        <input type="text" id="confirmationNo">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Resv. No</label>
+                        <input type="text" id="resvHolder col-md-6">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>CRS No/GC</label>
+                        <input type="text" id="crsNo">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Search Type</label>
+                        <select id="searchType">
+                            <option value="0">General</option>
+                            <option value="1">Guest In House</option>
+
+                            <option value="7">Cancellations</option>
+                        </select>
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Package</label>
+                        <input type="text" id="package">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Zone</label>
+                        <select id="zone" asp-items="ViewBag.cboZone">
+                        </select>
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Room No</label>
+                        <input type="text" id="roomNo">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Room Type</label>
+                        <select id="roomType" asp-items="ViewBag.cboRoomType">
+                        </select>
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Arrival</label>
+                        <input type="date" id="arrivalForm">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Departure</label>
+                        <input type="date" id="departureForm">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Rsv Online</label>
+                        <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                    </div>
+                    <div class="form-group-new-reservation col-md-6">
+                        <label>Room Sharer</label>
+                        <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
+                    </div>
+                </div>
+            </div>
             <div class="menu-left">
                 <button class="toggle-btn"><i class="fas fa-bars"></i></button>
                 <a class="menu-item " href="/Reservation/NewReservation">NEW RESERVATION</a>
@@ -12,159 +113,30 @@
                 <a class="menu-item " href="/Reservation/OverBooking">OVER BOOKING</a>
 
             </div>
+            
         </div>
 
         <!-- Nội dung bên phải -->
-        <div class="col-md-10">
+        <div class="col-md-8">
             <div class="content-right">
-                <div class="header">
-                    <h3 id="content-title">Search Reservation
-             
-                    </h3>
-                    <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
+
+
+                <!-- Container for Add Columns button -->
+                <div id="addColumnButtonContainer" style="margin-bottom: 7px;">
+                    <div class="header">
+                        <h3 id="content-title">
+                            Visible Columns
+
+                        </h3>
+                        <i class="fa-solid fa-plus" id="addColumns"  title="Click to add column into datagrid"></i>
+                    </div>
+                </div>
+                <!-- Container for visible column blocks -->
+                <div id="columnSelector" style="margin-bottom: 10px; display: flex; flex-wrap: wrap;">
+                    <!-- Visible column blocks with "x" icon will be generated dynamically -->
                 </div>
 
-                <div id="partial-content">
-                    <!-- Tab menu -->
-                    <div class="tab-menu">
-                        <div class="tab active" data-tab="tab-filter">Filter <i class="fas fa-minus tab-icon"></i></div>
-                        <div class="tab" data-tab="tab-functions">Functions & Options<i class="fas fa-plus tab-icon"></i></div>
-                    </div>
-                    <!-- Tab nội dung -->
-                    <div class="tab-content mt-2">
-                        <!-- FILTER -->
-                        <div id="tab-filter" class="tab-pane active">
-                            <div class="filter-section">
-                                <h4>Guest Information & Reservation Details</h4>
-                                <div class="form-group-new-reservation">
-                                    <label>First Name</label>
-                                    <input type="text"  id="firstName">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Name</label>
-                                    <input type="text"  id="name">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Owner</label>
-                                    <select id="owner">
-                                        <option value="">--All--</option>
-                                        <option value="--Hotel--">--Hotel--</option>
-                                        <option value="--Owner--">--Owner--</option>
-                                    </select>
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Conf. No</label>
-                                    <input type="text"id="confirmationNo">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Resv. No</label>
-                                    <input type="text" id="resvHolder">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>CRS No/GC</label>
-                                    <input type="text" id="crsNo">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Search Type</label>
-                                    <select  id="searchType">
-                                        <option value="0">General</option>
-                                        <option value="1">Guest In House</option>
-
-                                        <option value="7">Cancellations</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="filter-section">
-                                <h4>Room Information & Dates</h4>
-                                <div class="form-group-new-reservation">
-                                    <label>Package</label>
-                                    <input type="text"  id="package">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Zone</label>
-                                    <select id="zone" asp-items="ViewBag.cboZone">
-                                    </select>
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Room No</label>
-                                    <input type="text"   id="roomNo">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Room Type</label>
-                                    <select  id="roomType" asp-items="ViewBag.cboRoomType">
-                                    </select>
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Arrival</label>
-                                    <input type="date"  id="arrivalForm">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Departure</label>
-                                    <input type="date"  id="departureForm">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Rsv Online</label>
-                                    <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
-                                </div>
-                                <div class="form-group-new-reservation">
-                                    <label>Room Sharer</label>
-                                    <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="tab-functions" class="tab-pane" style="display: none;">
-                            <div class="functions-pane">
-                                <div class="function-menu">
-                                    <a href="#">Advance</a>
-                                    <a href="#">Clear</a>
-                                    <a href="#" onclick="openModalEdit();">Edit</a>
-                                    <a href="#" onclick="openModalCancel()">Cancel</a>
-                                    <a href="#" onclick="openConfirmReinstate();">Reinstate</a>
-                                    <a href="#" onclick="checkIn();">Check In</a>
-                                    <a href="#" onclick="openModalViewProfile();">View Profile</a>
-                                    <a href="#" id="groupAdmin">Group Admin</a>
-                                    <a href="#" data-function="export">Export</a>
-                                    <a href="#" onclick="openModalSplit();">Split</a>
-                                    <a class="rs-bold" onclick="openModalAccompanying();">Accompanying</a>
-                                    <a class="rs-bold" onclick="openModalAddOn();">Add On</a>
-                                    <a class="rs-bold">Alerts</a>
-                                    <a class="rs-bold" onclick="openModalBilling();">Billing</a>
-                                    <a class="rs-bold" onclick="openModalInvoicing();">Invoicing</a>
-
-                                    <a class="rs-bold">Change</a>
-                                    <a class="rs-bold" onclick="openModalShare();">Share</a>
-                                    <a class="rs-bold" onclick="openModalDeposit();">Deposit/DXL</a>
-                                    <a class="rs-bold" onclick="openModalFixedCharges();">Fixed Charges</a>
-                                    <a class="rs-bold" onclick="openConfirm();">Delete</a>
-                                    <a class="rs-bold" onclick="openModalMessage();">Message</a>
-                                    <a class="rs-bold" onclick="openModalRegistrationCard();">Regis.Card</a>
-                                    <a class="rs-bold" onclick="openRoomMove();">Room move</a>
-                                    <a class="rs-bold" onclick="openModalRouting();">Routing</a>
-                                    <a class="rs-bold" onclick="openModalWaitList();">WaitList</a>
-
-                                    <div class="dropdown">
-
-                                        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Room Assignment</a>
-                                        <div class="dropdown-menu-custom">
-                                            <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
-                                            <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown">
-
-                                        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Check Out</a>
-                                        <div class="dropdown-menu-custom">
-                                            <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
-                                            <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
-                                            <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
+                <div>
                     <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -175,9 +147,82 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-2">
+            <div class="header" >
+                <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
+                <h3 id="content-title">
+                    Functions & Options
+
+                </h3>
+                <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
+                <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
+            </div>
+            <div class="toolbar-menu max-w-7xl mt-2 " id="functionAndOption">
+                <a href="#" class="font-semibold">Advance</a>
+                <a href="#" class="font-semibold">Clear</a>
+                <a href="#" onclick="openModalEdit();" class="font-semibold">Edit</a>
+                <a href="#" onclick="openModalCancel()" class="font-semibold">Cancel</a>
+                <a href="#" onclick="openConfirmReinstate();" class="font-semibold">Reinstate</a>
+                <a href="#" onclick="checkIn();" class="font-semibold">Check In</a>
+                <a href="#" onclick="openModalViewProfile();" class="font-semibold">View Profile</a>
+                <a href="#" id="groupAdmin" class="font-semibold">Group Admin</a>
+                <a href="#" data-function="export" class="font-semibold">Export</a>
+                <a href="#" onclick="openModalSplit();" class="font-semibold">Split</a>
+                <a onclick="openModalAccompanying();" class="font-semibold">Accompanying</a>
+                <a onclick="openModalAddOn();" class="font-semibold">Add On</a>
+                <a class="font-semibold">Alerts</a>
+                <a onclick="openModalBilling();" class="font-semibold">Billing</a>
+                <a onclick="openModalInvoicing();" class="font-semibold">Invoicing</a>
+                <a class="font-semibold">Change</a>
+                <a onclick="openModalShare();" class="font-semibold">Share</a>
+                <a onclick="openModalDeposit();" class="font-semibold">Deposit/DXL</a>
+                <a onclick="openModalFixedCharges();" class="font-semibold">Fixed Charges</a>
+                <a onclick="openConfirm();" class="font-semibold">Delete</a>
+                <a onclick="openModalMessage();" class="font-semibold">Message</a>
+                <a onclick="openModalRegistrationCard();" class="font-semibold">Regis.Card</a>
+                <a onclick="openRoomMove();" class="font-semibold">Room Move</a>
+                <a onclick="openModalRouting();" class="font-semibold">Routing</a>
+                <a onclick="openModalWaitList();" class="font-semibold">WaitList</a>
+
+                <div class="dropdown relative">
+                    <a href="#" class="menu-toggle font-semibold">Room Assignment</a>
+                    <div class="submenu absolute z-10 mt-2">
+                        <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                        <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                    </div>
+                </div>
+
+                <div class="dropdown relative">
+                    <a href="#" class="menu-toggle font-semibold">Check Out</a>
+                    <div class="submenu absolute z-10 mt-2">
+                        <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
+                        <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
+                        <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>
 
+<div class="offcanvas offcanvas-end" tabindex="-1" id="columnOffcanvas" aria-labelledby="columnOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="columnOffcanvasLabel">Select column to add into grid</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body" style="background-color:#f5f5f5;margin:0 5px">
+        <div class="d-flex justify-content-end mb-2">
+            <button type="button" class="submit-button-clear-reservation" id="addSelectedColumns">Add</button>
+
+            <button type="button" class="submit-button-new-reservation" id="clearSelectedColumns">Clear</button>
+        </div>
+        <div id="hiddenColumnList" class="row">
+            <!-- Các khối cột ẩn sẽ được tạo động -->
+        </div>
+
+    </div>
+</div>
 @* Model edit *@
 <div class="modal fade modal modal-xl" id="modalEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -1239,8 +1284,33 @@
       menuLeft.classList.toggle('collapsed');
     });
 
+    function setupDefaultCaret(){
+        $('#caretDownFunctionAndOption').hide();
+        $('#caretDownFilter').hide();
 
+    }
+    function clickCaretDownFunctionAndOption(){
+        $('#caretUpFunctionAndOption').show();
+        $('#caretDownFunctionAndOption').hide();
+        $('#functionAndOption').show();
+    }
+    function clickCaretUpFunctionAndOption(){
+        $('#caretUpFunctionAndOption').hide();
+        $('#caretDownFunctionAndOption').show();
+        $('#functionAndOption').hide();
+    }
+    function clickCaretDownFilter(){
+        $('#caretUpFilter').show();
+        $('#caretDownFilter').hide();
+        $('#filter').show();
+    }
+    function clickCaretUpFilter(){
+        $('#caretUpFilter').hide();
+        $('#caretDownFilter').show();
+        $('#filter').hide();
+    }
     $(document).ready(async function () {
+        setupDefaultCaret();
             searchReservation();
             await setTomSelect();
             getProfileIndividual();
@@ -1318,7 +1388,8 @@
                     // $('#dateInput').val(result.split('T')[0]);
                     $('#expDatePaymentBilling').val(result.split('T')[0]);
                     $('#transDatePaymentBilling').val(result.split('T')[0]);
-
+                    $('#fromDateSelectOption').val(result.split('T')[0]);
+                    $('#toDateSelectOption').val(result.split('T')[0]);
                     // Cộng 7 ngày
                     const departureDate = new Date(businessDate);
                     departureDate.setDate(businessDate.getDate() + 7);
@@ -1401,28 +1472,147 @@
         var reservationStatus = 0;
     function initializeDataGridSearch(data) {
         // Kiểm tra dữ liệu đầu vào
-
-        // Nếu cần giới hạn tổng số bản ghi, ví dụ 100 bản ghi
         const limitedData = data.slice(0, 100);
 
-        $("#gridContainer").dxDataGrid({
-            dataSource: limitedData, // Sử dụng dữ liệu đã giới hạn
+        // Định nghĩa các cột dựa trên dữ liệu
+        const columns = [
+            { dataField: 'ID', caption: 'ID', visible: false },
+            { dataField: 'ConfirmationNo', caption: 'Confirmation No', visible: true },
+            { dataField: 'CRSNo', caption: 'CRS No', visible: true },
+            { dataField: 'MG', caption: 'MG', visible: true },
+            { dataField: 'Nationality', caption: 'Nationality', visible: true },
+            { dataField: 'GuestName', caption: 'Guest Name', visible: true },
+            { dataField: 'RoomNo', caption: 'Room No', visible: true, alignment: 'right' },
+            { dataField: 'RoomStatus', caption: 'Room Status', visible: true },
+            { dataField: 'RoomType', caption: 'Room Type', visible: true },
+            { dataField: 'Arrival', caption: 'Arrival', visible: true },
+            { dataField: 'ETA', caption: 'ETA', visible: true },
+            { dataField: 'NoOfNight', caption: 'No of Nights', visible: true, alignment: 'right' },
+            { dataField: 'Departure', caption: 'Departure', visible: true },
+            { dataField: 'ETD', caption: 'ETD', visible: true },
+            { dataField: 'Adults', caption: 'Adults', visible: true, alignment: 'right' },
+            { dataField: 'Child', caption: 'Child', visible: true, alignment: 'right' },
+            { dataField: 'Child1', caption: 'Child 1', visible: true, alignment: 'right' },
+            { dataField: 'Child2', caption: 'Child 2', visible: true, alignment: 'right' },
+            { dataField: 'Status', caption: 'Status', visible: true },
+            { dataField: 'Packages', caption: 'Packages', visible: true },
+            { dataField: 'PriceNet', caption: 'Price Net', visible: true, alignment: 'right', format: {
+                type: 'fixedPoint',
+                precision: 0,
+                thousandsSeparator: ','
+            } },
+            { dataField: 'ReservationHolder', caption: 'Reservation Holder', visible: true },
+            { dataField: 'BalanceVND', caption: 'Balance (VND)', visible: false },
+            { dataField: 'ARNo', caption: 'AR No', visible: false },
+            { dataField: 'AllotmentCode', caption: 'Allotment Code', visible: false },
+            { dataField: 'BalanceUSD', caption: 'Balance (USD)', visible: false },
+            { dataField: 'BookerName', caption: 'Booker Name', visible: false },
+            { dataField: 'CI', caption: 'Check-in Time', visible: false },
+            { dataField: 'CO', caption: 'Check-out Time', visible: false },
+            { dataField: 'Color', caption: 'Color', visible: false },
+            { dataField: 'Comment', caption: 'Comment', visible: false },
+            { dataField: 'CommentGroup', caption: 'Comment Group', visible: false },
+            { dataField: 'Contact', caption: 'Contact', visible: false },
+            { dataField: 'CreateBy', caption: 'Created By', visible: false },
+            { dataField: 'CreateDate', caption: 'Create Date', visible: false },
+            { dataField: 'Currency', caption: 'Currency', visible: false },
+            { dataField: 'DepositPayment', caption: 'Deposit Payment', visible: false },
+            { dataField: 'DepositRequest', caption: 'Deposit Request', visible: false },
+            { dataField: 'DiscountAmount', caption: 'Discount Amount', visible: false },
+            { dataField: 'DiscountRate', caption: 'Discount Rate', visible: false },
+            { dataField: 'DropOffDescription', caption: 'Drop-off Description', visible: false },
+            { dataField: 'DropOffReqdID', caption: 'Drop-off Request ID', visible: false },
+            { dataField: 'DropOffTransportNo', caption: 'Drop-off Transport No', visible: false },
+            { dataField: 'DropOffTransportType', caption: 'Drop-off Transport Type', visible: false },
+            { dataField: 'FixedCharge', caption: 'Fixed Charge', visible: false },
+            { dataField: 'GroupCode', caption: 'Group Code', visible: false },
+            { dataField: 'MainGuest', caption: 'Main Guest', visible: false },
+            { dataField: 'MarketCode', caption: 'Market Code', visible: false },
+            { dataField: 'MemberNo', caption: 'Member No', visible: false },
+            { dataField: 'MemberType', caption: 'Member Type', visible: false },
+            { dataField: 'NoOfRoom', caption: 'No of Rooms', visible: false },
+            { dataField: 'OriginCode', caption: 'Origin Code', visible: false },
+            { dataField: 'PM', caption: 'PM', visible: false },
+            { dataField: 'PersonInChargeID', caption: 'Person In Charge ID', visible: false },
+            { dataField: 'PickupDescription', caption: 'Pickup Description', visible: false },
+            { dataField: 'PickupReqdID', caption: 'Pickup Request ID', visible: false },
+            { dataField: 'PickupTransportNo', caption: 'Pickup Transport No', visible: false },
+            { dataField: 'PickupTransportType', caption: 'Pickup Transport Type', visible: false },
+            { dataField: 'Price', caption: 'Price', visible: false },
+            { dataField: 'PrintRate', caption: 'Print Rate', visible: false },
+            { dataField: 'ProfileCode', caption: 'Profile Code', visible: false },
+            { dataField: 'ProfileComment', caption: 'Profile Comment', visible: false },
+            { dataField: 'ProfileGroupID', caption: 'Profile Group ID', visible: false },
+            { dataField: 'ProfileIndividualID', caption: 'Profile Individual ID', visible: false },
+            { dataField: 'RateCode', caption: 'Rate Code', visible: false },
+            { dataField: 'ReservationStatus', caption: 'Reservation Status', visible: false },
+            { dataField: 'ReservationTypeCode', caption: 'Reservation Type Code', visible: false },
+            { dataField: 'RoomID', caption: 'Room ID', visible: false },
+            { dataField: 'ShareRoom', caption: 'Share Room', visible: false },
+            { dataField: 'SourceCode', caption: 'Source Code', visible: false },
+            { dataField: 'SpecialUpdateBy', caption: 'Special Update By', visible: false },
+            { dataField: 'SpecialUpdateDate', caption: 'Special Update Date', visible: false },
+            { dataField: 'Specials', caption: 'Specials', visible: false },
+            { dataField: 'Title', caption: 'Title', visible: false },
+            { dataField: 'UpdateBy', caption: 'Updated By', visible: false },
+            { dataField: 'UpdateDate', caption: 'Update Date', visible: false },
+            { dataField: 'VIP', caption: 'VIP', visible: false },
+            { dataField: 'VoucherNo', caption: 'Voucher No', visible: false }
+        ];
+
+        // Hàm cập nhật danh sách cột hiển thị
+        function updateVisibleColumns() {
+            const columnSelector = $('#columnSelector');
+            columnSelector.empty(); // Xóa nội dung cũ
+            columns.forEach(column => {
+                if (column.visible) {
+                    const blockHtml = `
+                        <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #ffffff;color: #1f2937;font-weight:500">
+                            <span class="remove-column" data-column="${column.dataField}" style="cursor: pointer; margin-right: 5px;color:#bf3431">
+                                <i class="fa-solid fa-xmark"></i>
+                            </span>
+                            <span style="color:#1f2937">${column.caption}</span>
+                        </div>`;
+                    columnSelector.append(blockHtml);
+                }
+            });
+        }
+
+        // Hàm cập nhật danh sách cột ẩn trong Offcanvas
+        function updateHiddenColumns() {
+            const hiddenColumnList = $('#hiddenColumnList');
+            hiddenColumnList.empty(); // Xóa nội dung cũ
+            columns.forEach(column => {
+                if (!column.visible) {
+                    const blockHtml = `
+                        <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #ffffff;color: #1f2937;font-weight:500">
+                            <input type="checkbox" class="column-checkbox" data-column="${column.dataField}" style="margin-right: 5px;">
+                            <span>${column.caption}</span>
+                        </div>`;
+                    hiddenColumnList.append(blockHtml);
+                }
+            });
+        }
+
+        // Khởi tạo DataGrid
+        const grid = $("#gridContainer").dxDataGrid({
+            dataSource: limitedData,
             allowColumnResizing: true,
             columnAutoWidth: true,
             columnMinWidth: 90,
             paging: {
-                enabled: true, // Bật phân trang
-                pageSize: 15 // Mỗi trang 15 bản ghi
+                enabled: true,
+                pageSize: 15
             },
             pager: {
                 visible: true,
-                allowedPageSizes: [15, 20, 30], // Chỉ các kích thước trang cố định
+                allowedPageSizes: [15, 20, 30],
                 showPageSizeSelector: true,
-                showInfo: true, // Hiển thị thông tin phân trang
+                showInfo: true,
                 showNavigationButtons: true
             },
             scrolling: {
-                mode: 'standard', // Thay 'virtual' bằng 'standard' để kiểm tra
+                mode: 'standard',
                 showScrollbar: 'always',
                 useNative: false
             },
@@ -1433,12 +1623,13 @@
             selection: {
                 mode: "single"
             },
+            columns: columns,
             onRowDblClick: function(e) {
                 openModalEdit(e.data.id);
             },
             onRowClick: function(e) {
-                
-                $('#listFunction').show(); 
+
+                $('#listFunction').show();
                 idReservation = e.data.ID;
                 $('#moreInfo').empty();
                 let html = ``;
@@ -1524,6 +1715,47 @@
                 }
                 $('#moreInfo').append(html);
             }
+        }).dxDataGrid('instance');
+
+        // Cập nhật danh sách cột hiển thị và ẩn ban đầu
+        updateVisibleColumns();
+        updateHiddenColumns();
+
+        // Xử lý sự kiện xóa cột
+        $('#columnSelector').on('click', '.remove-column', function() {
+            const columnName = $(this).attr('data-column');
+            grid.columnOption(columnName, 'visible', false);
+            columns.find(col => col.dataField === columnName).visible = false;
+            updateVisibleColumns();
+            updateHiddenColumns();
+        });
+
+        // Xử lý sự kiện nút "Add Columns" để mở Offcanvas
+        $('#addColumns').on('click', function() {
+            updateHiddenColumns(); // Cập nhật danh sách cột ẩn trước khi mở Offcanvas
+            const offcanvasElement = document.getElementById('columnOffcanvas');
+            const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            offcanvas.show();
+        });
+
+        // Xử lý sự kiện nút "Add" trong Offcanvas
+        $('#addSelectedColumns').on('click', function() {
+            $('.column-checkbox:checked').each(function() {
+                const columnName = $(this).attr('data-column');
+                grid.columnOption(columnName, 'visible', true);
+                columns.find(col => col.dataField === columnName).visible = true;
+            });
+            updateVisibleColumns();
+            updateHiddenColumns();
+            // Đóng Offcanvas sau khi thêm
+            const offcanvasElement = document.getElementById('columnOffcanvas');
+            const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+            offcanvas.hide();
+        });
+
+        // Xử lý sự kiện nút "Clear" trong Offcanvas
+        $('#clearSelectedColumns').on('click', function() {
+            $('.column-checkbox').prop('checked', false);
         });
     }
         async function openModalEdit() {
@@ -3108,7 +3340,7 @@
 
         async function setTomSelect(){
             const ids = [
-                            "#txtName","#txtItemInventory","#txtNameAccompanying","transactionRouting"
+                            "#txtName","#txtItemInventory","#txtNameAccompanying","#transactionRouting","#userSelectOption"
                 //,
                 //"#txtStateGroup",
                 // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",

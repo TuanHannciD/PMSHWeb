@@ -697,6 +697,9 @@
     function PostingService() {
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
+        const shiftID = localStorage.getItem("shiftID");
+        const shiftName = localStorage.getItem("shiftName");
+
         var formData = new FormData();
         formData.append('rsvID', idReservation);
         formData.append('description', $('#taCode2PostBilling').val());
@@ -707,6 +710,8 @@
         formData.append('userID', userID);
         formData.append('postType', postType);
         formData.append('window', $('#winNoPostBilling').val());
+        formData.append('shiftID', shiftID);
+        formData.append('shiftName', shiftName);
 
         $.ajax({
             url: '/Billing/PostArticle',

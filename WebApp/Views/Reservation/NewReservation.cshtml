@@ -22,29 +22,32 @@
         <!-- Nội dung bên phải -->
         <div class="col-md-10">
             <div class="content-right">
-                <div class="header">
-                    <h3 id="content-title">
-                        New Reservation
+                <div class="header" style="justify-content:space-between">
+                    <div class="header2" style="margin-bottom:-40px">
+                        <h3 id="content-title">
+                            New Reservation
 
-                    </h3>
-                    <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
-                </div>
-                <div style="display:flex;column-gap:12px">
-                    <button class="submit-button-clear-reservation" onclick="SaveReservation()">Save</button>
-
-                    <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
-                </div>
-                <div id="partial-content">
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" value="" id="checkWalkIn" name="checkWalkIn">
-                        <label class="form-check-label" for="flexCheckChecked" style="padding-top:5px">
-                            WalkIn
-                        </label>
+                        </h3>
+                        <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
                     </div>
+
+                    <div class="header2" >
+                        <button class="submit-button-clear-reservation" onclick="SaveReservation(0)">Save</button>
+                        <button class="submit-button-clear-reservation" onclick="SaveReservation(1)">Walk In</button>
+
+                        <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
+                    </div>
+                </div>
+
+                <div id="partial-content">
                     <div class="container-new-reservation body">
                         <!-- Guest Information -->
                         <div class="section-new-reservation">
-                            <h3>Guest Information</h3>
+                            <h3>
+                                Guest Information
+
+                            </h3>
+
                             <div class="form-grid-new-reservation">
                                 <div class="form-group-new-reservation">
                                     <label for="txtName">Name</label>
@@ -2384,8 +2387,12 @@
         calculateNet($('#arrival').val(),$('#departure').val(),0,
         $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
     });
-    function SaveReservation() {
-        let WalkIn = $('#checkWalkIn').is(':checked') ? 1 : 0;
+    function SaveReservation(type) {
+
+        let WalkIn = "0";
+        if(type == 1){
+            WalkIn = "1";
+        }
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
         var formData = new FormData();

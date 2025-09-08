@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.SqlClient;
+using DevExpress.ClipboardSource.SpreadsheetML;
 
 namespace Cashiering.Controllers
 {
@@ -18,15 +19,17 @@ namespace Cashiering.Controllers
         private readonly ILogger<CashieringController> _logger;
         private readonly IMemoryCache _cache;
         private readonly ICashieringService _iCashieringService;
+        private readonly ICloseShiftService _iCloseShiftService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public CashieringController(ILogger<CashieringController> logger,
-                IMemoryCache cache, IConfiguration configuration, ICashieringService iCashieringService, IHttpContextAccessor httpContextAccessor)
+                IMemoryCache cache, IConfiguration configuration, ICashieringService iCashieringService, IHttpContextAccessor httpContextAccessor,ICloseShiftService iCloseShiftService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iCashieringService = iCashieringService;
             _httpContextAccessor = httpContextAccessor;
+            _iCloseShiftService = iCloseShiftService;
 
         }
 
@@ -304,7 +307,7 @@ namespace Cashiering.Controllers
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }      
        [HttpGet]
-public IActionResult GetShiftDetail(int shiftID)
+        public IActionResult GetShiftDetail(int shiftID)
 {
     try
     {
@@ -587,6 +590,49 @@ public IActionResult GetShiftDetail(int shiftID)
         }
 
 
+        #region DatVP __ Close Shift
+        public IActionResult CloseShift()
+        {
+            return View(); 
+        }
+        [HttpGet]
+        public IActionResult GetTransactionByShift(int shiftID)
+        {
+            try
+            {
+                // type = 0: payment
+                DataTable resultPaymentData = _iCloseShiftService.GetCloseShift(shiftID, 0);
+
+                var resultPayment = (from d in resultPaymentData.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+
+                // type = 1: Exchange
+                DataTable resultExchangeData = _iCloseShiftService.GetCloseShift(shiftID, 1);
+                var resultExchange = (from d in resultExchangeData.AsEnumerable()
+                                     select d.Table.Columns.Cast<DataColumn>()
+                                         //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                         .ToDictionary(
+                                             col => col.ColumnName,
+                                             col => d[col.ColumnName]?.ToString()
+                                         )).ToList();
+                return Json(new
+                {
+                    resultPayment = resultPayment,
+                    resultExchange = resultExchange
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
 
     }
 }

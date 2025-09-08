@@ -931,6 +931,7 @@ namespace Reservation.Controllers
                 activityLog.OldValue = activityLog.NewValue = activityLog.Description = "";
                 ActivityLogBO.Instance.Insert(activityLog);
                 #endregion
+
                 #region lưu reservation master
                 if (int.Parse(Request.Form["profileAgentID"].ToString()) != 0 || int.Parse(Request.Form["profileCompanyID"].ToString()) != 0)
                 {
