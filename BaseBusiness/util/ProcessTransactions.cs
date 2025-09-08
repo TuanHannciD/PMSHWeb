@@ -26,10 +26,12 @@ namespace BaseBusiness.util
 
         #region Khai bao cac bien dung chung
         protected string strcon;
-        private readonly SqlConnection cnn;
+        private readonly SqlConnection  cnn;
         private SqlTransaction tran;
         private SqlCommand cmd;
         //private SqlDataAdapter da;
+        public SqlConnection Connection => cnn;
+        public SqlTransaction Transaction => tran;
         private EventsLogErrorModel mELE;
         string Header_Update = "UPDATE : ";
         string[] DESCRIPTION_OF_EXCEPTION = { "Server busy or network is slower !!!", "Time Out or Row is Locked !!!" };

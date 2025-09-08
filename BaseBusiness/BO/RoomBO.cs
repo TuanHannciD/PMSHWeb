@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BaseBusiness.BO
 {
+    using Dapper;
     public class RoomBO : BaseBO
     {
         private RoomFacade facade = RoomFacade.Instance;
@@ -82,7 +84,11 @@ namespace BaseBusiness.BO
 
             return instance.GetList<RoomModel>(query);
         }
-
+        public string GetRoomNoById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT RoomNo FROM Room WHERE ID = @id";
+            return conn.QuerySingleOrDefault<string>(sql, new { id }, tx);
+        }
 
 
     }

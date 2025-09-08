@@ -4,11 +4,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using RoomManagement.Services.Interfaces;
+using RoomManagement.Dto;
 
 namespace RoomManagement.Services.Implements
 {
@@ -295,6 +297,7 @@ namespace RoomManagement.Services.Implements
 
             return resultTable;
         }
+        
 
     }
 }

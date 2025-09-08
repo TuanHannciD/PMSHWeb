@@ -459,7 +459,6 @@ namespace BaseBusiness.bc
                 if (logger.IsDebugEnabled)
                     logger.Info(sqlText);
 
-                conn.Close();
             }
         }
 
