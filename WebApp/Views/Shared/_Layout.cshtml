@@ -6,13 +6,23 @@
     <title>oneS-PMSh.Report</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link href="~/css/button.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="~/images/logo.png" />
-    <link href="~/css/input.css" rel="stylesheet" />
-    <link href="~/css/card.css" rel="stylesheet" />
+    @* css assets *@
+    <link href="~/css/assets/button.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/assets/card.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/assets/input.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/assets/select.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/assets/textarea.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/assets/button_small.css" rel="stylesheet" asp-append-version="true" />
+
+
+    @* css components *@
+    <link href="~/css/components/grid_table.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/components/navbar.css" rel="stylesheet" asp-append-version="true" />
+
 
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
-    <link href="~/css/navbar.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="icon" type="image/png" href="~/images/logo.png" />
+
     @* jquery *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -80,182 +90,7 @@
 </head>
 <body class="dx-viewport" style="background-color:#f5f5f5">
 
-        @*  <div class="banner">
-            <img src="~/images/banner.jpg" alt="Banner Image" class="img-fluid">
-           <div class="banner-text">PROPERTY MANAGEMENT SYSTEM FOR HOTEL AND RESORT</div>
-        </div>
-        <nav class="navbar navbar-expand-md navbar-custom">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">Profile</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index">new profile</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">Reservation</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Reservation" asp-action="GroupAdmin">Group Admin</a></li>
-
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">Front Desk</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="TelephoneSwitch">Telephone Switch</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="FrontDesk" asp-action="DialingInformation">Dialing Information</a></li>
-                            </ul>
-                        </li>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">Cashiering</a>
-                            <ul class="dropdown-menu">                             
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">Report</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReport">Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a></li>
-                            </ul>
-                        </li> *@
-                         @* <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button">Report</a>
-                            <ul class="dropdown-menu">
-                                <!-- Sale and Forecast Reports -->
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Sale and Forecast</a>
-                                    <ul class="dropdown-menu scrollable-dropdown"> 
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport">Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="OTAsMonthlyReport">OTAs Monthly Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomOccupancy">Room Occupancy</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationCancellation">Reservation Cancellations</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationStatistics">Reservation Statistics</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationbyCompany">Reservation by Company</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="NoShowReport">No Show Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationSummary">Reservation Summary</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ProductActivity">Product Activity</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="NationalStatistics">National Statistics</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="SaleinChargeReport">Sales in Charge Reports</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="SaleinChargeActivity">Sales in Charge Activity</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RevenueDetail">Revenue Detail</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RevenueSummary">Revenue Summary</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="TAProductionReport">TA Production Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="LeadTimeReport">Leadtime Reports</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RatecodeReport">Ratecode Reports</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="AnnualRoomOccupancy">Annual Room Occupancy</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="GuestMarketReport">Guest Market Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomMoves">Room Moves</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepositTransferAtCheckIn">Deposit Transferred At Check In</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepositLedger">Deposit Ledger</a></li>
-                                        <li><a class="dropdown-item text-success" asp-controller="Report" asp-action="OtherReport" asp-route-name="BookingSummaryByStatus">Booking Summary By Status</a></li>
-                                        <li><a class="dropdown-item text-success" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomOccupancyChart">Room Occupancy Chart</a></li>
-                                    </ul>
-                                </li>
-
-                                <!-- Report Reservation -->
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Report Reservation</a>
-                                    <ul class="dropdown-menu scrollable-dropdown">
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="GroupReservationReport">Group Reservation Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="BlacklistReport">Blacklist Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationRateCheck">Reservation Rate Check</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="Alerts">Alerts</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ArrivalsAndCheckInToday">Arrivals and Check In Today</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ArrivalsDetailed">Arrivals Detailed</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ArrivalDetailedGroupbyHolder">Arrival Detail Group by Holders</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ReservationPreblocked">Reservation Preblocked</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="Transportation">Transportation</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepartureIndividualAndGroup">Departure Individual and Group</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DeparturesReport">Departure Reports</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomDiscrepancy">Room Discrepancy</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="VacantRoom">Vacant Room</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepartureExtended">Departure Extended</a></li>
-                                    </ul>
-                                </li>
-
-                                <!-- Night Audit -->
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Night Audit</a>
-                                    <ul class="dropdown-menu scrollable-dropdown">
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="CashierAudit">Cashier Audit</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="CashierSummary">Cashier Summary</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="GuestTrialBalance">Guest Trial Balance</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="FixChargeReport">FixCharge Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepositRequestLogReport">Deposit Request Log Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RevenueSpa">Revenue Spa</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RevenueReport">Revenue Reports</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="TransferARReport">Transfer AR Reports</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="TrialBalance">Trial Balance</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DepositActivity">Deposit Activity</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DailyMinibarReport">Daily Minibar Report</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="GuestLedger">Guest Ledger</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="CancellationJournal">Cancellation Journal</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="PostingJournalInvoicing">Posting Journal Invoicing</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="ArticleByRoom">Article by Rooms</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="JournalByCashierAndArticle">Journal by Cashier & Article</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="OccupancyByPercon">Occupancy by Person</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="SummaryByArticle">Summary by Article</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="IncurringDepositCollection">Incurring Deposit Collection</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="IncurringDepositPaymentPlan">Incurring Deposit Payment Plan</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="IncurringDepositReturn">Incurring Deposit Return</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="IncurringDepositSummary">Incurring Deposit Summary</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomStatistic">Room Statistics</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DailyRevenueReportNew">Daily Revenue Reports New</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Report" asp-action="OtherReport" asp-route-name="DailyRevenueReport(V2)">Daily Revenue Report (V2)</a></li>
-                                        <li><a class="dropdown-item text-primary" asp-controller="Report" asp-action="OtherReport" asp-route-name="ManagerReport">Manager Report</a></li>
-                                        <li><a class="dropdown-item text-primary" asp-controller="Report" asp-action="OtherReport" asp-route-name="RoomTypeStatistic">Room Type Statistics</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>*@
-        @*                 <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#">HouseKeeping</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomControlPanel">Room Control Panel </a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomFacilityForecast">Room Facility Forecast</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomStatus">Room Status</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomPlan">Room Plan</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="HouseStatus">House Status</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="FloorPlan">Floor Plan</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="AttendantPoint">Attendant Point</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="GuestServiceStatus">Guest Service Status</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskSheetStatus">Task Sheet Status </a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskAssignment">Task Assignment</a></li>
-                            </ul>
-                        </li>
-                        
-                    </ul>
-
-                            <a id="businessDate" style="color:white" class="nav-link"></a>
-
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a id="user-display" class="nav-link" asp-area="" asp-controller="User" asp-action="Index">[ admin - THOÁT ]</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>  *@
+        
     <div class="container-fluid">
         <div class="banner">
             <img src="/images/banner.PNG" alt="Banner Image" class="img-fluid">

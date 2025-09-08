@@ -632,6 +632,35 @@ namespace Cashiering.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CloseShiftIn()
+        {
+            try
+            {
+                int shiftID = int.Parse(Request.Form["shiftID"].ToString());
+                ShiftModel shift = (ShiftModel)ShiftBO.Instance.FindByPrimaryKey(shiftID);
+                if(shift == null || shift.ID == 0)
+                {
+                    return Json(new
+                    {
+                        code = 1,
+                        msg = "Could not find shift"
+                    });
+                }
+                shift.Status = true;
+                ShiftBO.Instance.Update(shift);
+                return Json(new {
+                    code = 1,
+                    msg = "Close shift was successfully"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new ShiftModel());
+            }
+
+        }
         #endregion
 
     }
