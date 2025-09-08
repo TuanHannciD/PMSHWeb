@@ -1,3 +1,6 @@
+using Administration.Controllers;
+using Administration.Services.Implements;
+using Administration.Services.Interfaces;
 using Billing.Controllers;
 using Billing.Services.Implements;
 using Billing.Services.Interfaces;
@@ -17,6 +20,12 @@ using HouseKeeping.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.FileProviders;
+using Miscellaneous.Controllers;
+using Miscellaneous.Services.Implements;
+using Miscellaneous.Services.Interfaces;
+using NightAudit.Controllers;
+using NightAudit.Services.Implements;
+using NightAudit.Services.Interfaces;
 using Profile.Controllers;
 using Report.Controllers;
 using Report.Services.Implements;
@@ -24,19 +33,13 @@ using Report.Services.Interfaces;
 using Reservation.Controllers;
 using Reservation.Services.Implements;
 using Reservation.Services.Interfaces;
+using RoomManagement.Controllers;
 using RoomManagement.Services.Implements;
 using RoomManagement.Services.Interfaces;
-using Miscellaneous.Controllers;
-using Miscellaneous.Services.Implements;
-using Miscellaneous.Services.Interfaces;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
-using RoomManagement.Controllers;
 using WebApp.Commons.Containts;
-using NightAudit.Controllers;
-using NightAudit.Services.Implements;
-using NightAudit.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +65,7 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
 
 builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(MiscellaneousController).Assembly));
+builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AdministrationController).Assembly));
 
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
@@ -98,7 +102,7 @@ builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionSe
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
 builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
-
+builder.Services.AddSingleton<IAdministrationService, AdministrationService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

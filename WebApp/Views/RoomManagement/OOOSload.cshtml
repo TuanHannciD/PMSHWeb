@@ -419,8 +419,8 @@
                                     <label>Return Status</label>
                                 <select id="rtStatus" name="rtStatus" class="form-control form-control-sm" style="width: 523px;">
                                         <option>--Chose One--</option>
-                                        <option value="1">Dirty</option>
-                                        <option value="2">Clean Non-Checked</option>
+                                        <option value="2">Dirty</option>
+                                        <option value="1">Clean Non-Checked</option>
                                         <option value="3">Pickup</option>
                                         <option value="4">Clean</option>
                                     </select>               
@@ -430,7 +430,9 @@
                                             <option value="">---Select Reason---</option>
                                             @foreach (var dpm in ViewBag.CommentList)
                                             {
-                                                <option value="@dpm.Code">@dpm.Code - @dpm.Description</option>
+                                            <option value="@dpm.ID" data-desc="@dpm.Description">
+                                                @dpm.Code - @dpm.Description
+                                            </option>
                                             }
                                         </select>
                                     </div>
@@ -455,9 +457,9 @@
                         </div>                       
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer">                  
                     <button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -570,66 +572,8 @@
 
             }
       }
-             document.addEventListener("DOMContentLoaded", function () {
-        const params = {
-            isDummy: '',
-            smoking: '',
-            floor: '',
-            roomTypeCode: '',
-            foStatus: '',
-            hkStatusID: '',
-            roomNo: '',
-            fromDate: '2023-08-01',
-            toDate: '2023-08-01',
-            zoneCode: ''
-        };
+                   
 
-           const queryString = new URLSearchParams(params).toString();
-    fetch(`/RoomManagement/GetAvailableRoomsSearchOOO?${queryString}`)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-
-               data.unshift({
-                roomID: "",
-                roomNo: "RoomNo - RoomType - RoomTypeName - HKStatus - FO - Floor - Smoking",
-                isHeader: true,
-                disabled: true
-            });
-
-            // Destroy TomSelect cũ nếu đã tồn tại
-            if ($("#roomSelect")[0].tomselect) {
-                $("#roomSelect")[0].tomselect.destroy();
-            }
-
-            new TomSelect("#roomSelect", {
-                valueField: "roomID",
-                labelField: "roomNo",
-                searchField: ["roomNo", "roomTypeName","roomType","hkStatus","fo","floor","smoking"],
-                options: data,
-                placeholder: "Chọn phòng...",
-                plugins: ["remove_button"],
-                maxOptions: 1000,
-                render: {
-                    option: function(data, escape) {
-                        if (data.isHeader) {
-                            return `<div style="font-weight:bold; border-bottom:1px solid #ccc; padding:2px 5px;">
-                                        ${escape(data.roomNo)}
-                                    </div>`;
-                        }
-                        return `<div>
-                                    ${escape(data.roomNo)} - ${escape(data.roomType)} - ${escape(data.roomTypeName)} - ${escape(data.hkStatus)} - ${escape(data.fo)} - ${escape(data.floor)} - ${escape(data.smoking)}
-                                </div>`;
-                    },
-                    item: function(data, escape) {
-                        return `<div>${escape(data.roomNo)}</div>`;
-                    }
-                }
-            });
-        })
-        .catch(err => console.error(err));
-
-    });
           function getStatusValue() {
         const isOOO = $('#outofOrder').is(':checked');
         const isOOS = $('#outofService').is(':checked');
@@ -733,18 +677,25 @@
             }
         });
     }
-        $("#btnNew").click(function () {
-        $("#itemForm")[0].reset();
-        $("#itemModal").modal("show");
+               $("#btnNew").click(function () {
+                $("#itemForm")[0].reset();
 
-        // set default date sau khi reset
-        const today = new Date();
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                const today = new Date();
+                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-        $("#itemFromDate").val(formatDate(firstDayOfMonth));
-        $("#itemToDate").val(formatDate(lastDayOfMonth));
-    });
+                $("#itemFromDate").val(formatDate(firstDayOfMonth));
+                $("#itemToDate").val(formatDate(lastDayOfMonth));
+
+                loadAvailableRooms();
+                $("#itemModal").modal("show");
+            });
+
+            // 🔥 Tự động lọc khi user thay đổi ngày
+            $("#itemFromDate, #itemToDate").on("change", function() {
+                loadAvailableRooms();
+            });
+
 
         $("#btnHistory").click(function () {
             openHistoryPopup();
@@ -796,46 +747,60 @@
                 }
             });
         }
-        function SaveOOOS() {
-            const userName = JSON.parse(localStorage.getItem("Loginname"));
-            const userID = JSON.parse(localStorage.getItem("userID"));
-            var formData = new FormData();
+         $("#btnSaveItem").click(function () {
+            SaveOOOS();
+          
+        });
+            function SaveOOOS() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
 
-                const selectedValues = $("#roomSelect").val();
-            selectedValues.forEach(value => {
-                formData.append('roomSelect', value);
-            });
-            formData.append('oooOrS', $("#oooOrS").val());
-            formData.append('rtStatus', $("#rtStatus").val());
-            formData.append('comment', $("#comment").val());
-            formData.append('txtReasonDesc', $("#txtReasonDesc").val());
-            formData.append('itemFromDate', $("#itemFromDate").val());
-            formData.append('itemToDate', $("#itemToDate").val());
-            formData.append('userName', userName);
-            formData.append('userID',userID);
+        // Lấy danh sách phòng
+        const selectedValues = $("#roomSelect").val();
+        selectedValues.forEach(value => {
+            formData.append('roomSelect', value);
+        });
 
-            $.ajax({
-                url: '/RoomManagement/SaveOOOS',
-                type: 'POST',
-                processData: false,
-                contentType: false,
-                // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                data: formData,
-                success: function (data) {
-                    if (data.code == 0) {
-                        resetForm();
-                            showToast('Success', data.msg, true);
-                    } else {
-                            showToast('Error', data.msg, false);
-                    }
+        formData.append('oooOrS', $("#oooOrS").val());
+        formData.append('rtStatus', $("#rtStatus").val());
+        formData.append('comment', $("#comment").val());
+        formData.append('txtReasonDesc', $("#txtReasonDesc").val());
+        formData.append('itemFromDate', $("#itemFromDate").val());
+        formData.append('itemToDate', $("#itemToDate").val());
+        formData.append('userName', userName);
+        formData.append('userID', userID);
 
-                },
-                error: function (xhr, statusText, err) {
-
-                }
-            });
-
+        // Nếu đang edit, lấy id từ selectedRowData
+        if (selectedRowData && selectedRowData.id) {
+            formData.append('id', selectedRowData.id);
         }
+
+        $.ajax({
+            url: (selectedRowData && selectedRowData.id)
+                ? '/RoomManagement/UpdateBusinessBlock'
+                : '/RoomManagement/InsertBusinessBlock',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.success) {
+                    $("#itemModal").modal("hide");
+                    showToast('Success', (selectedRowData && selectedRowData.id)
+                        ? "Update thành công"
+                        : "Insert thành công", true);
+                    reloadGrid();
+                } else {
+                    showToast('Error', data.message, false);
+                }
+            },
+            error: function (xhr, statusText, err) {
+                showToast('Error', "Có lỗi xảy ra!", false);
+            }
+        });
+    }
+
         $("#btnDelete").click(function () {
         if (!selectedRowData) {
             DevExpress.ui.notify("Please select a row first!", "warning", 2000);
@@ -876,4 +841,172 @@
             showToast("Error", "Delete error!", false);
         });
     }
+
+
+
+               async function editBusinessBlock(rowData) {
+        // Mở modal ngay lập tức
+        $("#itemModalLabel").text("Edit Item");
+        $("#itemModal").modal("show");
+
+        // Gán ngày tháng
+        if (rowData.fromDate) $("#itemFromDate").val(rowData.fromDate.split("T")[0]);
+        if (rowData.toDate) $("#itemToDate").val(rowData.toDate.split("T")[0]);
+
+        // Load danh sách phòng
+        try {
+            await loadAvailableRooms(); // Promise resolve đúng
+            const ts = $("#roomSelect")[0]?.tomselect;
+            if (ts && rowData.roomNo) {
+                let opt = Object.values(ts.options).find(o => String(o.roomNo).padStart(6,'0') === String(rowData.roomNo).padStart(6,'0'));
+                if(!opt) {
+                    ts.addOption({
+                        roomID: rowData.roomID || `custom-${rowData.roomNo}`,
+                        roomNo: rowData.roomNo,
+                        roomType: rowData.roomType || "N/A",
+                        roomTypeName: rowData.roomTypeName || "Unknown",
+                        hkStatus: rowData.hkStatus || "N/A",
+                        fo: rowData.fo || "N/A",
+                        floor: rowData.floor || "N/A",
+                        smoking: rowData.smoking || "N/A"
+                    });
+                }
+                ts.setValue(rowData.roomID || `custom-${rowData.roomNo}`);
+            }
+        } catch(err) {
+            console.error(err);
+        }
+
+        // Set các trường khác như status, returnStatus, reason...
+        $("#oooOrS").val(rowData.status === "OOO" ? "1" : rowData.status === "OOS" ? "2" : "");
+        $("#rtStatus").val({"Dirty":"2","Clean Non-Checked":"1","Pickup":"3","Clean":"4"}[rowData.returnStatus]||"");
+        let matchedId = null;
+        $("#comment option").each(function() {
+            if($(this).text().trim().startsWith(rowData.reasonCode)) { matchedId = $(this).val(); return false; }
+        });
+        if(matchedId) $("#comment").val(matchedId).trigger("change");
+        $("#txtReasonDesc").val(rowData.reason);
+    }
+
+     function loadAvailableRooms() {
+        return new Promise((resolve, reject) => {
+            const fromDate = $("#itemFromDate").val();
+            const toDate = $("#itemToDate").val();
+
+            if (!fromDate || !toDate) {
+                const error = new Error("fromDate hoặc toDate không có giá trị!");
+                console.error(error.message);
+                return reject(error);
+            }
+
+            const params = {
+                isDummy: '',
+                smoking: '',
+                floor: '',
+                roomTypeCode: '',
+                foStatus: '',
+                hkStatusID: '',
+                roomNo: '',
+                fromDate: fromDate,
+                toDate: toDate,
+                zoneCode: ''
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+            fetch(`/RoomManagement/GetAvailableRoomsSearchOOO?${queryString}`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Lỗi khi gọi API: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Dữ liệu từ API (5 phần tử đầu):", data.slice(0, 5));
+                    console.log("Danh sách roomNo:", data.map(item => item.roomNo));
+                    // Kiểm tra dữ liệu API
+                    if (!data.every(item => item.isHeader || (item.roomID && item.roomNo))) {
+                        console.error("Dữ liệu API thiếu roomID hoặc roomNo!");
+                        throw new Error("Dữ liệu API không hợp lệ");
+                    }
+
+                    data.unshift({
+                        roomID: "",
+                        roomNo: "RoomNo - RoomType - RoomTypeName - HKStatus - FO - Floor - Smoking",
+                        isHeader: true,
+                        disabled: true
+                    });
+
+                    if ($("#roomSelect")[0]?.tomselect) {
+                        $("#roomSelect")[0].tomselect.destroy();
+                    }
+
+                    new TomSelect("#roomSelect", {
+                        valueField: "roomID",
+                        labelField: "roomNo",
+                        searchField: ["roomNo", "roomTypeName", "roomType", "hkStatus", "fo", "floor", "smoking"],
+                        options: data,
+                        placeholder: "Chọn phòng...",
+                        plugins: ["remove_button"],
+                        maxOptions: 1000,
+                        render: {
+                            option: function(d, escape) {
+                                if (d.isHeader) {
+                                    return `<div style="font-weight:bold;border-bottom:1px solid #ccc;padding:2px 5px;">${escape(d.roomNo)}</div>`;
+                                }
+                                return `<div>${escape(d.roomNo || '')} - ${escape(d.roomType || '')} - ${escape(d.roomTypeName || '')} - ${escape(d.hkStatus || '')} - ${escape(d.fo || '')} - ${escape(d.floor || '')} - ${escape(d.smoking || '')}</div>`;
+                            },
+                            item: function(d, escape) {
+                                return `<div>${escape(d.roomNo || '')}</div>`;
+                            }
+                        },
+                        onInitialize: function() {
+                            console.log("TomSelect đã khởi tạo!");
+                            resolve();
+                        }
+                       
+                    });
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải danh sách phòng:", err);
+                    reject(err);
+                });
+        });
+    }
+
+        function selectRoomByNo(roomNo) {
+        const ts = $("#roomSelect")[0]?.tomselect;
+        if (!ts) {
+            console.error("TomSelect chưa được khởi tạo!");
+            return;
+        }
+
+        console.log("Đang tìm roomNo:", roomNo, "Loại:", typeof roomNo);
+        let foundId = null;
+        Object.values(ts.options).forEach(opt => {
+            console.log("So sánh với option roomNo:", opt.roomNo, "Loại:", typeof opt.roomNo);
+            if (String(opt.roomNo).padStart(6, '0') === String(roomNo).padStart(6, '0')) {
+                foundId = opt.roomID;
+            }
+        });
+
+        if (foundId) {
+            console.log(`Tìm thấy roomID: ${foundId} cho roomNo: ${roomNo}`);
+            ts.setValue(foundId);
+            ts.refreshOptions(false); // Refresh để hiển thị giá trị đã chọn
+        } else {
+            console.warn(`Không tìm thấy phòng với roomNo: ${roomNo}`);
+        }
+    }
+
+    $("#btnEdit").click(function () {
+        if (!selectedRowData) {
+            alert("Vui lòng chọn một dòng để edit!");
+            return;
+        }
+
+        // Gọi hàm edit
+        editBusinessBlock(selectedRowData);
+    });
+
+
 </script>

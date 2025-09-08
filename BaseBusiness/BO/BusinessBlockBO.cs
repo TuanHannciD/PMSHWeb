@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using BaseBusiness.bc;
 using BaseBusiness.Facade;
 using BaseBusiness.Model;
-
+using Microsoft.Data.SqlClient;
 namespace BaseBusiness.BO
 {
+    using Dapper;
     public class BusinessBlockBO : BaseBO
+
     {
         private BusinessBlockFacade facade = BusinessBlockFacade.Instance;
         protected static BusinessBlockBO instance = new BusinessBlockBO();
@@ -23,10 +25,16 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
-        public static int  CheckRoomInBusinessBlock(int roomID, DateTime fromDate,DateTime toDate)
+        public string GetRoomNoById(int id, SqlConnection conn, SqlTransaction tx)
         {
-            string query = $"select count(*) from BusinessBlock where RoomID = {roomID} and FromDateOOO >=  cast('{fromDate}' as date) and ToDateOOO <= cast('{toDate}' as date)";
-            return instance.GetFirst<int>(query);
+            const string sql = "SELECT RoomNo FROM BusinessBlock WHERE ID = @id";
+            return conn.QuerySingleOrDefault<string>(sql, new { id }, tx);
         }
+        public void Update(long id, string code, SqlConnection conn, SqlTransaction tx)
+        {
+            string sql = "UPDATE BusinessBlock SET Code = @Code WHERE ID = @Id";
+            conn.Execute(sql, new { Code = code, Id = id }, tx);
+        }
+
     }
 }
