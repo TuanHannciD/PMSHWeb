@@ -64,6 +64,5 @@ namespace BaseBusiness.Model
         public int IsPrintVAT { get; set; }
         public bool IsTransfer { get; set; }
         public string POS_Unclose { get; set; }
-        public string EInvoiceNo { get; set; }
     }
 }

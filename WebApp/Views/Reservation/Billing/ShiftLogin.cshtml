@@ -73,9 +73,8 @@
             // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             data: formData,
             success: function (data) {
-                console.log(data);
                     localStorage.setItem("shiftID", data[0].id);
-                    localStorage.setItem("shittName", data[0].userName);
+                    localStorage.setItem("shiftName", data[0].userName);
                     localStorage.setItem("crashierLogin", "InShift");
 
             },

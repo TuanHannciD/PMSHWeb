@@ -25,7 +25,7 @@ namespace BaseBusiness.BO
         }
         public static int GetTopConfirmationNo()
         {
-            string query = "select top 1 ConfirmationNo from Reservation where ConfirmationNo <> '' order by id desc";
+            string query = "select max(cast(ConfirmationNo as int)) as ConfirmationNo from Reservation where ConfirmationNo <> '' ";
             return instance.GetFirst<int>(query);
         }
         public static int GetTopID()

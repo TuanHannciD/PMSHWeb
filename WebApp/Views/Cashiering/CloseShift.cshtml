@@ -1,0 +1,104 @@
+﻿<div>
+    <h1>Transaction Shift Detail</h1>
+    <div>
+        <div id="gridContainerCloseShift" class="mt-2 gridContainer"></div>
+    </div>
+</div>
+<script>
+    $(document).ready( function () {
+        getTransactionShift()
+    });
+    function getTransactionShift() {
+        $.ajax({
+            url: '/Cashiering/GetTransactionByShift',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                shiftID: localStorage.getItem("shiftID"),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                // Kết hợp dữ liệu resultPayment và resultExchange
+                const combinedData = [
+                    ...result.resultPayment.map(item => ({ ...item, Type: 'Payment' })),
+                    ...result.resultExchange.map(item => ({ ...item, Type: 'Exchange Currency' }))
+                ];
+
+                // Gọi hàm khởi tạo DataGrid với dữ liệu kết hợp
+                initializeDataGridSearch(combinedData);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    console.error('Lỗi khi lấy dữ liệu:', err);
+                }
+            }
+        });
+    }
+
+    function initializeDataGridSearch(data) {
+        // Giới hạn dữ liệu (nếu cần)
+        const limitedData = data.slice(0, 100);
+
+        // Tạo danh sách cột động từ dữ liệu
+        const columns = [];
+        if (limitedData.length > 0) {
+            // Lấy tất cả các khóa từ đối tượng đầu tiên, loại bỏ 'Type' khỏi cột hiển thị
+            const keys = Object.keys(limitedData[0]).filter(key => key !== 'Type');
+            columns.push(
+                ...keys.map(key => ({
+                    dataField: key,
+                    caption: key, // Có thể tùy chỉnh tiêu đề cột
+                    allowFiltering: true
+                }))
+            );
+        }
+
+        // Khởi tạo DataGrid
+        $("#gridContainerCloseShift").dxDataGrid({
+            dataSource: limitedData,
+            allowColumnResizing: true,
+            columnAutoWidth: true,
+            columnMinWidth: 90,
+            paging: {
+                enabled: true,
+                pageSize: 15
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 30],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            scrolling: {
+                mode: 'standard',
+                showScrollbar: 'always',
+                useNative: false
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            grouping: {
+                autoExpandAll: true // Tự động mở rộng các nhóm
+            },
+            groupPanel: {
+                visible: true // Hiển thị bảng nhóm để kéo thả
+            },
+            columns: [
+                {
+                    dataField: 'Type',
+                    groupIndex: 0 // Nhóm theo Type (Payment hoặc Exchange)
+                },
+                ...columns // Các cột động từ dữ liệu
+            ],
+
+        });
+    }
+</script>

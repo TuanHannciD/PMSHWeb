@@ -99,6 +99,7 @@ builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
 builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
 builder.Services.AddSingleton<IAdjustTransactionService, AdjustTransactionService>();
+builder.Services.AddSingleton<ICloseShiftService, CloseShiftService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
