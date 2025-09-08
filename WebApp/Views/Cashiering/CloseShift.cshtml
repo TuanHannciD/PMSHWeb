@@ -96,7 +96,16 @@
                     dataField: 'Type',
                     groupIndex: 0 // Nhóm theo Type (Payment hoặc Exchange)
                 },
-                ...columns // Các cột động từ dữ liệu
+                { dataField: 'TransactionCode', caption: 'Trans. Code', visible: true },
+                { dataField: 'Description', caption: 'Description', visible: true },
+                { dataField: 'Amount', caption: 'Amount', visible: true },
+                { dataField: 'TransactionDate', caption: 'Date', visible: true },
+                { dataField: 'Reference', caption: 'Reference', visible: true },
+                { dataField: 'Supplement', caption: 'Supplement', visible: true },
+                { dataField: 'FolioID', caption: 'FolioNo', visible: true },
+                { dataField: 'RoomNo', caption: 'Room', visible: true },
+                { dataField: 'Account', caption: 'Account', visible: true },
+
             ],
 
         });
