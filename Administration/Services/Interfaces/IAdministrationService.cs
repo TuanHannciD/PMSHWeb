@@ -18,5 +18,10 @@ namespace Administration.Services.Interfaces
         public DataTable Language(string code, string name, int inactive);
         public DataTable Nationality(string code, string name, int inactive);
         public DataTable Title(string code, string name, int inactive);
+        public DataTable Territory(string code, string name, int inactive);
+        public DataTable State(string code, string name, int inactive);
+        public DataTable VIP(string code, string name, int inactive);
+        public DataTable Market(string code, string name, int inactive);
+
     }
 }

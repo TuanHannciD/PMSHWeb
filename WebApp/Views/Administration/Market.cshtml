@@ -3,7 +3,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    var listctry = ViewBag.CountryList;
+    var listmktype = ViewBag.MarketTypeList;
 
 }
 <link href="~/css/reservation.css" rel="stylesheet" />
@@ -48,18 +48,15 @@
                     <div class="menu-group-title">
                         Profile <i class="fas fa-chevron-down"></i>
                     </div>
-                    <div class="submenu">
+                    <div class="submenu">                    
                         <a class="menu-item" asp-controller="Administration" asp-action="City">CITY</a>
-                        <a class="menu-item active"> COUNTRY</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Country">COUNTRY</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Language">LANGUAGE</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Nationality">NATITONALITY</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Title">TITLE</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Territory">TERRITORY</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="State">STATE</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="VIP">VIP</a>
-
-                     
-
                     </div>
                 </div>
 
@@ -69,7 +66,7 @@
                         Reservatiom <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="submenu">
-                        <a class="menu-item" asp-controller="Administration" asp-action="Market">MARKET</a>
+                        <a class="menu-item active"> MARKET</a>
                     </div>
                 </div>
             </div>
@@ -81,7 +78,7 @@
             <div class="content-right">
                 <div class="header">
                     <h3 id="content-title">
-                        Country
+                        Market
 
                     </h3>
                 </div>
@@ -153,7 +150,39 @@
                                 <input type="text" id="txtname" name="txtname" class="form-control" />
                             </div>
                         </div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <label class="">Market Type:</label>
+                                <select id="marketTypeID" name="marketTypeID" class="form-control form-control-sm " style="width: 446px;">
+                                    <option value="">--Select Market Type--</option>
+                                    @foreach (var sg in ViewBag.MarketTypeList)
+                                    {
+                                        <option value="@sg.ID" data-code="@sg.Code">@sg.Code - @sg.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <label class="">Group Type:</label>
+                                <select id="groupType" name="groupType" class="form-control form-control-sm " style="width: 446px;">
+                                    <option value="">--Select Group Type--</option> 
+                                    <option value="0">Individual</option>
+                                    <option value="1">Group</option>
+                                    <option value="2">Complimentery</option>
+                                    <option value="3">House Use</option>
+                                    <option value="4">Walk-In</option>
+                                    <option value="5">Seri</option>
 
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <label for="txtregional" class="form-label">Regional</label>
+                                <input type="text" id="txtregional" name="txtregional" class="form-control" />
+                            </div>
+                        </div>
                         <!-- Description -->
                         <div class="row mb-1">
                             <div class="col">
@@ -214,9 +243,9 @@
                 $("#btnSaveItem").click(function () {
         const formData = $("#itemForm").serialize();
          console.log("FormData:", formData);
-        let url = "/Administration/InsertCountry";
+        let url = "/Administration/InsertMarket";
         if ($("#id").val() && $("#id").val() !== "0") {
-            url = "/Administration/UpdateCountry"; // nếu có id thì update
+            url = "/Administration/UpdateMarket"; // nếu có id thì update
         }
 
         $.ajax({
@@ -237,24 +266,32 @@
             }
         });
     });
-        function editMember(data) {
-        $("#id").val(data.id);                   // hidden field
-        $("#txtcode").val(data.code);            // ánh xạ Code
-        $("#txtname").val(data.name);            // ánh xạ Name
-        $("#txtdescription").val(data.description);
-        $("#inactive").prop("checked", data.inactive); // checkbox
-        $("#itemModal").modal("show");
+            function editMarket(id) {
+        $.get("/Administration/GetById", { id: id }, function (data) {
+            if (data) {
+                $("#txtcode").val(data.code);
+                $("#txtname").val(data.name);
+                $("#txtdescription").val(data.description);
+                $("#marketTypeID").val(data.marketTypeID);
+                $("#txtregional").val(data.regional);
+                $("#groupType").val(data.groupType);
+                $("#id").val(data.id);
+
+                $("#itemModal").modal("show"); 
+            }
+        });
     }
 
 
-           $("#btnEdit").on("click", function () {
+
+    $("#btnEdit").on("click", function () {
         if (!selectedRowData) {
             DevExpress.ui.notify("Please select a row first!", "warning", 2000);
             return;
         }
 
-        // Gọi hàm ánh xạ dữ liệu vào form
-        editMember(selectedRowData);
+        // Truyền đúng id
+        editMarket(selectedRowData.id);
     });
 
 
@@ -273,6 +310,8 @@
                         { dataField: "name", caption: "Name" },
                         { dataField: "description", caption: "Description" },
                         { dataField: "inactive", caption: "Inactive" },
+                        { dataField: "group", caption: "Group" },
+                        { dataField: "regional", caption: "Region" },
                         { dataField: "createdBy", caption: "Created By" },
                         { dataField: "createdDate", caption: "Created Date", dataType: "date" },
                         { dataField: "updatedBy", caption: "Updated By" },
@@ -300,7 +339,7 @@
         $("#loadingSpinnerRateCode").show();
 
         $.ajax({
-            url: "/Administration/GetCountry",
+            url: "/Administration/GetMarket",
             type: 'GET',
             data: {
                 code: $("#code").val(),
@@ -348,7 +387,7 @@
 
             function deleteSelectedItem() {
         $.ajax({
-            url: "/Administration/DeleteCountry",
+            url: "/Administration/DeleteMarket",
             type: "POST",
             data: { id: selectedRowData.id }, // gửi dạng form-data
             success: function (res) {
@@ -391,7 +430,7 @@
         worksheet.addRow([]);
 
         // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
-        const reportRow = worksheet.addRow(['Country']);
+        const reportRow = worksheet.addRow(['Market']);
         worksheet.mergeCells('A5:D5');
         reportRow.font = { bold: true, size: 14 };
         reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -413,7 +452,7 @@
             worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
             // Ghi file
-            let fileName = "Country.xlsx";
+            let fileName = "Market.xlsx";
             workbook.xlsx.writeBuffer().then(function (buffer) {
                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
             });

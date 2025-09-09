@@ -54,6 +54,9 @@
                         <a class="menu-item" asp-controller="Administration" asp-action="Language">LANGUAGE</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Nationality">NATITONALITY</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Title">TITLE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Territory">TERRITORY</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="State">STATE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="VIP">VIP</a>
                     </div>
                 </div>
 
@@ -284,7 +287,8 @@
                         { dataField: "code", caption: "Code" },
                         { dataField: "name", caption: "Name" },
                         { dataField: "description", caption: "Description" },
-                        { dataField: "inactive", caption: "Status" },
+                        { dataField: "country", caption: "Country" },
+                        { dataField: "inactive", caption: "Inactive" },
                         { dataField: "createdBy", caption: "Created By" },
                         { dataField: "createdDate", caption: "Created Date", dataType: "date" },
                         { dataField: "updatedBy", caption: "Updated By" },

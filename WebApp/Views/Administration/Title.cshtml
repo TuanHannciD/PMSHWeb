@@ -50,11 +50,13 @@
                     </div>
                     <div class="submenu">
                         <a class="menu-item" asp-controller="Administration" asp-action="City">CITY</a>
-                        <a class="menu-item" asp-controller="Administration" asp-action="Country">CITY</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Country">COUNTRY</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Language">LANGUAGE</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Nationality">NATITONALITY</a>
                         <a class="menu-item active"> TITLE</a>
-
+                        <a class="menu-item" asp-controller="Administration" asp-action="Territory">TERRITORY</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="State">STATE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="VIP">VIP</a>
 
                     </div>
                 </div>
@@ -267,7 +269,7 @@
                         { dataField: "code", caption: "Code" },
                         { dataField: "name", caption: "Name" },
                         { dataField: "description", caption: "Description" },
-                        { dataField: "inactive", caption: "Status" },
+                        { dataField: "inactive", caption: "Inactive" },
                         { dataField: "createdBy", caption: "Created By" },
                         { dataField: "createdDate", caption: "Created Date", dataType: "date" },
                         { dataField: "updatedBy", caption: "Updated By" },
