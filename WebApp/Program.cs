@@ -107,6 +107,8 @@ builder.Services.AddSingleton<IAdministrationService, AdministrationService>();
 
 builder.Services.AddSingleton<IAdjustTransactionService, AdjustTransactionService>();
 builder.Services.AddSingleton<ICloseShiftService, CloseShiftService>();
+builder.Services.AddSingleton<ICashieringManagerService, CashieringManagerService>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

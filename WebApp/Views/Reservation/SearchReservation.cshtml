@@ -1,109 +1,127 @@
-﻿<link href="~/css/reservation.css" rel="stylesheet" asp-append-version="true" />
+﻿<link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true"/>
 <style>
 
 
     
     
 </style>
+<div class="header" style="justify-content:space-between;border-bottom:none">
+    <div class="header2" >
+        <h3 id="content-title">
+            Search Reservation
 
+        </h3>
+        <i class="fas fa-info-circle info-icon" title="How to use?"></i>
+    </div>
+
+    <div class="header2">
+        <button class="submit-button-clear-reservation" onclick="SaveReservation(0)">Save</button>
+        <button class="submit-button-clear-reservation" onclick="SaveReservation(1)">Walk In</button>
+
+        <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
+    </div>
+</div>
 <div class="mt-3">
 
     <div class="row">
         <!-- Menu trái -->
         <div class="col-md-2 mb-2">
-            <div class="header" style="justify-content:space-between">
-                <div class="header2" >
-                    <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
+            <div class="mui-card">
+                <div class="header" style="justify-content:space-between">
+                    <div class="header2">
+                        <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
 
-                    <h3 id="content-title">
-                        Filter
+                        <h3 id="content-title">
+                            Filter
 
-                    </h3>
-                    <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
-                    <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
+                        </h3>
+                        <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
+                        <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
+                    </div>
+
+                    <div class="header2">
+                        <i class="fa-solid fa-magnifying-glass" onclick="searchReservation();"></i>
+
+                    </div>
                 </div>
 
-                <div class="header2">
-                    <i class="fa-solid fa-magnifying-glass" onclick="searchReservation();"></i>
+                <div id="filter" class="tab-pane ">
+                    <div class="row">
+                        <div class="form-group-new-reservation col-md-6" style="display:none">
+                            <label>First Name</label>
+                            <input type="text" id="firstName">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Name</label>
+                            <input type="text" id="name">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Owner</label>
+                            <select id="owner">
+                                <option value="">--All--</option>
+                                <option value="--Hotel--">--Hotel--</option>
+                                <option value="--Owner--">--Owner--</option>
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Conf. No</label>
+                            <input type="text" id="confirmationNo">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Resv. No</label>
+                            <input type="text" id="resvHolder col-md-6">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>CRS No/GC</label>
+                            <input type="text" id="crsNo">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Search Type</label>
+                            <select id="searchType">
+                                <option value="0">General</option>
+                                <option value="1">Guest In House</option>
 
+                                <option value="7">Cancellations</option>
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Package</label>
+                            <input type="text" id="package">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Zone</label>
+                            <select id="zone" asp-items="ViewBag.cboZone">
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Room No</label>
+                            <input type="text" id="roomNo">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Room Type</label>
+                            <select id="roomType" asp-items="ViewBag.cboRoomType">
+                            </select>
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Arrival</label>
+                            <input type="date" id="arrivalForm">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Departure</label>
+                            <input type="date" id="departureForm">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Rsv Online</label>
+                            <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>Room Sharer</label>
+                            <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="filter" class="tab-pane ">
-                <div class="row">
-                    <div class="form-group-new-reservation col-md-6" style="display:none">
-                        <label>First Name</label>
-                        <input type="text" id="firstName">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Name</label>
-                        <input type="text" id="name">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Owner</label>
-                        <select id="owner">
-                            <option value="">--All--</option>
-                            <option value="--Hotel--">--Hotel--</option>
-                            <option value="--Owner--">--Owner--</option>
-                        </select>
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Conf. No</label>
-                        <input type="text" id="confirmationNo">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Resv. No</label>
-                        <input type="text" id="resvHolder col-md-6">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>CRS No/GC</label>
-                        <input type="text" id="crsNo">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Search Type</label>
-                        <select id="searchType">
-                            <option value="0">General</option>
-                            <option value="1">Guest In House</option>
-
-                            <option value="7">Cancellations</option>
-                        </select>
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Package</label>
-                        <input type="text" id="package">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Zone</label>
-                        <select id="zone" asp-items="ViewBag.cboZone">
-                        </select>
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Room No</label>
-                        <input type="text" id="roomNo">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Room Type</label>
-                        <select id="roomType" asp-items="ViewBag.cboRoomType">
-                        </select>
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Arrival</label>
-                        <input type="date" id="arrivalForm">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Departure</label>
-                        <input type="date" id="departureForm">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Rsv Online</label>
-                        <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
-                        <label>Room Sharer</label>
-                        <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
-                    </div>
-                </div>
-            </div>
             <div class="menu-left">
                 <button class="toggle-btn"><i class="fas fa-bars"></i></button>
                 <a class="menu-item " href="/Reservation/NewReservation">NEW RESERVATION</a>
@@ -120,27 +138,39 @@
         <div class="col-md-8">
             <div class="content-right">
 
+                <div class="mui-card">
+                    <!-- Container for Add Columns button -->
+                    <div id="addColumnButtonContainer" style="margin-bottom: 7px;">
+                        <div class="header">
+                            <h3 id="content-title">
+                                Visible Columns
 
-                <!-- Container for Add Columns button -->
-                <div id="addColumnButtonContainer" style="margin-bottom: 7px;">
-                    <div class="header">
-                        <h3 id="content-title">
-                            Visible Columns
-
-                        </h3>
-                        <i class="fa-solid fa-plus" id="addColumns"  title="Click to add column into datagrid"></i>
+                            </h3>
+                            <i class="fa-solid fa-plus" id="addColumns" title="Click to add column into datagrid"></i>
+                        </div>
+                    </div>
+                    <!-- Container for visible column blocks -->
+                    <div id="columnSelector" style="margin-bottom: 10px; display: flex; flex-wrap: wrap;">
+                        <!-- Visible column blocks with "x" icon will be generated dynamically -->
                     </div>
                 </div>
-                <!-- Container for visible column blocks -->
-                <div id="columnSelector" style="margin-bottom: 10px; display: flex; flex-wrap: wrap;">
-                    <!-- Visible column blocks with "x" icon will be generated dynamically -->
-                </div>
 
-                <div>
-                    <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">
+
+                <div class="mui-card mt-2">
+                    <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;" >
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
+                    </div>
+                    <div class="toolbar-menu max-w-7xl" id="functionAndOption">
+                        <a href="#" class="font-semibold" style="background-color:#d28a19;color:white">Advance</a>
+                        <a href="#" class="font-semibold" style="background-color:#d28a19;color:white">Clear</a>
+                        <a href="#" onclick="openModalEdit();" style="background-color:#d28a19;color:white" class="font-semibold">Edit</a>
+                        <a href="#" onclick="openModalCancel()" style="background-color:#d28a19;color:white" class="font-semibold">Cancel</a>
+                        <a href="#" onclick="openConfirmReinstate();" style="background-color:#d28a19;color:white" class="font-semibold">Reinstate</a>
+                        <a href="#" onclick="checkIn();" class="font-semibold" style="background-color:#d28a19;color:white">Check In</a>
+                        <a href="#" onclick="openModalViewProfile();" class="font-semibold" style="background-color:#d28a19;color:white">View Profile</a>
+   
                     </div>
                     <!-- DevExtreme DataGrid -->
                     <div id="gridContainer" class="gridContainer mt-2"></div>
@@ -148,59 +178,62 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="header" >
-                <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
-                <h3 id="content-title">
-                    Functions & Options
+            <div class="mui-card">
+                <div class="header">
+                    <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
+                    <h3 id="content-title">
+                        Functions & Options
 
-                </h3>
-                <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
-                <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
-            </div>
-            <div class="toolbar-menu max-w-7xl mt-2 " id="functionAndOption">
-                <a href="#" class="font-semibold">Advance</a>
-                <a href="#" class="font-semibold">Clear</a>
-                <a href="#" onclick="openModalEdit();" class="font-semibold">Edit</a>
-                <a href="#" onclick="openModalCancel()" class="font-semibold">Cancel</a>
-                <a href="#" onclick="openConfirmReinstate();" class="font-semibold">Reinstate</a>
-                <a href="#" onclick="checkIn();" class="font-semibold">Check In</a>
-                <a href="#" onclick="openModalViewProfile();" class="font-semibold">View Profile</a>
-                <a href="#" id="groupAdmin" class="font-semibold">Group Admin</a>
-                <a href="#" data-function="export" class="font-semibold">Export</a>
-                <a href="#" onclick="openModalSplit();" class="font-semibold">Split</a>
-                <a onclick="openModalAccompanying();" class="font-semibold">Accompanying</a>
-                <a onclick="openModalAddOn();" class="font-semibold">Add On</a>
-                <a class="font-semibold">Alerts</a>
-                <a onclick="openModalBilling();" class="font-semibold">Billing</a>
-                <a onclick="openModalInvoicing();" class="font-semibold">Invoicing</a>
-                <a class="font-semibold">Change</a>
-                <a onclick="openModalShare();" class="font-semibold">Share</a>
-                <a onclick="openModalDeposit();" class="font-semibold">Deposit/DXL</a>
-                <a onclick="openModalFixedCharges();" class="font-semibold">Fixed Charges</a>
-                <a onclick="openConfirm();" class="font-semibold">Delete</a>
-                <a onclick="openModalMessage();" class="font-semibold">Message</a>
-                <a onclick="openModalRegistrationCard();" class="font-semibold">Regis.Card</a>
-                <a onclick="openRoomMove();" class="font-semibold">Room Move</a>
-                <a onclick="openModalRouting();" class="font-semibold">Routing</a>
-                <a onclick="openModalWaitList();" class="font-semibold">WaitList</a>
+                    </h3>
+                    <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
+                    <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
+                </div>
+                <div class="toolbar-menu max-w-7xl mt-2 " id="functionAndOption">
+                    <a href="#" class="font-semibold">Advance</a>
+                    <a href="#" class="font-semibold">Clear</a>
+                    <a href="#" onclick="openModalEdit();" class="font-semibold">Edit</a>
+                    <a href="#" onclick="openModalCancel()" class="font-semibold">Cancel</a>
+                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold">Reinstate</a>
+                    <a href="#" onclick="checkIn();" class="font-semibold">Check In</a>
+                    <a href="#" onclick="openModalViewProfile();" class="font-semibold">View Profile</a>
+                    <a href="#" id="groupAdmin" class="font-semibold">Group Admin</a>
+                    <a href="#" data-function="export" class="font-semibold">Export</a>
+                    <a href="#" onclick="openModalSplit();" class="font-semibold">Split</a>
+                    <a  href="#" onclick="openModalAccompanying();" class="font-semibold">Accompanying</a>
+                    <a  href="#" onclick="openModalAddOn();" class="font-semibold">Add On</a>
+                    <a href="#" class="font-semibold">Alerts</a>
+                    <a href="#" onclick="openModalBilling();" class="font-semibold">Billing</a>
+                    <a onclick="openModalInvoicing();" class="font-semibold">Invoicing</a>
+                    <a href="#" class="font-semibold">Change</a>
+                    <a href="#" onclick="openModalShare();" class="font-semibold">Share</a>
+                    <a href="#" onclick="openModalDeposit();" class="font-semibold">Deposit/DXL</a>
+                    <a href="#" onclick="openModalFixedCharges();" class="font-semibold">Fixed Charges</a>
+                    <a href="#" onclick="openConfirm();" class="font-semibold">Delete</a>
+                    <a href="#" onclick="openModalMessage();" class="font-semibold">Message</a>
+                    <a href="#" onclick="openModalRegistrationCard();" class="font-semibold">Regis.Card</a>
+                    <a href="#" onclick="openRoomMove();" class="font-semibold">Room Move</a>
+                    <a href="#" onclick="openModalRouting();" class="font-semibold">Routing</a>
+                    <a href="#" onclick="openModalWaitList();" class="font-semibold">WaitList</a>
 
-                <div class="dropdown relative">
-                    <a href="#" class="menu-toggle font-semibold">Room Assignment</a>
-                    <div class="submenu absolute z-10 mt-2">
-                        <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
-                        <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                    <div class="dropdown relative">
+                        <a href="#" class="menu-toggle font-semibold">Room Assignment</a>
+                        <div class="submenu absolute z-10 mt-2">
+                            <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                            <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown relative">
+                        <a href="#" class="menu-toggle font-semibold">Check Out</a>
+                        <div class="submenu absolute z-10 mt-2">
+                            <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
+                            <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
+                            <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
+                        </div>
                     </div>
                 </div>
-
-                <div class="dropdown relative">
-                    <a href="#" class="menu-toggle font-semibold">Check Out</a>
-                    <div class="submenu absolute z-10 mt-2">
-                        <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
-                        <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
-                        <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
-                    </div>
-                </div>
             </div>
+            
         </div>
         
     </div>
@@ -1567,7 +1600,7 @@
             columns.forEach(column => {
                 if (column.visible) {
                     const blockHtml = `
-                        <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #ffffff;color: #1f2937;font-weight:500">
+                        <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #f5f5f5;color: #1f2937;font-weight:500">
                             <span class="remove-column" data-column="${column.dataField}" style="cursor: pointer; margin-right: 5px;color:#bf3431">
                                 <i class="fa-solid fa-xmark"></i>
                             </span>
@@ -3522,7 +3555,7 @@
                 }
             } else {
                 if (tomSelectInstance) {
-                    tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable
+                    tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable~`
                 } else {
                     $('#txtItemInventory').prop('disabled', true);
                 }

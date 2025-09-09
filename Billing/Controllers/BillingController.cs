@@ -2081,6 +2081,22 @@ namespace Billing.Controllers
             }
 
         }
+        [HttpPost]
+        public async Task<IActionResult> GetInfoShift()
+        {
+            try
+            {
+                int shiftID = int.Parse(Request.Form["shiftID"].ToString());
+                ShiftModel shift = (ShiftModel)ShiftBO.Instance.FindByPrimaryKey(shiftID);
+                return Json(shift);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new ShiftModel());
+            }
+
+        }
         #endregion
 
         #region DatVP __ Invoicing: Billing

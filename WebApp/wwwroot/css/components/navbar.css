@@ -144,7 +144,7 @@ body {
     }
 
         .dropdown-menu-custom a {
-            color:#000000;
+            color:#000000 !important;
             padding: 8px 0;
             border: none;
         }
@@ -167,7 +167,6 @@ body {
         color: #000000;
         display: block;
         padding: 12px 16px;
-        color: var(--text-color);
         text-decoration: none;
         border-bottom: 1px solid #e5e7eb;
         font-size: 13px;
