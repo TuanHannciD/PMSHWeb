@@ -16,7 +16,7 @@ namespace BaseBusiness.Model
         public string CurrencyID { get; set; }
         public int ProfileID { get; set; }
         public string AccountName { get; set; }
-        public string ContractName { get; set; }
+        public string ContactName { get; set; }
         public string TelePhone { get; set; }
         public string Fax { get; set; }
         public string Email { get; set; }
