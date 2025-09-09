@@ -96,5 +96,53 @@ namespace Administration.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spFrmTitleSearch", param);
             return myTable;
         }
+        public DataTable Territory(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmTerritorySearch", param);
+            return myTable;
+        }
+        public DataTable State(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmStateSearch", param);
+            return myTable;
+        }
+        public DataTable VIP(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmVIPSearch", param);
+            return myTable;
+        }
+        public DataTable Market(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmMarketSearch", param);
+            return myTable;
+        }
     }
 }

@@ -33,7 +33,12 @@ namespace Administration.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
+        public IActionResult Index()
+        {
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
         [HttpGet]
+
         public IActionResult GetMemberList(string code, string name, int inactive)
         {
             try
@@ -1068,5 +1073,605 @@ namespace Administration.Controllers
             }
 
         }
+        [HttpGet]
+        public IActionResult GetTerritory(string code, string name, int inactive)
+        {
+            try
+            {
+
+
+                DataTable dataTable = _iAdministrationService.Territory(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult Territory()
+        {
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public ActionResult InsertTerritory()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                TerritoryModel member = new TerritoryModel();
+
+                // Lấy dữ liệu từ form
+                member.Code = Request.Form["txtcode"].ToString();
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long memberId = TerritoryBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateTerritory()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                TerritoryModel member = new TerritoryModel();
+
+                // Lấy ID từ form (có khi edit)
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                // Lấy dữ liệu từ form
+                member.Code = Request.Form["txtcode"].ToString();
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedDate = DateTime.Now;
+
+
+                TerritoryBO.Instance.Update(member);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteTerritory()
+        {
+            try
+            {
+
+                TerritoryModel memberModel = (TerritoryModel)TerritoryBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Country" });
+
+                }
+                TerritoryBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Country was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        public IActionResult GetState(string code, string name, int inactive)
+        {
+            try
+            {
+
+
+                DataTable dataTable = _iAdministrationService.State(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["ZipCode"].ToString()) ? d["ZipCode"] : "",
+                                  Name = !string.IsNullOrEmpty(d["StateName"].ToString()) ? d["StateName"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult State()
+        {
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public ActionResult InsertState()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                StateModel member = new StateModel();
+
+                // Lấy dữ liệu từ form
+                member.ZipCode = Request.Form["txtcode"].ToString();
+                member.StateName = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long memberId = StateBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateState()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                StateModel member = new StateModel();
+
+                // Lấy ID từ form (có khi edit)
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                // Lấy dữ liệu từ form
+                member.ZipCode = Request.Form["txtcode"].ToString();
+                member.StateName = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedDate = DateTime.Now;
+
+
+                StateBO.Instance.Update(member);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteState()
+        {
+            try
+            {
+
+                StateModel memberModel = (StateModel)StateBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Country" });
+
+                }
+                StateBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Country was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        public IActionResult GetVIP(string code, string name, int inactive)
+        {
+            try
+            {
+
+
+                DataTable dataTable = _iAdministrationService.VIP(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult VIP()
+        {
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public ActionResult InsertVIP()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                VIPModel member = new VIPModel();
+
+                // Lấy dữ liệu từ form
+                member.Code = Request.Form["txtcode"].ToString();
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long memberId = VIPBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateVIP()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                VIPModel member = new VIPModel();
+
+                // Lấy ID từ form (có khi edit)
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                // Lấy dữ liệu từ form
+                member.Code = Request.Form["txtcode"].ToString();
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedDate = DateTime.Now;
+
+
+                VIPBO.Instance.Update(member);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteVIP()
+        {
+            try
+            {
+
+                VIPModel memberModel = (VIPModel)VIPBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Country" });
+
+                }
+                VIPBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Country was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        public IActionResult GetMarket(string code, string name, int inactive)
+        {
+            try
+            {
+
+
+                DataTable dataTable = _iAdministrationService.Market(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",                               
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        [HttpGet]
+        public IActionResult GetById(int id)
+        {
+            var market = MarketBO.Instance.GetById(id);
+            if (market == null)
+                return NotFound();
+
+            return Json(market); // trả JSON ra cho Ajax
+        }
+        public IActionResult Market()
+        {
+            List<MarketTypeModel> listmktype = PropertyUtils.ConvertToList<MarketTypeModel>(MarketTypeBO.Instance.FindAll());
+            ViewBag.MarketTypeList = listmktype;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+
+        [HttpPost]
+        public ActionResult InsertMarket()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                MarketModel member = new MarketModel();
+
+                // Lấy dữ liệu từ form
+                member.Code = Request.Form["txtcode"].ToString();
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+
+                string marketTypeValue = Request.Form["marketTypeID"];
+                member.MarketTypeID = int.TryParse(marketTypeValue, out int mId) ? mId : 0;
+
+                string groupTypeValue = Request.Form["groupType"];
+                member.GroupType = int.TryParse(groupTypeValue, out int sId) ? sId : 0;
+
+                member.Regional = Request.Form["txtregional"].ToString();
+                // Thông tin người dùng
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long memberId = MarketBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateMarket()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                MarketModel member = new MarketModel();
+
+                // Lấy ID từ form (có khi edit)
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                // Lấy dữ liệu từ form
+                member.Code = Request.Form["txtcode"].ToString();
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                string marketTypeValue = Request.Form["marketTypeID"];
+                member.MarketTypeID = int.TryParse(marketTypeValue, out int mId) ? mId : 0;
+
+                string groupTypeValue = Request.Form["groupType"];
+                member.GroupType = int.TryParse(groupTypeValue, out int sId) ? sId : 0;
+                member.Regional = Request.Form["txtregional"].ToString();
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedDate = DateTime.Now;
+
+
+                MarketBO.Instance.Update(member);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteMarket()
+        {
+            try
+            {
+
+                MarketModel memberModel = (MarketModel)MarketBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Lost And Found" });
+
+                }
+                MarketBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Lost And Found was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        
     }
 }
