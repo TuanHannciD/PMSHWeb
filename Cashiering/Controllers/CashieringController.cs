@@ -663,6 +663,9 @@ namespace Cashiering.Controllers
         }
         #endregion
 
+
+        #region DatVP __ Cashiering Manager
+        #endregion
     }
 }
 
