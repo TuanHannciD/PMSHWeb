@@ -10,8 +10,9 @@
     </div>
     <div class="header2">
         <button class="submit-button-clear-reservation" onclick="openModalNew()">New</button>
+        <button class="submit-button-new-reservation" onclick="openModalMaintenance()">Maintenance</button>
 
-        <button class="submit-button-new-reservation" onclick="resetForm()">Edit</button>
+        <button class="submit-button-new-reservation" onclick="GetAccountAvailableByID()">Edit</button>
     </div>
 
 </div>
@@ -175,7 +176,7 @@
 
                     <div class="form-group-new-reservation col-md-2">
                         <label>Inactive</label>
-                        <input type="checkbox" id="desscriptionAdd">
+                        <input type="checkbox" id="inactive">
                     </div>
                 </div>
             </div>
@@ -183,6 +184,9 @@
     </div>
 </div>
 <div id="gridContainer" class="gridContainer mt-2"></div>
+
+@await Html.PartialAsync("Options/Maintenance")
+
 <script>
     $(document).ready(async function () {
         await setTomSelect();
@@ -191,7 +195,7 @@
     });
     function getProfileIndividual(){
         $.ajax({
-                url: '/Reservation/GetProfileIndividual',
+         url: '/Reservation/GetProfileIndividual',
             type: 'get',
             dataType: 'json',
                 crossDomain: false,
@@ -296,7 +300,10 @@
                 mode: "multiple",
                 showCheckBoxesMode: "always"
             },
-
+            onRowClick: function(e) {
+                const grid = $("#gridContainer").dxDataGrid("instance");
+                grid.selectRows([e.key], false);
+            },
         });
     }
 
@@ -306,12 +313,13 @@
     
     function closeModalNew(){
         $('#modalNew').modal('hide');
-              $('#accountTypeAdd').val(0);
+        id = 0;
+        $('#accountTypeAdd').val(0);
         $('#accountNumberAdd').val('');
         $('#creditLimitAdd').val('');
         $('#currencyAdd').val('');
         $('#profileAdd').val(0);
-       $('#contactAdd').val('');
+        $('#contactAdd').val('');
         $('#phoneAdd').val('');
         $('#faxAdd').val('');
         $('#emailAdd').val('');
@@ -323,11 +331,13 @@
         $('#countryAdd').val(0);
 
     }
+
     function AccountAvailableAdd(){
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
 
-        var formData = new FormData();
+        var formData = new FormData
+        formData.append('id', id);
         formData.append('accountType', $('#accountTypeAdd').val());
         formData.append('accountNumber', $('#accountNumberAdd').val());
         formData.append('creditLimit', $('#creditLimitAdd').val());
@@ -346,7 +356,7 @@
         formData.append('paymentDue', $('#paymentDueAdd').not('[type="checkbox"]').val());
         formData.append('description', $('#desscriptionAdd').not('[type="checkbox"]').val());
         formData.append('flagged', $('#paymentDueAdd[type="checkbox"]').is(':checked') ? 1 : 0);
-        formData.append('inactive', $('#desscriptionAdd[type="checkbox"]').is(':checked') ? 1 : 0);
+        formData.append('inactive', $('#inactive[type="checkbox"]').is(':checked') ? 1 : 0);
         formData.append('userName', userName);
         formData.append('userID', userID);
 
@@ -366,6 +376,54 @@
                 }
             },
             error: function (xhr, statusText, err) { }
+        });
+    }
+
+    function GetAccountAvailableByID(){
+        var grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedRows = grid.getSelectedRowsData();
+        var selectedIds = selectedRows.map(row => row.ID);
+        $.ajax({
+         url: '/Accounting/GetAccountReceivable',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                id: selectedIds[0]
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log(result);
+                $('#accountTypeAdd').val(result.accountTypeID);
+                $('#accountNumberAdd').val(result.accountNo);
+                $('#creditLimitAdd').val(result.creditLimit);
+                $('#currencyAdd').val(result.currencyID);
+                $('#profileAdd').val(result.profileID);
+                $('#contactAdd').val(result.contactName);
+                $('#phoneAdd').val(result.telePhone);
+                $('#faxAdd').val(result.fax);
+                $('#emailAdd').val(result.email);
+                $('#address1Add').val(result.address1);
+                $('#address2Add').val(result.address2);
+                $('#address3Add').val(result.address3);
+                $('#postalCode').val(result.postalCode);
+                $('#cityAdd').val(result.cityID);
+                $('#countryAdd').val(result.countryID);
+                if(result.statusFlagged == true){
+                    document.getElementById("paymentDueAdd").checked = true;
+                }
+                if(result.statusInactive == true){
+                    document.getElementById("inactive").checked = true;
+
+                }
+                openModalNew();
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
         });
     }
 </script>

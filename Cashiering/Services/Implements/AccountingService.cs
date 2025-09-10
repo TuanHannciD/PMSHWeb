@@ -1,7 +1,9 @@
 ﻿using BaseBusiness.BO;
 using BaseBusiness.util;
 using Cashiering.Services.Interfaces;
+using DevExpress.Web;
 using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +15,31 @@ namespace Cashiering.Services.Implements
 {
     public class AccountingService : IAccountingService
     {
+        public DataTable AccountMaintence(int arID, string folioNo, string isActive, string paymentOnly, string print, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@ARID", arID),
+                    new SqlParameter("@FolioNo", folioNo),
+                    new SqlParameter("@IsActive", isActive),
+                    new SqlParameter("@PaymentOnly",paymentOnly),
+                    new SqlParameter("@Print",print),
+                    new SqlParameter("@FromDate",fromDate ),
+                    new SqlParameter("@ToDate",  toDate),
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spARAccountReceivableTransSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
         public DataTable AccountSearch(string accountName, string accountNo, int accountType, string balance)
         {
             try
