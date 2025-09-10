@@ -200,6 +200,110 @@ namespace Cashiering.Controllers
                 return Json(ex.Message);
             }
         }
+
+
+        #endregion
+
+        #region DatVP __ Inovice: Common infor
+        [HttpGet]
+        public async Task<IActionResult> SearchInfoInvoice(int folioID,int arID)
+        {
+            try
+            {
+                string sqlCommand = "";
+                sqlCommand = $"SELECT ConfirmationNo, AccountName, ReservationID, ProfileID, FolioNo, Status FROM Folio WITH (NOLOCK) WHERE ID IN ({folioID}) ";
+                var data = _iAccountingService.SearchByCommmand(sqlCommand);
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+
+                FolioModel folio = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioID);
+                if(folio == null || folio.ID == 0)
+                {
+                    return Json(new
+                    {
+                        code = 1,
+                        msg = "Could not find folio"
+                    });
+                }
+                sqlCommand = $"SELECT ConfirmationNo, ArrivalDate, DepartureDate, LastName, RoomID, RoomNo FROM dbo.Reservation WITH (NOLOCK) WHERE ID = {folio.ReservationID}";
+                var data2 = _iAccountingService.SearchByCommmand(sqlCommand);
+                var result2 = (from d in data2.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+
+
+
+                sqlCommand = $"SELECT AccountName,AccountNo FROM dbo.ARAccountReceivable WITH (NOLOCK) WHERE ID = {arID}";
+                var data3 = _iAccountingService.SearchByCommmand(sqlCommand);
+                var result3 = (from d in data3.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(new
+                {
+                    code = 0,
+                    result1 = result,
+                    result2 = result2,
+                    result3 = result3
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    code = 1,
+                    msg = ex.Message
+                });
+            }
+        }
+
+
+        #endregion
+
+        #region DatVP __ Inovice: Search
+        [HttpGet]
+        public async Task<IActionResult> InvoiceSearch(int folioID)
+        {
+            try
+            {
+
+                var data = _iAccountingService.InvoiceSearch(folioID,0);
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+
+                
+                return Json(new
+                {
+                    result1 = result,
+
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+
+                    msg = ex.Message
+                });
+            }
+        }
+
+
         #endregion
     }
 }

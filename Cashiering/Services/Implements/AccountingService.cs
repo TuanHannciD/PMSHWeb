@@ -3,13 +3,12 @@ using BaseBusiness.util;
 using Cashiering.Services.Interfaces;
 using DevExpress.Web;
 using Microsoft.Data.SqlClient;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
+
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
+using SqlException = Microsoft.Data.SqlClient.SqlException;
+using SqlParameter = Microsoft.Data.SqlClient.SqlParameter;
+
 
 namespace Cashiering.Services.Implements
 {
@@ -57,6 +56,46 @@ namespace Cashiering.Services.Implements
                 };
 
                 DataTable myTable = DataTableHelper.getTableData("spARAccountReceivableSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable InvoiceSearch(int folioID, int mode)
+        {
+          try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@FolioID", folioID),
+                    new SqlParameter("@Mode", mode),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spSearchTransactionInFolioByDev ", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }        }
+
+        public DataTable SearchByCommmand(string sqlCommand)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@sqlCommand", sqlCommand),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
                 return myTable;
             }
             catch (SqlException ex)

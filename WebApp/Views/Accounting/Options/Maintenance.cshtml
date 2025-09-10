@@ -12,7 +12,7 @@
                 </div> *@
                 <div class="functions-pane mb-2" style="background-color: var(--accent-color);border-radius: 8px; border: 1px solid #e5e7eb;box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);padding:0px">
                     <div class="function-menu">
-                        <a href="#" onclick="openModalPosting();">Envoice</a>
+                        <a href="#" onclick="openModalInvoice();">Envoice</a>
                         <a href="#" onclick="openModalEditPosting();">Payment</a>
 
 
@@ -96,6 +96,8 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("Options/Invoice")
+
 <script>
     function openModalMaintenance() {
         const today = new Date().toISOString().split('T')[0];

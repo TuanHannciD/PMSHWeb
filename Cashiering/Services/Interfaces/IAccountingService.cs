@@ -25,5 +25,20 @@ namespace Cashiering.Services.Interfaces
 
         /// <returns>Data table chứa danh sáchaccount maintenacnce</returns>
         DataTable AccountMaintence(int arID, string folioNo, string isActive,string paymentOnly,string print,DateTime fromDate, DateTime toDate);
+
+
+        /// <summary>
+        /// DatVP: search by command
+        /// </summary>
+        /// <returns>search by command</returns>
+        DataTable SearchByCommmand(string sqlCommand);
+
+        /// <summary>
+        /// DatVP: Lây danh sách  account receivable
+        /// </summary>
+
+
+        /// <returns>Data table chứa danh sách account receivable</returns>
+        DataTable InvoiceSearch(int folioID, int mode);
     }
 }
