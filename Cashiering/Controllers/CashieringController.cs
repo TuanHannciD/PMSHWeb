@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.SqlClient;
 using DevExpress.ClipboardSource.SpreadsheetML;
+using Cashiering.Commons.Helpers;
 
 namespace Cashiering.Controllers
 {
@@ -20,9 +21,11 @@ namespace Cashiering.Controllers
         private readonly IMemoryCache _cache;
         private readonly ICashieringService _iCashieringService;
         private readonly ICloseShiftService _iCloseShiftService;
+        private readonly ICashieringManagerService _iCashieringManagerService;
+        private readonly IFolioVATSearchService _iFolioVATSearchService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public CashieringController(ILogger<CashieringController> logger,
-                IMemoryCache cache, IConfiguration configuration, ICashieringService iCashieringService, IHttpContextAccessor httpContextAccessor,ICloseShiftService iCloseShiftService)
+        public CashieringController(ILogger<CashieringController> logger,IFolioVATSearchService iFolioVATService,
+                IMemoryCache cache, IConfiguration configuration, ICashieringService iCashieringService, IHttpContextAccessor httpContextAccessor,ICloseShiftService iCloseShiftService,ICashieringManagerService iCashieringManagerService)
         {
             _cache = cache;
             _logger = logger;
@@ -30,7 +33,8 @@ namespace Cashiering.Controllers
             _iCashieringService = iCashieringService;
             _httpContextAccessor = httpContextAccessor;
             _iCloseShiftService = iCloseShiftService;
-
+            _iCashieringManagerService = iCashieringManagerService;
+            _iFolioVATSearchService = iFolioVATService;
         }
 
         public IActionResult Index()
@@ -665,6 +669,85 @@ namespace Cashiering.Controllers
 
 
         #region DatVP __ Cashiering Manager
+        public IActionResult CashieringManager()
+        {
+            ViewBag.cboZone = ListItemHelper.GetZoneProvider();
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GuestInHouse(string room, string name, string block, string group, string company, string confirmationNo, DateTime arrivalDate, DateTime arrivalTo, DateTime departure, string crsNo, string package, string guestName, int zone, int typeSearch)
+        {
+            try
+            {
+
+                DataTable resultExchangeData = _iCashieringManagerService.GetGUestInHouse(room, name, block, group, "", company, confirmationNo, arrivalDate, arrivalTo, departure,  crsNo,  package,  guestName,  zone,  typeSearch);
+                var resultExchange = (from d in resultExchangeData.AsEnumerable()
+                                      select d.Table.Columns.Cast<DataColumn>()
+                                          //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                          .ToDictionary(
+                                              col => col.ColumnName,
+                                              col => d[col.ColumnName]?.ToString()
+                                          )).ToList();
+                return Json(resultExchange);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region DatVP __ VAT Search
+        public IActionResult VATSearch()
+        {
+
+            return View();
+        }
+
+        #endregion
+
+        #region DatVP __ Folio VAT Search
+        public IActionResult FolioVATSearch()
+        {
+
+            return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult SearchFolioVAT(DateTime fromDate, DateTime toDate, int folioStatus, int printStatus)
+        {
+            try
+            {
+
+                DataTable resultExchangeData = _iFolioVATSearchService.SearchFolioVAT(fromDate, toDate, folioStatus, printStatus, 1);
+                var resultExchange = (from d in resultExchangeData.AsEnumerable()
+                                      select d.Table.Columns.Cast<DataColumn>()
+                                          //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                          .ToDictionary(
+                                              col => col.ColumnName,
+                                              col => d[col.ColumnName]?.ToString()
+                                          )).ToList();
+                return Json(resultExchange);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region DatVP __ FolioVATSearchByAccouting
+        public IActionResult FolioSearchByAccouting()
+        {
+            ViewBag.cboAccountType = ListItemHelper.GetARAccountType();
+
+            return View();
+        }
+
         #endregion
     }
 }
