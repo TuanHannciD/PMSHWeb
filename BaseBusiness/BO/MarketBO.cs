@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using BaseBusiness.bc;
 using BaseBusiness.Facade;
 using BaseBusiness.Model;
-
+using Microsoft.Data.SqlClient;
 namespace BaseBusiness.BO
 {
+    using Dapper;
     public class MarketBO : BaseBO
     {
         private MarketFacade facade = MarketFacade.Instance;
@@ -34,6 +35,10 @@ namespace BaseBusiness.BO
 
             return GetFirst<MarketModel>(sql, new { Id = id });
         }
-
+        public MarketModel GetById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT ID, Code, Name, Description, CreatedBy, CreatedDate,  UpdatedBy, UpdatedDate FROM Market WHERE ID = @id";
+            return conn.QuerySingleOrDefault<MarketModel>(sql, new { id }, tx);
+        }
     }
 }

@@ -3,22 +3,26 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    var listctry = ViewBag.CountryList;
-
+    // Kiểm tra xem có biến `media` nào được dùng không
+    // Ví dụ: var media = Model.Media; // Đảm bảo Model có thuộc tính Media nếu cần
 }
-<link href="~/css/reservation.css" rel="stylesheet" />
+
+<!-- Comment reservation.css để tránh xung đột, nhưng có thể thêm lại sau khi fix -->
+<link href="~/css/pages/reservation.css" rel="stylesheet" />
 <style>
-    .submenu {
-        display: none; /* mặc định ẩn */
-        margin-top: 2px;
-        padding-left: 10px;
+    :root {
+        --main-color: #2b6cb0; /* Màu chính (xanh dương) */
+        --secondary-color: #f5f5f5; /* Màu nền thứ cấp (xám nhạt) */
+        --highlight-color: #d65a00; /* Màu nổi bật (cam) */
+        --text-color: #2d3748; /* Màu chữ (xám đậm) */
+        --accent-color: #ffffff; /* Màu bổ sung (trắng) */
     }
 
     .menu-group-title {
         font-weight: bold;
         padding: 8px;
         cursor: pointer;
-        background: #f5f5f5;
+        background: var(--secondary-color);
         border: 1px solid #ddd;
         border-radius: 4px;
         display: flex;
@@ -26,15 +30,51 @@
         align-items: center;
     }
 
-    .tomselect-custom {
-        width: 100px;
-        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
-        font-size: 12px !important;
+    .menu-left .submenu {
+        display: none;
+        margin-top: 2px;
+        padding-left: 10px;
+        background: var(--accent-color);
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        min-width: 120px;
+        position: relative;
+        z-index: 20;
     }
 
-        .tomselect-custom .ts-control {
-            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        .menu-left .submenu.active {
+            display: block !important;
         }
+
+    /* Đảm bảo các style khác sử dụng biến CSS */
+    .menu-item {
+        display: block;
+        padding: 12px 16px;
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        border-bottom: 1px solid #bcbcbc;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+
+        .menu-item:hover,
+        .menu-item.active {
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+            border-left: 4px solid var(--highlight-color);
+        }
+
+    .menu-group > .menu-left {
+        display: none; /* ẩn mặc định */
+        margin-top: 2px;
+        background: var(--accent-color);
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
 </style>
 <div class="mt-3">
     <div class="row">
@@ -48,7 +88,7 @@
                     <div class="menu-group-title">
                         Profile <i class="fas fa-chevron-down"></i>
                     </div>
-                    <div class="submenu">
+                    <div class="menu-left">
                         <a class="menu-item" asp-controller="Administration" asp-action="City">CITY</a>
                         <a class="menu-item" asp-controller="Administration" asp-action="Country">COUNTRY</a>
                         <a class="menu-item active"> LANGUAGE</a>
@@ -65,10 +105,30 @@
                 <!-- Group 2 -->
                 <div class="menu-group">
                     <div class="menu-group-title">
-                        Reservatiom <i class="fas fa-chevron-down"></i>
+                        Reservation <i class="fas fa-chevron-down"></i>
                     </div>
-                    <div class="submenu">
+                    <div class="menu-left">
                         <a class="menu-item" asp-controller="Administration" asp-action="Market">MARKET</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="MarketType">MARKET TYPE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="PickupDropPlace">PICKUP DROP PLACE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="TransportType">TRANSPORT TYPE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="ReservationType">RESERVATION TYPE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Reason">REASON</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Origin">ORIGIN</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Source">SOURCE</a>
+                    </div>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-group-title">
+                        Other <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-left">
+                        <a class="menu-item" asp-controller="Administration" asp-action="AlertsSetup">ALERTS SETUP</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Comment">COMMENTS</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="CommentType">COMMENT TYPE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Season">SEASON</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Zone">ZONE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Department">DEPARTMENT</a>
                     </div>
                 </div>
             </div>
@@ -184,20 +244,21 @@
     DevExpress.localization.locale("vi");
        let selectedRowData = null;
 
-         $(document).ready(function () {
+        $(document).ready(function () {
+        $(".menu-group-title").on("click", function (event) {
+                const submenu = $(this).next(".menu-left"); // lấy thằng menu-left con
+           const icon = $(this).find("i");
+
+           // toggle submenu
+           submenu.slideToggle(200);
+
+           // đổi icon
+           icon.toggleClass("fa-chevron-down fa-chevron-up");
+           });
+
 
          reloadGrid();
-         });
-             $(document).on("click", ".menu-group-title", function () {
-        const submenu = $(this).next(".submenu");
-        const icon = $(this).find("i");
-
-        // toggle submenu
-        submenu.slideToggle(200);
-
-        // đổi icon
-        icon.toggleClass("fa-chevron-down fa-chevron-up");
-    });
+     });
 
         $("#btnView").on("click", function() {
         reloadGrid();
