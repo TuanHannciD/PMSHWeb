@@ -12,8 +12,7 @@
                 </div> *@
                 <div class="functions-pane mb-2" style="background-color: var(--accent-color);border-radius: 8px; border: 1px solid #e5e7eb;box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);padding:0px">
                     <div class="function-menu">
-                        <a href="#" onclick="openModalPosting();">Envoice</a>
-                        <a href="#" onclick="openModalEditPosting();">Payment</a>
+                        <a href="#" onclick="openModalTransfer();">Transfer</a>
 
 
                     </div>
@@ -89,6 +88,8 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("Options/Transfer")
+
 <script>
     function openModalInvoice() {
         const today = new Date().toISOString().split('T')[0];
@@ -162,7 +163,7 @@
              crossDomain: false,
              headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
              success: function (result) {
-                 initializeDataGridInvoice(result);
+                 initializeDataGridInvoice(result.result1);
              },
              error: function (xhr, statusText, err) {
                  if (xhr.status == 401) {

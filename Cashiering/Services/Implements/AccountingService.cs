@@ -83,7 +83,8 @@ namespace Cashiering.Services.Implements
             {
 
                 throw new Exception($"ERROR: {ex.Message}", ex);
-            }        }
+            }        
+        }
 
         public DataTable SearchByCommmand(string sqlCommand)
         {
@@ -96,6 +97,30 @@ namespace Cashiering.Services.Implements
                 };
 
                 DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable SearchInfoAR(string accountName, string accountNo, string folioNo, string isActive, string folioID)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@AccountName", accountName),
+                    new SqlParameter("@AccountNo", accountNo),
+                    new SqlParameter("@FolioNo", folioNo),
+                    new SqlParameter("@IsActive", isActive),
+                    new SqlParameter("@FolioID", folioID),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spARSearchInfo", param);
                 return myTable;
             }
             catch (SqlException ex)

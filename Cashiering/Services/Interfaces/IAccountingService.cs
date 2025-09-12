@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevExpress.Charts.Native;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -40,5 +41,13 @@ namespace Cashiering.Services.Interfaces
 
         /// <returns>Data table chứa danh sách account receivable</returns>
         DataTable InvoiceSearch(int folioID, int mode);
+
+        /// <summary>
+        /// DatVP: Lây danh sách folio transfer account receivable
+        /// </summary>
+
+
+        /// <returns>Data table chứa anh sách folio transfer account receivable</returns>
+        DataTable SearchInfoAR(string accountName, string accountNo,string folioNo,string isActive,string folioID);
     }
 }
