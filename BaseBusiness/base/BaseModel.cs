@@ -16,8 +16,12 @@ namespace BaseBusiness.bc
 		{
 			return 0;
 		}
+        public virtual string GetStringID()
+        {
+            return ""; // tr? v? giá tr? m?c ??nh, override ? model con n?u c?n
+        }
 
-		protected int userID = 0;
+        protected int userID = 0;
 		public void SetUserID (int id)
 		{
 			this.userID = id;
@@ -233,6 +237,15 @@ namespace BaseBusiness.bc
 		{
 			return "";
 		}
-	}
+        public virtual string GetTableName()
+        {
+            return this.GetType().Name.Replace("Model", "");
+        }
+        public virtual string GetPrimaryKeyName()
+        {
+            return "ID";
+        }
+
+    }
 	
 }

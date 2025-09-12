@@ -47,6 +47,11 @@ namespace BaseBusiness.BO
 
             return description;
         }
+        public MemberTypeModel GetById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT ID, Code, Name, Description, CreatedBy, CreatedDate,  UpdatedBy, UpdatedDate FROM MemberType WHERE ID = @id";
+            return conn.QuerySingleOrDefault<MemberTypeModel>(sql, new { id }, tx);
+        }
 
     }
 }

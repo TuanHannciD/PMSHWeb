@@ -790,4 +790,20 @@ textarea {
         width: 100%;
         position: static;
     }
+}/* Đặt màu chữ mặc định cho submenu */
+.menu-left .submenu a.menu-item {
+    color: #1f2937 !important; /* xám đậm gần đen */
+    text-decoration: none !important;
+    display: block;
+    padding: 8px 12px;
+    font-size: 14px;
 }
+
+    /* Khi hover hoặc active */
+    .menu-left .submenu a.menu-item:hover,
+    .menu-left .submenu a.menu-item.active {
+        color: #2b6cb0 !important; /* xanh chủ đạo */
+        background-color: #edf2f7 !important; /* nền xám nhạt */
+        border-left: 3px solid #dd6b20; /* viền trái cam */
+    }
+

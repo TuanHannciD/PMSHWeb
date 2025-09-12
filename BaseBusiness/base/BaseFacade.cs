@@ -1,16 +1,17 @@
 using System;
 using System.Collections;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Reflection;
-using BaseBusiness.util;
-using log4net;
 using System.Collections.Generic;
-using BaseBusiness.Utils;
+using System.Data;
 using System.Linq;
-using Dapper;
+using System.Reflection;
 using System.Transactions;
 using System.Xml;
+using BaseBusiness.exception;
+using BaseBusiness.util;
+using BaseBusiness.Utils;
+using Dapper;
+using log4net;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json.Linq;
 
 namespace BaseBusiness.bc
@@ -1038,5 +1039,174 @@ namespace BaseBusiness.bc
                 }
             }
         }
+        public virtual string InsertStringId(BaseModel model)
+        {
+            using (SqlConnection conn = new SqlConnection(strcon))
+            {
+                conn.Open();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string result = InsertStringId(model, conn, tx);
+                        tx.Commit();
+                        return result;
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public virtual string InsertStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
+        {
+            try
+            {
+                // L?y tên b?ng t? BaseModel
+                string tableName = model.GetTableName();
+
+                // L?y danh sách property ?? build SQL
+                var props = model.GetType().GetProperties()
+                                 .Where(p => p.CanRead)
+                                 .ToList();
+
+                List<string> columns = new List<string>();
+                List<string> values = new List<string>();
+                DynamicParameters parameters = new DynamicParameters();
+
+                foreach (var p in props)
+                {
+                    var val = p.GetValue(model, null);
+                    if (val != null)
+                    {
+                        columns.Add(p.Name);
+                        values.Add("@" + p.Name);
+                        parameters.Add("@" + p.Name, val);
+                    }
+                }
+
+                string sql = $"INSERT INTO {tableName} ({string.Join(",", columns)}) " +
+                             $"VALUES ({string.Join(",", values)}); " +
+                             $"SELECT @{model.GetPrimaryKeyName()};"; // tr? v? PK string
+
+                // Th?c thi v?i Dapper
+                string insertedId = conn.ExecuteScalar<string>(sql, parameters, tx);
+                return insertedId;
+            }
+            catch (Exception ex)
+            {
+                throw new FacadeException("InsertStringId failed: " + ex.Message);
+            }
+        }
+        public virtual string UpdateStringId(BaseModel model)
+        {
+            using (SqlConnection conn = new SqlConnection(strcon))
+            {
+                conn.Open();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string result = UpdateStringId(model, conn, tx);
+                        tx.Commit();
+                        return result;
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public virtual string UpdateStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
+        {
+            try
+            {
+                string tableName = model.GetTableName();
+                string primaryKey = model.GetPrimaryKeyName();
+
+                var props = model.GetType().GetProperties()
+                                 .Where(p => p.CanRead && p.Name != primaryKey)
+                                 .ToList();
+
+                List<string> setClauses = new List<string>();
+                DynamicParameters parameters = new DynamicParameters();
+
+                foreach (var p in props)
+                {
+                    var val = p.GetValue(model, null);
+                    setClauses.Add($"{p.Name} = @{p.Name}");
+                    parameters.Add("@" + p.Name, val);
+                }
+
+                var pkValue = model.GetType().GetProperty(primaryKey).GetValue(model, null);
+                parameters.Add("@" + primaryKey, pkValue);
+
+                string sql = $"UPDATE {tableName} SET {string.Join(", ", setClauses)} WHERE {primaryKey} = @{primaryKey}";
+
+                conn.Execute(sql, parameters, tx);
+
+                // Tr? v? PK d??i d?ng string
+                return pkValue?.ToString() ?? "";
+            }
+            catch (Exception ex)
+            {
+                throw new FacadeException("UpdateStringId failed: " + ex.Message);
+            }
+        }
+        public virtual string DeleteStringId(BaseModel model)
+        {
+            using (SqlConnection conn = new SqlConnection(strcon))
+            {
+                conn.Open();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string result = DeleteStringId(model, conn, tx);
+                        tx.Commit();
+                        return result;
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public virtual string DeleteStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
+        {
+            try
+            {
+                string tableName = model.GetTableName();
+                string pkName = model.GetPrimaryKeyName();
+
+                string sql = $"DELETE FROM {tableName} WHERE {pkName} = @{pkName}";
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@" + pkName, model.GetStringID()); // GetID() tr? v? string PK
+
+                int rowsAffected = conn.Execute(sql, parameters, tx);
+
+                if (rowsAffected == 0)
+                    throw new FacadeException("No record found to delete");
+
+                return model.GetPrimaryKeyName(); // tr? v? ID ?ã xóa
+            }
+            catch (Exception ex)
+            {
+                throw new FacadeException("DeleteStringId failed: " + ex.Message);
+            }
+        }
+
+
+
     }
 }
