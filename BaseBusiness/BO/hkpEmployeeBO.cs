@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.Data.SqlClient;
 namespace BaseBusiness.BO
 {
+    using Dapper;
     public class hkpEmployeeBO : BaseBO
     {
         private hkpEmployeeFacade facade = hkpEmployeeFacade.Instance;
@@ -31,6 +32,11 @@ namespace BaseBusiness.BO
           
 
             return instance.GetList<hkpEmployeeModel>(query);
+        }
+        public hkpEmployeeModel GetById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT ID, Name, IsActive,CreatedDate , CreatedBy, UpdatedBy,UpdatedDate, Inactive, Desciption  FROM hkpEmployee WHERE ID = @id";
+            return conn.QuerySingleOrDefault<hkpEmployeeModel>(sql, new { id }, tx);
         }
     }
 }

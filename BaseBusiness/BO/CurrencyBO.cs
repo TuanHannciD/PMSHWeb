@@ -8,7 +8,7 @@ using BaseBusiness.Facade;
 using BaseBusiness.Model;
 using Microsoft.Data.SqlClient;
 namespace BaseBusiness.BO
-{
+{ 
     using Dapper;
     public class CurrencyBO : BaseBO
     {

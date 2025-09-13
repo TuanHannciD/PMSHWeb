@@ -38,6 +38,6 @@ namespace Administration.Services.Interfaces
         public DataTable PropertyType(string code, string description, int sequence);
         public DataTable ReservationType();
         public DataTable Currency();
-        
+        public DataTable hkpEmployee(string code, string name, int inactive);
     }
 }

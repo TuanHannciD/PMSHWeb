@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Administration.Services.Interfaces;
 using BaseBusiness.util;
+using DevExpress.XtraRichEdit.Model;
 using Microsoft.Data.SqlClient;
 using static DevExpress.DataProcessing.InMemoryDataProcessor.AddSurrogateOperationAlgorithm;
 
@@ -355,6 +356,17 @@ namespace Administration.Services.Implements
             return myTable;
         }
 
+        public DataTable hkpEmployee(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
 
+            DataTable myTable = DataTableHelper.getTableData("spFrmhkpEmployeeSearch", param);
+            return myTable;
+        }
     }
 }

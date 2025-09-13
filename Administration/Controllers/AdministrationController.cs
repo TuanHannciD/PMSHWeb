@@ -4694,7 +4694,166 @@ namespace Administration.Controllers
                 pt.CloseConnection();
             }
         }
+        [HttpGet]
+        public IActionResult GethkpEmployee(string code, string name, int inactive)
+        {
+            try
+            {
 
+
+                DataTable dataTable = _iAdministrationService.hkpEmployee(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult hkpEmployee()
+        {
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public ActionResult InserthkpEmployee()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                hkpEmployeeModel member = new hkpEmployeeModel();
+
+  
+
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+
+                // Gọi BO để lưu
+                long memberId = hkpEmployeeBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdatehkpEmployee()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                hkpEmployeeModel member = new hkpEmployeeModel();
+
+                // Lấy ID từ form (có khi edit)
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                // Lấy dữ liệu từ form
+                member.Name = Request.Form["txtname"].ToString();
+                member.Description = Request.Form["txtdescription"].ToString();
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                  && Request.Form["inactive"].ToString() == "on";
+                string loginName = HttpContext.Session.GetString("LoginName") ?? "";
+
+                if (member.ID == 0) // Insert mới
+                {
+                    member.CreatedBy = loginName;
+                    member.CreatedDate = DateTime.Now;
+                    member.UpdatedBy = loginName;
+                    member.UpdatedDate = DateTime.Now;
+
+                    hkpEmployeeBO.Instance.Insert(member);
+                }
+                else // Update
+                {
+                    // Trước khi update, lấy lại bản ghi cũ từ DB để giữ CreatedBy, CreatedDate
+                    var oldData = hkpEmployeeBO.Instance.GetById(member.ID, pt.Connection, pt.Transaction);
+
+                    if (oldData != null)
+                    {
+                        member.CreatedBy = oldData.CreatedBy;
+                        member.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    member.UpdatedBy = loginName;
+                    member.UpdatedDate = DateTime.Now;
+
+                    hkpEmployeeBO.Instance.Update(member);
+                }
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult DeletehkpEmployee()
+        {
+            try
+            {
+
+                hkpEmployeeModel memberModel = (hkpEmployeeModel)hkpEmployeeBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Country" });
+
+                }
+                hkpEmployeeBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Country was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
 
 
 
