@@ -418,5 +418,104 @@ namespace BaseBusiness.bc
                 throw new BOException("Could not find the object: " + ex.Message);
             }
         }
+        public virtual string InsertStringId(BaseModel model)
+        {
+            try
+            {
+                PreSavingChecking(model);
+                return baseFacade.InsertStringId(model); // g?i xu?ng BaseFacade x? lý
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not update to database: " + ex.Message);
+            }
+        }
+
+        public virtual string InsertStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
+        {
+            try
+            {
+                PreSavingChecking(model);
+                return baseFacade.InsertStringId(model, conn, tx);
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not update to database: " + ex.Message);
+            }
+        }
+        public virtual string UpdateStringId(BaseModel model)
+        {
+            try
+            {
+                PreSavingChecking(model);
+                return baseFacade.UpdateStringId(model); // g?i xu?ng BaseFacade x? lý
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not update to database: " + ex.Message);
+            }
+        }
+
+        public virtual string UpdateStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
+        {
+            try
+            {
+                PreSavingChecking(model);
+                return baseFacade.UpdateStringId(model, conn, tx); // g?i xu?ng BaseFacade x? lý
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not update to database: " + ex.Message);
+            }
+        }
+        public virtual string DeleteStringId(BaseModel model)
+        {
+            try
+            {
+                return baseFacade.DeleteStringId(model); // g?i xu?ng Facade x? lý
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not delete from database: " + ex.Message);
+            }
+        }
+
+        public virtual string DeleteStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
+        {
+            try
+            {
+                return baseFacade.DeleteStringId(model, conn, tx); // g?i xu?ng Facade x? lý
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not delete from database: " + ex.Message);
+            }
+        }
+
+
     }
 }

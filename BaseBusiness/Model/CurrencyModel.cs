@@ -21,5 +21,14 @@ namespace BaseBusiness.Model
         public bool Inactive { get;set; }
         public int Decimals { get;set; }
         public bool IsSynchronous { get; set; }
+        public override string GetStringID()
+        {
+            return ID;
+        }
+
+        public override string GetPrimaryKeyName()
+        {
+            return "ID";
+        }
     }
 }

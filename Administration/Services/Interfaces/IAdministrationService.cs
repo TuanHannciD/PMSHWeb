@@ -22,6 +22,22 @@ namespace Administration.Services.Interfaces
         public DataTable State(string code, string name, int inactive);
         public DataTable VIP(string code, string name, int inactive);
         public DataTable Market(string code, string name, int inactive);
-
+        public DataTable MarketType(string code, string name, int inactive);
+        public DataTable PickupDropPlace(string code, string name, int inactive);
+        public DataTable TransportType(string code, string name, int inactive);
+        public DataTable Reason(string code, string name, int inactive);
+        public DataTable Origin(string code, string name, int inactive);
+        public DataTable Source(string code, string name, int inactive);
+        public DataTable AlertsSetup(string code, string name, int inactive);
+        public DataTable Comment(string code, string name, int inactive);
+        public DataTable CommentType(string code, string name, int inactive);
+        public DataTable Season(string code, string name, int inactive);
+        public DataTable Zone(string code, string name, int inactive);
+        public DataTable Department(string code, string name, int inactive);
+        public DataTable Owner(string code, string name, int inactive);
+        public DataTable PropertyType(string code, string description, int sequence);
+        public DataTable ReservationType();
+        public DataTable Currency();
+        
     }
 }

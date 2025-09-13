@@ -1559,6 +1559,29 @@ namespace Billing.Controllers
             {
                 pt.OpenConnection();
                 pt.BeginTransaction();
+                FolioModel folioMasterCheck = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioMasterID);
+                if(folioMasterCheck == null || folioMasterCheck.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Could not find folio transfer " });
+
+                }
+                if(folioMasterCheck.Status == true)
+                {
+                    return Json(new { code = 1, msg = "Folio transfer was locked " });
+
+                }
+                FolioModel folioTransferedCheck = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioID);
+
+                if (folioTransferedCheck == null || folioTransferedCheck.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Could not find folio transfered " });
+
+                }
+                if (folioTransferedCheck.Status == true)
+                {
+                    return Json(new { code = 1, msg = "Folio transfered was locked " });
+
+                }
                 foreach (var item in folioDetailID)
                 {
                     #region transfer transaction

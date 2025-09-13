@@ -108,6 +108,9 @@ builder.Services.AddSingleton<IAdministrationService, AdministrationService>();
 builder.Services.AddSingleton<IAdjustTransactionService, AdjustTransactionService>();
 builder.Services.AddSingleton<ICloseShiftService, CloseShiftService>();
 builder.Services.AddSingleton<ICashieringManagerService, CashieringManagerService>();
+builder.Services.AddSingleton<IVATSearchService, VATSearchService>();
+builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
+builder.Services.AddSingleton<IAccountingService, AccountingService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

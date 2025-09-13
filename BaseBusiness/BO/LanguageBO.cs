@@ -1,13 +1,15 @@
-﻿using BaseBusiness.bc;
-using BaseBusiness.Facade;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BaseBusiness.bc;
+using BaseBusiness.Facade;
+using BaseBusiness.Model;
+using Microsoft.Data.SqlClient;
 namespace BaseBusiness.BO
 {
+    using Dapper;
     public class LanguageBO : BaseBO
     {
         private LanguageFacade facade = LanguageFacade.Instance;
@@ -21,6 +23,11 @@ namespace BaseBusiness.BO
         public static LanguageBO Instance
         {
             get { return instance; }
+        }
+        public LanguageModel GetById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT ID, Code, Name, Description, CreatedBy, CreatedDate,  UpdatedBy, UpdatedDate FROM Language WHERE ID = @id";
+            return conn.QuerySingleOrDefault<LanguageModel>(sql, new { id }, tx);
         }
     }
 }
