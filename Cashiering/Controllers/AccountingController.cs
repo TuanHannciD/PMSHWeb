@@ -305,5 +305,35 @@ namespace Cashiering.Controllers
 
 
         #endregion
+
+        #region DatVP __ Invoice: Transfer
+        [HttpGet]
+        public async Task<IActionResult> SearchARInfo(string accountName,string accountNo,string folioNo,string isActive,string folioID)
+        {
+            try
+            {
+
+                var data = _iAccountingService.SearchInfoAR(accountName ?? "",accountNo ?? "",folioNo ?? "",isActive ?? "0",folioID );
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+
+
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+
+                    msg = ex.Message
+                });
+            }
+        }
+        #endregion
     }
 }

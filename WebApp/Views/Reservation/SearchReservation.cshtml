@@ -5,23 +5,15 @@
     
     
 </style>
-<div class="header" style="justify-content:space-between;border-bottom:none">
-    <div class="header2" >
-        <h3 id="content-title">
-            Search Reservation
+<div class="header mt-2" style="border-bottom:none">
+    <h3 id="content-title">
+        Search Reservation
 
-        </h3>
-        <i class="fas fa-info-circle info-icon" title="How to use?"></i>
-    </div>
+    </h3>
+    <i class="fas fa-info-circle info-icon" title="How to use?"></i>
 
-    <div class="header2">
-        <button class="submit-button-clear-reservation" onclick="SaveReservation(0)">Save</button>
-        <button class="submit-button-clear-reservation" onclick="SaveReservation(1)">Walk In</button>
-
-        <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
-    </div>
 </div>
-<div class="mt-3">
+<div class="mt-1">
 
     <div class="row">
         <!-- Menu trái -->
@@ -162,7 +154,7 @@
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                    <div class="toolbar-menu max-w-7xl" id="functionAndOption">
+                    <div class="toolbar-menu max-w-7xl" id="functionAndOptionTable" style="display:none">
                         <a href="#" class="font-semibold" style="background-color:#d28a19;color:white">Advance</a>
                         <a href="#" class="font-semibold" style="background-color:#d28a19;color:white">Clear</a>
                         <a href="#" onclick="openModalEdit();" style="background-color:#d28a19;color:white" class="font-semibold">Edit</a>
@@ -1661,7 +1653,7 @@
                 openModalEdit(e.data.id);
             },
             onRowClick: function(e) {
-
+                $('#functionAndOptionTable').show();
                 $('#listFunction').show();
                 idReservation = e.data.ID;
                 $('#moreInfo').empty();

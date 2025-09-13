@@ -307,21 +307,36 @@ namespace HouseKeeping.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spTurndownTasksheets", param);
             return myTable;
         }
-        //public DataTable HKPGetTaskSheets(DateTime fromDate, string page )
-        //{
+        public DataTable HKPGetTaskSheets(DateTime BusinessDate, int  page,string zoneexpan,string taskcodeExpanded,string  hkpSectionExpanded)
+        {
 
-        //    SqlParameter[] param = new SqlParameter[]
-        //    {
-        //       new SqlParameter("@TaskDate", fromDate),
-        //        new SqlParameter("@TasksheetNo",tasksheet) ,
-        //         new SqlParameter("@Status",""),
-        //            new SqlParameter("@Zone",zone)
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@date", BusinessDate),
+                new SqlParameter("@page",page) ,
+                 new SqlParameter("@zoneID",zoneexpan),
+                    new SqlParameter("@facilityTask",taskcodeExpanded),
+                              new SqlParameter("@sectionIDs",hkpSectionExpanded)
 
-        //    };
+            };
 
-        //    DataTable myTable = DataTableHelper.getTableData("spTaskAssignmentSearch", param);
-        //    return myTable;
-        //}
+            DataTable myTable = DataTableHelper.getTableData("spHKPGetTaskSheets", param);
+            return myTable;
+        }
+        public DataTable HKPTurndownTaskSheetGrid( string  taskid, string status)
+        {
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@taskID", taskid),
+                new SqlParameter("@status",status) ,
+ 
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spHKPTurndownTaskSheetGrid", param);
+            return myTable;
+        }
         public DataTable ActivityExtendedStay(DateTime datebunisess, string roomtype, string zone)
         {
 

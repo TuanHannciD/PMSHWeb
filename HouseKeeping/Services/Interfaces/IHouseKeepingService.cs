@@ -84,5 +84,8 @@ namespace HouseKeeping.Services.Interfaces
         DataTable TurndownTasksheetData(DateTime fromDate, string attendant, string IsDueOut, string roomStatus);
         DataTable AutoMakeupServiceRoom(string roomIDs, string _ListSection);
         DataTable LostAndFound(DateTime fromDate, DateTime toDate);
+        DataTable HKPGetTaskSheets(DateTime BusinessDate, int  page, string zoneexpan, string taskcodeExpanded, string hkpSectionExpanded);
+        DataTable HKPTurndownTaskSheetGrid(string  taskid, string status);
     }
+
 }
