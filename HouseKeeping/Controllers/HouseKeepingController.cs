@@ -769,41 +769,75 @@ namespace HouseKeeping.Controllers
                 return Json(ex.Message);
             }
         }
-        //[HttpGet]
-        //public IActionResult ExpandedTaskSheet(DateTime fromDate)
-        //{
+        [HttpGet]
+        public IActionResult ExpandedTaskSheet(string zoneexpan, string taskcodeExpanded, string hkpSectionExpanded)
+        {
+            zoneexpan = zoneexpan ?? "";
+            taskcodeExpanded = taskcodeExpanded ?? "";
+            hkpSectionExpanded = hkpSectionExpanded ?? "";
+            try
+            {
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                int maxRows = -1;
+                int bestPage = -1;
+                DataTable bestDataTable = null;
+                DateTime businessDate = businessDateModel[0].BusinessDate;
 
-        //    try
-        //    {
-        //        DataTable dataTable = _iHouseKeepingService.HKPGetTaskSheets(fromDate,page);
+                // Iterate through pages -1, 0, 1
+                foreach (int page in new int[] { -1, 0, 1 })
+                {
+                    DataTable dataTable = _iHouseKeepingService.HKPGetTaskSheets(businessDate, page, zoneexpan, taskcodeExpanded, hkpSectionExpanded);
+                    int rowCount = dataTable?.Rows.Count ?? 0;
+                    if (rowCount > maxRows)
+                    {
+                        maxRows = rowCount;
+                        bestPage = page;
+                        bestDataTable = dataTable;
+                    }
+                }
 
-        //        var result = (from d in dataTable.AsEnumerable()
-        //                      select new
-        //                      {
-        //                          TaskDate = d["TaskDate"].ToString() ?? "",
-        //                          TaskSheetNo = d["TaskSheetNo"].ToString() ?? "",
-        //                          Section = d["Section"].ToString() ?? "",
-        //                          Credits = d["Credits"].ToString() ?? "",
-        //                          Rooms = d["Rooms"].ToString() ?? "",
-        //                          CompletedOn = d["CompletedOn"].ToString() ?? "",
-        //                          Status = d["Status"].ToString() ?? "",
-        //                          TaskInstructions = d["TaskInstructions"].ToString() ?? "",
-        //                          ID = d["ID"].ToString() ?? "",
-        //                          FacilityTaskID = d["FacilityTaskID"].ToString() ?? "",
-        //                          Attendant = d["Attendant"].ToString() ?? "",
-        //                          Employee = d["Employee"].ToString() ?? "",
-        //                          TaskCode = d["TaskCode"].ToString() ?? ""
-        //                      }).ToList();
+                // Chuyển đổi bestDataTable thành danh sách DTO
+                var result = (from d in bestDataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  TaskSheetNo = d["TaskSheetNo"]?.ToString() ?? ""
+                              }).ToList();
 
-        //        return Json(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(ex.Message);
-        //    }
-        //}
+                string status = "'DO,OOO,VC,VCN,OD,VD,OCN,OC'"; // Loại bỏ dấu nháy thừa
+                status = GetSplitString(status);
 
+                // Tạo danh sách để lưu kết quả turndown dưới dạng DTO
+                List<List<object>> turndownResults = new List<List<object>>();
+                foreach (var item in result)
+                {
+                    string taskid = item.ID;
+                    DataTable turndownDataTable = _iHouseKeepingService.HKPTurndownTaskSheetGrid(taskid, status);
 
+                    // Chuyển đổi turndownDataTable thành danh sách DTO
+                    var turndownRows = (from row in turndownDataTable.AsEnumerable()
+                                        select new
+                                        {
+                                            TaskSheetID = row["TaskSheetID"]?.ToString() ?? "",
+                                            TaskSheetDetailID = row["TaskSheetDetailID"]?.ToString() ?? "",
+                                            RoomStatus = row["RoomStatus"]?.ToString() ?? "",
+                                            RoomNo = row["RoomNo"]?.ToString() ?? "",
+                                            Credit = row["Credit"] != DBNull.Value ? Convert.ToDecimal(row["Credit"]).ToString() : "0",
+                                            TaskSheetNo = row["TaskSheetNo"]?.ToString() ?? "",
+                                            EmployeeName = row["EmployeeName"]?.ToString() ?? "",
+                                            TurndownStatus = row["TurndownStatus"]?.ToString() ?? ""
+                                        }).ToList();
+                    turndownResults.Add(turndownRows.Cast<object>().ToList());
+                }
+
+                return Json(turndownResults);
+            }
+            catch (Exception ex)
+            {
+              
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
 
         [HttpPost]
         public IActionResult SaveRoomTaskSheetDetail(string roomturndown, DateTime taskdate, string tasksheetroom, string taskcodenewroom, string maxcredit, string descriptiontc, string userName)
