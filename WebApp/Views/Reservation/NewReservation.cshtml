@@ -49,10 +49,17 @@
                             </h3>
 
                             <div class="form-grid-new-reservation">
-                                <div class="form-group-new-reservation">
+                                <div class="form-group-new-reservation" style="margin-right:20px;">
+                                    <label for="roomSelect">Name</label>
+                                    <div class="action-button-new-reservation">
+                                        <input id="txtName" readonly />
+                                        <button onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
+                                    </div>
+                                </div>
+@*                                 <div class="form-group-new-reservation">
                                     <label for="txtName">Name</label>
                                     <select id="txtName"></select>
-                                </div>
+                                </div> *@
                                 <div class="form-group-new-reservation" style="margin-right: 20px;">
                                     <label for="txtFirstName">First Name</label>
                                     <input type="text" id="txtFirstName" readonly>
@@ -1006,7 +1013,7 @@
 <script>
     $(document).ready(async function (){
         await setTomSelect();
-        getProfileIndividual();
+        // getProfileIndividual();
     });
 
 
@@ -2605,7 +2612,7 @@
 
     async function setTomSelect(){
         const ids = [
-            "#txtName","#txtItemInventory","#profileAllotmentSearch"
+            "#txtItemInventory","#profileAllotmentSearch"
             //,
             //"#txtStateGroup",
             // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
@@ -2626,96 +2633,96 @@
         $('#loadingModal').modal('show');
     }
 
-        function hideLoadingModal() {
-            $('#loadingModal').modal('hide');
-        }
+    function hideLoadingModal() {
+        $('#loadingModal').modal('hide');
+    }
 
-        function getProfileIndividual() {
-            // Hiển thị modal tiến trình
-            showLoadingModal();
+    // function getProfileIndividual() {
+    //     // Hiển thị modal tiến trình
+    //     showLoadingModal();
 
-            $.ajax({
-                url: '/Reservation/GetProfileIndividual',
-                type: 'get',
-                dataType: 'json',
-                crossDomain: false,
-                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                    // Ẩn modal tiến trình
-                    hideLoadingModal();
+    //     $.ajax({
+    //         url: '/Reservation/GetProfileIndividual',
+    //         type: 'get',
+    //         dataType: 'json',
+    //         crossDomain: false,
+    //         headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+    //         success: function (result) {
+    //             // Ẩn modal tiến trình
+    //             hideLoadingModal();
 
-                    if (result.length > 0) {
+    //             if (result.length > 0) {
                         
-                        let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
-                        select.clear(); // Xóa giá trị hiện tại
-                        select.clearOptions(); // Xóa tất cả option cũ
+    //                 let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
+    //                 select.clear(); // Xóa giá trị hiện tại
+    //                 select.clearOptions(); // Xóa tất cả option cũ
 
-                        select.addOption({ value: '0', text: '' });
-                        result.forEach(item => {
-                            select.addOption({ value: item.id, text: `${item.account}` });
-                        });
+    //                 select.addOption({ value: '0', text: '' });
+    //                 result.forEach(item => {
+    //                     select.addOption({ value: item.id, text: `${item.account}` });
+    //                 });
 
-                        select.setValue('0'); // Chọn giá trị mặc định
+    //                 select.setValue('0'); // Chọn giá trị mặc định
 
-                         let select2 = $('#profileAllotmentSearch')[0].tomselect; // Lấy instance của TomSelect
-                        select2.clear(); // Xóa giá trị hiện tại
-                        select2.clearOptions(); // Xóa tất cả option cũ
+    //                     let select2 = $('#profileAllotmentSearch')[0].tomselect; // Lấy instance của TomSelect
+    //                 select2.clear(); // Xóa giá trị hiện tại
+    //                 select2.clearOptions(); // Xóa tất cả option cũ
 
-                        select2.addOption({ value: '0', text: '' });
-                        result.forEach(item => {
-                            select2.addOption({ value: item.id, text: `${item.account}` });
-                        });
+    //                 select2.addOption({ value: '0', text: '' });
+    //                 result.forEach(item => {
+    //                     select2.addOption({ value: item.id, text: `${item.account}` });
+    //                 });
 
-                        select.setValue('0'); // Chọn giá trị mặc định
-                    } else {
-                        let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
-                        select.clear(); // Xóa giá trị hiện tại
-                        select.clearOptions(); // Xóa tất cả option cũ
-                        select.addOption({ value: '0', text: '' });
-                        select.setValue('0');
+    //                 select.setValue('0'); // Chọn giá trị mặc định
+    //             } else {
+    //                 let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
+    //                 select.clear(); // Xóa giá trị hiện tại
+    //                 select.clearOptions(); // Xóa tất cả option cũ
+    //                 select.addOption({ value: '0', text: '' });
+    //                 select.setValue('0');
 
-                        let select2 = $('#profileAllotmentSearch')[0].tomselect; // Lấy instance của TomSelect
-                        select2.clear(); // Xóa giá trị hiện tại
-                        select2.clearOptions(); // Xóa tất cả option cũ
-                        select2.addOption({ value: '0', text: '' });
-                        select2.setValue('0');
-                    }
-                },
-                error: function (xhr, statusText, err) {
-                    // Ẩn modal tiến trình
-                    hideLoadingModal();
+    //                 let select2 = $('#profileAllotmentSearch')[0].tomselect; // Lấy instance của TomSelect
+    //                 select2.clear(); // Xóa giá trị hiện tại
+    //                 select2.clearOptions(); // Xóa tất cả option cũ
+    //                 select2.addOption({ value: '0', text: '' });
+    //                 select2.setValue('0');
+    //             }
+    //         },
+    //         error: function (xhr, statusText, err) {
+    //             // Ẩn modal tiến trình
+    //             hideLoadingModal();
 
-                    if (xhr.status == 401) {
-                        sessionTimeout();
-                    } else {
-                        alert('Đã xảy ra lỗi khi tải dữ liệu.');
-                    }
-                }
-            });
-        }
-        $('#txtName').on('change', function() {
-            var value = $(this).val();
-            if(value != 0){
-                getInfoByProfileID(value);
+    //             if (xhr.status == 401) {
+    //                 sessionTimeout();
+    //             } else {
+    //                 alert('Đã xảy ra lỗi khi tải dữ liệu.');
+    //             }
+    //         }
+    //     });
+    // }
+    // $('#txtName').on('change', function() {
+    //     var value = $(this).val();
+    //     if(value != 0){
+    //         getInfoByProfileID(value);
 
-            }
+    //     }
 
-            // Lấy instance của TomSelect cho #txtItemInventory
-            var tomSelectInstance = $('#txtItemInventory')[0].tomselect; // Lấy đối tượng TomSelect
+    //     // Lấy instance của TomSelect cho #txtItemInventory
+    //     var tomSelectInstance = $('#txtItemInventory')[0].tomselect; // Lấy đối tượng TomSelect
 
-            if (value && value !== '0') {
-                if (tomSelectInstance) {
-                    tomSelectInstance.enable(); // Sử dụng API của TomSelect để enable
-                } else {
-                    // Fallback: Thử enable bằng jQuery nếu không tìm thấy TomSelect
-                    $('#txtItemInventory').prop('disabled', false);
-                }
-            } else {
-                if (tomSelectInstance) {
-                    tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable
-                } else {
-                    $('#txtItemInventory').prop('disabled', true);
-                }
-            }
-        });
+    //     if (value && value !== '0') {
+    //         if (tomSelectInstance) {
+    //             tomSelectInstance.enable(); // Sử dụng API của TomSelect để enable
+    //         } else {
+    //             // Fallback: Thử enable bằng jQuery nếu không tìm thấy TomSelect
+    //             $('#txtItemInventory').prop('disabled', false);
+    //         }
+    //     } else {
+    //         if (tomSelectInstance) {
+    //             tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable
+    //         } else {
+    //             $('#txtItemInventory').prop('disabled', true);
+    //         }
+    //     }
+    // });
 </script>

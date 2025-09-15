@@ -89,44 +89,58 @@
     </style>
 </head>
 <body class="dx-viewport" style="background-color:#f5f5f5">
-
-        
     <div class="container-fluid">
         <div class="banner">
             <img src="/images/banner.PNG" alt="Banner Image" class="img-fluid">
             <div class="banner-text">PROPERTY MANAGEMENT SYSTEM FOR HOTEL AND RESORT</div>
         </div>
-
+        <!-- Contact and User Info Section -->
+        <div class="contact-user-section">
+            <div class="contact-info">
+                <span class="contact-item"><i class="fas fa-envelope"></i> Email: support@hotelresort.com</span>
+                <span class="contact-item"><i class="fas fa-phone"></i> Hotline: +1-800-123-4567</span>
+            </div>
+            <div class="user-info">
+                <i class="fa-solid fa-compress"></i>
+                <span class="business-date" id="businessDate"></span>
+                <span class="user-name" id="user-display"></span>
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <i class="fas fa-sign-out-alt logout-icon" title="Logout" onclick="window.location.href='/User/Index'"></i>
+            </div>
+        </div>
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-custom sticky-top" style="background-color: white;border-bottom: 1px solid #d1d5db;">
+        <nav class="navbar navbar-expand-lg navbar-custom sticky-top" style="display:block">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="mainNavbar">
+                <div class="collapse navbar-collapse row" id="mainNavbar">
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">HOME</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">PROFILE</a></li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Reservation" asp-action="SearchReservation">RESERVATION</a>                            
+                            <a class="nav-link" asp-controller="Reservation" asp-action="SearchReservation">RESERVATION</a>
                             <div class="dropdown-menu-custom">
-                                <a asp-area="" asp-controller="Reservation" asp-action="NewReservation" >New Reservation</a>
+                                <a asp-area="" asp-controller="Reservation" asp-action="NewReservation">New Reservation</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="SearchReservation">Search Reservation</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="GroupReservation">Group Reservation</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="WaitList">Wait List</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="OverBooking">Over Booking</a>
-
                             </div>
                         </li>
-                                  
-                        <li class="nav-item"><a class="nav-link" href="#">FRONTDESK</a>                                                                                
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">FRONTDESK</a>
                             <div class="dropdown-menu-custom">
-                                <a  asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a>
-                                <a  asp-area="" asp-controller="FrontDesk" asp-action="TelephoneSwitch">Telephone Switch</a>
-                                <a  asp-area="" asp-controller="FrontDesk" asp-action="DialingInformation">Dialing Information</a>
+                                <a asp-area="" asp-controller="FrontDesk" asp-action="TelephoneBook">Telephone Book</a>
+                                <a asp-area="" asp-controller="FrontDesk" asp-action="TelephoneSwitch">Telephone Switch</a>
+                                <a asp-area="" asp-controller="FrontDesk" asp-action="DialingInformation">Dialing Information</a>
                             </div>
                         </li>
-                         <li class="nav-item"><a class="nav-link" href="#">ROOM MANAGEMENT</a>                                                                                
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">ROOM MANAGEMENT</a>
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="RoomManagement" asp-action="Discrepancy">Room Discrepancy</a>
                                 <a asp-area="" asp-controller="RoomManagement" asp-action="ItemDailyInventory">Item Daily Inventory</a>
@@ -135,13 +149,12 @@
                                 <a asp-area="" asp-controller="RoomManagement" asp-action="OOOSload">Out Of Order/Service</a>
                             </div>
                         </li>
-                
-                        <li class="nav-item"><a class="nav-link" href="#">CASHIERING</a>                           
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">CASHIERING</a>
                             <div class="dropdown-menu-custom">
-
                                 <a asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a>
-                                <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a>   
+                                <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeCurrency">Exchange Currency</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="CloseShift">Close Shift</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="CashieringManager">Cashiering Manager</a>
@@ -149,36 +162,34 @@
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioVATSearch">Search VAT Voucher</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioVATSearchByAccounting">Search VAT Voucher for Accounting</a>
                                 <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Accounting Search</a>
-
-                            </div>                        
+                            </div>
                         </li>
-
-                        <li class="nav-item"><a class="nav-link" href="#">REPORT</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">REPORT</a>
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="Report" asp-action="OtherReport">View Report</a>
                                 <a asp-area="" asp-controller="Report" asp-action="OtherReportChart">Report By Chart</a>
                             </div>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="#">ADMINISTRATION</a>
-                           
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">ADMINISTRATION</a>
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="Administration" asp-action="MemberList">Member Card</a>
                                 <a asp-area="" asp-controller="Administration" asp-action="Index">Item Category</a>
                                 <a asp-area="" asp-controller="Administration" asp-action="Currency">Currency</a>
                                 <a asp-area="" asp-controller="Administration" asp-action="hkpEmployee">House Keeping</a>
-
                             </div>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="#">NIGHT AUDIT</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">NIGHT AUDIT</a>
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="NightAudit" asp-action="RoomRate">Room Rate</a>
                                 <a asp-area="" asp-controller="Report" asp-action="OtherReportChart">Fixed Charge</a>
                                 <a asp-area="" asp-controller="NightAudit" asp-action="RunNightAudit">Run Night Audit</a>
-
                             </div>
                         </li>
-
-                        <li class="nav-item"><a class="nav-link" href="#">HOUSE KEEPING</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">HOUSE KEEPING</a>
                             <div class="dropdown-menu-custom">
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomControlPanel">Room Control Panel</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomFacilityForecast">Room Facility Forecast</a>
@@ -190,7 +201,7 @@
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="GuestServiceStatus">Guest Service Status</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskSheetStatus">Task Sheet Status</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskAssignment">Task Assignment</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomAttendentDailyWorksheet">Room Attendent Daily Worksheet</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomAttendentDailyWorksheet">Room Attendant Daily Worksheet</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="MakeupServiceRoom">Makeup Service Room</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TurndownTasksheet">Turndown Tasksheet</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="LostAndFound">Lost And Found</a>
@@ -199,35 +210,21 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">MISCELLANEOUS</a>
                             <div class="dropdown-menu-custom">
-                  
                                 <a asp-area="" asp-controller="Miscellaneous" asp-action="CardManagement">Card Management</a>
                                 <a asp-area="" asp-controller="Miscellaneous" asp-action="MealReport">Meal Report</a>
                                 <a asp-area="" asp-controller="Miscellaneous" asp-action="IssuingCardToGuests">Issuing Card To Guests</a>
                             </div>
                         </li>
                     </ul>
-                    <div class="user-section">
-                        <span class="business-date" id="businessDate"></span>
-                        <div class="notification-icon">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge">3</span>
-                        </div>
-                        <span class="user-name" id="user-display"></span>
-                        <i class="fas fa-sign-out-alt logout-icon" title="Logout" onclick="window.location.href='/User/Index'"></i>
 
-                    </div>
                 </div>
             </div>
         </nav>
-
         <div>
             <main role="main" style="background-color:#f5f5f5;overflow:hidden">
                 @RenderBody()
             </main>
         </div>
-
-
-
         <!-- Toast Container -->
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
             <div id="nameToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -238,8 +235,8 @@
                 <div class="toast-body" id="toastMessage"></div>
             </div>
         </div>
+
     </div>
-  
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
@@ -298,6 +295,57 @@
             $(this).addClass('active');
         });
 
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+      const compressIcon = document.querySelector('.fa-compress');
+
+      // Bắt sự kiện click icon để bật/tắt toàn màn hình
+      compressIcon.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          // Bật toàn màn hình
+          document.documentElement.requestFullscreen()
+            .then(() => {
+              sessionStorage.setItem('fullscreen', 'true');
+              // Cập nhật icon nếu muốn (tùy chọn)
+              compressIcon.classList.remove('fa-compress');
+              compressIcon.classList.add('fa-expand');
+            })
+            .catch(err => {
+              console.error(`Lỗi khi bật toàn màn hình: ${err.message}`);
+            });
+        } else {
+          // Thoát toàn màn hình
+          document.exitFullscreen()
+            .then(() => {
+              sessionStorage.setItem('fullscreen', 'false');
+              // Cập nhật icon nếu muốn (tùy chọn)
+              compressIcon.classList.remove('fa-expand');
+              compressIcon.classList.add('fa-compress');
+            })
+            .catch(err => {
+              console.error(`Lỗi khi thoát toàn màn hình: ${err.message}`);
+            });
+        }
+      });
+
+      // Kiểm tra và khôi phục toàn màn hình khi trang tải
+      if (sessionStorage.getItem('fullscreen') === 'true' && !document.fullscreenElement) {
+        document.documentElement.requestFullscreen()
+          .catch(err => {
+            console.error(`Lỗi khi khôi phục toàn màn hình: ${err.message}`);
+          });
+      }
+    });
+
+    // Xử lý sự kiện khi người dùng thoát toàn màn hình bằng phím ESC hoặc trình duyệt
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        sessionStorage.setItem('fullscreen', 'false');
+        const compressIcon = document.querySelector('.fa-compress');
+        compressIcon.classList.remove('fa-expand');
+        compressIcon.classList.add('fa-compress');
+      }
     });
 </script>
 
