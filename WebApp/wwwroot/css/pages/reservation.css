@@ -234,7 +234,6 @@
 
 .btn-search:hover {
     background-color: #004099;
-    transform: translateY(-1px);
 }
 
 .functions-pane {
@@ -349,7 +348,7 @@
 
     .btn-action:hover {
         background-color: #d65a00;
-        transform: translateY(-1px);
+
     }
 
 
@@ -501,7 +500,6 @@ h1 {
 }
 
     .section-new-reservation:hover {
-        transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
 
@@ -717,7 +715,6 @@ textarea {
 .dropdown:hover .submenu {
     display: block;
     opacity: 1;
-    transform: translateY(0);
 }
 
 .submenu a {

@@ -2,10 +2,7 @@
 <style>
 
     .folio-container {
-        background-color: var(--accent-color);
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
         padding: 0;
         overflow: hidden;
     }
@@ -25,11 +22,9 @@
     .add-icon {
         margin-left: 8px;
         cursor: pointer;
-        transition: transform 0.2s ease;
     }
 
         .add-icon:hover {
-            transform: scale(1.2);
         }
 
     .folio-list {
@@ -56,7 +51,6 @@
         font-size: 14px;
         font-weight: 500;
         color: #333;
-        transition: all 0.3s ease;
         cursor: pointer;
         width: 80px;
         text-align: center;
@@ -66,14 +60,12 @@
             background-color: #0055b8;
             border-color: #003087;
             color: white;
-            transform: translateY(-2px);
         }
 
         .folio-item.active {
             background-color: #0055b8;
             border-color: #003087;
             color: white;
-            transform: scale(0.95);
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
@@ -81,12 +73,10 @@
         cursor: pointer;
         color: #333;
         font-size: 12px;
-        transition: transform 0.2s ease, color 0.3s ease;
     }
 
         .delete-icon:hover {
             color: #ff0000;
-            transform: scale(1.2);
         }
 
 </style>
@@ -131,61 +121,32 @@
 
                             </div>
                         </div>
-                        @* <div class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Preview</a>
-                            <div class="dropdown-menu-custom">
-                                <a href="#" onclick="openBilling1();" >Style: Billing Information</a>
-                                <a href="#" onclick="openBilling2();" >Style: Billing Information (selected transaction)</a>
-                            </div>
-                        </div> *@
+
                         <a href="#" onclick="openModalPaymentBilling();">Payment</a>
                         <a href="#" onclick="openModalEditPosting();">Deposit</a>
 
                     </div>
                 </div>
 
-                <div class="" style="display: flex;padding: 0px 15px">
+                <div class="mui-card" >
 
-                    <div class="col-md-10 row filter-section">
-                        <div class="header" style="justify-content:space-between">
-                            <h3 id="content-title" style="font-size:14px">
-                                1. Reservation Information
-                            </h3>
-                            <div class="row">
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.1. RSV Status: <span id="rsvStatusBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.2. Conf.No: <span id="conNoBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.3. Group: <span id="groupBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.4. Company: <span id="companyBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.5. Arrival: <span id="arivalBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto;color:#2b6cb0">1.6 Departure: <span id="departureBilling"></span></label>
-                            </div>
-
-                        </div>
+                    <div class="col-md-12 row ">
+    
+                        <label class="form-label col-md-2">RSV Status: <i><span id="rsvStatusBilling"></span></i></label>
+                        <label class="form-label col-md-2">Conf.No: <i><span id="conNoBilling"></span></i></label>
+                        <label class="form-label col-md-2">Group: <i><span id="groupBilling"></span></i></label>
+                        <label class="form-label col-md-2">Company: <i><span id="companyBilling"></span></i></label>
+                        <label class="form-label col-md-2">Arrival: <i><span id="arivalBilling"></span></i></label>
+                        <label class="form-label col-md-2">Departure: <i><span id="departureBilling"></span></i></label>
+                        <label class="form-label col-md-2">Balance: <i><span id="balanceBilling"></span></i></label>
+                        <label class="form-label col-md-2">Total: <i><span id="totalBilling"></span></i></label>
+  
                     </div>
-                    @*                     <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px;display:none" id="moreInfo">
-                    </div> *@
                 </div>
 
-                <div class="" style="display: flex;padding:0px 15px">
 
-                    <div class="col-md-10 row filter-section">
-                        <div class="header" style="justify-content:space-between">
-                            <h3 id="content-title" style="font-size:14px">
-                                2. Folio Information
-                            </h3>
-                            <div class="row">
-                                <label class="form-label col-md-2" style="width:auto;border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">2.1. Balance: <span id="balanceBilling"></span></label>
-                                <label class="form-label  col-md-2" style="width:auto;color:#2b6cb0">2.2. Total: <span id="totalBilling"></span></label>
-
-                            </div>
-
-                        </div>
-                    </div>
-                    @*                     <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px;display:none" id="moreInfo">
-                    </div> *@
-                </div>
-                <div class="row mt-2" style="margin-left:4px">
-                    <div class="folio-container col-md-1">
+                <div class="row mt-2" style="margin:0;justify-content:space-between">
+                    <div class="folio-container col-md-1 mui-card">
                         <div class="folio-header">
                             <span>Folio No</span>
                             <i class="fas fa-plus add-icon" onclick="openModalNewWindow();"></i>
@@ -193,8 +154,8 @@
                         <ul id="listFolioNo" class="folio-list">
                         </ul>
                     </div>
-                    <div class="col-md-11">
-                        <div style="padding: 15px;display:flex;justify-content:space-between">
+                    <div class="col-md-10 ">
+                        <div style="padding: 15px;display:flex;justify-content:space-between" class="mui-card">
                             <div>
                                 <span id="infoBillingName" style="font-size:18px;color:#0055b8"></span>
                                 <div style="display:flex">
