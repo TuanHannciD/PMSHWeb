@@ -79,6 +79,17 @@
             color: #ff0000;
         }
 
+    .overlay-menu {
+        position: absolute;
+        right: 15px;
+        top: 200px; /* Điều chỉnh để menu xuất hiện dưới tiêu đề */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 1000; /* Đảm bảo menu nằm trên bảng */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }
 </style>
 <!-- Modal billimg-->
 <div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelBilling" aria-hidden="true">
@@ -151,69 +162,58 @@
                             <span>Folio No</span>
                             <i class="fas fa-plus add-icon" onclick="openModalNewWindow();"></i>
                         </div>
-                        <ul id="listFolioNo" class="folio-list">
-                        </ul>
+                        <ul id="listFolioNo" class="folio-list"></ul>
                     </div>
-                    <div class="col-md-10 ">
-                        <div style="padding: 15px;display:flex;justify-content:space-between" class="mui-card">
-                            <div>
+                    <div class="col-md-10">
+                        <div style="padding: 15px; justify-content:space-between" class="row">
+                            <div class="col-md-10 mui-card">
                                 <span id="infoBillingName" style="font-size:18px;color:#0055b8"></span>
                                 <div style="display:flex">
-                                    <span>
-                                        Balance:
-                                    </span>
+                                    <span>Balance:</span>
                                     <label id="balanceBillingMaster"></label>
                                 </div>
+                                <!-- Thêm nút toggle -->
+                                <button id="toggleFunctionMenu" class="btn btn-primary mt-2">Toggle Menu</button>
                             </div>
-                            <div class="function-menu">
+                            <!-- Menu chức năng với lớp overlay -->
+                            <div class="function-menu col-md-2 overlay-menu" id="functionMenu" style="display: none;">
                                 <div class="dropdown">
-
-                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Lock Folio</a>
+                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Khóa Folio</a>
                                     <div class="dropdown-menu-custom">
-                                        <a href="#" onclick="LockFolioOnly(folioNoID);">Only One</a>
-                                        <a href="#" onclick="LockFolio();">All folio of Guest</a>
+                                        <a href="#" onclick="LockFolioOnly(folioNoID);">Chỉ Một</a>
+                                        <a href="#" onclick="LockFolio();">Tất Cả Folio của Khách</a>
                                     </div>
                                 </div>
-
                                 <div class="dropdown">
-
-                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Unlock Folio</a>
+                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Mở Khóa Folio</a>
                                     <div class="dropdown-menu-custom">
-                                        <a href="#" onclick="UnLockFolioOnly(folioNoID);">Only One</a>
-                                        <a href="#" onclick="UnLockFolio();">All folio of Guest</a>
+                                        <a href="#" onclick="UnLockFolioOnly(folioNoID);">Chỉ Một</a>
+                                        <a href="#" onclick="UnLockFolio();">Tất Cả Folio của Khách</a>
                                     </div>
                                 </div>
                                 <div class="dropdown">
-
-                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Posting History</a>
+                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Lịch Sử Ghi Sổ</a>
                                     <div class="dropdown-menu-custom">
-                                        <a href="#" onclick="PostingHistory(1);">By Folio</a>
-                                        <a href="#" onclick="PostingHistory(2);">By Invoice</a>
+                                        <a href="#" onclick="PostingHistory(1);">Theo Folio</a>
+                                        <a href="#" onclick="PostingHistory(2);">Theo Hóa Đơn</a>
                                     </div>
                                 </div>
-                                <a href="#" onclick="openModalSplitTransaction();">Split Transactions</a>
-                                <a href="#" onclick="adjustTransaction();">Adjust Transactions</a>
-                                <a href="#" id="deleteTransactionBilling">Delete Transactions</a>
-
-                                <a href="#" onclick="ExportExcelBilling();">Export to Excel</a>
+                                <a href="#" onclick="openModalSplitTransaction();">Chia Tách Giao Dịch</a>
+                                <a href="#" onclick="adjustTransaction();">Điều Chỉnh Giao Dịch</a>
+                                <a href="#" id="deleteTransactionBilling">Xóa Giao Dịch</a>
+                                <a href="#" onclick="ExportExcelBilling();">Xuất ra Excel</a>
                                 <div class="dropdown">
-
-                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Transfer to Window</a>
-                                    <div class="dropdown-menu-custom" id="listTransferToWindow">
-                                    </div>
+                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Chuyển đến Cửa Sổ</a>
+                                    <div class="dropdown-menu-custom" id="listTransferToWindow"></div>
                                 </div>
-                                <a href="#" onclick="openModalTransferTransaction();">Transfer Transaction</a>
-                                <a href="#" onclick="openModalSelectOption();">Select Option</a>
-
+                                <a href="#" onclick="openModalTransferTransaction();">Chuyển Giao Dịch</a>
+                                <a href="#" onclick="openModalSelectOption();">Chọn Tùy Chọn</a>
                             </div>
-
                         </div>
-
-                        <div>
+                        <div class="mui-card">
                             <div id="gridContainerBilling" class="mt-2 gridContainer"></div>
                         </div>
                     </div>
-
                 </div>
 
             </div>
@@ -232,7 +232,12 @@
 @await Html.PartialAsync("Billing/SelectOption")
 
 <script>
-
+    $(document).ready(function() {
+        // Gắn sự kiện cho nút toggle
+        $("#toggleFunctionMenu").on("click", function() {
+            $("#functionMenu").toggle();
+        });
+    });
     var folioPosting = 1;
     var transactionNoPost = "0";
     var totalAmountBilling = 0;
@@ -334,7 +339,7 @@
 
         $("#gridContainerBilling").dxDataGrid({
             dataSource: data,
-            keyExpr: "id", // Khóa chính của grid là id
+            keyExpr: "id",
             allowColumnResizing: true,
             columns: [
                 {
@@ -345,20 +350,20 @@
                     headerCellTemplate: function() { return $("<div>"); }
                 },
                 { dataField: "id", caption: "ID", visible: false },
-                { dataField: "date", caption: "Date" },
-                { dataField: "code", caption: "Account" },
-                { dataField: "description", caption: "Description" },
-                { dataField: "invoiceNo", caption: "InvoiceNo" },
-                { dataField: "amount", caption: "Amount" },
-                { dataField: "supplement", caption: "Supplement" },
-                { dataField: "reference", caption: "Reference" },
-                { dataField: "userName", caption: "User" },
-                { dataField: "time", caption: "Time" },
-                { dataField: "groupCode", caption: "Group Code" },
-                { dataField: "subgroupCode", caption: "Sub Group Code" },
+                { dataField: "date", caption: "Ngày" },
+                { dataField: "code", caption: "Tài Khoản" },
+                { dataField: "description", caption: "Mô Tả" },
+                { dataField: "invoiceNo", caption: "Số Hóa Đơn" },
+                { dataField: "amount", caption: "Số Tiền" },
+                { dataField: "supplement", caption: "Bổ Sung" },
+                { dataField: "reference", caption: "Tham Chiếu" },
+                { dataField: "userName", caption: "Người Dùng" },
+                { dataField: "time", caption: "Thời Gian" },
+                { dataField: "groupCode", caption: "Mã Nhóm" },
+                { dataField: "subgroupCode", caption: "Mã Nhóm Phụ" },
                 { dataField: "shiftID", caption: "Website" },
-                { dataField: "property", caption: "Property" },
-                { dataField: "transactionNo", caption: "Transaction No" }
+                { dataField: "property", caption: "Thuộc Tính" },
+                { dataField: "transactionNo", caption: "Số Giao Dịch" }
             ],
             paging: { pageSize: 15 },
             scrolling: {
@@ -380,6 +385,7 @@
                 showCheckBoxesMode: "always"
             },
             onRowClick: function(e) {
+                // Cập nhật thông tin giao dịch
                 transactionNoPost = e.data.transactionNo;
                 invoiceNoPosting = e.data.invoiceNo;
                 folioDetailID = e.data.id;
@@ -390,12 +396,14 @@
                     $("#amountTtoalSplit").text('0');
                     $("#valueSplitTransaction").val('0');
                 }
+                // Hiển thị menu chức năng khi click vào dòng
+                $("#functionMenu").show();
                 // Chọn dòng được click
                 const grid = $("#gridContainerBilling").dxDataGrid("instance");
                 grid.selectRows([e.key], false);
             },
             onContentReady: function(e) {
-                // Tìm các dòng trong data có code trùng với TransactionCode trong selectedCodesFromResult
+                // Tìm các dòng có code trùng với selectedCodesFromResult
                 const keysToSelect = data
                     .filter(item => selectedCodesFromResult.includes(item.code))
                     .map(item => item.id)
@@ -407,6 +415,8 @@
                 }
             }
         });
+
+
     }
     $("#deleteTransactionBilling").on("click", function() {
         var grid = $("#gridContainerBilling").dxDataGrid("instance");
