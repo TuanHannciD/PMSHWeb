@@ -50,7 +50,7 @@
 
                             <div class="form-grid-new-reservation">
                                 <div class="form-group-new-reservation" style="margin-right:20px;">
-                                    <label for="roomSelect">Name</label>
+                                    <label >Name</label>
                                     <div class="action-button-new-reservation">
                                         <input id="txtName" readonly />
                                         <button onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
@@ -127,13 +127,26 @@
                         <div class="section-new-reservation">
                             <h3>Agent Information</h3>
                             <div class="form-grid-new-reservation">
+
                                 <div class="form-group-new-reservation">
-                                    <label for="txtAgent">Agent</label>
-                                    <select id="txtAgent" asp-items="ViewBag.cboProfileAgent"></select>
+                                    <label >Agent</label>
+                                    <div class="action-button-new-reservation">
+                                        <input id="txtAgentID" readonly style="display:none"/>
+                                        <input id="txtAgent" readonly />
+                                        <button onclick="openModalSearchAgent()"><i class="fa-solid fa-ellipsis"></i></button>
+                                    </div>`
+     @*                                <label for="txtAgent">Agent</label>
+                                    <select id="txtAgent" asp-items="ViewBag.cboProfileAgent"></select> *@
                                 </div>
                                 <div class="form-group-new-reservation">
-                                    <label for="txtCompany">Company</label>
-                                    <select id="txtCompany" asp-items=" ViewBag.cboProfileCompany"></select>
+                                    <label>Company</label>
+                                    <div class="action-button-new-reservation">
+                                        <input id="txtCompanyID" readonly style="display:none" />
+                                        <input id="txtCompany" readonly />
+                                        <button onclick="openModalSearchCompany()"><i class="fa-solid fa-ellipsis"></i></button>
+                                    </div>`
+@*                                     <label for="txtCompany">Company</label>
+                                    <select id="txtCompany" asp-items=" ViewBag.cboProfileCompany"></select> *@
                                 </div>
                                 <div class="form-group-new-reservation" style="margin-right: 20px;">
                                     <label for="txtGroupCode">Group Code</label>
@@ -420,6 +433,9 @@
 @await Html.PartialAsync("ModalNewReservation/ModalSearchMarket")
 @await Html.PartialAsync("ModalNewReservation/ModalSearchPreference")
 @await Html.PartialAsync("ModalNewReservation/ModalSearchProfile")
+@await Html.PartialAsync("ModalNewReservation/ModalSearchAgent")
+@await Html.PartialAsync("ModalNewReservation/ModalSearchCompany")
+
 @await Html.PartialAsync("ModalNewReservation/ModalSearchRoom")
 <script>
     var profileIndividualID = 0;
@@ -434,8 +450,16 @@
 
     function setUpReservation(result){
         profileIndividualID = result.profileIndividualId;
-        $('#txtAgent').val(result.profileAgentId);
-        $('#txtCompany').val(result.profileCompanyId);
+        if (result.printRate === true) {
+            document.getElementById("txtPrintRate").checked = true;
+        }
+        if (result.noPost === true) {
+            document.getElementById("txtNoPost").checked = true;
+        }
+        $('#txtAgentID').val(result.profileAgentId);
+        $('#txtAgent').val(result.agentName);
+        $('#txtCompanyID').val(result.profileCompanyId);
+        $('#txtCompany').val(result.companyName);
         $("#txtGroupCode").val('');
         $('#txtContact').val(result.profileContactId);
         $("#txtContactPhone").val(result.contactPhone);
@@ -794,32 +818,7 @@
 
     // Khởi tạo trạng thái ban đầu
     updateRoomSelect();
-    function openModalSearchProfile(){
-        getAllProfiles(3);
-        $('#modalProfile').modal('show');
-    }
-    function closeModalSearchProfle(){
-        $('#nameProfileSearch').val('');
-        $('#firstNameProfileSearch').val('');
-        $('#cityProfileSearch').val(0);
-        $('#txtName').val('');
-        $('#txtFirstName').val('');
-        $('#txtTitle').val(0);
-        $('#txtPhone').val('');
-        $('#txtEmail').val('');
-        $('#txtIdentityCard').val('');
-        $('#txtPassport').val('');
-        $('#txtAddress').val('');
-        $('#txtDob').val('');
-        $('#txtNationality').val(0);
-        $('#txtCity').val(0);
-        $('#txtVIP').val(0);
-        $('#txtMemberType').val(0);
-        $('#txtCardNo').val('');
-        $('#txtPrefRoom').val('');
-        $('#modalProfile').modal('hide');
 
-    }
     function extractLastName(name) {
         const parts = name.trim().split(/,\s*/);
         return parts[1] || '';
@@ -831,49 +830,7 @@
         return namePattern.test(name.trim());
     }
 
-    function getInfoByProfileID(id){
-        $.ajax({
-            url: '/Reservation/GetInfoProfile',
-            type: 'get',
-            dataType: 'json',
-            data:{
-                profileID: id
-            },
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#txtID').val(result.id);
-                $('#nameProfileSearch').val(result.account);
-                $('#firstNameProfileSearch').val(result.firstname);
-                $('#cityProfileSearch').val(result.city);
-                $('#txtName').val(result.account);
-                $('#txtItemInventory').prop('disabled', false); // Enable the select element
-                $('#txtFirstName').val(result.firstname);
-                $('#txtTitle').val(result.titleID);
-                $('#txtPhone').val(result.handPhone);
-                $('#txtEmail').val(result.email);
-                $('#txtIdentityCard').val(result.identityCard);
-                $('#txtPassport').val(result.passPort);
-                $('#txtAddress').val(result.address);
-                const formattedDate = result.dateOfBirth.split("T")[0];
-                $('#txtDob').val(formattedDate);
-                $('#txtNationality').val(result.nationalityID);
-                $('#txtCity').val(result.city);
-                $('#txtVIP').val(result.vipID);
-                $('#txtCardNo').val(result.memberNo);
-                $('#txtMemberType').val(result.memberType);
-                $('#txtPrefRoom').val(result.prefRoom);
 
-
-          },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                } else {
-                }
-            }
-        });
-    }
 
     $('#txtRoomType').change(function () {
         var selectedValue = $(this).val();
@@ -1047,19 +1004,17 @@
         let valueDiscountAmount = $('#txtDiscountAmount').val();
         let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
 
-        formData.append('profileAgentID', $('#txtAgent').val());
-        formData.append('agentName', $('#txtAgent').find('option:selected').text());
-        formData.append('profileCompanyID', $('#txtCompany').val());
-        formData.append('companyName', $('#txtCompany').find('option:selected').text());
+        formData.append('profileAgentID', $('#txtAgentID').val());
+        formData.append('agentName', $('#txtAgent').val());
+        formData.append('profileCompanyID', $('#txtCompanyID').val());
+        formData.append('companyName', $('#txtCompany').val());
         formData.append('groupCode', $("#txtGroupCode").val());
         formData.append('profileContactID', $('#txtContact').val());
         formData.append('contactName', $('#txtContact').find('option:selected').text());
         formData.append('contactPhone', $("#txtContactPhone").val());
         formData.append('profileIndividualID', $("#txtID").val());
-        const tomSelect = $('#txtName')[0].tomselect;
-        const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
         formData.append('firstName', $("#txtFirstName").val());
-        formData.append('lastName', selectedText);
+        formData.append('lastName', $('#txtName').val());
         formData.append('title', $("#txtTitle").val() ?? '');
         formData.append('phone', $("#txtPhone").val());
         formData.append('email', $("#txtEmail").val());
@@ -1129,6 +1084,12 @@
         formData.append('userName', userName);
         formData.append('userID',userID);
         formData.append('walkIn',WalkIn);
+        let valuePrint = $('#txtPrintRate').is(':checked') ? 1 : 0;
+        formData.append('printRate',valuePrint);
+
+        let valueNoPost = $('#txtNoPost').is(':checked') ? 1 : 0;
+        formData.append('noPost',valueNoPost);
+
         $.ajax({
             url: '/Reservation/SaveReservation',
             type: 'POST',
@@ -1222,14 +1183,12 @@
             $("#txtAllotment").val('');
             $("#txtPersonInCharge").val('');
             $("#nights").val('');
+            $('#txtName').val(''); 
+            $('#txtID').val(0); 
 
-                        let select2 = $('#txtName')[0].tomselect; 
-
-
-                    select2.setValue('0'); 
-                var businessDate = '@ViewBag.businesDate';
-                var eta = '@ViewBag.configETA';
-                var etd = '@ViewBag.configETD';
+            var businessDate = '@ViewBag.businesDate';
+            var eta = '@ViewBag.configETA';
+            var etd = '@ViewBag.configETD';
 
             var dateParts = businessDate.split(' ')[0].split('/'); 
             var parsedBusinessDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);

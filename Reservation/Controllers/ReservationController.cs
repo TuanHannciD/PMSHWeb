@@ -103,8 +103,8 @@ namespace Reservation.Controllers
             ViewBag.cboCity = ListItemHelper.GetCityProvider();
             ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
             ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
-            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
-            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
+            //ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
+            //ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
             ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
@@ -897,8 +897,26 @@ namespace Reservation.Controllers
                 }
 
                 reservationModel.BookerDetails = "";
-                reservationModel.NoPost = false;
-                reservationModel.PrintRate = false;
+                if (int.Parse(Request.Form["noPost"].ToString()) == 1)
+                {
+                    reservationModel.NoPost = true;
+
+                }
+                else
+                {
+                    reservationModel.NoPost = false;
+
+                }
+                if(int.Parse(Request.Form["printRate"].ToString()) == 1)
+                {
+                    reservationModel.PrintRate = true;
+
+                }
+                else
+                {
+                    reservationModel.PrintRate = false;
+
+                }
                 reservationModel.ConfirmationStatus = true;
                 reservationModel.VideoCheckOutStatus = false;
                 reservationModel.CRSNo = "";
@@ -1078,7 +1096,8 @@ namespace Reservation.Controllers
                 folioModel.ReservationID = (int)reservationID;
                 folioModel.ProfileID = reservationModel.ProfileIndividualId;
                 folioModel.AccountName = reservationModel.LastName;
-                folioModel.Status = true;
+                reservationModel.NoPost = true ? folioModel.Status = true : folioModel.Status = false;
+
                 folioModel.ConfirmationNo = reservationModel.ConfirmationNo;
                 folioModel.BalanceUSD = folioModel.BalanceVND = reservationModel.RateAfterTax;
                 folioModel.CreateDate = folioModel.UpdateDate = DateTime.Now;

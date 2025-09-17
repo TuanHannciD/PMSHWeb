@@ -1,59 +1,59 @@
 ﻿<!-- Modal search profile-->
-<div class="modal fade modal-xl" id="modalProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade modal-xl" id="modalSearchAgent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Search Profile</h5>
-                <button type="button" class="btn-close" onclick="closeModalSearchProfle()"></button>
+                <h5 class="modal-title" id="staticBackdropLabel">Search Profile Agent</h5>
+                <button type="button" class="btn-close" onclick="closeModalSearchAgent()"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-2" style="margin-top:0px">
-                    <button class="submit-button-clear-reservation" onclick="getAllProfiles(3);"><i class="fas fa-search"></i> Search</button>
+                    <button class="submit-button-clear-reservation" onclick="getAllProfilesAgent(3);"><i class="fas fa-search"></i> Search</button>
                 </div>
                 <div class="row mui-card mb-2">
                     <div class="col-md-2 mb-2">
                         <label for="input1" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="nameProfileSearch" placeholder="Enter name">
+                        <input type="text" class="form-control" id="nameProfileAgent" placeholder="Enter name">
                     </div>
                     <div class="col-md-2 mb-2">
                         <label for="input2" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstNameProfileSearch" placeholder="Enter first name">
+                        <input type="text" class="form-control" id="firstNameProfileAgent" placeholder="Enter first name">
                     </div>
                     <div class="col-md-2 mb-2">
                         <label for="input3" class="form-label">View By</label>
-                        <select type="text" class="form-control" id="viewByProfileSearch" disabled style="line-height:1.28">
-                            <option selected value="3">Individual</option>
+                        <select type="text" class="form-control" id="viewByProfileAgent" disabled style="line-height:1.28">
+                            <option selected value="0">Agent</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-2">
                         <label for="input4" class="form-label">City</label>
-                        <select type="text" class="form-control" id="cityProfileSearch" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
+                        <select type="text" class="form-control" id="cityProfileAgent" placeholder="Enter value" asp-items="ViewBag.cboCity" style="line-height:1.28"></select>
                     </div>
                     <div class="col-md-2 mb-2">
                         <label for="input5" class="form-label">Key word</label>
-                        <input type="text" class="form-control" id="keywordProfileSearch" placeholder="Enter value">
+                        <input type="text" class="form-control" id="keywordProfileAgent" placeholder="Enter value">
                     </div>
                     <div class="col-md-2 mb-2">
                         <label for="input6" class="form-label">Code</label>
-                        <input type="text" class="form-control" id="codeProfileSearch" placeholder="Enter value">
+                        <input type="text" class="form-control" id="codeProfileAgent" placeholder="Enter value">
                     </div>
                     <div class="col-md-2 mb-2">
                         <label for="input4" class="form-label">Property</label>
-                        <select type="text" class="form-control" id="propertyProfileSearch" disabled style="line-height:1.28">
+                        <select type="text" class="form-control" id="propertyProfileAgent" disabled style="line-height:1.28">
                             <option selected>PMSh TheArena</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-2">
                         <label>Sale in charge</label>
                         <div>
-                            <input type="checkbox" id="sale" name="myCheckbox">
+                            <input type="checkbox" id="saleAgent" name="myCheckbox">
                         </div>
                     </div>
                 </div>
 
                 <div class="mui-card">
-                    <div id="gridContainerSearchProfile" class="mt-2 gridContainer"></div>
+                    <div id="gridContainerSearchAgent" class="mt-2 gridContainer"></div>
                 </div>
             </div>
 
@@ -62,36 +62,36 @@
 </div>
 <script>
 
-    function openModalSearchProfile(){
-        getAllProfiles(3);
-        $('#modalProfile').modal('show');
+    function openModalSearchAgent(){
+        getAllProfilesAgent(0);
+        $('#modalSearchAgent').modal('show');
     }
-    function closeModalSearchProfle(){
-        $('#nameProfileSearch').val('');
-        $('#firstNameProfileSearch').val('');
-        $('#cityProfileSearch').val(0);
+    function closeModalSearchAgent(){
+        $('#nameProfileAgent').val('');
+        $('#firstNameProfileAgent').val('');
+        $('#cityProfileAgent').val(0);
 
-        $('#modalProfile').modal('hide');
+        $('#modalSearchAgent').modal('hide');
 
     }
-    function getAllProfiles(type) {
-        $('#viewByProfileSearch').val(type || 3); // Đặt giá trị mặc định nếu không có type
-        initializeDataGridSearchProfile();
+    function getAllProfilesAgent(type) {
+        $('#viewByProfileAgent').val(type || 0); // Đặt giá trị mặc định nếu không có type
+        initializeDataGridSearchAgent();
     }
 
-    function initializeDataGridSearchProfile() {
-        $("#gridContainerSearchProfile").dxDataGrid({
+    function initializeDataGridSearchAgent() {
+        $("#gridContainerSearchAgent").dxDataGrid({
             dataSource: {
                 load: function (loadOptions) {
                     var d = $.Deferred();
                     var params = {
-                        code: $('#codeProfileSearch').val(),
-                        account: $('#nameProfileSearch').val(),
-                        firstName: $('#firstNameProfileSearch').val(),
-                        keyWord: $('#keywordProfileSearch').val(),
-                        city: $('#cityProfileSearch').val(),
-                        type: $('#viewByProfileSearch').val(),
-                        showSaleInCharge: $("#sale").is(":checked"),
+                        code: $('#codeProfileAgent').val(),
+                        account: $('#nameProfileAgent').val(),
+                        firstName: $('#firstNameProfileAgent').val(),
+                        keyWord: $('#keywordProfileAgent').val(),
+                        city: $('#cityProfileAgent').val(),
+                        type: $('#viewByProfileAgent').val(),
+                        showSaleInCharge: $("#saleAgent").is(":checked"),
                         page: loadOptions.skip / loadOptions.take + 1, // Tính số trang
                         pageSize: loadOptions.take // Kích thước trang
                     };
@@ -161,12 +161,12 @@
                 mode: "single"
             },
             onRowDblClick: function (e) {
-                getInfoByProfileID(e.data.id);
-                $('#modalProfile').modal('hide');
+                getInfoByAgentID(e.data.id);
+                closeModalSearchAgent();
             }
         });
     }
-    function getInfoByProfileID(id){
+    function getInfoByAgentID(id){
         $.ajax({
             url: '/Reservation/GetInfoProfile',
             type: 'get',
@@ -177,27 +177,8 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                $('#txtID').val(result.id);
-                $('#nameProfileSearch').val(result.account);
-                $('#firstNameProfileSearch').val(result.firstname);
-                $('#cityProfileSearch').val(result.city);
-                $('#txtName').val(result.account);
-                $('#txtItemInventory').prop('disabled', false); // Enable the select element
-                $('#txtFirstName').val(result.firstname);
-                $('#txtTitle').val(result.titleID);
-                $('#txtPhone').val(result.handPhone);
-                $('#txtEmail').val(result.email);
-                $('#txtIdentityCard').val(result.identityCard);
-                $('#txtPassport').val(result.passPort);
-                $('#txtAddress').val(result.address);
-                const formattedDate = result.dateOfBirth.split("T")[0];
-                $('#txtDob').val(formattedDate);
-                $('#txtNationality').val(result.nationalityID);
-                $('#txtCity').val(result.city);
-                $('#txtVIP').val(result.vipID);
-                $('#txtCardNo').val(result.memberNo);
-                $('#txtMemberType').val(result.memberType);
-                $('#txtPrefRoom').val(result.prefRoom);
+                $('#txtAgentID').val(result.id);
+                $('#txtAgent').val(result.account);
 
 
           },
