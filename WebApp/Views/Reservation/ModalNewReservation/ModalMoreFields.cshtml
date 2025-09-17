@@ -1,0 +1,116 @@
+﻿<!-- Modal more fields-->
+<div class="modal fade modal-xl" id="modalMoreFields" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">More Fields</h5>
+                <button type="button" class="btn-close" onclick="closeModalMoreFields()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="submit-button-clear-reservation" onclick="getAllotment();"> OK</button>
+                </div>
+                <div class="container-new-reservation body" style="grid-template-columns: repeat(2, 1fr);">
+                    <!-- Guest Information -->
+                    <div class="section-new-reservation">
+                        <h3>Pick up</h3>
+                        <div class="form-grid-new-reservation">
+                            <div class="form-group-new-reservation">
+                                <label>Picked Reqd</label>
+                                <select id="pickedID">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <label>Transport Type </label>
+                                <select asp-items="ViewBag.cboTransportType" id="pickUpTransportType">
+                                </select>
+                            </div>
+                            <div class="form-group-new-reservation">
+                                <label>Station Code</label>
+                                <input type="text" id="pickUpStationCode" />
+                            </div>
+                            <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <label>Carrier Code</label>
+                                <input id="pickUpCarrierCode" />
+                            </div>
+                            <div class="form-group-new-reservation" style="margin-right:20px;">
+                                <label>Transport No.</label>
+                                <input id="pickUpTransportNo" />
+                            </div>
+                            <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <label>Arrival Date</label>
+                                <input type="date" id="pickUpDate" />
+                            </div>
+                            <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <label>Pickup Time</label>
+                                <input id="pickUpTime" value="@ViewBag.configETA" />
+                            </div>
+                            <div class="form-group-new-reservation " style="margin-right: 20px;">
+                                <label>Description</label>
+                                <input id="pickUpDescription" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Membership Information -->
+                    <div class="section-new-reservation">
+                        <h3>Drop off</h3>
+                        <div class="form-grid-new-reservation">
+                            <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <label>Dropoff Reqd</label>
+                                <select id="dropOffId">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <label>Transport Type</label>
+                                <select asp-items="ViewBag.cboTransportType" id="dropOffTransportType">
+                                </select>
+                            </div>
+                            <div class="form-group-new-reservation">
+                                <label>Station Code</label>
+                                <input id="dropOffStationCode" />
+                            </div>
+                            <div class="form-group-new-reservation">
+                                <label>Carrier Code</label>
+                                <input id="dropOffCarrierCode" />
+                            </div>
+                            <div class="form-group-new-reservation">
+                                <label>Transport No.</label>
+                                <input id="dropOffTransportNo" />
+                            </div>
+                            <div class="form-group-new-reservation">
+                                <label>Departure Date</label>
+                                <input type="date" id="dropOffDate" />
+                            </div>
+                            <div class="form-group-new-reservation " style="margin-right: 20px;">
+                                <label for="txtCardNo">DropOff Time</label>
+                                <input id="dropOffTime" value="@ViewBag.configETD" />
+                            </div>
+                            <div class="form-group-new-reservation " style="margin-right: 20px;">
+                                <label for="txtCardNo">Description</label>
+                                <input id="dropOffDescription" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openModalMoreFields(){
+        $('#modalMoreFields').modal('show');
+
+    }
+    function closeModalMoreFields(){
+        $('#modalMoreFields').modal('hide');
+    }
+</script>

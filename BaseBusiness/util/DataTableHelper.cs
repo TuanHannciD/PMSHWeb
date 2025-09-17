@@ -121,6 +121,48 @@ namespace BaseBusiness.util
             }
             return table;
         }
+        public static DataSet GetDataSet(string procedureName, SqlParameter[] mySqlParameter)
+        {
+            DataSet dataSet = new DataSet();
+            SqlConnection mySqlConnectionConnFromDB = null;
+            try
+            {
+                string str = DBUtils.GetDBConnectionString();
+                mySqlConnectionConnFromDB = new SqlConnection(str);
+                using (var mySqlCommand = new SqlCommand(procedureName, mySqlConnectionConnFromDB))
+                using (var mySqlDataAdapter = new SqlDataAdapter(mySqlCommand))
+                {
+                    mySqlConnectionConnFromDB.Open();
+                    mySqlCommand.CommandType = CommandType.StoredProcedure;
+                    if (mySqlParameter != null)
+                    {
+                        for (int i = 0; i < mySqlParameter.Length; i++)
+                            mySqlCommand.Parameters.Add(mySqlParameter[i]);
+                    }
+                    mySqlDataAdapter.Fill(dataSet);
+                }
+            }
+            catch (SqlException se)
+            {
+                if (se.Class == 20)
+                    throw new Exception("DB Connection Error");
+                else
+                    throw new Exception(se.Message);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (mySqlConnectionConnFromDB != null)
+                {
+                    mySqlConnectionConnFromDB.Close();
+                    mySqlConnectionConnFromDB.Dispose();
+                }
+            }
+            return dataSet;
+        }
         public static int ExecuteInsertAndReturnId(string sql, SqlParameter[] parameters)
         {
             string str = DBUtils.GetDBConnectionString();
