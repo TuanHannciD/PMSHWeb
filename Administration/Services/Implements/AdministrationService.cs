@@ -368,5 +368,73 @@ namespace Administration.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spFrmhkpEmployeeSearch", param);
             return myTable;
         }
+        public DataTable Property()
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@sqlCommand",
+            @"select a.*,b.Code as PropertyType from Property a with(nolock) join PropertyType b with(nolock) on a.PropertyTypeID=b.ID")
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+            return myTable;
+        }
+        public DataTable PropertyPermission(string userID)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@UserID", userID ?? "")        
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spPropertyPermissionSearch", param);
+            return myTable;
+        }
+        public DataTable StatusList()
+        {
+            SqlParameter[] param = new SqlParameter[] { };
+
+            DataTable myTable = DataTableHelper.getTableData("spHKPSelectStatus", param);
+            return myTable;
+        }
+        public DataTable ConfigSystem()
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@sqlCommand",
+            @"select Desciption From ConfigSystem Where KeyName = ''Msg''")
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+            return myTable;
+        }
+        public DataTable Member(DateTime fromDate, DateTime toDate, string status, string memberID, int isSortByCardName)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@Status", status),
+                new SqlParameter("@MemberID", memberID),
+                new SqlParameter("@IsSortByCardName", isSortByCardName)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptMember", param);
+            return myTable;
+        }
+        public DataTable PostingHistory(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string actionType, string user)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate),
+                new SqlParameter("@ToDate", toDate),
+                new SqlParameter("@FromFolioID", fromFolioID ?? ""),
+                new SqlParameter("@ToFolioID", toFolioID ?? ""),
+                new SqlParameter("@ActionType", actionType ?? ""),
+                new SqlParameter("@User", user ?? "")
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSearchPostingHistoryGeneral", param);
+            return myTable;
+        }
     }
 }

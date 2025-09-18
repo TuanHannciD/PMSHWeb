@@ -48,9 +48,11 @@ namespace User.Controllers
                 var result = _iUserService.Login(loginName,password);
                 int UserGroupID = result.UserGroupID;
                 int UserID = result.ID;
+                int CashierNo = result.CashierNo;
                 var result2 = _iUserService.PermissionNames(UserGroupID, UserID);
                 HttpContext.Session.SetInt32("UserID", UserID);
                 HttpContext.Session.SetString("LoginName", loginName);
+                HttpContext.Session.SetInt32("CashierNo", CashierNo);
 
                 var businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
                 int memberTypeID = 0; int roomTypeID = 0; int vipID = 0;

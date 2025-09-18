@@ -233,15 +233,6 @@
             }
         });
     });
-        function editMember(data) {
-        $("#id").val(data.id);                   // hidden field
-        $("#txtcode").val(data.code);            // ánh xạ Code
-        $("#txtname").val(data.name);            // ánh xạ Name
-        $("#txtdescription").val(data.description);
-        $("#inactive").prop("checked", data.inactive); // checkbox
-        $("#itemModal").modal("show");
-    }
-
 
            $("#btnEdit").on("click", function () {
         if (!selectedRowData) {
@@ -249,8 +240,27 @@
             return;
         }
 
-        // Gọi hàm ánh xạ dữ liệu vào form
-        editMember(selectedRowData);
+        // Lấy dữ liệu chi tiết từ server dựa vào ID
+        $.ajax({
+            url: "/Administration/GethkpEmployeeById",
+            type: "GET",
+            data: { id: selectedRowData.id },
+            success: function(data) {
+                if (data.success && data.id) {
+                    $("#id").val(data.id);
+                    $("#txtdescription").val(data.description);
+                    $("#txtname").val(data.name);
+                    $("#inactive").prop("checked", data.inactive);
+                    $("#itemModal").modal("show");
+                } else {
+                    DevExpress.ui.notify(data.message || "Cannot load data!", "error", 2000);
+                }
+            },
+            error: function(xhr) {
+                console.error("Load data error:", xhr.responseText);
+                DevExpress.ui.notify("Cannot load data from server!", "error", 2000);
+            }
+        });
     });
 
 

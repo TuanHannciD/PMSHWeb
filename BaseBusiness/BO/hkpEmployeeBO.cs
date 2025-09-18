@@ -35,7 +35,7 @@ namespace BaseBusiness.BO
         }
         public hkpEmployeeModel GetById(int id, SqlConnection conn, SqlTransaction tx)
         {
-            const string sql = "SELECT ID, Name, IsActive,CreatedDate , CreatedBy, UpdatedBy,UpdatedDate, Inactive, Desciption  FROM hkpEmployee WHERE ID = @id";
+            const string sql = "SELECT ID, Description, Name, IsActive,CreatedDate , CreatedBy, UpdatedBy,UpdatedDate, Inactive FROM hkpEmployee WHERE ID = @id";
             return conn.QuerySingleOrDefault<hkpEmployeeModel>(sql, new { id }, tx);
         }
     }

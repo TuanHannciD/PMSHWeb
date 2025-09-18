@@ -240,11 +240,29 @@ namespace BaseBusiness.util
 				sql += " WHERE " + exp.ToString();
 			return sql;
 		}
+        public static bool TestExternalConnection(string serverName, string databaseName, string login, string password)
+        {
+            try
+            {
+                string connString = $"Server={serverName};Database={databaseName};User Id={login};Password={password};Trusted_Connection=False;Encrypt=False;";
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    return true; // K?t n?i thành công
+                }
+            }
+            catch
+            {
+                return false; // K?t n?i th?t b?i
+            }
+        }
 
-	}
 
-	public class ConnectionStrings
+    }
+
+    public class ConnectionStrings
 	{		
 		public string DefaultConnection { get; set; }
 	}
+
 }
