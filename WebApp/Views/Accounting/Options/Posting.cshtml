@@ -219,23 +219,67 @@
          </div>
     </div>
 </div>
+@await Html.PartialAsync("Options/ShiftLogin")
+
 <script>
     var postType = 1;
+
+    var groupTransaction = [];
+    var subGroupTransaction = [];
+    var transactionList = [];
+    var articleList = [];
+    var groupTransactionSelectOption = [];
+    var subGroupTransactionSelectOption = [];
+    var transactionListSelectOption = [];
+    // hàm lấy transaction group, transaction sub group, transactions, articles
+    function getInforServices() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/Billing/GetInforService',
+                type: 'get',
+                dataType: 'json',
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    groupTransaction = result.groupTransaction;
+                    subGroupTransaction = result.groupSubTransaction;
+                    transactionList = result.transactions;
+                    groupTransactionSelectOption = result.groupTransaction;
+                    subGroupTransactionSelectOption = result.groupSubTransaction;
+                    transactionListSelectOption = result.transactions;
+                    articleList = result.articles;
+                    resolve(); // Gọi resolve khi AJAX thành công
+                },
+                error: function (xhr, statusText, err) {
+                    if (xhr.status == 401) {
+                        sessionTimeout();
+                    }
+                    reject(err); // Gọi reject nếu có lỗi
+                }
+            });
+        });
+    }
     function openModalPosting() {
         const crashierLogin = localStorage.getItem("crashierLogin");
-        if(crashierLogin == "NotYet"){
+        if (crashierLogin == "NotYet") {
             openModalShilftLogin();
+        } else {
+            $('#winNoPostBilling').val('1');
+            // Gọi getInforServices và chờ hoàn tất trước khi chạy các hàm tiếp theo
+            getInforServices()
+                .then(() => {
+                    setGroupTransactionPosting();
+                    setSubGroupTransactionPosting($('#transactionGroupIDPosting').val());
+                    getTransactionPosting($('#transactionGroupIDPosting').val(), $('#subTransactionGroupIDPosting').val());
+                    $('#modalPosting').modal('show');
+                })
+                .catch((err) => {
+                    console.error("Lỗi khi gọi getInforServices:", err);
+                });
         }
-        else{
-            $('#winNoPostBilling').val(folioPosting);
-            setGroupTransactionPosting();
-            setSubGroupTransactionPosting($('#transactionGroupIDPosting').val());
-            getTransactionPosting($('#transactionGroupIDPosting').val(), $('#subTransactionGroupIDPosting').val());
-            $('#modalPosting').modal('show');
-        }
-
     }
-      let selectedProductName = ''; // Store selected transaction name globally
+
+    let selectedProductName = ''; // Store selected transaction name globally
     let isFiltersVisible = false; // Track filter visibility state
 
     // Toggle filters visibility and move search input
@@ -699,11 +743,12 @@
         const userID = JSON.parse(localStorage.getItem("userID"));
         const shiftID = localStorage.getItem("shiftID");
         const shiftName = localStorage.getItem("shiftName");
-
+        var grid = $("#gridContainerMaintenance").dxDataGrid("instance");
+        var selectedRows = grid.getSelectedRowsData();
+        var selectedIds = selectedRows.map(row => row.FolioID);
         var formData = new FormData();
-        formData.append('rsvID', idReservation);
+        formData.append('folioID', selectedIds[0]);
         formData.append('description', $('#taCode2PostBilling').val());
-        formData.append('roomID', roomID);
         formData.append('referencePost', $('#referencePostBilling').val());
         formData.append('listItem', JSON.stringify(listCart));
         formData.append('userName', userName);
@@ -714,7 +759,7 @@
         formData.append('shiftName', shiftName);
 
         $.ajax({
-            url: '/Billing/PostArticle',
+            url: '/Accounting/PostArticle',
             type: 'POST',
             processData: false,
             contentType: false,
@@ -724,7 +769,7 @@
                     resetInfoPost();
                     listCart = [];
                     listSelected();
-                    searchFolioDetail(0);
+                    searchInvoice();
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);

@@ -13,7 +13,8 @@
                 <div class="functions-pane mb-2" style="background-color: var(--accent-color);border-radius: 8px; border: 1px solid #e5e7eb;box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);padding:0px">
                     <div class="function-menu">
                         <a href="#" onclick="openModalTransfer();">Transfer</a>
-
+                        <a href="#" onclick="openModalPosting();">Post</a>
+                        <a href="#" onclick="adjustTransaction();">Adjust</a>
 
                     </div>
                 </div>
@@ -89,6 +90,8 @@
     </div>
 </div>
 @await Html.PartialAsync("Options/Transfer")
+@await Html.PartialAsync("Options/Posting")
+@await Html.PartialAsync("Options/Adjust")
 
 <script>
     function openModalInvoice() {

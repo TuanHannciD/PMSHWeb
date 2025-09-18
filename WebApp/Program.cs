@@ -44,6 +44,12 @@ using WebApp.Commons.Containts;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.MimeTypes = new[] { "text/csv" }; // L?y t? appsettings.json n?u c?n
+});
+
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(HouseKeepingController).Assembly));
 builder.Services.AddControllersWithViews()
@@ -59,20 +65,23 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
 builder.Services.AddControllersWithViews()
- .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
 builder.Services.AddControllersWithViews()
- .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
-builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
-
-builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(MiscellaneousController).Assembly));
-builder.Services.AddControllersWithViews().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AdministrationController).Assembly));
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(MiscellaneousController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AdministrationController).Assembly));
 
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDevExpressControls();
 builder.Services.AddMvc();
-builder.Services.ConfigureReportingServices(configurator => {
+builder.Services.ConfigureReportingServices(configurator =>
+{
     configurator.ConfigureWebDocumentViewer(viewerconfigurator =>
     {
         viewerconfigurator.UseCachedReportSourceBuilder();
@@ -96,22 +105,17 @@ builder.Services.AddSingleton<ICashieringService, CashieringService>();
 builder.Services.AddSingleton<IPostService, PostService>();
 builder.Services.AddSingleton<ICrashierService, CrashierService>();
 builder.Services.AddSingleton<IInvoicingService, InvoicingService>();
-
 builder.Services.AddSingleton<ITransferTransactionService, TransferTransactionService>();
-
 builder.Services.AddSingleton<IRoomManagementService, RoomManagementService>();
 builder.Services.AddSingleton<IRoomRateService, RoomRateService>();
 builder.Services.AddSingleton<IMiscellaneousService, MiscellaneousService>();
-
 builder.Services.AddSingleton<IAdministrationService, AdministrationService>();
-
 builder.Services.AddSingleton<IAdjustTransactionService, AdjustTransactionService>();
 builder.Services.AddSingleton<ICloseShiftService, CloseShiftService>();
 builder.Services.AddSingleton<ICashieringManagerService, CashieringManagerService>();
 builder.Services.AddSingleton<IVATSearchService, VATSearchService>();
 builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
 builder.Services.AddSingleton<IAccountingService, AccountingService>();
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -119,29 +123,25 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
 builder.Services.AddSingleton<IGroupReservationService, GroupReservationService>();
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddSingleton<IShareService, ShareService>();
 builder.Services.AddSingleton<IGroupAdminService, GroupAdminService>();
-
-
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-               .AddCookie(options =>
-               {
-                   options.ExpireTimeSpan = TimeSpan.FromMinutes(AppConstants.EXPIRE_TIME);
-                   options.Cookie.IsEssential = true;
-                   options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
-                   options.Cookie.Path = "/";
-                   options.LoginPath = "/User/Index";
-                   options.Cookie.HttpOnly = true;
-                   options.Cookie.SameSite = SameSiteMode.Lax;
-               });
+.AddCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(AppConstants.EXPIRE_TIME);
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.Cookie.Path = "/";
+    options.LoginPath = "/User/Index";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -150,16 +150,19 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
+
 var app = builder.Build();
+
 app.UseDevExpressControls();
 System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 var env = builder.Environment;
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
@@ -170,21 +173,13 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseResponseCompression(); // ??t sau UseStaticFiles và tr??c UseRouting
 app.MapStaticAssets();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=User}/{action=Index}/{id?}")
     .WithStaticAssets();
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=User}/{action=Index}/{id?}")
-//    .WithStaticAssets();
-
 
 app.Run();

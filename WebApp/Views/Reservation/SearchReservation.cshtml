@@ -1650,7 +1650,21 @@
             },
             columns: columns,
             onRowDblClick: function(e) {
-                openModalEdit(e.data.id);
+                $.ajax({
+                    url: '/Reservation/EncryptId',
+                    type: 'POST',
+                    data: { id: e.data.ID },
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
+                        } else {
+                            alert('Lỗi khi mã hóa ID');
+                        }
+                    },
+                    error: function() {
+                        alert('Lỗi khi gọi API mã hóa');
+                    }
+                });        
             },
             onRowClick: function(e) {
                 $('#functionAndOptionTable').show();
@@ -3447,78 +3461,7 @@
                 },
                 success: function (result) {
 
-                    $('#txtAgent').val(result.profileAgentId);
-                    $('#txtCompany').val(result.profileCompanyId);
-                    $("#txtGroupCode").val('');
-                    $('#txtContact').val(result.profileContactId);
-                    $("#txtContactPhone").val(result.contactPhone);
-                    $("#txtID").val(result.id);
-                    var tomSelectInstance = $('#txtName')[0].tomselect;
-                    tomSelectInstance.setValue(result.profileIndividualId);
-                    $("#txtFirstName").val(result.firstName);
-                    $("#txtTitleID").val(result.title)
-                    $("#txtPhone").val('');
-                    $("#txtEmail").val(result.email);
-                    $("#txtMemberType").val(result.memberType);
-                    $("#txtCardNo").val(result.memberNo);
-                    $("#txtAddress").val(result.address);
-                    $("#txtCity").val(result.city);
-                    $("#txtNationality").val(result.country);
-                    $("#arrival").val(result.arrivalDate.split("T")[0]);
-                    $("#departure").val(result.departureDate.split("T")[0]);
-                    $("#adults").val(result.noOfAdult);
-                    $("#c").val(result.noOfChild);
-                    $("#c1").val(result.noOfChild1);
-                    $("#c2").val(result.noOfChild2);
-                    $("#nights").val(result.noOfNight);
-                    $("#numRooms").val(result.noOfRoom);
-                    $("#txtRoomType").val(result.roomTypeId);
-                    $("#txtVIP").val(result.vipId);
-                    $("#txtRTC").val(result.rtcId);
-                    $("#roomID").val(result.roomId);
-                    $("#roomSelect").val(result.roomNo);
-                    $("#txtETA").val(result.eta);
-                    $("#txtETD").val(result.etd);
-                    $("#txtResType").val(result.reservationTypeId);
-                    $("#txtMarketID").val(result.marketId);
-                    $("#txtMarket").val(result.marketCode);
-                    $("#txtSource").val(result.sourceId);
-                    $("#txtBookerID").val(result.bookerId);
-                    $("#txtBooker").val(result.bookerName);
-                    $("#txtComment").val(result.comment);
-                    $("#pickedID").val(result.pickupReqdId);
-                    $("#pickUpTransportType").val(result.pickupTransportType);
-                    $("#pickUpStationCode").val(result.pickupStationCode);
-                    $("#pickUpCarrierCode").val(result.pickupCarrierCode);
-                    $("#pickUpTime").val(result.pickupTime);
-                    $("#pickUpDate").val(result.pickupArrivalDate.split("T")[0]);
-                    $("#pickUpTransportNo").val(result.pickupTransportNo);
-                    $("#pickUpDescription").val(result.pickupDescription);
-                    $("#dropOffId").val(result.dropOffReqdId);
-                    $("#dropOffTransportType").val(result.dropOffTransportType);
-                    $("#dropOffStationCode").val(result.dropOffStationCode);
-                    $("#dropOffCarrierCode").val(result.dropOffCarrierCode);
-                    $("#dropOffTime").val(result.dropOffTime);
-                    $("#dropOffTransportNo").val(result.dropOffTransportNo);
-                    $("#dropOffDate").val(result.dropOffDepartureDate.split("T")[0]);
-                    $("#dropOffDescription").val(result.dropOffDescription);
-                    $("#txtPackage").val(result.packageId);
-                    $("#txtRateCodeID").val(result.rateCodeId);
-                    $("#txtRateCode").val(result.rateCode);
-                    let amount = result.rate; // Giả sử result.rate là 4409171
-                    let formattedAmount = amount.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
-                    let amountNet = result.rateAfterTax; // Giả sử result.rate là 4409171
-                    let formattedNet = amountNet.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
-                    $("#txtRateAmount").val(formattedAmount); // Kết quả: 4,409,171
-                    $("#txtNetAmount").val(formattedNet);
-                    $('#txtRateAfterDiscount').val(formattedAmount);
-                    $('#txtNetAfterDiscount').val(formattedNet);
-                    $("#txtColor").val(result.color);
-                    // $("#txtItemInventory").val('');
-                    // $("#txtPreference").val();
-                    $("#txtAllotmentID").val(result.allotmentId);
-                    $("#txtAllotment").val(result.allotmentCode);
-                    $("#txtPersonInCharge").val(result.personInChargeId);
+                    
                 },
                 error: function (xhr, statusText, err) {
                     if (xhr.status == 401) {

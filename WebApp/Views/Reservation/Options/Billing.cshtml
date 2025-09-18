@@ -2,10 +2,7 @@
 <style>
 
     .folio-container {
-        background-color: var(--accent-color);
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
         padding: 0;
         overflow: hidden;
     }
@@ -25,11 +22,9 @@
     .add-icon {
         margin-left: 8px;
         cursor: pointer;
-        transition: transform 0.2s ease;
     }
 
         .add-icon:hover {
-            transform: scale(1.2);
         }
 
     .folio-list {
@@ -56,7 +51,6 @@
         font-size: 14px;
         font-weight: 500;
         color: #333;
-        transition: all 0.3s ease;
         cursor: pointer;
         width: 80px;
         text-align: center;
@@ -66,14 +60,12 @@
             background-color: #0055b8;
             border-color: #003087;
             color: white;
-            transform: translateY(-2px);
         }
 
         .folio-item.active {
             background-color: #0055b8;
             border-color: #003087;
             color: white;
-            transform: scale(0.95);
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
@@ -81,14 +73,24 @@
         cursor: pointer;
         color: #333;
         font-size: 12px;
-        transition: transform 0.2s ease, color 0.3s ease;
     }
 
         .delete-icon:hover {
             color: #ff0000;
-            transform: scale(1.2);
         }
 
+    .overlay-menu {
+        position: absolute;
+        right: 25px;
+        top: 180px; /* Điều chỉnh để menu xuất hiện dưới tiêu đề */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 1000; /* Đảm bảo menu nằm trên bảng */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        width:200px
+    }
 </style>
 <!-- Modal billimg-->
 <div class="modal fade modal-xl" id="modalBilling" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelBilling" aria-hidden="true">
@@ -102,8 +104,8 @@
                 @* <div class="mb-2">
                     <button class="mui-button mui-button-search" >Post</button>
                 </div> *@
-                <div class="functions-pane mb-2" style="background-color: var(--accent-color);border-radius: 8px; border: 1px solid #e5e7eb;box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);padding:0px">
-                    <div class="function-menu">
+                <div class="functions-pane mb-2 row" style="background-color: var(--accent-color);border-radius: 8px; border: 1px solid #e5e7eb;box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);padding:0px">
+                    <div class="function-menu col-md-10">
                         <div class="dropdown">
 
                             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">View</a>
@@ -131,128 +133,94 @@
 
                             </div>
                         </div>
-                        @* <div class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Preview</a>
-                            <div class="dropdown-menu-custom">
-                                <a href="#" onclick="openBilling1();" >Style: Billing Information</a>
-                                <a href="#" onclick="openBilling2();" >Style: Billing Information (selected transaction)</a>
-                            </div>
-                        </div> *@
+
                         <a href="#" onclick="openModalPaymentBilling();">Payment</a>
                         <a href="#" onclick="openModalEditPosting();">Deposit</a>
 
                     </div>
-                </div>
+                    <div class="function-menu col-md-2">
 
-                <div class="" style="display: flex;padding: 0px 15px">
+                        <a href="#" id="toggleFunctionMenu"><i class="fa-solid fa-sliders"></i>Show functions</a>
 
-                    <div class="col-md-10 row filter-section">
-                        <div class="header" style="justify-content:space-between">
-                            <h3 id="content-title" style="font-size:14px">
-                                1. Reservation Information
-                            </h3>
-                            <div class="row">
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.1. RSV Status: <span id="rsvStatusBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.2. Conf.No: <span id="conNoBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.3. Group: <span id="groupBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.4. Company: <span id="companyBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto; border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">1.5. Arrival: <span id="arivalBilling"></span></label>
-                                <label class="form-label col-md-2" style="width:auto;color:#2b6cb0">1.6 Departure: <span id="departureBilling"></span></label>
-                            </div>
-
-                        </div>
                     </div>
-                    @*                     <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px;display:none" id="moreInfo">
-                    </div> *@
                 </div>
 
-                <div class="" style="display: flex;padding:0px 15px">
+                <div class="mui-card" >
 
-                    <div class="col-md-10 row filter-section">
-                        <div class="header" style="justify-content:space-between">
-                            <h3 id="content-title" style="font-size:14px">
-                                2. Folio Information
-                            </h3>
-                            <div class="row">
-                                <label class="form-label col-md-2" style="width:auto;border-right: 1px solid #000; padding-right: 10px; margin-right: 10px;color:#2b6cb0">2.1. Balance: <span id="balanceBilling"></span></label>
-                                <label class="form-label  col-md-2" style="width:auto;color:#2b6cb0">2.2. Total: <span id="totalBilling"></span></label>
-
-                            </div>
-
-                        </div>
+                    <div class="col-md-12 row ">
+    
+                        <label class="form-label col-md-2">RSV Status: <i><span id="rsvStatusBilling"></span></i></label>
+                        <label class="form-label col-md-2">Conf.No: <i><span id="conNoBilling"></span></i></label>
+                        <label class="form-label col-md-2">Group: <i><span id="groupBilling"></span></i></label>
+                        <label class="form-label col-md-2">Company: <i><span id="companyBilling"></span></i></label>
+                        <label class="form-label col-md-2">Arrival: <i><span id="arivalBilling"></span></i></label>
+                        <label class="form-label col-md-2">Departure: <i><span id="departureBilling"></span></i></label>
+                        <label class="form-label col-md-2">Balance: <i><span id="balanceBilling"></span></i></label>
+                        <label class="form-label col-md-2">Total: <i><span id="totalBilling"></span></i></label>
+  
                     </div>
-                    @*                     <div class="col-md-2 row bg-light border rounded" style="overflow-y:scroll;font-size:12px;display:none" id="moreInfo">
-                    </div> *@
                 </div>
-                <div class="row mt-2" style="margin-left:4px">
-                    <div class="folio-container col-md-1">
+
+
+                <div class="row mt-2" style="margin:0;justify-content:space-between">
+                    <div class="folio-container col-md-1 mui-card">
                         <div class="folio-header">
                             <span>Folio No</span>
                             <i class="fas fa-plus add-icon" onclick="openModalNewWindow();"></i>
                         </div>
-                        <ul id="listFolioNo" class="folio-list">
-                        </ul>
+                        <ul id="listFolioNo" class="folio-list"></ul>
                     </div>
-                    <div class="col-md-11">
-                        <div style="padding: 15px;display:flex;justify-content:space-between">
-                            <div>
-                                <span id="infoBillingName" style="font-size:18px;color:#0055b8"></span>
+                    <div class="col-md-10">
+                        <div style="padding-left: 15px; justify-content:space-between" class="row">
+                            <div class="col-md-10 mui-card">
+                                <span id="infoBillingName" style="font-size:18px;color:#0055b8">
+                                </span>
+
                                 <div style="display:flex">
-                                    <span>
-                                        Balance:
-                                    </span>
+                                    <span>Balance:</span>
                                     <label id="balanceBillingMaster"></label>
                                 </div>
+                                <!-- Thêm nút toggle -->
                             </div>
-                            <div class="function-menu">
+                            <!-- Menu chức năng với lớp overlay -->
+                            <div class="function-menu col-md-2 overlay-menu mt-2" id="functionMenu" style="display: none;">
                                 <div class="dropdown">
-
                                     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Lock Folio</a>
                                     <div class="dropdown-menu-custom">
                                         <a href="#" onclick="LockFolioOnly(folioNoID);">Only One</a>
-                                        <a href="#" onclick="LockFolio();">All folio of Guest</a>
+                                        <a href="#" onclick="LockFolio();">All Folio</a>
                                     </div>
                                 </div>
-
                                 <div class="dropdown">
-
                                     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Unlock Folio</a>
                                     <div class="dropdown-menu-custom">
                                         <a href="#" onclick="UnLockFolioOnly(folioNoID);">Only One</a>
-                                        <a href="#" onclick="UnLockFolio();">All folio of Guest</a>
+                                        <a href="#" onclick="UnLockFolio();">All Folio</a>
                                     </div>
                                 </div>
                                 <div class="dropdown">
-
                                     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Posting History</a>
                                     <div class="dropdown-menu-custom">
                                         <a href="#" onclick="PostingHistory(1);">By Folio</a>
                                         <a href="#" onclick="PostingHistory(2);">By Invoice</a>
                                     </div>
                                 </div>
-                                <a href="#" onclick="openModalSplitTransaction();">Split Transactions</a>
-                                <a href="#" onclick="adjustTransaction();">Adjust Transactions</a>
+                                <a href="#" onclick="openModalSplitTransaction();">Split Transaction</a>
+                                <a href="#" onclick="adjustTransaction();">Adjust Transaction</a>
                                 <a href="#" id="deleteTransactionBilling">Delete Transactions</a>
-
                                 <a href="#" onclick="ExportExcelBilling();">Export to Excel</a>
                                 <div class="dropdown">
-
                                     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Transfer to Window</a>
-                                    <div class="dropdown-menu-custom" id="listTransferToWindow">
-                                    </div>
+                                    <div class="dropdown-menu-custom" id="listTransferToWindow"></div>
                                 </div>
                                 <a href="#" onclick="openModalTransferTransaction();">Transfer Transaction</a>
-                                <a href="#" onclick="openModalSelectOption();">Select Option</a>
-
+                                <a href="#" onclick="openModalSelectOption();">Option</a>
                             </div>
-
                         </div>
-
-                        <div>
+                        <div class="mui-card mt-2" style="padding-left:4px;margin-left:4px">
                             <div id="gridContainerBilling" class="mt-2 gridContainer"></div>
                         </div>
                     </div>
-
                 </div>
 
             </div>
@@ -271,7 +239,12 @@
 @await Html.PartialAsync("Billing/SelectOption")
 
 <script>
-
+    $(document).ready(function() {
+        // Gắn sự kiện cho nút toggle
+        $("#toggleFunctionMenu").on("click", function() {
+            $("#functionMenu").toggle();
+        });
+    });
     var folioPosting = 1;
     var transactionNoPost = "0";
     var totalAmountBilling = 0;
@@ -373,7 +346,7 @@
 
         $("#gridContainerBilling").dxDataGrid({
             dataSource: data,
-            keyExpr: "id", // Khóa chính của grid là id
+            keyExpr: "id",
             allowColumnResizing: true,
             columns: [
                 {
@@ -385,19 +358,19 @@
                 },
                 { dataField: "id", caption: "ID", visible: false },
                 { dataField: "date", caption: "Date" },
-                { dataField: "code", caption: "Account" },
-                { dataField: "description", caption: "Description" },
-                { dataField: "invoiceNo", caption: "InvoiceNo" },
+                { dataField: "code", caption: "Trans Code" },
+                { dataField: "description", caption: "description" },
+                { dataField: "invoiceNo", caption: "Inv .No" },
                 { dataField: "amount", caption: "Amount" },
-                { dataField: "supplement", caption: "Supplement" },
+                { dataField: "supplement", caption: "Suplement" },
                 { dataField: "reference", caption: "Reference" },
                 { dataField: "userName", caption: "User" },
                 { dataField: "time", caption: "Time" },
                 { dataField: "groupCode", caption: "Group Code" },
                 { dataField: "subgroupCode", caption: "Sub Group Code" },
-                { dataField: "shiftID", caption: "Website" },
+                { dataField: "shiftID", caption: "Shift" },
                 { dataField: "property", caption: "Property" },
-                { dataField: "transactionNo", caption: "Transaction No" }
+                { dataField: "transactionNo", caption: "Trans .No" }
             ],
             paging: { pageSize: 15 },
             scrolling: {
@@ -419,6 +392,7 @@
                 showCheckBoxesMode: "always"
             },
             onRowClick: function(e) {
+                // Cập nhật thông tin giao dịch
                 transactionNoPost = e.data.transactionNo;
                 invoiceNoPosting = e.data.invoiceNo;
                 folioDetailID = e.data.id;
@@ -429,12 +403,14 @@
                     $("#amountTtoalSplit").text('0');
                     $("#valueSplitTransaction").val('0');
                 }
+                // Hiển thị menu chức năng khi click vào dòng
+                $("#functionMenu").show();
                 // Chọn dòng được click
                 const grid = $("#gridContainerBilling").dxDataGrid("instance");
                 grid.selectRows([e.key], false);
             },
             onContentReady: function(e) {
-                // Tìm các dòng trong data có code trùng với TransactionCode trong selectedCodesFromResult
+                // Tìm các dòng có code trùng với selectedCodesFromResult
                 const keysToSelect = data
                     .filter(item => selectedCodesFromResult.includes(item.code))
                     .map(item => item.id)
@@ -446,6 +422,8 @@
                 }
             }
         });
+
+
     }
     $("#deleteTransactionBilling").on("click", function() {
         var grid = $("#gridContainerBilling").dxDataGrid("instance");

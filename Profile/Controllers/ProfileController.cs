@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using BaseBusiness.BO;
@@ -978,5 +979,51 @@ namespace Profile.Controllers
 
         }
         #endregion
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllProfiles2(string code, string account, string firstName, string keyWord, string city, int type, bool showSaleInCharge, int page = 1, int pageSize = 15)
+        {
+            try
+            {
+                (DataTable data, int totalCount) = ProfileBO.GetAllProfile2(code, account, firstName, keyWord, city, type, showSaleInCharge, page, pageSize);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  ID = int.Parse(d["_ProfileID"].ToString()),
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  VIP = d["VIP"]?.ToString() ?? "",
+                                  Account = d["Account"]?.ToString() ?? "",
+                                  PassPort = d["PassPort"]?.ToString() ?? "",
+                                  IdentityCard = d["IdentityCard"]?.ToString() ?? "",
+                                  Address = d["Address"]?.ToString() ?? "",
+                                  City = d["City"]?.ToString() ?? "",
+                                  Nationality = d["Nationality"]?.ToString() ?? "",
+                                  HandPhone = d["HandPhone"]?.ToString() ?? "",
+                                  Telephone = d["Telephone"]?.ToString() ?? "",
+                                  Email = d["Email"]?.ToString() ?? "",
+                                  Keyword = d["Keyword"]?.ToString() ?? "",
+                                  PostalCode = d["PostalCode"]?.ToString() ?? "",
+                                  ReturnGuest = d["ReturnGuest"]?.ToString() ?? "",
+                                  StayNo = d["StayNo"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "",
+                                  TaxCode = d["TaxCode"]?.ToString() ?? "",
+                                  FullAccount = d["FullAccount"]?.ToString() ?? "",
+                                  HomeAddress = d["HomeAddress"]?.ToString() ?? "",
+                                  ARNo = d["ARNo"]?.ToString() ?? "",
+                                  Website = d["Website"]?.ToString() ?? "",
+                                  DateOfBirth = d["DateOfBirth"]?.ToString() ?? "",
+                                  AcctContact = d["AcctContact"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  AcctIsBlackListContact = d["IsBlackList"]?.ToString() ?? "",
+                                  PersonInChargeID = d["PersonInChargeID"]?.ToString() ?? ""
+                              }).ToList();
+                return Json(new { data = result, totalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
