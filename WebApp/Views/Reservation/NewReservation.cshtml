@@ -12,55 +12,48 @@
             <div class="menu-left">
                 <button class="toggle-btn"><i class="fas fa-bars"></i></button>
                 <a class="menu-item active">NEW RESERVATION</a>
-                <a class="menu-item " asp-controller="Reservation" asp-action="SearchReservation">SEARCH RESERVATION</a>
-                <a class="menu-item"asp-controller="Reservation" asp-action="GroupReservation">GROUP RESERVATION</a>
-                <a class="menu-item " href="/Reservation/WaitList">WAIT LIST</a>
-                <a class="menu-item " href="/Reservation/OverBooking">OVER BOOKING</a>
+                <a class="menu-item" asp-controller="Reservation" asp-action="SearchReservation">SEARCH RESERVATION</a>
+                <a class="menu-item" asp-controller="Reservation" asp-action="GroupReservation">GROUP RESERVATION</a>
+                <a class="menu-item" href="/Reservation/WaitList">WAIT LIST</a>
+                <div class="menu-item">
+                    MORE OPTIONS
+                    <div class="submenu">
+                        <a class="menu-item">Manage Profiles</a>
+                        <a class="menu-item">Reports</a>
+                        <a class="menu-item">Settings</a>
+                    </div>
+                </div>
+                <a class="menu-item" href="/Reservation/OverBooking">OVER BOOKING</a>
             </div>
         </div>
-
         <!-- Nội dung bên phải -->
         <div class="col-md-10">
             <div class="content-right">
                 <div class="header" style="justify-content:space-between">
                     <div class="header2" style="margin-bottom:-40px">
-                        <h3 id="content-title">
-                            New Reservation
-
-                        </h3>
+                        <h3 id="content-title">New Reservation</h3>
                         <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
                     </div>
-
-                    <div class="header2" >
+                    <div class="header2">
                         <button class="submit-button-clear-reservation" onclick="SaveReservation(0)">Save</button>
                         <button class="submit-button-clear-reservation" onclick="SaveReservation(1)">Walk In</button>
-
                         <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
                     </div>
                 </div>
-
                 <div id="partial-content">
-                    <div class="container-new-reservation body">
+                    <div class="container-new-reservation">
                         <!-- Guest Information -->
                         <div class="section-new-reservation">
-                            <h3>
-                                Guest Information
-
-                            </h3>
-
+                            <h3>Guest Information</h3>
                             <div class="form-grid-new-reservation">
-                                <div class="form-group-new-reservation" style="margin-right:20px;">
-                                    <label >Name</label>
+                                <div class="form-group-new-reservation">
+                                    <label>Name</label>
                                     <div class="action-button-new-reservation">
                                         <input id="txtName" readonly />
-                                        <button onclick="openModalSearchProfile()"><i class="fa-solid fa-ellipsis"></i></button>
+                                        <button onclick="openModalSearchProfile()" ><i class="fa-solid fa-ellipsis"></i></button>
                                     </div>
                                 </div>
-@*                                 <div class="form-group-new-reservation">
-                                    <label for="txtName">Name</label>
-                                    <select id="txtName"></select>
-                                </div> *@
-                                <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtFirstName">First Name</label>
                                     <input type="text" id="txtFirstName" readonly>
                                 </div>
@@ -68,26 +61,25 @@
                                     <label for="txtTitle">Title</label>
                                     <select id="txtTitle" asp-items="ViewBag.cboTitle"></select>
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtPhone">Phone</label>
                                     <input type="text" id="txtPhone">
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right:20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtPassport">Passport</label>
                                     <input type="text" id="txtPassport">
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtIdentityCard">Identity Card</label>
                                     <input type="text" id="txtIdentityCard">
                                 </div>
-                                <div class="form-group-new-reservation full-width-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation full-width-new-reservation">
                                     <label for="txtEmail">Email</label>
                                     <input type="email" id="txtEmail">
                                 </div>
                                 <input type="hidden" id="txtID" />
                             </div>
                         </div>
-
                         <!-- Membership Information -->
                         <div class="section-new-reservation">
                             <h3>Membership Information</h3>
@@ -96,7 +88,7 @@
                                     <label for="txtAddress">Address</label>
                                     <input type="text" id="txtAddress">
                                 </div>
-                                <div class="form-group-new-reservation" >
+                                <div class="form-group-new-reservation">
                                     <label for="txtDob">Date of Birth</label>
                                     <input type="date" id="txtDob">
                                 </div>
@@ -110,33 +102,29 @@
                                 </div>
                                 <div class="form-group-new-reservation">
                                     <label for="txtVIP">VIP</label>
-                                    <select id="txtVIP" asp-items=" ViewBag.cboVIP "></select>
+                                    <select id="txtVIP" asp-items="ViewBag.cboVIP"></select>
                                 </div>
                                 <div class="form-group-new-reservation">
                                     <label for="txtMemberType">Member Type</label>
                                     <select id="txtMemberType" asp-items="ViewBag.cboMemberType"></select>
                                 </div>
-                                <div class="form-group-new-reservation" >
+                                <div class="form-group-new-reservation">
                                     <label for="txtCardNo">Card No.</label>
                                     <input type="text" id="txtCardNo">
                                 </div>
                             </div>
                         </div>
-
                         <!-- Agent Information -->
                         <div class="section-new-reservation">
                             <h3>Agent Information</h3>
                             <div class="form-grid-new-reservation">
-
                                 <div class="form-group-new-reservation">
-                                    <label >Agent</label>
+                                    <label>Agent</label>
                                     <div class="action-button-new-reservation">
-                                        <input id="txtAgentID" readonly style="display:none"/>
+                                        <input id="txtAgentID" readonly style="display:none" />
                                         <input id="txtAgent" readonly />
                                         <button onclick="openModalSearchAgent()"><i class="fa-solid fa-ellipsis"></i></button>
-                                    </div>`
-     @*                                <label for="txtAgent">Agent</label>
-                                    <select id="txtAgent" asp-items="ViewBag.cboProfileAgent"></select> *@
+                                    </div>
                                 </div>
                                 <div class="form-group-new-reservation">
                                     <label>Company</label>
@@ -144,23 +132,25 @@
                                         <input id="txtCompanyID" readonly style="display:none" />
                                         <input id="txtCompany" readonly />
                                         <button onclick="openModalSearchCompany()"><i class="fa-solid fa-ellipsis"></i></button>
-                                    </div>`
-@*                                     <label for="txtCompany">Company</label>
-                                    <select id="txtCompany" asp-items=" ViewBag.cboProfileCompany"></select> *@
+                                    </div>
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtGroupCode">Group Code</label>
                                     <input type="text" id="txtGroupCode">
                                 </div>
                                 <div class="form-group-new-reservation">
-                                    <label for="txtContact">Contact</label>
-                                    <select id="txtContact" asp-items="ViewBag.cboProfileContact"></select>
+                                    <label>Contact</label>
+                                    <div class="action-button-new-reservation">
+                                        <input id="txtContactID" readonly style="display:none" />
+                                        <input id="txtContact" readonly />
+                                        <button onclick="openModalSearchContact()"><i class="fa-solid fa-ellipsis"></i></button>
+                                    </div>
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtContactPhone">Contact Phone</label>
                                     <input type="text" id="txtContactPhone">
                                 </div>
-                                <div class="form-group-new-reservation" >
+                                <div class="form-group-new-reservation">
                                     <label for="txtPrefRoom">Preferred Room</label>
                                     <input type="text" id="txtPrefRoom">
                                 </div>
@@ -169,12 +159,11 @@
                                     <input type="text" id="txtLastStay" value="1">
                                 </div>
                                 <div class="form-group-new-reservation">
-                                    <label for="txtLastStay">Click to open more fields</label>
+                                    <label>More Fields</label>
                                     <button onclick="openModalMoreFields()">More Fields</button>
                                 </div>
                             </div>
                         </div>
-
                         <!-- Stay Details -->
                         <div class="section-new-reservation">
                             <h3>Stay Details</h3>
@@ -197,7 +186,7 @@
                                         <span style="font-size:12px;color:#c53030;display:none" id="departure-day"></span>
                                     </div>
                                 </div>
-                                <div class="form-group-new-reservation" style="width: 100px;">
+                                <div class="form-group-new-reservation">
                                     <label for="nights">Nights</label>
                                     <input type="text" id="nights" readonly style="text-align:right">
                                 </div>
@@ -222,7 +211,7 @@
                                         <label for="c1">Child (C1)</label>
                                         <input type="number" value="0" id="c1" style="text-align:right">
                                     </div>
-                                    <div class="form-group-new-reservation" >
+                                    <div class="form-group-new-reservation">
                                         <label for="c2">Child (C2)</label>
                                         <input type="number" value="0" id="c2" style="text-align:right">
                                     </div>
@@ -235,7 +224,7 @@
                                     <label for="txtRTC">RTC</label>
                                     <select id="txtRTC" asp-items="ViewBag.cboRoomType"></select>
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right:20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="roomSelect">Room</label>
                                     <div class="action-button-new-reservation">
                                         <input id="roomSelect" readonly />
@@ -243,7 +232,7 @@
                                         <button id="btnRoom" onclick="openModalSearchRoom()"><i class="fa-solid fa-ellipsis"></i></button>
                                     </div>
                                 </div>
-                                <div class="form-group-new-reservation" >
+                                <div class="form-group-new-reservation">
                                     <label for="txtRN">RN</label>
                                     <input id="txtRN" />
                                 </div>
@@ -260,7 +249,7 @@
                                         <label for="txtRateAmount">Rate</label>
                                         <input value="0" id="txtRateAmount" style="text-align:right">
                                     </div>
-                                    <div class="form-group-new-reservation" >
+                                    <div class="form-group-new-reservation">
                                         <label for="txtNetAmount">Net</label>
                                         <input value="0" id="txtNetAmount" style="text-align:right">
                                     </div>
@@ -277,17 +266,16 @@
                                         <button onclick="openModalSearchAllotment()"><i class="fa-solid fa-ellipsis"></i></button>
                                     </div>
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right:20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtDiscountAmount">Disc. Amt</label>
                                     <input type="text" value="0" id="txtDiscountAmount" style="text-align:right">
                                 </div>
-                                <div class="form-group-new-reservation" >
+                                <div class="form-group-new-reservation">
                                     <label for="txtDiscountPercent">Disc. %</label>
                                     <input type="text" value="0" id="txtDiscountPercent" style="text-align:right">
                                 </div>
                             </div>
                         </div>
-
                         <!-- Rate & Packages -->
                         <div class="section-new-reservation">
                             <h3>Rate Summary</h3>
@@ -310,7 +298,7 @@
                                 </div>
                                 <div class="form-group-new-reservation">
                                     <label for="txtPersonInCharge">Sale</label>
-                                    <select id="txtPersonInCharge" asp-items="ViewBag.cboPersonInCharge "></select>
+                                    <select id="txtPersonInCharge" asp-items="ViewBag.cboPersonInCharge"></select>
                                 </div>
                                 <div class="form-group-new-reservation">
                                     <label for="txtPayment">Payment</label>
@@ -328,9 +316,9 @@
                                         <button onclick="openModalSearchBooker()"><i class="fa-solid fa-ellipsis"></i></button>
                                     </div>
                                 </div>
-                                <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                <div class="form-group-new-reservation">
                                     <label for="txtETA">ETA</label>
-                                    <input  value="@ViewBag.configETA" id="txtETA" style="text-align:right">
+                                    <input value="@ViewBag.configETA" id="txtETA" style="text-align:right">
                                 </div>
                                 <div class="form-group-new-reservation">
                                     <label for="txtETD">ETD</label>
@@ -355,11 +343,10 @@
                                 </div>
                                 <div class="form-group-new-reservation full-width-new-reservation">
                                     <label for="txtReason">Reason</label>
-                                    <select id="txtReason" asp-items=" ViewBag.cboReason"></select>
+                                    <select id="txtReason" asp-items="ViewBag.cboReason"></select>
                                 </div>
                             </div>
                         </div>
-
                         <!-- Booking & Special Requests -->
                         <div class="section-new-reservation">
                             <h3>Booking & Special Requests</h3>
@@ -384,11 +371,11 @@
                                         <label for="txtColor">Set Color</label>
                                         <input type="color" id="txtColor">
                                     </div>
-                                    <div class="form-group-new-reservation" style="margin-right: 20px;">
+                                    <div class="form-group-new-reservation">
                                         <label for="txtFolioBal">Folio Balance</label>
                                         <input type="number" value="0" id="txtFolioBal" style="text-align:right">
                                     </div>
-                                    <div class="form-group-new-reservation" >
+                                    <div class="form-group-new-reservation">
                                         <label for="txtCurrency">$</label>
                                         <input type="number" value="0" id="txtCurrency">
                                         <span style="font-size:12px;color:#c53030">VND</span>
@@ -416,7 +403,6 @@
                                     <label for="txtComment">Comments</label>
                                     <textarea rows="3" class="specials-section-new-reservation" id="txtComment"></textarea>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -425,7 +411,6 @@
         </div>
     </div>
 </div>
-
 @await Html.PartialAsync("ModalNewReservation/ModalMoreFields")
 @await Html.PartialAsync("ModalNewReservation/ModalRateCode")
 @await Html.PartialAsync("ModalNewReservation/ModalSearchAllotment")
@@ -435,7 +420,7 @@
 @await Html.PartialAsync("ModalNewReservation/ModalSearchProfile")
 @await Html.PartialAsync("ModalNewReservation/ModalSearchAgent")
 @await Html.PartialAsync("ModalNewReservation/ModalSearchCompany")
-
+@await Html.PartialAsync("ModalNewReservation/ModalSearchContact")
 @await Html.PartialAsync("ModalNewReservation/ModalSearchRoom")
 <script>
     var profileIndividualID = 0;
@@ -461,7 +446,8 @@
         $('#txtCompanyID').val(result.profileCompanyId);
         $('#txtCompany').val(result.companyName);
         $("#txtGroupCode").val('');
-        $('#txtContact').val(result.profileContactId);
+        $('#txtContactID').val(result.profileContactId);
+        $('#txtContact').val(result.contactName);
         $("#txtContactPhone").val(result.contactPhone);
         $("#txtID").val(result.id);
         $('#txtName').val(result.lastName);
@@ -1009,8 +995,8 @@
         formData.append('profileCompanyID', $('#txtCompanyID').val());
         formData.append('companyName', $('#txtCompany').val());
         formData.append('groupCode', $("#txtGroupCode").val());
-        formData.append('profileContactID', $('#txtContact').val());
-        formData.append('contactName', $('#txtContact').find('option:selected').text());
+        formData.append('profileContactID', $('#txtContactID').val());
+        formData.append('contactName', $('#txtContact').val());
         formData.append('contactPhone', $("#txtContactPhone").val());
         formData.append('profileIndividualID', $("#txtID").val());
         formData.append('firstName', $("#txtFirstName").val());
@@ -1113,14 +1099,17 @@
     }
     function resetForm(){
             $('#txtAgent').val('');
-            $('#txtCompany').val('')
+            $('#txtAgentID').val('0');
+            $('#txtCompany').val('');
+            $('#txtCompanyID').val('')
             $("#txtGroupCode").val('');
             $('#txtContact').val('');
+            $('#txtContactID').val('0');
             $("#txtContactPhone").val('');
-            $("#txtID").val('');
+            $("#txtID").val('0');
             $("#txtName").val('');
             $("#txtFirstName").val('');
-            $("#txtTitleID").val('')
+            $("#txtTitleID").val('0')
             $("#txtPhone").val('');
             $("#txtEmail").val('');
             $("#txtMemberType").val('');
@@ -1130,12 +1119,9 @@
             $("#txtNationality").val('');
             $("#arrival").val('');
             $("#departure").val('');
-             $("#txtDob").val('');
+            $("#txtDob").val('');
             $("#txtRateAfterDiscount").val('0');
-
             $("#txtNetAfterDiscount").val('0');
-
-             
             $("#adults").val('');
             $("#c").val('');
             $("#c1").val('');

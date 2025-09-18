@@ -103,9 +103,7 @@ namespace Reservation.Controllers
             ViewBag.cboCity = ListItemHelper.GetCityProvider();
             ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
             ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
-            //ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
-            //ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
-            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
             ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
