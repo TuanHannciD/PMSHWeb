@@ -4854,9 +4854,646 @@ namespace Administration.Controllers
             }
 
         }
+        [HttpGet]
+        public IActionResult GethkpEmployeeById(int id)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                hkpEmployeeModel member = hkpEmployeeBO.Instance.GetById(id, pt.Connection, pt.Transaction);
+
+                pt.CommitTransaction();
+
+                if (member == null)
+                    return Json(new { success = false, message = "Not found" });
+
+                return Json(new
+                {
+                    success = true,
+                    id = member.ID,
+                    description = member.Description ?? "",
+                    name = member.Name ?? "",
+                    inactive = member.Inactive
+
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpGet]
+        public IActionResult GetProperty()
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Property();
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  PropertyTypeID = !string.IsNullOrEmpty(d["PropertyTypeID"].ToString()) ? d["PropertyTypeID"] : "",
+                                  PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
+                                  PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
+                                  Telephone = !string.IsNullOrEmpty(d["Telephone"].ToString()) ? d["Telephone"] : "",
+                                  Fax = !string.IsNullOrEmpty(d["Fax"].ToString()) ? d["Fax"] : "",
+                                  Email = !string.IsNullOrEmpty(d["Email"].ToString()) ? d["Email"] : "",
+                                  Website = !string.IsNullOrEmpty(d["Website"].ToString()) ? d["Website"] : "",
+                                  Address = !string.IsNullOrEmpty(d["Address"].ToString()) ? d["Address"] : "",
+                                  ServerName = !string.IsNullOrEmpty(d["ServerName"].ToString()) ? d["ServerName"] : "",
+                                  DatabaseName = !string.IsNullOrEmpty(d["DatabaseName"].ToString()) ? d["DatabaseName"] : "",
+                                  Login = !string.IsNullOrEmpty(d["Login"].ToString()) ? d["Login"] : "",
+                                  Password = !string.IsNullOrEmpty(d["Password"].ToString()) ? d["Password"] : "",
+                                  PropertyType = !string.IsNullOrEmpty(d["PropertyType"].ToString()) ? d["PropertyType"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult Property()
+        {
+            List<PropertyTypeModel> listctry = PropertyUtils.ConvertToList<PropertyTypeModel>(PropertyTypeBO.Instance.FindAll());
+            ViewBag.PropertyTypeList = listctry;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public ActionResult InsertProperty()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                PropertyModel member = new PropertyModel();
+
+                // Lấy dữ liệu từ form
+                member.PropertyCode = Request.Form["code"].ToString();
+                string propertyTypeValue = Request.Form["propertyType"];
+                member.PropertyTypeID = int.TryParse(propertyTypeValue, out int cId) ? cId : 0;
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                   && Request.Form["inactive"].ToString() == "on";
+                member.PropertyName = Request.Form["propertyName"].ToString();
+                member.Telephone = Request.Form["telephone"].ToString();
+                member.Fax = Request.Form["fax"].ToString();
+                member.Email = Request.Form["email"].ToString();
+                member.Website = Request.Form["website"].ToString();
+                member.Address = Request.Form["address"].ToString();
+
+                member.ServerName = Request.Form["serverName"].ToString();
+                member.DatabaseName = Request.Form["databaseName"].ToString();
+                member.Login = Request.Form["login"].ToString();
+                member.Password = Request.Form["password"].ToString();
+                bool canConnect = DBUtils.TestExternalConnection(
+                    member.ServerName,
+                    member.DatabaseName,
+                    member.Login,
+                    member.Password
+                );
+
+                if (!canConnect)
+                {
+                    return Json(new { success = false, message = "Không thể kết nối đến database với thông tin đã nhập!" });
+                }
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+                if (string.IsNullOrWhiteSpace(member.PropertyCode))
+                    return Json(new { success = false, message = "Code không được để trống." });
+
+                long memberId = PropertyBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateProperty()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                PropertyModel member = new PropertyModel();
+
+                // Lấy ID từ form
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                member.PropertyCode = Request.Form["code"].ToString();
+                string propertyTypeValue = Request.Form["propertyType"];
+                member.PropertyTypeID = int.TryParse(propertyTypeValue, out int cId) ? cId : 0;
+                member.Inactive = !string.IsNullOrEmpty(Request.Form["inactive"])
+                                   && Request.Form["inactive"].ToString() == "on";
+                member.PropertyName = Request.Form["propertyName"].ToString();
+                member.Telephone = Request.Form["telephone"].ToString();
+                member.Fax = Request.Form["fax"].ToString();
+                member.Email = Request.Form["email"].ToString();
+                member.Website = Request.Form["website"].ToString();
+                member.Address = Request.Form["address"].ToString();
+
+                member.ServerName = Request.Form["serverName"].ToString();
+                member.DatabaseName = Request.Form["databaseName"].ToString();
+                member.Login = Request.Form["login"].ToString();
+                member.Password = Request.Form["password"].ToString();
+
+                string loginName = HttpContext.Session.GetString("LoginName") ?? "";
+                if (string.IsNullOrWhiteSpace(member.PropertyCode))
+                    return Json(new { success = false, message = "Code không được để trống." });
+
+                if (member.ID == 0) // Insert mới
+                {
+                    member.CreatedBy = loginName;
+                    member.CreatedDate = DateTime.Now;
+                    member.UpdatedBy = loginName;
+                    member.UpdatedDate = DateTime.Now;
+
+                    PropertyBO.Instance.Insert(member);
+                }
+                else // Update
+                {
+                    // Trước khi update, lấy lại bản ghi cũ từ DB để giữ CreatedBy, CreatedDate
+                    var oldData = PropertyBO.Instance.GetById(member.ID, pt.Connection, pt.Transaction);
+
+                    if (oldData != null)
+                    {
+                        member.CreatedBy = oldData.CreatedBy;
+                        member.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    member.UpdatedBy = loginName;
+                    member.UpdatedDate = DateTime.Now;
+
+                    PropertyBO.Instance.Update(member);
+                }
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
 
 
+        [HttpPost]
+        public ActionResult DeleteProperty()
+        {
+            try
+            {
+
+                PropertyModel memberModel = (PropertyModel)PropertyBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Lost And Found" });
+
+                }
+                PropertyBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Lost And Found was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        public IActionResult GetPropertyPermission(string userID)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PropertyPermission(userID);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  PropertyID = !string.IsNullOrEmpty(d["PropertyID"].ToString()) ? d["PropertyID"] : "",
+                                  PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
+                                  PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
+                                  UserID = !string.IsNullOrEmpty(d["UserID"].ToString()) ? d["UserID"] : "",
+                                  LoginName = !string.IsNullOrEmpty(d["LoginName"].ToString()) ? d["LoginName"] : "",                               
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult PropertyPermission()
+        {
+            List<PropertyModel> listctry = PropertyUtils.ConvertToList<PropertyModel>(PropertyBO.Instance.FindAll());
+            ViewBag.PropertyList = listctry;
+            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listuser;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public ActionResult InsertPropertyPermission()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                PropertyPermissionModel member = new PropertyPermissionModel();
+
+             
+                string propertyTypeValue = Request.Form["propertyType"];
+                member.PropertyID = int.TryParse(propertyTypeValue, out int cId) ? cId : 0;
+
+                string userValue = Request.Form["chooseuser"];
+                member.UserID = int.TryParse(userValue, out int uId) ? uId : 0;
+                
+                member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;               
+
+                long memberId = PropertyPermissionBO.Instance.Insert(member);
+
+                pt.CommitTransaction();
+
+                return Json(new { success = true, id = memberId });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdatePropertyPermission()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                PropertyPermissionModel member = new PropertyPermissionModel();
+
+                // Lấy ID từ form
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+
+                string propertyTypeValue = Request.Form["propertyType"];
+                member.PropertyID = int.TryParse(propertyTypeValue, out int cId) ? cId : 0;
+
+                string userValue = Request.Form["chooseuser"];
+                member.UserID = int.TryParse(userValue, out int uId) ? uId : 0;
+
+                string loginName = HttpContext.Session.GetString("LoginName") ?? "";
+                member.UpdatedBy = member.CreatedBy;
+                member.CreatedDate = DateTime.Now;
+                member.UpdatedDate = DateTime.Now;
+
+                if (member.ID == 0) // Insert mới
+                {
+                    member.CreatedBy = loginName;
+                    member.CreatedDate = DateTime.Now;
+                    member.UpdatedBy = loginName;
+                    member.UpdatedDate = DateTime.Now;
+
+                    PropertyPermissionBO.Instance.Insert(member);
+                }
+                else // Update
+                {
+                    // Trước khi update, lấy lại bản ghi cũ từ DB để giữ CreatedBy, CreatedDate
+                    var oldData = PropertyPermissionBO.Instance.GetById(member.ID, pt.Connection, pt.Transaction);
+
+                    if (oldData != null)
+                    {
+                        member.CreatedBy = oldData.CreatedBy;
+                        member.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    member.UpdatedBy = loginName;
+                    member.UpdatedDate = DateTime.Now;
+
+                    PropertyPermissionBO.Instance.Update(member);
+                }
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
 
 
+        [HttpPost]
+        public ActionResult DeletePropertyPermission()
+        {
+            try
+            {
+
+                PropertyPermissionModel memberModel = (PropertyPermissionModel)PropertyPermissionBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (memberModel == null || memberModel.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can not find Lost And Found" });
+
+                }
+                PropertyPermissionBO.Instance.Delete(int.Parse(Request.Form["id"].ToString()));
+                return Json(new { code = 0, msg = "Delete Lost And Found was successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        public IActionResult GetStatusList()
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.StatusList();
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ColorName = !string.IsNullOrEmpty(d["ColorName"].ToString()) ? d["ColorName"] : "",
+                                  FontColorName = !string.IsNullOrEmpty(d["FontColorName"].ToString()) ? d["FontColorName"] : "",
+                                  StatusName = !string.IsNullOrEmpty(d["Status Name"].ToString()) ? d["Status Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public IActionResult ConfigStatusColor()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult UpdateConfigStatusColor()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                HKPStatusColorModel member = new HKPStatusColorModel();
+
+                // Lấy ID từ form
+                member.ID = !string.IsNullOrEmpty(Request.Form["id"])
+                             ? int.Parse(Request.Form["id"])
+                             : 0;
+                member.ColorName = Request.Form["bgColor"].ToString();
+                member.FontColorName = Request.Form["fontColor"].ToString();
+
+                int loginName = HttpContext.Session.GetInt32("UserID") ?? 0;
+                member.UserUpdateID = member.UserInsertID;
+                member.CreateDate = DateTime.Now;
+                member.UpdateDate = DateTime.Now;
+
+                if (member.ID == 0) // Insert mới
+                {
+
+                    member.UserInsertID = loginName;
+                    member.CreateDate = DateTime.Now;
+                    member.UserUpdateID = loginName;
+                    member.UpdateDate = DateTime.Now;
+
+                    HKPStatusColorBO.Instance.Insert(member);
+                }
+                else // Update
+                {
+                    // Trước khi update, lấy lại bản ghi cũ từ DB để giữ CreatedBy, CreatedDate
+                    var oldData = HKPStatusColorBO.Instance.GetById(member.ID, pt.Connection, pt.Transaction);
+
+                    if (oldData != null)
+                    {
+                        member.StatusName = oldData.StatusName;
+                        member.Description = oldData.Description;
+                        member.UserInsertID = oldData.UserInsertID;
+                        member.CreateDate = oldData.CreateDate;
+                    }
+
+                    member.UserUpdateID = loginName;
+                    member.UpdateDate = DateTime.Now;
+
+                    HKPStatusColorBO.Instance.Update(member);
+                }
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }     
+
+        public ActionResult CreateMessage()
+        {
+            var model = new ConfigSystemModel
+            {
+                Desciption = ConfigSystemBO.GetConfigDesciption()
+            };
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult UpdateMessage(string desc)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                int loginUser = HttpContext.Session.GetInt32("UserID") ?? 0;
+
+                // Update Msg
+                ConfigSystemBO.Instance.UpdateMsg(desc, loginUser, pt.Connection, pt.Transaction);
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpGet]
+        public IActionResult GetMemberTypeSearch(DateTime fromDate, DateTime toDate, string status, string memberID, int isSortByCardName)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Member(fromDate, toDate, status, memberID, isSortByCardName);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Arrival = !string.IsNullOrEmpty(d["Arrival"].ToString()) ? d["Arrival"] : "",
+                                  Depart = !string.IsNullOrEmpty(d["Depart"].ToString()) ? d["Depart"] : "",
+                                  Nights = !string.IsNullOrEmpty(d["Nights"].ToString()) ? d["Nights"] : "",
+                                  RoNo = !string.IsNullOrEmpty(d["RoNo"].ToString()) ? d["RoNo"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  Member = !string.IsNullOrEmpty(d["Member"].ToString()) ? d["Member"] : "",
+                                  CardNumber = !string.IsNullOrEmpty(d["CardNumber"].ToString()) ? d["CardNumber"] : "",
+                                  CardHolder = !string.IsNullOrEmpty(d["CardHolder"].ToString()) ? d["CardHolder"] : "",
+                                  MarketCode = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+                                  RateCode = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public ActionResult MemberTypeSearch()
+        {
+            List<MemberTypeModel> listctry = PropertyUtils.ConvertToList<MemberTypeModel>(MemberTypeBO.Instance.FindAll());
+            ViewBag.MemberTypeList = listctry;
+            List<MemberCategoryModel> listmbc = PropertyUtils.ConvertToList<MemberCategoryModel>(MemberCategoryBO.Instance.FindAll());
+            ViewBag.MemberCategoryList = listmbc;
+            return View();
+        }
+        [HttpGet]
+        public IActionResult GetPostingHistory(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string actionType, string user)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PostingHistory(fromDate, toDate, fromFolioID, toFolioID, actionType , user);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Property = !string.IsNullOrEmpty(d["Property"].ToString()) ? d["Property"] : "",
+                                  AcctionText = !string.IsNullOrEmpty(d["AcctionText"].ToString()) ? d["AcctionText"] : "",
+                                  TransactionFate = !string.IsNullOrEmpty(d["TransactionFate"].ToString()) ? d["TransactionFate"] : "",
+                                  AcctionDate = !string.IsNullOrEmpty(d["AcctionDate"].ToString()) ? d["AcctionDate"] : "",
+                                  ActionUser = !string.IsNullOrEmpty(d["RoNo"].ToString()) ? d["RoNo"] : "",
+                                  AmountIncTax = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  MoreInfornamtion = !string.IsNullOrEmpty(d["Member"].ToString()) ? d["Member"] : "",
+                                  Machine = !string.IsNullOrEmpty(d["CardNumber"].ToString()) ? d["CardNumber"] : "",
+                                  InvoiceNo = !string.IsNullOrEmpty(d["CardHolder"].ToString()) ? d["CardHolder"] : "",
+                                  ActionType = !string.IsNullOrEmpty(d["MarketCode"].ToString()) ? d["MarketCode"] : "",
+                                  FromFolioID = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  FromName = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  FromRoom = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  ToFolioID = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  Name = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  ToName = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                                  ToRoom = !string.IsNullOrEmpty(d["RateCode"].ToString()) ? d["RateCode"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public ActionResult PostingHistory()
+        {
+            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listuser;
+            return View();
+        }
     }
 }

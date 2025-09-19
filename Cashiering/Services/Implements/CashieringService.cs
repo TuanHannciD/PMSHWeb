@@ -147,5 +147,43 @@ namespace Cashiering.Services.Implements
             return DataTableHelper.getTableData("spExchangeCurrencySearch", param);
 
         }
+        public DataTable FolioHistoryView(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string fromRoom, string toRoom, string actionType, string user)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@FromDate", fromDate.ToString("yyyy-MM-dd")),
+                new SqlParameter("@ToDate", toDate.ToString("yyyy-MM-dd")),
+                new SqlParameter("@FromFolioID", fromFolioID ?? ""),
+                new SqlParameter("@ToFolioID", toFolioID ?? ""),
+                new SqlParameter("@FromRoom", fromRoom ?? ""),
+                new SqlParameter("@ToRoom", toRoom ?? ""),
+                new SqlParameter("@ActionType", actionType ?? ""),
+                new SqlParameter("@User", user ?? "")
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSearchPostingHistoryGeneral", param);
+            return myTable;
+        }
+        public DataTable SearchPostingHistoryDetail(string invoiceNo)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@InvoiceNo", invoiceNo )
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSearchPostingHistoryDetail", param);
+            return myTable;
+        }
+        public DataTable CashierReport(int shiftID, int mode)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@ShiftID", shiftID ),
+                new SqlParameter("@Mode", mode ),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spCashierReport", param);
+            return myTable;
+        }
     } 
 }

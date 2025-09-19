@@ -45,7 +45,10 @@ namespace Cashiering.Services.Interfaces
         public DataTable ShiftDetail(int shiftID, int type);
         public DataTable ExchangeRate();
         public DataTable ExchangeCurrency(string account, string passPort, string roomNo, DateTime fromDate, DateTime toDate, int isDelete);
+        public DataTable FolioHistoryView(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string fromRoom, string toRoom, string actionType, string user);
+        public DataTable SearchPostingHistoryDetail(string invoiceNo);
 
+        public DataTable CashierReport(int shiftID, int mode);
     }
 }
 

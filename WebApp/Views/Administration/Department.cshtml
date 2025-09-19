@@ -131,6 +131,25 @@
                         <a class="menu-item active"> DEPARTMENT</a>
                     </div>
                 </div>
+                <div class="menu-group">
+                    <div class="menu-group-title">
+                        Owner <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-left">
+                        <a class="menu-item" asp-controller="Administration" asp-action="Owner"> OWNER</a>
+
+                    </div>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-group-title">
+                        Property Type<i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-left">
+                        <a class="menu-item" asp-controller="Administration" asp-action="PropertyType"> PROPERTY TYPE</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="Property"> PROPERTY</a>
+                        <a class="menu-item" asp-controller="Administration" asp-action="PropertyPermission"> PROPERTY PERMISSION</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -296,6 +315,7 @@
             }
         });
     });
+
         function editMember(data) {
         $("#id").val(data.id);                   // hidden field
         $("#txtcode").val(data.code);            // ánh xạ Code
