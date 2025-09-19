@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.Data.SqlClient;
 namespace BaseBusiness.BO
 {
+    using Dapper;
     public class FolioDetailBO : BaseBO
     {
         private FolioDetailFacade facade = FolioDetailFacade.Instance;
@@ -57,6 +58,11 @@ namespace BaseBusiness.BO
                            $"and ReservationID = {rsvID}\r\n" +
                            (string.IsNullOrEmpty(userIDsString) || userIDsString == "0" ? "" : $"and UserInsertID IN ({userIDsString})\r\n");
             return instance.GetList<string>(query);
+        }
+        public FolioDetailModel GetById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT ID, TransactionCode, Price, Description, TransactionDate, ArticleCode, Reference, CheckNo, UserID, UserName, UserInsertID, CreateDate,  UserUpdateID, UpdateDate FROM FolioDetail WHERE ID = @id";
+            return conn.QuerySingleOrDefault<FolioDetailModel>(sql, new { id }, tx);
         }
     }
 }

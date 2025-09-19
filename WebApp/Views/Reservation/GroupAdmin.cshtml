@@ -2,91 +2,73 @@
 @using Reservation.Dto
 <link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" />
 @model List<ReservationSearchDTO>
-<div class="body">
-    <div class="container2">
+<div class="mt-3">
+    <div class="row">
+        <div class="col-md-2 mb-2">
+            <div class="menu-left">
+                <button class="toggle-btn"><i class="fas fa-bars"></i></button>
+                <a class="menu-item active">NEW RESERVATION</a>
+                <a class="menu-item" asp-controller="Reservation" asp-action="SearchReservation">SEARCH RESERVATION</a>
+                <a class="menu-item" asp-controller="Reservation" asp-action="GroupReservation">GROUP RESERVATION</a>
+                <a class="menu-item" href="/Reservation/WaitList">WAIT LIST</a>
 
-        <div class="text-center" style="font-size: 20px;">Group Admin</div>
-        <div class="rs-header " style="column-gap:8px">
-            <div class="rs-toggle-btn" onclick="toggleCollapse()">
-                <span class="rs-toggle-icon" id="collapseIcon">−</span>
-                <span id="collapseTitle">Hide Functions</span>
-            </div>
-            <div class="rs-column">
-                <div class="rs-section">
-                    <ul class="rs-menu-list">
-                        <li><a href="/Home/Index" class="rs-bold">Home</a></li>
-                        <li><a href="/Reservation/NewReservation" class="rs-bold">New Reservation</a></li>
-                        <li><a href="/Reservation/SearchReservation" class="rs-bold">Search Reservation</a></li>
-
-                        <li><a href="/Home/Index" class="rs-bold">Close</a></li>
-
-                    </ul>
-                </div>
+                <a class="menu-item" href="/Reservation/OverBooking">OVER BOOKING</a>
             </div>
         </div>
-        <!-- Content Box -->
-        <div class="rs-content-box row" id="infoBox" style="margin:0 2px">
+        <div class="col-md-10">
+            <div class="header">
+                    <h3 id="content-title">Group Admin</h3>
+                    <i class="fas fa-info-circle info-icon" title="Reservation Lookup Information"></i>
+            </div>
+            <div class="function-menu mui-card">
 
-            <div class="rs-column">
-                <div class="rs-section">
-                    <h4>Reservation Functions</h4>
-                    <ul class="rs-menu-list">
-                        <li><a class="rs-bold">Advance</a></li>
-                        <li><a class="rs-bold">Cancel</a></li>
-                        <li><a class="rs-bold" onclick="openModalSplit();">Split</a></li>
-                        <li class="dropdown-toggle">
-                            <a class="rs-bold">Room Assignment</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="rs-bold" onclick="openRoomAssignment();" id="assignRoom">Assignment</a></li>
-                                <li><a class="rs-bold" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown-toggle">
-                            <a class="rs-bold">Check In</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="rs-bold" onclick="openRoomAssignment();" id="assignRoom">Check In</a></li>
-                                <li><a class="rs-bold" onclick="openModalGroupCheckIn();">Group Check In</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                <a href="#" >Advance</a>
+                <a href="#" >Cancel</a>
+                <a href="#" onclick="openModalSplit();">Split</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Room Assignment</a>
+                    <div class="dropdown-menu-custom">
+                        <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                        <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Check In</a>
+                    <div class="dropdown-menu-custom">
+                        <a href="#" onclick="openRoomAssignment();" id="assignRoom">Check In</a>
+                        <a href="#" onclick="openModalGroupCheckIn();">Group Check In</a>
+
+                    </div>
+                </div>
+                <a href="#" onclick="roomSharer();">Room Sharer</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Display</a>
+                    <div class="dropdown-menu-custom">
+                        <a href="#" onclick="filterDisplay(2)" >Reservation</a>
+                        <a href="#" onclick="filterDisplay(1)">Guest In House</a>
+                        <a href="#" onclick="filterDisplay(6)">Checked Out</a>
+                        <a href="#" onclick="filterDisplay(7)">Cancellation</a>
+                        <a href="#" onclick="filterDisplay(9)">Wait List</a>
+                        <a href="#" onclick="filterDisplay(8)">NoShow</a>
+                        <a href="#" onclick="filterDisplay(0)">General</a>
+                    </div>
                 </div>
             </div>
-
-
-        </div>
-
-
-
-        <div class="rs-content-box row" style="gap:0;margin:0 2px">
-
-            <div id="gridContainer" class="mt-2 gridContainer"></div>
+            <div id="gridContainer" class="mt-2 gridContainer mui-card"></div>
         </div>
     </div>
 </div>
+
 @await Html.PartialAsync("GroupAdmin/GroupCheckIn")
 
 <script>
     $(document).ready(async function () {
-            var data = @Html.Raw(JsonConvert.SerializeObject(Model));
-            initializeDataGridSearch(data);
+        var result = @Json.Serialize(ViewBag.Reservation);
+        initializeDataGridSearch(result);
     });
-    var listData = [];
-    function toggleCollapse() {
-        const box = document.getElementById("infoBox");
-        const icon = document.getElementById("collapseIcon");
-        const title = document.getElementById("collapseTitle");
 
-        if (box.classList.contains("rs-hidden")) {
-            box.classList.remove("rs-hidden");
-            icon.textContent = "−";
-            title.textContent = "Hide Functions"
-        } else {
-            box.classList.add("rs-hidden");
-            icon.textContent = "+";
-            title.textContent = "Show Functions"
-        }
-    }
-        var idReservation = 0;
+    var idReservation = 0;
     var status = '';
     var roomStatus = '';
     var roomNo = '';
@@ -98,7 +80,6 @@
     var lastname = '';
     var listData = [];
     var roomType = '';
-    var listReservationByConfirmationNo = [];
     function initializeDataGridSearch(data) {
         listData = data;
         $("#gridContainer").dxDataGrid({
@@ -210,5 +191,72 @@
                 }
             }
         });
+    }
+
+    function roomSharer(){
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+        formData.append('rsvID', idReservation);
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+
+        $.ajax({
+            url: '/Reservation/RoomSharer',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    initializeDataGridSearch(data.reservations);
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    function filterDisplay(type){
+        //general
+        if(type == 0){
+            var listItem = listData.filter(item => item.ReservationStatus != 3 && item.ReservationStatus != 4 && item.ReservationStatus != 7 );
+            initializeDataGridSearch(listItem);
+        }
+        //guest in house
+        if(type == 1){
+            var listItem = listData.filter(item => item.ReservationStatus == 1 || item.ReservationStatus == 6);
+            initializeDataGridSearch(listItem);
+        }
+        //reservation
+        if(type == 2){
+            var listItem = listData.filter(item => item.ReservationStatus == 0 || item.ReservationStatus == 5);
+            initializeDataGridSearch(listItem);
+        }
+        // checked out
+        if(type == 6){
+            var listItem = listData.filter(item => item.ReservationStatus == 2);
+            initializeDataGridSearch(listItem);
+        }
+        //cancellation
+        if(type == 7){
+            var listItem = listData.filter(item => item.ReservationStatus == 3);
+            initializeDataGridSearch(listItem);
+        }
+        //wait list
+        if(type == 9){
+            var listItem = listData.filter(item => item.ReservationStatus == 4);
+            initializeDataGridSearch(listItem);
+        }
+        //noshow
+        if(type == 8){
+            var listItem = listData.filter(item => item.ReservationStatus == 7);
+            initializeDataGridSearch(listItem);
+        }
     }
 </script>

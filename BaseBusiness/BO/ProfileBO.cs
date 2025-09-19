@@ -99,5 +99,46 @@ namespace BaseBusiness.BO
             DataTable myTable = DataTableHelper.getTableData("spProfileSearch_ALL", param);
             return myTable;
         }
+
+        public static (DataTable, int) GetAllProfile2(string code, string account, string firstName, string keyWord, string city, int type, bool showSaleInCharge, int page, int pageSize)
+        {
+            code = code ?? "";
+            account = account ?? "";
+            firstName = firstName ?? "";
+            keyWord = keyWord ?? "";
+            city = city ?? "";
+
+            string typeS = type switch
+            {
+                0 => "1", // Corporate
+                1 => "2", // Company
+                2 => "3", // Source
+                3 => "0", // Individual
+                4 => "4", // Group
+                5 => "5", // Contact
+                6 => "",  // All
+                _ => ""
+            };
+
+            string _saleInCharge = showSaleInCharge ? "true" : "";
+
+            SqlParameter[] param = new SqlParameter[]
+            {
+        new SqlParameter("@Code", code),
+        new SqlParameter("@Account", account),
+        new SqlParameter("@FirstName", firstName),
+        new SqlParameter("@Keyword", keyWord),
+        new SqlParameter("@City", city),
+        new SqlParameter("@Type", typeS),
+        new SqlParameter("@ShowSaleInCharge", _saleInCharge),
+        new SqlParameter("@Page", page),
+        new SqlParameter("@PageSize", pageSize)
+            };
+
+            DataSet dataSet = DataTableHelper.GetDataSet("spProfileSearch_ALL2", param);
+            DataTable myTable = dataSet.Tables[0];
+            int totalCount = Convert.ToInt32(dataSet.Tables[1].Rows[0][0]);
+            return (myTable, totalCount);
+        }
     }
 }

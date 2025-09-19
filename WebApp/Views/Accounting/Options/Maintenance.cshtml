@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content" style="border: 1px solid #bcbcbc">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabelBilling">Account Maintenanace</h5>
+                <h5 class="modal-title">Account Maintenanace</h5>
                 <button type="button" class="btn-close" onclick="closeModalMaintenance()"></button>
             </div>
             <div class="modal-body">
@@ -143,6 +143,7 @@
         });
 
     }
+
     function initializeDataGridMaintenance(data) {
 
        $("#gridContainerMaintenance").dxDataGrid({
@@ -171,6 +172,7 @@
            onRowClick: function (e) {
                const grid = $("#gridContainerMaintenance").dxDataGrid("instance");
                grid.selectRows([e.key], false);
+
            },
        });
     }

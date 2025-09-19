@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
@@ -44,11 +45,16 @@ namespace Reservation.Controllers
         private readonly IMessageService _iMessageService;
         private readonly IShareService _iShareService;
         private readonly IGroupAdminService _iGroupAdminService;
+        private readonly string _secretKey;
+        private readonly string _iv;
         public ReservationController(ILogger<ReservationController> logger,
                 IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService,
                 IDepositService iDepositService, IRoutingService iRoutingService, IGroupReservationService iGroupReservationService,
                 IMessageService iMessageService, IShareService iShareService,IGroupAdminService iGroupAdminService)
         {
+            _secretKey = configuration["Encryption:Key"] ?? throw new ArgumentNullException("Encryption:Key is missing in configuration");
+            _iv = configuration["Encryption:IV"] ?? throw new ArgumentNullException("Encryption:IV is missing in configuration");
+
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
@@ -61,18 +67,43 @@ namespace Reservation.Controllers
             _iShareService = iShareService;
             _iGroupAdminService = iGroupAdminService;
         }
-
-        public IActionResult NewReservation()
+        [HttpPost]
+        public IActionResult EncryptId(int id)
         {
+            try
+            {
+                string encryptedId = Encrypt(id.ToString(), _secretKey, _iv);
+                return Json(new { success = true, encryptedId });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        public IActionResult NewReservation(string key)
+        {
+            int? id = null;
+            if (!string.IsNullOrEmpty(key))
+            {
+                try
+                {
+                    string decryptedId = Decrypt(key, _secretKey, _iv);
+                    id = int.Parse(decryptedId);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("Invalid key");
+                }
+            }
+
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.cboNationality = ListItemHelper.GetNationalityProvider();
             ViewBag.cboTitle = ListItemHelper.GetTitleProviderRSV();
             ViewBag.cboCity = ListItemHelper.GetCityProvider();
             ViewBag.cboVIP = ListItemHelper.GetVIPProvider();
             ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
-            ViewBag.cboProfileAgent = ListItemHelper.GetProfileAgentProvider();
-            ViewBag.cboProfileCompany = ListItemHelper.GetProfileCompanyProvider();
-            ViewBag.cboProfileContact = ListItemHelper.GetProfileContactProvider();
+
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
             ViewBag.cboCurrency = ListItemHelper.GetCurrencyProvider();
             ViewBag.cboPackage = ListItemHelper.GetPackagesProvider();
@@ -90,9 +121,56 @@ namespace Reservation.Controllers
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
             ViewBag.configETA = _iReservationService.GetConfigETA();
             ViewBag.configETD = _iReservationService.GetConfigETD();
+
+            ReservationModel reservation = new ReservationModel();
+            if (id.HasValue)
+            {
+                reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(id.Value);
+            }
+            ViewBag.Reservation = reservation;
             return View();
         }
 
+        private string Encrypt(string plainText, string key, string iv)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.IV = Encoding.UTF8.GetBytes(iv);
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
+                using (var ms = new System.IO.MemoryStream())
+                {
+                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    using (var sw = new System.IO.StreamWriter(cs))
+                    {
+                        sw.Write(plainText);
+                    }
+                    return Convert.ToBase64String(ms.ToArray());
+                }
+            }
+        }
+
+        private string Decrypt(string cipherText, string key, string iv)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.IV = Encoding.UTF8.GetBytes(iv);
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                using (var decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                using (var ms = new System.IO.MemoryStream(Convert.FromBase64String(cipherText)))
+                using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                using (var sr = new System.IO.StreamReader(cs))
+                {
+                    return sr.ReadToEnd();
+                }
+            }
+        }
 
         public IActionResult SearchReservation()
         {
@@ -144,25 +222,40 @@ namespace Reservation.Controllers
 
             return View();
         }
-        [HttpPost]
-        public IActionResult SetDataGroupAdmin([FromBody] List<ReservationSearchDTO> data)
-        {
-            TempData["ListData"] = JsonConvert.SerializeObject(data);
-            return Json(new { redirectUrl = Url.Action("GroupAdmin") });
-        }
 
-        public IActionResult GroupAdmin()
-        {
-            List<ReservationSearchDTO> listData = new List<ReservationSearchDTO>();
 
-            if (TempData["ListData"] != null)
+        public IActionResult GroupAdmin(string key)
+        {
+            int? id = null;
+            if (!string.IsNullOrEmpty(key))
             {
-                string json = TempData["ListData"].ToString();
-                listData = JsonConvert.DeserializeObject<List<ReservationSearchDTO>>(json);
+                try
+                {
+                    string decryptedId = Decrypt(key, _secretKey, _iv);
+                    id = int.Parse(decryptedId);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("Invalid key");
+                }
             }
 
-            return View(listData);
+            List<Dictionary<string, object>> reservations = new List<Dictionary<string, object>>();
+            if (id.HasValue)
+            {
+                DataTable reservationTable = _iGroupAdminService.spReservationSearchByConfirmationNo(id.ToString());
+                reservations = reservationTable.AsEnumerable().Select(row =>
+                    reservationTable.Columns.Cast<DataColumn>()
+                        .ToDictionary(
+                            column => column.ColumnName,
+                            column => row[column] is DBNull ? null : row[column]
+                        )
+                ).ToList();
+            }
 
+            ViewBag.Reservation = reservations;
+
+            return View();
         }
         public IActionResult OverBooking()
         {
@@ -817,8 +910,26 @@ namespace Reservation.Controllers
                 }
 
                 reservationModel.BookerDetails = "";
-                reservationModel.NoPost = false;
-                reservationModel.PrintRate = false;
+                if (int.Parse(Request.Form["noPost"].ToString()) == 1)
+                {
+                    reservationModel.NoPost = true;
+
+                }
+                else
+                {
+                    reservationModel.NoPost = false;
+
+                }
+                if(int.Parse(Request.Form["printRate"].ToString()) == 1)
+                {
+                    reservationModel.PrintRate = true;
+
+                }
+                else
+                {
+                    reservationModel.PrintRate = false;
+
+                }
                 reservationModel.ConfirmationStatus = true;
                 reservationModel.VideoCheckOutStatus = false;
                 reservationModel.CRSNo = "";
@@ -998,7 +1109,8 @@ namespace Reservation.Controllers
                 folioModel.ReservationID = (int)reservationID;
                 folioModel.ProfileID = reservationModel.ProfileIndividualId;
                 folioModel.AccountName = reservationModel.LastName;
-                folioModel.Status = true;
+                reservationModel.NoPost = true ? folioModel.Status = true : folioModel.Status = false;
+
                 folioModel.ConfirmationNo = reservationModel.ConfirmationNo;
                 folioModel.BalanceUSD = folioModel.BalanceVND = reservationModel.RateAfterTax;
                 folioModel.CreateDate = folioModel.UpdateDate = DateTime.Now;
@@ -4340,6 +4452,89 @@ namespace Reservation.Controllers
                 #endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Check out was successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Group Admin: Room Sharer
+        [HttpPost]
+        public ActionResult RoomSharer()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                int reservationID = int.Parse(Request.Form["rsvID"].ToString());
+                ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                if (rsv == null || rsv.ID == 0)
+                {
+                    return Json(new { code = 1, msg = " Could not find Reservation" });
+
+                }
+                if(rsv.MainGuest == false)
+                {
+                    return Json(new { code = 1, msg = " This selected is not main guest reservation" });
+
+                }
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+                ReservationModel rsvRoomSharer = (ReservationModel)rsv.Clone();
+                foreach (var prop in typeof(ReservationModel).GetProperties())
+                {
+                    if (prop.CanWrite && prop.Name != "ID")
+                    {
+                        prop.SetValue(rsvRoomSharer, prop.GetValue(rsv));
+                    }
+                }
+                long idRoomSharer = ReservationBO.Instance.Insert(rsvRoomSharer);
+                ReservationModel rsvUpdate = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(idRoomSharer);
+                rsvUpdate.ReservationNo = rsvUpdate.PinCode = rsvUpdate.ID.ToString();
+                rsvUpdate.ReservationDate = businessDateModel[0].BusinessDate;
+                rsvUpdate.NoOfAdult = rsvUpdate.NoOfChild = rsvUpdate.NoOfChild1 = rsvUpdate.NoOfChild2 = rsvUpdate.NoOfRoom = 0;
+                rsvUpdate.DiscountAmount = rsvUpdate.DiscountRate = 0;
+                rsvUpdate.PackageId = 0;
+                rsvUpdate.Packages = "";
+                rsvUpdate.MainGuest = false;
+                rsvUpdate.RateCodeId = 0;
+                rsvUpdate.Rate = rsvUpdate.RateAfterTax  = rsvUpdate.TotalAmount = 0;
+                rsvUpdate.RoutingToProfile = "";
+                ReservationBO.Instance.Update(rsvUpdate);
+                #region thêm log activity log
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.ObjectID = rsvUpdate.ID;
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "Insert";
+                activityLog.OldValue = activityLog.NewValue = activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+
+                List<Dictionary<string, object>> reservations = new List<Dictionary<string, object>>();
+                if (rsvUpdate.ConfirmationNo != "")
+                {
+                    DataTable reservationTable = _iGroupAdminService.spReservationSearchByConfirmationNo(rsvUpdate.ConfirmationNo);
+                    reservations = reservationTable.AsEnumerable().Select(row =>
+                        reservationTable.Columns.Cast<DataColumn>()
+                            .ToDictionary(
+                                column => column.ColumnName,
+                                column => row[column] is DBNull ? null : row[column]
+                            )
+                    ).ToList();
+                }
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Room Sharer was successfully", reservations = reservations });
             }
             catch (Exception ex)
             {

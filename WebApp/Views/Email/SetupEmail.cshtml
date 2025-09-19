@@ -1,0 +1,287 @@
+﻿<link href="~/css/pages/setup-email.css" rel="stylesheet" asp-append-version="true"/>
+
+
+<div class="container">
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Email Configuration Wizard</h1>
+
+    <div class="content-container">
+        <div class="form-container">
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#step-1">Email Config</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#step-2">Parameters</a>
+                </li>
+            </ul>
+
+            <form id="multi-step-form">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active step step-1 mui-card" id="step-1">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-6">Step 1: Email Configuration</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label text-sm font-medium text-gray-700 mb-1">Sender Name</label>
+                                <div class="input-container">
+                                    <input type="text" id="senderName" class="input-field form-control" placeholder="Enter sender name" disabled>
+                                    <i class="fas fa-edit edit-icon" data-input="senderName"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label text-sm font-medium text-gray-700 mb-1">Host</label>
+                                <div class="input-container">
+                                    <input type="text" id="host"  class="input-field form-control" placeholder="e.g., smtp.gmail.com" disabled>
+                                    <i class="fas fa-edit edit-icon" data-input="host"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label text-sm font-medium text-gray-700 mb-1">Port</label>
+                                <div class="input-container">
+                                    <input type="number" id="port"  class="input-field form-control" placeholder="e.g., 587" disabled>
+                                    <i class="fas fa-edit edit-icon" data-input="port"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label text-sm font-medium text-gray-700 mb-1">Username</label>
+                                <div class="input-container">
+                                    <input type="email" id="username" class="input-field form-control" placeholder="Enter username" disabled>
+                                    <i class="fas fa-edit edit-icon" data-input="username"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <div class="input-container">
+                                    <input type="password" id="password"  class="input-field form-control" placeholder="Enter password" disabled>
+                                    <i class="fas fa-edit edit-icon" data-input="password"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="enableSsl"  class="h-4 w-4 text-blue-500 rounded" disabled>
+                                <label class="text-sm font-medium text-gray-700">Enable SSL</label>
+                                <i class="fas fa-edit edit-icon" data-input="enableSsl"></i>
+                            </div>
+                            <button type="button" class="btn btn-primary w-full next-step" onclick="SaveEmailConfig()">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade step step-2 mui-card" id="step-2">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-6">Step 2: Define Parameters</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label text-sm font-medium text-gray-700 mb-1">Parameter Key</label>
+                                <div class="input-container">
+                                    <input type="text" id="paramKey" class="input-field form-control flex-1" placeholder="e.g., ##name##">
+                                    <button type="button" id="addParamBtn" class="btn btn-primary ms-2" onclick="SaveParam()">Add</button>
+                                </div>
+                                <p id="paramSuccess" class="success-message">Parameter added successfully!</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">Parameters List</h3>
+                                <div class="param-list-container">
+                                    <ul id="paramList" class="space-y-2"></ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <div class="config-table">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Contact Email</h2>
+                <div id="gridContainer" class="gridContainer mt-2"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<script>
+    function getEmailConfig(){
+        $.ajax({
+            url: '/Email/GetEmailConfig',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#senderName').val(result.senderName);
+                $('#host').val(result.host);
+                $('#port').val(result.port);
+                $('#username').val(result.userName);
+                $('#password').val(result.password);
+                $('#enableSsl').prop('checked', result.ssl == 1); // Check checkbox if result.ssl == 1
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+
+    function SaveEmailConfig() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+
+        formData.append('senderName', $('#senderName').val());
+        formData.append('host', $('#host').val());
+        formData.append('port', $('#port').val());
+        formData.append('userNameEmail', $('#username').val());
+        formData.append('password', $('#password').val());
+        let valueSSL = $('#ssl').is(':checked') ? 1 : 0;
+
+        formData.append('ssl', valueSSL);
+        formData.append('userName', userName);
+        formData.append('userID',userID);
+        $.ajax({
+            url: '/Email/SaveConfigEmail',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    getEmailConfig();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+    $(document).ready(function() {
+        getEmailConfig();
+        getAllParam();
+        getAllContactEmail();
+    });
+    $('.edit-icon').on('click', function() {
+        const inputId = $(this).data('input');
+        const input = $('#' + inputId);
+        input.prop('disabled', !input.prop('disabled'));
+        $(this).toggleClass('fa-edit fa-lock');
+        if (!input.prop('disabled')) {
+            input.focus();
+        }
+    });
+
+    function getAllParam(){
+        $.ajax({
+            url: '/Email/GetAllParameter',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#paramList').empty();
+                var html = '';
+                if(result.length > 0){
+                    result.forEach(function(param) {
+                        html += `<li class="param-item flex justify-between items-center p-2 border rounded">
+                                    <span>${param.parameter}</span>
+                                 </li>`;
+                    });
+                } else {
+                    html = '<li class="text-gray-500">No parameters added yet.</li>';
+                }
+                $('#paramList').append(html);
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+
+    function SaveParam() {
+        var formData = new FormData();
+        formData.append('param', $('#paramKey').val());
+        $.ajax({
+            url: '/Email/SaveParam',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    getAllParam();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+
+    function getAllContactEmail(){
+        $.ajax({
+            url: '/Email/GetAllTemplateEmail',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGrid(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    function initializeDataGrid(data) {
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            keyExpr: "id",
+            allowColumnResizing: true,
+            columns: [
+
+                { dataField: "id", caption: "ID", visible: false },
+                { dataField: "name", caption: "Subject" },
+                { dataField: "content", caption: "Content" },
+  
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual'
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "always"
+            },
+
+ 
+        });
+
+
+    }
+</script>

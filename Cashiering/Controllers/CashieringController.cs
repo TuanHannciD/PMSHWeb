@@ -749,6 +749,230 @@ namespace Cashiering.Controllers
         }
 
         #endregion
+
+        [HttpGet]
+        public IActionResult GetFolioHistoryView(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string fromRoom, string toRoom, string actionType, string user)
+        {
+            try
+            {
+                DataTable dataTable = _iCashieringService.FolioHistoryView(fromDate, toDate, fromFolioID, fromRoom, toRoom, toFolioID, actionType, user);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Property = !string.IsNullOrEmpty(d["Property"].ToString()) ? d["Property"] : "",
+                                  ActionText = !string.IsNullOrEmpty(d["ActionText"].ToString()) ? d["ActionText"] : "",
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  ActionDate = !string.IsNullOrEmpty(d["ActionDate"].ToString()) ? d["ActionDate"] : "",
+                                  ActionUser = !string.IsNullOrEmpty(d["ActionUser"].ToString()) ? d["ActionUser"] : "",
+                                  AmountIncTax = !string.IsNullOrEmpty(d["AmountIncTax"].ToString()) ? d["AmountIncTax"] : "",
+                                  MoreInformation = !string.IsNullOrEmpty(d["MoreInformation"].ToString()) ? d["MoreInformation"] : "",
+                                  Machine = !string.IsNullOrEmpty(d["Machine"].ToString()) ? d["Machine"] : "",
+                                  InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",
+                                  ActionType = !string.IsNullOrEmpty(d["ActionType"].ToString()) ? d["ActionType"] : "",
+                                  FromFolioID = !string.IsNullOrEmpty(d["FromFolioID"].ToString()) ? d["FromFolioID"] : "",
+                                  FromName = !string.IsNullOrEmpty(d["FromName"].ToString()) ? d["FromName"] : "",
+                                  FromRoom = !string.IsNullOrEmpty(d["FromRoom"].ToString()) ? d["FromRoom"] : "",
+                                  ToFolioID = !string.IsNullOrEmpty(d["ToFolioID"].ToString()) ? d["ToFolioID"] : "",
+                                  ToName = !string.IsNullOrEmpty(d["ToName"].ToString()) ? d["ToName"] : "",
+                                  ToRoom = !string.IsNullOrEmpty(d["ToRoom"].ToString()) ? d["ToRoom"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        public ActionResult FolioHistoryView()
+        {
+            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listuser;
+            return View();
+        }
+        [HttpGet]
+        public IActionResult GetSearchPostingHistoryDetail(string invoiceNo)
+        {
+            try
+            {
+                DataTable dataTable = _iCashieringService.SearchPostingHistoryDetail(invoiceNo);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  ActionText = !string.IsNullOrEmpty(d["ActionText"].ToString()) ? d["ActionText"] : "",
+                                  ReasonText = !string.IsNullOrEmpty(d["ReasonText"].ToString()) ? d["ReasonText"] : "",
+                                  TransactionDate = !string.IsNullOrEmpty(d["TransactionDate"].ToString()) ? d["TransactionDate"] : "",
+                                  FolioID = !string.IsNullOrEmpty(d["FolioID"].ToString()) ? d["FolioID"] : "",
+                                  ActionDate = !string.IsNullOrEmpty(d["ActionDate"].ToString()) ? d["ActionDate"] : "",
+                                  ActionUser = !string.IsNullOrEmpty(d["ActionUser"].ToString()) ? d["ActionUser"] : "",
+                                  AccountName = !string.IsNullOrEmpty(d["AccountName"].ToString()) ? d["AccountName"] : "",
+                                  Machine = !string.IsNullOrEmpty(d["Machine"].ToString()) ? d["Machine"] : "",
+                                  InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",
+                                  ActionType = !string.IsNullOrEmpty(d["ActionType"].ToString()) ? d["ActionType"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+        private int GetCurrentShiftID()
+        {
+            string loginName = HttpContext.Session.GetString("LoginName") ?? "";
+            int shiftID = 0;
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+
+                var cmd = new SqlCommand(@"
+            SELECT TOP 1 ShiftID 
+            FROM FolioDetail 
+            WHERE UserName = @LoginName 
+            ORDER BY TransactionDate DESC", connection);
+
+                cmd.Parameters.AddWithValue("@LoginName", loginName);
+
+                var queryResult = cmd.ExecuteScalar();
+                if (queryResult != null)
+                    shiftID = Convert.ToInt32(queryResult);
+            }
+
+            return shiftID;
+        }
+
+
+        [HttpGet]
+        public IActionResult GetCashierReport(int mode)
+        {
+            try
+            {
+                int shiftID = GetCurrentShiftID();
+
+                DataTable dataTable = _iCashieringService.CashierReport(shiftID, mode);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Room = d["Room"]?.ToString() ?? "",
+                                  AccountName = d["AccountName"]?.ToString() ?? "",
+                                  FolioNo = d["FolioNo"]?.ToString() ?? "",
+                                  TransactionDate = d["TransactionDate"]?.ToString() ?? "",
+                                  TransactionCode = d["TransactionCode"]?.ToString() ?? "",
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  Supplement = d["Supplement"]?.ToString() ?? "",
+                                  Amount = d["Amount"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  InvoiceNo = d["InvoiceNo"]?.ToString() ?? "",
+                                  WinNo = d["WinNo"]?.ToString() ?? "",
+                                  ArNo = d["ArNo"]?.ToString() ?? "",
+                                  ShiftID = d["ShiftID"]?.ToString() ?? "",
+                                  DebitVND = d["DebitVND"]?.ToString() ?? "",
+                                  CreditVND = d["CreditVND"]?.ToString() ?? "",
+                                  DebitUSD = d["DebitUSD"]?.ToString() ?? "",
+                                  CreditUSD = d["CreditUSD"]?.ToString() ?? "",
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        public ActionResult CashierReport()
+        {
+            int shiftID = GetCurrentShiftID();
+            ViewBag.ShiftID = shiftID;   // 👈 Gửi ra view
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateFolioDetail()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                FolioDetailModel member = new FolioDetailModel();
+
+                // Lấy ID từ form
+                member.ID = int.Parse(Request.Form["hiddenID"]);
+
+                member.Price = Convert.ToDecimal(Request.Form["txtprice"]);
+                member.Quantity = Convert.ToInt32(Request.Form["txtquantity"]);
+                member.Supplement = Request.Form["txtsupplement"].ToString();
+                member.Reference = Request.Form["txtreference"].ToString();
+                member.TransactionDate = Convert.ToDateTime(Request.Form["txttransactionDatee"]);
+                int loginName = HttpContext.Session.GetInt32("UserID") ?? 0;
+                member.UserUpdateID = member.UserInsertID;
+                member.CreateDate = DateTime.Now;
+                member.UpdateDate = DateTime.Now;
+
+                if (member.ID == 0) // Insert mới
+                {
+                    member.UserInsertID = loginName;
+                    member.CreateDate = DateTime.Now;
+                    member.UserUpdateID = loginName;
+                    member.UpdateDate = DateTime.Now;
+
+                    FolioDetailBO.Instance.Insert(member);
+                }
+                else // Update
+                {
+                    // Trước khi update, lấy lại bản ghi cũ từ DB để giữ CreatedBy, CreatedDate
+                    var oldData = FolioDetailBO.Instance.GetById(member.ID, pt.Connection, pt.Transaction);
+
+                    if (oldData != null)
+                    {
+                        member.TransactionCode = oldData.TransactionCode;
+                        member.Description = oldData.Description;
+                        member.Amount = oldData.Amount;
+                        member.CurrencyID = oldData.CurrencyID;
+                        member.ArticleCode = oldData.ArticleCode;
+                        member.CheckNo = oldData.CheckNo;
+                        member.UserInsertID = oldData.UserInsertID;
+                        member.CreateDate = oldData.CreateDate;
+                    }
+
+                    member.UserUpdateID = loginName;
+                    member.UpdateDate = DateTime.Now;
+
+                    FolioDetailBO.Instance.Update(member);
+                }
+
+                pt.CommitTransaction();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+
     }
 }
 

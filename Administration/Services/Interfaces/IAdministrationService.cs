@@ -39,5 +39,11 @@ namespace Administration.Services.Interfaces
         public DataTable ReservationType();
         public DataTable Currency();
         public DataTable hkpEmployee(string code, string name, int inactive);
+        public DataTable Property();
+        public DataTable PropertyPermission(string userID);
+        public DataTable StatusList();
+        public DataTable ConfigSystem();
+        public DataTable Member(DateTime fromDate, DateTime toDate, string status, string memberID, int isSortByCardName);
+        public DataTable PostingHistory(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string actionType, string user);
     }
 }
