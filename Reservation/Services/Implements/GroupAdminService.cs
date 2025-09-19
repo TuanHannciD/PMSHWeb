@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.BO;
 using BaseBusiness.util;
+using DevExpress.XtraGauges.Core.Base;
 using Microsoft.Data.SqlClient;
 using Reservation.Services.Interfaces;
 using System;
@@ -27,6 +28,26 @@ namespace Reservation.Services.Implements
                 };
 
                 DataTable myTable = DataTableHelper.getTableData("spGroupCheckInByConfirmationNo", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable spReservationSearchByConfirmationNo(string ConfirmationNo)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@ConfirmationNo", ConfirmationNo),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationSearchByConfirmationNo", param);
                 return myTable;
             }
             catch (SqlException ex)

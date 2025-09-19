@@ -434,7 +434,22 @@ namespace BaseBusiness.bc
                 throw new BOException("Could not update to database: " + ex.Message);
             }
         }
-
+        public virtual string InsertStringNoneId(BaseModel model)
+        {
+            try
+            {
+                PreSavingChecking(model);
+                return baseFacade.InsertStringNoneId(model); // g?i xu?ng BaseFacade x? lý
+            }
+            catch (BOException boe)
+            {
+                throw boe;
+            }
+            catch (Exception ex)
+            {
+                throw new BOException("Could not update to database: " + ex.Message);
+            }
+        }
         public virtual string InsertStringId(BaseModel model, SqlConnection conn, SqlTransaction tx)
         {
             try

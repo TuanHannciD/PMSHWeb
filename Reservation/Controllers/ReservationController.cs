@@ -222,25 +222,40 @@ namespace Reservation.Controllers
 
             return View();
         }
-        [HttpPost]
-        public IActionResult SetDataGroupAdmin([FromBody] List<ReservationSearchDTO> data)
-        {
-            TempData["ListData"] = JsonConvert.SerializeObject(data);
-            return Json(new { redirectUrl = Url.Action("GroupAdmin") });
-        }
 
-        public IActionResult GroupAdmin()
-        {
-            List<ReservationSearchDTO> listData = new List<ReservationSearchDTO>();
 
-            if (TempData["ListData"] != null)
+        public IActionResult GroupAdmin(string key)
+        {
+            int? id = null;
+            if (!string.IsNullOrEmpty(key))
             {
-                string json = TempData["ListData"].ToString();
-                listData = JsonConvert.DeserializeObject<List<ReservationSearchDTO>>(json);
+                try
+                {
+                    string decryptedId = Decrypt(key, _secretKey, _iv);
+                    id = int.Parse(decryptedId);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("Invalid key");
+                }
             }
 
-            return View(listData);
+            List<Dictionary<string, object>> reservations = new List<Dictionary<string, object>>();
+            if (id.HasValue)
+            {
+                DataTable reservationTable = _iGroupAdminService.spReservationSearchByConfirmationNo(id.ToString());
+                reservations = reservationTable.AsEnumerable().Select(row =>
+                    reservationTable.Columns.Cast<DataColumn>()
+                        .ToDictionary(
+                            column => column.ColumnName,
+                            column => row[column] is DBNull ? null : row[column]
+                        )
+                ).ToList();
+            }
 
+            ViewBag.Reservation = reservations;
+
+            return View();
         }
         public IActionResult OverBooking()
         {
@@ -4437,6 +4452,89 @@ namespace Reservation.Controllers
                 #endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Check out was successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Group Admin: Room Sharer
+        [HttpPost]
+        public ActionResult RoomSharer()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                int reservationID = int.Parse(Request.Form["rsvID"].ToString());
+                ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                if (rsv == null || rsv.ID == 0)
+                {
+                    return Json(new { code = 1, msg = " Could not find Reservation" });
+
+                }
+                if(rsv.MainGuest == false)
+                {
+                    return Json(new { code = 1, msg = " This selected is not main guest reservation" });
+
+                }
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+                ReservationModel rsvRoomSharer = (ReservationModel)rsv.Clone();
+                foreach (var prop in typeof(ReservationModel).GetProperties())
+                {
+                    if (prop.CanWrite && prop.Name != "ID")
+                    {
+                        prop.SetValue(rsvRoomSharer, prop.GetValue(rsv));
+                    }
+                }
+                long idRoomSharer = ReservationBO.Instance.Insert(rsvRoomSharer);
+                ReservationModel rsvUpdate = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(idRoomSharer);
+                rsvUpdate.ReservationNo = rsvUpdate.PinCode = rsvUpdate.ID.ToString();
+                rsvUpdate.ReservationDate = businessDateModel[0].BusinessDate;
+                rsvUpdate.NoOfAdult = rsvUpdate.NoOfChild = rsvUpdate.NoOfChild1 = rsvUpdate.NoOfChild2 = rsvUpdate.NoOfRoom = 0;
+                rsvUpdate.DiscountAmount = rsvUpdate.DiscountRate = 0;
+                rsvUpdate.PackageId = 0;
+                rsvUpdate.Packages = "";
+                rsvUpdate.MainGuest = false;
+                rsvUpdate.RateCodeId = 0;
+                rsvUpdate.Rate = rsvUpdate.RateAfterTax  = rsvUpdate.TotalAmount = 0;
+                rsvUpdate.RoutingToProfile = "";
+                ReservationBO.Instance.Update(rsvUpdate);
+                #region thêm log activity log
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.ObjectID = rsvUpdate.ID;
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "Insert";
+                activityLog.OldValue = activityLog.NewValue = activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+
+                List<Dictionary<string, object>> reservations = new List<Dictionary<string, object>>();
+                if (rsvUpdate.ConfirmationNo != "")
+                {
+                    DataTable reservationTable = _iGroupAdminService.spReservationSearchByConfirmationNo(rsvUpdate.ConfirmationNo);
+                    reservations = reservationTable.AsEnumerable().Select(row =>
+                        reservationTable.Columns.Cast<DataColumn>()
+                            .ToDictionary(
+                                column => column.ColumnName,
+                                column => row[column] is DBNull ? null : row[column]
+                            )
+                    ).ToList();
+                }
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Room Sharer was successfully", reservations = reservations });
             }
             catch (Exception ex)
             {

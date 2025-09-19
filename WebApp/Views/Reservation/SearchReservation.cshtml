@@ -180,20 +180,20 @@
                     <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
                     <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
                 </div>
-                <div class="toolbar-menu max-w-7xl mt-2 " id="functionAndOption">
-                    <a href="#" class="font-semibold">Advance</a>
-                    <a href="#" class="font-semibold">Clear</a>
-                    <a href="#" onclick="openModalEdit();" class="font-semibold">Edit</a>
-                    <a href="#" onclick="openModalCancel()" class="font-semibold">Cancel</a>
-                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold">Reinstate</a>
-                    <a href="#" onclick="checkIn();" class="font-semibold">Check In</a>
-                    <a href="#" onclick="openModalViewProfile();" class="font-semibold">View Profile</a>
-                    <a href="#" id="groupAdmin" class="font-semibold">Group Admin</a>
-                    <a href="#" data-function="export" class="font-semibold">Export</a>
-                    <a href="#" onclick="openModalSplit();" class="font-semibold">Split</a>
-                    <a  href="#" onclick="openModalAccompanying();" class="font-semibold">Accompanying</a>
-                    <a  href="#" onclick="openModalAddOn();" class="font-semibold">Add On</a>
-                    <a href="#" class="font-semibold">Alerts</a>
+                <div class="toolbar-menu  mt-2 row" id="functionAndOption">
+                    <a href="#" class="font-semibold col-md-4" >Advance</a>
+                    <a href="#" class="font-semibold col-md-4" >Clear</a>
+                    <a href="#" onclick="openModalEdit();" class="font-semibold col-md-4">Edit</a>
+                    <a href="#" onclick="openModalCancel()" class="font-semibold col-md-4">Cancel</a>
+                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold col-md-4">Reinstate</a>
+                    <a href="#" onclick="checkIn();" class="font-semibold col-md-4">Check In</a>
+                    <a href="#" onclick="openModalViewProfile();" class="font-semibold col-md-4">View Profile</a>
+                    <a href="#" id="groupAdmin" class="font-semibold col-md-4" onclick="redirectGroupAdmin();">Group Admin</a>
+                    <a href="#" data-function="export" class="font-semibold col-md-4">Export</a>
+                    <a href="#" onclick="openModalSplit();" class="font-semibold col-md-4">Split</a>
+                    <a  href="#" onclick="openModalAccompanying();" class="font-semibold col-md-4">Accompanying</a>
+                    <a  href="#" onclick="openModalAddOn();" class="font-semibold col-md-4">Add On</a>
+                    <a href="#" class="font-semibold col-md-4">Alerts</a>
                     <a href="#" onclick="openModalBilling();" class="font-semibold">Billing</a>
                     <a onclick="openModalInvoicing();" class="font-semibold">Invoicing</a>
                     <a href="#" class="font-semibold">Change</a>
@@ -3523,20 +3523,38 @@
         }
 
 
-        document.getElementById("groupAdmin").addEventListener("click", async function () {
+        // document.getElementById("groupAdmin").addEventListener("click", async function () {
 
 
-                    const response = await fetch('/Reservation/SetDataGroupAdmin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+        //             const response = await fetch('/Reservation/SetDataGroupAdmin', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(listReservationByConfirmationNo)
+        //     });
+
+        //     const result = await response.json();
+        //     if (result.redirectUrl) {
+        //         window.location.href = result.redirectUrl;
+        //     }
+        // });
+        function redirectGroupAdmin(){
+            $.ajax({
+                url: '/Reservation/EncryptId',
+                type: 'POST',
+                data: { id: confirmationNo},
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '/Reservation/GroupAdmin?key=' + encodeURIComponent(response.encryptedId);
+                    } else {
+                        alert('Lỗi khi mã hóa ID');
+                    }
                 },
-                body: JSON.stringify(listReservationByConfirmationNo)
+                error: function() {
+                    alert('Lỗi khi gọi API mã hóa');
+                }
             });
+        }
 
-            const result = await response.json();
-            if (result.redirectUrl) {
-                window.location.href = result.redirectUrl;
-            }
-        });
 </script>
