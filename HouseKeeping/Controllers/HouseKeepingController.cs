@@ -27,6 +27,7 @@ using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using DevExpress.DataAccess.DataFederation;
+
 namespace HouseKeeping.Controllers
 {
     public class HouseKeepingController : Controller
@@ -835,6 +836,117 @@ namespace HouseKeeping.Controllers
             catch (Exception ex)
             {
               
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult MoveTaskSheetDetails(string selectedRows, int  targetTaskSheetData)
+        {
+            selectedRows = selectedRows ?? "";
+     
+
+            try
+            {
+                var ids = selectedRows.Split(',')
+                                      .Where(x => !string.IsNullOrWhiteSpace(x))
+                                      .Select(id => int.Parse(id))
+                                      .ToList();
+
+                foreach (var id in ids)
+                {
+                    // Tìm record theo từng id
+                    hkpTaskSheetDetailModel jkpFt = (hkpTaskSheetDetailModel)hkpTaskSheetDetailBO.Instance.FindByPrimaryKey(id);
+
+                    if (jkpFt != null)
+                    {
+                        // Gán TaskSheetID mới
+                        jkpFt.TaskSheetID = targetTaskSheetData;
+
+                        // Cập nhật record
+                        hkpTaskSheetDetailBO.Instance.Update(jkpFt);
+                    }
+                }
+
+                return Json(new { success = true, message = "TasksheetDetails Update successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CreateNewTaskSheet(string taskDetailIDs, int targetTaskSheetData)
+        {
+            taskDetailIDs = taskDetailIDs ?? "";
+
+
+            try
+            {
+                hkpTaskSheetModel oldTSM = (hkpTaskSheetModel)hkpTaskSheetBO.Instance.FindByPrimaryKey(targetTaskSheetData);
+
+                List<hkpTaskSheetModel> listats = PropertyUtils.ConvertToList<hkpTaskSheetModel>(hkpTaskSheetBO.Instance.FindAll());
+
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+                DateTime businessDate = businessDateModel[0].BusinessDate;
+                var filteredListts = listats
+                .Where(x => x.TaskSheetDate.Date == businessDate)
+                .ToList();
+
+                // Lấy số lớn nhất (nếu có)
+                int maxTaskSheetNo = filteredListts.Any()
+                    ? filteredListts.Max(x => x.TaskSheetNo)
+                    : 0;
+
+
+                // (Tuỳ chọn) Tạo mã mới tiếp theo
+                int newTaskSheetNo = maxTaskSheetNo + 1;
+                hkpTaskSheetModel model = new hkpTaskSheetModel();
+                model.Status = false;
+                model.TaskSheetDate = businessDate;
+                model.TaskSheetNo = newTaskSheetNo;
+                model.AttendantID = oldTSM.AttendantID;
+                model.FacilityTaskID = oldTSM.FacilityTaskID;
+                model.FacilityTask = oldTSM.FacilityTask;
+                model.FacilityInstructions = oldTSM.FacilityInstructions;
+                model.SessionID = oldTSM.SessionID;
+                model.SessionName = oldTSM.SessionName;
+                model.CreatedBy = oldTSM.CreatedBy;
+                model.CreatedDate = DateTime.Now;
+                model.UpdateBy = oldTSM.CreatedBy;
+                model.UpdateDate = DateTime.Now;
+                model.ID = (int)hkpTaskSheetBO.Instance.Insert(model);
+
+
+
+
+                var ids = taskDetailIDs.Split(',')
+                                      .Where(x => !string.IsNullOrWhiteSpace(x))
+                                      .Select(id => int.Parse(id))
+                                      .ToList();
+
+                foreach (var id in ids)
+                {
+                    // Tìm record theo từng id
+                    hkpTaskSheetDetailModel jkpFt = (hkpTaskSheetDetailModel)hkpTaskSheetDetailBO.Instance.FindByPrimaryKey(id);
+
+                    if (jkpFt != null)
+                    {
+                        // Gán TaskSheetID mới
+                        jkpFt.TaskSheetID = model.ID;
+
+                        // Cập nhật record
+                        hkpTaskSheetDetailBO.Instance.Update(jkpFt);
+                    }
+                }
+
+                return Json(new { success = true, message = "Tasksheet Insert  successfully" });
+
+               
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, new { error = ex.Message });
             }
         }

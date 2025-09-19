@@ -404,6 +404,40 @@
         background-color: lightgray;
     }
 
+    .dx-context-menu .dx-menu-item .dx-menu-item-content {
+        padding: 2px 8px; /* nhỏ gọn */
+        font-size: 12px; /* chữ nhỏ */
+    }
+
+    .custom-context-menu .dx-menu-separator {
+        margin: 3px 0; /* khoảng cách */
+    }
+
+    .custom-context-menu {
+        font-size: 12px;
+    }
+
+    /* Submenu có scroll dọc */
+    .dx-submenu .custom-context-menu {
+        max-height: 200px; /* chiều cao tối đa (tùy chỉnh) */
+        overflow-y: auto;
+    }
+
+    /* Style cho item New Task Sheet */
+    .dx-context-menu .menu-new-task {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    /* Divider */
+    .dx-context-menu .menu-divider {
+        border-bottom: 1px solid #ccc;
+        margin: 4px 0;
+        height: 1px;
+    }
+
+
+
   /*   #logGridReportContainer .dx-datagrid-rowsview .dx-selection {
         background-color: #005f87 !important; 
         color: white !important; 
@@ -3083,139 +3117,291 @@
                 }
             });
         }
-function ExpandedTaskSheet() {
-    // Hiển thị spinner
-    $("#loadingSpinner").show();
+        let allTaskSheets = [];
+      function ExpandedTaskSheet() {
+        // Hiển thị spinner
+        $("#loadingSpinner").show();
 
-    // Lấy giá trị đầu vào và kiểm tra
-    const zoneexpan = $("#zoneexpan").val();
-    const taskcodeExpanded = $("#taskcodeExpanded").val();
-    const hkpSectionExpanded = $("#hkpSectionExpanded").val();
+        // Lấy giá trị đầu vào và kiểm tra
+        const zoneexpan = $("#zoneexpan").val();
+        const taskcodeExpanded = $("#taskcodeExpanded").val();
+        const hkpSectionExpanded = $("#hkpSectionExpanded").val();
 
-    $.ajax({
-        url: '/HouseKeeping/ExpandedTaskSheet',
-        type: 'GET',
-        data: {
-            zoneexpan: zoneexpan,
-            taskcodeExpanded: taskcodeExpanded,
-            hkpSectionExpanded: hkpSectionExpanded
-        },
-        traditional: true,
-        crossDomain: false,
-        headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-        success: function (result) {
-            console.log("result:", result);
+        // ⚡ Biến lưu dòng click chuột
+        let contextRowData = null;
+        let contextMenu = null;
 
-            // Xóa nội dung cũ của container
-            $("#logGridReportContainerExpanded").empty();
+        // Nếu contextMenu chưa có thì tạo trước
+        if ($("#contextMenu").length === 0) {
+            $("body").append('<div id="contextMenu"></div>');
+        }
 
-            // Định nghĩa chiều rộng cột
-            const columnWidth = 120;
-
-            // Tạo container chính với class row
-            let html = '<div class="row">';
-            let tableCount = 0;
-
-            // Duyệt qua mảng result để tạo dxDataGrid
-            result.forEach((tableData, index) => {
-                const gridId = `gridContainer_${index}`;
-
-                // Thêm container cho mỗi grid với col-md-3
-                html += `
-                    <div class="col-md-3" style="padding: 10px;">
-                        <div id="${gridId}"></div>
-                    </div>
-                `;
-
-                tableCount++;
-                // Nếu đã đủ 4 grid hoặc là phần tử cuối, đóng row và bắt đầu row mới
-                if (tableCount === 4 || index === result.length - 1) {
-                    html += '</div>';
-                    if (index < result.length - 1) {
-                        html += '<div class="row">';
-                    }
-                    tableCount = 0;
+        // Khởi tạo contextMenu rỗng
+        contextMenu = $("#contextMenu").dxContextMenu({
+            items: [],
+            hideOnOutsideClick: true,
+            width: 160,
+            cssClass: "custom-context-menu",
+            onItemClick: function (e) {
+                if (!contextRowData || !e.itemData.text || e.itemData.items) {
+                    return;
                 }
-            });
 
-            // Thêm HTML vào container
-            $("#logGridReportContainerExpanded").append(html);
+             
+                    const targetTaskSheetNo = e.itemData.text;
+                    const sourceTaskSheetNo = contextRowData.taskSheetNo;
 
-            // Khởi tạo dxDataGrid sau khi thêm DOM
-            result.forEach((tableData, index) => {
-                const gridId = `gridContainer_${index}`;
-                $(`#${gridId}`).dxDataGrid({
-                    dataSource: tableData,
-                    height: 500,
-                    allowColumnResizing: true,
-                    columnAutoWidth: false,
-                        paging: { enabled: false },   // ❌ tắt phân trang
-                    pager: { visible: false },
-                    columns: [
-                        { dataField: "taskSheetNo", caption: "Task Sheet No", width: columnWidth, visible: false, groupIndex: 0 },
-                        { dataField: "employeeName", caption: "Employee Name", width: columnWidth, visible: false },
-                        { dataField: "turndownStatus",caption: "", width: columnWidth-80 },
-                                { dataField: "roomStatus", caption: "", width: columnWidth -80},
-                        { dataField: "roomNo", caption: "", width: columnWidth },
-                        { dataField: "credit", caption: "", width: columnWidth }
-                    ],
-                    summary: {
-                        groupItems: [{
-                            column: "taskSheetNo",
-                            summaryType: "count",
-                            displayFormat: "{0} items"
-                        }]
-                    },
-                    autoExpandAll: true,
-                    onCellPrepared: function(e) {
-                        if (e.rowType === "group" && e.cellElement.find(".dx-datagrid-group-opened, .dx-datagrid-group-closed").length) {
-                            e.cellElement.find(".dx-datagrid-group-opened, .dx-datagrid-group-closed").remove();
-                        }
-                    },
-                    customizeColumns: function (columns) {
-                        columns.forEach(column => {
-                            if (column.dataField === 'taskSheetNo') {
-                                column.groupCellTemplate = function (cellElement, cellInfo) {
-                                          const roomCount = cellInfo.data.items.length;
-                                        cellElement.text(`Task ${cellInfo.data.key} - ${cellInfo.data.items[0].employeeName} | Rms ${roomCount}`);
-                                };
+                    // ⚡ Toàn bộ dữ liệu TaskSheet gốc
+                    const sourceTaskSheetData = allTaskSheets
+                        .flatMap(tbl => tbl)
+                        .filter(row => row.taskSheetNo == sourceTaskSheetNo);
+
+                    // ⚡ Toàn bộ dữ liệu TaskSheet đích
+                    const targetTaskSheetData = allTaskSheets
+                        .flatMap(tbl => tbl)
+                        .filter(row => row.taskSheetNo == targetTaskSheetNo);
+
+                    // ⚡ Lấy grid instance (từ dòng click)
+                    const gridInstance = $(contextMenu.option("target"))
+                        .closest("div[id^='gridContainer_']")
+                        .data("gridInstance");
+
+                    if (!gridInstance) {
+                        console.error("❌ Không tìm thấy gridInstance");
+                        return;
+                    }
+
+                    // ⚡ Các dòng đã chọn trong grid (TaskSheet gốc)
+                    const selectedRows = gridInstance.getSelectedRowsData();
+
+                    if (!selectedRows || selectedRows.length === 0) {
+                        alert("Vui lòng chọn ít nhất 1 phòng để chuyển.");
+                        return;
+                    }
+                  
+                    const taskDetailIDs = selectedRows.map(r => r.taskSheetDetailID).join(",");
+                      if (e.itemData.cssClass === "menu-new-task") {
+                        // 👉 Xử lý riêng khi chọn New Task Sheet
+                        createNewTaskSheet(taskDetailIDs,sourceTaskSheetData);
+                         return;
+                    }
+                    console.log("🔹 TaskSheet gốc:", sourceTaskSheetNo, sourceTaskSheetData);
+                    console.log("🔹 Các dòng đã chọn:", taskDetailIDs);
+                    console.log("🔹 TaskSheet đích:", targetTaskSheetNo, targetTaskSheetData);
+                    if (confirm(`Bạn có chắc muốn chuyển ${selectedRows.length} phòng từ TaskSheet ${sourceTaskSheetNo} sang TaskSheet ${targetTaskSheetNo}?`)) {
+                        $.ajax({
+                            url: '/HouseKeeping/MoveTaskSheetDetails',
+                            type: 'POST',
+                            data: {
+                                selectedRows: taskDetailIDs,
+                                targetTaskSheetData: targetTaskSheetData[0].taskSheetID
+                            },
+                            headers: { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() },
+                            success: function (res) {
+                                    showToast('Success', res.message, true);
+                                ExpandedTaskSheet(); // reload lại lưới
+                            },
+                            error: function (xhr) {
+                                alert("Lỗi khi cập nhật: " + xhr.responseText);
                             }
                         });
-                    },
-                    // paging: { pageSize: 25 },
-                    scrolling: {
-                        useNative: true,
-                        showScrollbar: "always",
-                            columnRenderingMode: "virtual"
-                    },
-                    // pager: {
-                    //     visible: true,
-                    //     // allowedPageSizes: [25, 50, 'all'],
-                    //     showPageSizeSelector: true,
-                    //     showInfo: true,
-                    //     showNavigationButtons: true
-                    // },
-                    filterRow: { visible: true, applyFilter: "auto" },
-                    headerFilter: { visible: true },
-                    selection: { mode: "multiple", showCheckBoxesMode: "none" },
-                    showBorders: true,
-                    onSelectionChanged: function (e) {
-                        const selectedRowData = e.selectedRowsData;
-                        console.log(`Danh sách dòng đã chọn trong grid ${index}:`, selectedRowData);
+                    }
+                
+            }
+        }).dxContextMenu("instance");
+
+        $.ajax({
+            url: '/HouseKeeping/ExpandedTaskSheet',
+            type: 'GET',
+            data: {
+                zoneexpan: zoneexpan,
+                taskcodeExpanded: taskcodeExpanded,
+                hkpSectionExpanded: hkpSectionExpanded
+            },
+            traditional: true,
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log("result:", result);
+                allTaskSheets = result;
+
+                // Xóa nội dung cũ của container
+                $("#logGridReportContainerExpanded").empty();
+
+                const columnWidth = 120;
+                let html = '<div class="row">';
+                let tableCount = 0;
+
+                result.forEach((tableData, index) => {
+                    const gridId = `gridContainer_${index}`;
+                    html += `
+                        <div class="col-md-3" style="padding: 10px;">
+                            <div id="${gridId}"></div>
+                        </div>
+                    `;
+                    tableCount++;
+                    if (tableCount === 4 || index === result.length - 1) {
+                        html += '</div>';
+                        if (index < result.length - 1) {
+                            html += '<div class="row">';
+                        }
+                        tableCount = 0;
                     }
                 });
-            });
 
-            $("#loadingSpinner").hide();
-        },
-        error: function (xhr, status, error) {
-            // Ghi log chi tiết lỗi
-            console.error("Lỗi AJAX:", status, error, xhr.responseText);
-            alert(`Không thể tải báo cáo. Mã lỗi: ${xhr.status}. Vui lòng thử lại sau.`);
-            $("#loadingSpinner").hide();
-        }
-    });
-}
+                $("#logGridReportContainerExpanded").append(html);
+
+                // ⚡ Lấy danh sách taskSheetNo duy nhất
+                const taskSheetNos = [...new Set(
+                    result.flatMap(table => table.map(row => row.taskSheetNo))
+                )];
+
+                // ⚡ Cập nhật contextMenu
+                const menuItems = [
+                    {
+                        text: "Send To",
+                        cssClass: "menu-has-scroll",
+                        items: [
+                            { text: "➕ New Task Sheet", cssClass: "menu-new-task" },
+                            {
+                                template: function () {
+                                    return $("<div>").addClass("menu-divider");
+                                },
+                                disabled: true
+                            },
+                            ...taskSheetNos.map(no => ({ text: no }))
+                        ]
+                    },
+                    {
+                        text: "Go To",
+                        cssClass: "menu-has-scroll",
+                        items: taskSheetNos.map(no => ({ text: no }))
+                    }
+                ];
+                contextMenu.option("items", menuItems);
+
+                // ⚡ Khởi tạo dxDataGrid
+                result.forEach((tableData, index) => {
+                    const gridId = `gridContainer_${index}`;
+                    const grid = $(`#${gridId}`).dxDataGrid({
+                        dataSource: tableData,
+                        height: 500,
+                        allowColumnResizing: true,
+                        columnAutoWidth: false,
+                        paging: { enabled: false },
+                        pager: { visible: false },
+                        columns: [
+                            { dataField: "taskSheetNo", caption: "Task Sheet No", width: columnWidth, visible: false, groupIndex: 0 },
+                            { dataField: "employeeName", caption: "Employee Name", width: columnWidth, visible: false },
+                            { dataField: "turndownStatus", caption: "", width: columnWidth - 80 },
+                            { dataField: "roomStatus", caption: "", width: columnWidth - 80 },
+                            { dataField: "roomNo", caption: "", width: columnWidth },
+                            { dataField: "credit", caption: "", width: columnWidth }
+                        ],
+                        summary: {
+                            groupItems: [{
+                                column: "taskSheetNo",
+                                summaryType: "count",
+                                displayFormat: "{0} items"
+                            }]
+                        },
+                        autoExpandAll: true,
+                        onCellPrepared: function (e) {
+                            if (e.rowType === "group" && e.cellElement.find(".dx-datagrid-group-opened, .dx-datagrid-group-closed").length) {
+                                e.cellElement.find(".dx-datagrid-group-opened, .dx-datagrid-group-closed").remove();
+                            }
+                            if (e.rowType === "data" && e.column.dataField === "roomStatus") {
+                                const status = (e.value || "").toUpperCase();
+                                switch (status) {
+                                    case "OD": e.cellElement.addClass("color-OD").css("color", "white"); break;
+                                    case "OOO": e.cellElement.addClass("color-OOO").css("color", "white"); break;
+                                    case "VCN": e.cellElement.addClass("color-VCN"); break;
+                                    case "OCN": e.cellElement.addClass("color-OCN").css("color", "white"); break;
+                                    case "OC": e.cellElement.addClass("color-OC"); break;
+                                    case "VC": e.cellElement.addClass("color-VC"); break;
+                                    case "VD": e.cellElement.addClass("color-VD").css("color", "white"); break;
+                                    case "DO": e.cellElement.addClass("color-DO").css("color", "white"); break;
+                                    default:
+                                        e.cellElement.css("background-color", "").css("color", "");
+                                        break;
+                                }
+                            }
+                        },
+                        customizeColumns: function (columns) {
+                            columns.forEach(column => {
+                                if (column.dataField === 'taskSheetNo') {
+                                    column.groupCellTemplate = function (cellElement, cellInfo) {
+                                        const roomCount = cellInfo.data.items.length;
+                                        cellElement.text(`Task ${cellInfo.data.key} - ${cellInfo.data.items[0].employeeName} | Rms ${roomCount}`);
+                                    };
+                                }
+                            });
+                        },
+                        scrolling: {
+                            useNative: true,
+                            showScrollbar: "always",
+                            columnRenderingMode: "virtual"
+                        },
+                        filterRow: { visible: true, applyFilter: "auto" },
+                        headerFilter: { visible: true },
+                        selection: { mode: "multiple", showCheckBoxesMode: "none" },
+                        showBorders: true,
+                        onRowPrepared: function (e) {
+                            if (e.rowType === "data") {
+                                e.rowElement.on("contextmenu", function (ev) {
+                                    ev.preventDefault();
+                                    return false;
+                                });
+
+                                e.rowElement.off("click").on("click", function (ev) {
+                                    if (ev.which === 1) { // chuột trái
+                                        contextRowData = e.data;
+                                        contextMenu.option("target", e.rowElement);
+                                        contextMenu.show();
+                                    }
+                                });
+                            }
+                        }
+                    }).dxDataGrid("instance");
+
+                    // ⚡ Lưu gridInstance để contextMenu lấy lại
+                    $(`#${gridId}`).data("gridInstance", grid);
+                });
+
+                $("#loadingSpinner").hide();
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi AJAX:", status, error, xhr.responseText);
+                alert(`Không thể tải báo cáo. Mã lỗi: ${xhr.status}. Vui lòng thử lại sau.`);
+                $("#loadingSpinner").hide();
+            }
+        });
+    }
+
+    function createNewTaskSheet(taskDetailIDs,sourceTaskSheetData) {
+        console.log("⚡ Tạo TaskSheet mới từ:", sourceTaskSheetData);
+
+        // Ví dụ gọi API tạo mới
+        $.ajax({
+            url: '/HouseKeeping/CreateNewTaskSheet',
+            type: 'POST',
+            data: {
+                taskDetailIDs: taskDetailIDs,
+                targetTaskSheetData: sourceTaskSheetData[0].taskSheetID
+            },
+            headers: { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() },
+            success: function (res) {
+                showToast('Success', res.message, true);
+                ExpandedTaskSheet(); // reload lại lưới
+            },
+            error: function (xhr) {
+                alert("Lỗi khi tạo TaskSheet mới: " + xhr.responseText);
+            }
+        });
+    }
+
+
+
 
         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
             $("#loadingSpinner").show();
