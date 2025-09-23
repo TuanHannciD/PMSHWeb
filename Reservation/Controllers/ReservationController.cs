@@ -752,7 +752,7 @@ namespace Reservation.Controllers
                 {
                     roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
                 }
-                if (string.IsNullOrEmpty(Request.Form["profileCompanyID"].ToString()))
+                if (string.IsNullOrEmpty(Request.Form["profileIndividualID"].ToString()))
                 {
                     return Json(new { code = 1, msg = "Profile cannot be blank" });
                 }
@@ -769,16 +769,16 @@ namespace Reservation.Controllers
                 reservationModel.ConfirmationNo = (ReservationBO.GetTopConfirmationNo() + 1).ToString();
                 reservationModel.ReservationNo = (ReservationBO.GetTopID() + 1).ToString();
                 reservationModel.ReservationDate = businessDate[0].BusinessDate;
-                reservationModel.ProfileAgentId = int.Parse(Request.Form["profileAgentID"].ToString());
+                reservationModel.ProfileAgentId = string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString()) ? 0 : int.Parse(Request.Form["profileAgentID"].ToString());
                 reservationModel.AgentName = Request.Form["agentName"].ToString();
-                reservationModel.ProfileCompanyId = int.Parse(Request.Form["profileCompanyID"].ToString());
+                reservationModel.ProfileCompanyId = string.IsNullOrEmpty(Request.Form["profileCompanyID"].ToString()) ? 0 :int.Parse(Request.Form["profileCompanyID"].ToString());
                 reservationModel.CompanyName = Request.Form["companyName"].ToString();
                 reservationModel.ProfileSourceId = 0;
                 reservationModel.SourceName = "";
                 reservationModel.ProfileGroupId = 0;
                 reservationModel.GroupCode = Request.Form["groupCode"].ToString();
                 reservationModel.GroupName = "";
-                reservationModel.ProfileContactId = int.Parse(Request.Form["profileContactID"].ToString());
+                reservationModel.ProfileContactId = string.IsNullOrEmpty(Request.Form["profileContactID"].ToString()) ? 0 :  int.Parse(Request.Form["profileContactID"].ToString());
                 reservationModel.ContactName = Request.Form["contactName"].ToString();
                 reservationModel.ContactPhone = Request.Form["contactPhone"].ToString();
                 reservationModel.ProfileComment = "";
@@ -1044,7 +1044,7 @@ namespace Reservation.Controllers
                 #endregion
 
                 #region lưu reservation master
-                if (int.Parse(Request.Form["profileAgentID"].ToString()) != 0 || int.Parse(Request.Form["profileCompanyID"].ToString()) != 0)
+                if (!string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString())  || !string.IsNullOrEmpty(Request.Form["profileCompanyID"].ToString()))
                 {
                     ReservationModel reservationMaster = new ReservationModel();
                     reservationMaster = reservationModel;
@@ -1118,7 +1118,7 @@ namespace Reservation.Controllers
                 FolioBO.Instance.Insert(folioModel);
                 #endregion
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNP : {reservationModel.ConfirmationNo}" });
+                return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
 
             }
             catch (Exception ex)

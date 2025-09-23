@@ -117,6 +117,8 @@ builder.Services.AddSingleton<ICashieringManagerService, CashieringManagerServic
 builder.Services.AddSingleton<IVATSearchService, VATSearchService>();
 builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
 builder.Services.AddSingleton<IAccountingService, AccountingService>();
+builder.Services.AddSingleton<IEmailService, EmailService>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,19 +23,25 @@ namespace Administration.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmailController> _logger;
         private readonly IMemoryCache _cache;
+        private readonly IEmailService _iEmailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public EmailController(ILogger<EmailController> logger,
-                IMemoryCache cache, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+                IMemoryCache cache, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService iEmailService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-
+            _iEmailService = iEmailService;
         }
         public IActionResult SetupEmail()
         {
-            return View(); 
+            return View();
+        }
+
+        public IActionResult SendEmail()
+        {
+            return View();
         }
 
         #region DatVP __ SetupEmail: Get config email in config system
@@ -69,7 +76,7 @@ namespace Administration.Controllers
         }
         #endregion
 
-        #region DatVP __ SetUpEmail: Lưu config email
+        #region DatVP __ SetUpEmail: Save config email
         [HttpPost]
         public ActionResult SaveConfigEmail()
         {
@@ -206,7 +213,7 @@ namespace Administration.Controllers
                 }
                 #endregion
 
-                
+
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = $"Saved config system" });
 
@@ -293,6 +300,65 @@ namespace Administration.Controllers
 
 
                 return Json(senderName);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+        }
+        #endregion
+
+        #region DatVP __ SetupEmail: Save contact template email
+        [HttpPost]
+        public ActionResult SaveContactTemplateEmail()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                ContactEmailTemplateModel model = new ContactEmailTemplateModel();
+                model.Name = Request.Form["subject"];
+                model.Content = Request.Form["content"];
+                model.Language = 1;
+                ContactEmailTemplateBO.Instance.Insert(model);
+
+
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = $"Saved contact email template" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
+
+        #region DatVP __ SendEmail: Get Email of guest
+        [HttpGet]
+        public IActionResult GetAllEmailOfGuest(DateTime fromDate,DateTime toDate, int status)
+        {
+            try
+            {
+                var data = _iEmailService.GetAllEmailOfGuest(fromDate,toDate, status);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+
+
             }
             catch (Exception ex)
             {

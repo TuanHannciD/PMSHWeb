@@ -1,11 +1,14 @@
 ﻿<link href="~/css/pages/setup-email.css" rel="stylesheet" asp-append-version="true"/>
 
-
-<div class="container">
-    <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Email Configuration Wizard</h1>
-
-    <div class="content-container">
-        <div class="form-container">
+<div>
+    <div class="header mt-2" style="border-bottom:none">
+        <h3 id="content-title">
+            Setup Email
+        </h3>
+        <i class="fas fa-info-circle info-icon" title="How to use?"></i>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
             <!-- Tabs -->
             <ul class="nav nav-tabs mb-4">
                 <li class="nav-item">
@@ -15,11 +18,9 @@
                     <a class="nav-link" data-bs-toggle="tab" href="#step-2">Parameters</a>
                 </li>
             </ul>
-
             <form id="multi-step-form">
                 <div class="tab-content">
                     <div class="tab-pane fade show active step step-1 mui-card" id="step-1">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-6">Step 1: Email Configuration</h2>
                         <div class="space-y-4">
                             <div>
                                 <label class="form-label text-sm font-medium text-gray-700 mb-1">Sender Name</label>
@@ -31,14 +32,14 @@
                             <div>
                                 <label class="form-label text-sm font-medium text-gray-700 mb-1">Host</label>
                                 <div class="input-container">
-                                    <input type="text" id="host"  class="input-field form-control" placeholder="e.g., smtp.gmail.com" disabled>
+                                    <input type="text" id="host" class="input-field form-control" placeholder="e.g., smtp.gmail.com" disabled>
                                     <i class="fas fa-edit edit-icon" data-input="host"></i>
                                 </div>
                             </div>
                             <div>
                                 <label class="form-label text-sm font-medium text-gray-700 mb-1">Port</label>
                                 <div class="input-container">
-                                    <input type="number" id="port"  class="input-field form-control" placeholder="e.g., 587" disabled>
+                                    <input type="number" id="port" class="input-field form-control" placeholder="e.g., 587" disabled>
                                     <i class="fas fa-edit edit-icon" data-input="port"></i>
                                 </div>
                             </div>
@@ -52,21 +53,19 @@
                             <div>
                                 <label class="form-label text-sm font-medium text-gray-700 mb-1">Password</label>
                                 <div class="input-container">
-                                    <input type="password" id="password"  class="input-field form-control" placeholder="Enter password" disabled>
+                                    <input type="password" id="password" class="input-field form-control" placeholder="Enter password" disabled>
                                     <i class="fas fa-edit edit-icon" data-input="password"></i>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="enableSsl"  class="h-4 w-4 text-blue-500 rounded" disabled>
+                                <input type="checkbox" id="enableSsl" class="h-4 w-4 text-blue-500 rounded" disabled>
                                 <label class="text-sm font-medium text-gray-700">Enable SSL</label>
                                 <i class="fas fa-edit edit-icon" data-input="enableSsl"></i>
                             </div>
                             <button type="button" class="btn btn-primary w-full next-step" onclick="SaveEmailConfig()">Save</button>
                         </div>
                     </div>
-
                     <div class="tab-pane fade step step-2 mui-card" id="step-2">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-6">Step 2: Define Parameters</h2>
                         <div class="space-y-4">
                             <div>
                                 <label class="form-label text-sm font-medium text-gray-700 mb-1">Parameter Key</label>
@@ -82,25 +81,68 @@
                                     <ul id="paramList" class="space-y-2"></ul>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </form>
         </div>
-
-        <div class="table-container">
-            <div class="config-table">
-                <h2 class="text-lg font-semibold text-gray-900 mb-6">Contact Email</h2>
+        <div class="col-md-7">
+            <div class="header mt-1">
+                <h3 id="content-title">
+                    Template Contact Email
+                </h3>
+            </div>
+            <div class="header2 mt-4">
+                <button class="submit-button-clear-reservation" onclick="openModalNewTemplate()">New</button>
+            </div>
+            <div class="config-table mui-card mt-2">
                 <div id="gridContainer" class="gridContainer mt-2"></div>
-
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for new email template -->
+<div class="modal fade modal-xl" id="modalNewTemplateEmail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">New contact email template</h5>
+                <button type="button" class="btn-close" onclick="closeModalNewTemplateEmail();"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-search" onclick="saveEmailTemplate()"><i class="fas fa-save"></i> Save</button>
+                    <button class="mui-button mui-button-clear" onclick="clearEmailTemplate()"><i class="fas fa-eraser"></i> Clear</button>
+                </div>
+                <div style="margin:0 12px">
+                    <span>List parameters</span>
+                    <div class="row mui-card" id="paramListTemplate">
+                        <!-- Draggable parameters will be populated here -->
+                    </div>
+                    <div>
+                        <label class="form-label text-sm font-medium text-gray-700 mb-1">Subject</label>
+                        <div class="input-container">
+                            <input type="text" id="subject" class="input-field form-control" placeholder="Enter subject email">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="form-label text-sm font-medium text-gray-700 mb-1">Content</label>
+                        <div class="input-container">
+                            <textarea id="emailContent" class="input-field form-control" placeholder="Enter email content"></textarea>
+                        </div>
+                        <p id="contentLengthWarning" class="text-danger mt-1" style="display: none;">Content exceeds the maximum length of 10,000 characters!</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 <script>
-    function getEmailConfig(){
+    // Maximum content length (in characters) for the email content
+    const MAX_CONTENT_LENGTH = 10000;
+
+    function getEmailConfig() {
         $.ajax({
             url: '/Email/GetEmailConfig',
             type: 'get',
@@ -113,12 +155,11 @@
                 $('#port').val(result.port);
                 $('#username').val(result.userName);
                 $('#password').val(result.password);
-                $('#enableSsl').prop('checked', result.ssl == 1); // Check checkbox if result.ssl == 1
+                $('#enableSsl').prop('checked', result.ssl == 1);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
-                } else {
                 }
             }
         });
@@ -128,17 +169,15 @@
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
         var formData = new FormData();
-
         formData.append('senderName', $('#senderName').val());
         formData.append('host', $('#host').val());
         formData.append('port', $('#port').val());
         formData.append('userNameEmail', $('#username').val());
         formData.append('password', $('#password').val());
-        let valueSSL = $('#ssl').is(':checked') ? 1 : 0;
-
+        let valueSSL = $('#enableSsl').is(':checked') ? 1 : 0;
         formData.append('ssl', valueSSL);
         formData.append('userName', userName);
-        formData.append('userID',userID);
+        formData.append('userID', userID);
         $.ajax({
             url: '/Email/SaveConfigEmail',
             type: 'POST',
@@ -152,30 +191,12 @@
                 } else {
                     showToast('Error', data.msg, false);
                 }
-
             },
-            error: function (xhr, statusText, err) {
-
-            }
+            error: function (xhr, statusText, err) {}
         });
-
     }
-    $(document).ready(function() {
-        getEmailConfig();
-        getAllParam();
-        getAllContactEmail();
-    });
-    $('.edit-icon').on('click', function() {
-        const inputId = $(this).data('input');
-        const input = $('#' + inputId);
-        input.prop('disabled', !input.prop('disabled'));
-        $(this).toggleClass('fa-edit fa-lock');
-        if (!input.prop('disabled')) {
-            input.focus();
-        }
-    });
 
-    function getAllParam(){
+    function getAllParam() {
         $.ajax({
             url: '/Email/GetAllParameter',
             type: 'get',
@@ -185,7 +206,7 @@
             success: function (result) {
                 $('#paramList').empty();
                 var html = '';
-                if(result.length > 0){
+                if (result.length > 0) {
                     result.forEach(function(param) {
                         html += `<li class="param-item flex justify-between items-center p-2 border rounded">
                                     <span>${param.parameter}</span>
@@ -195,12 +216,10 @@
                     html = '<li class="text-gray-500">No parameters added yet.</li>';
                 }
                 $('#paramList').append(html);
-
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
-                } else {
                 }
             }
         });
@@ -223,14 +242,11 @@
                     showToast('Error', data.msg, false);
                 }
             },
-            error: function (xhr, statusText, err) {
-
-            }
+            error: function (xhr, statusText, err) {}
         });
-
     }
 
-    function getAllContactEmail(){
+    function getAllContactEmail() {
         $.ajax({
             url: '/Email/GetAllTemplateEmail',
             type: 'get',
@@ -243,27 +259,23 @@
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
-                } else {
                 }
             }
         });
     }
+
     function initializeDataGrid(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             keyExpr: "id",
             allowColumnResizing: true,
             columns: [
-
                 { dataField: "id", caption: "ID", visible: false },
                 { dataField: "name", caption: "Subject" },
                 { dataField: "content", caption: "Content" },
-  
             ],
             paging: { pageSize: 15 },
-            scrolling: {
-                rowRenderingMode: 'virtual'
-            },
+            scrolling: { rowRenderingMode: 'virtual' },
             pager: {
                 visible: true,
                 allowedPageSizes: [15, 20, 'all'],
@@ -274,14 +286,165 @@
                 visible: true,
                 applyFilter: "auto"
             },
-            selection: {
-                mode: "multiple",
-                showCheckBoxesMode: "always"
+            onRowClick: function(e) {
+                const grid = $("#gridContainer").dxDataGrid("instance");
+                grid.selectRows([e.key], false);
             },
-
- 
         });
-
-
     }
+
+    function openModalNewTemplate() {
+        getAllParamForTemplate();
+        $('#modalNewTemplateEmail').modal('show');
+    }
+
+    function closeModalNewTemplateEmail() {
+        $('#modalNewTemplateEmail').modal('hide');
+        clearEmailTemplate();
+    }
+
+    function getAllParamForTemplate() {
+        $.ajax({
+            url: '/Email/GetAllParameter',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#paramListTemplate').empty();
+                var html = '';
+                if (result.length > 0) {
+                    result.forEach(function(param) {
+                        html += `<span class="param-item badge bg-primary m-1" draggable="true" ondragstart="drag(event)" data-param="${param.parameter}">${param.parameter}</span>`;
+                    });
+                } else {
+                    html = '<span class="text-gray-500">No parameters available.</span>';
+                }
+                $('#paramListTemplate').append(html);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+
+    function saveEmailTemplate() {
+        const content = CKEDITOR.instances.emailContent.getData();
+        if (content.length > MAX_CONTENT_LENGTH) {
+            showToast('Error', 'Email content exceeds the maximum length of ' + MAX_CONTENT_LENGTH + ' characters!', false);
+            return;
+        }
+        var formData = new FormData();
+        formData.append('subject', $('#subject').val());
+        formData.append('content', content);
+        $.ajax({
+            url: '/Email/SaveContactTemplateEmail',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    getAllContactEmail();
+                    closeModalNewTemplateEmail();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+            },
+            error: function (xhr, statusText, err) {}
+        });
+    }
+
+    function clearEmailTemplate() {
+        $('#subject').val('');
+        CKEDITOR.instances.emailContent.setData('');
+        $('#contentLengthWarning').hide();
+    }
+
+    // Drag and drop functions
+    function drag(event) {
+        event.dataTransfer.setData("text", event.target.dataset.param);
+    }
+
+    function checkContentLength(editor) {
+        const content = editor.getData();
+        const warningElement = $('#contentLengthWarning');
+        if (content.length > MAX_CONTENT_LENGTH) {
+            warningElement.show();
+            editor.setReadOnly(true); // Disable editing
+        } else {
+            warningElement.hide();
+            editor.setReadOnly(false); // Enable editing
+        }
+    }
+
+    $(document).ready(function() {
+        CKEDITOR.replace('emailContent', {
+            height: 200,
+            allowedContent: true,
+            on: {
+                instanceReady: function(evt) {
+                    const editor = evt.editor;
+                    // Get the iframe's document
+                    const iframe = editor.window.getFrame().$;
+                    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                    const editable = iframeDocument.body;
+
+                    // Make the editable area droppable
+                    editable.setAttribute('draggable', false);
+                    editable.ondragover = function(event) {
+                        event.preventDefault();
+                    };
+                    editable.ondrop = function(event) {
+                        const param = event.dataTransfer.getData('text');
+                        if (param) {
+                            const currentContent = editor.getData();
+                            if ((currentContent.length + param.length) <= MAX_CONTENT_LENGTH) {
+                                editor.insertText(param);
+                            } else {
+                                showToast('Error', 'Cannot add parameter: Content would exceed the maximum length of ' + MAX_CONTENT_LENGTH + ' characters!', false);
+                            }
+                            event.preventDefault();
+                        }
+                    };
+                },
+                change: function(evt) {
+                    checkContentLength(evt.editor);
+                },
+                key: function(evt) {
+                    const editor = evt.editor;
+                    const content = editor.getData();
+                    if (content.length > MAX_CONTENT_LENGTH) {
+                        evt.cancel(); // Prevent further typing
+                        showToast('Error', 'Content exceeds the maximum length of ' + MAX_CONTENT_LENGTH + ' characters!', false);
+                    }
+                },
+                paste: function(evt) {
+                    const editor = evt.editor;
+                    const pastedData = evt.data.dataValue;
+                    const currentContent = editor.getData();
+                    if ((currentContent.length + pastedData.length) > MAX_CONTENT_LENGTH) {
+                        evt.cancel(); // Prevent pasting
+                        showToast('Error', 'Cannot paste: Content would exceed the maximum length of ' + MAX_CONTENT_LENGTH + ' characters!', false);
+                    }
+                }
+            }
+        });
+        getEmailConfig();
+        getAllParam();
+        getAllContactEmail();
+    });
+
+    $('.edit-icon').on('click', function() {
+        const inputId = $(this).data('input');
+        const input = $('#' + inputId);
+        input.prop('disabled', !input.prop('disabled'));
+        $(this).toggleClass('fa-edit fa-lock');
+        if (!input.prop('disabled')) {
+            input.focus();
+        }
+    });
 </script>

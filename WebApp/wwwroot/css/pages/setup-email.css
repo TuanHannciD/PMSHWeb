@@ -30,6 +30,30 @@
             color: #1F2937;
             transition: all 0.2s ease;
         }
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0px;
+    border-bottom: 2px solid #ececec;
+}
+
+    .header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .header .info-icon {
+        color: #6b7280;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+        .header .info-icon:hover {
+            color: var(--main-color);
+        }
         .input-field:focus {
             outline: none;
             border-color: #3B82F6;
@@ -144,9 +168,7 @@
             border-color: #3B82F6;
         }
         .config-table {
-            background: #FFFFFF;
-            border-radius: 1rem;
+
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #E5E7EB;
+
         }
