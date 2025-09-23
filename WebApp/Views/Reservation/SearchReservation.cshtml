@@ -1,42 +1,30 @@
-﻿<link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true"/>
+﻿<link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" />
 <style>
-
-
-    
-    
 </style>
 <div class="header mt-2" style="border-bottom:none;justify-content:center">
     <h3 id="content-title">
         Search Reservation
-
     </h3>
-
 </div>
 <div class="mt-1">
-
     <div class="row">
         <!-- Menu trái -->
-        <div class="col-md-3 mb-2">
+        <div class="col-md-3 mb-2" id="leftMenu">
             <div class="mui-card">
                 <div class="header" style="justify-content:space-between">
                     <div class="header2">
                         <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
-
                         <h3 id="content-title">
                             Filter
-
                         </h3>
                         <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
                         <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
                     </div>
-
                     <div class="header2">
                         <i class="fa-solid fa-magnifying-glass" onclick="searchReservation();"></i>
-
                     </div>
                 </div>
-
-                <div id="filter" class="tab-pane ">
+                <div id="filter" class="tab-pane">
                     <div class="row">
                         <div class="form-group-new-reservation col-md-6">
                             <label>Arrival</label>
@@ -68,7 +56,7 @@
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Resv. No</label>
-                            <input type="text" id="resvHolder col-md-6">
+                            <input type="text" id="resvHolder">
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>CRS No/GC</label>
@@ -79,7 +67,6 @@
                             <select id="searchType">
                                 <option value="0">General</option>
                                 <option value="1">Guest In House</option>
-
                                 <option value="7">Cancellations</option>
                             </select>
                         </div>
@@ -112,113 +99,89 @@
                     </div>
                 </div>
             </div>
-
             <div class="mui-card mt-2">
                 <div class="header">
                     <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
                     <h3 id="content-title">
                         Functions & Options
-
                     </h3>
                     <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
                     <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
                 </div>
-                <div class="toolbar-menu  mt-2 row" id="functionAndOption">
-                    <a href="#" class="font-semibold col-md-5">Advance</a>
-                    <a href="#" class="font-semibold col-md-5">Clear</a>
-                    <a href="#" onclick="openModalEdit();" class="font-semibold col-md-5">Edit</a>
-                    <a href="#" onclick="openModalCancel()" class="font-semibold col-md-5">Cancel</a>
-                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold col-md-5">Reinstate</a>
-                    <a href="#" onclick="checkIn();" class="font-semibold col-md-5">Check In</a>
-                    <a href="#" onclick="openModalViewProfile();" class="font-semibold col-md-5">View Profile</a>
-                    <a href="#" id="groupAdmin" class="font-semibold col-md-5" onclick="redirectGroupAdmin();">Group Admin</a>
-                    <a href="#" data-function="export" class="font-semibold col-md-5">Export</a>
-                    <a href="#" onclick="openModalSplit();" class="font-semibold col-md-5">Split</a>
-                    <a href="#" onclick="openModalAccompanying();" class="font-semibold col-md-5">Accompany</a>
-                    <a href="#" onclick="openModalAddOn();" class="font-semibold col-md-5">Add On</a>
-                    <a href="#" class="font-semibold col-md-5">Alerts</a>
-                    <a href="#" onclick="openModalBilling();" class="font-semibold col-md-5">Billing</a>
-                    <a onclick="openModalInvoicing();" class="font-semibold col-md-5">Invoicing</a>
-                    <a href="#" class="font-semibold col-md-5">Change</a>
-                    <a href="#" onclick="openModalShare();" class="font-semibold col-md-5">Share</a>
-                    <a href="#" onclick="openModalDeposit();" class="font-semibold col-md-5">Dep/DXL</a>
-                    <a href="#" onclick="openModalFixedCharges();" class="font-semibold col-md-5">Fixed Charges</a>
-                    <a href="#" onclick="openConfirm();" class="font-semibold col-md-5">Delete</a>
-                    <a href="#" onclick="openModalMessage();" class="font-semibold col-md-5">Message</a>
-                    <a href="#" onclick="openModalRegistrationCard();" class="font-semibold col-md-5">Regis.Card</a>
-                    <a href="#" onclick="openRoomMove();" class="font-semibold col-md-5">Room Move</a>
-                    <a href="#" onclick="openModalRouting();" class="font-semibold col-md-5">Routing</a>
-                    <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-5">WaitList</a>
-
-                    <div class="dropdown relative col-md-5">
-                        <a href="#" class="menu-toggle font-semibold">Rm. Assg</a>
-                        <div class="submenu absolute z-10 mt-2">
-                            <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
-                            <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
-                        </div>
-                    </div>
-
-                    <div class="dropdown relative col-md-5">
-                        <a href="#" class="menu-toggle font-semibold">Check Out</a>
+                <div class="toolbar-menu mt-2 row" id="functionAndOption">
+                    <div class="dropdown relative col-md-4 mb-1" style="padding:0">
+                        <a href="#" class="menu-toggle font-semibold">CO</a>
                         <div class="submenu absolute z-10 mt-2">
                             <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
                             <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
                             <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-        </div>
-
-        <!-- Nội dung bên phải -->
-        <div class="col-md-9">
-            <div class="content-right">
-                <div class="mui-card" style="display:none">
-                    <!-- Container for Add Columns button -->
-                    <div id="addColumnButtonContainer" style="margin-bottom: 7px;">
-                        <div class="header">
-                            <h3 id="content-title">
-                                Visible Columns
-
-                            </h3>
-                            <i class="fa-solid fa-plus" id="addColumns" title="Click to add column into datagrid"></i>
+                    <div class="dropdown relative col-md-4 mb-1" style="padding:0">
+                        <a href="#" class="menu-toggle font-semibold">Rm.Assg</a>
+                        <div class="submenu absolute z-10 mt-2">
+                            <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                            <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
                         </div>
                     </div>
-                    <!-- Container for visible column blocks -->
-                    <div id="columnSelector" style="margin-bottom: 10px; display: flex; flex-wrap: wrap;">
-                        <!-- Visible column blocks with "x" icon will be generated dynamically -->
-                    </div>
+                    <a href="#" class="font-semibold col-md-4 mb-1">Advance</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1">Clear</a>
+                    <a href="#" onclick="editBooking();" class="font-semibold col-md-4 mb-1">Edit</a>
+                    <a href="#" onclick="openModalCancel()" class="font-semibold col-md-4 mb-1">Cancel</a>
+                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold col-md-4 mb-1">Reinstate</a>
+                    <a href="#" onclick="checkIn();" class="font-semibold col-md-4 mb-1">Check In</a>
+                    <a href="#" onclick="openModalViewProfile();" class="font-semibold col-md-4 mb-1">Profile</a>
+                    <a href="#" id="groupAdmin" class="font-semibold col-md-4 mb-1" onclick="redirectGroupAdmin();">Grp Admin</a>
+                    <a href="#" data-function="export" class="font-semibold col-md-4 mb-1">Export</a>
+                    <a href="#" onclick="openModalSplit();" class="font-semibold col-md-4 mb-1">Split</a>
+                    <a href="#" onclick="openModalAccompanying();" class="font-semibold col-md-4 mb-1">Accompany</a>
+                    <a href="#" onclick="openModalAddOn();" class="font-semibold col-md-4 mb-1">Add On</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1">Alerts</a>
+                    <a href="#" onclick="openModalBilling();" class="font-semibold col-md-4 mb-1">Billing</a>
+                    <a onclick="openModalInvoicing();" class="font-semibold col-md-4 mb-1">Invoicing</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1">Change</a>
+                    <a href="#" onclick="openModalShare();" class="font-semibold col-md-4 mb-1">Share</a>
+                    <a href="#" onclick="openModalDeposit();" class="font-semibold col-md-4 mb-1">Dep/DXL</a>
+                    <a href="#" onclick="openModalFixedCharges();" class="font-semibold col-md-4 mb-1">FixedCharges</a>
+                    <a href="#" onclick="openConfirm();" class="font-semibold col-md-4 mb-1">Delete</a>
+                    <a href="#" onclick="openModalMessage();" class="font-semibold col-md-4 mb-1">Message</a>
+                    <a href="#" onclick="openModalRegistrationCard();" class="font-semibold col-md-4 mb-1">Regis.Card</a>
+                    <a href="#" onclick="openRoomMove();" class="font-semibold col-md-4 mb-1">Room Move</a>
+                    <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1">Routing</a>
+                    <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1">WaitList</a>
+                    <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1">Columns</a>
+
+
                 </div>
-
-
+            </div>
+        </div>
+        <!-- Nội dung bên phải -->
+        <div class="col-md-9" id="rightContent">
+            <div class="content-right">
                 <div class="mui-card">
-                    <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;" >
+                    <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                    <span>Data Booking</span>
-                    <div class="toolbar-menu max-w-7xl" id="functionAndOptionTable" style="display:none">
-                        <a href="#" class="font-semibold" style="background-color:#d28a19;color:white">Advance</a>
-                        <a href="#" class="font-semibold" style="background-color:#d28a19;color:white">Clear</a>
-                        <a href="#" onclick="openModalEdit();" style="background-color:#d28a19;color:white" class="font-semibold">Edit</a>
-                        <a href="#" onclick="openModalCancel()" style="background-color:#d28a19;color:white" class="font-semibold">Cancel</a>
-                        <a href="#" onclick="openConfirmReinstate();" style="background-color:#d28a19;color:white" class="font-semibold">Reinstate</a>
-                        <a href="#" onclick="checkIn();" class="font-semibold" style="background-color:#d28a19;color:white">Check In</a>
-                        <a href="#" onclick="openModalViewProfile();" class="font-semibold" style="background-color:#d28a19;color:white">View Profile</a>
-   
+                    <div class="header" style="border:none">
+                        <h3 id="content-title">
+                            <i class="fa-solid fa-bars" id="toggleLeftMenu" onclick="toggleLeftMenu();" title="Toggle left menu"></i>
+                            Data Booking
+                        </h3>
+                    </div>
+                    <div class="toolbar-menu max-w-7xl row" id="functionAndOptionTable" style="display:none">
+                        <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalBilling();">Billing</a>
+                        <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Packages</a>
+                        <a href="#" style="background-color:#0055b8;color:white" class="font-semibold col-md-1">Dep/DXL</a>
                     </div>
                     <!-- DevExtreme DataGrid -->
                     <div id="gridContainer" class="gridContainer mt-2"></div>
                 </div>
             </div>
         </div>
-
-        
     </div>
 </div>
-
 <div class="offcanvas offcanvas-end" tabindex="-1" id="columnOffcanvas" aria-labelledby="columnOffcanvasLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="columnOffcanvasLabel">Select column to add into grid</h5>
@@ -227,23 +190,17 @@
     <div class="offcanvas-body" style="background-color:#f5f5f5;margin:0 5px">
         <div class="d-flex justify-content-end mb-2">
             <button type="button" class="submit-button-clear-reservation" id="addSelectedColumns">Add</button>
-
             <button type="button" class="submit-button-new-reservation" id="clearSelectedColumns">Clear</button>
         </div>
-        <div id="hiddenColumnList" class="row">
-            <!-- Các khối cột ẩn sẽ được tạo động -->
+        <div id="columnList" class="row">
+            <!-- Các cột sẽ được tạo động -->
         </div>
-
     </div>
 </div>
-
-
-
 <!-- Modal cancel-->
 <div class="modal fade modal" id="modalCancel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Cancel</h5>
                 <button type="button" class="btn-close" onclick="closeModalCancel()"></button>
@@ -259,14 +216,11 @@
                 </div>
                 <div class="mt-2">
                     <textarea class="form-control" id="descriptionCancel" rows="3"></textarea>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
 @await Html.PartialAsync("Options/Deposit")
 @await Html.PartialAsync("Options/RoomMove")
 @await Html.PartialAsync("Options/Message")
@@ -289,33 +243,52 @@
 @await Html.PartialAsync("Options/CheckOutAll")
 @await Html.PartialAsync("Options/CheckOutZero")
 @await Html.PartialAsync("Options/CheckOut")
-
 <script>
-
-    function setupDefaultCaret(){
+    function toggleLeftMenu() {
+        const leftMenu = $('#leftMenu');
+        const rightContent = $('#rightContent');
+        const toggleIcon = $('#toggleLeftMenu');
+        if (leftMenu.is(':visible')) {
+            leftMenu.hide();
+            rightContent.removeClass('col-md-9 col-md-8').addClass('col-md-12');
+            toggleIcon.removeClass('fa-bars').addClass('fa-arrow-left');
+            toggleIcon.attr('title', 'Show left menu');
+        } else {
+            leftMenu.show();
+            rightContent.removeClass('col-md-12 col-md-8').addClass('col-md-9');
+            toggleIcon.removeClass('fa-arrow-left').addClass('fa-bars');
+            toggleIcon.attr('title', 'Hide left menu');
+        }
+    }
+    function setupDefaultCaret() {
         $('#caretDownFunctionAndOption').hide();
         $('#caretDownFilter').hide();
-
     }
-    function clickCaretDownFunctionAndOption(){
+    function clickCaretDownFunctionAndOption() {
         $('#caretUpFunctionAndOption').show();
         $('#caretDownFunctionAndOption').hide();
         $('#functionAndOption').show();
     }
-    function clickCaretUpFunctionAndOption(){
+    function clickCaretUpFunctionAndOption() {
         $('#caretUpFunctionAndOption').hide();
         $('#caretDownFunctionAndOption').show();
         $('#functionAndOption').hide();
     }
-    function clickCaretDownFilter(){
+    function clickCaretDownFilter() {
         $('#caretUpFilter').show();
         $('#caretDownFilter').hide();
         $('#filter').show();
     }
-    function clickCaretUpFilter(){
+    function clickCaretUpFilter() {
         $('#caretUpFilter').hide();
         $('#caretDownFilter').show();
         $('#filter').hide();
+    }
+    function openVisibleColumns() {
+        // Call updateColumnList from within initializeDataGridSearch when grid is initialized
+        const offcanvasElement = document.getElementById('columnOffcanvas');
+        const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+        offcanvas.show();
     }
     $(document).ready(async function () {
         setupDefaultCaret();
@@ -324,15 +297,12 @@
         getProfileIndividual();
         $('#listFunction').hide();
         $('#searchType, #name, #firstName, #resvHolder, #confirmationNo, #crsNo, #roomNo, #roomType, #package, #zone, #arrivalForm, #departureForm, #roomShare, #owner').on('keypress', function (e) {
-            if (e.which === 13) { // Enter key = 13
-                e.preventDefault(); // Ngăn form bị submit nếu có
+            if (e.which === 13) {
+                e.preventDefault();
                 searchReservation();
             }
         });
-
-
     });
-
     function getBusinessDate() {
         return $.ajax({
             url: '/Reservation/GetBusinessDate',
@@ -341,21 +311,14 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-
-                // Lấy ngày từ result (giả sử result có định dạng ISO như 'YYYY-MM-DDTHH:mm:ss')
                 const businessDate = new Date(result);
                 $('#arrivalForm').val(result.split('T')[0]);
-                // $('#dayInput').val(result.split('T')[0]);
-                // $('#dateInput').val(result.split('T')[0]);
                 $('#expDatePaymentBilling').val(result.split('T')[0]);
                 $('#transDatePaymentBilling').val(result.split('T')[0]);
                 $('#fromDateSelectOption').val(result.split('T')[0]);
                 $('#toDateSelectOption').val(result.split('T')[0]);
-                // Cộng 7 ngày
                 const departureDate = new Date(businessDate);
                 departureDate.setDate(businessDate.getDate() + 7);
-
-                // Định dạng ngày thành YYYY-MM-DD
                 const formattedDepartureDate = departureDate.toISOString().split('T')[0];
                 $('#departureForm').val(formattedDepartureDate);
             },
@@ -366,7 +329,6 @@
             }
         });
     }
-
     function searchReservation() {
         $("#loadingSpinnerForm").show();
         const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
@@ -389,7 +351,7 @@
                     arrivalFrom: $('#arrivalForm').val(),
                     arrivalTo: $('#departureForm').val(),
                     roomSharer: checkboxValue,
-                    owner: $('#owner').val() // Sửa lỗi cú pháp: $('owner') thành $('#owner')
+                    owner: $('#owner').val()
                 },
                 crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
@@ -431,10 +393,7 @@
     var folioNoID = 0;
     var reservationStatus = 0;
     function initializeDataGridSearch(data) {
-        // Kiểm tra dữ liệu đầu vào
         const limitedData = data.slice(0, 100);
-
-        // Định nghĩa các cột dựa trên dữ liệu
         const columns = [
             { dataField: 'ID', caption: 'ID', visible: false },
             { dataField: 'ConfirmationNo', caption: 'Confirmation No', visible: true },
@@ -519,42 +478,19 @@
             { dataField: 'VIP', caption: 'VIP', visible: false },
             { dataField: 'VoucherNo', caption: 'Voucher No', visible: false }
         ];
-
-        // Hàm cập nhật danh sách cột hiển thị
-        function updateVisibleColumns() {
-            const columnSelector = $('#columnSelector');
-            columnSelector.empty(); // Xóa nội dung cũ
+        function updateColumnList() {
+            const columnList = $('#columnList');
+            columnList.empty();
             columns.forEach(column => {
-                if (column.visible) {
-                    const blockHtml = `
-                        <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #f5f5f5;color: #1f2937;font-weight:500">
-                            <span class="remove-column" data-column="${column.dataField}" style="cursor: pointer; margin-right: 5px;color:#bf3431">
-                                <i class="fa-solid fa-xmark"></i>
-                            </span>
-                            <span style="color:#1f2937">${column.caption}</span>
-                        </div>`;
-                    columnSelector.append(blockHtml);
-                }
+                const isChecked = column.visible ? 'checked' : '';
+                const blockHtml = `
+                    <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #ffffff;color: #1f2937;font-weight:500">
+                        <input type="checkbox" class="column-checkbox" data-column="${column.dataField}" style="margin-right: 5px;" ${isChecked}>
+                        <span>${column.caption}</span>
+                    </div>`;
+                columnList.append(blockHtml);
             });
         }
-
-        // Hàm cập nhật danh sách cột ẩn trong Offcanvas
-        function updateHiddenColumns() {
-            const hiddenColumnList = $('#hiddenColumnList');
-            hiddenColumnList.empty(); // Xóa nội dung cũ
-            columns.forEach(column => {
-                if (!column.visible) {
-                    const blockHtml = `
-                        <div class="column-block d-flex align-items-center mb-1" style="margin-right: 10px;padding: 6px 12px;background: #ffffff;color: #1f2937;font-weight:500">
-                            <input type="checkbox" class="column-checkbox" data-column="${column.dataField}" style="margin-right: 5px;">
-                            <span>${column.caption}</span>
-                        </div>`;
-                    hiddenColumnList.append(blockHtml);
-                }
-            });
-        }
-
-        // Khởi tạo DataGrid
         const grid = $("#gridContainer").dxDataGrid({
             dataSource: limitedData,
             allowColumnResizing: true,
@@ -562,11 +498,11 @@
             columnMinWidth: 90,
             paging: {
                 enabled: true,
-                pageSize: 15
+                pageSize: 18
             },
             pager: {
                 visible: true,
-                allowedPageSizes: [15, 20, 30],
+                allowedPageSizes: [18, 25, 30],
                 showPageSizeSelector: true,
                 showInfo: true,
                 showNavigationButtons: true
@@ -585,21 +521,7 @@
             },
             columns: columns,
             onRowDblClick: function(e) {
-                $.ajax({
-                    url: '/Reservation/EncryptId',
-                    type: 'POST',
-                    data: { id: e.data.ID },
-                    success: function(response) {
-                        if (response.success) {
-                            window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
-                        } else {
-                            alert('Lỗi khi mã hóa ID');
-                        }
-                    },
-                    error: function() {
-                        alert('Lỗi khi gọi API mã hóa');
-                    }
-                });        
+                editBooking();
             },
             onRowClick: function(e) {
                 $('#functionAndOptionTable').show();
@@ -676,7 +598,6 @@
                             el.style.cursor = 'not-allowed';
                         }
                     });
-
                 } else {
                     ['unAssignRoom'].forEach(id => {
                         const el = document.getElementById(id);
@@ -690,67 +611,39 @@
                 $('#moreInfo').append(html);
             }
         }).dxDataGrid('instance');
-
-        // Cập nhật danh sách cột hiển thị và ẩn ban đầu
-        updateVisibleColumns();
-        updateHiddenColumns();
-
-        // Xử lý sự kiện xóa cột
-        $('#columnSelector').on('click', '.remove-column', function() {
-            const columnName = $(this).attr('data-column');
-            grid.columnOption(columnName, 'visible', false);
-            columns.find(col => col.dataField === columnName).visible = false;
-            updateVisibleColumns();
-            updateHiddenColumns();
-        });
-
-        // Xử lý sự kiện nút "Add Columns" để mở Offcanvas
-        $('#addColumns').on('click', function() {
-            updateHiddenColumns(); // Cập nhật danh sách cột ẩn trước khi mở Offcanvas
-            const offcanvasElement = document.getElementById('columnOffcanvas');
-            const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-            offcanvas.show();
-        });
-
-        // Xử lý sự kiện nút "Add" trong Offcanvas
+        // Update column list when opening offcanvas
+        updateColumnList();
+        // Handle "Add" button in offcanvas
         $('#addSelectedColumns').on('click', function() {
-            $('.column-checkbox:checked').each(function() {
+            $('.column-checkbox').each(function() {
                 const columnName = $(this).attr('data-column');
-                grid.columnOption(columnName, 'visible', true);
-                columns.find(col => col.dataField === columnName).visible = true;
+                const isChecked = $(this).is(':checked');
+                grid.columnOption(columnName, 'visible', isChecked);
+                columns.find(col => col.dataField === columnName).visible = isChecked;
             });
-            updateVisibleColumns();
-            updateHiddenColumns();
-            // Đóng Offcanvas sau khi thêm
             const offcanvasElement = document.getElementById('columnOffcanvas');
             const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
             offcanvas.hide();
         });
-
-        // Xử lý sự kiện nút "Clear" trong Offcanvas
+        // Handle "Clear" button in offcanvas
         $('#clearSelectedColumns').on('click', function() {
             $('.column-checkbox').prop('checked', false);
         });
     }
-
-
     function formatNumberBilling(number) {
-      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
-    // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
     function formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
-
-    function redirectGroupAdmin(){
+    function redirectGroupAdmin() {
         $.ajax({
             url: '/Reservation/EncryptId',
             type: 'POST',
-            data: { id: confirmationNo},
+            data: { id: confirmationNo },
             success: function(response) {
                 if (response.success) {
                     window.location.href = '/Reservation/GroupAdmin?key=' + encodeURIComponent(response.encryptedId);
@@ -763,11 +656,10 @@
             }
         });
     }
-    async function setTomSelect(){
+    async function setTomSelect() {
         const ids = [
-                        "#txtName","#txtItemInventory","#txtNameAccompanying","#transactionRouting","#userSelectOption"
+            "#txtName", "#txtItemInventory", "#txtNameAccompanying", "#transactionRouting", "#userSelectOption"
         ];
-
         for (const id of ids) {
             if ($(id).length) {
                 new TomSelect(id, {
@@ -777,33 +669,27 @@
             }
         }
     }
-    function getProfileIndividual(){
+    function getProfileIndividual() {
         $.ajax({
-                url: '/Reservation/GetProfileIndividual',
+            url: '/Reservation/GetProfileIndividual',
             type: 'get',
             dataType: 'json',
-                crossDomain: false,
+            crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 if (result.length > 0) {
-                    
-
-                    let select2 = $('#txtNameAccompanying')[0].tomselect; // Lấy instance của TomSelect
-                    select2.clear(); // Xóa giá trị hiện tại
-                    select2.clearOptions(); // Xóa tất cả option cũ
-
+                    let select2 = $('#txtNameAccompanying')[0].tomselect;
+                    select2.clear();
+                    select2.clearOptions();
                     select2.addOption({ value: '0', text: '' });
                     result.forEach(item => {
                         select2.addOption({ value: item.id, text: `${item.account}` });
                     });
-
-                    select2.setValue('0'); // Chọn giá trị mặc định
-                }
-                else{
-
-                    let select2 = $('#txtNameAccompanying')[0].tomselect; // Lấy instance của TomSelect
-                    select2.clear(); // Xóa giá trị hiện tại
-                    select2.clearOptions(); // Xóa tất cả option cũ
+                    select2.setValue('0');
+                } else {
+                    let select2 = $('#txtNameAccompanying')[0].tomselect;
+                    select2.clear();
+                    select2.clearOptions();
                     select2.addOption({ value: '0', text: '' });
                     select2.setValue('0');
                 }
@@ -811,8 +697,24 @@
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
-                } else {
                 }
+            }
+        });
+    }
+    function editBooking() {
+        $.ajax({
+            url: '/Reservation/EncryptId',
+            type: 'POST',
+            data: { id: idReservation },
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
+                } else {
+                    alert('Lỗi khi mã hóa ID');
+                }
+            },
+            error: function() {
+                alert('Lỗi khi gọi API mã hóa');
             }
         });
     }
