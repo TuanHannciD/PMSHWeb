@@ -755,4 +755,16 @@
             }
         });
     }
+    function getSelectedCheckboxes(name) {
+        const checkboxes = document.querySelectorAll(`input[type="checkbox"][name="${name}"]:checked`);
+        const values = Array.from(checkboxes).map(checkbox => checkbox.value);
+        return values.join(","); // Trả về chuỗi dạng 'a,c,v,c'
+    }
+
+
+
+    function getSelectedRadio(name) {
+        const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
+        return radio ? radio.value : null;
+    }
 </script>

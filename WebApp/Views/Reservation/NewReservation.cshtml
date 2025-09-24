@@ -524,11 +524,12 @@
 @await Html.PartialAsync("ModalNewReservation/ModalSearchRoom")
 <script>
     var profileIndividualID = 0;
+    var reservationID = 0;
     $(document).ready(async function (){
         await setTomSelect();
         var result = @Json.Serialize(ViewBag.Reservation);
-        console.log(result);
         if(result.id != 0){
+            reservationID = result.id;
             setUpReservation(result);
         }
     });
@@ -1087,6 +1088,8 @@
         let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
         let valueDiscountAmount = $('#txtDiscountAmount').val();
         let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
+        
+        formData.append('reservationID',reservationID);
 
         formData.append('profileAgentID', $('#txtAgentID').val());
         formData.append('agentName', $('#txtAgent').val());
