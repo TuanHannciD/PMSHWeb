@@ -1117,6 +1117,8 @@ namespace Reservation.Controllers
                 folioModel.UserInsertID = folioModel.UserUpdateID = reservationModel.UserInsertId;
                 FolioBO.Instance.Insert(folioModel);
                 #endregion
+
+
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
 
