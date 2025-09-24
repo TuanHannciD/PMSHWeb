@@ -3703,6 +3703,203 @@ namespace HouseKeeping.Controllers
             }
 
         }
+        [HttpGet]
+        public ActionResult UpdateRoomStatus()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+  
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+               DateTime GetBusinessDate = businessDateModel[0].BusinessDate;
+
+                string sql = "SELECT RoomNo, Status FROM Reservation WITH(NOLOCK)" +
+                    " WHERE datediff(day, ArrivalDate, '" + GetBusinessDate.ToString("yyyy/MM/dd") + "') >= 0" +
+                    " AND datediff(day, DepartureDate, '" + GetBusinessDate.ToString("yyyy/MM/dd") + "') <= 0" +
+                    " AND MainGuest = 1" +
+                    " AND RoomID > 0" +
+                    " AND Status NOT IN (3,4,7)";
+                string roomNo = "";
+                DataTable dt = pt.Select(sql);
+                foreach (DataRow row in dt.Rows)
+                {
+                    roomNo = row[0].ToString();
+                    var RoomNoUp = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindByAttribute("RoomNo", roomNo)).FirstOrDefault();
+
+                    DataRow[] rows = dt.Select("RoomNo = '" + roomNo + "'");
+                    if (rows.Length == 1)
+                    {
+                        int status = (int)row[1];
+                        switch (status)
+                        {
+                            case 1:
+                                status = 2;
+                                break;
+                            case 2:
+                                status = 5;
+                                break;
+                            case 5:
+                                status = 0;
+                                break;
+                            case 6:
+                                status = 4;
+                                break;
+                            case 8:
+                                status = 3;
+                                break;
+                            default:
+                                status = 0;
+                                break;
+                        }
+                        //sql = "UPDATE Room SET CurrResvStatus = " + status + " WHERE RoomNo = '" + roomNo + "'";
+                        RoomNoUp.CurrResvStatus = status;
+
+                        // Gọi BO để lưu
+                        RoomBO.Instance.Update(RoomNoUp);
+
+                    }
+                    else if (rows.Length == 2)
+                    {
+                        //sql = "UPDATE Room SET CurrResvStatus = 7 WHERE RoomNo = '" + roomNo + "'";
+                        RoomNoUp.CurrResvStatus = 7;
+
+                        // Gọi BO để lưu
+                        RoomBO.Instance.Update(RoomNoUp);
+                    }
+                    else
+                    {
+                        //sql = "UPDATE Room SET CurrResvStatus = 0 WHERE RoomNo = '" + roomNo + "'";
+                        RoomNoUp.CurrResvStatus = 0;
+
+                        // Gọi BO để lưu
+                        RoomBO.Instance.Update(RoomNoUp);
+                    }
+                    //pt.UpdateCommand(sql);
+                }
+                sql = "SELECT RoomNo FROM Reservation WITH(NOLOCK) " +
+                    " WHERE datediff(day, ArrivalDate, '" + GetBusinessDate.ToString("yyyy/MM/dd") + "') < 0 " +
+                    " AND MainGuest = 1 " +
+                    " AND RoomID > 0 " +
+                    " AND Status NOT IN (3,4,7) " +
+                    " AND RoomNo NOT IN ( " +
+                        " SELECT RoomNo " +
+                        " FROM Reservation WITH(NOLOCK) " +
+" WHERE datediff(day, ArrivalDate, '" + GetBusinessDate.ToString("yyyy/MM/dd") + "') >= 0 " +
+                        " AND datediff(day, DepartureDate, '" + GetBusinessDate.ToString("yyyy/MM/dd") + "') <= 0 " +
+                        " AND MainGuest = 1 " +
+                        " AND RoomID > 0 " +
+                        " AND Status NOT IN (3,4,7) " +
+                    " )";
+
+                var listroom = RoomBO.GetRoom(sql); // List<RoomModel>
+
+                if (listroom != null && listroom.Any())
+                {
+                    // Ghép danh sách RoomNo thành chuỗi 'A101','A102',...
+                    var roomNoss = string.Join(",",
+                        listroom.Select(r => $"'{r.RoomNo}'"));
+
+                    string updateSql = $"UPDATE Room SET CurrResvStatus = 0 WHERE RoomNo IN ({roomNoss})";
+
+                    pt.UpdateCommand(updateSql);
+                }
+
+
+                //foreach (var room in listroom)
+                //{
+                //    // Lấy model đầu tiên theo RoomNo
+                //    var RoomNoUp = PropertyUtils.ConvertToList<RoomModel>(
+                //                       RoomBO.Instance.FindByAttribute("RoomNo", room.RoomNo))
+                //                   .FirstOrDefault();
+
+                //    if (RoomNoUp != null)
+                //    {
+                //        RoomNoUp.CurrResvStatus = 0;
+                //        RoomBO.Instance.Update(RoomNoUp);
+                //    }
+                //}
+
+
+                //pt.UpdateCommand("UPDATE Room SET CurrResvStatus = 0 WHERE RoomNo IN (" + sql + ")");
+                string roomNos = "";
+                foreach (DataRow row in dt.Rows)
+                    roomNos += row[0].ToString() + ",";
+                dt = pt.Select(sql);
+                foreach (DataRow row in dt.Rows)
+                    roomNos += row[0].ToString() + ",";
+                roomNos = roomNos.TrimEnd(',');
+                sql = "UPDATE Room SET CurrResvStatus = 6 WHERE RoomNo NOT IN (" + roomNos + ")";
+                pt.UpdateCommand(sql);
+
+                sql = "SELECT KeyValue FROM ConfigSystem WITH(NOLOCK) WHERE KeyName = 'ExtraBedCode'";
+                dt = pt.Select(sql);
+                if (dt.Rows.Count == 0)
+                    dt.Rows.Add("1902,1904,1906,1908");
+
+                sql = "SELECT DISTINCT a.RoomNo FROM dbo.Reservation a WITH (NOLOCK), dbo.ReservationFixedCharge b WITH (NOLOCK) " +
+                      "WHERE a.ID = b.ReservationID AND b.TransactionCode IN (" + dt.Rows[0][0] + ") AND a.Status NOT IN (0,3,4,7) " +
+                      "AND (DATEDIFF(day,b.PostingDate, dbo.getBusinessDate()) = 0 OR (DATEDIFF(day,b.BeginDate, dbo.getBusinessDate()) >= 0 AND DATEDIFF(day,b.EndDate-1,dbo.getBusinessDate()) <= 0 )) " +
+                      "AND a.RoomID > 0 ORDER BY a.RoomNo ";
+                dt = pt.Select(sql);
+                if (dt.Rows.Count > 0)
+                {
+                    roomNos = "";
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                        roomNos += dt.Rows[i][0] + ",";
+                    roomNos = roomNos.Trim(',');
+
+                    sql = "UPDATE Room SET HasExtraBed = 0";
+                    pt.UpdateCommand(sql);
+                    sql = "UPDATE Room SET HasExtraBed = 1 WHERE RoomNo IN (" + roomNos + ")";
+                    pt.UpdateCommand(sql);
+                }
+                //sql = "SELECT DISTINCT RoomNo, Country FROM Reservation WITH(NOLOCK)" +
+                //    " WHERE datediff(day, ArrivalDate, dbo.getBusinessDate()) >=  0" +
+                //    " AND datediff(day, DepartureDate, dbo.getBusinessDate()) <= 0" +
+                //    " AND MainGuest = 1" +
+                //    " AND Status NOT IN (3,4,7)" +
+                //    " AND RoomNo <> ''";
+                string query  = "SELECT b.RoomNo,b.NoOfAdult,SUM(ISNULL(b.NoOfChild,0)+ ISNULL(b.NoOfChild1,0)) AS Surcharge, a.Country " +
+                      "FROM dbo.Reservation a WITH (NOLOCK), dbo.ReservationRate b WITH (NOLOCK) " +
+"WHERE a.ID = b.ReservationID AND (datediff(day, b.RateDate, dbo.getBusinessDate()) =  0 OR a.Status = 6) " +
+                      "AND a.MainGuest = 1 AND a.ReservationNo > 0 AND b.RoomType <> 'XXX' AND a.Status NOT IN (3,4,7) AND b.RoomID > 0 " +
+                      "GROUP BY b.RoomNo,b.NoOfAdult,a.Country ORDER BY b.RoomNo ";
+
+
+                var list = RoomBO.UpdateRoomStatus(query);
+                 dt = PropertyUtils.ConvertToDataTable(list);
+                //dt = pt.Select(sql);
+                //update db
+                //update db
+                sql = "UPDATE Room SET MainGuestNationality = '', Surcharge = 0 ";
+                pt.UpdateCommand(sql);
+                //Process new
+                if (dt.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        sql = "UPDATE Room SET MainGuestNationality = '" + dt.Rows[i]["Country"].ToString() + "', Surcharge = " + TextUtils.ToInt(dt.Rows[i]["Surcharge"].ToString()) + " " +
+                              "WHERE RoomNo = " + dt.Rows[i]["RoomNo"].ToString();
+                        pt.UpdateCommand(sql);
+                    }
+                }
+                pt.CommitTransaction();
+                return Json(new { success = true, message = "Rooms status updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+
+        }
 
     }
 }

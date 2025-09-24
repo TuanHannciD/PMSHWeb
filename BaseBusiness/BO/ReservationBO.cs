@@ -42,6 +42,7 @@ namespace BaseBusiness.BO
             string query = $"SELECT * FROM Reservation WHERE CAST(ArrivalDate AS DATE) >= CAST('{toDateStr}' AS DATE) AND CAST(DepartureDate AS DATE) <= CAST('{fromDateStr}' AS DATE) ORDER BY id DESC";
             return instance.GetList<ReservationModel>(query);
         }
+
         public static List<ProfileModel> GetProfileIndividual()
         {
             string query = $"select * from Profile where Type = 0 order by id desc ";
