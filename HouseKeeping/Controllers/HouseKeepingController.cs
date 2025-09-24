@@ -68,6 +68,41 @@ namespace HouseKeeping.Controllers
             ViewBag.ZoneList = listzo;
             return View();
         }
+
+        //[HttpGet]
+        //public IActionResult RoomAvailabilityData(DateTime fromDate, string zone)
+        //{
+        //    try
+        //    {
+        //        zone = zone ?? "";
+        //        DateTime toDate = fromDate.AddDays(30); // Tự động tính ngày kết thúc
+
+        //        List<string> columnNames = new List<string>();
+        //        List<string> isnullExpressions = new List<string>();
+
+
+        //        // Dạng từng ngày [dM]
+        //        for (int i = 0; i < 31; i++)
+        //        {
+        //            DateTime currentDate = fromDate.AddDays(i);
+        //            string day = currentDate.Day.ToString();       // Không format "00" để tránh lỗi 017
+        //            string month = currentDate.Month.ToString();   // Không thêm số 0
+
+        //            string column = $"[{day}{month}]";
+        //            string expression = $"'{day}' = ISNULL({column}, 0)";
+
+        //            columnNames.Add(column);
+        //            isnullExpressions.Add(expression);
+        //        }
+
+
+        //        return Json(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(ex.Message);
+        //    }
+        //}
         public IActionResult RoomStatus()
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
