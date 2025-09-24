@@ -17,8 +17,8 @@
         if (status != 'RESVED' && status != 'DUE IN' ) {
             return;
         } 
-        if(roomStatus != 'VD'){
-            showToast('ERROR', 'Room Status not in VD status', false);
+        if(roomStatus != 'VC'){
+            showToast('ERROR', 'Room Status not in VC status', false);
             return;
         }
         const userName = JSON.parse(localStorage.getItem("Loginname"));

@@ -141,21 +141,26 @@
                     <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
                 </div>
                 <div class="toolbar-menu mt-2 row" id="functionAndOption">
-                    <div class="dropdown relative col-md-4 mb-1" style="padding:0">
+@*                     <div class="dropdown relative col-md-4 mb-1" style="padding:0">
                         <a href="#" class="menu-toggle font-semibold">CO</a>
                         <div class="submenu absolute z-10 mt-2">
                             <a href="#" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
                             <a href="#" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
                             <a href="#" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
                         </div>
-                    </div>
-                    <div class="dropdown relative col-md-4 mb-1" style="padding:0">
+                    </div> *@
+@*                     <div class="dropdown relative col-md-4 mb-1" style="padding:0">
                         <a href="#" class="menu-toggle font-semibold">Rm.Assg</a>
                         <div class="submenu absolute z-10 mt-2">
                             <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
                             <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
                         </div>
-                    </div>
+                    </div> *@
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
+                    <a href="#"  class="font-semibold col-md-4 mb-1" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
                     <a href="#" class="font-semibold col-md-4 mb-1">Advance</a>
                     <a href="#" class="font-semibold col-md-4 mb-1">Clear</a>
                     <a href="#" onclick="editBooking();" class="font-semibold col-md-4 mb-1">Edit</a>

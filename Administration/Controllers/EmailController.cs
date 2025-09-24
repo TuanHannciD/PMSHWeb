@@ -13,8 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Administration.Controllers
 {
@@ -365,6 +368,75 @@ namespace Administration.Controllers
                 return Json(ex.Message);
             }
 
+        }
+        #endregion
+
+        #region DatVP __ SendEmail: Send Email
+        [HttpPost]
+        public ActionResult SendEmailGuest(int templateID, List<int> profileIDs)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                // Fetch email template
+                ContactEmailTemplateModel contactEmail = (ContactEmailTemplateModel)ContactEmailTemplateBO.Instance.FindByPrimaryKey(templateID);
+                if (contactEmail == null)
+                {
+                    return Json(new { code = 1, msg = "Can not find temokate" });
+                }
+                string subject = contactEmail.Name;
+                string htmlContent = contactEmail.Content;
+
+                // Process each profile
+                foreach (int profileId in profileIDs)
+                {
+                    ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(profileId);
+                    if (profile == null)
+                    {
+                        return Json(new { code = 1, msg = $"Profile with ID { profileId} not found." });
+
+                    }
+
+                    // Ensure profile has an Email property
+                    if (string.IsNullOrEmpty(profile.Email))
+                    {
+                        return Json(new { code = 1, msg = $"Email address missing for profile ID {profileId}." });
+
+                    }
+
+                    // Replace placeholders like ##Account## with profile properties
+                    string pattern = @"##(\w+)##";
+                    string personalizedContent = Regex.Replace(htmlContent, pattern, match =>
+                    {
+                        string propertyName = match.Groups[1].Value;
+                        PropertyInfo propertyInfo = profile.GetType().GetProperty(propertyName);
+                        if (propertyInfo != null)
+                        {
+                            object value = propertyInfo.GetValue(profile);
+                            return value?.ToString() ?? string.Empty;
+                        }
+                        return match.Value; // Keep original placeholder if property not found
+                    });
+
+                    // Send email to profile.Email with personalized content
+                    //SendEmail(profile.Email, subject, personalizedContent);
+                }
+
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Emails processed successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
         }
         #endregion
     }

@@ -10,6 +10,6 @@ namespace Administration.Services.Interfaces
     public interface IEmailService
     {
         public DataTable GetAllEmailOfGuest(DateTime fromDate, DateTime toDate, int status);
-
+        //void SendEmail(string hoTen, string email, string body, string orderCode);
     }
 }
