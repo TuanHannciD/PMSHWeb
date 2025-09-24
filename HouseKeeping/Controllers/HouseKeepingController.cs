@@ -60,7 +60,14 @@ namespace HouseKeeping.Controllers
             ViewBag.ZoneList = listzo;
             return View();
         }
-
+        public IActionResult RoomAvailability()
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+            return View();
+        }
         public IActionResult RoomStatus()
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
