@@ -112,7 +112,7 @@
             </div>
         </div>
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-custom sticky-top" style="display:block">
+        <nav class="navbar navbar-expand-lg navbar-custom sticky-top" style="display:block;z-index: 999 !important">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                     <span class="navbar-toggler-icon"></span>
@@ -208,6 +208,7 @@
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TaskAssignment">Task Assignment</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="RoomAttendentDailyWorksheet">Room Attendant Daily Worksheet</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="MakeupServiceRoom">Makeup Service Room</a>
+                                <a class="dropdown-item">Update Room Status</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="TurndownTasksheet">Turndown Tasksheet</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="HouseKeeping" asp-action="LostAndFound">Lost And Found</a>
                             </div>
@@ -420,6 +421,29 @@
                 exitFullscreen();
             }
         });
+
+           $(".dropdown-item:contains('Update Room Status')").on("click", function () {
+                $.ajax({
+                    url: '/HouseKeeping/UpdateRoomStatus',
+                    type: 'GET',
+                    traditional: true,
+                    crossDomain: false,
+                    headers: {
+                        "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                    },
+                    success: function (result) {
+                        showToast('Success', result.message, true);
+                        $('#popupNewGridAddUser').hide();
+                        $("#loadingSpinner").hide();
+                        $("#btnPrint").trigger("click");
+                    },
+                    error: function () {
+                        alert("Không thể tải báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
+                });
+            });
+
 
         // Lắng nghe sự kiện thay đổi trạng thái toàn màn hình
         document.addEventListener('fullscreenchange', updateFullscreenIcon);

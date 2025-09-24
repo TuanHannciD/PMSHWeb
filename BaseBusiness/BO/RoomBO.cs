@@ -90,6 +90,26 @@ namespace BaseBusiness.BO
             return conn.QuerySingleOrDefault<string>(sql, new { id }, tx);
         }
 
+        public static List<RoomModel> GetRoom(string query)
+        {
+
+         
+
+            return instance.GetList<RoomModel>(query);
+        }
+        public static List<ReservationDTO> UpdateRoomStatus(string query)
+        {
+
+
+            return instance.GetList<ReservationDTO>(query);
+        }
+        public class ReservationDTO
+        {
+            public string RoomNo { get; set; }       // Số phòng
+            public int NoOfAdult { get; set; }       // Số người lớn
+            public decimal Surcharge { get; set; }   // Phụ phí
+            public string Country { get; set; }      // Quốc gia
+        }
 
     }
 }
