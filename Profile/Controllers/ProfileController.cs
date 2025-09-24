@@ -1025,5 +1025,35 @@ namespace Profile.Controllers
             }
         }
 
+
+        #region new profile in reservation
+        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult SaveProfileInReservation()
+        {
+            try
+            {
+                ProfileModel profile = new ProfileModel();
+
+                profile.Account = Request.Form["AccountIndividual"].ToString();
+                profile.FullAccount = "";
+                profile.LastName = Request.Form["LastNameIndivdual"].ToString();
+                profile.Firstname = Request.Form["FirstNameIndividual"].ToString();
+                profile.MiddleName = Request.Form["MiddleNameIndividual"].ToString();
+                profile.Type = 0;
+                profile.UserInsertID = profile.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                profile.CreateDate = profile.UpdateDate = DateTime.Now;
+                long id = ProfileBO.Instance.Insert(profile);
+                return Json(new { code = 0, msg = "New profile created successfully",id = id });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
+        }
+        #endregion
+
     }
 }
