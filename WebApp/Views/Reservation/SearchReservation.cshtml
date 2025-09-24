@@ -26,75 +26,107 @@
                 </div>
                 <div id="filter" class="tab-pane">
                     <div class="row">
+
                         <div class="form-group-new-reservation col-md-6">
                             <label>Arrival</label>
-                            <input type="date" id="arrivalForm">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="date" id="arrivalForm">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Departure</label>
-                            <input type="date" id="departureForm">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="date" id="departureForm">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6" style="display:none">
                             <label>First Name</label>
-                            <input type="text" id="firstName">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="firstName">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Name</label>
-                            <input type="text" id="name">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="name">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Owner</label>
-                            <select id="owner">
-                                <option value="">--All--</option>
-                                <option value="--Hotel--">--Hotel--</option>
-                                <option value="--Owner--">--Owner--</option>
-                            </select>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select id="owner">
+                                    <option value="">--All--</option>
+                                    <option value="--Hotel--">--Hotel--</option>
+                                    <option value="--Owner--">--Owner--</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Conf. No</label>
-                            <input type="text" id="confirmationNo">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="confirmationNo">
+
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Resv. No</label>
-                            <input type="text" id="resvHolder">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="resvHolder">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>CRS No/GC</label>
-                            <input type="text" id="crsNo">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="crsNo">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Search Type</label>
-                            <select id="searchType">
-                                <option value="0">General</option>
-                                <option value="1">Guest In House</option>
-                                <option value="7">Cancellations</option>
-                            </select>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select id="searchType">
+                                    <option value="0">General</option>
+                                    <option value="1">Guest In House</option>
+                                    <option value="7">Cancellations</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Package</label>
-                            <input type="text" id="package">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="package">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Zone</label>
-                            <select id="zone" asp-items="ViewBag.cboZone">
-                            </select>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select id="zone" asp-items="ViewBag.cboZone">
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Room No</label>
-                            <input type="text" id="roomNo">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="roomNo">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Room Type</label>
-                            <select id="roomType" asp-items="ViewBag.cboRoomType">
-                            </select>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select id="roomType" asp-items="ViewBag.cboRoomType">
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Rsv Online</label>
-                            <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
+                            </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Room Sharer</label>
-                            <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
+                            </div>
                         </div>
                     </div>
                 </div>
