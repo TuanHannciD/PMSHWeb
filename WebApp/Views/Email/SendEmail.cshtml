@@ -41,7 +41,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="button-group">
-                <button type="button" class="mui-button mui-button-search" onclick="();">Post</button>
+                <button type="button" class="mui-button mui-button-search" onclick="SendEmailGuest();">Post</button>
                 <button type="button" class="mui-button mui-button-clear" data-bs-dismiss="modal">Close</button>
             </div>
             <div class="modal-body">
@@ -89,6 +89,8 @@
                     headerCellTemplate: function() { return $("<div>"); }
                 },
                 { dataField: "ID", caption: "ID", visible: false },
+                { dataField: "ProfileIndividualID", caption: "ProfileIndividualID", visible: false },
+
                 { dataField: "ConfirmationNo", caption: "Confirmation No" },
                 { dataField: "Status", caption: "Status" },
                 { dataField: "ArrivalDate", caption: "Arrival Date" },
@@ -164,6 +166,7 @@
             }
         });
     }
+    var templateID = 0;
     function initializeDataGrid(data) {
         $("#gridContainerContact").dxDataGrid({
             dataSource: data,
@@ -189,7 +192,37 @@
             onRowClick: function(e) {
                 const grid = $("#gridContainerContact").dxDataGrid("instance");
                 grid.selectRows([e.key], false);
+                templateID = e.data.id;
             },
         });
+    }
+
+    function SendEmailGuest() {
+        var grid = $("#gridContainer").dxDataGrid("instance");
+        var selectedRows = grid.getSelectedRowsData();
+        var selectedIds = selectedRows.map(row => row.ProfileIndividualID);
+
+
+        $.ajax({
+            url: '/Email/SendEmailGuest',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                templateID:templateID,
+                profileIDs: selectedIds,
+
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            },
+
+        });
+
     }
 </script>
