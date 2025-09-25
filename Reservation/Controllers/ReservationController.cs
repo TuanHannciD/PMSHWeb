@@ -1198,7 +1198,7 @@ namespace Reservation.Controllers
                     reservationModel.City = Request.Form["city"].ToString();
                     reservationModel.Zip = "";
                     reservationModel.State = "";
-                    if (Request.Form["nationality"].ToString() != "0")
+                    if (Request.Form["nationality"].ToString() != "null")
                     {
                         NationalityModel nationality = (NationalityModel)NationalityBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["nationality"].ToString()));
                         reservationModel.Country = nationality.Code;
