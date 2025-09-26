@@ -53,6 +53,10 @@ namespace Administration.Controllers
         {
             return View();
         }
+        public IActionResult SendSMS()
+        {
+            return View();
+        }
         public IActionResult EmailSendingHistory()
         {
             return View();
