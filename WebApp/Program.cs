@@ -78,6 +78,8 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(EmailController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TransactionGroupController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TransactionController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -121,6 +123,7 @@ builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
 builder.Services.AddSingleton<IAccountingService, AccountingService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>();
+builder.Services.AddSingleton<ITransactionService, TransactionService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
