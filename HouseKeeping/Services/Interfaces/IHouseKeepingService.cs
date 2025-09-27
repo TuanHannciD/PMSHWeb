@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevExpress.Xpo.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -86,6 +87,10 @@ namespace HouseKeeping.Services.Interfaces
         DataTable LostAndFound(DateTime fromDate, DateTime toDate);
         DataTable HKPGetTaskSheets(DateTime BusinessDate, int  page, string zoneexpan, string taskcodeExpanded, string hkpSectionExpanded);
         DataTable HKPTurndownTaskSheetGrid(string  taskid, string status);
+        DataTable RoomAvailabilityData(DateTime fromDate, DateTime toDate, string zone, string columnsString, string expressionString,string idList,string includeOverbooking,string stringincludeAllotment);
+        DataTable GetRoomByAllotment(DateTime fromDate, DateTime toDate, string zone, string columnsString, string expressionString, string idList, string includeOverbooking, string stringincludeAllotment);
+        DataTable GetBookedRoom(DateTime fromDate, DateTime toDate, string zone, string columnsString, string expressionString, string idList, string includeOverbooking, string stringincludeAllotment);
+        DataTable SelectAvailibilityColor(DateTime fromDate, DateTime toDate);
     }
 
 }

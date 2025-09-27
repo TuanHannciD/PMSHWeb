@@ -31,5 +31,17 @@ namespace BaseBusiness.BO
             const string sql = "SELECT ID, Code, Name, Description, CreatedBy, CreatedDate,  UpdatedBy, UpdatedDate FROM Zone WHERE ID = @id";
             return conn.QuerySingleOrDefault<ZoneModel>(sql, new { id }, tx);
         }
+        public static List<RoomAvailabilitySummaryDTO> TotalRoomNight(string  code )
+        {
+
+            string query = $"SELECT TotalRoomNight, TotalAvail FROM dbo.Zone where Code IN (" + code + ")";
+
+            return instance.GetList<RoomAvailabilitySummaryDTO>(query);
+        }
+        public class RoomAvailabilitySummaryDTO
+        {
+            public int TotalRoomNight { get; set; }
+            public int TotalAvail { get; set; }
+        }
     }
 }

@@ -27,6 +27,8 @@ using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using DevExpress.DataAccess.DataFederation;
+using System.Reflection.Metadata;
+using Microsoft.VisualBasic;
 
 namespace HouseKeeping.Controllers
 {
@@ -66,43 +68,507 @@ namespace HouseKeeping.Controllers
             ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
             ViewBag.ZoneList = listzo;
+            List<ReservationTypeModel> listrety = PropertyUtils.ConvertToList<ReservationTypeModel>(ReservationTypeBO.Instance.FindAll());
+            ViewBag.ReservationType = listrety;
             return View();
         }
+        [HttpGet]
+        public IActionResult RoomAvailabilityData(DateTime fromDate, string zone, string restype, int displayofday, string showNonDeduct, string showOcc3, string showRoomNight, string includeOutOfOrder, string includeOverbooking, string includeAllotment)
+        {
+            try
+            {
+                string zoneold = zone;
+                zone = zone ?? "";
+                int totalDays;
+                DateTime toDate;
+                if (displayofday == 0)
+                {
+                    totalDays = 36;
+                    toDate = fromDate.AddDays(35);
+                }
+                else
+                {
+                    totalDays = displayofday + 1; // cộng thêm 1 để chạy đủ
+                    toDate = fromDate.AddDays(displayofday);
+                }
 
-        //[HttpGet]
-        //public IActionResult RoomAvailabilityData(DateTime fromDate, string zone)
-        //{
-        //    try
-        //    {
-        //        zone = zone ?? "";
-        //        DateTime toDate = fromDate.AddDays(30); // Tự động tính ngày kết thúc
+                List<string> columnNames = new List<string>();
+                List<string> isnullExpressions = new List<string>();
+                string expressionString = getParaDate(fromDate, toDate)[1];
 
-        //        List<string> columnNames = new List<string>();
-        //        List<string> isnullExpressions = new List<string>();
+                // Dạng từng ngày [dM]
+                for (int i = 0; i < 36; i++)
+                {
+                    DateTime currentDate = fromDate.AddDays(i);
+                    string day = currentDate.Day.ToString();       // Không format "00" để tránh lỗi 017
+                    string month = currentDate.Month.ToString();   // Không thêm số 0
+                    string column = $"[{day}{month}]";
+                    columnNames.Add(column);
+                }
 
+                List<int> idrestype = PropertyUtils
+                    .ConvertToList<ReservationTypeModel>(ReservationTypeBO.Instance.FindAll())
+                    .Select(x => x.ID)      // chỉ lấy ID
+                    .ToList();
 
-        //        // Dạng từng ngày [dM]
-        //        for (int i = 0; i < 31; i++)
-        //        {
-        //            DateTime currentDate = fromDate.AddDays(i);
-        //            string day = currentDate.Day.ToString();       // Không format "00" để tránh lỗi 017
-        //            string month = currentDate.Month.ToString();   // Không thêm số 0
+                // Nối các ID thành chuỗi cách nhau dấu ,
+                string idList = string.Join(",", idrestype);
+                idList = GetSplitString(idList);
+                zone = GetSplitString(zone);
 
-        //            string column = $"[{day}{month}]";
-        //            string expression = $"'{day}' = ISNULL({column}, 0)";
+                idList = string.IsNullOrEmpty(restype) ? idList : restype;
 
-        //            columnNames.Add(column);
-        //            isnullExpressions.Add(expression);
-        //        }
+                string columnsString = string.Join(",", columnNames);
+                string _pZoneCode = "";
+                string[] _pZone = zone.Split(',');
+                if (_pZone != null)
+                {
+                    _pZoneCode = "'" + string.Join("','", _pZone) + "'";
+                }
 
+                var ttRoomNight = ZoneBO.TotalRoomNight(_pZoneCode);
+                DataTable dataTable = _iHouseKeepingService.RoomAvailabilityData(fromDate, toDate, zone, columnsString, expressionString, idList, includeOverbooking, includeAllotment);
+                DataTable dataTable1 = _iHouseKeepingService.GetRoomByAllotment(fromDate, toDate, zone, columnsString, expressionString, idList, includeOverbooking, includeAllotment);
+                DataTable dataTable2 = _iHouseKeepingService.GetBookedRoom(fromDate, toDate, zone, columnsString, expressionString, idList, includeOverbooking, includeAllotment);
 
-        //        return Json(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(ex.Message);
-        //    }
-        //}
+                // Theo dõi số lần xuất hiện của DisplaySequence "666" và "333"
+                var displaySequenceCounts = new Dictionary<string, int>();
+                var filteredRows = dataTable.AsEnumerable()
+                    .Where(row =>
+                    {
+                        string displaySequence = row["DisplaySequence"]?.ToString() ?? "";
+                        if (displaySequence == "666" || displaySequence == "333")
+                        {
+                            displaySequenceCounts.TryGetValue(displaySequence, out int count);
+                            displaySequenceCounts[displaySequence] = count + 1;
+                            // Giữ hàng nếu là lần xuất hiện thứ hai, bỏ nếu là lần đầu
+                            return count == 1;
+                        }
+                        return true; // Giữ tất cả các hàng khác
+                    }).ToList();
+
+                // Lấy hàng từ dataTable1 và dataTable2 (nếu có) hoặc tạo hàng mặc định
+                var allotmentRow = dataTable1.AsEnumerable().FirstOrDefault() ?? new DataTable().NewRow();
+                var bookedRoomRow = dataTable2.AsEnumerable().FirstOrDefault() ?? new DataTable().NewRow();
+
+                // Tách hàng OOO (DisplaySequence = "99999")
+                var oooRow = filteredRows.FirstOrDefault(row => row["DisplaySequence"]?.ToString() == "99999");
+                var nonOooRows = filteredRows.Where(row => row["DisplaySequence"]?.ToString() != "99999").ToList();
+
+                // Lọc filteredRows theo điều kiện RoomType không phải "0" hoặc "" và DisplaySequence không phải "99999"
+                var rowsToSum = filteredRows.Where(row =>
+                {
+                    string roomType = row["RoomType"]?.ToString() ?? "";
+                    string displaySeq = row["DisplaySequence"]?.ToString() ?? "";
+                    return roomType != "0" && roomType != "" && displaySeq != "99999";
+                }).ToList();
+
+                // Tính tổng cho các cột Date1 đến Date36 và TotalRooms cho Availability
+                var sums = new Dictionary<string, double>();
+
+                // Tính tổng TotalRooms từ rowsToSum
+                double totalRoomsSum = 0;
+                bool hasValidTotalRooms = false;
+                foreach (var row in rowsToSum)
+                {
+                    try
+                    {
+                        string value = row["TotalRooms"]?.ToString() ?? "";
+                        if (!string.IsNullOrEmpty(value) && double.TryParse(value, out double numericValue))
+                        {
+                            totalRoomsSum += numericValue;
+                            hasValidTotalRooms = true;
+                        }
+                    }
+                    catch
+                    {
+                        // Bỏ qua nếu cột không tồn tại hoặc giá trị không hợp lệ
+                    }
+                }
+                sums["TotalRooms"] = hasValidTotalRooms ? totalRoomsSum : double.NaN;
+
+                // Tính tổng cho Date1 đến Date36
+                for (int i = 1; i <= 36; i++)
+                {
+                    string columnName = $"Date{i}";
+                    double filteredRowsSum = 0;
+                    bool hasValidFilteredRowsSum = false;
+                    // Tính tổng từ rowsToSum
+                    foreach (var row in rowsToSum)
+                    {
+                        try
+                        {
+                            if (row.Table.Columns.Contains(columnName))
+                            {
+                                string value = row[columnName]?.ToString() ?? "";
+                                if (!string.IsNullOrEmpty(value) && double.TryParse(value, out double numericValue))
+                                {
+                                    filteredRowsSum += numericValue;
+                                    hasValidFilteredRowsSum = true;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Bỏ qua nếu cột không tồn tại hoặc giá trị không hợp lệ
+                        }
+                    }
+
+                    // Tính giá trị từ bookedRoomRow
+                    double bookedRoomValue = 0;
+                    bool hasValidBookedRoomValue = false;
+                    try
+                    {
+                        if (bookedRoomRow.Table.Columns.Contains(columnName))
+                        {
+                            string value = bookedRoomRow[columnName]?.ToString() ?? "";
+                            if (!string.IsNullOrEmpty(value) && double.TryParse(value, out double numericValue))
+                            {
+                                bookedRoomValue = numericValue;
+                                hasValidBookedRoomValue = true;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Bỏ qua nếu cột không tồn tại hoặc giá trị không hợp lệ
+                    }
+
+                    // Tổng cuối cùng cho Availability
+                    sums[columnName] = (hasValidFilteredRowsSum || hasValidBookedRoomValue) ? filteredRowsSum + bookedRoomValue : double.NaN;
+                }
+
+                // Tính % OCC cho Date1 đến Date36
+                Dictionary<string, string> occPercentages = new Dictionary<string, string>();
+                double availabilityValue = sums.ContainsKey("TotalRooms") && !double.IsNaN(sums["TotalRooms"]) ? sums["TotalRooms"] : 0;
+                for (int i = 1; i <= 36; i++)
+                {
+                    string columnName = $"Date{i}";
+                    double bookedValue = 0;
+                    bool hasValidBookedValue = false;
+                    try
+                    {
+                        if (bookedRoomRow.Table.Columns.Contains(columnName))
+                        {
+                            string value = bookedRoomRow[columnName]?.ToString() ?? "";
+                            if (!string.IsNullOrEmpty(value) && double.TryParse(value, out double numericValue))
+                            {
+                                bookedValue = numericValue;
+                                hasValidBookedValue = true;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Bỏ qua nếu cột không tồn tại hoặc giá trị không hợp lệ
+                    }
+
+                    // Tính % OCC = (Booked / Availability) × 100
+                    if (hasValidBookedValue && availabilityValue != 0 && !double.IsNaN(availabilityValue))
+                    {
+                        occPercentages[columnName] = $"{Math.Round((bookedValue / availabilityValue) * 100, 2)}%";
+                    }
+                    else
+                    {
+                        occPercentages[columnName] = "";
+                    }
+                }
+
+                // Tạo hàng mới cho Availability và % OCC
+                var availabilityRow = new DataTable().NewRow();
+                var occRow = new DataTable().NewRow();
+
+                // Tính tổng theo ZoneCode nếu zoneold có nhiều hơn 1 giá trị
+                var zoneSums = new Dictionary<string, Dictionary<string, double>>();
+                var zoneSumRows = new List<DataRow>();
+                if (!string.IsNullOrEmpty(zoneold) && zoneold.Contains(","))
+                {
+                    string[] zones = zoneold.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                    if (zones.Length > 1)
+                    {
+                        // Tính tổng Availability từ các zone
+                        var availabilitySums = new Dictionary<string, double>();
+                        availabilitySums["TotalRooms"] = 0;
+                        for (int i = 1; i <= 36; i++)
+                        {
+                            availabilitySums[$"Date{i}"] = 0;
+                        }
+
+                        foreach (var z in zones)
+                        {
+                            var zoneRows = filteredRows.Where(row => row["ZoneCode"]?.ToString() == z).ToList();
+                            var zoneSum = new Dictionary<string, double>();
+
+                            // Tính tổng TotalRooms cho ZoneCode
+                            double zoneTotalRoomsSum = 0;
+                            bool hasValidZoneTotalRooms = false;
+                            foreach (var row in zoneRows)
+                            {
+                                try
+                                {
+                                    string value = row["TotalRooms"]?.ToString() ?? "";
+                                    if (!string.IsNullOrEmpty(value) && double.TryParse(value, out double numericValue))
+                                    {
+                                        zoneTotalRoomsSum += numericValue;
+                                        hasValidZoneTotalRooms = true;
+                                    }
+                                }
+                                catch
+                                {
+                                    // Bỏ qua nếu cột không tồn tại hoặc giá trị không hợp lệ
+                                }
+                            }
+                            zoneSum["TotalRooms"] = hasValidZoneTotalRooms ? zoneTotalRoomsSum : double.NaN;
+                            availabilitySums["TotalRooms"] += hasValidZoneTotalRooms ? zoneTotalRoomsSum : 0;
+
+                            // Tính tổng cho Date1 đến Date36 cho ZoneCode
+                            for (int i = 1; i <= 36; i++)
+                            {
+                                string columnName = $"Date{i}";
+                                double zoneFilteredSum = 0;
+                                bool hasValidZoneFilteredSum = false;
+                                foreach (var row in zoneRows)
+                                {
+                                    try
+                                    {
+                                        if (row.Table.Columns.Contains(columnName))
+                                        {
+                                            string value = row[columnName]?.ToString() ?? "";
+                                            if (!string.IsNullOrEmpty(value) && double.TryParse(value, out double numericValue))
+                                            {
+                                                zoneFilteredSum += numericValue;
+                                                hasValidZoneFilteredSum = true;
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        // Bỏ qua nếu cột không tồn tại hoặc giá trị không hợp lệ
+                                    }
+                                }
+                                zoneSum[columnName] = hasValidZoneFilteredSum ? zoneFilteredSum : double.NaN;
+                                availabilitySums[columnName] += hasValidZoneFilteredSum ? zoneFilteredSum : 0;
+                            }
+                            zoneSums[z] = zoneSum;
+                            zoneSumRows.Add(new DataTable().NewRow());
+                        }
+
+                        // Cập nhật sums cho Availability từ tổng của các zone
+                        sums["TotalRooms"] = availabilitySums["TotalRooms"];
+                        for (int i = 1; i <= 36; i++)
+                        {
+                            string columnName = $"Date{i}";
+                            sums[columnName] = availabilitySums[columnName];
+                        }
+                    }
+                }
+
+                // Tạo danh sách các hàng để kết hợp theo thứ tự yêu cầu
+                var combinedRows = new List<DataRow>();
+                combinedRows.AddRange(nonOooRows); // 1. Các hàng từ dataTable (trừ OOO)
+                combinedRows.Add(bookedRoomRow);   // 2. BookedRoom
+                combinedRows.Add(allotmentRow);    // 3. Allotment
+                if (oooRow != null)
+                    combinedRows.Add(oooRow);      // 4. OOO
+                combinedRows.Add(availabilityRow); // 5. Availability
+                combinedRows.Add(occRow);         // 6. % OCC
+                combinedRows.AddRange(zoneSumRows); // 7. ZoneCode sums (dynamic)
+
+                var result = (from d in combinedRows
+                              select new
+                              {
+                                  DisplaySequence = d != bookedRoomRow && d != allotmentRow && d != availabilityRow && d != occRow && !zoneSumRows.Contains(d) && !string.IsNullOrEmpty(d["DisplaySequence"]?.ToString()) ? d["DisplaySequence"].ToString() : "",
+                                  RoomType = d == bookedRoomRow ? "BookedRoom" :
+                                             d == allotmentRow ? "Allotment" :
+                                             d == availabilityRow ? "Availability" :
+                                             d == occRow ? "% OCC" :
+                                             zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? $" {zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))}" :
+                                             (!string.IsNullOrEmpty(d["DisplaySequence"]?.ToString()) && d["DisplaySequence"].ToString() == "99999" ? "OOO" :
+                                             (!string.IsNullOrEmpty(d["DisplaySequence"]?.ToString()) && d["DisplaySequence"].ToString() == "333" && displaySequenceCounts.ContainsKey("333") && displaySequenceCounts["333"] > 1 ? "R.Night" :
+                                             (!string.IsNullOrEmpty(d["RoomType"]?.ToString()) ? d["RoomType"].ToString() : ""))),
+                                  TotalRooms = d == availabilityRow ? (double.IsNaN(sums["TotalRooms"]) ? "" : sums["TotalRooms"].ToString()) :
+                                               zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["TotalRooms"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["TotalRooms"].ToString()) :
+                                               (d != bookedRoomRow && d != allotmentRow && d != availabilityRow && d != occRow && !string.IsNullOrEmpty(d["DisplaySequence"]?.ToString()) && d["DisplaySequence"].ToString() == "333" && displaySequenceCounts.ContainsKey("333") && displaySequenceCounts["333"] > 1 && ttRoomNight != null && ttRoomNight.Count > 0 ? ttRoomNight[0].TotalRoomNight.ToString() : (d != bookedRoomRow && d != allotmentRow && d != availabilityRow && d != occRow && !string.IsNullOrEmpty(d["TotalRooms"]?.ToString()) ? d["TotalRooms"].ToString() : "")),
+                                  Date1 = d == availabilityRow ? (double.IsNaN(sums["Date1"]) ? "" : sums["Date1"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date1") ? occPercentages["Date1"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date1"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date1"].ToString()) :
+                                          (d.Table.Columns.Contains("Date1") ? (d["Date1"]?.ToString() ?? "") : ""),
+                                  Date2 = d == availabilityRow ? (double.IsNaN(sums["Date2"]) ? "" : sums["Date2"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date2") ? occPercentages["Date2"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date2"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date2"].ToString()) :
+                                          (d.Table.Columns.Contains("Date2") ? (d["Date2"]?.ToString() ?? "") : ""),
+                                  Date3 = d == availabilityRow ? (double.IsNaN(sums["Date3"]) ? "" : sums["Date3"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date3") ? occPercentages["Date3"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date3"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date3"].ToString()) :
+                                          (d.Table.Columns.Contains("Date3") ? (d["Date3"]?.ToString() ?? "") : ""),
+                                  Date4 = d == availabilityRow ? (double.IsNaN(sums["Date4"]) ? "" : sums["Date4"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date4") ? occPercentages["Date4"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date4"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date4"].ToString()) :
+                                          (d.Table.Columns.Contains("Date4") ? (d["Date4"]?.ToString() ?? "") : ""),
+                                  Date5 = d == availabilityRow ? (double.IsNaN(sums["Date5"]) ? "" : sums["Date5"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date5") ? occPercentages["Date5"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date5"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date5"].ToString()) :
+                                          (d.Table.Columns.Contains("Date5") ? (d["Date5"]?.ToString() ?? "") : ""),
+                                  Date6 = d == availabilityRow ? (double.IsNaN(sums["Date6"]) ? "" : sums["Date6"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date6") ? occPercentages["Date6"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date6"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date6"].ToString()) :
+                                          (d.Table.Columns.Contains("Date6") ? (d["Date6"]?.ToString() ?? "") : ""),
+                                  Date7 = d == availabilityRow ? (double.IsNaN(sums["Date7"]) ? "" : sums["Date7"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date7") ? occPercentages["Date7"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date7"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date7"].ToString()) :
+                                          (d.Table.Columns.Contains("Date7") ? (d["Date7"]?.ToString() ?? "") : ""),
+                                  Date8 = d == availabilityRow ? (double.IsNaN(sums["Date8"]) ? "" : sums["Date8"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date8") ? occPercentages["Date8"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date8"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date8"].ToString()) :
+                                          (d.Table.Columns.Contains("Date8") ? (d["Date8"]?.ToString() ?? "") : ""),
+                                  Date9 = d == availabilityRow ? (double.IsNaN(sums["Date9"]) ? "" : sums["Date9"].ToString()) :
+                                          d == occRow ? (occPercentages.ContainsKey("Date9") ? occPercentages["Date9"] : "") :
+                                          zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date9"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date9"].ToString()) :
+                                          (d.Table.Columns.Contains("Date9") ? (d["Date9"]?.ToString() ?? "") : ""),
+                                  Date10 = d == availabilityRow ? (double.IsNaN(sums["Date10"]) ? "" : sums["Date10"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date10") ? occPercentages["Date10"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date10"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date10"].ToString()) :
+                                           (d.Table.Columns.Contains("Date10") ? (d["Date10"]?.ToString() ?? "") : ""),
+                                  Date11 = d == availabilityRow ? (double.IsNaN(sums["Date11"]) ? "" : sums["Date11"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date11") ? occPercentages["Date11"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date11"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date11"].ToString()) :
+                                           (d.Table.Columns.Contains("Date11") ? (d["Date11"]?.ToString() ?? "") : ""),
+                                  Date12 = d == availabilityRow ? (double.IsNaN(sums["Date12"]) ? "" : sums["Date12"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date12") ? occPercentages["Date12"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date12"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date12"].ToString()) :
+                                           (d.Table.Columns.Contains("Date12") ? (d["Date12"]?.ToString() ?? "") : ""),
+                                  Date13 = d == availabilityRow ? (double.IsNaN(sums["Date13"]) ? "" : sums["Date13"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date13") ? occPercentages["Date13"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date13"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date13"].ToString()) :
+                                           (d.Table.Columns.Contains("Date13") ? (d["Date13"]?.ToString() ?? "") : ""),
+                                  Date14 = d == availabilityRow ? (double.IsNaN(sums["Date14"]) ? "" : sums["Date14"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date14") ? occPercentages["Date14"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date14"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date14"].ToString()) :
+                                           (d.Table.Columns.Contains("Date14") ? (d["Date14"]?.ToString() ?? "") : ""),
+                                  Date15 = d == availabilityRow ? (double.IsNaN(sums["Date15"]) ? "" : sums["Date15"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date15") ? occPercentages["Date15"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date15"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date15"].ToString()) :
+                                           (d.Table.Columns.Contains("Date15") ? (d["Date15"]?.ToString() ?? "") : ""),
+                                  Date16 = d == availabilityRow ? (double.IsNaN(sums["Date16"]) ? "" : sums["Date16"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date16") ? occPercentages["Date16"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date16"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date16"].ToString()) :
+                                           (d.Table.Columns.Contains("Date16") ? (d["Date16"]?.ToString() ?? "") : ""),
+                                  Date17 = d == availabilityRow ? (double.IsNaN(sums["Date17"]) ? "" : sums["Date17"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date17") ? occPercentages["Date17"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date17"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date17"].ToString()) :
+                                           (d.Table.Columns.Contains("Date17") ? (d["Date17"]?.ToString() ?? "") : ""),
+                                  Date18 = d == availabilityRow ? (double.IsNaN(sums["Date18"]) ? "" : sums["Date18"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date18") ? occPercentages["Date18"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date18"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date18"].ToString()) :
+                                           (d.Table.Columns.Contains("Date18") ? (d["Date18"]?.ToString() ?? "") : ""),
+                                  Date19 = d == availabilityRow ? (double.IsNaN(sums["Date19"]) ? "" : sums["Date19"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date19") ? occPercentages["Date19"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date19"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date19"].ToString()) :
+                                           (d.Table.Columns.Contains("Date19") ? (d["Date19"]?.ToString() ?? "") : ""),
+                                  Date20 = d == availabilityRow ? (double.IsNaN(sums["Date20"]) ? "" : sums["Date20"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date20") ? occPercentages["Date20"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date20"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date20"].ToString()) :
+                                           (d.Table.Columns.Contains("Date20") ? (d["Date20"]?.ToString() ?? "") : ""),
+                                  Date21 = d == availabilityRow ? (double.IsNaN(sums["Date21"]) ? "" : sums["Date21"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date21") ? occPercentages["Date21"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date21"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date21"].ToString()) :
+                                           (d.Table.Columns.Contains("Date21") ? (d["Date21"]?.ToString() ?? "") : ""),
+                                  Date22 = d == availabilityRow ? (double.IsNaN(sums["Date22"]) ? "" : sums["Date22"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date22") ? occPercentages["Date22"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date22"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date22"].ToString()) :
+                                           (d.Table.Columns.Contains("Date22") ? (d["Date22"]?.ToString() ?? "") : ""),
+                                  Date23 = d == availabilityRow ? (double.IsNaN(sums["Date23"]) ? "" : sums["Date23"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date23") ? occPercentages["Date23"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date23"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date23"].ToString()) :
+                                           (d.Table.Columns.Contains("Date23") ? (d["Date23"]?.ToString() ?? "") : ""),
+                                  Date24 = d == availabilityRow ? (double.IsNaN(sums["Date24"]) ? "" : sums["Date24"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date24") ? occPercentages["Date24"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date24"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date24"].ToString()) :
+                                           (d.Table.Columns.Contains("Date24") ? (d["Date24"]?.ToString() ?? "") : ""),
+                                  Date25 = d == availabilityRow ? (double.IsNaN(sums["Date25"]) ? "" : sums["Date25"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date25") ? occPercentages["Date25"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date25"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date25"].ToString()) :
+                                           (d.Table.Columns.Contains("Date25") ? (d["Date25"]?.ToString() ?? "") : ""),
+                                  Date26 = d == availabilityRow ? (double.IsNaN(sums["Date26"]) ? "" : sums["Date26"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date26") ? occPercentages["Date26"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date26"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date26"].ToString()) :
+                                           (d.Table.Columns.Contains("Date26") ? (d["Date26"]?.ToString() ?? "") : ""),
+                                  Date27 = d == availabilityRow ? (double.IsNaN(sums["Date27"]) ? "" : sums["Date27"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date27") ? occPercentages["Date27"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date27"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date27"].ToString()) :
+                                           (d.Table.Columns.Contains("Date27cra") ? (d["Date27"]?.ToString() ?? "") : ""),
+                                  Date28 = d == availabilityRow ? (double.IsNaN(sums["Date28"]) ? "" : sums["Date28"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date28") ? occPercentages["Date28"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date28"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date28"].ToString()) :
+                                           (d.Table.Columns.Contains("Date28") ? (d["Date28"]?.ToString() ?? "") : ""),
+                                  Date29 = d == availabilityRow ? (double.IsNaN(sums["Date29"]) ? "" : sums["Date29"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date29") ? occPercentages["Date29"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date29"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date29"].ToString()) :
+                                           (d.Table.Columns.Contains("Date29") ? (d["Date29"]?.ToString() ?? "") : ""),
+                                  Date30 = d == availabilityRow ? (double.IsNaN(sums["Date30"]) ? "" : sums["Date30"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date30") ? occPercentages["Date30"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date30"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date30"].ToString()) :
+                                           (d.Table.Columns.Contains("Date30") ? (d["Date30"]?.ToString() ?? "") : ""),
+                                  Date31 = d == availabilityRow ? (double.IsNaN(sums["Date31"]) ? "" : sums["Date31"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date31") ? occPercentages["Date31"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date31"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date31"].ToString()) :
+                                           (d.Table.Columns.Contains("Date31") ? (d["Date31"]?.ToString() ?? "") : ""),
+                                  Date32 = d == availabilityRow ? (double.IsNaN(sums["Date32"]) ? "" : sums["Date32"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date32") ? occPercentages["Date32"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date32"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date32"].ToString()) :
+                                           (d.Table.Columns.Contains("Date32") ? (d["Date32"]?.ToString() ?? "") : ""),
+                                  Date33 = d == availabilityRow ? (double.IsNaN(sums["Date33"]) ? "" : sums["Date33"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date33") ? occPercentages["Date33"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date33"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date33"].ToString()) :
+                                           (d.Table.Columns.Contains("Date33") ? (d["Date33"]?.ToString() ?? "") : ""),
+                                  Date34 = d == availabilityRow ? (double.IsNaN(sums["Date34"]) ? "" : sums["Date34"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date34") ? occPercentages["Date34"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date34"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date34"].ToString()) :
+                                           (d.Table.Columns.Contains("Date34") ? (d["Date34"]?.ToString() ?? "") : ""),
+                                  Date35 = d == availabilityRow ? (double.IsNaN(sums["Date35"]) ? "" : sums["Date35"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date35") ? occPercentages["Date35"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date35"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date35"].ToString()) :
+                                           (d.Table.Columns.Contains("Date35") ? (d["Date35"]?.ToString() ?? "") : ""),
+                                  Date36 = d == availabilityRow ? (double.IsNaN(sums["Date36"]) ? "" : sums["Date36"].ToString()) :
+                                           d == occRow ? (occPercentages.ContainsKey("Date36") ? occPercentages["Date36"] : "") :
+                                           zoneSumRows.Contains(d) && zoneSums.Count > 0 && zoneSumRows.IndexOf(d) < zoneSums.Count ? (zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date36"].ToString() == "NaN" ? "" : zoneSums[zoneSums.Keys.ElementAt(zoneSumRows.IndexOf(d))]["Date36"].ToString()) :
+                                           (d.Table.Columns.Contains("Date36") ? (d["Date36"]?.ToString() ?? "") : "")
+                              }).ToList();
+
+                DataTable dataTable3 = _iHouseKeepingService.SelectAvailibilityColor(fromDate, toDate);
+
+                return Json(new
+                {
+                    fromDate = fromDate.ToString("yyyy-MM-dd"),
+                    toDate = toDate.ToString("yyyy-MM-dd"),
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        private string[] getParaDate(DateTime fromDate,DateTime toDate)
+        {
+            string paraDate = "";
+            string paraDateConvert = "";
+            int dateIndex = 1;
+            for (DateTime date = fromDate; date <= toDate; date += new TimeSpan(1, 0, 0, 0))
+            {
+                string strIndex = dateIndex.ToString();
+                paraDateConvert += "'Date" + strIndex + "' = Convert(nvarchar,sum(isnull([" + date.Day.ToString() + date.Month.ToString() + "],0))),";
+                paraDate += "[" + date.Day.ToString() + date.Month.ToString() + "],";
+                dateIndex += 1;
+            }
+
+            paraDate = paraDate.Remove(paraDate.Length - 1);
+            paraDateConvert = paraDateConvert.Remove(paraDateConvert.Length - 1);
+            string[] result = new string[2];
+            result[0] = paraDate;
+            result[1] = paraDateConvert;
+            return result;
+        }
         public IActionResult RoomStatus()
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());

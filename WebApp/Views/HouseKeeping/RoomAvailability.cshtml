@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = ViewBag.ReportHeader;
     var zoneList = ViewBag.ZoneList;
+    var restyList = ViewBag.ReservationType;
 }
 <link asp-append-version="true" href="~/css/reservation.css" rel="stylesheet" />
 
@@ -189,25 +190,7 @@
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
         <!-- From Date -->
-        <div class="d-flex flex-column ">
 
-            <div class="d-flex align-items-center">
-               @*  <label class="fw-bold me-3">View by:</label> *@
-
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" name="zone" class="tomselect-custom" multiple>
-                        @foreach (var item in zoneList)
-                        {
-                            <option value="@item.Code">@item.Code</option>
-                        }
-                    </select>
-
-                </div>
-
-
-            </div>
-        </div>
         <div class="d-flex flex-column ">
 
             <div class="d-flex align-items-center">
@@ -216,10 +199,96 @@
                     <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
                 </div>
 
-              @*   <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">To :</label>
-                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
-                </div> *@
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Display No of Days:</label>
+                    <select id="displayofday" name="displayofday" class="form-control form-control-sm w-auto">
+                        <option value="0"></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="28">28</option>
+                        <option value="30">30</option>
+                        <option value="31">31</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Zone:</label>
+                    <select id="zone" name="zone" class="tomselect-custom" multiple>
+                       @foreach (var item in zoneList)
+                        {
+                            if (item == zoneList[0])
+                            {
+                                <option value="@item.Code" selected>@item.Code</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Code">@item.Code</option>
+                            }
+                        }
+                    </select>
+
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Res.Type:</label>
+                    <select id="restype" name="restype" class="tomselect-custom" multiple>
+                        @foreach (var item in restyList)
+                        {
+                            <option value="@item.ID">@item.Name</option>
+                        }
+                    </select>
+
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex-column">
+            <div class="d-flex align-items-center me-3">
+
+                <!-- Show Non Deduct -->
+                <div class="form-check me-3">
+                    <span class="status-color-box color-clean-uncheck"></span>
+                    <input class="form-check-input" type="checkbox" id="showNonDeduct" name="includeOptions" value="1" >
+                    <label class="form-check-label" for="cleanUncheck">Show Non Deduct</label>
+                </div>
+
+                <!-- Show %Occ3 -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="showOcc3" name="includeOptions" value="1">
+                    <label class="form-check-label" for="showOcc3">Show %Occ3</label>
+                </div>
+
+                <!-- Show Room Night -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="showRoomNight" name="includeOptions" value="1">
+                    <label class="form-check-label" for="showRoomNight">Show Room Night</label>
+                </div>
+
+                <!-- Include Out of Order -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="includeOutOfOrder" name="includeOptions" value="1" checked>
+                    <label class="form-check-label" for="includeOutOfOrder">Include Out of Order</label>
+                </div>
+
+                <!-- Include Overbooking -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="includeOverbooking" name="includeOptions" value="1">
+                    <label class="form-check-label" for="includeOverbooking">Include Overbooking</label>
+                </div>
+
+                <!-- Include Allotment -->
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="includeAllotment" name="includeOptions" value="1" checked>
+                    <label class="form-check-label" for="includeAllotment">Include Allotment</label>
+                </div>
+
+
+            
             </div>
         </div>
 
@@ -229,7 +298,7 @@
     <div class="">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        
     </div>
 </div>
 
@@ -264,10 +333,11 @@
                //$('#toDate').val(formatDate(parsedBusinessDate));
             initializeTomSelects();
 
+            $("#btnPrint").trigger("click");
 
         });
         function initializeTomSelects() {
-        const selectors = ["#zone"];
+        const selectors = ["#zone","#restype"];
 
         for (const id of selectors) {
             const el = document.querySelector(id);
@@ -292,13 +362,27 @@
         }
     }
         $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+             const zone = $("#zone").val();
+             if (!zone || zone.length === 0) {
+                       showToast('Error', "Please select a Zone before printing!", false);
+                    return; // dừng không gọi AJAX
+                }
             $("#loadingSpinner").show();
             $.ajax({
                 url: '/HouseKeeping/RoomAvailabilityData',
                 type: 'GET',
                 data: {
                     fromDate: $("#fromDate").val(),
-                    zone: $("#zone").val(),
+                    zone: $("#zone").val().join(","),
+                      restype: $("#restype").val().join(","),
+                     
+                    displayofday: $("#displayofday").val(),
+                    showNonDeduct: $("#showNonDeduct").val(),
+                      showOcc3: $("#showOcc3").val(),
+                     showRoomNight: $("#showRoomNight").val(),
+                    includeOutOfOrder: $("#includeOutOfOrder").val(),
+                    includeOverbooking: $("#includeOverbooking").val(),
+                      includeAllotment: $("#includeAllotment").val(),
                 },
                 traditional: true,
                   crossDomain: false,
@@ -307,7 +391,7 @@
                     // $("#reportViewerContainer").html(result);
                     // $("#loadingSpinner").hide();
                 console.log(result);
-            initializeReservationSummaryGrid(result);
+            initializeReservationSummaryGrid(result.data,result.fromDate,result.toDate);
                         $("#loadingSpinner").hide();
                 },
                 error: function () {
@@ -317,41 +401,77 @@
             });
         });
 
-
-           function generateDateColumns(fromDate, toDate) {
+    function generateDateColumns(fromDate, toDate) {
         const columns = [];
         const start = new Date(fromDate);
         const end = new Date(toDate);
 
-        while (start <= end) {
-            const dateStr = start.toISOString().split("T")[0]; // yyyy-MM-dd
+        let index = 1; // bắt đầu từ Date1
 
+        while (start <= end) {
             const day = start.getDate().toString().padStart(2, '0');
             const month = start.toLocaleString('en-US', { month: 'short' }); // "Jul"
             const weekday = start.toLocaleString('en-US', { weekday: 'short' }); // "Mon"
             const weekNumber = getWeekNumber(start); // CW
 
-            const captionHtml = `${day}-${month}<br>${weekday}<br>CW${-weekNumber}`;
+            const captionHtml = `${day}-${month}<br>${weekday}<br>CW${weekNumber}`;
 
             columns.push({
-                dataField: dateStr,
-                width: 110,
-                dataType: "number",
-                format: {
-                    type: "fixedPoint",
-                    precision: 1 // luôn có 1 ch? s? th?p phân
-                },
+                dataField: `date${index}`,   // ví dụ: date1, date2 ...
+                width: 80,
                 alignment: "center",
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+
+                    // Giữ nguyên xử lý cho % OCC
+                    if (options.data.roomType === "% OCC") {
+                        if (value !== null && value !== undefined && value !== "") {
+                            container.text(value);
+                        } else {
+                            container.text("");
+                        }
+                    }
+                    // Xử lý cho R.Night
+                    else if (options.data.roomType === "R.Night") {
+                        if (value === null || value === undefined || value === ""|| value === "0") {
+                            container.text("0").css("color", "red");
+                        } else {
+                            container.text(value);
+                        }
+                    }
+                    else if (options.data.roomType === "Allotment") {
+                        if (value === null || value === undefined || value === "") {
+                            container.text("0");
+                        } else {
+                            container.text(value);
+                        }
+                    }
+                    // Các loại khác
+                    else {
+                        let num = parseFloat(value);
+                        if (!isNaN(num) && num <= 0) {
+                            container.text(value).css("color", "red");
+                        } else {
+                            container.text(value ?? "");
+                        }
+                    }
+                },
                 headerCellTemplate: function (container) {
-                    container.html(`<div style="white-space: normal; text-align:center; font-size:11px;">${captionHtml}</div>`);
+                    container.html(
+                        `<div style="white-space: normal; text-align:center; font-size:11px;">${captionHtml}</div>`
+                    );
                 }
             });
 
             start.setDate(start.getDate() + 1);
+            index++;
         }
 
         return columns;
     }
+
+
+
 
 
         function getWeekNumber(date) {
@@ -368,15 +488,34 @@
         const columnWidth = 120;
 
 
-
+         let hasPassedBookedRoom = false;
         const dateColumns = generateDateColumns(fromDate, toDate);
-         console.log(dateColumns);
+       
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             allowColumnResizing: true,
             columnAutoWidth: true,
             columns: [
-                { dataField: "Statisticname", caption: "Statistic Name", width: columnWidth + 40 },
+                { dataField: "roomType", caption: "Room Type", width: columnWidth - 10 },
+
+                { dataField: "totalRooms",
+                    caption: "Total Rooms",
+                    width: 100,
+                    cellTemplate: function (container, options) {
+                        let value = options.value;
+
+                        // Nếu RoomType = Allotment hoặc BookedRoom
+                        if (options.data.roomType === "Allotment" || options.data.roomType === "BookedRoom") {
+                            if (value === null || value === undefined || value === "") {
+                                container.text("0"); // hiển thị 0
+                            } else {
+                                container.text(value);
+                            }
+                        } else {
+                            container.text(value ?? "");
+                        }
+                    }
+                },
                 ...dateColumns
             ],
 
@@ -396,17 +535,27 @@
             headerFilter: { visible: true },
             selection: { mode: "multiple", showCheckBoxesMode: "none" },
             showBorders: true,
-            onRowPrepared: function (e) {
+           onRowPrepared: function (e) {
                 if (e.rowType === "data") {
+                     if (e.data.roomType === "BookedRoom") {
+                    hasPassedBookedRoom = true;
+                }
 
-                    if (e.data?.isTotal) {
+                // Apply green background if we've passed "BookedRoom" or are on it
+                if (hasPassedBookedRoom) {
+                    e.rowElement.css({
+                        "background-color": "#bdf8fc" // Light green background
+                    });
+                }
+
+                if (e.data?.isTotal) {
                         e.rowElement.css({
                             "font-weight": "bold",
-                            "background-color": "#f6f6f6"
+                            "background-color": "#f6f6f6" // Override with total row style if isTotal
                         });
                     }
                 }
-            }
+           }
         });
     }
 
@@ -414,18 +563,13 @@
 
 
         $("#btnExportExcel").click(function () {
-                   const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
-            var selectedReport = '@ViewBag.ReportTitle';
-            if (!selectedReport) {
-                alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
-                return;
-            }
-
+              const grid = $("#gridContainer").dxDataGrid("instance");
+                            const selectedReport ="RoomAvailability";
                          const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
             const worksheet = workbook.addWorksheet("Sheet 1");
 
             // === T?o header công ty (dòng 1) ===
-            worksheet.addRow(['Công ty C? ph?n Gi?i pháp Công ngh? CS-Solution']);
+            worksheet.addRow([companyName]);
             worksheet.mergeCells('A1:E1');
             worksheet.getRow(1).font = { bold: true };
             worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
