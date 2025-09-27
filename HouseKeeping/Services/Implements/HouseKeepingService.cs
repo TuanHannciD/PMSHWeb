@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Policy;
 
 namespace HouseKeeping.Services.Implements
 {
@@ -1100,6 +1101,75 @@ namespace HouseKeeping.Services.Implements
             };
 
             DataTable myTable = DataTableHelper.getTableData("spSearchLostAndFound", param);
+            return myTable;
+        }
+        public DataTable RoomAvailabilityData(DateTime fromDate, DateTime toDate, string zone, string columnsString, string expressionString, string idList, string includeOverbooking, string stringincludeAllotment)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+               new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+               new SqlParameter("@ParaDate", columnsString),
+               new SqlParameter("@ParaDateConvert", expressionString),
+               new SqlParameter("@ResvType", idList),
+               new SqlParameter("@NonDeduct", "1"),
+                 new SqlParameter("@IncludeOverbook", includeOverbooking),
+                   new SqlParameter("@IncludeAllotment", stringincludeAllotment),
+                     new SqlParameter("@ViewbyAllotement", "1"),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRmgRoomAvailableNew", param);
+            return myTable;
+        }
+        public DataTable GetRoomByAllotment(DateTime fromDate, DateTime toDate, string zone, string columnsString, string expressionString, string idList, string includeOverbooking, string stringincludeAllotment)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+               new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+               new SqlParameter("@ParaDate", columnsString),
+               new SqlParameter("@ParaDateConvert", expressionString),
+               new SqlParameter("@ResvType",idList),
+               new SqlParameter("@NonDeduct", "1"),
+                 new SqlParameter("@IncludeOverbook", includeOverbooking),
+                   new SqlParameter("@IncludeAllotment", stringincludeAllotment),
+                     new SqlParameter("@ViewbyAllotement", "1"),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spGetRoomByAllotment", param);
+            return myTable;
+        }
+        public DataTable GetBookedRoom(DateTime fromDate, DateTime toDate, string zone, string columnsString, string expressionString, string idList, string includeOverbooking, string stringincludeAllotment)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+               new SqlParameter("@ToDate", toDate),
+               new SqlParameter("@Zone", zone),
+               new SqlParameter("@ParaDate", columnsString),
+               new SqlParameter("@ParaDateConvert", expressionString),
+               new SqlParameter("@ResvType", idList),
+               new SqlParameter("@NonDeduct", "1"),
+     new SqlParameter("@IncludeOverbook", includeOverbooking),
+                   new SqlParameter("@IncludeAllotment", stringincludeAllotment),
+                     new SqlParameter("@ViewbyAllotement", "1"),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spGetBookedRoom", param);
+            return myTable;
+        }
+        public DataTable SelectAvailibilityColor(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@FromDate", fromDate),
+               new SqlParameter("@ToDate", toDate)
+             
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spSelectAvailibilityColor", param);
             return myTable;
         }
     }
