@@ -163,7 +163,7 @@
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioVATSearchByAccounting">Search VAT Voucher for Accounting</a>
                                 <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Accounting Search</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioHistoryView">Folio History View</a>
-                            </div>                        
+                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">REPORT</a>
@@ -175,14 +175,32 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">ADMINISTRATION</a>
                             <div class="dropdown-menu-custom">
-                                <a asp-area="" asp-controller="Administration" asp-action="MemberList">Member Card</a>
                                 <a asp-area="" asp-controller="Administration" asp-action="Index">Item Category</a>
                                 <a asp-area="" asp-controller="Administration" asp-action="Currency">Currency</a>
                                 <a asp-area="" asp-controller="Administration" asp-action="hkpEmployee">House Keeping</a>
+                                <a asp-area="" asp-controller="Administration" asp-action="MemberList">Member Card</a>
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-submenu-toggle">Email Management</a>
+                                    <div class="dropdown-submenu-content">
+                                        <a asp-area="" asp-controller="Email" asp-action="SetupEmail">Setup Email</a>
+                                        <a asp-area="" asp-controller="Email" asp-action="SendEmail">Send Email</a>
+                                        <a asp-area="" asp-controller="Email" asp-action="SendSMS">Send SMS</a>
+                                        <a asp-area="" asp-controller="Email" asp-action="SendEmailBirthday">Send Email Birthday</a>
+                                        <a asp-area="" asp-controller="Email" asp-action="EmailSendingHistory">Email Sending History</a>
+                                    </div>
+                                </div>
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-submenu-toggle">Transaction & Article</a>
+                                    <div class="dropdown-submenu-content">
 
-                                <a asp-area="" asp-controller="Email" asp-action="SetupEmail">Setup Email</a>
-                                <a asp-area="" asp-controller="Email" asp-action="SendEmail">Send Email</a>
+                                        <a asp-area="" asp-controller="Article" asp-action="Search">Article</a>
+                                        <a asp-area="" asp-controller="Transaction" asp-action="Search">Transaction</a>
 
+                                        <a asp-area="" asp-controller="TransactionSubGroup" asp-action="TransSubGroup">Transaction Sub Group</a>
+
+                                        <a asp-area="" asp-controller="TransactionGroup" asp-action="TransGroup">Transaction Group</a>
+                                    </div>
+                                </div>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -222,7 +240,6 @@
                             </div>
                         </li>
                     </ul>
-
                 </div>
             </div>
         </nav>
@@ -304,7 +321,35 @@
     //     });
 
     // });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle mobile submenu toggle
+        const submenuToggles = document.querySelectorAll('.dropdown-submenu-toggle');
 
+        submenuToggles.forEach(toggle => {
+            toggle.addEventListener('click', function (e) {
+                if (window.innerWidth <= 991.98) {
+                    e.preventDefault();
+                    const submenu = this.nextElementSibling;
+                    const parent = this.parentElement;
+
+                    // Toggle active class
+                    if (parent.classList.contains('active')) {
+                        parent.classList.remove('active');
+                        submenu.style.display = 'none';
+                    } else {
+                        // Close other open submenus
+                        document.querySelectorAll('.dropdown-submenu.active').forEach(item => {
+                            item.classList.remove('active');
+                            item.querySelector('.dropdown-submenu-content').style.display = 'none';
+                        });
+
+                        parent.classList.add('active');
+                        submenu.style.display = 'block';
+                    }
+                }
+            });
+        });
+    });
     $(document).ready(function () {
         // Hàm kiểm tra và áp dụng trạng thái biểu tượng
         function updateFullscreenIcon() {

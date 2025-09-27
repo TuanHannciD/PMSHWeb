@@ -51,7 +51,6 @@
         $('#modalGroupCheckIn').modal('hide');
     }
     $('input[name="grouupCheckInType"]').on('change', function () {
-        // Lấy giá trị của radio được chọn
         var selectedValue = $('input[name="grouupCheckInType"]:checked').val();
         searchGroupCheckInRoom(selectedValue);
 

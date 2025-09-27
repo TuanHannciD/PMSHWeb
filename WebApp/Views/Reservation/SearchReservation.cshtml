@@ -340,7 +340,7 @@
             }
         });
     });
-    function getBusinessDate() {
+        function getBusinessDate() {
         return $.ajax({
             url: '/Reservation/GetBusinessDate',
             type: 'get',
@@ -349,15 +349,21 @@
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 const businessDate = new Date(result);
-                $('#arrivalForm').val(result.split('T')[0]);
-                $('#expDatePaymentBilling').val(result.split('T')[0]);
-                $('#transDatePaymentBilling').val(result.split('T')[0]);
-                $('#fromDateSelectOption').val(result.split('T')[0]);
-                $('#toDateSelectOption').val(result.split('T')[0]);
-                const departureDate = new Date(businessDate);
-                departureDate.setDate(businessDate.getDate() + 7);
-                const formattedDepartureDate = departureDate.toISOString().split('T')[0];
-                $('#departureForm').val(formattedDepartureDate);
+                const formattedBusinessDate = result.split('T')[0];
+                // Chỉ set giá trị nếu các trường ngày trống
+                if (!$('#arrivalForm').val()) {
+                    $('#arrivalForm').val(formattedBusinessDate);
+                    $('#expDatePaymentBilling').val(formattedBusinessDate);
+                    $('#transDatePaymentBilling').val(formattedBusinessDate);
+                    $('#fromDateSelectOption').val(formattedBusinessDate);
+                    $('#toDateSelectOption').val(formattedBusinessDate);
+                }
+                if (!$('#departureForm').val()) {
+                    const departureDate = new Date(businessDate);
+                    departureDate.setDate(businessDate.getDate() + 7);
+                    const formattedDepartureDate = departureDate.toISOString().split('T')[0];
+                    $('#departureForm').val(formattedDepartureDate);
+                }
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -366,10 +372,21 @@
             }
         });
     }
+
     function searchReservation() {
         $("#loadingSpinnerForm").show();
+
         const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
-        getBusinessDate().then(function () {
+
+        // Kiểm tra xem các trường ngày có giá trị hợp lệ hay không
+        const arrivalDate = $('#arrivalForm').val();
+        const departureDate = $('#departureForm').val();
+        const isValidDate = (dateStr) => {
+            return dateStr && !isNaN(Date.parse(dateStr));
+        };
+
+        // Nếu cả hai trường ngày đều có giá trị hợp lệ, không gọi getBusinessDate
+        if (isValidDate(arrivalDate) && isValidDate(departureDate)) {
             $.ajax({
                 url: '/Reservation/SearchReservation2',
                 type: 'get',
@@ -385,8 +402,8 @@
                     roomType: $('#roomType').find('option:selected').text(),
                     package: $('#package').val(),
                     zone: $('#zone').find('option:selected').text(),
-                    arrivalFrom: $('#arrivalForm').val(),
-                    arrivalTo: $('#departureForm').val(),
+                    arrivalFrom: arrivalDate,
+                    arrivalTo: departureDate,
                     roomSharer: checkboxValue,
                     owner: $('#owner').val()
                 },
@@ -405,13 +422,53 @@
                     $("#loadingSpinnerForm").hide();
                 }
             });
-        }).catch(function (xhr, statusText, err) {
-            if (xhr.status == 401) {
-                sessionTimeout();
-            }
-            $("#loadingSpinnerForm").hide();
-        });
+        } else {
+            // Gọi getBusinessDate nếu ngày không hợp lệ hoặc trống
+            getBusinessDate().then(function () {
+                $.ajax({
+                    url: '/Reservation/SearchReservation2',
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        searchType: $('#searchType').val(),
+                        name: $('#name').val(),
+                        firstName: $('#firstName').val(),
+                        reservationHolder: $('#resvHolder').val(),
+                        confirmationNo: $('#confirmationNo').val(),
+                        crsNo: $('#crsNo').val(),
+                        roomNo: $('#roomNo').val(),
+                        roomType: $('#roomType').find('option:selected').text(),
+                        package: $('#package').val(),
+                        zone: $('#zone').find('option:selected').text(),
+                        arrivalFrom: $('#arrivalForm').val(),
+                        arrivalTo: $('#departureForm').val(),
+                        roomSharer: checkboxValue,
+                        owner: $('#owner').val()
+                    },
+                    crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                    success: function (result) {
+                        listData = result;
+                        initializeDataGridSearch(result);
+                    },
+                    error: function (xhr, statusText, err) {
+                        if (xhr.status == 401) {
+                            sessionTimeout();
+                        }
+                    },
+                    complete: function () {
+                        $("#loadingSpinnerForm").hide();
+                    }
+                });
+            }).catch(function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+                $("#loadingSpinnerForm").hide();
+            });
+        }
     }
+    
     var idReservation = 0;
     var status = '';
     var roomStatus = '';
