@@ -72,14 +72,108 @@ namespace Administration.Controllers
 
                 if (string.IsNullOrEmpty(Request.Form["code"].ToString()))
                 {
-                    return Json(new { code = 0, msg = "Group Code can not be blank" });
+                    return Json(new { code = 1, msg = "Group Code can not be blank" });
                 }
-                TransactionGroupModel transGroup = new TransactionGroupModel();
-                transGroup.Code = Request.Form["code"].ToString();
-                transGroup.Description = Request.Form["description"].ToString();
-                transGroup.Type = int.Parse(Request.Form["description"].ToString());
+                if(int.Parse(Request.Form["id"].ToString()) == 0)
+                {
+                    TransactionGroupModel transGroup = new TransactionGroupModel();
+                    transGroup.Code = Request.Form["code"].ToString();
+                    transGroup.GenerateID = 0;
+                    transGroup.Description = Request.Form["description"].ToString();
+                    transGroup.Type = int.Parse(Request.Form["type"].ToString());
+                    transGroup.CreateDate = transGroup.UpdateDate = DateTime.Now;
+                    transGroup.UserInsertID = transGroup.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                    long groupID = TransactionGroupBO.Instance.Insert(transGroup);
+                    TransactionGroupModel model = (TransactionGroupModel)TransactionGroupBO.Instance.FindByPrimaryKey((int)groupID);
+                    model.Seq = model.ID;
+                    TransactionGroupBO.Instance.Update(model);
+                    pt.CommitTransaction();
+                    return Json(new { code = 0, msg = "Group transaction was created successfully" });
+                }
+                else
+                {
+                    TransactionGroupModel model = (TransactionGroupModel)TransactionGroupBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                    List<TransactionGroupModel> folioDetail = PropertyUtils.ConvertToList<TransactionGroupModel>(TransactionGroupBO.Instance.
+                        FindAll()).Where(x => x.Code == Request.Form["code"].ToString() && x.ID != int.Parse(Request.Form["id"].ToString())).ToList();
+                    if(folioDetail.Count > 0)
+                    {
+                        return Json(new { code = 1, msg = "Code has exits" });
+                    }
+                    model.Code = Request.Form["code"].ToString();
+                    model.Description = Request.Form["description"].ToString();
+                    model.Type = int.Parse(Request.Form["type"].ToString());
+                    model.UpdateDate = DateTime.Now;
+                    model.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                    TransactionGroupBO.Instance.Update(model);
+                    pt.CommitTransaction();
+                    return Json(new { code = 0, msg = "Group transaction was updated successfully" });
+                } 
+
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetTransactionGroupByID(int id)
+        {
+            try
+            {
+                TransactionGroupModel model = (TransactionGroupModel)TransactionGroupBO.Instance.FindByPrimaryKey((int)id); 
+                if(model == null || model.ID == 0)
+                {
+                    return Json(new TransactionGroupModel());
+                }
+                return Json(model);
+
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+        }
+
+        [HttpPost]
+        public ActionResult DeleteTransactionGroup(int id)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                TransactionGroupModel model = (TransactionGroupModel)TransactionGroupBO.Instance.FindByPrimaryKey((int)id);
+                if(model == null || model.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Group transaction not found" });
+                }
+                List<TransactionSubGroupModel> subGroup = PropertyUtils.ConvertToList<TransactionSubGroupModel>(TransactionSubGroupBO.Instance.FindByAttribute("TransactionGroupID", id));
+                if(subGroup.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "Can not delete this transaction group, exits at 1 least transation sub group" });
+                }
+                List<TransactionsModel> tran = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindByAttribute("TransactionGroupID", id));
+                if (tran.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "Can not delete this transaction group, exits at 1 least transation" });
+                }
+                TransactionGroupBO.Instance.Delete(id);
+                
+
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "Group transaction was created successfully" });
+                return Json(new { code = 0, msg = "Transaction Group was deleted successfully" });
+
 
             }
             catch (Exception ex)
