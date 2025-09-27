@@ -36,15 +36,15 @@
 
     </div>
     <div class="row">
-        <div class="col-md-2">
-            <label>Grp. Code</label>
-            <select type="text" id="groupCode">
+        <div class="col-md-2 row">
+            <label class="col-md-4">Grp. Code</label>
+            <select class="col-md-8" type="text" id="groupCode">
 
             </select>
         </div>
-        <div class="col-md-2">
-            <label>Sub Grp. Code</label>
-            <select type="text" id="groupSubCode">
+        <div class="col-md-2 row">
+            <label class="col-md-4">Sub Grp. Code</label>
+            <select class="col-md-8" type="text" id="groupSubCode">
             </select>
         </div>
         <div class="col-md-2">
@@ -78,7 +78,6 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                console.log(result);
                 initializeDataGridSearch(result);
             },
             error: function (xhr, statusText, err) {
