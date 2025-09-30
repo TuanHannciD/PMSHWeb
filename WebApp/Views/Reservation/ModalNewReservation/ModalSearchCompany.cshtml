@@ -163,6 +163,7 @@
             onRowDblClick: function (e) {
                 getInfoByCompanyID(e.data.id);
                 closeModalSearchCompany();
+                $('#clearCompany').show();
             }
         });
     }
@@ -189,5 +190,11 @@
                 }
             }
         });
+    }
+    function clearCompany(){
+        $('#txtCompanyID').val('');
+        $('#txtCompany').val('');
+        $('#clearCompany').hide();
+
     }
 </script>

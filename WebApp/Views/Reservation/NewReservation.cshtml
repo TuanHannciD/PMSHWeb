@@ -130,8 +130,11 @@
                                         <label>Agent</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input id="txtAgentID" readonly style="display:none" />
-                                            <input id="txtAgent" readonly class="col-md-10"/>
+                                            <input id="txtAgent" readonly class="col-md-8"/>
                                             <button onclick="openModalSearchAgent()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                                            <div class="col-md-1" style="justify-content:center;text-align:center;color:red;" id="clearAgent" onclick="clearAgent()">
+                                                <i class="fa-solid fa-xmark" style="padding-top:6px"></i>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -139,8 +142,11 @@
                                         <label>Company</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input id="txtCompanyID" readonly style="display:none" />
-                                            <input id="txtCompany" readonly class="col-md-10" />
+                                            <input id="txtCompany" readonly class="col-md-8" />
                                             <button onclick="openModalSearchCompany()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                                            <div class="col-md-1" style="justify-content:center;text-align:center;color:red;" id="clearCompany" onclick="clearCompany()">
+                                                <i class="fa-solid fa-xmark" style="padding-top:6px"></i>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -155,8 +161,11 @@
                                         <label>Contact</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input id="txtContactID" readonly style="display:none" />
-                                            <input id="txtContact" readonly class="col-md-10"/>
+                                            <input id="txtContact" readonly class="col-md-8"/>
                                             <button onclick="openModalSearchContact()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                                            <div class="col-md-1" style="justify-content:center;text-align:center;color:red;" id="clearContact" onclick="clearContact()">
+                                                <i class="fa-solid fa-xmark" style="padding-top:6px"></i>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -1405,33 +1414,32 @@
         }
     }
     $('#txtName').on('blur', function () {
-      var input = $(this).val().trim();
-      var regex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*,\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*$/i;
-      // Ví dụ: Nguyen Van, Tuan Anh
+        var input = $(this).val().trim();
+        // Regex hỗ trợ tiếng Việt, định dạng: "LastName, FirstName MiddleName"
+        var regex = /^[a-zA-ZÀ-ỹ]+(?:\s[a-zA-ZÀ-ỹ]+)*,\s*[a-zA-ZÀ-ỹ]+(?:\s[a-zA-ZÀ-ỹ]+)*$/i;
 
-      if (regex.test(input)) {
-        $('#errorMessage').hide();
-        $(this).removeClass('is-invalid').addClass('is-valid');
+        if (regex.test(input)) {
+            $('#errorMessage').hide();
+            $(this).removeClass('is-invalid').addClass('is-valid');
 
-        // Tách chuỗi theo định dạng "LastName, FirstName MiddleName"
-        var parts = input.split(',');
-        var lastName = parts[0].trim();          // "Nguyen Van"
-        var firstMiddlePart = parts[1].trim();   // "Tuan Anh"
-        var nameTokens = firstMiddlePart.split(/\s+/); // ["Tuan", "Anh"]
+            // Tách chuỗi theo định dạng "LastName, FirstName MiddleName"
+            var parts = input.split(',');
+            var lastName = parts[0].trim();          // "Nguyễn Văn"
+            var firstMiddlePart = parts[1].trim();   // "Tuấn Anh"
+            var nameTokens = firstMiddlePart.split(/\s+/); // ["Tuấn", "Anh"]
 
-        var firstName = nameTokens[0];
-        var middleName = nameTokens.slice(1).join(' '); // Có thể là rỗng
+            var firstName = nameTokens[0];
+            var middleName = nameTokens.slice(1).join(' '); // Có thể là rỗng
 
-        $('#txtFirstName').val(firstName);
-        CreateProfile(input,lastName,firstName,middleName);
+            $('#txtFirstName').val(firstName);
+            CreateProfile(input, lastName, firstName, middleName);
 
-      } else {
-        $('#errorMessage').show();
-        $(this).removeClass('is-valid').addClass('is-invalid');
+        } else {
+            $('#errorMessage').show();
+            $(this).removeClass('is-valid').addClass('is-invalid');
 
-        $('#txtFirstName').val('');
-
-      }
+            $('#txtFirstName').val('');
+        }
     });
     function CreateProfile(account,lastName,firstName,middleName) {
         var formData = new FormData();
@@ -1465,5 +1473,8 @@
     }
     function setUpIconClear(){
         $('#clearRoomNo').hide();
+        $('#clearAgent').hide();
+        $('#clearCompany').hide();
+        $('#clearContact').hide();
     }
 </script>

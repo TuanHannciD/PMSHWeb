@@ -163,6 +163,7 @@
             onRowDblClick: function (e) {
                 getInfoByContactID(e.data.id);
                 closeModalSearchContact();
+                $('#clearContact').show();
             }
         });
     }
@@ -178,7 +179,7 @@
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 $('#txtContactID').val(result.id);
-                $('#txtCotact').val(result.account);
+                $('#txtContact').val(result.account);
 
 
           },
@@ -189,5 +190,11 @@
                 }
             }
         });
+    }
+    function clearContact(){
+        $('#txtContactID').val('');
+        $('#txtContact').val('');
+        $('#clearContact').hide();
+
     }
 </script>

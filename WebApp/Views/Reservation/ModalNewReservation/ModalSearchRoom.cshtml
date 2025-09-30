@@ -198,14 +198,14 @@
         });
     }
     function clearRoomNo(){
-        $('#roomID').val('0');
+        $('#roomID').val('');
         $('#roomSelect').val('');
         $('#txtRoomType').val(0);
         $('#txtRTC').val(0);
         $('#roomNoSearch').val('');
         $('#floorSearch').val('');
         $('#txtRTC').val(0);
-        $('#modalRoom').modal('hide');
+        $('#clearRoomNo').hide();
     }
     function openModalSearchRoom(){
         $('#roomTypeSearch').val($('#txtRoomType').val());

@@ -163,8 +163,15 @@
             onRowDblClick: function (e) {
                 getInfoByAgentID(e.data.id);
                 closeModalSearchAgent();
+                $('#clearAgent').show();
             }
         });
+    }
+    function clearAgent(){
+        $('#txtAgentID').val('');
+        $('#txtAgent').val('');
+        $('#clearAgent').hide();
+
     }
     function getInfoByAgentID(id){
         $.ajax({
