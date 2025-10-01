@@ -401,7 +401,7 @@
             });
         });
 
-    function generateDateColumns(fromDate, toDate) {
+      function generateDateColumns(fromDate, toDate) {
         const columns = [];
         const start = new Date(fromDate);
         const end = new Date(toDate);
@@ -419,40 +419,47 @@
             columns.push({
                 dataField: `date${index}`,   // ví dụ: date1, date2 ...
                 width: 80,
-                alignment: "center",
+                dataType: "number",  // <-- báo cho grid đây là số
                 cellTemplate: function (container, options) {
                     let value = options.value;
+                    let num = parseFloat(value);
 
-                    // Giữ nguyên xử lý cho % OCC
-                    if (options.data.roomType === "% OCC") {
+                    // Format số (1,000; 1,234,567 ...)
+                    const formatNumber = (val) =>
+                        new Intl.NumberFormat("en-US").format(val);
+
+                     if (options.data.roomType === "% OCC") {
                         if (value !== null && value !== undefined && value !== "") {
-                            container.text(value);
+                            let num = parseFloat(value);
+                            if (!isNaN(num)) {
+                                container.text(num + " %");
+                            } else {
+                                container.text(value + " %");
+                            }
                         } else {
                             container.text("");
                         }
                     }
-                    // Xử lý cho R.Night
+
                     else if (options.data.roomType === "R.Night") {
-                        if (value === null || value === undefined || value === ""|| value === "0") {
+                        if (!num || num === 0) {
                             container.text("0").css("color", "red");
                         } else {
-                            container.text(value);
+                            container.text(formatNumber(num));
                         }
                     }
                     else if (options.data.roomType === "Allotment") {
-                        if (value === null || value === undefined || value === "") {
-                            container.text("0");
-                        } else {
-                            container.text(value);
-                        }
+                        container.text(num ? formatNumber(num) : "0");
                     }
-                    // Các loại khác
                     else {
-                        let num = parseFloat(value);
-                        if (!isNaN(num) && num <= 0) {
-                            container.text(value).css("color", "red");
+                        if (!isNaN(num)) {
+                            if (num <= 0) {
+                                container.text(formatNumber(num)).css("color", "red");
+                            } else {
+                                container.text(formatNumber(num));
+                            }
                         } else {
-                            container.text(value ?? "");
+                            container.text("");
                         }
                     }
                 },
@@ -469,6 +476,7 @@
 
         return columns;
     }
+
 
 
 
@@ -500,7 +508,7 @@
 
                 { dataField: "totalRooms",
                     caption: "Total Rooms",
-                    width: 100,
+                    width: 100, dataType: "number",
                     cellTemplate: function (container, options) {
                         let value = options.value;
 

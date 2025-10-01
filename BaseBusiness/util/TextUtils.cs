@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -286,7 +287,32 @@ namespace BaseBusiness.util
             else
                 return x.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
         }
+        public static DataTable Select(string strComm)
+        {
+            using (SqlConnection cnn = new SqlConnection(DBUtils.GetDBConnectionString()))
+            {
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand(strComm, cnn))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandTimeout = 0;
 
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            DataSet ds = new DataSet();
+                            cnn.Open();
+                            da.Fill(ds);
+                            return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+                        }
+                    }
+                }
+                catch (SqlException se)
+                {
+                    throw new Exception("Select error: " + se.Message);
+                }
+            }
+        }
         public static string SalaryToString(Decimal x, params object[] optionalParamArray)
         {
             string displayType = "",strReturn="";
