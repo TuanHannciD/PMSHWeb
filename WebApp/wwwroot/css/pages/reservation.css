@@ -582,15 +582,10 @@ textarea {
 }
 
 @media (max-width: 1024px) {
-    .container-new-reservation {
-        grid-template-columns: repeat(2, 1fr);
-    }
+
 }
 
 @media (max-width: 768px) {
-    .container-new-reservation {
-        grid-template-columns: 1fr;
-    }
 
     .form-grid-new-reservation, .stay-details-grid-new-reservation {
 

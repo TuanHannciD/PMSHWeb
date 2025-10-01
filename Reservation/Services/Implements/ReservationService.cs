@@ -475,7 +475,7 @@ namespace Reservation.Services.Implements
         }
 
         public DataTable SearchReservation(int searchType, string name, string firstName, string reservationHolder, string confirmationNo,
-            string crsNo, string roomNo, string roomType, string package, string zone, DateTime arrivalFrom, DateTime arrivalTo, string roomSharer, string owner)
+            string crsNo, string roomNo, string roomType, string package, string zone, string arrivalFrom, string arrivalTo, string roomSharer, string owner)
         {
             try
             {

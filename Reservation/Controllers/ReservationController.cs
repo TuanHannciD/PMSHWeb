@@ -1462,13 +1462,22 @@ namespace Reservation.Controllers
         #region DatVP __ search reservation
         [HttpGet]
         public async Task<IActionResult> SearchReservation2(int searchType,string name,string firstName,string reservationHolder,string confirmationNo,
-            string crsNo,string roomNo,string roomType,string package,string zone,DateTime arrivalFrom, DateTime arrivalTo,string roomSharer,string owner)
+            string crsNo,string roomNo,string roomType,string package,string zone,DateTime arrivalFrom, int chooseFromDate, int chooseToDate,DateTime arrivalTo,string roomSharer,string owner)
        {
             try
             {
-
+                string formattedDate = arrivalFrom.ToString("yyyy-MM-dd");
+                string formattedDate2 = arrivalTo.ToString("yyyy-MM-dd");
+                if (chooseFromDate == 0)
+                {
+                    formattedDate = "";
+                }
+                if (chooseToDate == 0)
+                {
+                    formattedDate2 = "";
+                }
                 var data = _iReservationService.SearchReservation( searchType,  name,  firstName,  reservationHolder,  confirmationNo,
-                crsNo,  roomNo,  roomType,  package,  zone,  arrivalFrom,  arrivalTo,  roomSharer,  owner);
+                crsNo,  roomNo,  roomType,  package,  zone, formattedDate, formattedDate2,  roomSharer,  owner);
 
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()

@@ -28,15 +28,20 @@
                     <div class="row">
 
                         <div class="form-group-new-reservation col-md-6">
-                            <label>Arrival</label>
-                            <div class="row" style="margin-left:1px;margin-right:2px">
-                                <input type="date" id="arrivalForm">
+                            <label>
+                                Arrival 
+                            </label>
+                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                <input type="checkbox" id="chooseFromDate" checked class="col-md-2">
+
+                                <input type="date" id="arrivalForm" class="col-md-10">
                             </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6">
                             <label>Departure</label>
-                            <div class="row" style="margin-left:1px;margin-right:2px">
-                                <input type="date" id="departureForm">
+                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                <input type="checkbox" id="chooseToDate" checked class="col-md-2">
+                                <input type="date" id="departureForm" class="col-md-10">
                             </div>
                         </div>
                         <div class="form-group-new-reservation col-md-6" style="display:none">
@@ -128,17 +133,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group-new-reservation col-md-6">
-                            <label>Rsv Online</label>
+                        <div class="form-group-new-reservation col-md-6 mt-1"  style="display:flex">
                             <div class="row" style="margin-left:1px;margin-right:2px">
                                 <input type="checkbox" id="reservationOnline" name="reservationOnline" value="1">
                             </div>
+                            <label>Rsv Online</label>
                         </div>
-                        <div class="form-group-new-reservation col-md-6">
-                            <label>Room Sharer</label>
-                            <div class="row" style="margin-left:1px;margin-right:2px">
+                        <div class="form-group-new-reservation col-md-6 mt-1" style="display:flex">
+                            <div  style="margin-left:1px;margin-right:2px">
                                 <input type="checkbox" id="roomShare" name="roomShare" value="IncludeRS" checked>
                             </div>
+                            <label >Room Sharer</label>
+
                         </div>
                     </div>
                 </div>
@@ -152,7 +158,7 @@
                     <i class="fa-solid fa-caret-down" id="caretDownFunctionAndOption" onclick="clickCaretDownFunctionAndOption();" title="Click to show funtions and options"></i>
                     <i class="fa-solid fa-caret-up" id="caretUpFunctionAndOption" onclick="clickCaretUpFunctionAndOption();" title="Click to hide funtions and options"></i>
                 </div>
-                <div class="toolbar-menu mt-2 row" id="functionAndOption">
+                <div class="toolbar-menu mt-2 row text-start" id="functionAndOption" >
 @*                     <div class="dropdown relative col-md-4 mb-1" style="padding:0">
                         <a href="#" class="menu-toggle font-semibold">CO</a>
                         <div class="submenu absolute z-10 mt-2">
@@ -168,37 +174,37 @@
                             <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
                         </div>
                     </div> *@
-                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
-                    <a href="#"  class="font-semibold col-md-4 mb-1" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1">Advance</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1">Clear</a>
-                    <a href="#" onclick="editBooking();" class="font-semibold col-md-4 mb-1">Edit</a>
-                    <a href="#" onclick="openModalCancel()" class="font-semibold col-md-4 mb-1">Cancel</a>
-                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold col-md-4 mb-1">Reinstate</a>
-                    <a href="#" onclick="checkIn();" class="font-semibold col-md-4 mb-1">Check In</a>
-                    <a href="#" onclick="openModalViewProfile();" class="font-semibold col-md-4 mb-1">Profile</a>
-                    <a href="#" id="groupAdmin" class="font-semibold col-md-4 mb-1" onclick="redirectGroupAdmin();">Grp Admin</a>
-                    <a href="#" data-function="export" class="font-semibold col-md-4 mb-1">Export</a>
-                    <a href="#" onclick="openModalSplit();" class="font-semibold col-md-4 mb-1">Split</a>
-                    <a href="#" onclick="openModalAccompanying();" class="font-semibold col-md-4 mb-1">Accompany</a>
-                    <a href="#" onclick="openModalAddOn();" class="font-semibold col-md-4 mb-1">Add On</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1">Alerts</a>
-                    <a href="#" onclick="openModalBilling();" class="font-semibold col-md-4 mb-1">Billing</a>
-                    <a onclick="openModalInvoicing();" class="font-semibold col-md-4 mb-1">Invoicing</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1">Change</a>
-                    <a href="#" onclick="openModalShare();" class="font-semibold col-md-4 mb-1">Share</a>
-                    <a href="#" onclick="openModalDeposit();" class="font-semibold col-md-4 mb-1">Dep/DXL</a>
-                    <a href="#" onclick="openModalFixedCharges();" class="font-semibold col-md-4 mb-1">FixedCharges</a>
-                    <a href="#" onclick="openConfirm();" class="font-semibold col-md-4 mb-1">Delete</a>
-                    <a href="#" onclick="openModalMessage();" class="font-semibold col-md-4 mb-1">Message</a>
-                    <a href="#" onclick="openModalRegistrationCard();" class="font-semibold col-md-4 mb-1">Regis.Card</a>
-                    <a href="#" onclick="openRoomMove();" class="font-semibold col-md-4 mb-1">Room Move</a>
-                    <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1">Routing</a>
-                    <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1">WaitList</a>
-                    <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1">Columns</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1  text-start" onclick="openModalCheckOutAll(1);" id="assignRoom">C/O All</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1  text-start" onclick="openModalCheckOutAll(2);" id="unAssignRoom">C/O Zero</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start" onclick="openModalCheckOut();" id="unAssignRoom">C/O</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start">Advance</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start">Clear</a>
+                    <a href="#" onclick="editBooking();" class="font-semibold col-md-4 mb-1 text-start">Edit</a>
+                    <a href="#" onclick="openModalCancel()" class="font-semibold col-md-4 mb-1 text-start">Cancel</a>
+                    <a href="#" onclick="openConfirmReinstate();" class="font-semibold col-md-4 mb-1 text-start">Reinstate</a>
+                    <a href="#" onclick="checkIn();" class="font-semibold col-md-4 mb-1 text-start">Check In</a>
+                    <a href="#" onclick="openModalViewProfile();" class="font-semibold col-md-4 mb-1 text-start">Profile</a>
+                    <a href="#" id="groupAdmin" class="font-semibold col-md-4 mb-1 text-start" onclick="redirectGroupAdmin();">Grp Admin</a>
+                    <a href="#" data-function="export" class="font-semibold col-md-4 mb-1 text-start">Export</a>
+                    <a href="#" onclick="openModalSplit();" class="font-semibold col-md-4 mb-1 text-start">Split</a>
+                    <a href="#" onclick="openModalAccompanying();" class="font-semibold col-md-4 mb-1 text-start">Accompany</a>
+                    <a href="#" onclick="openModalAddOn();" class="font-semibold col-md-4 mb-1 text-start">Add On</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start">Alerts</a>
+                    <a href="#" onclick="openModalBilling();" class="font-semibold col-md-4 mb-1 text-start">Billing</a>
+                    <a onclick="openModalInvoicing();" class="font-semibold col-md-4 mb-1 text-start">Invoicing</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start">Change</a>
+                    <a href="#" onclick="openModalShare();" class="font-semibold col-md-4 mb-1 text-start">Share</a>
+                    <a href="#" onclick="openModalDeposit();" class="font-semibold col-md-4 mb-1 text-start">Dep/DXL</a>
+                    <a href="#" onclick="openModalFixedCharges();" class="font-semibold col-md-4 mb-1 text-start">FixedCharges</a>
+                    <a href="#" onclick="openConfirm();" class="font-semibold col-md-4 mb-1 text-start">Delete</a>
+                    <a href="#" onclick="openModalMessage();" class="font-semibold col-md-4 mb-1 text-start">Message</a>
+                    <a href="#" onclick="openModalRegistrationCard();" class="font-semibold col-md-4 mb-1 text-start">Regis.Card</a>
+                    <a href="#" onclick="openRoomMove();" class="font-semibold col-md-4 mb-1 text-start">Room Move</a>
+                    <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1 text-start">Routing</a>
+                    <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1 text-start">WaitList</a>
+                    <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1 text-start">Columns</a>
 
 
                 </div>
@@ -208,33 +214,40 @@
         <div class="col-md-9" id="rightContent">
             <div class="content-right">
                 <div class="mui-card">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="header" style="border:none">
+                                <h3 id="content-title">
+                                    <i class="fa-solid fa-bars" id="toggleLeftMenu" onclick="toggleLeftMenu();" title="Toggle left menu"></i>
+                                    Booking Data
+                                </h3>
+                            </div>
 
-                    <div class="header" style="border:none">
-                        <h3 id="content-title">
-                            <i class="fa-solid fa-bars" id="toggleLeftMenu" onclick="toggleLeftMenu();" title="Toggle left menu"></i>
-                            Booking Data
-                        </h3>
+                            <div class="toolbar-menu max-w-7xl row" id="functionAndOptionTable" style="display:none;column-gap:4px">
+                                <a href="#" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white" onclick="openModalBilling();">Billing</a>
+                                <a href="#" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Packages</a>
+                                <a href="#" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Dep/DXL</a>
+                                <a href="#" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white" onclick="editBooking();">Edit</a>
+                                <a href="#" id="groupAdmin" class="font-semibold col-md-2 mb-2" onclick="redirectGroupAdmin();" style="background-color:#0055b8;color:white">Gr.Admin</a>
+                                <a href="#" class="font-semibold col-md-2 mb-2" onclick="openRoomAssignment();" id="assignRoom" style="background-color:#0055b8;color:white">Assign</a>
+                                <a href="#" onclick="openModalSplit();" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white">Split</a>
+                                <a href="#" onclick="checkIn();" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white">Check In</a>
+                                <a href="#" class="font-semibold col-md-2 mb-2" onclick="openModalCheckOut();" id="unAssignRoom" style="background-color:#0055b8;color:white">C/O</a>
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-4" id="cmt_wrapper">
+                        </div>
                     </div>
+
                     <div id="loadingSpinnerForm" style="display: none; text-align: center; padding: 20px;">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                    <div class="toolbar-menu max-w-7xl row" id="functionAndOptionTable" style="display:none;column-gap:4px">
-                        <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalBilling();">Billing</a>
-                        <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Packages</a>
-                        <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Dep/DXL</a>
-                        <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="editBooking();">Edit</a>
-                        <a href="#" id="groupAdmin" class="font-semibold col-md-1" onclick="redirectGroupAdmin();" style="background-color:#0055b8;color:white">Gr.Admin</a>
-                        <a href="#" class="font-semibold col-md-1" onclick="openRoomAssignment();" id="assignRoom" style="background-color:#0055b8;color:white">Assign</a>
-                        <a href="#" onclick="openModalSplit();" class="font-semibold col-md-1" style="background-color:#0055b8;color:white">Split</a>
-                        <a href="#" onclick="checkIn();" class="font-semibold col-md-1" style="background-color:#0055b8;color:white">Check In</a>
-                        <a href="#" class="font-semibold col-md-1" onclick="openModalCheckOut();" id="unAssignRoom" style="background-color:#0055b8;color:white">C/O</a>
-
-
-                    </div>
                     <!-- DevExtreme DataGrid -->
-                    <div id="gridContainer" class="gridContainer mt-2"></div>
+                    <div id="gridContainer" class="gridContainer"></div>
                 </div>
             </div>
         </div>
@@ -403,6 +416,7 @@
     }
 
     function searchReservation() {
+        $('#cmt_wrapper').hide();
         $("#loadingSpinnerForm").show();
 
         const checkboxValue = $('#roomShare').is(':checked') ? $('#roomShare').val() : '';
@@ -432,6 +446,8 @@
                     package: $('#package').val(),
                     zone: $('#zone').find('option:selected').text(),
                     arrivalFrom: arrivalDate,
+                    chooseFromDate:$('#chooseFromDate').is(':checked') ? 1 : 0,
+                    chooseToDate:$('#chooseToDate').is(':checked') ? 1 : 0,
                     arrivalTo: departureDate,
                     roomSharer: checkboxValue,
                     owner: $('#owner').val()
@@ -470,6 +486,8 @@
                         package: $('#package').val(),
                         zone: $('#zone').find('option:selected').text(),
                         arrivalFrom: $('#arrivalForm').val(),
+                        chooseFromDate:$('#chooseFromDate').is(':checked') ? 1 : 0,
+                        chooseToDate:$('#chooseToDate').is(':checked') ? 1 : 0,
                         arrivalTo: $('#departureForm').val(),
                         roomSharer: checkboxValue,
                         owner: $('#owner').val()
@@ -516,7 +534,6 @@
     var folioNoID = 0;
     var reservationStatus = 0;
     function initializeDataGridSearch(data) {
-        const limitedData = data.slice(0, 100);
         const columns = [
             { dataField: 'ID', caption: 'ID', visible: false },
             { dataField: 'ConfirmationNo', caption: 'Confirmation No', visible: true },
@@ -527,10 +544,20 @@
             { dataField: 'RoomNo', caption: 'Room No', visible: true, alignment: 'right' },
             { dataField: 'RoomStatus', caption: 'Rm Status', visible: true },
             { dataField: 'RoomType', caption: 'Room Type', visible: true },
-            { dataField: 'Arrival', caption: 'Arrival', visible: true },
+            { dataField: 'Arrival', caption: 'Arrival', visible: true
+                ,customizeText: function(cellInfo) {
+                // Assuming cellInfo.value is a string like "16/10/2024 00:00:00"
+                return cellInfo.value.split(" ")[0]; // Returns only "16/10/2024"
+                }
+            },
             { dataField: 'ETA', caption: 'ETA', visible: true },
             { dataField: 'NoOfNight', caption: 'No of Nights', visible: true, alignment: 'right' },
-            { dataField: 'Departure', caption: 'Departure', visible: true },
+            { dataField: 'Departure', caption: 'Departure', visible: true 
+                ,customizeText: function(cellInfo) {
+                // Assuming cellInfo.value is a string like "16/10/2024 00:00:00"
+                return cellInfo.value.split(" ")[0]; // Returns only "16/10/2024"
+                }
+            },
             { dataField: 'ETD', caption: 'ETD', visible: true },
             { dataField: 'Adults', caption: 'Adults', visible: true, alignment: 'right' },
             { dataField: 'Child', caption: 'Child', visible: true, alignment: 'right' },
@@ -615,16 +642,16 @@
             });
         }
         const grid = $("#gridContainer").dxDataGrid({
-            dataSource: limitedData,
+            dataSource: data,
             allowColumnResizing: true,
             columnAutoWidth: true,
             paging: {
                 enabled: true,
-                pageSize: 18
+                pageSize: 24
             },
             pager: {
                 visible: true,
-                allowedPageSizes: [18, 25, 30],
+                allowedPageSizes: [24, 30, 35],
                 showPageSizeSelector: true,
                 showInfo: true,
                 showNavigationButtons: true
@@ -731,6 +758,12 @@
                     });
                 }
                 $('#moreInfo').append(html);
+                $('#cmt_wrapper').empty();
+
+                $('#cmt_wrapper').append(`<span><b>Comment:</b> <i>${e.data.Comment}</i></span>`);
+
+                $('#cmt_wrapper').show();
+
             }
         }).dxDataGrid('instance');
         // Update column list when opening offcanvas
