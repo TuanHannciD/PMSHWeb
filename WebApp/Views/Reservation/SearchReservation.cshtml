@@ -86,7 +86,19 @@
                                 <select id="searchType">
                                     <option value="0">General</option>
                                     <option value="1">Guest In House</option>
+                                    <option value="2">Reservation</option>
+                                    <option value="3">Due In</option>
+                                    <option value="4">Checked In</option>
+                                    <option value="5">Due Out</option>
+                                    <option value="6">Checked Out</option>
                                     <option value="7">Cancellations</option>
+                                    <option value="8">No show</option>
+                                    <option value="9">Wait List</option>
+                                    <option value="10">Day use</option>
+                                    <option value="11">Complementary</option>
+                                    <option value="12">Arrival & Checked In Today</option>
+                                    <option value="13">Checked Out Today</option>
+
                                 </select>
                             </div>
                         </div>
@@ -213,6 +225,12 @@
                         <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Packages</a>
                         <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="openModalDeposit();">Dep/DXL</a>
                         <a href="#" class="font-semibold col-md-1" style="background-color:#0055b8;color:white" onclick="editBooking();">Edit</a>
+                        <a href="#" id="groupAdmin" class="font-semibold col-md-1" onclick="redirectGroupAdmin();" style="background-color:#0055b8;color:white">Gr.Admin</a>
+                        <a href="#" class="font-semibold col-md-1" onclick="openRoomAssignment();" id="assignRoom" style="background-color:#0055b8;color:white">Assign</a>
+                        <a href="#" onclick="openModalSplit();" class="font-semibold col-md-1" style="background-color:#0055b8;color:white">Split</a>
+                        <a href="#" onclick="checkIn();" class="font-semibold col-md-1" style="background-color:#0055b8;color:white">Check In</a>
+                        <a href="#" class="font-semibold col-md-1" onclick="openModalCheckOut();" id="unAssignRoom" style="background-color:#0055b8;color:white">C/O</a>
+
 
                     </div>
                     <!-- DevExtreme DataGrid -->
@@ -507,7 +525,7 @@
             { dataField: 'Nationality', caption: 'Nationality', visible: true },
             { dataField: 'GuestName', caption: 'Guest Name', visible: true },
             { dataField: 'RoomNo', caption: 'Room No', visible: true, alignment: 'right' },
-            { dataField: 'RoomStatus', caption: 'Room Status', visible: true },
+            { dataField: 'RoomStatus', caption: 'Rm Status', visible: true },
             { dataField: 'RoomType', caption: 'Room Type', visible: true },
             { dataField: 'Arrival', caption: 'Arrival', visible: true },
             { dataField: 'ETA', caption: 'ETA', visible: true },
@@ -600,7 +618,6 @@
             dataSource: limitedData,
             allowColumnResizing: true,
             columnAutoWidth: true,
-            columnMinWidth: 90,
             paging: {
                 enabled: true,
                 pageSize: 18

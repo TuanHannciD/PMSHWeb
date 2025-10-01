@@ -648,7 +648,41 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> CaculateNetReverse(DateTime fromDate, DateTime toDate, int rateCodeID, int roomTypeID,
+    string currencyID, int packageID, int day, decimal price, string transactionCode, decimal discountPercent, decimal discountAmount)
+        {
+            try
+            {
+                if (rateCodeID != 0)
+                {
+                    var data = _iReservationService.ReservationGetRateQueryDetail(fromDate, toDate, rateCodeID, roomTypeID, currencyID, packageID, day);
+                    transactionCode = data.Rows[0]["TransactionCode"].ToString();
+                }
+                else
+                {
 
+                    transactionCode = PropertyUtils.ConvertToList<ConfigSystemModel>(ConfigSystemBO.Instance.FindAll()).
+                    Where(x => x.KeyName == "RoomCharge").ToList()[0].KeyValue;
+
+                }
+                var (originalPrice, priceAfter, priceDiscount, priceAfterDiscount) = _iReservationService.CalculateNetReverse(price, transactionCode, discountAmount, discountPercent);
+
+                // Tạo đối tượng JSON để trả về
+                var result = new
+                {
+                    Price = originalPrice,
+                    PriceAfter = priceAfter,
+                    PriceDiscount = priceDiscount,
+                    PriceAfterDiscount = priceAfterDiscount
+                };
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> GetBusinessDate()
         {
@@ -1135,9 +1169,6 @@ namespace Reservation.Controllers
 
                     }
                     #region edit reservation
-                    reservationModel.ConfirmationNo = (ReservationBO.GetTopConfirmationNo() + 1).ToString();
-                    reservationModel.ReservationNo = (ReservationBO.GetTopID() + 1).ToString();
-                    reservationModel.ReservationDate = businessDate[0].BusinessDate;
                     reservationModel.ProfileAgentId = string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString()) ? 0 : int.Parse(Request.Form["profileAgentID"].ToString());
                     reservationModel.AgentName = Request.Form["agentName"].ToString();
                     reservationModel.ProfileCompanyId = string.IsNullOrEmpty(Request.Form["profileCompanyID"].ToString()) ? 0 : int.Parse(Request.Form["profileCompanyID"].ToString());
@@ -1334,7 +1365,6 @@ namespace Reservation.Controllers
                     reservationModel.DropOffDescription = Request.Form["dropOffDescription"].ToString();
                     reservationModel.PackageId = int.Parse(Request.Form["packageID"].ToString());
                     reservationModel.Packages = Request.Form["packages"].ToString();
-                    reservationModel.Relationship = ReservationBO.GetTopID() + 1;
                     reservationModel.Status = DateTime.Parse(Request.Form["arrival"].ToString()) == businessDate[0].BusinessDate ? 5 : 0;
                     reservationModel.PostingMaster = false;
                     reservationModel.MainGuest = true;
@@ -1361,7 +1391,6 @@ namespace Reservation.Controllers
                     reservationModel.ARNo = "";
                     reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
                     reservationModel.Specials = Request.Form["specials"].ToString();
-                    reservationModel.ShareRoom = ReservationBO.GetTopID() + 1;
                     reservationModel.NoShowStatus = false;
                     reservationModel.ShareRoomName = "";
                     reservationModel.AccompanyName = "";
@@ -1388,7 +1417,6 @@ namespace Reservation.Controllers
                         reservationModel.AllotmentId = int.Parse(Request.Form["allotmentID"].ToString());
                         reservationModel.AllotmentCode = Request.Form["allotmentCode"].ToString();
                     }
-                    reservationModel.PinCode = (ReservationBO.GetTopID() + 1).ToString();
                     reservationModel.PersonInChargeId = int.Parse(Request.Form["perrsonInCharge"].ToString());
                     reservationModel.RoomNight = int.Parse(Request.Form["roomNight"].ToString());
                     reservationModel.CardId = "";

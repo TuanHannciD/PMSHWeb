@@ -95,8 +95,71 @@ namespace Reservation.Services.Implements
                 throw new Exception($"Error: {ex.Message}", ex);
             }
         }
-        
 
+        public (decimal Price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNetReverse(decimal priceAfterDiscount, string TransactionCode, decimal DiscountAmount, decimal DiscountPercent)
+        {
+            try
+            {
+                decimal svc = 0;
+                decimal vat = 0;
+                decimal room = 0;
+                decimal Price = 0;
+                decimal priceAfter = 0;
+                decimal priceDiscount = 0;
+
+                // Retrieve percentages for room, service charge, and VAT
+                List<GenerateTransactionModel> generateTransactionModels = PropertyUtils.ConvertToList<GenerateTransactionModel>(GenerateTransactionBO.Instance.FindAll())
+                    .Where(x => x.TransactionCode == TransactionCode).ToList();
+
+                #region Retrieve percentages for room, svc, and vat
+                if (generateTransactionModels.Count > 0)
+                {
+                    foreach (var item in generateTransactionModels)
+                    {
+                        if (item.SubgroupCode == "RR")
+                        {
+                            room = item.Percentage;
+                        }
+                        if (item.SubgroupCode == "SVC")
+                        {
+                            svc = item.Percentage;
+                        }
+                        if (item.SubgroupCode == "Tax")
+                        {
+                            vat = item.Percentage;
+                        }
+                    }
+                }
+                #endregion
+
+                #region Calculate original Price by reversing the calculations
+                // Step 1: Reverse the discount amount
+                priceAfter = priceAfterDiscount + DiscountAmount;
+
+                // Step 2: Reverse the discount percent
+                if (DiscountPercent != 100) // Avoid division by zero
+                {
+                    priceAfter = priceAfter / (1 - DiscountPercent / 100);
+                }
+                else
+                {
+                    throw new Exception("DiscountPercent of 100% is invalid for reverse calculation.");
+                }
+
+                // Step 3: Reverse the service charge and VAT to get base Price
+                Price = priceAfter / ((1 + vat / 100) * (1 + svc / 100));
+
+                // Step 4: Recalculate forward to get priceDiscount
+                priceDiscount = Price * (1 - DiscountPercent / 100);
+                #endregion
+
+                return (Price, priceAfter, priceDiscount, priceAfterDiscount);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error: {ex.Message}", ex);
+            }
+        }
         public decimal CalculateNetFixedCharge(string transactionCode, decimal price)
         {
             try

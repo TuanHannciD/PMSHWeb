@@ -45,6 +45,7 @@ namespace Reservation.Services.Interfaces
         /// <param name="TransactionCode">Giá trị tiền rate code</param>
         /// <returns>Giá trị net</returns>
         (decimal price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNet(decimal Price,string TransactionCode,decimal DiscountAmount, decimal DiscountPercent);
+        (decimal Price, decimal priceAfter, decimal priceDiscount, decimal priceAfterDiscount) CalculateNetReverse(decimal priceAfterDiscount, string TransactionCode, decimal DiscountAmount, decimal DiscountPercent);
 
         /// <summary>
         /// DatVP: Tính net cho fixed charge

@@ -85,9 +85,16 @@
             onRowDblClick: function(e) {
                 $('#modalPreference').modal('hide');
                 $('#codePreferenceSearch').val(e.data.code);
-                        $('#txtPreference').val(e.data.code);
+                $('#txtPreference').val(e.data.code);
+                $('#clearSpecial').show();
+
             }
         });
+    }
+    function clearSpecial(){
+        $('#codePreferenceSearch').val('');
+        $('#txtPreference').val('');
+        $('#clearSpecial').hide();
     }
     function openModalSearchPreference(){
         getDataPreference();

@@ -352,7 +352,7 @@ namespace Reservation.Commons.Helpers
                 List<PackageModel> list = PropertyUtils.ConvertToList<PackageModel>(PackageBO.Instance.FindByAttribute("Active", 1));
                 if (list.Count > 0)
                 {
-                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Description, Selected = false }).ToList();
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text =p.Code + " - " + p.Description, Selected = false }).ToList();
                 }
                 if (defaultValue)
                     items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });

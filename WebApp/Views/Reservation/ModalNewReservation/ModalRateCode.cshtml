@@ -10,90 +10,114 @@
                 <div class="mb-2">
                     <button class="mui-button mui-button-new" onclick="ReservationRateQueryDetail();">Search</button>
                 </div>
-                <div class="row " style="justify-content:space-between">
-                    <div class="col-md-5 mui-card">
-                        <div class="row me-1 mt-1">
+                <div class="row mx-2 justify-content-between d-flex">
+                    <div class="col-md-5 mui-card row">
+                        <div class="form-group-new-reservation col-md-5">
+                            <label>Arrival</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="date" id="arrivalRateCode">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-5">
+                            <label>Departure</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="date" id="departureRateCode">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-2">
+                            <label>Nights</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="text" id="nightsRateCode" readonly class="text-end">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-3">
+                            <label>Adults</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="number" value="2" id="adultsRateCode" class="text-end">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-3">
+                            <label>C</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="number" value="0" id="cRateCode" class="text-end">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-3">
+                            <label>C1</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="number" value="0" id="c1RateCode" class="text-end">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-3">
+                            <label>C2</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input type="number" value="0" id="c2RateCode" class="text-end">
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-6">
+                            <label>No. of Room</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <input class="col-md-7 text-end" type="number" id="numRoomsRateCode" value="1" min="1">
+                            </div>
+                        </div>
+ 
+                    </div>
+                    <div class="col-md-2 mui-card row">
+                        <div class="form-group-new-reservation col-md-12">
+                            <label>RoomType</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select type="text" id="roomTypeRateCode"  asp-items="ViewBag.cboRoomType"></select>
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-12">
+                            <label>Promotions</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select id="promotionRateCode"  asp-items="ViewBag.cboPromotion">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group-new-reservation col-md-12">
+                            <label>Packages</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <select id="packageRateCode"  asp-items="ViewBag.cboPackage">
+                                </select>
+                            </div>
+                        </div>
 
-                            <label class="col-md-3">Arrival</label>
-                            <input type="date" id="arrivalRateCode" class="col-md-5">
-                            <button class="col-md-1" onclick="changeDateRateCode('arrivalRateCode', -1)">-</button>
-                            <button class="col-md-1" onclick="changeDateRateCode('arrivalRateCode', 1)">+</button>
-                            <span class="col-md-2" style="font-size:12px;color:#9F0010" id="arrival-day-ratecode"></span>
-                        </div>
-                        <div class="row me-1">
-                            <label class="col-md-3">Nights</label>
-                            <input type="text" id="nightsRateCode" class="col-md-9" readonly>
-                        </div>
-                        <div class="row me-1">
-                            <label class="col-md-3">Departure</label>
-                            <input type="date" id="departureRateCode" class="col-md-5">
-                            <button class="col-md-1" onclick="changeDateRateCode('departureRateCode', -1)">-</button>
-                            <button class="col-md-1" onclick="changeDateRateCode('departureRateCode', 1)">+</button>
-                            <span class="col-md-2" style="font-size:12px;color:#9F0010" id="departure-day-ratecode"></span>
-                        </div>
-                        <div class="row me-1">
-                            <label class="col-md-3">Adults</label>
-                            <input type="number" value="2" class="small-input col-md-3" id="adultsRateCode">
-                            <label class="col-md-1">C</label>
-                            <input type="number" value="0" class="small-input col-md-1" id="cRateCode">
-                            <label class="col-md-1">C1</label>
-                            <input type="number" value="0" class="small-input col-md-1" id="c1RateCode">
-                            <label class="col-md-1">C2</label>
-                            <input type="number" value="0" class="small-input col-md-1" id="c2RateCode">
-                        </div>
-                        <div class="row me-1">
-                            <label class="col-md-3">No. of Room</label>
-                            <input class="col-md-7" type="number" id="numRoomsRateCode" value="1" min="1">
-                            <button class="col-md-1" onclick="decreaseRoomsRateCode()">-</button>
-                            <button class="col-md-1" onclick="increaseRoomsRateCode()">+</button>
-                        </div>
                     </div>
-                    <div class="col-md-3 mui-card">
-                        <div class="row me-1 mt-1">
-                            <label class="col-md-5">RoomType</label>
-                            <select type="text" id="roomTypeRateCode" class="col-md-7" asp-items="ViewBag.cboRoomType"></select>
-                        </div>
-                        <div class="row me-1">
-                            <label class="col-md-5">Promotions</label>
-                            <select id="promotionRateCode" class="col-md-7" asp-items="ViewBag.cboPromotion">
-                            </select>
-                        </div>
-                        <div class="row me-1">
-                            <label class="col-md-5">Packages</label>
-                            <select id="packageRateCode" class="col-md-7" asp-items="ViewBag.cboPackage">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mui-card row" style="margin:0;padding:0">
-                        <div class="form-group" style="display:flex">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="func" checked value="0">
-                                <label class="form-check-label">Total</label>
+                    <div class="col-md-5 mui-card row" >
+                        <div style="display:flex;column-gap:32px">
+                            <div class="row">
+                                <input type="radio" name="func" checked value="0" class="col-md-1">
+                                <label class="col-md-9">Total</label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="func" value="1">
-                                <label class="form-check-label">Average</label>
+                            <div class="row">
+                                <input type="radio" name="func" checked value="1" class="col-md-1">
+                                <label class="col-md-9">Average</label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="func" value="2">
-                                <label class="form-check-label">First Rate</label>
+                            <div class="row">
+                                <input type="radio" name="func" checked value="2" class="col-md-1">
+                                <label class="col-md-9">First Rate</label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="dayuse" value="1">
-                                <label class="form-check-label">Day Use</label>
+                            <div class="row">
+                                <input type="checkbox" name="dayuse" value="1" class="col-md-1">
+                                <label class="col-md-9">Day Use</label>
                             </div>
                         </div>
+
+
+
                         <div class="form-group">
                             <div class="form-group">
                                 <label>Currency</label>
                                 <div style="display:flex">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="currency" checked value="VND">
-                                        <label class="form-check-label">VND</label>
+                                        <input  type="radio" name="currency" checked value="VND">
+                                        <label >VND</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="currency" value="USD">
-                                        <label class="form-check-label">USD</label>
+                                        <input  type="radio" name="currency" value="USD">
+                                        <label >USD</label>
                                     </div>
                                 </div>
                             </div>
@@ -103,12 +127,12 @@
                                 <label>Display</label>
                                 <div style="display:flex">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="display" checked value="0">
-                                        <label class="form-check-label">+++</label>
+                                        <input  type="radio" name="display" checked value="0">
+                                        <label >+++</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="display" value="1">
-                                        <label class="form-check-label">net</label>
+                                        <input  type="radio" name="display" value="1">
+                                        <label>net</label>
                                     </div>
                                 </div>
                             </div>
@@ -313,10 +337,27 @@
                         calculateNet($('#arrival').val(),$('#departure').val(),rowData.RateCodeID,
                         $('#txtRoomType').val(),'VND',rowData.PackageID,0,value,'',$('#txtDiscountPercent').val(),$('#txtDiscountAmount').val());
                         closeModalRateCode();
+                        $('#clearRateCode').show();
+
                     }
 
                 }
             }
         });
+    }
+    function clearRateCode(){
+        $('#clearRateCode').hide();
+        $('#txtRateCode').val('');
+        $('#txtRateCodeID').val('');
+        $('#txtRateAmount').val(0);
+        $('#txtNetAmount').val(0);
+        $('#packageRateCode').val('');
+        $('#txtPackage').val('');
+        $('#txtRateAfterDiscount').val(0);
+        $('#txtNetAfterDiscount').val(0);
+        $('#txtTotal').val(0);
+        $('#txtTotalNet').val(0);
+        $('#txtDiscountAmount').val(0);
+        $('#txtDiscountPercent').val(0);
     }
 </script>

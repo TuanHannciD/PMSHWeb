@@ -175,8 +175,15 @@
                 $('#txtBookerID').val(e.data.id);
                 $('#txtBooker').val(e.data.account);
                 $('#modalBooker').modal('hide');
+                $('#clearBooker').show();
+
             }
         });
+    }
+    function clearBooker(){
+        $('#txtBookerID').val('');
+        $('#txtBooker').val('');
+        $('#clearBooker').hide();
     }
     function getInfoByBookerID(id){
         $.ajax({

@@ -284,22 +284,25 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group-new-reservation col-md-4">
+                                    <div class="form-group-new-reservation col-md-7">
                                         <label for="txtRateCode">Rate Code</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
-                                            <input id="txtRateCode" style="text-align:right" readonly class="col-md-9"/>
+                                            <input id="txtRateCode" style="text-align:right" readonly class="col-md-7"/>
                                             <input id="txtRateCodeID" style="display:none" readonly />
                                             <button onclick="openModalRateCode()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                                            <div class="col-md-1" style="justify-content:center;text-align:center;color:red;" id="clearRateCode" onclick="clearRateCode()">
+                                                <i class="fa-solid fa-xmark" style="padding-top:6px"></i>
+                                            </div>
                                         </div>
 
                                     </div>
-                                    <div class="form-group-new-reservation col-md-4">
+                                    <div class="form-group-new-reservation col-md-5">
                                         <label for="txtRateAmount">Rate</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input value="0" id="txtRateAmount" style="text-align:right">
                                         </div>
                                     </div>
-                                    <div class="form-group-new-reservation col-md-4">
+                                    <div class="form-group-new-reservation col-md-5">
                                         <label for="txtNetAmount">Net</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input value="0" id="txtNetAmount" style="text-align:right">
@@ -307,13 +310,13 @@
                                     </div>
                                     
 
-                                    <div class="form-group-new-reservation col-md-6">
+                                    <div class="form-group-new-reservation col-md-4">
                                         <label for="txtDiscountAmount">Disc. Amt</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input type="text" value="0" id="txtDiscountAmount" style="text-align:right">
                                         </div>
                                     </div>
-                                    <div class="form-group-new-reservation col-md-6">
+                                    <div class="form-group-new-reservation col-md-3">
                                         <label for="txtDiscountPercent">Disc. %</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
                                             <input type="text" value="0" id="txtDiscountPercent" style="text-align:right">
@@ -339,6 +342,7 @@
                                             <input id="txtAllotment" readonly class="col-md-10" />
                                             <input id="txtAllotmentID" readonly style="display:none" />
                                             <button onclick="openModalSearchAllotment()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+
                                         </div>
 
                                     </div>
@@ -383,9 +387,12 @@
                                     <div class="form-group-new-reservation col-md-6">
                                         <label for="txtBooker">Booker</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
-                                            <input id="txtBooker"  class="col-md-10"/>
+                                            <input id="txtBooker"  class="col-md-8"/>
                                             <input id="txtBookerID" style="display:none" />
                                             <button onclick="openModalSearchBooker()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                                            <div class="col-md-1" style="justify-content:center;text-align:center;color:red;" id="clearBooker" onclick="clearBooker()">
+                                                <i class="fa-solid fa-xmark" style="padding-top:6px"></i>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -408,7 +415,7 @@
                                             <span style="font-size:12px" class="col-md-2">+ net</span>
                                             <input value="0" id="txtNetAfterDiscount" class="col-md-5" readonly style="text-align:right">
                                         </div>
-
+                                        
                                     </div>
 
                                     <div class="form-group-new-reservation col-md-12">
@@ -431,8 +438,11 @@
                                     <div class="form-group-new-reservation col-md-6">
                                         <label for="txtPreference">Specials</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
-                                            <input id="txtPreference" class="col-md-10"/>
+                                            <input id="txtPreference" class="col-md-8"/>
                                             <button onclick="openModalSearchPreference()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                                            <div class="col-md-1" style="justify-content:center;text-align:center;color:red;" id="clearSpecial" onclick="clearSpecial()">
+                                                <i class="fa-solid fa-xmark" style="padding-top:6px"></i>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group-new-reservation col-md-6">
@@ -780,20 +790,20 @@
 
 
     function updateDatesRateCode() {
-        const arrivalInput = document.getElementById('arrivalRateCode');
-        const departureInput = document.getElementById('departureRateCode');
-        const arrivalDay = document.getElementById('arrival-day-ratecode');
-        const departureDay = document.getElementById('departure-day-ratecode');
+        // const arrivalInput = document.getElementById('arrivalRateCode');
+        // const departureInput = document.getElementById('departureRateCode');
+        // const arrivalDay = document.getElementById('arrival-day-ratecode');
+        // const departureDay = document.getElementById('departure-day-ratecode');
 
-        const arrivalDate = new Date(arrivalInput.value);
-        const departureDate = new Date(departureInput.value);
+        // const arrivalDate = new Date(arrivalInput.value);
+        // const departureDate = new Date(departureInput.value);
 
-        if (arrivalDate) {
-            arrivalDay.textContent = getDayName(arrivalDate);
-        }
-        if (departureDate) {
-            departureDay.textContent = getDayName(departureDate);
-        }
+        // if (arrivalDate) {
+        //     arrivalDay.textContent = getDayName(arrivalDate);
+        // }
+        // if (departureDate) {
+        //     departureDay.textContent = getDayName(departureDate);
+        // }
         calculateNightsRateCode();
     }
 
@@ -1087,7 +1097,55 @@
         });
     }
 
+    function calculateNetReverse(fromDate,toDate,rateCodeID,roomTypeID,currencyID,packageID,day,value,transactionCode,discountPercent,discountAmount) {
+        return $.ajax({
+            url: '/Reservation/CaculateNetReverse',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data:{
+                fromDate: fromDate,
+                toDate: toDate,
+                rateCodeID: rateCodeID,
+                roomTypeID: roomTypeID,
+                currencyID: currencyID,
+                packageID: packageID,
+                day: day,
+                price:value,
+                transactionCode: transactionCode,
+                discountPercent: discountPercent,
+                discountAmount: discountAmount
+            },
+            success: function (result) {
+                var value = parseFloat(result.priceAfter);
+                    valueFloat =  Math.round(value).toLocaleString('en-US', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            });
+                $('#txtNetAmount').val(valueFloat);
 
+                var valueRateAfter = parseFloat(result.priceDiscount);
+                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                $('#txtRateAmount').val(valueRateAfterFloat);
+
+                $('#txtRateAfterDiscount').val(valueRateAfterFloat);
+                var valueNetAfter = parseFloat(result.priceAfterDiscount);
+                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                $('#txtNetAfterDiscount').val(valueNetAfterFloat);
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
     $('#txtRateAmount').on('input', function() {
         let value = $(this).val();
 
@@ -1120,6 +1178,41 @@
         let valueDiscountAmount = $('#txtDiscountAmount').val();
         let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
         calculateNet($('#arrival').val(),$('#departure').val(),0,
+        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
+    });
+
+    $('#txtNetAmount').on('input', function() {
+        let value = $(this).val();
+
+        // Loại bỏ tất cả ký tự không phải số
+        value = value.replace(/[^0-9]/g, '');
+
+        // Định dạng thành tiền với dấu phẩy
+        if (value) {
+            // Sử dụng toLocaleString để định dạng số
+            let formattedValue = parseInt(value).toLocaleString('vi-VN');
+            // Thay dấu chấm thành dấu phẩy
+            formattedValue = formattedValue.replace(/\./g, ',');
+            $(this).val(formattedValue);
+        } else {
+            // Nếu không có giá trị, đặt lại input thành rỗng
+            $(this).val('');
+        }
+    }).on('keypress', function(event) {
+        // Chỉ cho phép nhập các ký tự số (0-9)
+        let charCode = event.which || event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    });
+    $('#txtNetAmount').blur(function() {
+        let value = $(this).val();
+        let cleanValue = value.replace(/[^0-9]/g, '');
+        let valueDiscountPercent = $('#txtDiscountPercent').val();
+        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
+        let valueDiscountAmount = $('#txtDiscountAmount').val();
+        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
+        calculateNetReverse($('#arrival').val(),$('#departure').val(),0,
         $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
     });
     $('#txtDiscountAmount').on('input', function() {
@@ -1476,5 +1569,8 @@
         $('#clearAgent').hide();
         $('#clearCompany').hide();
         $('#clearContact').hide();
+        $('#clearRateCode').hide();
+        $('#clearBooker').hide();
+        $('#clearSpecial').hide();
     }
 </script>
