@@ -17,6 +17,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using BaseBusiness.util; 
 using Microsoft.Data.SqlClient;
+using DevExpress.XtraPrinting.Export.Pdf;
+using Org.BouncyCastle.Asn1;
+using System.ServiceModel.Channels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using DevExpress.Data.ODataLinq;
 namespace FrontDesk.Controllers
 {
     public class FrontDeskController : Controller
@@ -304,7 +309,491 @@ namespace FrontDesk.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
-   
+
+        #region WakeUpCall
+        public IActionResult WakeUpCall()
+        {
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+            List<RoomModel> listro = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+            ViewBag.RoomList = listro;
+            List<RoomClassModel> listroclass = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
+            ViewBag.RoomClassList = listroclass;
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            return View(); 
+        }
+
+        [HttpGet]
+        public IActionResult WakeUpCallFindRoom(string roomNoset, string reservationHolder, string zone,string confirmNo)
+        {
+            roomNoset = roomNoset ?? "";
+            reservationHolder = reservationHolder ?? "";
+            zone = zone ?? "";
+            confirmNo = confirmNo ?? "";
+            try
+            {
+                DataTable dataTable = _iFrontDeskService.WakeUpCallFindRoom(roomNoset, reservationHolder, zone, confirmNo);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"].ToString() : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"].ToString() : "",
+                                  ConfirmNo = !string.IsNullOrEmpty(d["Confirm No"].ToString()) ? d["Confirm No"].ToString() : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"].ToString() : "",
+                                  ShareRoom = !string.IsNullOrEmpty(d["Share Room"].ToString()) ? d["Share Room"].ToString() : "",
+                                  ArrDate = !string.IsNullOrEmpty(d["Arr Date"].ToString()) ? Convert.ToDateTime(d["Arr Date"]).ToString("yyyy-MM-dd") : "",
+                                  DepDate = !string.IsNullOrEmpty(d["Dep Date"].ToString()) ? Convert.ToDateTime(d["Dep Date"]).ToString("yyyy-MM-dd") : "",
+                                  ReservationHolder = !string.IsNullOrEmpty(d["Reservation Holder"].ToString()) ? d["Reservation Holder"].ToString() : ""
+
+                              }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult WakeUpCallSearch(DateTime currentDate, string searchforName, int  isSpecial)
+        {
+     
+            searchforName = searchforName ?? "";
+      
+            try
+            {
+                DataTable dataTable = _iFrontDeskService.WakeUpCallSearch(currentDate, searchforName, isSpecial);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"].ToString() : "",
+                                  RoomID = !string.IsNullOrEmpty(d["RoomID"].ToString()) ? d["RoomID"].ToString() : "",
+                                  Room = !string.IsNullOrEmpty(d["Room"].ToString()) ? d["Room"].ToString() : "",
+                                 
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"].ToString() : "",
+                                  DateTime = !string.IsNullOrEmpty(d["Date/Time"].ToString()) ? Convert.ToDateTime(d["Date/Time"]).ToString("yyyy-MM-dd") : "",
+
+                              }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ViewWakeUpCallAccount(int roomID, int shareRoom)
+        {
+
+       
+
+            try
+            {
+                DataTable dataTable = _iFrontDeskService.ViewWakeUpCallAccount(roomID, shareRoom);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  Account = !string.IsNullOrEmpty(d["Account"].ToString()) ? d["Account"].ToString() : "",
+                                
+
+                              }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult ViewWakeUpCall(string name, string group, string roomview,DateTime fromDateview,DateTime toDateview,string timeDailyview,int  roomClass)
+        {
+
+            name = name ?? "";
+            group = group ?? "";
+            roomview = roomview ?? "";
+            timeDailyview = timeDailyview ?? "";
+            string hour = "";
+            string minute = "";
+
+            if (!string.IsNullOrEmpty(timeDailyview))
+            {
+                var parts = timeDailyview.Split(':');
+                if (parts.Length == 2)
+                {
+                    hour = parts[0];
+                    minute = parts[1];
+                }
+            }
+
+
+
+            try
+            {
+                DataTable dataTable = _iFrontDeskService.ViewWakeUpCall(name, group, roomview, fromDateview, toDateview, hour, minute, roomClass);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  WakeUpID = d["WakeUpID"]?.ToString() ?? "",
+                                  RoomNo = d["Room No"]?.ToString() ?? "",
+                                  Status = d["Status"]?.ToString() ?? "",
+                                  GuestName = d["Guest Name"]?.ToString() ?? "",
+                                  GroupName = d["Group Name"]?.ToString() ?? "",
+                                  WUDate = d["WU Date"]?.ToString() ?? "",
+                                  WUTime = d["WU Time"]?.ToString() ?? "",
+                                  ShareRoom = d["ShareRoom"]?.ToString() ?? "",
+                                  CreatedDate = d["Created Date"]?.ToString() ?? "",
+                                  UpdatedDate = d["Updated Date"]?.ToString() ?? "",
+                                  UserCancel = d["User Cancel"]?.ToString() ?? "",
+                                  UserSetup = d["User Setup"]?.ToString() ?? "",
+                                  ConfirmationNo = d["ConfirmationNo"]?.ToString() ?? "",
+                                  ArrivalDate = d["ArrivalDate"]?.ToString() ?? "",
+                                  DepartureDate = d["DepartureDate"]?.ToString() ?? ""
+
+
+                              }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SetWakeUpCall([FromBody] WakeUpCallRequest request)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string callType = request.callType ?? "";
+                string timeDate = request.timeDate ?? "";
+                string timeDaily = request.timeDaily ?? "";
+                string message = "";
+                List<WakeUpCallRow> selectedRows = request.selectedRows ?? new List<WakeUpCallRow>();
+                #region insert 1 ngày cho phòng ko phải Group
+                if (request.callType== "date")//insert 1 ngày cho phòng ko phải Group
+                {
+
+                    for (int i = 0; i < request.selectedRows.Count-1; i++)
+                    {
+                        WakeUpCallRow row = request.selectedRows[i];
+                        string strDateTime = request.singleDate.ToString("yyyy-MM-dd") + " " + request.timeDate;
+
+                        DateTime wkTime = ConvertStringDateTime(strDateTime);
+                        //check xem ngay wk co vuot qua ngay Departure ko
+                        string strCheckResult = checkDepartureDate(wkTime, row.Room, row.Id.ToString());
+                        message += strCheckResult;
+                        if (strCheckResult != "") continue;
+                        int shareRoom = 0;
+                        //if (arrShareRoom.Length > 1)
+                        //    shareRoom = int.Parse(arrShareRoom[i]);
+                        WakeUpCallModel modelWUC = new WakeUpCallModel();
+                        modelWUC.UpdateDate = DateTime.Now;
+                        modelWUC.CreateDate = DateTime.Now;
+                        modelWUC.WakeUpTime = wkTime;
+                        modelWUC.RoomID = int.Parse(row.Id);
+                        modelWUC.Status = 0;
+                        modelWUC.UserInsertID = int.Parse(request.userID);
+                        modelWUC.Name = row.Name;
+                        modelWUC.ProfileGroupID = 0;
+                        modelWUC.ShareRoom = shareRoom;
+                        int wcID = (int)WakeUpCallBO.Instance.Insert(modelWUC);
+                        message += "wake up call is created for room: " + row.Room + " \n";
+                        #region ghi log
+                        string description = "Wake up call set for room: " + row.Room + ", Time: " + request.timeDate+ " from " + request.singleDate.ToShortDateString() + " to " + request.singleDate.ToShortDateString();
+                        WakeUpCallLogModel wcLogModel = new WakeUpCallLogModel();
+                        wcLogModel.CreateDate = DateTime.Now;
+                        wcLogModel.WakeUpCallID = wcID;
+                        wcLogModel.ActionDescription = description;
+                        WakeUpCallLogBO.Instance.Insert(wcLogModel);
+                        #endregion
+                    }
+                 
+                }
+                #endregion
+                #region insert nhiều ngày cho phòng ko phải Group
+                if (request.callType == "daily")//insert nhiều ngày cho phòng ko phải Group
+                {
+                   
+                    TimeSpan oneDate = new TimeSpan(1, 0, 0, 0);
+                    for (int i = 0; i < request.selectedRows.Count - 1; i++)
+                    {
+                        for (DateTime date = request.fromDate; date <= request.toDate; date += oneDate)
+                        {
+
+                            string strDateTime = date.ToString("dd/MM/yyyy") + " " + timeDaily;
+                            WakeUpCallRow row = request.selectedRows[i];
+                            //check xem ngay wk co vuot qua ngay Departure ko
+                            string strCheckResult = checkDepartureDate(date, row.Room, row.Id.ToString());
+                            message += strCheckResult;
+                            if (strCheckResult != "") continue;
+
+                            int shareRoom = 0;
+                            //if (arrShareRoom.Length > 1)
+                            //    shareRoom = int.Parse(arrShareRoom[i]);
+
+                            WakeUpCallModel modelWUC = new WakeUpCallModel();
+                            modelWUC.UpdateDate = DateTime.Now;
+                            modelWUC.CreateDate = DateTime.Now;
+                            modelWUC.WakeUpTime = ConvertStringDateTime(strDateTime);
+                            modelWUC.RoomID = int.Parse(row.Id);
+                            modelWUC.Status = 0;
+                            modelWUC.UserInsertID = int.Parse(request.userID);
+                            modelWUC.Name = row.Name;
+                            modelWUC.ProfileGroupID = 0;
+                            modelWUC.ShareRoom = shareRoom;
+                            int wcID = (int)WakeUpCallBO.Instance.Insert(modelWUC);
+                            message += "wake up call is created for room: " + row.Room + " \n";
+
+                            #region ghi log
+                            if (date == request.fromDate)
+                            {
+                                string description = "Wake up call set for room: " + row.Room + ", Time: " + request.timeDaily + " from " + request.fromDate.ToShortDateString() + " to " + request.toDate.ToShortDateString();
+                                WakeUpCallLogModel wcLogModel = new WakeUpCallLogModel();
+                                wcLogModel.CreateDate = DateTime.Now;
+                                wcLogModel.WakeUpCallID = wcID;
+                                wcLogModel.ActionDescription = description;
+                                WakeUpCallLogBO.Instance.Insert(wcLogModel);
+                            }
+                            #endregion
+                        }
+                    }
+                   
+                }
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { success = true, message = message });
+
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+        
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CancelWakeUpCall([FromBody] WakeUpCallRequest request)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string callType = request.callType ?? "";
+                string timeDate = request.timeDate ?? "";
+                string timeDaily = request.timeDaily ?? "";
+                string message = "";
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                 DateTime SystemDate = businessDateModel[0].BusinessDate;
+                List<WakeUpCallRow> selectedRows = request.selectedRows ?? new List<WakeUpCallRow>();
+                #region Cancel tất cả wakeupcall ở những phòng không thuộc group
+                if (request.callType == "daily")//xóa tất cả wakeupcall ở những phòng không thuộc group
+                {
+
+                    for (int i = 0; i < request.selectedRows.Count - 1; i++)
+                    {
+                        WakeUpCallRow row = request.selectedRows[i];
+
+                        WakeUpCallModel wcModel = (WakeUpCallModel)WakeUpCallBO.Instance.FindByAttribute("RoomID", int.Parse(row.Id))[0];
+
+                        #region update Cancel WUC
+                        wcModel.UpdateDate = SystemDate;
+                        wcModel.UserUpdateID = int.Parse(request.userID);
+                        wcModel.Status = 4;//failed
+                        WakeUpCallBO.Instance.Update(wcModel);
+                        #endregion
+
+
+                        //WakeUpCallBO.Instance.DeleteByAttribute("RoomID", int.Parse(arrRoomID[i]));  
+
+                        #region ghi log                        
+                        WakeUpCallLogModel wcLogModel = new WakeUpCallLogModel();
+                        wcLogModel.CreateDate = wcModel.UpdateDate;
+                        wcLogModel.WakeUpCallID = wcModel.ID;
+                        wcLogModel.ActionDescription = "Cancel Wake up calls for room:" + row.Room;
+                        wcLogModel.RoomNo = row.Room;
+                        wcLogModel.GuestName = wcModel.Name;
+                        wcLogModel.InsertDate = wcModel.WakeUpTime.ToShortDateString();
+                        wcLogModel.InsertTime = wcModel.WakeUpTime.TimeOfDay.ToString();
+                        WakeUpCallLogBO.Instance.Insert(wcLogModel);
+                        #endregion   
+                    }
+                    message = "Delete Successfully!";
+             
+                }
+                #endregion
+              
+                #region Cancel từng Schedule không thuộc group
+                if (request.callType == "date")//xóa từng Schedule không thuộc group
+                {
+
+
+                    for (int i = 0; i < request.selectedRows.Count - 1; i++)
+                    {
+                        WakeUpCallRow row = request.selectedRows[i];
+                        int wcID = int.Parse(row.Id);
+                        WakeUpCallModel wcModel = (WakeUpCallModel)WakeUpCallBO.Instance.FindByPrimaryKey(wcID);
+                        #region update Cancel WUC
+                        wcModel.UpdateDate = SystemDate;
+                        wcModel.UserUpdateID = int.Parse(request.userID);
+                        wcModel.Status = 4;//failed
+                        WakeUpCallBO.Instance.Update(wcModel);
+                        #endregion
+                        //WakeUpCallBO.Instance.Delete(wcID);
+                        #region ghi log
+                        string description = "All wake up calls are cancelled for room: " + row.Room;
+                        WakeUpCallLogModel wcLogModel = new WakeUpCallLogModel();
+                        wcLogModel.CreateDate = wcModel.CreateDate;
+                        wcLogModel.WakeUpCallID = wcModel.ID;
+                        wcLogModel.ActionDescription = description;
+                        wcLogModel.RoomNo = row.Room;
+                        wcLogModel.GuestName = wcModel.Name;
+                        wcLogModel.InsertDate = wcModel.WakeUpTime.ToShortDateString();
+                        wcLogModel.InsertTime = wcModel.WakeUpTime.TimeOfDay.ToString();
+                        WakeUpCallLogBO.Instance.Insert(wcLogModel);
+                        #endregion   
+                    }
+                    message = "Delete Successfully!";
+                }
+                #endregion
+                pt.CommitTransaction();
+                return Json(new { success = true, message = message });
+
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { success = false, message = ex.Message });
+
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        private string checkDepartureDate(DateTime wkDate, string roomNo, string roomID)
+        {
+            string message = "";
+            #region check thời gian wc có vượt quá ngày departure ko
+            string command = "Select Max(DepartureDate) as lastDeparture from dbo.Reservation with (nolock) where Status in (1,6) and ReservationNo > 0 and RoomID=" + roomID.ToString();
+            DataTable dtresv = BaseBusiness.util.TextUtils.Select(command);
+            string a = dtresv.Rows[0][0].ToString();
+            DateTime lastDeparture = ConvertStringDateTime(dtresv.Rows[0][0].ToString());
+            TimeSpan tcompare = lastDeparture - wkDate;
+            if (tcompare.Days < 0)            
+                message += "Can not create for room: " + roomNo + "  Wakeup Date must be <= the departure date \n";            
+            #region
+            string command1 = "select ID from Wakeupcall where RoomID = " + roomID.ToString() + " and datediff(minute,WakeUpTime,'" + wkDate.ToString("MM/dd/yyyy HH:mm") + "')=0 and Status not in (3,4,5)";
+            DataTable dt = BaseBusiness.util.TextUtils.Select(command1);
+            if(dt.Rows.Count>0)
+                message += "wake up call for room: " + roomNo + " is exist already, can not create more \n";
+            #endregion
+
+            return message;
+            #endregion 
+        }
+        private DateTime ConvertStringDateTime(string strDate)
+        {
+            DateTime result = new DateTime();
+
+            if (strDate.Contains("/"))
+            {
+                string day;
+                string month;
+                string yearAndTime;
+                string[] arrStrDate = strDate.Split('/');
+                day = arrStrDate[0];
+                month = arrStrDate[1];
+                yearAndTime = arrStrDate[2];
+                try
+                {
+                    DateTime test = Convert.ToDateTime("12/13/2010");
+                    //chạy qua đây tức là định dạng MM/dd/yyyy
+                    string strResult = month + "/" + day + "/" + yearAndTime;
+                    result = Convert.ToDateTime(strResult);
+                }
+                catch
+                {
+                    //chạy vào đây tức là định dạng dd/MM/yyyy
+                    string strResult = day + "/" + month + "/" + yearAndTime;
+                    result = Convert.ToDateTime(strResult);
+                }
+            }
+            if (strDate.Contains("."))
+            {
+                string day;
+                string month;
+                string yearAndTime;
+                string[] arrStrDate = strDate.Split('.');
+                day = arrStrDate[0];
+                month = arrStrDate[1];
+                yearAndTime = arrStrDate[2];
+                try
+                {
+                    DateTime test = Convert.ToDateTime("12/13/2010");
+                    //chạy qua đây tức là định dạng MM/dd/yyyy
+                    string strResult = month + "/" + day + "/" + yearAndTime;
+                    result = Convert.ToDateTime(strResult);
+                }
+                catch
+                {
+                    //chạy vào đây tức là định dạng dd/MM/yyyy
+                    string strResult = day + "/" + month + "/" + yearAndTime;
+                    result = Convert.ToDateTime(strResult);
+                }
+            }
+            if (strDate.Contains("-"))
+            {
+                result = Convert.ToDateTime(strDate);
+            }
+
+            return result;
+        }
+        public class WakeUpCallRequest
+        {
+            public string userID { get; set; }
+            public string callType { get; set; }
+            public DateTime singleDate { get; set; }
+            public string timeDate { get; set; }
+            public DateTime toDate { get; set; }
+            public DateTime fromDate { get; set; }
+            public string timeDaily { get; set; }
+            public List<WakeUpCallRow> selectedRows { get; set; }
+        }
+        public class WakeUpCallRow
+        {
+            public string Id { get; set; }
+            public string Room { get; set; }
+            public string ConfirmNo { get; set; }
+            public string Name { get; set; }
+            public string ShareRoom { get; set; }
+            public string ArrDate { get; set; }
+            public string DepDate { get; set; }
+            public string ReservationHolder { get; set; }
+        }
+
+        #endregion
+
 
     }
 }

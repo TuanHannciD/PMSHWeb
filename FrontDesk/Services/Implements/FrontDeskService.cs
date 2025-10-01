@@ -119,8 +119,65 @@ namespace FrontDesk.Services.Implements
             return myTable;
         }
 
+        public DataTable WakeUpCallFindRoom(string roomNoset, string reservationHolder, string zone, string confirmNo)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@RoomNo", roomNoset),
+                new SqlParameter("@ConfirmationNo", confirmNo),
+                new SqlParameter("@ReservationHolder", reservationHolder),
+                new SqlParameter("@Zone", zone),
+              
+            };
 
+            DataTable myTable = DataTableHelper.getTableData("spWakeUpCallFindRoom", param);
+            return myTable;
+        }
+        public DataTable WakeUpCallSearch(DateTime currentDate, string searchforName, int isSpecial)
+        {
+            int IsProfile = 0;
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Name", searchforName),
+                new SqlParameter("@CurrentDate", currentDate),
+                new SqlParameter("@IsSpecial", isSpecial),
+                new SqlParameter("@IsProfile", IsProfile),
 
+            };
 
+            DataTable myTable = DataTableHelper.getTableData("spWakeUpCallSearch", param);
+            return myTable;
+        }
+        public DataTable ViewWakeUpCall(string name, string group, string roomview, DateTime fromDateview, DateTime toDateview, string  hour, string minute, int  roomClass)
+        {
+            int IsExport = 0;
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Name", name),
+                new SqlParameter("@GroupID", group),
+                new SqlParameter("@RoomNo", roomview),
+                new SqlParameter("@FromDate", fromDateview),
+                new SqlParameter("@ToDate", toDateview),
+                new SqlParameter("@RoomClassID", roomClass),
+                new SqlParameter("@IsExport", IsExport),
+                  new SqlParameter("@Hour", hour),
+                     new SqlParameter("@Minute", minute),
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spWakeUpCallView", param);
+            return myTable;
+        }
+        public DataTable ViewWakeUpCallAccount(int roomID, int shareRoom)
+        {
+            int IsExport = 0;
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@RoomID", roomID),
+                new SqlParameter("@ShareRoom", shareRoom)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spWakeUpCallFindMainGuest", param);
+            return myTable;
+        }
     }
 }

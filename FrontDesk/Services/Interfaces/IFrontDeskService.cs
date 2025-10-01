@@ -17,5 +17,9 @@ namespace FrontDesk.Services.Interfaces
         public DataTable GetTelephoneBookByCategory(string categoryId, string searchTerm);
         public DataTable TelephoneSwitch(string roomNo, int foStatus);
         public DataTable DialingInformation(DateTime fromDate, DateTime toDate, string phoneNo, int view, string zone);
+        public DataTable WakeUpCallFindRoom(string roomNoset, string reservationHolder, string zone, string confirmNo);
+        public DataTable WakeUpCallSearch(DateTime currentDate, string searchforName, int isSpecial);
+        public DataTable ViewWakeUpCall(string name, string group, string roomview, DateTime fromDateview, DateTime toDateview, string  hour, string minute, int  roomClass);
+        public DataTable ViewWakeUpCallAccount(int roomID, int shareRoom);
     }
 }
