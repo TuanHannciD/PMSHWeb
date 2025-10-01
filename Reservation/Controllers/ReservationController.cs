@@ -989,7 +989,9 @@ namespace Reservation.Controllers
                     reservationModel.Party = "";
                     reservationModel.PartyGuest = "";
                     reservationModel.IsPasserBy = false;
-                    reservationModel.Color = Request.Form["color"].ToString();
+                    //reservationModel.Color = Request.Form["color"].ToString();
+                    reservationModel.Color = "";
+
                     reservationModel.ARNo = "";
                     reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
                     reservationModel.Specials = Request.Form["specials"].ToString();
@@ -1354,7 +1356,8 @@ namespace Reservation.Controllers
                     reservationModel.Party = "";
                     reservationModel.PartyGuest = "";
                     reservationModel.IsPasserBy = false;
-                    reservationModel.Color = Request.Form["color"].ToString();
+                    //reservationModel.Color = Request.Form["color"].ToString();
+                    reservationModel.Color = "";
                     reservationModel.ARNo = "";
                     reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
                     reservationModel.Specials = Request.Form["specials"].ToString();
