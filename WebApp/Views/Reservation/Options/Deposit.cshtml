@@ -7,13 +7,13 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="openModalDepositRequest();"><i class="fa-solid fa-code-pull-request"></i> Request</button>
-                    <button class="mui-button mui-button-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                    <button class="mui-button mui-button-delete"><i class="fa-solid fa-trash"></i> Delete</button>
-                    <button class="mui-button mui-button-clear" onclick="openModalDepositPayment();"><i class="fa-solid fa-money-check-dollar"></i> Payment</button>
-                    <button class="mui-button mui-button-export" ><i class="fa-solid fa-clipboard-check"></i> Apply</button>
-                    <button class="mui-button mui-button-export" ><i class="fa-solid fa-print"></i> Receipct</button>
-                    <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
+                    <button class="submit-button-clear-reservation" onclick="openModalDepositRequest();">Request</button>
+                    <button class="submit-button-clear-reservation"> Edit</button>
+                    <button class="submit-button-clear-reservation"> Delete</button>
+                    <button class="submit-button-clear-reservation" onclick="openModalDepositPayment();"> Payment</button>
+                    <button class="submit-button-clear-reservation">Apply</button>
+                    <button class="submit-button-clear-reservation"> Receipct</button>
+                    <button class="submit-button-clear-reservation"> Close</button>
                 </div>
                 <div class="mui-divider"></div>
 
@@ -274,7 +274,10 @@
         getDepositRule();
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#dueDateDepositRequest').val(formattedDate);
-        $('#modalDepositRequest').modal('show');
+        if(reservationStatus == 0){
+            $('#modalDepositRequest').modal('show');
+
+        }
     }
     function closeDepositRequest(){
         clearDepositRequest(); 
@@ -429,7 +432,10 @@
         getTransactionPayment();
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#dateDepositPayment').val(formattedDate);
-                $('#modalDepositPayment').modal('show');
+        if(reservationStatus == 0){
+            $('#modalDepositPayment').modal('show');
+
+        }
 
     }
     function closeModalDepositPayment(){

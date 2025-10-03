@@ -191,10 +191,10 @@
                     <a href="#" onclick="openModalSplit();" class="font-semibold col-md-4 mb-1 text-start">Split</a>
                     <a href="#" onclick="openModalAccompanying();" class="font-semibold col-md-4 mb-1 text-start">Accompany</a>
                     <a href="#" onclick="openModalAddOn();" class="font-semibold col-md-4 mb-1 text-start">Add On</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1 text-start">Alerts</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start" onclick="openModalAlerts()">Alerts</a>
                     <a href="#" onclick="openModalBilling();" class="font-semibold col-md-4 mb-1 text-start">Billing</a>
                     <a onclick="openModalInvoicing();" class="font-semibold col-md-4 mb-1 text-start">Invoicing</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1 text-start">Change</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1 text-start" onclick="openModalChanges();">Changes</a>
                     <a href="#" onclick="openModalShare();" class="font-semibold col-md-4 mb-1 text-start">Share</a>
                     <a href="#" onclick="openModalDeposit();" class="font-semibold col-md-4 mb-1 text-start">Dep/DXL</a>
                     <a href="#" onclick="openModalFixedCharges();" class="font-semibold col-md-4 mb-1 text-start">FixedCharges</a>
@@ -204,6 +204,7 @@
                     <a href="#" onclick="openRoomMove();" class="font-semibold col-md-4 mb-1 text-start">Room Move</a>
                     <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1 text-start">Routing</a>
                     <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1 text-start">WaitList</a>
+                    <a href="#" onclick="openModalTraces();" class="font-semibold col-md-4 mb-1 text-start">Traces</a>
                     <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1 text-start">Columns</a>
 
 
@@ -322,6 +323,10 @@
 @await Html.PartialAsync("Options/CheckOutAll")
 @await Html.PartialAsync("Options/CheckOutZero")
 @await Html.PartialAsync("Options/CheckOut")
+@await Html.PartialAsync("Options/Alerts")
+@await Html.PartialAsync("Options/Traces")
+@await Html.PartialAsync("Options/Changes")
+
 <script>
     function toggleLeftMenu() {
         const leftMenu = $('#leftMenu');
@@ -382,7 +387,7 @@
             }
         });
     });
-        function getBusinessDate() {
+    function getBusinessDate() {
         return $.ajax({
             url: '/Reservation/GetBusinessDate',
             type: 'get',
@@ -392,6 +397,9 @@
             success: function (result) {
                 const businessDate = new Date(result);
                 const formattedBusinessDate = result.split('T')[0];
+                $('#dateTraces').val(formattedBusinessDate);
+                $('#fromDateAddNewTrace').val(formattedBusinessDate);
+                $('#toDateAddNewTrace').val(formattedBusinessDate);
                 // Chỉ set giá trị nếu các trường ngày trống
                 if (!$('#arrivalForm').val()) {
                     $('#arrivalForm').val(formattedBusinessDate);

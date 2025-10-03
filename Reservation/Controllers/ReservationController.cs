@@ -19,6 +19,7 @@ using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
@@ -4397,6 +4398,235 @@ namespace Reservation.Controllers
         #region DatVP __ Resserrvation: Add On
         #endregion
 
+        #region DatVP __ Reservation: Traces
+        [HttpGet]
+        public async Task<IActionResult> GetDepartmentTraces()
+        {
+            try
+            {
+
+                List<DepartmentModel> result = PropertyUtils.ConvertToList<DepartmentModel>(DepartmentBO.Instance.FindAll());
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchTrace(string departmentID,string resolved,DateTime date,string name,string reservationID)
+        {
+            try
+            {
+
+                var data = _iReservationService.SearchTrace(departmentID ?? "",resolved ?? "",date,name ?? "", reservationID );
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveTrace()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                if (string.IsNullOrEmpty(Request.Form["department"].ToString()))
+                {
+                    return Json(new { code = 1, msg = $"Please choose department" });
+
+                }
+                if (string.IsNullOrEmpty(Request.Form["traceText"].ToString()))
+                {
+                    return Json(new { code = 1, msg = $"Trace text cant not be blank" });
+
+                }
+                ReservationTracesModel trace = new ReservationTracesModel();
+                trace.FromDate = DateTime.Parse(Request.Form["fromDate"].ToString());
+                trace.ToDate = DateTime.Parse(Request.Form["toDate"].ToString());
+                trace.TracesTime = Request.Form["time"].ToString();
+                trace.DepartmentID = int.Parse(Request.Form["department"].ToString());
+                trace.Resolved = 0;
+                trace.TracesText = Request.Form["traceText"].ToString();
+                trace.ProfileID = int.Parse(Request.Form["profileID"].ToString());
+                trace.ReservationID = int.Parse(Request.Form["reservationID"].ToString());
+                trace.UserInsertID = trace.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                trace.CreateDate = trace.UpdateDate = DateTime.Now;
+                trace.ResolvedBy = "";
+                trace.IsDelete = false;
+                long id = ReservationTracesBO.Instance.Insert(trace);
+
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "ReservationTraces";
+                activityLog.ObjectID = (int)id;
+                activityLog.OldValue = "";
+                activityLog.NewValue = $"[FromDate]{trace.FromDate},[ToDate]{trace.ToDate},[TraceTime]{trace.TracesTime},[DepartmentID]{trace.DepartmentID},[TraceText]{trace.TracesText},[Resolved]{trace.Resolved}";
+                activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = $"Trace was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Alerts
+        [HttpGet]
+        public async Task<IActionResult> GetAlertsByReservationID(int reservationID)
+        {
+            try
+            {
+
+                var data = _iReservationService.SearchReservationAlerts(reservationID);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSetUpAlert()
+        {
+            try
+            {
+
+                List<AlertsSetupModel> result = PropertyUtils.ConvertToList<AlertsSetupModel>(AlertsSetupBO.Instance.FindAll());
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveAlert()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                if (string.IsNullOrEmpty(Request.Form["code"].ToString()))
+                {
+                    return Json(new { code = 1, msg = $"Please chose code alert" });
+
+                }
+                ReservationAlertsModel alert = new ReservationAlertsModel();
+                alert.ReservationID = int.Parse(Request.Form["reservationID"].ToString());
+                alert.Code = Request.Form["code"].ToString();
+                alert.Description = Request.Form["description"].ToString();
+                alert.Area = Request.Form["area"].ToString();
+                alert.UserInsertID = alert.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                alert.CreateDate = alert.UpdateDate = DateTime.Now;
+                alert.WarningDay = int.Parse(Request.Form["warningDay"].ToString());
+                if(int.Parse(Request.Form["actice"].ToString()) == 1)
+                {
+                    alert.IsActive = 1;
+                }
+                else
+                {
+                    alert.IsActive = 0;
+                }
+                long id = ReservationAlertsBO.Instance.Insert(alert);
+                ReservationAlertsModel alertUpdate = (ReservationAlertsModel)ReservationAlertsBO.Instance.FindByPrimaryKey((int)id);
+                alertUpdate.OriginAlertID = (int)id;
+                ReservationAlertsBO.Instance.Update(alertUpdate);
+
+                ActivityLogModel activityLog = new ActivityLogModel();
+                activityLog.TableName = "Reservation";
+                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                activityLog.UserName = Request.Form["userName"].ToString();
+                activityLog.ChangeDate = DateTime.Now;
+                activityLog.Change = "ReservationAlerts";
+                activityLog.ObjectID = (int)id;
+                activityLog.OldValue = "";
+                activityLog.NewValue = $"[Code]{alert.Code},[Area]{alert.Area},[Description]{alert.Description},";
+                activityLog.Description = "";
+                ActivityLogBO.Instance.Insert(activityLog);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = $"Alert was created successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Changes
+        [HttpGet]
+        public async Task<IActionResult> SearchChanges(int id)
+        {
+            try
+            {
+
+                string sqlCommand = $"SELECT UserName,  Convert(varchar,ChangeDate, 108) Time, ChangeDate Date, Change, OldValue,NewValue, Description FROM ActivityLog WITH (NOLOCK)WHERE TableName = 'Reservation' AND ObjectID = {id} ORDER BY ChangeDate";
+                var data = _iReservationService.SearchOverBooking(sqlCommand);
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
         #region DatVP __  Wait List
         [HttpGet]
         public async Task<IActionResult> SearchWaitList(string name, string priority, string market, string roomType, string reason, string rateCode, string phone, string date)
@@ -4529,7 +4759,6 @@ namespace Reservation.Controllers
             }
         }
         #endregion
-
 
         #region DatVP __ OverBooking: New
         [HttpGet]

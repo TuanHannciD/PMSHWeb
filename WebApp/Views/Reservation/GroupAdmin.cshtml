@@ -18,6 +18,7 @@
                     <div class="dropdown-menu-custom">
                         <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
                         <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                        <a href="#" onclick="openAutoRoomAssignment();" >Auto Room Assignment</a>
 
                     </div>
                 </div>
@@ -49,12 +50,9 @@
 </div>
 
 @await Html.PartialAsync("GroupAdmin/GroupCheckIn")
-
+@await Html.PartialAsync("Options/RoomAssignment")
 <script>
-    $(document).ready(async function () {
-        var result = @Json.Serialize(ViewBag.Reservation);
-        initializeDataGridSearch(result);
-    });
+
 
     var idReservation = 0;
     var status = '';
@@ -68,6 +66,42 @@
     var lastname = '';
     var listData = [];
     var roomType = '';
+    $(document).ready(async function () {
+        getBusinessDate();
+        var result = @Json.Serialize(ViewBag.Reservation);
+        idReservation = result[0].ID;
+        initializeDataGridSearch(result);
+    });
+    function getSelectedCheckboxes(name) {
+        const checkboxes = document.querySelectorAll(`input[type="checkbox"][name="${name}"]:checked`);
+        const values = Array.from(checkboxes).map(checkbox => checkbox.value);
+        return values.join(","); // Trả về chuỗi dạng 'a,c,v,c'
+    }
+
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                const formattedBusinessDate = result.split('T')[0];
+                $('#fromSearchAssignment').val(formattedBusinessDate);
+                $('#toSearchAssignment').val(formattedBusinessDate);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+
+    function getSelectedRadio(name) {
+        const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
+        return radio ? radio.value : null;
+    }
     function initializeDataGridSearch(data) {
         listData = data;
         $("#gridContainer").dxDataGrid({
