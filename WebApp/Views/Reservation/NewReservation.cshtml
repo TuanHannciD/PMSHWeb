@@ -679,19 +679,55 @@
         $("#txtAddress").val(result.address);
         $("#txtCity").val(result.city);
         $("#txtNationality").val(result.country);
-        $("#arrival").val(result.arrivalDate.split("T")[0]);
-        $("#departure").val(result.departureDate.split("T")[0]);
+
+        // $("#arrival").val(result.arrivalDate.split("T")[0]);
+        // $("#departure").val(result.departureDate.split("T")[0]);
+         var reservationInfo = localStorage.getItem("ReservationRoomPlan");
+        if (reservationInfo) {
+            var parts = reservationInfo.split("|");
+            var startDate = parts[0];
+            var endDate = parts[1];
+            var roomNo = parts[2];
+            var roomTypeId = parts[3];
+            var idReservationRoomplan = parts[4]; // lấy id từ localStorage
+
+         
+            if (idReservationRoomplan == idReservation) {
+                $("#arrival").val(startDate);
+                $("#departure").val(endDate);
+                $("#roomSelect").val(roomNo);
+                $("#txtRoomType").val(roomTypeId);
+
+                
+                localStorage.removeItem("ReservationRoomPlan");
+            } else {
+               
+                $("#arrival").val(result.arrivalDate.split("T")[0]);
+                $("#departure").val(result.departureDate.split("T")[0]);
+                $("#roomSelect").val(result.roomNo);
+                $("#txtRoomType").val(result.roomTypeId);
+            }
+        } else {
+            // fallback nếu localStorage trống
+            $("#arrival").val(result.arrivalDate.split("T")[0]);
+            $("#departure").val(result.departureDate.split("T")[0]);
+            $("#roomSelect").val(result.roomNo);
+            $("#txtRoomType").val(result.roomTypeId);
+        }
+
         $("#adults").val(result.noOfAdult);
         $("#c").val(result.noOfChild);
         $("#c1").val(result.noOfChild1);
         $("#c2").val(result.noOfChild2);
         $("#nights").val(result.noOfNight);
         $("#numRooms").val(result.noOfRoom);
-        $("#txtRoomType").val(result.roomTypeId);
+        // $("#txtRoomType").val(result.roomTypeId);
         $("#txtVIP").val(result.vipId);
         $("#txtRTC").val(result.rtcId);
         $("#roomID").val(result.roomId);
-        $("#roomSelect").val(result.roomNo);
+        // $("#roomSelect").val(result.roomNo);
+
+
         $("#txtETA").val(result.eta);
         $("#txtETD").val(result.etd);
         $("#txtResType").val(result.reservationTypeId);
