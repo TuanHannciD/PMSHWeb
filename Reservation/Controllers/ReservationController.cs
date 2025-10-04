@@ -193,6 +193,7 @@ namespace Reservation.Controllers
             ViewBag.cboSource = ListItemHelper.GetSourceProvider();
             ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
             ViewBag.cboZone = ListItemHelper.GetZoneProvider();
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
 
             //ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
             ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
