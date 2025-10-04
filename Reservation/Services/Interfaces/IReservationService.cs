@@ -80,5 +80,25 @@ namespace Reservation.Services.Interfaces
 
         string GetConfigETA();
         string GetConfigETD();
+
+        /// <summary>
+        /// DatVP: seearch reservation alert
+        /// </summary>
+        /// <param name="reservationID">reservation id</param>
+
+        /// <returns>datatable list reservation alert</returns>
+        DataTable SearchReservationAlerts(int reservationID);
+
+        /// <summary>
+        /// DatVP: seearch reservation trace
+        /// </summary>
+        /// <param name="departmentID">department id</param>
+        /// <param name="resolved">trace status -- All: '',Resolved: 1,UnResolveđ:0</param>
+        /// <param name="date">trace create date</param>
+        /// <param name="name">profile name</param>
+        /// <param name="reservationID">reservation id</param>
+
+        /// <returns>datatable list reservation alert</returns>
+        DataTable SearchTrace(string departmentID,string resolved,DateTime date,string name,string reservationID);
     }
 }

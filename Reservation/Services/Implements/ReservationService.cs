@@ -556,5 +556,50 @@ namespace Reservation.Services.Implements
 
             }
         }
+
+        public DataTable SearchReservationAlerts(int reservationID)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@ReservationID", reservationID),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationAlerts", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable SearchTrace(string departmentID, string resolved, DateTime date, string name, string reservationID)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@Department", departmentID),
+                    new SqlParameter("@Resolved", resolved),
+                    new SqlParameter("@Date", date),
+                    new SqlParameter("@Name", name),
+                    new SqlParameter("@ReservationID", reservationID),
+
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationTracesSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }
