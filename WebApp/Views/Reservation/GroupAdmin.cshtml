@@ -67,13 +67,10 @@
     var listData = [];
     var roomType = '';
     $(document).ready(async function () {
-        console.log("---------");
         var result = @Json.Serialize(ViewBag.Reservation);
         idReservation = result[0].ID;
         setDateAssign(result[0].Arrival,result[0].Departure);
-        console.log("---------");
-        console.log(result);
-
+ 
         initializeDataGridSearch(result);
     });
     function setDateAssign(arrivalDate,departure){
@@ -286,5 +283,57 @@
             var listItem = listData.filter(item => item.ReservationStatus == 7);
             initializeDataGridSearch(listItem);
         }
+    }
+    function assignAutoRoom(){
+        var grid = $("#gridContainer").dxDataGrid("instance");
+        var dataSource = grid.getDataSource();
+        var data = dataSource.items();
+        var selectedIds = data.map(row => row.ID);
+        $.ajax({
+            url: '/Reservation/AssignAutoRoom',
+            type: 'post',
+            dataType: 'json',
+            data:{
+                listRsvID: selectedIds,
+                listRoom: unselectedRows.map(row => row.roomNo),
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                if(result.code == 0){
+                    showToast('Success', result.msg, true);
+                    $('#statusAutoRoom').val(result.roomSelected);
+                    redirectGroupAdmin(data.map(row => row.ConfirmationNo)[0])
+                }
+                else{
+                    showToast('Error', result.msg, false);
+
+                }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            },
+
+        });
+    }
+    function redirectGroupAdmin(confirmationNo) {
+        $.ajax({
+            url: '/Reservation/EncryptId',
+            type: 'POST',
+            data: { id: confirmationNo },
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = '/Reservation/GroupAdmin?key=' + encodeURIComponent(response.encryptedId);
+                } else {
+                    alert('Lỗi khi mã hóa ID');
+                }
+            },
+            error: function() {
+                alert('Lỗi khi gọi API mã hóa');
+            }
+        });
     }
 </script>

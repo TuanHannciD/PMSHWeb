@@ -233,7 +233,7 @@
                             Status
                         </label>
                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
-                            <textarea id="statusAutoRoom" />
+                            <textarea id="statusAutoRoom" ></textarea>
                         </div>
                     </div>
                 </div>
@@ -250,7 +250,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Room available to assignment</h5>
+                <h5 class="modal-title">Room available to assignment</h5>
                 <button type="button" class="btn-close" onclick="closeFormSearchRoomAuto();"></button>
             </div>
             <div class="modal-body">
@@ -577,38 +577,5 @@
         $('#notAssignRoom').text(text);
 
     }
-    function assignAutoRoom(){
-        var grid = $("#gridContainer").dxDataGrid("instance");
-        var dataSource = grid.getDataSource();
-        var data = dataSource.items();
-        var selectedIds = data.map(row => row.ID);
-        $.ajax({
-            url: '/Reservation/AssignAutoRoom',
-            type: 'post',
-            dataType: 'json',
-            data:{
-                listRsvID: selectedIds,
-                listRoom: unselectedRows.map(row => row.roomNo),
-            },
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                // if(result.code == 0){
-                //     showToast('Success', result.msg, true);
-                //     $('#statusAutoRoom').val(result.roomSelected);
-                // }
-                // else{
-                //     showToast('Error', result.msg, false);
 
-                // }
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                } else {
-                }
-            },
-
-        });
-    }
 </script>

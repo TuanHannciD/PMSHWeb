@@ -5196,7 +5196,7 @@ namespace Reservation.Controllers
                         rsv.RoomType = roomType.Code;
                         rsv.RoomTypeId = roomType.ID;
                         ReservationBO.Instance.Update(rsv);
-                        roomSelected = $"{listRoom[i]} - {roomType.Code} - {rsv.LastName} - Assign successfull \n";
+                        roomSelected += $"{listRoom[i]} - {roomType.Code} - {rsv.LastName} - Assign successfull \n";
                     }
                     else
                     {
