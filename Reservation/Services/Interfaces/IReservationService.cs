@@ -100,5 +100,24 @@ namespace Reservation.Services.Interfaces
 
         /// <returns>datatable list reservation alert</returns>
         DataTable SearchTrace(string departmentID,string resolved,DateTime date,string name,string reservationID);
+
+        /// <summary>
+        /// DatVP: seearch room auto assign
+        /// </summary>
+        /// <param name="type">type auto: 1. Assign, 2. UnAssign</param>
+        /// <param name="roomType">name room type</param>
+        /// <param name="roomClass">room class</param>
+        /// <param name="smoking">smoking</param>
+        /// <param name="floor">floor</param>
+        /// <param name="startFromRoom">start from room</param>
+        /// <param name="arrivalDate">arrival date</param>
+        /// <param name="departureDate">departure date</param>
+        /// <param name="hkStatusID"> hk status</param>
+        /// <param name="confirmationNo">confirmation no</param>
+        /// <param name="rsvRoomTypeID">id room type</param>
+        /// <param name="notAssRoomNo">mot ass room no</param>
+        /// <returns>datatable list room auto assign</returns>
+        DataTable ReservationAutoRoomAssignment(int type,string roomType,string roomClass,string smoking,string floor,
+            string startFromRoom,DateTime arrivalDate,DateTime departureDate,string hkStatusID,string confirmationNo,string rsvRoomTypeID,string notAssRoomNo);
     }
 }

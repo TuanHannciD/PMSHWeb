@@ -67,9 +67,13 @@
     var listData = [];
     var roomType = '';
     $(document).ready(async function () {
+        console.log("---------");
         var result = @Json.Serialize(ViewBag.Reservation);
         idReservation = result[0].ID;
         setDateAssign(result[0].Arrival,result[0].Departure);
+        console.log("---------");
+        console.log(result);
+
         initializeDataGridSearch(result);
     });
     function setDateAssign(arrivalDate,departure){
@@ -104,6 +108,7 @@
         return radio ? radio.value : null;
     }
     function initializeDataGridSearch(data) {
+        console.log(data);
         listData = data;
         $("#gridContainer").dxDataGrid({
             dataSource: data,
