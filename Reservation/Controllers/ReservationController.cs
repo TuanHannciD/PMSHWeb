@@ -271,6 +271,9 @@ namespace Reservation.Controllers
 
         public IActionResult RateCodeAuthor()
         {
+            ViewBag.cboUser = ListItemHelper.GetUserProvider();
+            ViewBag.cboRateCode = ListItemHelper.GetRateCodeProvider();
+
             return View();
         }
         #region DatVP __ Commmon
@@ -5222,6 +5225,69 @@ namespace Reservation.Controllers
             finally
             {
                 pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Rate Code Author
+        [HttpGet]
+        public async Task<IActionResult> SearchRateCodeAutho(int user, int rateCode)
+        {
+            try
+            {
+                List<UserRateCodePermissionModel> result = PropertyUtils.ConvertToList<UserRateCodePermissionModel>(UserRateCodePermissionBO.Instance.FindAll())
+                    .Where(x => (user == 0 || x.UserID == user) && (rateCode == 0 || x.RateCodeID == rateCode))
+                    .ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveRateCodeAuthor()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if (int.Parse(Request.Form["userID"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose user" });
+
+                }
+                if (int.Parse(Request.Form["rateCodeID"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose rate code" });
+
+                }
+                UserRateCodePermissionModel model = new UserRateCodePermissionModel();
+                model.UserID = int.Parse(Request.Form["userID"].ToString());
+                UsersModel user = (UsersModel)UsersBO.Instance.FindByPrimaryKey(model.UserID);
+                model.UserName = user.LoginName;
+                model.RateCodeID = int.Parse(Request.Form["rateCodeID"].ToString();
+                RateCodeModel rateCode = (RateCodeModel)RateCodeBO.Instance.FindByPrimaryKey(model.RateCodeID);
+                model.RateCode = rateCode.RateCode;
+                model.CreatedBy = model.UpdatedBy = int.Parse((Request.Form["userName"].ToString());
+                model.CreatedDate = model.UpdatedDate = DateTime.Now;
+                UserRateCodePermissionBO.Instance.Insert(model);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "User - Rate Code Permisson was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
             }
         }
         #endregion
