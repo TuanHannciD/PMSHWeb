@@ -1,0 +1,48 @@
+﻿<div class="mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="header" style="justify-content:center">
+                    <h3 id="content-title">Group Admin</h3>
+            </div>
+            <div class="function-menu mui-card">
+
+                <a href="#" >Advance</a>
+                <a href="#" >Cancel</a>
+                <a href="#" onclick="openModalSplit();">Split</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Room Assignment</a>
+                    <div class="dropdown-menu-custom">
+                        <a href="#" onclick="openRoomAssignment();" id="assignRoom">Assignment</a>
+                        <a href="#" onclick="openConfirmRoomUnAssign();" id="unAssignRoom">UnAssign</a>
+                        <a href="#" onclick="openModalAutoRoomAssignment();">Auto Room Assignment</a>
+
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Check In</a>
+                    <div class="dropdown-menu-custom">
+                        <a href="#" >Check In</a>
+                        <a href="#" onclick="openModalGroupCheckIn();">Group Check In</a>
+
+                    </div>
+                </div>
+                <a href="#" onclick="roomSharer();">Room Sharer</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Display</a>
+                    <div class="dropdown-menu-custom">
+                        <a href="#" onclick="filterDisplay(2)" >Reservation</a>
+                        <a href="#" onclick="filterDisplay(1)">Guest In House</a>
+                        <a href="#" onclick="filterDisplay(6)">Checked Out</a>
+                        <a href="#" onclick="filterDisplay(7)">Cancellation</a>
+                        <a href="#" onclick="filterDisplay(9)">Wait List</a>
+                        <a href="#" onclick="filterDisplay(8)">NoShow</a>
+                        <a href="#" onclick="filterDisplay(0)">General</a>
+                    </div>
+                </div>
+            </div>
+            <div id="gridContainer" class="mt-2 gridContainer mui-card"></div>
+        </div>
+    </div>
+</div>
+<script>
+</script>

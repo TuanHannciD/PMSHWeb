@@ -208,7 +208,7 @@ namespace Reservation.Controllers
             return View();
         }
 
-
+         
         public IActionResult GroupReservation()
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
@@ -266,6 +266,11 @@ namespace Reservation.Controllers
 
             return View();
 
+        }
+
+        public IActionResult RateCodeAuthor()
+        {
+            return View();
         }
         #region DatVP __ Commmon
         [HttpGet]
