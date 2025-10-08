@@ -120,10 +120,10 @@
             </div>
             <div class="modal-body">
                 <div class="mb-2">
-                    <button class="mui-button mui-button-search" onclick="getAllRoomsAssignment();"> Start</button>
+                    <button class="mui-button mui-button-search" onclick="assignAutoRoom();"> Start</button>
                 </div>
                 <div class="row">
-                    <div class="form-group-new-reservation col-md-4">
+                    <div class="form-group-new-reservation col-md-2">
                         <label>
                             Arrival
                         </label>
@@ -131,7 +131,29 @@
                             <input type="date" id="arrivalAutoRoom">
                         </div>
                     </div>
-                    <div class="form-group-new-reservation col-md-4">
+                    <div class="form-group-new-reservation col-md-2" style="display:none">
+                        <label>
+                            Departure
+                        </label>
+                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                            <input type="date" id="departureAutoRoom">
+                        </div>
+                    </div>
+                    <div class="form-group-new-reservation col-md-2" style="display:none">
+                        <label>
+                            Confirmation
+                        </label>
+                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                            <input type="text" id="conAutoRoom">
+                        </div>
+                    </div>
+                    <div class="form-group-new-reservation col-md-2 mt-1" style="display:flex">
+                        <div class="row" style="margin-left:1px;margin-right:2px">
+                            <input type="checkbox" id="allDateAutoRoom">
+                        </div>
+                        <label>All Date</label>
+                    </div>
+                    <div class="form-group-new-reservation col-md-2">
                         <label>
                             Room Type
                         </label>
@@ -139,38 +161,107 @@
                             <select id="roomTypeAutoRoom" asp-items="ViewBag.cboRoomType"></select>
                         </div>
                     </div>
-                    <div class="form-group-new-reservation col-md-4 mt-1" style="display:flex">
-                        <div class="row" style="margin-left:1px;margin-right:2px">
-                            <input type="checkbox" id="allDateAutoRoom">
-                        </div>
-                        <label>All Date</label>
-                    </div>
-                    <div class="form-group-new-reservation col-md-6">
+                   
+                    <div class="form-group-new-reservation col-md-2">
                         <label>
                             Smoking
                         </label>
                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
                             <select id="smokingAutoRoom">
-                                <option value="2">ALL</option>
+                                <option value="">ALL</option>
                                 <option value="1">Smoking Rooms</option>
                                 <option value="0">Non-Smoking Rooms</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group-new-reservation col-md-6">
+                    <div class="form-group-new-reservation col-md-2">
                         <label>
                             Floor
                         </label>
                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
-                            <select id="floorAutoRoom">
-                                <option value="2">ALL</option>
-                                <option value="1">Smoking Rooms</option>
-                                <option value="0">Non-Smoking Rooms</option>
+                            <select id="floorAutoRoom" asp-items="ViewBag.cboFloor">
                             </select>
+                        </div>
+                    </div>
+                    <div style="col-md-2 form-group-new-reservation mt-1">
+                        <div style="display:flex;column-gap:12px">
+                            <div class="form-check">
+                                <input type="checkbox" name="statusRoomAuto" value="2">
+                                <label style="padding-top:4px">Dirty Rooms</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="statusRoomAuto" value="1">
+                                <label style="padding-top:4px">Clean Non-checked Rooms</label>
+                            </div>
+                            
+                            <div class="form-check">
+                                <input type="checkbox" name="statusRoomAuto" value="4">
+                                <label  style="padding-top:4px">Clean Rooms</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="statusRoomAuto" value="5">
+                                <label  style="padding-top:4px">Include Due out Rooms</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="statusRoomAuto" value="6">
+                                <label  style="padding-top:4px">Include Out of Service Rooms</label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group-new-reservation col-md-2">
+                        <label>
+                            Start From Room
+                        </label>
+                        <div class="row" style="margin-left:1px;margin-right:2px">
+                            <input id="startFromRoom" readonly class="col-md-8" />
+                            <button onclick="opemFormSearchRoomAuto()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                        </div>
+
+                    </div>
+                    <div class="form-group-new-reservation col-md-12">
+                        <label style="color:red">
+                            Not Assign Room: <span id="notAssignRoom"></span>
+                        </label>
+
+
+                    </div>
+                    <div class="form-group-new-reservation col-md-12">
+                        <label>
+                            Status
+                        </label>
+                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                            <textarea id="statusAutoRoom" ></textarea>
                         </div>
                     </div>
                 </div>
                 
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal search room auto assignment-->
+<div class="modal fade modal-xl" id="modalSearchRoomAuto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Room available to assignment</h5>
+                <button type="button" class="btn-close" onclick="closeFormSearchRoomAuto();"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button class="mui-button mui-button-search" onclick="chooseRoomAuto();"> OK</button>
+                </div>
+                <div class="row">
+                    <div id="gridContainerSearchRoomAutoAssignment" class="mt-2 gridContainer"></div>
+
+                </div>
+
             </div>
 
         </div>
@@ -364,9 +455,127 @@
     }
 
     function openModalAutoRoomAssignment(){
+        var grid = $("#gridContainer").dxDataGrid("instance");
+        var dataSource = grid.getDataSource();
+        var firstRow = dataSource.items()[0];
+
+        $('#arrivalAutoRoom').val(firstRow.Arrival.split('T')[0]);
+        $('#departureAutoRoom').val(firstRow.Departure.split('T')[0]);
+        $('#conAutoRoom').val(firstRow.ConfirmationNo);
+        $('#roomTypeAutoRoom option').filter(function() {
+            return $(this).text().trim() == firstRow.RoomType;
+        }).prop('selected', true);
         $('#modalAutoRoomAssignment').modal('show');
     }
     function closeModalAutoRoomAssignment(){
         $('#modalAutoRoomAssignment').modal('hide');
     }
+    var listRoomAssignAuto = [];
+    function opemFormSearchRoomAuto(){
+        $.ajax({
+            url: '/Reservation/SearchRoomAssign',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                smoking: $('#smokingAutoRoom').val(),
+                floor: $('#floorAutoRoom').val(),
+                arrivalDate: $('#arrivalAutoRoom').val(),
+                departureDate: $('#departureAutoRoom').val(),
+                confirmationNo:  $('#conAutoRoom').val(),
+                roomTypeID: $('#roomTypeAutoRoom').val(),
+                hkStatus: getSelectedCheckboxes('statusRoomAuto')
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                listRoomAssignAuto = result;
+                initializeDataGridSearchRoomAutoAssignment(result);
+                $('#modalSearchRoomAuto').modal('show');
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            },
+
+        });
+    }
+
+    function initializeDataGridSearchRoomAutoAssignment(data) {
+        $("#gridContainerSearchRoomAutoAssignment").dxDataGrid({
+            dataSource: data,
+            keyExpr: "id",
+            allowColumnResizing: true,
+            columns: [
+                {
+                    type: "selection",
+                    width: 50,
+                    allowFiltering: false,
+                    allowSorting: false,
+                    headerCellTemplate: function() { return $("<div>"); }
+                },
+                { dataField: "id", caption: "ID", visible: false },
+                { dataField: "roomNo", caption: "Room No" },
+                { dataField: "roomType", caption: "Room Type" },
+                { dataField: "hkStatus", caption: "HK Status" },
+                { dataField: "fo", caption: "FO " },
+                { dataField: "roomClass", caption: "Room Class" },
+                { dataField: "floor", caption: "Floor" },
+                { dataField: "smoking", caption: "Smoking" },
+                { dataField: "backToBack", caption: "Back To Back" },
+                { dataField: "balcony", caption: "Balcony" },
+                { dataField: "connecting", caption: "Connecting" },
+                { dataField: "description", caption: "Description" },
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual'
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "always"
+            },
+            onRowClick: function(e) {
+
+                const grid = $("#gridContainerBilling").dxDataGrid("instance");
+                grid.selectRows([e.key], false);
+            },
+           
+        });
+    }
+    function closeFormSearchRoomAuto(){
+        $('#modalSearchRoomAuto').modal('hide');
+
+    }
+    var unselectedRows = [];
+    function chooseRoomAuto() {
+        var grid = $("#gridContainerSearchRoomAutoAssignment").dxDataGrid("instance");
+        var selectedRows = grid.getSelectedRowsData(); 
+        var selectedIds = selectedRows.map(row => row.roomNo); 
+        unselectedRows = listRoomAssignAuto.filter(item => !selectedIds.includes(item.roomNo));
+        closeFormSearchRoomAuto(); 
+        $('#startFromRoom').val(selectedIds[0]); 
+        var text = '';
+
+        if(selectedIds.length > 0){
+            for(var i = 0;i<selectedIds.length;i++){
+                text += selectedIds[i] + ', ';
+            }
+        }
+        $('#notAssignRoom').text(text);
+
+    }
+
 </script>

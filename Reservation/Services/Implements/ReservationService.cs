@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Reservation.Services.Implements
 {
@@ -593,6 +594,37 @@ namespace Reservation.Services.Implements
                 };
 
                 DataTable myTable = DataTableHelper.getTableData("spReservationTracesSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable ReservationAutoRoomAssignment(int type, string roomType, string roomClass, string smoking, string floor,
+            string startFromRoom, DateTime arrivalDate, DateTime departureDate, string hkStatusID, string confirmationNo, string rsvRoomTypeID, string notAssRoomNo)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@Type", type),
+                    new SqlParameter("@RoomType", roomType),
+                    new SqlParameter("@RoomClass", roomClass),
+                    new SqlParameter("@Smocking", smoking),
+                    new SqlParameter("@Floor", floor),
+                    new SqlParameter("@StartFromRoom", startFromRoom),
+                    new SqlParameter("@ArrivalDate", arrivalDate),
+                    new SqlParameter("@DepartureDate", departureDate),
+                    new SqlParameter("@HKStatusID", hkStatusID),
+                    new SqlParameter("@ConfirmationNo", confirmationNo),
+                    new SqlParameter("@RsvRoomTypeID", rsvRoomTypeID),
+                    new SqlParameter("@NotAssRoomNo", notAssRoomNo),
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationAutoRoomAssignment", param);
                 return myTable;
             }
             catch (SqlException ex)

@@ -256,7 +256,8 @@ namespace Reservation.Controllers
             }
 
             ViewBag.Reservation = reservations;
-
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+            ViewBag.cboFloor = ListItemHelper.GetFloorProvider();
             return View();
         }
         public IActionResult OverBooking()
@@ -5104,6 +5105,114 @@ namespace Reservation.Controllers
                 #endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Room Sharer was successfully", reservations = reservations });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Group Admin: AutoRoomAssign
+        [HttpGet]
+        public async Task<IActionResult> SearchRoomAssign(string smoking,string floor,DateTime arrivalDate,DateTime departureDate,
+            string confirmationNo,string roomTypeID, string hkStatus)
+        {
+            try
+            {
+                string hk = "";
+                if (string.IsNullOrEmpty(hkStatus))
+                {
+                    hk = "";
+                }
+                else
+                {
+                    hk = string.Join("','", hkStatus.Split(','));
+                }
+
+                DataTable myData = _iReservationService.ReservationAutoRoomAssignment(1, "", "", smoking ?? "", floor ?? "", "", arrivalDate, departureDate,
+                    hk, confirmationNo, roomTypeID, "");
+                var result = (from d in myData.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = d["RoomNo"].ToString(),
+                                  RoomType = d["RoomType"].ToString(),
+                                  HKStatus = d["HKStatus"].ToString(),
+                                  FO = d["FO"].ToString(),
+                                  HKStatusID = d["HKStatusID"].ToString(),
+                                  RoomClass = d["RoomClass"].ToString(),
+                                  Floor = d["Floor"].ToString(),
+                                  BackToBack = d["back-to-back"].ToString(),
+                                  Balcony = d["Balcony"].ToString(),
+                                  Connecting = d["Connecting"].ToString(),
+
+                                  Description = d["Description"].ToString(),
+                                  RoomID = d["RoomID"].ToString(),
+                                  RoomTypeID = d["RoomTypeID"].ToString(),
+                                  ID = d["ID"].ToString(),
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AssignAutoRoom(List<int> listRsvID, List<string> listRoom)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string roomSelected = "";
+                // Check if listRsvID is empty
+                if (listRsvID.Count < 1)
+                {
+                    return Json(new { code = 1, msg = "Must be at least 1 booking" });
+                }
+                if (listRoom.Count < 1)
+                {
+                    return Json(new { code = 1, msg = "Must be at least 1 room" });
+                }
+                // Check if listRoom has enough elements to match listRsvID
+                if (listRoom.Count < listRsvID.Count)
+                {
+                    return Json(new { code = 1, msg = "Not enough room numbers provided for all bookings" });
+                }
+
+                for (int i = 0; i < listRsvID.Count; i++)
+                {
+                    ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(listRsvID[i]);
+                    if (rsv != null)
+                    {
+                        rsv.RoomNo = listRoom[i];
+                        RoomModel room = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindByAttribute("RoomNo", listRoom[i])).FirstOrDefault();
+                        rsv.RoomId = room.ID;
+                        RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(room.RoomTypeID);
+                        rsv.RoomType = roomType.Code;
+                        rsv.RoomTypeId = roomType.ID;
+                        ReservationBO.Instance.Update(rsv);
+                        roomSelected += $"{listRoom[i]} - {roomType.Code} - {rsv.LastName} - Assign successfull \n";
+                    }
+                    else
+                    {
+                        // Handle case where reservation is not found
+                        pt.RollBack();
+                        return Json(new { code = 1, msg = $"Reservation with ID {listRsvID[i]} not found" });
+                    }
+                }
+
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Rooms assigned auto successfully", roomSelected = roomSelected });
             }
             catch (Exception ex)
             {

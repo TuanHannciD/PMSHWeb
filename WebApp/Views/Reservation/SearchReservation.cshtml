@@ -187,7 +187,6 @@
                     <a href="#" onclick="checkIn();" class="font-semibold col-md-4 mb-1 text-start">Check In</a>
                     <a href="#" onclick="openModalViewProfile();" class="font-semibold col-md-4 mb-1 text-start">Profile</a>
                     <a href="#" id="groupAdmin" class="font-semibold col-md-4 mb-1 text-start" onclick="redirectGroupAdmin();">Grp Admin</a>
-                    <a href="#" data-function="export" class="font-semibold col-md-4 mb-1 text-start">Export</a>
                     <a href="#" onclick="openModalSplit();" class="font-semibold col-md-4 mb-1 text-start">Split</a>
                     <a href="#" onclick="openModalAccompanying();" class="font-semibold col-md-4 mb-1 text-start">Accompany</a>
                     <a href="#" onclick="openModalAddOn();" class="font-semibold col-md-4 mb-1 text-start">Add On</a>
@@ -205,6 +204,8 @@
                     <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1 text-start">Routing</a>
                     <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1 text-start">WaitList</a>
                     <a href="#" onclick="openModalTraces();" class="font-semibold col-md-4 mb-1 text-start">Traces</a>
+                    <a href="#" onclick="exportExcel();" class="font-semibold col-md-4 mb-1 text-start">Export Excel</a>
+
                     <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1 text-start">Columns</a>
 
 
@@ -326,7 +327,9 @@
 @await Html.PartialAsync("Options/Alerts")
 @await Html.PartialAsync("Options/Traces")
 @await Html.PartialAsync("Options/Changes")
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdn3.devexpress.com/jslib/23.2.3/js/dx.all.js"></script>
 <script>
     function toggleLeftMenu() {
         const leftMenu = $('#leftMenu');
@@ -801,6 +804,62 @@
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
+    }
+          
+      
+    function exportExcel() {
+        const grid = $("#gridContainer").dxDataGrid("instance"); 
+
+
+          const workbook = new ExcelJS.Workbook();
+          const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+          const worksheet = workbook.addWorksheet("Sheet 1");
+
+          // === Tạo header công ty (dòng 1) ===
+          worksheet.addRow([companyName]);
+          worksheet.mergeCells('A1:E1');
+          worksheet.getRow(1).font = { bold: true };
+          worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+          // === Dòng 2: Thời gian xuất (phải) ===
+          const now = new Date();
+          const exportDate = now.toLocaleString("vi-VN");
+          worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+          worksheet.mergeCells('E2:H2');
+          worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+          // === Dòng 3–4: Trống
+          worksheet.addRow([]);
+          worksheet.addRow([]);
+
+          // === Dòng 5: Tên báo cáo ở giữa ===
+          const reportRow = worksheet.addRow(['', '', 'Booking List']);
+          worksheet.mergeCells('C5:F5');
+          reportRow.font = { bold: true, size: 14 };
+          reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+          // === Dòng 6: Trống trước khi xuất dữ liệu
+          worksheet.addRow([]);
+
+          // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+          DevExpress.excelExporter.exportDataGrid({
+              component: grid,
+              worksheet: worksheet,
+              autoFilterEnabled: true,
+              topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+          }).then(function () {
+              // Footer
+              const lastRow = worksheet.lastRow.number + 2;
+              worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+              worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+              worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+              // Ghi file
+              let fileName = "ReservationData" + ".xlsx";
+              workbook.xlsx.writeBuffer().then(function (buffer) {
+                  saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+              });
+          });
     }
     function redirectGroupAdmin() {
         $.ajax({
