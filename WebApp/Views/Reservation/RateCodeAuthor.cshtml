@@ -11,8 +11,7 @@
                 <a href="#" onclick="searchRateCodeAuthor();">Search</a>
                 <a href="#" onclick="searchRateCodeAuthor();">Refresh</a>
                 <a href="#" onclick="openModalNewRateCodeAuthor();">New</a>
-                <a href="#" onclick="roomSharer();">Delete</a>
-                <a href="#" onclick="roomSharer();">Close</a>
+                <a href="#" onclick="deleteRateCodeAuthor();">Delete</a>
 
             </div>
             <div class="row mt-2">
@@ -47,7 +46,7 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="CancelReservation();"> OK</button>
+                    <button class="mui-button mui-button-search" onclick="saveRateCodeAuthor();"> OK</button>
                 </div>
               <div class="form-group-new-reservation">
                     <label>User</label>
@@ -132,6 +131,9 @@
             selection: {
                 mode: "single"
             },
+            onRowClick: function(e) {
+                permissionID = e.data.id;
+            },
             columns: columns,
         }).dxDataGrid('instance');
  
@@ -144,13 +146,12 @@
         $('#rateCodeNew').val(0);
         $('#modalOpenNewRateCodeAuthor').modal('hide');
     }
+    var permissionID = 0;
     function saveRateCodeAuthor(){
         const userName = JSON.parse(localStorage.getItem("Loginname"));
-        const userID = JSON.parse(localStorage.getItem("userID"));
         var formData = new FormData();
         formData.append('userID', $('#userNew').val());
         formData.append('rateCodeID', $('#rateCodeNew').val());
-        formData.append('userID', userID);
         formData.append('userName', userName);
         $.ajax({
             url: '/Reservation/SaveRateCodeAuthor',
@@ -162,6 +163,31 @@
             success: function (data) {
                 if (data.code == 0) {
                     closeModalNewRateCodeAuthor();
+                    showToast('Success', data.msg, true);
+                    searchRateCodeAuthor();
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+    }
+    function deleteRateCodeAuthor(){
+        var formData = new FormData();
+
+        formData.append('id', permissionID);
+        $.ajax({
+            url: '/Reservation/DeleteRateCodeAuthor',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
                     showToast('Success', data.msg, true);
                     searchRateCodeAuthor();
                 } else {

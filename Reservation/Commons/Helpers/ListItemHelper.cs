@@ -83,7 +83,7 @@ namespace Reservation.Commons.Helpers
                 List<TitleModel> list = PropertyUtils.ConvertToList<TitleModel>(TitleBO.Instance.FindByAttribute("Inactive", 0));
                 if (list.Count > 0)
                 {
-                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name, Selected = false }).ToList();
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Code, Selected = false }).ToList();
                 }
                 if (defaultValue)
                     items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });

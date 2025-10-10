@@ -1167,6 +1167,17 @@ namespace Reservation.Controllers
                     FolioBO.Instance.Insert(folioModel);
                     #endregion
 
+                    #region lưu reservation amount currency
+                    ReservationAmountByCurrencyModel reservationAmountCurrency = new ReservationAmountByCurrencyModel();
+                    reservationAmountCurrency.ReservationID = (int)reservationID;
+                    reservationAmountCurrency.ConfirmationNo = int.Parse(reservationModel.ConfirmationNo);
+                    reservationAmountCurrency.CurrencyID = "VND";
+                    reservationAmountCurrency.AmountAfterTax = reservationModel.Rate;
+                    reservationAmountCurrency.AmountBeforTax = reservationModel.RateAfterTax;
+                    reservationAmountCurrency.UserInsertID = reservationAmountCurrency.UserInsertID = int.Parse(Request.Form["userID"].ToString());
+                    reservationAmountCurrency.CreateDate = reservationAmountCurrency.UpdateDate = DateTime.Now;
+                    ReservationAmountByCurrencyBO.Instance.Insert(reservationAmountCurrency);
+                    #endregion
                     pt.CommitTransaction();
                     return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
 
@@ -1179,6 +1190,7 @@ namespace Reservation.Controllers
                         return Json(new { code = 1, msg = "Could not fint reservation" });
 
                     }
+
                     #region edit reservation
                     reservationModel.ProfileAgentId = string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString()) ? 0 : int.Parse(Request.Form["profileAgentID"].ToString());
                     reservationModel.AgentName = Request.Form["agentName"].ToString();
@@ -1378,7 +1390,7 @@ namespace Reservation.Controllers
                     reservationModel.Packages = Request.Form["packages"].ToString();
                     reservationModel.Status = DateTime.Parse(Request.Form["arrival"].ToString()) == businessDate[0].BusinessDate ? 5 : 0;
                     reservationModel.PostingMaster = false;
-                    reservationModel.MainGuest = true;
+                    //reservationModel.MainGuest = true;
                     if (string.IsNullOrEmpty(Request.Form["rateCode"].ToString()))
                     {
                         reservationModel.RateCodeId = 0;
@@ -5265,18 +5277,60 @@ namespace Reservation.Controllers
                     return Json(new { code = 1, msg = "Please choose rate code" });
 
                 }
+                List<UserRateCodePermissionModel> result = PropertyUtils.ConvertToList<UserRateCodePermissionModel>(UserRateCodePermissionBO.Instance.FindAll())
+                .Where(x => x.UserID == int.Parse(Request.Form["userID"].ToString()) &&  x.RateCodeID == int.Parse(Request.Form["rateCodeID"].ToString()))
+                .ToList();
+                if(result.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "User - Rate Code Permisson was invalid" });
+
+                }
                 UserRateCodePermissionModel model = new UserRateCodePermissionModel();
                 model.UserID = int.Parse(Request.Form["userID"].ToString());
                 UsersModel user = (UsersModel)UsersBO.Instance.FindByPrimaryKey(model.UserID);
                 model.UserName = user.LoginName;
-                model.RateCodeID = int.Parse(Request.Form["rateCodeID"].ToString();
+                model.RateCodeID = int.Parse(Request.Form["rateCodeID"].ToString());
                 RateCodeModel rateCode = (RateCodeModel)RateCodeBO.Instance.FindByPrimaryKey(model.RateCodeID);
                 model.RateCode = rateCode.RateCode;
-                model.CreatedBy = model.UpdatedBy = int.Parse((Request.Form["userName"].ToString());
+                model.CreatedBy = model.UpdatedBy = Request.Form["userName"].ToString();
                 model.CreatedDate = model.UpdatedDate = DateTime.Now;
                 UserRateCodePermissionBO.Instance.Insert(model);
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "User - Rate Code Permisson was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult DeleteRateCodeAuthor()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+
+                UserRateCodePermissionModel model = (UserRateCodePermissionModel)UserRateCodePermissionBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (model == null || model.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can't not find User - Rate Code Permisson" });
+
+                }
+                UserRateCodePermissionBO.Instance.Delete(model.ID);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "User - Rate Code Permisson was deleted successfully" });
 
             }
             catch (Exception ex)

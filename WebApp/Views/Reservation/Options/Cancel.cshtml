@@ -30,7 +30,7 @@
             showToast('Error', 'Please choose booking', false);
             return;
         }
-        if(status != 'RESVED'){
+        if(reservationStatus != 5 && reservationStatus!= 0 ){
             showToast('Error', 'Cannot cancel because booking is not in Reservation status', false);
             return;
         }

@@ -1,6 +1,4 @@
 ﻿
-<!-- Modal group check in-->
-
 <div class="modal fade modal-xl" id="modalViewProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -16,87 +14,93 @@
                     <div class="col-md-6">
                         <div class="section-box position-relative">
                             <div class="section-title">Address Information</div>
-                            <div class="row g-3 mt-3">
+                            <div class="row mt-3">
                                 <!-- Image Section -->
                                 <div class="col-md-4" id="image_wrapper">
                                     <div class="fw-bold">Image</div>
                                     <div class="image-placeholder mt-2"></div>
                                 </div>
                                 <!-- Form Fields -->
-                                <div class="col-md-8">
-                                    <div class="form-group row g-2">
-                                        <label class="col-sm-4 col-form-label text-end fw-bold">Code</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtCodeIndividual">
+                                <div class="col-md-8 row">
+                                    <div class="form-group-new-reservation col-md-6">
+                                        <label>Code</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtCodeIndividual">
+
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end fw-bold">Full Name</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtFullNameIndividual">
+                                    <div class="form-group-new-reservation col-md-6">
+                                        <label>Full Name</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtFullNameIndividual">
                                             <div id="errorMessage" class="text-danger mt-1 d-none">
                                                 <strong>Typing format is not correct. Please type as: FirstName Middle, LastName</strong>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">First/Last Name</label>
-                                        <div class="col-sm-8 d-flex gap-2">
-                                            <input type="text" class="form-control" id="txtFirstNameIndividual">
-                                            <input type="text" class="form-control" id="txtLastNameIndividual">
+                                    <div class="form-group-new-reservation col-md-12 ">
+                                        <label>First/Last Name</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtFirstNameIndividual" class="col-md-6">
+                                            <input type="text" id="txtLastNameIndividual" class="col-md-6">
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Middle Name</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtMiddleNameIndividual">
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Middle Name</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtMiddleNameIndividual">
+
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Language/Title</label>
-                                        <div class="col-sm-8 d-flex gap-2">
-                                            <select type="text" class="form-select" id="txtLanguageIndividual"></select>
-                                            <select type="text" class="form-select" id="txtTitleIndividual"></select>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>City</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtCityIndividual"></select>
+
+
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Nationality/Country</label>
-                                        <div class="col-sm-8 d-flex gap-2">
-                                            <select type="text" class="form-select" id="txtNationalityIndividual"></select>
-                                            <select type="text" class="form-select" id="txtCountryIndividual"></select>
+                                    <div class="form-group-new-reservation col-md-12 ">
+                                        <label>Language/Title</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtLanguageIndividual" class="col-md-6"></select>
+                                            <select type="text" id="txtTitleIndividual" class="col-md-6"></select>
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">City</label>
-                                        <div class="col-sm-8">
-                                            <select type="text" class="form-select" id="txtCityIndividual"></select>
+                                    <div class="form-group-new-reservation col-md-12 ">
+                                        <label>Nationality/Country</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtNationalityIndividual" class="col-md-6"></select>
+                                            <select type="text" id="txtCountryIndividual" class="col-md-6"></select>
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
+  
+
+                                    <div class=" row g-2 mt-2">
                                         <label class="col-sm-4 col-form-label text-end">Postal/State</label>
                                         <div class="col-sm-8 d-flex gap-2">
-                                            <input type="text" class="form-control" id="txtPostalIndividual">
-                                            <select type="text" class="form-control" id="txtStateIndividual"></select>
+                                            <input type="text"  id="txtPostalIndividual">
+                                            <select type="text"  id="txtStateIndividual"></select>
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
+                                    <div class=" row g-2 mt-2">
                                         <label class="col-sm-4 col-form-label text-end">Religion/Nation</label>
                                         <div class="col-sm-8 d-flex gap-2">
-                                            <input type="text" class="form-control" id="txtReligionIndividual">
-                                            <input type="text" class="form-control" id="txtNationIndividual">
+                                            <input type="text"  id="txtReligionIndividual">
+                                            <input type="text"  id="txtNationIndividual">
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
+                                    <div class=" row g-2 mt-2">
                                         <label class="col-sm-4 col-form-label text-end">Purpose of Stay</label>
                                         <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtPurposeIndividual">
+                                            <input type="text"  id="txtPurposeIndividual">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group mt-3">
+                            <div class=" mt-3">
                                 <label class="fw-bold">Address</label>
-                                <textarea id="txtAddressIndividual" class="form-control" rows="4"></textarea>
+                                <textarea id="txtAddressIndividual"  rows="4"></textarea>
                             </div>
                         </div>
                     </div>
