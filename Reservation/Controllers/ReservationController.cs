@@ -1158,7 +1158,7 @@ namespace Reservation.Controllers
                     folioModel.ReservationID = (int)reservationID;
                     folioModel.ProfileID = reservationModel.ProfileIndividualId;
                     folioModel.AccountName = reservationModel.LastName;
-                    reservationModel.NoPost = true ? folioModel.Status = true : folioModel.Status = false;
+                    folioModel.Status = reservationModel.NoPost == true ? true : false;
 
                     folioModel.ConfirmationNo = reservationModel.ConfirmationNo;
                     folioModel.BalanceUSD = folioModel.BalanceVND = reservationModel.RateAfterTax;

@@ -1,4 +1,8 @@
-﻿
+﻿<style>
+    select{
+        padding-top:2px;
+    }
+</style>
 <div class="modal fade modal-xl" id="modalViewProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -12,9 +16,9 @@
                 <div class="main-infor row" id="profile_individual">
                     <!-- Left Column: Address Information -->
                     <div class="col-md-6">
-                        <div class="section-box position-relative">
+                        <div class="section-box">
                             <div class="section-title">Address Information</div>
-                            <div class="row mt-3">
+                            <div class="row">
                                 <!-- Image Section -->
                                 <div class="col-md-4" id="image_wrapper">
                                     <div class="fw-bold">Image</div>
@@ -38,11 +42,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group-new-reservation col-md-12 ">
-                                        <label>First/Last Name</label>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>First</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
-                                            <input type="text" id="txtFirstNameIndividual" class="col-md-6">
-                                            <input type="text" id="txtLastNameIndividual" class="col-md-6">
+                                            <input type="text" id="txtFirstNameIndividual" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Last Name</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtLastNameIndividual">
                                         </div>
                                     </div>
                                     <div class="form-group-new-reservation col-md-6 ">
@@ -60,47 +69,131 @@
 
                                         </div>
                                     </div>
-                                    <div class="form-group-new-reservation col-md-12 ">
-                                        <label>Language/Title</label>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Language</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
-                                            <select type="text" id="txtLanguageIndividual" class="col-md-6"></select>
-                                            <select type="text" id="txtTitleIndividual" class="col-md-6"></select>
+                                            <select type="text" id="txtLanguageIndividual"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Title</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtTitleIndividual" ></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6">
+                                        <label>Nationality</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtNationalityIndividual" ></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Country</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtCountryIndividual" ></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Postal</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtPostalIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>State</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <select type="text" id="txtStateIndividual"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Religion</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtReligionIndividual">
+                                        </div>
+                                    </div>
+                                    <div class="form-group-new-reservation col-md-6 ">
+                                        <label>Nation</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <input type="text" id="txtNationIndividual">
                                         </div>
                                     </div>
                                     <div class="form-group-new-reservation col-md-12 ">
-                                        <label>Nationality/Country</label>
+                                        <label>Purpose of Stay</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
-                                            <select type="text" id="txtNationalityIndividual" class="col-md-6"></select>
-                                            <select type="text" id="txtCountryIndividual" class="col-md-6"></select>
+                                            <input type="text" id="txtPurposeIndividual">
                                         </div>
                                     </div>
-  
+                                    <div class="form-group-new-reservation col-md-12 ">
+                                        <label>Address</label>
+                                        <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                            <textarea id="txtAddressIndividual" rows="4"></textarea>
+                                        </div>
+                                    </div>
 
-                                    <div class=" row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Postal/State</label>
-                                        <div class="col-sm-8 d-flex gap-2">
-                                            <input type="text"  id="txtPostalIndividual">
-                                            <select type="text"  id="txtStateIndividual"></select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- Attributes and History -->
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="section-box">
+                                    <div class="section-title">Attributes</div>
+                                    <div class="row">
+                                        <div class="form-group-new-reservation col-md-12">
+                                            <label>Rate Code</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="rateCodeIndividual">
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12">
+                                            <label>A/R No</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="aRNoIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12">
+                                            <label>Member No</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="memberNoIndividual">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class=" row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Religion/Nation</label>
-                                        <div class="col-sm-8 d-flex gap-2">
-                                            <input type="text"  id="txtReligionIndividual">
-                                            <input type="text"  id="txtNationIndividual">
+
+   
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="section-box">
+                                    <div class="section-title">History Information</div>
+                                    <div class="row">
+                                        <div class="form-group-new-reservation col-md-6">
+                                            <label>Last Room</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="lastRoomIndividual">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class=" row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Purpose of Stay</label>
-                                        <div class="col-sm-8">
-                                            <input type="text"  id="txtPurposeIndividual">
+                                        <div class="form-group-new-reservation col-md-6">
+                                            <label>On</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="onIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12">
+                                            <label>Last Rate</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="lastRateIndivdual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12">
+                                            <label>Stay</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="stayIndividual">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class=" mt-3">
-                                <label class="fw-bold">Address</label>
-                                <textarea id="txtAddressIndividual"  rows="4"></textarea>
                             </div>
                         </div>
                     </div>
@@ -112,75 +205,79 @@
                             <div class="col-md-6">
                                 <div class="section-box position-relative">
                                     <div class="section-title">Internal Information</div>
-                                    <div class="form-group row g-2 mt-3">
-                                        <label class="col-sm-4 col-form-label text-end">Salutation</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtSalutationIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">VIP</label>
-                                        <div class="col-sm-8">
-                                            <select type="text" class="form-control" id="txtVIPIndividual"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">VIP Reason</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtReasonIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Pref Room</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtPrefRoomIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Other</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtOtherIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Passport</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtPassportIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Identity Card</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtCardIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Date of Birth</label>
-                                        <div class="col-sm-6">
-                                            <input type="date" class="form-control" id="txtDobIndividual" disabled>
-                                        </div>
-                                        <div class="col-sm-2 d-flex align-items-center">
-                                            <input type="checkbox" class="form-check-input" id="txtCheckboxDobIndividual" checked>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <div class="col-sm-6">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="txtActiveIndividual" checked>
-                                                <label class="form-check-label">Active</label>
+                                    <div class="row">
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Salutation</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtSalutationIndividual">
                                             </div>
                                         </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="txtContactIndividual">
-                                                <label class="form-check-label">Contact</label>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>VIP</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <select type="text"  id="txtVIPIndividual"></select>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Keyword</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtKeywordIndividual">
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>VIP Reason</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtReasonIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Pref Room</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtPrefRoomIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Other</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtOtherIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Passport</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtPassportIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Identity Card</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtCardIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Date of Birth</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="date" class="col-md-10" id="txtDobIndividual" disabled>
+                                                <input type="checkbox"  id="txtCheckboxDobIndividual" checked class="col-md-2">
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <div class="col-sm-6">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" id="txtActiveIndividual" checked>
+                                                        <label class="form-check-label">Active</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" id="txtContactIndividual">
+                                                        <label class="form-check-label">Contact</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Keyword</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtKeywordIndividual">
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -191,22 +288,25 @@
                                 <!-- Tax -->
                                 <div class="section-box position-relative">
                                     <div class="section-title">Tax</div>
-                                    <div class="form-group row g-2 mt-3">
-                                        <label class="col-sm-4 col-form-label text-end">Company</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtCompanyIndividual">
+                                    <div class="row">
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Company</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtCompanyIndividual">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Tax Code</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtTaxIndividual">
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Tax Code</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtTaxIndividual">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Bus. Address</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtBusAddressIndividual">
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Bus. Address</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtBusAddressIndividual">
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -214,48 +314,51 @@
                                 <!-- Communications -->
                                 <div class="section-box position-relative mt-3">
                                     <div class="section-title">Communications</div>
-                                    <div class="form-group row g-2 mt-3">
-                                        <label class="col-sm-4 col-form-label text-end">Telephone</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtTelephoneIndividual">
+                                    <div class="row">
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Bus. Telephone</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtTelephoneIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Hand Phone</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtHandPhoneIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Fax</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtFaxIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Email</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtEmailIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Website</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text" id="txtWebsiteIndividual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                            <label>Company</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtCompany2Individual">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-new-reservation col-md-12 ">
+                                        <label>Business Title</label>
+                                            <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
+                                                <input type="text"  id="txtBusinessTitleIndividual">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Hand Phone</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtHandPhoneIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Fax</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtFaxIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Email</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtEmailIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Website</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtWebsiteIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Company</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtCompany2Individual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Business Title</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtBusinessTitleIndividual">
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 
@@ -264,73 +367,21 @@
                             <div class="row g-2 mt-3">
                                 <label class="col-sm-2 col-form-label text-end text-danger">Blacklist</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="blackListIndividual">
+                                    <input type="text" id="blackListIndividual">
                                 </div>
                                 <div class="col-sm-2 d-flex align-items-center">
-                                    <input type="checkbox" class="form-check-input" id="txtBlackListIndividual">
+                                    <input type="checkbox" id="txtBlackListIndividual">
                                 </div>
                             </div>
                             <div class="row g-2 mt-3">
                                 <label class="col-sm-2 col-form-label text-end text-danger">Notes</label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" rows="4" id="txtNoteIndividual"></textarea>
+                                    <textarea  rows="4" id="txtNoteIndividual"></textarea>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Attributes and History -->
-                        <div class="col-md-12 row g-3">
-                            <div class="col-md-6">
-                                <div class="section-box position-relative">
-                                    <div class="section-title">Attributes</div>
-                                    <div class="form-group row g-2 mt-3">
-                                        <label class="col-sm-4 col-form-label text-end">Rate Code</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="rateCodeIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">A/R No</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="aRNoIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Member No</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="memberNoIndividual">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="section-box position-relative">
-                                    <div class="section-title">History Information</div>
-                                    <div class="row g-2 mt-3">
-                                        <label class="col-sm-4 col-form-label text-end">Last Room</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" id="lastRoomIndividual">
-                                        </div>
-                                        <label class="col-sm-2 col-form-label">On</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" id="onIndividual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Last Rate</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="lastRateIndivdual">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row g-2 mt-2">
-                                        <label class="col-sm-4 col-form-label text-end">Stay</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="stayIndividual">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
 
                     </div>
 

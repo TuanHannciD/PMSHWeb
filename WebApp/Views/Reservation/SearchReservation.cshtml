@@ -329,7 +329,7 @@
 @await Html.PartialAsync("Options/Changes")
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-<script src="https://cdn3.devexpress.com/jslib/23.2.3/js/dx.all.js"></script>
+
 <script>
     function toggleLeftMenu() {
         const leftMenu = $('#leftMenu');
@@ -381,7 +381,6 @@
         setupDefaultCaret();
         searchReservation();
         await setTomSelect();
-        getProfileIndividual();
         $('#listFunction').hide();
         $('#searchType, #name, #firstName, #resvHolder, #confirmationNo, #crsNo, #roomNo, #roomType, #package, #zone, #arrivalForm, #departureForm, #roomShare, #owner').on('keypress', function (e) {
             if (e.which === 13) {
@@ -880,7 +879,7 @@
     }
     async function setTomSelect() {
         const ids = [
-            "#txtName", "#txtItemInventory", "#txtNameAccompanying", "#transactionRouting", "#userSelectOption"
+            "#txtName", "#txtItemInventory", "#transactionRouting", "#userSelectOption"
         ];
         for (const id of ids) {
             if ($(id).length) {
@@ -891,38 +890,7 @@
             }
         }
     }
-    function getProfileIndividual() {
-        $.ajax({
-            url: '/Reservation/GetProfileIndividual',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                if (result.length > 0) {
-                    let select2 = $('#txtNameAccompanying')[0].tomselect;
-                    select2.clear();
-                    select2.clearOptions();
-                    select2.addOption({ value: '0', text: '' });
-                    result.forEach(item => {
-                        select2.addOption({ value: item.id, text: `${item.account}` });
-                    });
-                    select2.setValue('0');
-                } else {
-                    let select2 = $('#txtNameAccompanying')[0].tomselect;
-                    select2.clear();
-                    select2.clearOptions();
-                    select2.addOption({ value: '0', text: '' });
-                    select2.setValue('0');
-                }
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                }
-            }
-        });
-    }
+    
     function editBooking() {
         // Hiển thị lớp phủ để vô hiệu hóa tương tác
         $('#overlay').show();
