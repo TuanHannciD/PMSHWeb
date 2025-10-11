@@ -49,6 +49,9 @@ namespace Cashiering.Services.Interfaces
         public DataTable SearchPostingHistoryDetail(string invoiceNo);
 
         public DataTable CashierReport(int shiftID, int mode);
+
+        DataTable ExchangeCurrencyReportData(DateTime fromDate, string cachier, string zonecode);
+        DataTable ExchangeCurrencyPrint(string id);
     }
 }
 

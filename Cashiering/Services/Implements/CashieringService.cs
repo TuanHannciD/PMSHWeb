@@ -185,5 +185,32 @@ namespace Cashiering.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spCashierReport", param);
             return myTable;
         }
+
+        public DataTable ExchangeCurrencyReportData(DateTime fromDate, string cachier, string zonecode)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@TransactionDate", fromDate),
+               new SqlParameter("@ShiftID", cachier),
+                  new SqlParameter("@Zone", zonecode)
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptExchangeCurrencyByCashier", param);
+            return myTable;
+        }
+
+        public DataTable ExchangeCurrencyPrint( string id)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+               new SqlParameter("@ID", id),
+
+
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spRptExchangeCurrencyReceipt", param);
+            return myTable;
+        }
     } 
 }

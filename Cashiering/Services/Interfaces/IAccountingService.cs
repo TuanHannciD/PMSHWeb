@@ -49,5 +49,7 @@ namespace Cashiering.Services.Interfaces
 
         /// <returns>Data table chứa anh sách folio transfer account receivable</returns>
         DataTable SearchInfoAR(string accountName, string accountNo,string folioNo,string isActive,string folioID);
+        DataTable AccountTypeData();
+        DataTable AROpeningData();
     }
 }

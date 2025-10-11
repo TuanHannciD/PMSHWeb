@@ -162,8 +162,19 @@
                                 <a asp-area="" asp-controller="Cashiering" asp-action="VATSearch">VAT Search</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioVATSearch">Search VAT Voucher</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioVATSearchByAccounting">Search VAT Voucher for Accounting</a>
-                                <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Accounting Search</a>
+                               @*  <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Accounting Search</a> *@
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioHistoryView">Folio History View</a>
+                                <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeCurrencyReport">Exchange Currency Report</a>
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-submenu-toggle">Account Receivable</a>
+                                    <div class="dropdown-submenu-content">
+
+                                        <a asp-area="" asp-controller="Accounting" asp-action="AccountType">Account Type</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="ARAgingLevels">AR Aging Levels</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="AROpening">AR Opening</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Search account receivable</a>
+                                    </div>
+                                </div>
                             </div>
                         </li>
                         <li class="nav-item">
