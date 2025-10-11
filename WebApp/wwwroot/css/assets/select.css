@@ -26,8 +26,10 @@ select {
 }
 /* Chiều cao cho phần control (input/select chính) */
 .ts-wrapper .ts-control {
-    margin: 0px;
+    margin:0px -10px;
+    width:auto;
     height: 28px !important; /* Sử dụng !important nếu cần override theme mặc định */
+    padding:2px 0px;
 }
 
 /* Nếu là single select, điều chỉnh padding để text không bị lệch */
@@ -41,7 +43,6 @@ select {
 .ts-wrapper.multi .ts-control > .item {
     height: 24px; /* Nhỏ hơn một chút để fit trong 28px tổng */
     line-height: 24px;
-    margin: 2px; /* Khoảng cách giữa các item */
 }
 
 /* Đảm bảo wrapper không ảnh hưởng */

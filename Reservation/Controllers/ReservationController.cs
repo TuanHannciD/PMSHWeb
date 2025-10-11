@@ -208,7 +208,7 @@ namespace Reservation.Controllers
             return View();
         }
 
-
+         
         public IActionResult GroupReservation()
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
@@ -256,7 +256,8 @@ namespace Reservation.Controllers
             }
 
             ViewBag.Reservation = reservations;
-
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
+            ViewBag.cboFloor = ListItemHelper.GetFloorProvider();
             return View();
         }
         public IActionResult OverBooking()
@@ -266,6 +267,14 @@ namespace Reservation.Controllers
 
             return View();
 
+        }
+
+        public IActionResult RateCodeAuthor()
+        {
+            ViewBag.cboUser = ListItemHelper.GetUserProvider();
+            ViewBag.cboRateCode = ListItemHelper.GetRateCodeProvider();
+
+            return View();
         }
         #region DatVP __ Commmon
         [HttpGet]
@@ -1149,7 +1158,7 @@ namespace Reservation.Controllers
                     folioModel.ReservationID = (int)reservationID;
                     folioModel.ProfileID = reservationModel.ProfileIndividualId;
                     folioModel.AccountName = reservationModel.LastName;
-                    reservationModel.NoPost = true ? folioModel.Status = true : folioModel.Status = false;
+                    folioModel.Status = reservationModel.NoPost == true ? true : false;
 
                     folioModel.ConfirmationNo = reservationModel.ConfirmationNo;
                     folioModel.BalanceUSD = folioModel.BalanceVND = reservationModel.RateAfterTax;
@@ -1158,6 +1167,17 @@ namespace Reservation.Controllers
                     FolioBO.Instance.Insert(folioModel);
                     #endregion
 
+                    #region lưu reservation amount currency
+                    ReservationAmountByCurrencyModel reservationAmountCurrency = new ReservationAmountByCurrencyModel();
+                    reservationAmountCurrency.ReservationID = (int)reservationID;
+                    reservationAmountCurrency.ConfirmationNo = int.Parse(reservationModel.ConfirmationNo);
+                    reservationAmountCurrency.CurrencyID = "VND";
+                    reservationAmountCurrency.AmountAfterTax = reservationModel.Rate;
+                    reservationAmountCurrency.AmountBeforTax = reservationModel.RateAfterTax;
+                    reservationAmountCurrency.UserInsertID = reservationAmountCurrency.UserInsertID = int.Parse(Request.Form["userID"].ToString());
+                    reservationAmountCurrency.CreateDate = reservationAmountCurrency.UpdateDate = DateTime.Now;
+                    ReservationAmountByCurrencyBO.Instance.Insert(reservationAmountCurrency);
+                    #endregion
                     pt.CommitTransaction();
                     return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
 
@@ -1170,6 +1190,7 @@ namespace Reservation.Controllers
                         return Json(new { code = 1, msg = "Could not fint reservation" });
 
                     }
+
                     #region edit reservation
                     reservationModel.ProfileAgentId = string.IsNullOrEmpty(Request.Form["profileAgentID"].ToString()) ? 0 : int.Parse(Request.Form["profileAgentID"].ToString());
                     reservationModel.AgentName = Request.Form["agentName"].ToString();
@@ -1369,7 +1390,7 @@ namespace Reservation.Controllers
                     reservationModel.Packages = Request.Form["packages"].ToString();
                     reservationModel.Status = DateTime.Parse(Request.Form["arrival"].ToString()) == businessDate[0].BusinessDate ? 5 : 0;
                     reservationModel.PostingMaster = false;
-                    reservationModel.MainGuest = true;
+                    //reservationModel.MainGuest = true;
                     if (string.IsNullOrEmpty(Request.Form["rateCode"].ToString()))
                     {
                         reservationModel.RateCodeId = 0;
@@ -5108,6 +5129,219 @@ namespace Reservation.Controllers
             finally
             {
                 pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Group Admin: AutoRoomAssign
+        [HttpGet]
+        public async Task<IActionResult> SearchRoomAssign(string smoking,string floor,DateTime arrivalDate,DateTime departureDate,
+            string confirmationNo,string roomTypeID, string hkStatus)
+        {
+            try
+            {
+                string hk = "";
+                if (string.IsNullOrEmpty(hkStatus))
+                {
+                    hk = "";
+                }
+                else
+                {
+                    hk = string.Join("','", hkStatus.Split(','));
+                }
+
+                DataTable myData = _iReservationService.ReservationAutoRoomAssignment(1, "", "", smoking ?? "", floor ?? "", "", arrivalDate, departureDate,
+                    hk, confirmationNo, roomTypeID, "");
+                var result = (from d in myData.AsEnumerable()
+                              select new
+                              {
+                                  RoomNo = d["RoomNo"].ToString(),
+                                  RoomType = d["RoomType"].ToString(),
+                                  HKStatus = d["HKStatus"].ToString(),
+                                  FO = d["FO"].ToString(),
+                                  HKStatusID = d["HKStatusID"].ToString(),
+                                  RoomClass = d["RoomClass"].ToString(),
+                                  Floor = d["Floor"].ToString(),
+                                  BackToBack = d["back-to-back"].ToString(),
+                                  Balcony = d["Balcony"].ToString(),
+                                  Connecting = d["Connecting"].ToString(),
+
+                                  Description = d["Description"].ToString(),
+                                  RoomID = d["RoomID"].ToString(),
+                                  RoomTypeID = d["RoomTypeID"].ToString(),
+                                  ID = d["ID"].ToString(),
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AssignAutoRoom(List<int> listRsvID, List<string> listRoom)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string roomSelected = "";
+                // Check if listRsvID is empty
+                if (listRsvID.Count < 1)
+                {
+                    return Json(new { code = 1, msg = "Must be at least 1 booking" });
+                }
+                if (listRoom.Count < 1)
+                {
+                    return Json(new { code = 1, msg = "Must be at least 1 room" });
+                }
+                // Check if listRoom has enough elements to match listRsvID
+                if (listRoom.Count < listRsvID.Count)
+                {
+                    return Json(new { code = 1, msg = "Not enough room numbers provided for all bookings" });
+                }
+
+                for (int i = 0; i < listRsvID.Count; i++)
+                {
+                    ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(listRsvID[i]);
+                    if (rsv != null)
+                    {
+                        rsv.RoomNo = listRoom[i];
+                        RoomModel room = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindByAttribute("RoomNo", listRoom[i])).FirstOrDefault();
+                        rsv.RoomId = room.ID;
+                        RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(room.RoomTypeID);
+                        rsv.RoomType = roomType.Code;
+                        rsv.RoomTypeId = roomType.ID;
+                        ReservationBO.Instance.Update(rsv);
+                        roomSelected += $"{listRoom[i]} - {roomType.Code} - {rsv.LastName} - Assign successfull \n";
+                    }
+                    else
+                    {
+                        // Handle case where reservation is not found
+                        pt.RollBack();
+                        return Json(new { code = 1, msg = $"Reservation with ID {listRsvID[i]} not found" });
+                    }
+                }
+
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Rooms assigned auto successfully", roomSelected = roomSelected });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region DatVP __ Rate Code Author
+        [HttpGet]
+        public async Task<IActionResult> SearchRateCodeAutho(int user, int rateCode)
+        {
+            try
+            {
+                List<UserRateCodePermissionModel> result = PropertyUtils.ConvertToList<UserRateCodePermissionModel>(UserRateCodePermissionBO.Instance.FindAll())
+                    .Where(x => (user == 0 || x.UserID == user) && (rateCode == 0 || x.RateCodeID == rateCode))
+                    .ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveRateCodeAuthor()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if (int.Parse(Request.Form["userID"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose user" });
+
+                }
+                if (int.Parse(Request.Form["rateCodeID"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Please choose rate code" });
+
+                }
+                List<UserRateCodePermissionModel> result = PropertyUtils.ConvertToList<UserRateCodePermissionModel>(UserRateCodePermissionBO.Instance.FindAll())
+                .Where(x => x.UserID == int.Parse(Request.Form["userID"].ToString()) &&  x.RateCodeID == int.Parse(Request.Form["rateCodeID"].ToString()))
+                .ToList();
+                if(result.Count > 0)
+                {
+                    return Json(new { code = 1, msg = "User - Rate Code Permisson was invalid" });
+
+                }
+                UserRateCodePermissionModel model = new UserRateCodePermissionModel();
+                model.UserID = int.Parse(Request.Form["userID"].ToString());
+                UsersModel user = (UsersModel)UsersBO.Instance.FindByPrimaryKey(model.UserID);
+                model.UserName = user.LoginName;
+                model.RateCodeID = int.Parse(Request.Form["rateCodeID"].ToString());
+                RateCodeModel rateCode = (RateCodeModel)RateCodeBO.Instance.FindByPrimaryKey(model.RateCodeID);
+                model.RateCode = rateCode.RateCode;
+                model.CreatedBy = model.UpdatedBy = Request.Form["userName"].ToString();
+                model.CreatedDate = model.UpdatedDate = DateTime.Now;
+                UserRateCodePermissionBO.Instance.Insert(model);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "User - Rate Code Permisson was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult DeleteRateCodeAuthor()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+
+                UserRateCodePermissionModel model = (UserRateCodePermissionModel)UserRateCodePermissionBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
+                if (model == null || model.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Can't not find User - Rate Code Permisson" });
+
+                }
+                UserRateCodePermissionBO.Instance.Delete(model.ID);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "User - Rate Code Permisson was deleted successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
             }
         }
         #endregion

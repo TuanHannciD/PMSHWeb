@@ -973,9 +973,7 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const arrivalDate = new Date(this.value);
-        if (arrivalDate < today) {
-            this.value = formatDate(today); // Đặt lại ngày hôm nay nếu nhỏ hơn
-        }
+
         // Cập nhật departure để giữ số đêm cố định
         const nights = parseInt(document.getElementById('nights').value) || 1;
         const newDeparture = new Date(this.value);
@@ -988,17 +986,20 @@
         updateDates();
     });
 
-    document.getElementById('departure').addEventListener('change', function() {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const departureDate = new Date(this.value);
-        const arrivalDate = new Date(document.getElementById('arrival').value);
-        // Đảm bảo departure không nhỏ hơn ngày hiện tại và lớn hơn arrival
-        if (departureDate <= arrivalDate || departureDate < today) {
-            const newDeparture = new Date(arrivalDate > today ? arrivalDate : today);
-            newDeparture.setDate(newDeparture.getDate() + 1);
-            this.value = formatDate(newDeparture);
+    document.getElementById('departure').addEventListener('blur', function() {
+        const departureDateStr = $('#departure').val(); // Chuỗi YYYY-MM-DD
+        const arrivalDateStr = $('#arrival').val(); // Chuỗi YYYY-MM-DD
+
+        const departureDate = new Date(departureDateStr);
+        const arrivalDate = new Date(arrivalDateStr);
+
+        if (departureDateStr && arrivalDateStr && !isNaN(departureDate) && !isNaN(arrivalDate) && departureDate <= arrivalDate) {
+            console.log('a');
+            let date = new Date(arrivalDate);
+            date.setDate(date.getDate() + 1);
+            $('#departure').val(date.toISOString().split('T')[0]);
         }
+
         updateDates();
     });
 
