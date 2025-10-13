@@ -9,7 +9,9 @@
             </div>
             <div class="modal-body">
                 <div class="mb-2">
-                    <button class="submit-button-clear-reservation" onclick="getAllotment();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="closeModalMoreFields();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="clearModalMoreFields();"> Clear</button>
+
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -165,5 +167,21 @@
     }
     function closeModalMoreFields(){
         $('#modalMoreFields').modal('hide');
+    }
+    function clearModalMoreFields(){
+        $('#pickedID').val(0);
+        $('#pickUpTransportType').val(0);
+        $('#pickUpStationCode').val('');
+        $('#pickUpCarrierCode').val('');
+        $('#pickUpTransportNo').val('');
+        $('#pickUpDescription').val('');
+
+        $('#dropOffId').val(0);
+        $('#dropOffTransportType').val(0);
+
+        $('#dropOffStationCode').val('');
+        $('#dropOffCarrierCode').val('');
+        $('#dropOffTransportNo').val('');
+        $('#dropOffDescription').val('');
     }
 </script>

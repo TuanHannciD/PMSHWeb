@@ -4379,11 +4379,16 @@ namespace Reservation.Controllers
                     }
                     reservation.Status = 1;
                     ReservationBO.Instance.Update(reservation);
+
+                    ReservationOptionsModel optionsModel = new ReservationOptionsModel();
+                    optionsModel.ReservationID = reservation.ID;
+                    optionsModel.Billing = true;
+                    ReservationOptionsBO.Instance.Insert(optionsModel);
                 }
 
                 pt.CommitTransaction();
 
-                return Json(new { code = 0, msg = "Assign Room was successfully!" });
+                return Json(new { code = 0, msg = "Check In was successfully!" });
 
             }
             catch (Exception ex)
