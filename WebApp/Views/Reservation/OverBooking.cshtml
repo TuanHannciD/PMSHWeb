@@ -180,6 +180,7 @@
     function closeModalNew(){
         $('#modalNewOverBooking').modal('show');
     }
+
     function getBusinessDate() {
         return $.ajax({
             url: '/Reservation/GetBusinessDate',
@@ -276,14 +277,7 @@
 
         });
     }
-    function openModalOverBooking(){
-        getBusinessDate();
-        $('#modalOverBooking').modal('show');
-    }
-    function closeModalOverBooking(){
-        $('#modalOverBooking').modal('hide');
 
-    }
     $('#roomType').on('change', function() {
         // Get the selected value
         var selectedValue = $(this).val();
@@ -353,9 +347,9 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
+                    clearForm();
                     closeModalOverBooking();
                     searchReservation();
-                    clearForm();
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);
