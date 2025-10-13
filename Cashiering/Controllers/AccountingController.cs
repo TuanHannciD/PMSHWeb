@@ -14,9 +14,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static DevExpress.Utils.Filtering.ExcelFilterOptions;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Cashiering.Controllers
@@ -748,6 +750,244 @@ namespace Cashiering.Controllers
 
             }
         }
+        #endregion
+
+
+
+        #region AccountType
+
+        public IActionResult AccountType()
+        {
+
+            List<CurrencyModel> listcurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listcurr;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+
+        [HttpGet]
+        public IActionResult AccountTypeData()
+        {
+            try
+            {
+                DataTable dataTable = _iAccountingService.AccountTypeData();
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  CreditLimit = d["CreditLimit"] != DBNull.Value ? Convert.ToDecimal(d["CreditLimit"]) : 0,
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  StatementMode = d["StatementMode"]?.ToString() ?? "",
+                                  ReminderCycle = d["ReminderCycle"]?.ToString() ?? "",
+                                  DayOfMonth = d["DayOfMonth"] != DBNull.Value ? Convert.ToInt32(d["DayOfMonth"]) : 0,
+                                  Amount = d["Amount"] != DBNull.Value ? Convert.ToDecimal(d["Amount"]) : 0,
+                                  DayOrderThan = d["DayOrderThan"] != DBNull.Value ? Convert.ToInt32(d["DayOrderThan"]) : 0,
+                                  Percentage = d["Percentage"] != DBNull.Value ? Convert.ToDecimal(d["Percentage"]) : 0,
+                                  IncludePayment = d["IncludePayment"] != DBNull.Value ? Convert.ToInt32(d["IncludePayment"]) : 0,
+                                  CreatedDate = d["CreatedDate"] != DBNull.Value ? Convert.ToDateTime(d["CreatedDate"]) : (DateTime?)null,
+                                  UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]) : (DateTime?)null,
+                                  UserInsert = d["UserInsert"]?.ToString() ?? "",
+                                  UserUpdate = d["UserUpdate"]?.ToString() ?? ""
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AccountTypeSave(string typeacc,string descriptionaccty,int creditLimit,string  currencyacc,string statementmode,string remindercycle,int dayofmonth,string check, int dayolderthan  ,int amountorPercentage,string includePayment,string id,string user)
+        {
+            try
+            {
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                ARAccountTypeModel _Model = new ARAccountTypeModel();
+                _Model.Type = typeacc;
+                _Model.Description = descriptionaccty;
+                _Model.CreditLimit = creditLimit;
+                _Model.StatementMode = statementmode;
+                _Model.ReminderCycle = remindercycle;
+                _Model.DayOfMonth = dayofmonth;
+                _Model.DayOrderThan = dayolderthan;
+
+                if (check== "amount")
+                {
+                    _Model.Amount = amountorPercentage;
+                    _Model.Percentage = 0;
+                }
+                else
+                {
+                    _Model.Percentage = amountorPercentage;
+                    _Model.Amount = 0;
+                }
+
+                _Model.CurrencyID = currencyacc;
+                _Model.IncludePayment = includePayment == "1" ? true : false;
+
+                if (!string.IsNullOrEmpty(id) && id != "0")
+                {
+                    _Model.UpdatedBy = user;
+                    _Model.UpdatedDate = businessDateModel[0].BusinessDate;
+                    _Model.ID = int.Parse(id);
+                    ARAccountTypeBO.Instance.Update(_Model);
+              
+                }
+                else
+                {
+                    _Model.CreatedBy = user;
+                    _Model.UpdatedBy = user;
+                    _Model.CreatedDate = businessDateModel[0].BusinessDate;
+                    _Model.UpdatedDate = _Model.CreatedDate;
+                    ARAccountTypeBO.Instance.Insert(_Model);
+                }
+
+                return Json(new { success = true, message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AccountTypeDelete( int id)
+        {
+            try
+            {
+                ARAccountTypeBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        
+        #region ARAgingLevels
+
+        public IActionResult ARAgingLevels()
+        {
+            List<ARAgingLevelsModel> ARAgingLevelsList = PropertyUtils.ConvertToList<ARAgingLevelsModel>(ARAgingLevelsBO.Instance.FindAll());
+            ViewBag.ARAgingLevels = ARAgingLevelsList;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpPost]
+        public IActionResult ARAgingLevelsSave(string level1, string level2, string level3, string level4, string level5,string user)
+        {
+            try
+            {
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+                var levels = new List<string> { level1, level2, level3, level4, level5 };
+
+                for (int i = 1; i <= 5; i++)
+                {
+                    string value = levels[i - 1];
+
+                    // kiểm tra phải là số
+                    if (!int.TryParse(value, out int number))
+                    {
+                        return BadRequest(new { success = false, message = $"Day of Levels{i} must be number" });
+                    }
+                    if (number == 0)
+                    {
+                        return BadRequest(new { success = false, message = $"Day of Levels{i} cannot be 0" });
+                    }
+
+                    // Kiểm tra DB đã có record Levels = i chưa
+                    DataTable dt = TextUtils.Select("SELECT * FROM ARAgingLevels WHERE Levels='" + i + "'");
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        // Update
+                        ARAgingLevelsModel model = (ARAgingLevelsModel)ARAgingLevelsBO.Instance.FindByPrimaryKey(Convert.ToInt32(dt.Rows[0]["ID"].ToString()));
+
+                        model.AgingValue = number;
+                        model.UpdatedDate = businessDateModel[0].BusinessDate; ;
+                        model.UpdatedBy = user;
+
+                        ARAgingLevelsBO.Instance.Update(model);
+                    }
+                    else
+                    {
+                        // Insert
+                        ARAgingLevelsModel model = new ARAgingLevelsModel
+                        {
+                            Levels = i.ToString(),
+                            AgingValue = number,
+                            Description = "",
+                            CreatedDate = businessDateModel[0].BusinessDate,
+                            UpdatedDate = businessDateModel[0].BusinessDate,
+                            CreatedBy = user,
+                            UpdatedBy = user
+                        };
+
+                        ARAgingLevelsBO.Instance.Insert(model);
+                    }
+                }
+
+                return Json(new { success = true, message = "Save success!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        #endregion
+
+        #region AROpening
+
+
+        public IActionResult AROpening()
+        {
+            List<CurrencyModel> listcurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listcurr;uppp
+
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+
+        [HttpGet]
+        public IActionResult AROpeningData()
+        {
+            try
+            {
+                DataTable dataTable = _iAccountingService.AROpeningData();
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  ARID = d["ARID"]?.ToString() ?? "",
+                                  AccountName = d["AccountName"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "",
+                                  AccountNo = d["AccountNo"]?.ToString() ?? "",
+                                  City = d["City"]?.ToString() ?? "",
+                                  Balance = d["Balance"]?.ToString() ?? "",
+                                  ContactName = d["ContactName"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"]?.ToString() ?? "",
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? ""
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion
     }
 }

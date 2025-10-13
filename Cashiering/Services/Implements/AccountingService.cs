@@ -129,5 +129,44 @@ namespace Cashiering.Services.Implements
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
         }
+        public DataTable AccountTypeData()
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                   
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spSearchARAccountType", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable AROpeningData()
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spSearchAROldsBalances", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }

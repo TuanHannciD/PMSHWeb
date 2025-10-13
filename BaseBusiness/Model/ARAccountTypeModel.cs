@@ -17,6 +17,7 @@ namespace BaseBusiness.Model
         public string StatementMode { get;set; }
         public string ReminderCycle { get; set; }
         public int DayOfMonth { get; set; }
+        public int DayOrderThan { get; set; }
         public decimal Amount { get; set; }
         public decimal Percentage { get; set; }
         public bool IncludePayment { get; set; }

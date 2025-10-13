@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Data.SqlClient;
 using DevExpress.ClipboardSource.SpreadsheetML;
 using Cashiering.Commons.Helpers;
+using DevExpress.XtraReports.UI;
 
 namespace Cashiering.Controllers
 {
@@ -53,6 +54,7 @@ namespace Cashiering.Controllers
             ViewBag.TransactionsList = trans;
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }
+
         [HttpGet]
         public IActionResult GetPostingJournal(
             string cashierNo,
@@ -973,6 +975,106 @@ namespace Cashiering.Controllers
             }
         }
 
+        #region ExchangeCurrencyReport
+        public IActionResult ExchangeCurrencyReport()
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+
+            List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzo;
+            List<UsersModel> listus = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listus;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+
+        [HttpGet]
+        public IActionResult ExchangeCurrencyReportData(DateTime fromDate,string cachier,string zonecode)
+        {
+            try
+            {
+                
+
+                DataTable dataTable = _iCashieringService.ExchangeCurrencyReportData(fromDate, cachier, zonecode);
+                // Nếu có dữ liệu, tạo report
+                var report = new Reports.RptExchangeCurrencyByCashier();
+                report.DataSource = dataTable;
+
+                // 👉 Lấy giá trị CashierName đầu tiên trong DataTable để gán vào nhãn trong report
+                if (dataTable.Rows.Count > 0)
+                {
+                    string cashierName = dataTable.Rows[0]["CashierName"]?.ToString() ?? "";
+                    report.Parameters["CashierName"].Value = cashierName;  // nếu bạn có Parameter tên CashierName
+                    report.Parameters["TransactionDate"].Value = dataTable.Rows[0]["TransactionDate"]?.ToString() ?? "";
+                    report.Parameters["ShiftID"].Value = dataTable.Rows[0]["ShiftID"]?.ToString() ?? "";
+                    report.Parameters["LogoutTime"].Value = dataTable.Rows[0]["LogoutTime"]?.ToString() ?? "";
+                    report.Parameters["LoginTime"].Value = dataTable.Rows[0]["LoginTime"]?.ToString() ?? "";
+                }
+                using (var ms = new MemoryStream())
+                {
+                    report.ExportToPdf(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    // Chuyển dữ liệu PDF thành base64
+                    string base64String = Convert.ToBase64String(ms.ToArray());
+                    return Json(new { pdfBase64 = $"data:application/pdf;base64,{base64String}" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region GetExchangeCurrencyPrint
+        [HttpGet]
+        public IActionResult ExchangeCurrencyPrint(string id)
+        {
+            try
+            {
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                string bsd = $"ngày {businessDateModel[0].BusinessDate:dd} tháng {businessDateModel[0].BusinessDate:MM} năm {businessDateModel[0].BusinessDate:yyyy}";
+
+
+                DataTable dataTable = _iCashieringService.ExchangeCurrencyPrint(id);
+                // Nếu có dữ liệu, tạo report
+                var report = new Reports.RptExchangeCurrencyPrint();
+                report.DataSource = dataTable;
+
+                // Format hiển thị cho các control trong report
+                (report.FindControl("xrTableCellAmount", true) as XRTableCell).TextFormatString = "{0:#,0}";
+                (report.FindControl("xrTableCellExchangeRate", true) as XRTableCell).TextFormatString = "{0:#,0}";
+                (report.FindControl("xrTableCellAmountInVND", true) as XRTableCell).TextFormatString = "{0:#,0}";
+                (report.FindControl("xrTableCellAmountInVNDTotal", true) as XRTableCell).TextFormatString = "{0:#,0}";
+
+                // 👉 Lấy giá trị CashierName đầu tiên trong DataTable để gán vào nhãn trong report
+                if (dataTable.Rows.Count > 0)
+                {
+                    string InvoiceNo = dataTable.Rows[0]["InvoiceNo"]?.ToString() ?? "";
+                    report.Parameters["InvoiceNo"].Value = InvoiceNo;  // nếu bạn có Parameter tên CashierName
+                    report.Parameters["Account"].Value = dataTable.Rows[0]["Account"]?.ToString() ?? "";
+                    report.Parameters["PassPort"].Value = dataTable.Rows[0]["PassPort"]?.ToString() ?? "";
+                    report.Parameters["RoomNo"].Value = dataTable.Rows[0]["RoomNo"]?.ToString() ?? "";
+                    report.Parameters["Address"].Value = dataTable.Rows[0]["Address"]?.ToString() ?? "";
+                    report.Parameters["Bunisessdate"].Value = bsd;
+                }
+                using (var ms = new MemoryStream())
+                {
+                    report.ExportToPdf(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    // Chuyển dữ liệu PDF thành base64
+                    string base64String = Convert.ToBase64String(ms.ToArray());
+                    return Json(new { pdfBase64 = $"data:application/pdf;base64,{base64String}" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
     }
 }
 
