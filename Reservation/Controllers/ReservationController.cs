@@ -2292,10 +2292,23 @@ namespace Reservation.Controllers
                 pt.BeginTransaction();
                 string url = "";
                 ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(id);
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(reservation.ProfileIndividualId);
+
                 XtraReport report = new WebApp.Templates.RegistrationCard.V_RegistrationCard();
                 report.Parameters["ConfirmationNo"].Value = reservation.ConfirmationNo;
-                report.Parameters["ArrivalDate"].Value = reservation.ArrivalDate.ToString();
-                report.Parameters["DepartureDate"].Value = reservation.DepartureDate.ToString();
+                report.Parameters["ArrivalDate"].Value = reservation.ArrivalDate.ToString().Split(" ")[0];
+                report.Parameters["DepartureDate"].Value = reservation.DepartureDate.ToString().Split(" ")[0];
+                report.Parameters["ArrivalTime"].Value = reservation.Eta.ToString();
+                report.Parameters["DepartureTime"].Value = reservation.Etd.ToString();
+                report.Parameters["RoomType"].Value = reservation.RoomType;
+                report.Parameters["RoomNo"].Value = reservation.RoomNo;
+                report.Parameters["Account"].Value = reservation.LastName;
+                report.Parameters["National"].Value = reservation.Language;
+                report.Parameters["Dob"].Value = profile.DateOfBirth.ToString();
+                report.Parameters["Cccd"].Value = profile.IdentityCard == "" ? profile.PassPort : profile.IdentityCard;
+                report.Parameters["ContactInfo"].Value = $"{profile.HandPhone} - {profile.Email} - {profile.Address}";
+                report.Parameters["Booker"].Value = reservation.BookerName;
+
                 report.CreateDocument();
 
                 using (MemoryStream msPdf = new MemoryStream())
