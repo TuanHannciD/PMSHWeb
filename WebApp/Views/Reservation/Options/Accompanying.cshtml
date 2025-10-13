@@ -11,6 +11,8 @@
                 <div class="">
                     <button class="submit-button-clear-reservation" id="attach" onclick="AttachAccompanying();"> Attach</button>
                     <button class="submit-button-clear-reservation" id="detach" onclick="detach()">Detach</button>
+                    <button class="submit-button-clear-reservation" id="detach" onclick="openModalViewProfile()">Profile</button>
+
                     <button class="submit-button-clear-reservation" onclick="closeModalAccompanying();"> Close</button>
                 </div>
                 <div class="form-group-new-reservation col-md-6 mt-2">
@@ -96,6 +98,7 @@
     </div>
 </div>
 <script>
+
     function openModalAccompanying(){
         if (idReservation === 0) {
             showToast('Error', 'Please choose booking', false);
@@ -106,6 +109,7 @@
          $('#modalAccompanying').modal('show');
     }
     function closeModalAccompanying(){
+        clearProfileAccompanying();
         $('#clearProfileAccompanying').hide();
          $('#modalAccompanying').modal('hide');
     }
@@ -194,6 +198,8 @@
 
 
                 { dataField: "ID", caption: "ID",  visible: false},
+                { dataField: "ProfileID", caption: "ProfileID",  visible: false},
+
                 { dataField: "Account", caption: "Name"  },
                 { dataField: "City", caption: "City"},
                 { dataField: "DateOfBirth", caption: "Birthday"},
@@ -217,7 +223,7 @@
                 mode: "single" // Allows only one row to be selected at a time
             },
             onRowClick: function(e) {
-                profileID = e.data.ID;
+                profileID = e.data.ProfileID;
                 $('#detach').show();
             }
         });
