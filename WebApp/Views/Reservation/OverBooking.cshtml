@@ -194,7 +194,6 @@
                 $('#fromDate').val(result.split('T')[0]);
                 $('#fromDateNew').val(result.split('T')[0]);
                 $('#toDateNew').val(result.split('T')[0]);
-
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -204,6 +203,7 @@
         });
     }
     function searchReservation() {
+
         $("#loadingSpinnerForm").show();
 
         $.ajax({
@@ -216,6 +216,7 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
+     
                 listData = result;
                 initializeDataGridSearch(result);
             },
