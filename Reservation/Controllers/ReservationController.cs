@@ -4772,6 +4772,46 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
+
+        [HttpPost]
+        public ActionResult WaitListAcceptRes()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                WaitListModel waitList = (WaitListModel)WaitListBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["waitListID"].ToString()));
+                if(waitList == null || waitList.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Could not find wait list. Please another waitlist or refresh " });
+
+                }
+                ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(waitList.ReservationID);
+                if (rsv == null || rsv.ID == 0)
+                {
+                    return Json(new { code = 1, msg = "Could not find reservation in this waitlist " });
+
+                }
+                rsv.Status = 0;
+                ReservationBO.Instance.Update(rsv);
+
+                WaitListBO.Instance.Delete(waitList.ID);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "New wait list was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
         #endregion
 
         #region DatVP __ OverBooking: Search
