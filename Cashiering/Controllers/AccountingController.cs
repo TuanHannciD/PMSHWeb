@@ -951,7 +951,7 @@ namespace Cashiering.Controllers
         public IActionResult AROpening()
         {
             List<CurrencyModel> listcurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
-            ViewBag.CurrencyList = listcurr;uppp
+            ViewBag.CurrencyList = listcurr;
 
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }
