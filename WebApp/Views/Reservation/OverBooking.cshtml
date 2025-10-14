@@ -178,7 +178,7 @@
         $('#modalNewOverBooking').modal('show');
     }
     function closeModalNew(){
-        $('#modalNewOverBooking').modal('show');
+        $('#modalNewOverBooking').modal('hide');
     }
 
     function getBusinessDate() {
@@ -349,7 +349,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     clearForm();
-                    closeModalOverBooking();
+                    closeModalNew();
                     searchReservation();
                     showToast('Success', data.msg, true);
                 } else {
