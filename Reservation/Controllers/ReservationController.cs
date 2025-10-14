@@ -5,7 +5,10 @@ using DevExpress.Data.Filtering.Helpers;
 using DevExpress.Web.Internal;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Import.Doc;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -46,12 +49,14 @@ namespace Reservation.Controllers
         private readonly IMessageService _iMessageService;
         private readonly IShareService _iShareService;
         private readonly IGroupAdminService _iGroupAdminService;
+        private readonly IWebHostEnvironment _environment;
         private readonly string _secretKey;
         private readonly string _iv;
         public ReservationController(ILogger<ReservationController> logger,
                 IMemoryCache cache, IConfiguration configuration, IReservationService iReservationService,IFolioDetailService folioDetailService,
                 IDepositService iDepositService, IRoutingService iRoutingService, IGroupReservationService iGroupReservationService,
-                IMessageService iMessageService, IShareService iShareService,IGroupAdminService iGroupAdminService)
+                IMessageService iMessageService, IShareService iShareService,IGroupAdminService iGroupAdminService
+            , IWebHostEnvironment environment)
         {
             _secretKey = configuration["Encryption:Key"] ?? throw new ArgumentNullException("Encryption:Key is missing in configuration");
             _iv = configuration["Encryption:IV"] ?? throw new ArgumentNullException("Encryption:IV is missing in configuration");
@@ -67,6 +72,7 @@ namespace Reservation.Controllers
             _iMessageService = iMessageService;
             _iShareService = iShareService;
             _iGroupAdminService = iGroupAdminService;
+            _environment = environment;
         }
         [HttpPost]
         public IActionResult EncryptId(int id)
@@ -5457,6 +5463,158 @@ namespace Reservation.Controllers
             {
                 pt.CloseConnection();
 
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Confirmation letter
+        [HttpGet]
+        public async Task<IActionResult> ReadDoc(int id)
+        {
+            try
+            {
+                // Kiểm tra ID hợp lệ
+                if (id <= 0)
+                {
+                    return Json(new { error = "ID không hợp lệ." });
+                }
+
+                // Đường dẫn tệp gốc
+                string filePath = Path.Combine(_environment.WebRootPath, "templates", "confirmation_letter.docx");
+
+                // Kiểm tra sự tồn tại của tệp gốc
+                if (!System.IO.File.Exists(filePath))
+                {
+                    return Json(new { error = $"Tệp gốc không tồn tại tại: {filePath}" });
+                }
+
+                // Lấy thông tin reservation
+                ReservationModel reservationModel = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(id);
+                if (reservationModel == null)
+                {
+                    return Json(new { error = "Không tìm thấy reservation với ID đã cung cấp." });
+                }
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(reservationModel.ProfileIndividualId);
+                // Tạo thư mục tạm nếu chưa tồn tại
+                string tempFolder = Path.Combine(_environment.WebRootPath, "templates");
+                if (!Directory.Exists(tempFolder))
+                {
+                    Directory.CreateDirectory(tempFolder);
+                }
+
+                // Tạo tên tệp tạm duy nhất
+                string tempFileName = $"confirmation_letter_{Guid.NewGuid()}.docx";
+                string tempFilePath = Path.Combine(tempFolder, tempFileName);
+
+                // Sao chép tệp gốc sang tệp tạm
+                try
+                {
+                    System.IO.File.Copy(filePath, tempFilePath, true);
+                }
+                catch (IOException ex)
+                {
+                    return Json(new { error = $"Lỗi khi sao chép tệp: {ex.Message}" });
+                }
+
+                // Tạo từ điển các placeholder và giá trị thay thế
+                var replacements = new Dictionary<string, string>
+                {
+                    { "«Export.Company»", profile.Company ?? "" },
+                    { "«Export.LastName»", reservationModel.LastName ?? "" },
+                    { "«Export.SystemDate»", DateTime.Now.ToString() },
+                    { "«Export.HandPhone»", profile.HandPhone ?? "" },
+                    { "«Export.Email»", profile.Email ?? "" },
+
+                    { "«Export.ConfirmationNo»", reservationModel.ConfirmationNo ?? "" },
+                    { "«Export.RoomType»", reservationModel.RoomType ?? "" },
+                    { "«Export.ArrivalDate»", reservationModel.ArrivalDate.ToString("dd/MM/yyyy") ?? "" },
+                    { "«Export.DepartureDate»", reservationModel.DepartureDate.ToString("dd/MM/yyyy") ?? "" },
+                    { "«Export.RateNet»", reservationModel.RateAfterTax.ToString() ?? "" }
+
+                };
+
+                // Thay thế các placeholder trong tài liệu
+                try
+                {
+                    ReplacePlaceholdersInWordDocument(tempFilePath, replacements);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = $"Lỗi khi thay thế văn bản: {ex.Message}" });
+                }
+
+                // Đọc tệp đã chỉnh sửa vào luồng
+                byte[] fileBytes;
+                try
+                {
+                    fileBytes = System.IO.File.ReadAllBytes(tempFilePath);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = $"Lỗi khi đọc tệp tạm: {ex.Message}" });
+                }
+                finally
+                {
+                    // Xóa tệp tạm
+                    try
+                    {
+                        if (System.IO.File.Exists(tempFilePath))
+                        {
+                            System.IO.File.Delete(tempFilePath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Lỗi khi xóa tệp tạm: {ex.Message}");
+                    }
+                }
+
+                // Trả về tệp dưới dạng tải xuống
+                return File(fileBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"confirmation_letter_{id}.docx");
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = $"Lỗi xử lý: {ex.Message}" });
+            }
+        }
+
+        private void ReplacePlaceholdersInWordDocument(string filePath, Dictionary<string, string> replacements)
+        {
+            try
+            {
+                // Mở tài liệu Word
+                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, true))
+                {
+                    // Duyệt qua tất cả các phần tử văn bản trong tài liệu
+                    foreach (var text in wordDoc.MainDocumentPart.Document.Descendants<Text>())
+                    {
+                        string currentText = text.Text;
+                        bool modified = false;
+
+                        // Thay thế từng placeholder
+                        foreach (var replacement in replacements)
+                        {
+                            if (currentText.Contains(replacement.Key))
+                            {
+                                currentText = currentText.Replace(replacement.Key, replacement.Value);
+                                modified = true;
+                            }
+                        }
+
+                        // Cập nhật văn bản nếu có thay đổi
+                        if (modified)
+                        {
+                            text.Text = currentText;
+                        }
+                    }
+
+                    // Lưu thay đổi
+                    wordDoc.MainDocumentPart.Document.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi thay thế văn bản trong tài liệu: {ex.Message}");
             }
         }
         #endregion

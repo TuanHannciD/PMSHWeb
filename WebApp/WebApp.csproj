@@ -26,4 +26,8 @@
     <ProjectReference Include="..\User\User.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\templates\" />
+  </ItemGroup>
+
 </Project>
