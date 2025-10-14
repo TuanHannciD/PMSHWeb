@@ -25,7 +25,8 @@
 <script>
 
     function openModalShilftLogin(){
-        const userName = JSON.parse(localStorage.getItem("userName"));
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        console.log(userName);
         $('#crashierNoInput').val(userName);
         $('#modalShiftLogin').modal('show');
     }
