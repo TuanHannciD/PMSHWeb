@@ -21,7 +21,7 @@
 </div>
 <script>
     function openModalCheckOutAll(type) {
-        if ($('#searchType').val() != 1) {
+        if (reservationStatus != 1 && reservationStatus != 6) {
             showToast('Error', "Please just choose booking has status CHECKED IN or DUE OUT", false);
             return;
         }
