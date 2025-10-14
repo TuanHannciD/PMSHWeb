@@ -17,19 +17,16 @@
                 <button type="button" class="btn-close" onclick="closseModalSplit()"></button>
             </div>
             <div class="modal-body">
-                <div class="rs-content-box row" id="infoBox" style="margin:0 2px;">
-                    <div class="rs-column">
-                        <div class="rs-section">
-                            <ul class="rs-menu-list">
-                                <li><a id="splitBtn" class="rs-bold" onclick="splitReservation();">Split</a></li>
-                                <li><a id="splitAllBtn" class="rs-bold" onclick="splitAllReservation();">Split All</a></li>
-                                <li><a class="rs-bold" onclick="splitSpecialReservation();">Split Special</a></li>
-                                <li><a id="splitAllSpecialBtn" class="rs-bold" onclick="splitAllSpecialReservation();">Split All Special</a></li>
-                                <li><a class="rs-bold" onclick="splitAllRoomSharerReservation();">Split All RoomSharer for all main guests</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="function-menu mui-card">
+
+                    <a id="splitBtn" onclick="splitReservation();">Split</a>
+                    <a id="splitAllBtn"  onclick="splitAllReservation();">Split All</a>
+                    <a onclick="splitSpecialReservation();">Split Special</a>
+                    <a id="splitAllSpecialBtn" onclick="splitAllSpecialReservation();">Split All Special</a>
+                    <a  onclick="splitAllRoomSharerReservation();">Split All RoomSharer for all main guests</a>
+
                 </div>
+
                 <div class="mui-card mt-2">
                     <div id="gridContainerSplit" class="mt-2 gridContainer"></div>
                 </div>
@@ -84,7 +81,6 @@
         const grid = $("#gridContainerSplit").dxDataGrid("instance");
        checkedIds = grid.getVisibleRows()
         .map(row => row.data)
-        .filter(row => row._checked === true)
         .map(row => row.ID); // Lấy ID
         openConfirmSplit('You are about to split all room sharer for this confimation? Do you want to continue?');
         type = 5;
@@ -108,7 +104,7 @@
         }
     }
 
-    const checkedIds = [];
+    let checkedIds = [];
 
     var idReservationSplit = 0;
     var listReservationSplitID = [];

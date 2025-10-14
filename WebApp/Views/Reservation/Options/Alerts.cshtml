@@ -39,7 +39,7 @@
                         <label>Code</label>
                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
                             <input id="codeAlertNew" class="col-md-10"/>
-                            <button id="btnSearchAlert" onclick="openModalSearchAlert()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button id="btnSearchAlert" onclick="openModalAlertSetUp()" class="col-md-2"><i class="fa-solid fa-arrow-down"></i></button>
 
                         </div>
                     </div>
@@ -88,7 +88,27 @@
     </div>
 </div>
 
+<div class="modal fade modal" id="modalAlertSetUp" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border:1px solid #bcbcbc">
 
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Alert Setup</h5>
+                <button type="button" class="btn-close" onclick="closeModalAlertSetUp();"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <button class="submit-button-clear-reservation" onclick="SaveAlert();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="closeModalAlertSetUp();">Close</button>
+                </div>
+                <div class="mui-card mt-2">
+                    <div id="gridContainerAlertsSetUp" class="mt-2 gridContainer"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     
     function openModalNewAlert(){
@@ -120,44 +140,7 @@
         $('#btnEditAlert').show();
         $('#btnDeleteAlert').show();
     }
-    function GetAlertSetUp() {
-        $.ajax({
-            url: '/Reservation/GetSetUpAlert',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                // Clear existing options
-                $('#codeAlertNew').empty();
 
-                // Add a default option (optional)
-                $('#codeAlertNew').append('<option value="">Select an alert</option>');
-
-                // Populate select with options
-                $.each(result, function (index, item) {
-                    $('#codeAlertNew').append(
-                        $('<option></option>').val(item.code).text(item.code)
-                    );
-                });
-
-                // Event handler for select change
-                $('#codeAlertNew').on('change', function () {
-                    var selectedId = $(this).val();
-                    var selectedItem = result.find(function (item) {
-                        return item.code == selectedId;
-                    });
-                    // Update description input
-                    $('#descriptionAlert').val(selectedItem ? selectedItem.description : '');
-                });
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                }
-            }
-        });
-    }
     function GetAlertsByReservationID() {
         
         $.ajax({
@@ -215,7 +198,6 @@
             }
         });
     }
-
     function SaveAlert() {
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
@@ -257,5 +239,65 @@
          $('#areaNewAlert').val('Reservation');
          $('#descriptionAlert').val('');
          $('#warningDayAlert').val('0');
+    }
+
+    function openModalAlertSetUp(){
+        GetAlertSetUp();
+        $('#modalAlertSetUp').modal('show');
+    }
+    function closeModalAlertSetUp(){
+        $('#modalAlertSetUp').modal('hide');
+    }
+    function GetAlertSetUp() {
+        $.ajax({
+            url: '/Reservation/GetSetUpAlert',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridAlertsSetUp(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    function initializeDataGridAlertsSetUp(data) {
+        $("#gridContainerAlertsSetUp").dxDataGrid({
+
+        dataSource: data, allowColumnResizing: true,
+            columns: [
+                { dataField: "id", caption: "ID",  visible: false},
+                { dataField: "code", caption: "Code"},
+                { dataField: "description", caption: "Description"},
+
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            onRowDblClick: function(e) {
+                $('#codeAlertNew').val(e.data.code);
+                closeModalAlertSetUp();
+            }
+        });
     }
 </script>

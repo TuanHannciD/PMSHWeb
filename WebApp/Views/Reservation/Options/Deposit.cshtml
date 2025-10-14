@@ -12,7 +12,7 @@
                     <button class="submit-button-clear-reservation"> Delete</button>
                     <button class="submit-button-clear-reservation" onclick="openModalDepositPayment();"> Payment</button>
                     <button class="submit-button-clear-reservation">Apply</button>
-                    <button class="submit-button-clear-reservation"> Receipct</button>
+                    <button class="submit-button-clear-reservation" onclick="PrinReceipt();"> Receipct</button>
                     <button class="submit-button-clear-reservation"> Close</button>
                 </div>
                 <div class="mui-divider"></div>
@@ -38,53 +38,53 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="SaveDepositRequest();"><i class="fa-solid fa-file-circle-check"></i> OK</button>
-                    <button class="mui-button mui-button-clear"><i class="fa-solid fa-file"></i>Close</button>
+                    <button class="submit-button-clear-reservation" onclick="SaveDepositRequest();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="closeDepositRequest();">Close</button>
                 </div>
 
-                <div class="mt-2 row bg-light border rounded" style="margin:0 1px">
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Type</label>
-                        <select type="text" class="form-control col-md-8" id="typeDepositRequest">
+                <div class="mt-2 row">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Type</label>
+                        <select id="typeDepositRequest">
                             <option value="0">Room</option>
                             <option value="1">Package</option>
                             <option value="2" selected>All</option>
 
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Deposit Rule</label>
-                        <select type="text" class="form-control col-md-8" id="ruleDepositRequest">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Deposit Rule</label>
+                        <select  id="ruleDepositRequest">
 
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2 row">
+                    <div class="col-md-6 form-group-new-reservation row">
                         
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Description</label>
-                        <input type="text" class="form-control col-md-8" id="descriptionDepositRequest">
+                        <label >Description</label>
+                        <input type="text" id="descriptionDepositRequest">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Percentage</label>
-                        <input type="text" class="form-control col-md-8" id="percentageDepositRequest" value="0">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Percentage</label>
+                        <input type="text" id="percentageDepositRequest" value="0">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Deposit Amount</label>
-                        <input type="text" class="form-control col-md-8" id="amountDepositRequest">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Deposit Amount</label>
+                        <input type="text"  id="amountDepositRequest">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Due Date</label>
-                        <input type="date" class="form-control col-md-8" id="dueDateDepositRequest">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Due Date</label>
+                        <input type="date" id="dueDateDepositRequest">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Currency</label>
-                        <select type="text" class="form-control col-md-8" id="currencyDepositRequest">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Currency</label>
+                        <select  id="currencyDepositRequest">
                             <option value="VND">VND</option>
 
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Comment</label>
-                        <input type="text" class="form-control col-md-8" id="commentDepositRequest">
+                    <div class="col-md-6 form-group-new-reservation row">
+                        <label >Comment</label>
+                        <input type="text" id="commentDepositRequest">
                     </div>
                 </div>
             </div>
@@ -103,46 +103,46 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="SaveDepositPayment();"><i class="fa-solid fa-file-circle-check"></i> OK</button>
-                    <button class="mui-button mui-button-clear" onclick="closeModalDepositPayment();"><i class="fa-solid fa-file"></i>Close</button>
+                    <button class="submit-button-clear-reservation" onclick="SaveDepositPayment();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="closeModalDepositPayment();">Close</button>
                 </div>
 
-                <div class="mt-2 row bg-light border rounded" style="margin:0 1px">
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Trans Type</label>
-                        <select type="text" class="form-control col-md-8" id="transactionDepositPayment">
+                <div class="mt-2 row"  style="justify-content:space-between">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label  >Trans Type</label>
+                        <select id="transactionDepositPayment">
 
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Currency</label>
-                        <select type="text" class="form-control col-md-8" id="currencyDepositPayment">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label   >Currency</label>
+                        <select   id="currencyDepositPayment">
                             <option value="VND">VND</option>
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Amount</label>
-                        <input type="number" class="form-control col-md-8" id="amountDepositPayment">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label >Amount</label>
+                        <input  id="amountDepositPayment">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Reference</label>
-                        <input type="text" class="form-control col-md-8" id="referenceDepositPayment">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label >Reference</label>
+                        <input  id="referenceDepositPayment">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Supplement</label>
-                        <input type="text" class="form-control col-md-8" id="supplementDepositPayment">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label >Supplement</label>
+                        <input  id="supplementDepositPayment">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Credit Card No</label>
-                        <input type="text" class="form-control col-md-8" id="creditCardNoDepositPayment">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label >Credit Card No</label>
+                        <input  id="creditCardNoDepositPayment">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Exp Date</label>
-                        <input type="date" class="form-control col-md-8" id="dateDepositPayment">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label >Exp Date</label>
+                        <input type="date"  id="dateDepositPayment">
                     </div>
-                    <div class="col-md-6 mb-2 row">
-                        <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:right">Reservation Type</label>
-                        <select type="text" class="form-control col-md-8" id="reservationTypeDepositPayment" asp-items="ViewBag.cboReservationType">
+                    <div class="col-md-5 form-group-new-reservation row">
+                        <label >Reservation Type</label>
+                        <select  id="reservationTypeDepositPayment" asp-items="ViewBag.cboReservationType">
                         </select>
                     </div>
                 </div>
@@ -223,6 +223,7 @@
             }
         });
     }
+    var depoistPaymentID = 0;
     function initializeDataGridDepositPayment(data) {
         var columnWidth = 150;
         $("#gridContainerDepositPayment").dxDataGrid({
@@ -258,6 +259,7 @@
                 mode: "single"
             },
             onRowClick: function(e) {
+                depoistPaymentID = e.data.paymentID;
             }
         });
     }
@@ -414,7 +416,6 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
-                    clearDepositRequest();
                     GetDepositRequestByReservationID(idReservation);
                     showToast('Success', data.msg, true);
                 } else {
@@ -429,6 +430,7 @@
 
     }
     function openModalDepositPayment(){
+        $('#referenceDepositPayment').val(`DEPOSIT - Conf.No: ${confirmationNo}`);
         getTransactionPayment();
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#dateDepositPayment').val(formattedDate);
@@ -441,7 +443,17 @@
     function closeModalDepositPayment(){
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#dateDepositPayment').val(formattedDate);
-                $('#modalDepositPayment').modal('hide');
+        $('#modalDepositPayment').modal('hide');
+        clearDepositPayment();
+
+    }
+    function clearDepositPayment(){
+        $('#transactionDepositPayment').val(0);
+        $('#amountDepositPayment').val('');
+        $('#referenceDepositPayment').val('');
+        $('#supplementDepositPayment').val('');
+        $('#creditCardNoDepositPayment').val('');
+        $('#reservationTypeDepositPayment').val(0);
 
     }
     function getTransactionPayment(){
@@ -499,6 +511,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     clearDepositRequest();
+                    closeModalDepositPayment();
                     GetDepositRequestByReservationID(idReservation);
                     showToast('Success', data.msg, true);
                 } else {
@@ -511,5 +524,43 @@
             }
         });
 
+    }
+    function PrinReceipt() {
+        $.ajax({
+            url: '/Reservation/PrintReceipt',
+            type: 'POST',
+            data:{
+                id: depoistPaymentID
+            },
+            success: function (data) {
+                try {
+                    // Nếu data có prefix, tách ra phần base64
+                    let base64String = data;
+
+                    // Nếu có tiền tố "data:application/pdf;base64," thì tách ra
+                    if (base64String.startsWith('data:')) {
+                        base64String = base64String.split(',')[1];
+                    }
+
+                    // Giải mã base64
+                    const byteCharacters = atob(base64String);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'application/pdf' });
+                    console.log(blob);
+                    // Tạo URL và mở trong cửa sổ mới
+                    const blobUrl = URL.createObjectURL(blob);
+                    window.open(blobUrl);
+                } catch (e) {
+                    console.error("Base64 decode error:", e);
+                }
+            },
+            error: function (xhr, statusText, err) {
+                console.error("AJAX error:", err);
+            }
+        });
     }
 </script>
