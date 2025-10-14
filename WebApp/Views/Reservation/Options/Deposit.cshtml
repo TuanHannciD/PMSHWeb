@@ -12,7 +12,7 @@
                     <button class="submit-button-clear-reservation"> Delete</button>
                     <button class="submit-button-clear-reservation" onclick="openModalDepositPayment();"> Payment</button>
                     <button class="submit-button-clear-reservation">Apply</button>
-                    <button class="submit-button-clear-reservation"> Receipct</button>
+                    <button class="submit-button-clear-reservation" onclick="PrinReceipt();"> Receipct</button>
                     <button class="submit-button-clear-reservation"> Close</button>
                 </div>
                 <div class="mui-divider"></div>
@@ -223,6 +223,7 @@
             }
         });
     }
+    var depoistPaymentID = 0;
     function initializeDataGridDepositPayment(data) {
         var columnWidth = 150;
         $("#gridContainerDepositPayment").dxDataGrid({
@@ -258,6 +259,7 @@
                 mode: "single"
             },
             onRowClick: function(e) {
+                depoistPaymentID = e.data.paymentID;
             }
         });
     }
@@ -522,5 +524,43 @@
             }
         });
 
+    }
+    function PrinReceipt() {
+        $.ajax({
+            url: '/Reservation/PrintReceipt',
+            type: 'POST',
+            data:{
+                id: depoistPaymentID
+            },
+            success: function (data) {
+                try {
+                    // Nếu data có prefix, tách ra phần base64
+                    let base64String = data;
+
+                    // Nếu có tiền tố "data:application/pdf;base64," thì tách ra
+                    if (base64String.startsWith('data:')) {
+                        base64String = base64String.split(',')[1];
+                    }
+
+                    // Giải mã base64
+                    const byteCharacters = atob(base64String);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'application/pdf' });
+                    console.log(blob);
+                    // Tạo URL và mở trong cửa sổ mới
+                    const blobUrl = URL.createObjectURL(blob);
+                    window.open(blobUrl);
+                } catch (e) {
+                    console.error("Base64 decode error:", e);
+                }
+            },
+            error: function (xhr, statusText, err) {
+                console.error("AJAX error:", err);
+            }
+        });
     }
 </script>

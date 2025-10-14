@@ -168,5 +168,24 @@ namespace Cashiering.Services.Implements
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
         }
+        public DataTable ARTracesData()
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                     new SqlParameter("@ids", ""),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spARSearchTrace", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }

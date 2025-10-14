@@ -155,6 +155,17 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">CASHIERING</a>
                             <div class="dropdown-menu-custom">
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-submenu-toggle">Account Receivable</a>
+                                    <div class="dropdown-submenu-content">
+
+                                        <a asp-area="" asp-controller="Accounting" asp-action="AccountType">Account Type</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="ARAgingLevels">AR Aging Levels</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="AROpening">AR Opening</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Search account receivable</a>
+                                        <a asp-area="" asp-controller="Accounting" asp-action="ARTraces">AR Traces</a>
+                                    </div>
+                                </div>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="PostingJournal">Posting Journal</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="CashierAudit">Cashier Audit</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeRate">Exchange Rate</a>
@@ -167,16 +178,7 @@
                                @*  <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Accounting Search</a> *@
                                 <a asp-area="" asp-controller="Cashiering" asp-action="FolioHistoryView">Folio History View</a>
                                 <a asp-area="" asp-controller="Cashiering" asp-action="ExchangeCurrencyReport">Exchange Currency Report</a>
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-submenu-toggle">Account Receivable</a>
-                                    <div class="dropdown-submenu-content">
-
-                                        <a asp-area="" asp-controller="Accounting" asp-action="AccountType">Account Type</a>
-                                        <a asp-area="" asp-controller="Accounting" asp-action="ARAgingLevels">AR Aging Levels</a>
-                                        <a asp-area="" asp-controller="Accounting" asp-action="AROpening">AR Opening</a>
-                                        <a asp-area="" asp-controller="Accounting" asp-action="AccountingSearch">Search account receivable</a>
-                                    </div>
-                                </div>
+                             
                             </div>
                         </li>
                         <li class="nav-item">

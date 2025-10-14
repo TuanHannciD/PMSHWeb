@@ -205,7 +205,7 @@
                     <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1 text-start">WaitList</a>
                     <a href="#" onclick="openModalTraces();" class="font-semibold col-md-4 mb-1 text-start">Traces</a>
                     <a href="#" onclick="exportExcel();" class="font-semibold col-md-4 mb-1 text-start">Export Excel</a>
-
+                    <a href="#" onclick="LoadConfirmationLetter();" class="font-semibold col-md-4 mb-1 text-start">Confirmation Letter</a>
                     <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1 text-start">Columns</a>
 
 
@@ -932,5 +932,47 @@
     function getSelectedRadio(name) {
         const radio = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
         return radio ? radio.value : null;
+    }
+
+    function LoadConfirmationLetter() {
+        if (!idReservation || idReservation <= 0) {
+            console.error('ID không hợp lệ.');
+            return;
+        }
+
+        return $.ajax({
+            url: '/Reservation/ReadDoc?id=' + idReservation,
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob' // Nhận phản hồi dưới dạng blob để tải tệp
+            },
+            headers: { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() },
+            success: function (data, status, xhr) {
+                // Lấy tên tệp từ header Content-Disposition hoặc sử dụng tên mặc định
+                var filename = xhr.getResponseHeader('Content-Disposition')?.match(/filename="(.+)"/)?.[1] || 'confirmation_letter.docx';
+
+                // Tạo URL tạm thời cho blob
+                var blob = new Blob([data]);
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+
+                // Kích hoạt tải xuống
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Giải phóng URL
+                window.URL.revokeObjectURL(link.href);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    console.error('Lỗi khi tải tài liệu:', err);
+                    alert('Không thể tải tài liệu. Vui lòng thử lại sau.');
+                }
+            }
+        });
     }
 </script>

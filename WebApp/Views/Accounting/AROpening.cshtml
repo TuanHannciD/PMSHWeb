@@ -97,7 +97,10 @@
 <div class="text-center" id="reportTitle" style="font-size: 20px">Account Type</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="">
-        <button id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-thumbs-up"></i> Ok</button>
+   <button id="btnPrint" class="mui-button mui-button-new" style="display: none;">
+    <i class="fa-solid fa-thumbs-up"></i> 
+</button>
+        <button id="btnOkAuto" class="mui-button mui-button-new"><i class="fa-solid fa-thumbs-up"></i> Ok</button>
     </div>
 </div>
 <div class="mui-card">
@@ -113,7 +116,7 @@
 </div>
 
 <script>
-
+    
     $(document).ready(function () {
       $("#btnPrint").trigger("click");
 
@@ -153,7 +156,7 @@
                                 (a.accountName || "").localeCompare(b.accountName || "")
                             );
 
-                console.log(sortedByAccountName);
+        
 
                 // B3: Hiển thị lưới
                 initializeAROpeningGrid(sortedByAccountName);
@@ -167,85 +170,111 @@
             });
         });
         var selectedRowData=null;
-     function initializeAROpeningGrid(data) {
-        $("#gridContainer").dxDataGrid({
-            dataSource: data,
-            showBorders: true,
-            selection: { mode: "single" },
-            paging: { pageSize: 20 },
-            pager: {
-                showPageSizeSelector: true,
-                allowedPageSizes: [20, 50, 100],
-                showInfo: true
+function initializeAROpeningGrid(data) {
+    var currencyList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CurrencyList ?? new List<object>()));
+
+    console.log(currencyList);
+
+    $("#gridContainer").dxDataGrid({
+        dataSource: data,
+        showBorders: true,
+        selection: { mode: "single" },
+        paging: { pageSize: 20 },
+        pager: {
+            showPageSizeSelector: true,
+            allowedPageSizes: [20, 50, 100],
+            showInfo: true
+        },
+        filterRow: { visible: true },
+        columns: [
+            { dataField: "id", caption: "ID", visible: false, allowEditing: false },
+            { dataField: "accountName", caption: "Account Name", width: 220, allowEditing: false },
+            { dataField: "city", caption: "City", width: 120, allowEditing: false },
+            { dataField: "balance", caption: "Balance", width: 120, format: "#,##0.##", allowEditing: false },
+
+            // ✅ Cột duy nhất cho phép chỉnh sửa
+            {
+                dataField: "currencyID",
+                caption: "Currency",
+                width: 140,
+                allowEditing: true, // chỉ cột này có thể sửa
+                lookup: {
+                    dataSource: currencyList,
+                    valueExpr: "ID",
+                    displayExpr: "ID"
+                },
+                setCellValue: function (rowData, value) {
+                    rowData.currencyID = value || null;
+
+                    // ✅ Cập nhật selectedRowData nếu trùng
+                    if (selectedRowData && selectedRowData.id === rowData.id) {
+                        selectedRowData.currencyID = value || null;
+                    }
+
+                    console.log("Updated row:", rowData);
+                    console.log("Selected row after edit:", selectedRowData);
+                }
             },
-            filterRow: { visible: true },
-            columns: [
-                { dataField: "id", caption: "ID", width: 80, visible: false },
-            
-                { dataField: "accountName", caption: "Account Name", width: 220 },
-                 { dataField: "city", caption: "City", width: 120 },
-                { dataField: "balance", caption: "Balance", width: 120, format: "#,##0.##" },
-                { dataField: "currencyID", caption: "Currency", width: 80 },
-               { dataField: "contactName", caption: "Contact Name", width: 220 },
-                { dataField: "type", caption: "Type", width: 80 },
-                 { dataField: "accountNo", caption: "Account No", width: 150 },
-                        { dataField: "createdBy", caption: "Created By", width: 120 },
-                { dataField: "createdDate", caption: "Created Date", dataType: "date", format: "dd/MM/yyyy", width: 120 },
-                              { dataField: "updatedBy", caption: "Updated By", width: 120 },
-                { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy", width: 120 },
-                { dataField: "arid", caption: "ARID", width: 100 }
+
+            { dataField: "contactName", caption: "Contact Name", width: 220, allowEditing: false },
+            { dataField: "type", caption: "Type", width: 80, allowEditing: false },
+            { dataField: "accountNo", caption: "Account No", width: 150, allowEditing: false },
+            { dataField: "createdBy", caption: "Created By", width: 120, allowEditing: false },
+            { dataField: "createdDate", caption: "Created Date", dataType: "date", format: "dd/MM/yyyy", width: 120, allowEditing: false },
+            { dataField: "updatedBy", caption: "Updated By", width: 120, allowEditing: false },
+            { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy", width: 120, allowEditing: false },
+            { dataField: "arid", caption: "ARID", width: 100, allowEditing: false }
+        ],
+
+        editing: {
+            mode: "cell",
+            allowUpdating: true,
+            allowAdding: false,
+            allowDeleting: false
+        },
+
+        scrolling: {
+            mode: "standard",
+            showScrollbar: "always",
+            scrollByContent: true
+        },
+        pager: {
+            visible: true,
+            allowedPageSizes: [50, 100, 'all'],
+            showPageSizeSelector: true,
+            showInfo: true,
+            showNavigationButtons: true
+        },
+        onRowClick: function (e) {
+            selectedRowData = e.data;
   
-                
-            ],
-            scrolling: {
-                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
-                    showScrollbar: "always",
-                    scrollByContent: true
-                },
-                paging: {
-                    pageSize: 50
-                },
-                pager: {
-                    visible: true,
-                    allowedPageSizes: [50, 100, 'all'],
-                    showPageSizeSelector: true,
-                    showInfo: true,
-                    showNavigationButtons: true
-                },
-                    filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            // 🔥 Quan trọng: gán selectedRowData khi click chọn
-             onRowClick: function (e) {
-                selectedRowData = e.data; // 🔥 lấy data của row vừa click
-                console.log("Selected Row (RowClick):", selectedRowData);
-            }
-        });
-     }
+        }
+    });
+}
+
+
 
       $(document).off("click", "#btnOkAuto").on("click", "#btnOkAuto", function () {
-            var values = $("input[name='includeOptionsTurndown']:checked").map(function () {
-                return this.value;
-            }).get();
-
+        
+                    console.log("Selected Row:", selectedRowData);
             $("#loadingSpinner").show();
             $.ajax({
-                url: '/Accounting/AccountTypeSave',
+                url: '/Accounting/AROpeningSave',
                 type: 'POST',
                 data: {
-                       typeacc: $("#typeacc").val(),
-                       descriptionaccty: $("#descriptionaccty").val(),
-                       creditLimit: $("#creditLimit").val(),
-                       currencyacc: $("#currencyacc").val(),
-                          statementmode: $("#statementmode").val(),
-                       remindercycle: $("#remindercycle").val(),
-                        dayofmonth: $("#dayofmonth").val(),
-                        check: values,
-                       dayolderthan: $("#dayolderthan").val(),
-                            amountorPercentage: $("#amountorPercentage").val(),
-                      includePayment:  $("#includeUnallocated").is(":checked"),
-                          id: $("#idcaacountype").val(),
+                    accountName: selectedRowData.accountName,
+                    accountNo: selectedRowData.accountNo,
+                    arid: selectedRowData.arid,
+                    balance: selectedRowData.balance,
+                    city: selectedRowData.city,
+                    contactName: selectedRowData.contactName,
+                    createdBy: selectedRowData.createdBy,
+                    createdDate: selectedRowData.createdDate,
+                    currencyID: selectedRowData.currencyID,
+                    id: selectedRowData.id,
+                    type: selectedRowData.type,
+                    updatedBy: selectedRowData.updatedBy,
+                    updatedDate: selectedRowData.updatedDate,  
                        user: localStorage.getItem("Loginname")
 
                 },
@@ -255,10 +284,9 @@
                 success: function (result) {
                      if (result.success) {
                               showToast('Success', result.message, true);
-                              $('#popupNewAccoutType').fadeOut(200);
-                               $('#overlay').fadeOut(200);
-                                 $("#btnPrint").trigger("click");
-                                  clearAccountTypeForm();
+                               $("#loadingSpinner").hide();
+                                    $("#btnPrint").trigger("click");
+                          
                      } else {
                               showToast('Error', 'Please select a Task Code before saving.', false);
                      }
