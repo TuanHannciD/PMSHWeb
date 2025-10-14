@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -981,6 +982,55 @@ namespace Cashiering.Controllers
                                   UpdatedBy = d["UpdatedBy"]?.ToString() ?? ""
                               }).ToList();
                 return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult AROpeningSave(string accountName, string accountNo, string arid, string balance, string city, string contactName, string createdBy, string createdDate, string currencyID, string   id, string type, string updatedBy, string updatedDate, string user)
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            try
+            {
+                ARAccountReceivableOldBalancesModel model;
+                if (!string.IsNullOrEmpty(id))
+                {
+                    if (currencyID == "")
+                    {
+                        throw new Exception("Currency");
+                    }
+                    model = (ARAccountReceivableOldBalancesModel)ARAccountReceivableOldBalancesBO.Instance.FindByPrimaryKey(int.Parse(id));
+                    model.Amount = Convert.ToDecimal(balance);
+
+                    model.CurrencyID = currencyID;
+                    model.UpdatedBy = user;
+                    model.UpdatedDate = businessDateModel[0].BusinessDate;
+                    ARAccountReceivableOldBalancesBO.Instance.Update(model);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(balance))
+                    {
+                        if (currencyID == "")
+                        {
+                            throw new Exception("Currency");
+                        }
+                        model = new ARAccountReceivableOldBalancesModel();
+                        model.AccountReceivableID = Convert.ToInt32(arid);
+                        model.Amount = Convert.ToDecimal(balance);
+                        model.CurrencyID = currencyID;
+                        model.UpdatedBy = user;
+                        model.UpdatedDate = businessDateModel[0].BusinessDate;
+                        model.CreatedBy = user;
+                        model.CreatedDate = businessDateModel[0].BusinessDate;
+                        ARAccountReceivableOldBalancesBO.Instance.Insert(model);
+                    }
+                }
+                return Json(new { success = true, message = "Data updated!" });
             }
             catch (Exception ex)
             {

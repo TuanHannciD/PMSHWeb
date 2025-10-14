@@ -56,8 +56,11 @@ namespace FrontDesk.Controllers
             {
                 var list = TelephoneBookBO.Instance.FindAll();
                 var result = list.Cast<TelephoneBookModel>().ToList();
+                List<TelephoneBookCategoryModel> tlplist = PropertyUtils.ConvertToList<TelephoneBookCategoryModel>(TelephoneBookCategoryBO.Instance.FindAll());
+                bool hasAllCategory = tlplist.Any(c => c.Name != null && c.Name.Trim() == "--All--");
 
-                if (categoryId.HasValue && categoryId.Value > 0)
+                // Nếu có "--All--" thì hiển thị hết, không lọc
+                if (!hasAllCategory && categoryId.HasValue && categoryId.Value > 0)
                 {
                     result = result.Where(x => x.TelephoneBookCategoryID == categoryId.Value).ToList();
                 }
@@ -176,7 +179,8 @@ namespace FrontDesk.Controllers
                                   code = d["Code"]?.ToString(),
                                   guestName = d["GuestName"]?.ToString(),
                                   checkInDate = d["CheckInDate"]?.ToString(),
-                                  checkOutDate = d["CheckOutDate"]?.ToString()
+                                  checkOutDate = d["CheckOutDate"]?.ToString(),
+                                  newValue = d["NewValue"]?.ToString()
                               }).ToList();
 
                 // Dùng Ok thay vì Json để System.Text.Json serialize theo đúng tên bạn đặt
