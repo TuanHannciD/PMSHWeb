@@ -51,5 +51,6 @@ namespace Cashiering.Services.Interfaces
         DataTable SearchInfoAR(string accountName, string accountNo,string folioNo,string isActive,string folioID);
         DataTable AccountTypeData();
         DataTable AROpeningData();
+        DataTable ARTracesData();
     }
 }
