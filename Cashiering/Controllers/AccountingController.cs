@@ -1039,5 +1039,44 @@ namespace Cashiering.Controllers
         }
 
         #endregion
+
+        #region ARTraces
+        public IActionResult ARTraces()
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
+            return View(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpGet]
+        public IActionResult ARTracesData()
+        {
+            try
+            {
+                DataTable dataTable = _iAccountingService.ARTracesData();
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+                                  TraceText = d["TraceText"]?.ToString() ?? "",
+                                  TraceAt = d["TraceAt"] == DBNull.Value ? null : Convert.ToDateTime(d["TraceAt"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  ResolvedAt = d["ResolvedAt"] == DBNull.Value ? null : Convert.ToDateTime(d["ResolvedAt"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  ResolvedBy = d["ResolvedBy"]?.ToString() ?? "",
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"] == DBNull.Value ? null : Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"] == DBNull.Value ? null : Convert.ToDateTime(d["UpdatedDate"]).ToString("yyyy-MM-dd HH:mm:ss")
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }
