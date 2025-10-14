@@ -5568,7 +5568,6 @@ namespace Reservation.Controllers
                         Console.WriteLine($"Lỗi khi xóa tệp tạm: {ex.Message}");
                     }
                 }
-
                 // Trả về tệp dưới dạng tải xuống
                 return File(fileBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"confirmation_letter_{id}.docx");
             }
