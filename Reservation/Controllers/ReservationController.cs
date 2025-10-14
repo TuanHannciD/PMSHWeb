@@ -2783,6 +2783,54 @@ namespace Reservation.Controllers
 
             }
         }
+
+        [HttpPost]
+        public ActionResult PrintReceipt(int id)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                string url = "";
+                DepositPaymentModel deposit = (DepositPaymentModel)DepositPaymentBO.Instance.FindByPrimaryKey(id);
+                ReservationModel reservation = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(deposit.ReservationID);
+
+                XtraReport report = new Templates.DepositReceipt.Report1();
+                report.Parameters["Date"].Value = deposit.TransactionDate.ToString("dd/MM/yyyy");
+                report.Parameters["GuestName"].Value = reservation.ArrivalDate.ToString().Split(" ")[0];
+                report.Parameters["PaymentMethod"].Value = deposit.Description.ToString();
+                report.Parameters["ReceiptNo"].Value = deposit.ReceiptNo.ToString();
+                report.Parameters["ReceiptReason"].Value = $"Deposit Res.No {deposit.ReservationID}";
+                report.Parameters["RoomNo"].Value = reservation.RoomNo.ToString();
+                report.Parameters["Time"].Value = deposit.TransactionDate.ToString("hh:mm");
+                report.Parameters["User"].Value = deposit.UserName.ToString();
+                report.Parameters["TotalAmount"].Value = deposit.AmountMaster.ToString();
+
+
+                report.CreateDocument();
+
+                using (MemoryStream msPdf = new MemoryStream())
+                {
+                    report.ExportToPdf(msPdf);
+                    string base64Pdf = Convert.ToBase64String(msPdf.ToArray());
+                    url = $"data:application/pdf;base64,{base64Pdf}";
+
+                }
+                pt.CommitTransaction();
+                return Json(url);
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
         #endregion
 
         #region DatVP __ Reservation: routing
