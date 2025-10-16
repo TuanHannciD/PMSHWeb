@@ -1,24 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<style>
-    .form_profile{
-        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-        margin: 12px;
-        border-radius:12px;
-        padding:12px;
-        display:none;
-    }
+<link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" />
 
-    .main-infor{
-        margin:0px 2px;
-        display: flex;
-        align-items: flex-start;
-    }
-    .form-control{
-        height:36px;
-    }
-</style>
 <!--Model chose product type-->
 <div class="modal fade bd-example-modal-sm" id="profileTypeModal" tabindex="-1" role="dialog" aria-labelledby="profileTypeModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -60,22 +44,19 @@
         </div>
     </div>
 </div>
-<div style="display:flex;margin: 12px;text-align:center">
-    <i class="fa-solid fa-arrow-left" style="padding-top:5px;margin-right:4px" onclick="window.location.href='@Url.Action("Index", "Home")'"></i>
-    <div style="font-size:18px"><b>Profile/New Profile</b></div>
-</div>
+
 
 
 
 <div id="form_profile" class="form_profile">
 
-    <div class="profileType_info">
-        <div>Selected Profile Type: <b><span id="chooseProfileTypeLabel"></span></b></div>
+    <div class="header" style="justify-content:center;border:none">
+        <h3 id="content-title">New Profile</h3>
     </div>
-    <div class="text-start mt-4">
-        <button type="button" class="btn btn-success" onclick="saveProfile();">Save</button>
-        <button type="button" class="btn btn-warning" onclick="closeFormProfile()">Change Profile Type</button>
-        <button type="button" class="btn btn-secondary">Clear</button>
+    <div class="mt-4">
+        <button type="button" class="submit-button-clear-reservation" onclick="saveProfile();">Save</button>
+        <button type="button" class="submit-button-clear-reservation" onclick="closeFormProfile()">Change Profile Type</button>
+        <button type="button" class="submit-button-new-reservation">Clear</button>
     </div>
     <div class="profile_input">
         <div style="display:flex" class="mt-4">
@@ -85,14 +66,19 @@
 
         <!--profile individual-->
         <div class="main-infor mt-4 row" style="justify-content:space-between" id="profile_individual">
-            <div class="col-md-6" style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; position: relative;">
+            <div class="col-md-6 mui-card" style="position: relative;">
                 <div style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                     <b>Address Information</b>
                 </div>
                 <div class="row mt-4">
+                    
                     <div class="col-md-4" id="image_wrapper">
-                        <div style="margin:0px">Image</div>
-                        <div class="mt-2" style="height: 240px;box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;background-color:#ececec"></div>
+                        <div class="form-group-new-reservation ">
+                            <label for="txtFirstName">Image</label>
+                            <div class="row" style="margin-left:1px;margin-right:2px">
+                                <div class="mt-2" style="height: 240px;box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;background-color:#ececec"></div>
+                            </div>
+                        </div>                        
                     </div>
                     <div class="col-md-8 ">
                         <div class="form-group row">
@@ -199,7 +185,7 @@
             </div>
             <div class="col-md-6 row" style="justify-content:space-between;display: flex;
                 align-items: flex-start;">
-                <div class="col-md-5" style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; position: relative">
+                <div class="col-md-5 mui-card" style="position: relative">
                     <div style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                         <b>Internal Information</b>
                     </div>
@@ -278,7 +264,7 @@
 
                 </div>
                 <div class="col-md-7 row">
-                    <div class="col-md-12" style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; position: relative">
+                    <div class="col-md-12 mui-card" style="position: relative">
                         <div class="mb-4" style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                             <b>Tax</b>
                         </div>
@@ -301,7 +287,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 mt-4" style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; position: relative">
+                    <div class="col-md-12 mt-4 mui-card" style="position: relative">
                         <div class="mb-4" style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                             <b>Communications</b>
                         </div>
@@ -367,7 +353,7 @@
                     </div>
                 </div>
                 <div class="col-md-12 row mt-4" style="justify-content:space-between">
-                    <div class="col-md-5" style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; position: relative">
+                    <div class="col-md-5 mui-card" style="position: relative">
                         <div class="mb-4" style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                             <b>Attributes</b>
                         </div>
@@ -390,7 +376,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-7" style="box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px; position: relative">
+                    <div class="col-md-7 mui-card" style="position: relative">
                         <div class="mb-4" style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                             <b>History Information</b>
                         </div>

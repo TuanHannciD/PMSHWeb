@@ -27,6 +27,8 @@ using NightAudit.Controllers;
 using NightAudit.Services.Implements;
 using NightAudit.Services.Interfaces;
 using Profile.Controllers;
+using Profile.Services.Implements;
+using Profile.Services.Interfaces;
 using Report.Controllers;
 using Report.Services.Implements;
 using Report.Services.Interfaces;
@@ -129,6 +131,7 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>();
  
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
 
 
 builder.Services.AddSingleton<ITransactionSubGroupService, TransactionSubGroupService>();
