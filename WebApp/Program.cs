@@ -131,11 +131,15 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>();
  
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
-builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
 
 
 builder.Services.AddSingleton<ITransactionSubGroupService, TransactionSubGroupService>();
 builder.Services.AddSingleton<IArticleService, ArticleService>();
+
+
+//DI service of profile
+builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
+builder.Services.AddSingleton<IMembershipService, MembershipService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

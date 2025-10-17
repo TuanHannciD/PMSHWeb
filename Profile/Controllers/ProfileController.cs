@@ -21,15 +21,16 @@ namespace Profile.Controllers
         private readonly ILogger<ProfileController> _logger;
         private readonly IMemoryCache _cache;
         private readonly IProfileExportService _iProfileService;
-
+        private readonly IMembershipService _iMembershipService;
 
         public ProfileController(ILogger<ProfileController> logger,
-             IMemoryCache cache, IConfiguration configuration, IProfileExportService iProfileService)
+             IMemoryCache cache, IConfiguration configuration, IProfileExportService iProfileService,IMembershipService iMembershipService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iProfileService = iProfileService;
+            _iMembershipService = iMembershipService;
         }
         
         public IActionResult Index()
@@ -1092,6 +1093,29 @@ namespace Profile.Controllers
             try
             {
                 var data = _iProfileService.SearchProfileHistory(profileID,0,"");
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        #endregion
+
+        #region DatVP __ Profile Membership
+        [HttpGet]
+        public async Task<IActionResult> SearchProfileMembership(int profileID,string inactive)
+        {
+            try
+            {
+                var data = _iMembershipService.SearchProfileMembership(profileID, inactive ?? "", "");
 
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()

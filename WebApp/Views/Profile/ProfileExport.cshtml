@@ -92,7 +92,6 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                console.log(result);
                 initializeDataGrid(result);
             },
             error: function (xhr, statusText, err) {

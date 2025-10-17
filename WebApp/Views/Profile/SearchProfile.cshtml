@@ -17,6 +17,7 @@
             <a href="#" onclick="getAllProfiles();">Search</a>
 
             <a href="#" onclick="openModalPosting();" onclick="window.location.href='@Url.Action("Index", "Profile")'">New</a>
+            <a href="#" onclick="editProfile();">Edit</a>
             <a href="#" onclick="openModalEditPosting();">Clear</a>
             <a href="#" onclick="openModalOption();">Option</a>
             <a href="#" onclick="openModalEditPosting();">Feature</a>
@@ -708,7 +709,7 @@
                     <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(2);">Delete</a>
                     <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOut();">Future</a>
                     <a href="#" class="font-semibold col-md-4 mb-1" onclick="GetProfileHistory();">History</a>
-                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Memberships</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalMembership();">Memberships</a>
                     <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Merge</a>
                     <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Neg.Rates</a>
                     <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Profile Update</a>
@@ -743,6 +744,9 @@
         </div>
     </div>
 </div>
+
+@await Html.PartialAsync("Options/Membership")
+
 <script>
     $(document).ready(async function () {
         await setSelect2();
@@ -907,6 +911,7 @@
                 id: selectedRowsData[0].id
             },
             success: function (result) {
+                console.log(result);
                if(result.code != 0){
                     informBox(TOAST_STATUS.DANGER, result.msg);
                     return;
@@ -1617,10 +1622,9 @@
             success: function (data) {
                 if (data.code == 0) {
                     $('#modalEdit').modal('hide');
-                    informBox(TOAST_STATUS.INFO, data.msg);
-
+                    showToast("Success",data.msg,true);
                 } else {
-                    informBox(TOAST_STATUS.WARNING, data.msg);
+                    showToast("Faile",data.msg,false);
                 }
 
             },
