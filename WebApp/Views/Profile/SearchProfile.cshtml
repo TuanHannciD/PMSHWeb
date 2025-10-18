@@ -1055,6 +1055,7 @@
                     let select = $('#txtLanguageIndividual')[0].tomselect; // Lấy instance của TomSelect
                     select.clear(); // Xóa giá trị hiện tại
                     select.clearOptions(); // Xóa danh sách options cũ
+                    select.addOption({ value: '0', text: 'Please select language' });
 
                     result.forEach(item => {
                         select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
@@ -1142,6 +1143,7 @@
                     let select = $('#txtCountryIndividual')[0].tomselect; // Lấy instance của TomSelect
                     select.clear(); // Xóa giá trị hiện tại
                     select.clearOptions(); // Xóa tất cả option cũ
+                    select.addOption({ value: '0', text: 'Please select country' });
 
                     result.forEach(item => {
                         select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
@@ -1622,6 +1624,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     $('#modalEdit').modal('hide');
+                    getAllProfiles();
                     showToast("Success",data.msg,true);
                 } else {
                     showToast("Faile",data.msg,false);
