@@ -187,5 +187,26 @@ namespace Cashiering.Services.Implements
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
         }
+        public DataTable ARAccountReceivableSearch()
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                     new SqlParameter("@AccountName", ""),
+                         new SqlParameter("@AccountNo", ""),
+                             new SqlParameter("@AccountTypeID", ""),
+                                 new SqlParameter("@Balance", ""),
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spARAccountReceivableSearch", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }

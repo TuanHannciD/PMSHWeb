@@ -752,7 +752,7 @@ namespace Cashiering.Controllers
 
         #endregion
 
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetFolioHistoryView(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string fromRoom, string toRoom, string actionType, string user)
         {
             try

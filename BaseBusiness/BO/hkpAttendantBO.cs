@@ -39,5 +39,39 @@ namespace BaseBusiness.BO
 
             return instance.GetList<hkpAttendantModel>(query);
         }
+        public static List<hkpAttendantDTOModel> AttendantsData()
+        {
+
+
+            string query = $@"SELECT a.*, f.Name AS [Floor], s.Code AS [Section] FROM hkpAttendant a LEFT JOIN Floor f ON a.FloorID = f.ID LEFT JOIN hkpSection s ON a.SectionID = s.ID";
+
+            return instance.GetList<hkpAttendantDTOModel>(query);
+        }
+        public class hkpAttendantDTOModel 
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+            public string MobileNo { get; set; }
+            public string Floor { get; set; }
+            public string Section { get; set; }
+            public int FloorID { get; set; }
+            public int SectionID { get; set; }
+            public string JobCode { get; set; }
+
+            public bool Monday { get; set; }
+            public bool Tuesday { get; set; }
+            public bool Wednesday { get; set; }
+            public bool Thursday { get; set; }
+            public bool Friday { get; set; }
+            public bool Saturday { get; set; }
+            public bool Sunday { get; set; }
+
+            public bool IsActive { get; set; }
+
+            public string CreatedBy { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public string UpdatedBy { get; set; }
+            public DateTime UpdatedDate { get; set; }
+        }
     }
 }

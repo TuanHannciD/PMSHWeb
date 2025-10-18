@@ -22,6 +22,13 @@
 .mui-button-clear {
     background-color: #808080;
 }
+.mui-button-unsolve {
+    background-color: #d9252e;
+}
+.mui-button-resolve {
+    background-color: #79e079;
+}
+
 
 .mui-button-search {
     background-color: #003366;
