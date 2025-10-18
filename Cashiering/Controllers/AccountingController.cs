@@ -1077,6 +1077,174 @@ namespace Cashiering.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ARAccountReceivableSearch()
+        {
+            try
+            {
+                DataTable dataTable = _iAccountingService.ARAccountReceivableSearch();
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  Check = d["Check"]?.ToString() ?? "",
+                                  AccountName = d["AccountName"]?.ToString() ?? "",
+                                  AccountNo = d["AccountNo"]?.ToString() ?? "",
+                                  CreditLimit = d["CreditLimit"]?.ToString() ?? "",
+                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                                  ContactName = d["ContactName"]?.ToString() ?? "",
+                                  AccountTypeID = d["AccountTypeID"]?.ToString() ?? "",
+                                  TelePhone = d["TelePhone"]?.ToString() ?? "",
+                                  Fax = d["Fax"]?.ToString() ?? "",
+                                  Email = d["Email"]?.ToString() ?? "",
+                                  Address1 = d["Address1"]?.ToString() ?? "",
+                                  StatusFlagged = d["StatusFlagged"]?.ToString() ?? "",
+                                  StatusInactive = d["StatusInactive"]?.ToString() ?? "",
+                                  PaymentDueDays = d["PaymentDueDays"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"]?.ToString() ?? "",
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"]?.ToString() ?? "",
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  BalanceVND = d["BalanceVND"]?.ToString() ?? "",
+                                  BalanceUSD = d["BalanceUSD"]?.ToString() ?? ""
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult ARTraceSave([FromBody] ARTraceSaveModel model)
+        {
+            try
+            {
+                model.user = model.user?.Replace("\"", "").Trim();
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                foreach (var acc in model.selectedAccounts)
+                {
+                    ARTraceModel trace = new ARTraceModel
+                    {
+                        ARAccountID = acc.id,
+                        TraceAt = model.tracetime,
+                        TraceText = model.tracetext,
+                        ResolvedAt = new DateTime(1900, 1, 1),
+                        ResolvedBy = "Unresolved",
+                        CreatedBy = model.user ,
+                        CreatedDate = businessDateModel[0].BusinessDate,
+                        UpdatedBy = model.user ,
+                        UpdatedDate = businessDateModel[0].BusinessDate
+                    };
+
+                    // Gọi Business Object để lưu
+                    ARTraceBO.Instance.Insert(trace);
+                }
+
+
+                return Json(new { success = true, message = "Insert success!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        public class ARTraceSaveModel
+        {
+            public DateTime tracetime { get; set; }
+            public string tracetext { get; set; }
+            public string user { get; set; }
+            public List<AccountInfo> selectedAccounts { get; set; }
+        }
+
+        public class AccountInfo
+        {
+            public int id { get; set; }
+            public string accountName { get; set; }
+            public string accountNo { get; set; }
+            public string contactName { get; set; }
+            public string telePhone { get; set; }
+            public string email { get; set; }
+        }
+
+        [HttpPost]
+        public IActionResult ARTraceDelete(int id)
+        {
+            try
+            {
+                ARTraceBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ARTraceResolve(int id,string user)
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            DateTime businessDate = businessDateModel[0].BusinessDate;
+
+            // Ghép ngày từ businessDate + giờ hiện tại
+            DateTime currentTime = DateTime.Now;
+            DateTime resolvedAt = new DateTime(
+                businessDate.Year,
+                businessDate.Month,
+                businessDate.Day,
+                currentTime.Hour,
+                currentTime.Minute,
+                currentTime.Second
+            );
+
+            user = user?.Replace("\"", "").Trim();
+            try
+            {
+        
+                ARTraceModel model = (ARTraceModel)ARTraceBO.Instance.FindByPrimaryKey(id);
+                model.ResolvedAt = resolvedAt;
+                model.ResolvedBy = user;
+                model.UpdatedBy = user;
+                model.UpdatedDate = businessDateModel[0].BusinessDate;
+                ARTraceBO.Instance.Update(model);
+
+                return Json(new { success = true, message = "Success !" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult ARTraceUnresolve(int id, string user)
+        {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            user = user?.Replace("\"", "").Trim();
+            try
+            {
+
+                ARTraceModel model = (ARTraceModel)ARTraceBO.Instance.FindByPrimaryKey(id);
+                model.ResolvedAt = new DateTime(1900, 1, 1);
+                model.ResolvedBy = "Unresolved";
+                model.UpdatedBy = user;
+                model.UpdatedDate = businessDateModel[0].BusinessDate;
+                ARTraceBO.Instance.Update(model);
+
+                return Json(new { success = true, message = "Success !" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
         #endregion
     }
 }

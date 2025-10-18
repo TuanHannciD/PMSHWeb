@@ -277,7 +277,19 @@
              columns: [
                         { dataField: "name", caption: "Name" },
                         { dataField: "description", caption: "Description" },
-                        { dataField: "inactive", caption: "Inactive" },
+                        { dataField: "inactive", caption: "Inactive",
+                            cellTemplate: function(container, options) {
+                                // ép kiểu: 1 = true, 0 = false
+                                let checked = options.value == 1;
+                                $("<div>")
+                                    .dxCheckBox({
+                                        value: checked,
+                                        readOnly: true
+                                    })
+                                    .css("transform", "scale(0.8)") // thu nhỏ checkbox
+                                    .appendTo(container);
+                            } 
+                        },
                         { dataField: "createdBy", caption: "Created By" },
                         { dataField: "createdDate", caption: "Created Date", dataType: "date" },
                         { dataField: "updatedBy", caption: "Updated By" },

@@ -454,11 +454,18 @@
                     });
                 }
                 usersParam = selectedusers.map(r => r.replace("''")).join("','");
-                     
+                var actionType = $("#action input[type='checkbox']:checked")
+                    .map(function () { return this.value; })
+                    .get()
+                    .join(",");
+
+                console.log("actionType:", actionType);
+                console.log("usersParam:", usersParam);
+
                 // Gửi ajax
                 $.ajax({
                     url: '/Cashiering/GetFolioHistoryView',
-                    type: 'GET',
+                    type: 'POST',
                     data: {
                         fromDate: $("#fromDate").val(),
                         toDate: $("#toDate").val(),
@@ -466,11 +473,8 @@
                         toFolioID: $("#toFolio").val(),
                         fromRoom: $("#fromRoom").val(),
                         toRoom: $("#toRoom").val(),
-                        actionType: $("#action input[type='checkbox']:checked")
-                        .map(function () { return this.value; })
-                        .get()
-                        .join(","),
-                        user: usersParam
+                        actionType: actionType,
+                         user: usersParam
                     },
                     success: function(data){
                         loadGrid(data);

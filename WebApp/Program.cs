@@ -39,7 +39,9 @@ using RoomManagement.Services.Interfaces;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
+
 using WebApp.Commons.Containts;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +86,8 @@ builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TransactionSubGroupController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ArticleController).Assembly));
+builder.Services.AddControllersWithViews()
+    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(HouseKeepingAdminController).Assembly));
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -133,7 +137,7 @@ builder.Services.AddSingleton<ITransactionService, TransactionService>();
 
 builder.Services.AddSingleton<ITransactionSubGroupService, TransactionSubGroupService>();
 builder.Services.AddSingleton<IArticleService, ArticleService>();
-
+builder.Services.AddSingleton<IHouseKeepingAdminService, HouseKeepingAdminService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

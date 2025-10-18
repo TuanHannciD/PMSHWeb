@@ -52,5 +52,6 @@ namespace Cashiering.Services.Interfaces
         DataTable AccountTypeData();
         DataTable AROpeningData();
         DataTable ARTracesData();
+        DataTable ARAccountReceivableSearch();
     }
 }
