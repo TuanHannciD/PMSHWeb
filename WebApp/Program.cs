@@ -27,6 +27,8 @@ using NightAudit.Controllers;
 using NightAudit.Services.Implements;
 using NightAudit.Services.Interfaces;
 using Profile.Controllers;
+using Profile.Services.Implements;
+using Profile.Services.Interfaces;
 using Report.Controllers;
 using Report.Services.Implements;
 using Report.Services.Interfaces;
@@ -137,7 +139,7 @@ builder.Services.AddSingleton<ITransactionService, TransactionService>();
 
 builder.Services.AddSingleton<ITransactionSubGroupService, TransactionSubGroupService>();
 builder.Services.AddSingleton<IArticleService, ArticleService>();
-builder.Services.AddSingleton<IHouseKeepingAdminService, HouseKeepingAdminService>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

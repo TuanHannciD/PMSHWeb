@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Profile.Services.Interfaces;
 namespace Profile.Controllers
 {
     public class ProfileController : Controller
@@ -19,13 +20,17 @@ namespace Profile.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<ProfileController> _logger;
         private readonly IMemoryCache _cache;
+        private readonly IProfileExportService _iProfileService;
+        private readonly IMembershipService _iMembershipService;
 
         public ProfileController(ILogger<ProfileController> logger,
-             IMemoryCache cache, IConfiguration configuration)
+             IMemoryCache cache, IConfiguration configuration, IProfileExportService iProfileService,IMembershipService iMembershipService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
+            _iProfileService = iProfileService;
+            _iMembershipService = iMembershipService;
         }
         
         public IActionResult Index()
@@ -594,6 +599,51 @@ namespace Profile.Controllers
             ProfileBO.Instance.Delete(int.Parse(id));
             return Json(new { code = 0, msg = "Profile deleted successfully" });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllProfiles2(string code, string account, string firstName, string keyWord, string city, int type, bool showSaleInCharge, int page = 1, int pageSize = 15)
+        {
+            try
+            {
+                (DataTable data, int totalCount) = ProfileBO.GetAllProfile2(code, account, firstName, keyWord, city, type, showSaleInCharge, page, pageSize);
+                var result = (from d in data.AsEnumerable()
+                              select new
+                              {
+                                  ID = int.Parse(d["_ProfileID"].ToString()),
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  VIP = d["VIP"]?.ToString() ?? "",
+                                  Account = d["Account"]?.ToString() ?? "",
+                                  PassPort = d["PassPort"]?.ToString() ?? "",
+                                  IdentityCard = d["IdentityCard"]?.ToString() ?? "",
+                                  Address = d["Address"]?.ToString() ?? "",
+                                  City = d["City"]?.ToString() ?? "",
+                                  Nationality = d["Nationality"]?.ToString() ?? "",
+                                  HandPhone = d["HandPhone"]?.ToString() ?? "",
+                                  Telephone = d["Telephone"]?.ToString() ?? "",
+                                  Email = d["Email"]?.ToString() ?? "",
+                                  Keyword = d["Keyword"]?.ToString() ?? "",
+                                  PostalCode = d["PostalCode"]?.ToString() ?? "",
+                                  ReturnGuest = d["ReturnGuest"]?.ToString() ?? "",
+                                  StayNo = d["StayNo"]?.ToString() ?? "",
+                                  Type = d["Type"]?.ToString() ?? "",
+                                  TaxCode = d["TaxCode"]?.ToString() ?? "",
+                                  FullAccount = d["FullAccount"]?.ToString() ?? "",
+                                  HomeAddress = d["HomeAddress"]?.ToString() ?? "",
+                                  ARNo = d["ARNo"]?.ToString() ?? "",
+                                  Website = d["Website"]?.ToString() ?? "",
+                                  DateOfBirth = d["DateOfBirth"]?.ToString() ?? "",
+                                  AcctContact = d["AcctContact"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  AcctIsBlackListContact = d["IsBlackList"]?.ToString() ?? "",
+                                  PersonInChargeID = d["PersonInChargeID"]?.ToString() ?? ""
+                              }).ToList();
+                return Json(new { data = result, totalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         #endregion
 
         #region new profile
@@ -980,52 +1030,6 @@ namespace Profile.Controllers
         }
         #endregion
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllProfiles2(string code, string account, string firstName, string keyWord, string city, int type, bool showSaleInCharge, int page = 1, int pageSize = 15)
-        {
-            try
-            {
-                (DataTable data, int totalCount) = ProfileBO.GetAllProfile2(code, account, firstName, keyWord, city, type, showSaleInCharge, page, pageSize);
-                var result = (from d in data.AsEnumerable()
-                              select new
-                              {
-                                  ID = int.Parse(d["_ProfileID"].ToString()),
-                                  Code = d["Code"]?.ToString() ?? "",
-                                  VIP = d["VIP"]?.ToString() ?? "",
-                                  Account = d["Account"]?.ToString() ?? "",
-                                  PassPort = d["PassPort"]?.ToString() ?? "",
-                                  IdentityCard = d["IdentityCard"]?.ToString() ?? "",
-                                  Address = d["Address"]?.ToString() ?? "",
-                                  City = d["City"]?.ToString() ?? "",
-                                  Nationality = d["Nationality"]?.ToString() ?? "",
-                                  HandPhone = d["HandPhone"]?.ToString() ?? "",
-                                  Telephone = d["Telephone"]?.ToString() ?? "",
-                                  Email = d["Email"]?.ToString() ?? "",
-                                  Keyword = d["Keyword"]?.ToString() ?? "",
-                                  PostalCode = d["PostalCode"]?.ToString() ?? "",
-                                  ReturnGuest = d["ReturnGuest"]?.ToString() ?? "",
-                                  StayNo = d["StayNo"]?.ToString() ?? "",
-                                  Type = d["Type"]?.ToString() ?? "",
-                                  TaxCode = d["TaxCode"]?.ToString() ?? "",
-                                  FullAccount = d["FullAccount"]?.ToString() ?? "",
-                                  HomeAddress = d["HomeAddress"]?.ToString() ?? "",
-                                  ARNo = d["ARNo"]?.ToString() ?? "",
-                                  Website = d["Website"]?.ToString() ?? "",
-                                  DateOfBirth = d["DateOfBirth"]?.ToString() ?? "",
-                                  AcctContact = d["AcctContact"]?.ToString() ?? "",
-                                  Description = d["Description"]?.ToString() ?? "",
-                                  AcctIsBlackListContact = d["IsBlackList"]?.ToString() ?? "",
-                                  PersonInChargeID = d["PersonInChargeID"]?.ToString() ?? ""
-                              }).ToList();
-                return Json(new { data = result, totalCount = totalCount });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-
         #region new profile in reservation
         //[ValidateAntiForgeryToken]
         [HttpPost]
@@ -1055,5 +1059,77 @@ namespace Profile.Controllers
         }
         #endregion
 
+        #region DatVP __ Profile Export
+        public IActionResult ProfileExport()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> SearchProfileExport(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                var data = _iProfileService.SearchProfileExport(fromDate, toDate);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        #endregion
+
+        #region DatVP __ Profile History
+        [HttpGet]
+        public async Task<IActionResult> SearchProfileHistory(int profileID)
+        {
+            try
+            {
+                var data = _iProfileService.SearchProfileHistory(profileID,0,"");
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        #endregion
+
+        #region DatVP __ Profile Membership
+        [HttpGet]
+        public async Task<IActionResult> SearchProfileMembership(int profileID,string inactive)
+        {
+            try
+            {
+                var data = _iMembershipService.SearchProfileMembership(profileID, inactive ?? "", "");
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        #endregion
     }
 }

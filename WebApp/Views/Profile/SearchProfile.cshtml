@@ -1,86 +1,99 @@
-﻿f@{
+﻿@{
     ViewData["Title"] = "Search Profile";
 }
 
-<link href="~/css/search-profile.css" rel="stylesheet" />
+<link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" />
 
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 
-<div class="content_wrapper row">
-    <div class="function_wrapper col-md-12">
-        <div style ="display: flex; justify-content: space-between; align-items: center;">
-            <div style="background-color:#3b9ac6;color:white;padding:5px" class="mb-3">Profile list</div>
-            <div class="button-group mb-3">
-                <button onclick="window.location.href='@Url.Action("Index", "Profile")'" class="mui-button mui-button-new"><i class="fas fa-plus"></i> New</button>
-                <button class="mui-button mui-button-new"><i class="fas fa-eraser"></i> Clear</button>
-                <button class="mui-button mui-button-new"><i class="fas fa-cog"></i> Option</button>
-                <button class="mui-button mui-button-new"><i class="fas fa-clock"></i> Future</button>
-                <button class="mui-button mui-button-new" onclick="window.location.href='@Url.Action("Index", "Home")'"><i class="fas fa-times"></i> Close</button>
-            </div>
-        </div>
+<div class="mt-1">
+    <div class="header" style="justify-content:center;border:none">
+        <h3 id="content-title">Search Profile</h3>
+    </div>
+    <div class="functions-pane mb-2 row" style="background-color: var(--accent-color);border-radius: 8px; border: 1px solid #e5e7eb;box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);padding:0px">
+        <div class="function-menu col-md-10">
+            <a href="#" onclick="getAllProfiles();">Search</a>
 
-
-
-        <div class="mui-card mb-3 " >
-            <div class="row mt-3">
-                <div class="col-1" style="display: flex; justify-content: flex-end;">
-                    <button class="arrow arrow-left"><i class="fa-solid fa-arrow-left"></i></button>
-                </div>
-                <div class="col-10 ">
-                    <div class="filter-container">
-
-                        <div class="filter-carousel" id="filterCarousel">
-                            <div class="filter-item">
-                                <select id="txtType">
-                                    <option value="0">Travel Agent</option>
-                                    <option value="1">Company</option>
-                                    <option value="2">Source</option>
-                                    <option value="3">Individual</option>
-                                    <option value="4">Group</option>
-                                    <option value="4">Contact</option>
-                                    <option value="6" selected>View by All</option>
-                                </select>
-                            </div>
-                            <div class="filter-item">
-                                <input type="text" id="txtAccount" placeholder="Account...">
-                            </div>
-                            <div class="filter-item">
-                                <input type="text" id="txtKeyword" placeholder="Key word...">
-                            </div>
-                            <div class="filter-item">
-                                <input type="text" id="txtFirstName" placeholder="First name...">
-                            </div>
-                            <div class="filter-item">
-                                <input type="text" id="txtCode" placeholder="Code...">
-                            </div>
-                            <div class="filter-item">
-                                <select id="txtCity">
-                                </select>
-                            </div>
-                            <div class="filter-item">
-                                <input type="text" id="txtFirstName" placeholder="First name...">
-                            </div>
-                            <div class="filter-item">
-                                <select id="txtType" disabled>
-                                    <option value="value">PMSh The Arena</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-1" style="display: flex; justify-content: flex-start;">
-                    <button class="arrow arrow-right"><i class="fa-solid fa-arrow-right"></i></button>
-
-                </div>
-            </div>
-
-
-            <div class="mui-divider"></div>
-            <div id="gridContainer" class="mt-2"></div>
+            <a href="#" onclick="openModalPosting();" onclick="window.location.href='@Url.Action("Index", "Profile")'">New</a>
+            <a href="#" onclick="editProfile();">Edit</a>
+            <a href="#" onclick="openModalEditPosting();">Clear</a>
+            <a href="#" onclick="openModalOption();">Option</a>
+            <a href="#" onclick="openModalEditPosting();">Feature</a>
+            <a href="#" onclick="openModalEditPosting();" onclick="window.location.href='@Url.Action("Index", "Home")'">Close</a>
         </div>
         
+    </div>
+    <div class="row">
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">View By</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <select id="txtType">
+                    <option value="0">Travel Agent</option>
+                    <option value="1">Company</option>
+                    <option value="2">Source</option>
+                    <option value="3">Individual</option>
+                    <option value="4">Group</option>
+                    <option value="4">Contact</option>
+                    <option value="6" selected>View by All</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">Account</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <input type="text" id="txtAccount">
+
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">Keyword</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <input type="text" id="txtKeyword" >
+
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">First Name</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <input type="text" id="txtFirstName" >
+
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">Code</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <input type="text" id="txtCode" >
+
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">City</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <select id="txtCity">
+                </select>
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">First Name</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <input type="text" id="txtFirstName" >
+
+            </div>
+        </div>
+        <div class="form-group-new-reservation col-md-2">
+            <label for="txtTitle">Area</label>
+            <div class="row" style="margin-left:1px;margin-right:2px">
+                <select id="txtType" disabled>
+                    <option value="value">PMSh The Arena</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="mui-card mt-2">
+        <div id="gridContainer" class="gridContainer"></div>
+
     </div>
 </div>
 
@@ -681,7 +694,58 @@
 </div>
 
 
+<div class="modal fade" id="modalOption" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border: 1px solid #bcbcbc">
+            <div class="modal-header">
+                <h5 class="modal-title">Profile Options</h5>
+                <button type="button" class="btn-close" aria-label="Close" onclick="closeModalOption();"></button>
+            </div>
 
+            <div class="modal-body">
+                <div class="toolbar-menu mt-2 row" id="functionAndOption">
+
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(1);">Changes</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOutAll(2);">Delete</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalCheckOut();">Future</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="GetProfileHistory();">History</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openModalMembership();">Memberships</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Merge</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Neg.Rates</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Profile Update</a>
+                    <a href="#" class="font-semibold col-md-4 mb-1" onclick="openConfirmRoomUnAssign();">Relationships</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade modal-xl" id="modalHistory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">History</h5>
+                <button type="button" class="btn-close" onclick="closeModalHistory()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="">
+                    <button class="submit-button-clear-reservation" id="attach" onclick="AttachAccompanying();"> Attach</button>
+                    <button class="submit-button-clear-reservation" id="detach" onclick="detach()">Detach</button>
+                    <button class="submit-button-clear-reservation" id="detach" onclick="openModalViewProfile()">Profile</button>
+
+                    <button class="submit-button-clear-reservation" onclick="closeModalAccompanying();"> Close</button>
+                </div>
+
+
+                <div class="mui-card mt-2">
+                    <div id="gridContainerHistory" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("Options/Membership")
 
 <script>
     $(document).ready(async function () {
@@ -701,42 +765,12 @@
          getCurrency2();
          getMarketType2();
     });
-    // Điều hướng carousel
-        const carousel = document.getElementById('filterCarousel');
-        const items = document.querySelectorAll('.filter-item');
-        const totalItems = items.length;
-        let visibleItems = window.innerWidth <= 768 ? 1 : 3; // 1 phần tử trên màn hình nhỏ, 3 trên màn hình lớn
-        let currentIndex = 0;
-
-        document.querySelector('.arrow-right').addEventListener('click', () => {
-            if (currentIndex < totalItems - visibleItems) {
-                currentIndex++;
-            } else {
-                currentIndex = 0;
-            }
-            updateCarousel();
-        });
-
-        document.querySelector('.arrow-left').addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-            } else {
-                currentIndex = totalItems - visibleItems;
-            }
-            updateCarousel();
-        });
-
-        function updateCarousel() {
-            const itemWidth = 100 / visibleItems;
-            carousel.style.transform = `translateX(-${currentIndex * itemWidth}%)`;
-        }
-
-        // Cập nhật visibleItems khi thay đổi kích thước màn hình
-        window.addEventListener('resize', () => {
-            visibleItems = window.innerWidth <= 768 ? 1 : 3;
-            currentIndex = Math.min(currentIndex, totalItems - visibleItems);
-            updateCarousel();
-        });
+    function openModalOption(){
+        $('#modalOption').modal('show');
+    }
+    function closeModalOption(){
+        $('#modalOption').modal('hide');
+    }
     function getAllCity() {
         $.ajax({
             url: '/Profile/GetAllCity',
@@ -798,7 +832,7 @@
             }
         });
     }
-
+    var profileID = 0;
     function initializeDataGrid(data) {
         var columnWidth = 150; // Độ rộng muốn đặt cho tất cả các cột
 
@@ -828,58 +862,7 @@
                 { dataField: "keyword", caption: "Keyword", width: columnWidth },
                 { dataField: "description", caption: "Description", width: columnWidth },
                 { dataField: "personInChargeID", caption: "Sale In Charge", width: columnWidth },
-                {
-                    caption: "Action",
-                    fixed: true,
-        
-                    fixedPosition: "right",
-                    width: 130, // Tăng chiều rộng để chứa thêm icon
-                    cellTemplate: function(container, options) {
-                        // Icon Edit
-                        $("<i>")
-                            .addClass("fa fa-edit")
-                            .attr("title", "Edit")
-                            .css({
-                                cursor: "pointer",
-                                color: "#b29247",
-                                "font-size": "16px",
-                                "margin-right": "10px",
-                            })
-                            .on("click", function() {
-                                editProfile();
-                            })
-                            .appendTo(container);
 
-                        // Icon Delete
-                        $("<i>")
-                            .addClass("fa fa-trash")
-                            .attr("title", "Delete")
-                            .css({
-                                cursor: "pointer",
-                                color: "#994040",
-                                "font-size": "16px",
-                                "margin-right": "10px",
-                            })
-                            .on("click", function() {
-                                DeleteProfile();
-                            })
-                            .appendTo(container);
-
-                        // Icon Reservation
-                        $("<i>")
-                            .addClass("fa fa-calendar-check")
-                            .attr("title", "Reservation")
-                            .css({
-                                cursor: "pointer",
-                                color: "#026c38",
-                                "font-size": "16px",
-                            })
-                            .on("click", function() {
-                                reserveProfile(); // Hàm xử lý khi click vào icon reservation
-                            })
-                            .appendTo(container);
-                    }
-                }
             ],
             paging: { pageSize: 15 },
             scrolling: {
@@ -892,17 +875,7 @@
                 showInfo: true,
                 showNavigationButtons: true,
             },
-            onRowPrepared: function(e) {
-                if (e.rowType === "data") {
-                    if (e.rowIndex % 2 === 0) {
-                        // Hàng chẵn (0, 2, 4, ...) - màu xanh
-                        e.rowElement.css("background-color", "#ffffff"); // màu xanh nhạt
-                    } else {
-                        // Hàng lẻ (1, 3, 5, ...) - màu đỏ
-                        e.rowElement.css("background-color", "#d6ead4"); // màu đỏ nhạt
-                    }
-                }
-            },
+            
             selection: {
                 mode: "multiple",
                 showCheckBoxesMode: "none"
@@ -910,7 +883,7 @@
 
             showBorders: false,
             onRowClick: function(e) {
-                console.log("ID được click:", e.data.id);
+                profileID = e.data.id;
             }
 
         });
@@ -938,6 +911,7 @@
                 id: selectedRowsData[0].id
             },
             success: function (result) {
+                console.log(result);
                if(result.code != 0){
                     informBox(TOAST_STATUS.DANGER, result.msg);
                     return;
@@ -1648,10 +1622,9 @@
             success: function (data) {
                 if (data.code == 0) {
                     $('#modalEdit').modal('hide');
-                    informBox(TOAST_STATUS.INFO, data.msg);
-
+                    showToast("Success",data.msg,true);
                 } else {
-                    informBox(TOAST_STATUS.WARNING, data.msg);
+                    showToast("Faile",data.msg,false);
                 }
 
             },
@@ -1662,7 +1635,6 @@
     }
 
     function ReservationProfile(){
-        console.log('click1');
         var grid = $("#gridContainer").dxDataGrid("instance");
         var selectedRowsData = grid.getSelectedRowsData();
         if(selectedRowsData.length < 1){
@@ -1743,5 +1715,65 @@
            informBox(TOAST_STATUS.WARNING, "Please select the product type you want to delete");
         }
 
+    }
+
+    function GetProfileHistory() {
+
+        $.ajax({
+            url: '/Profile/SearchProfileHistory',
+            type: 'get',
+            dataType: 'json',
+            data:{
+                profileID: profileID
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                $('#modalHistory').modal('show');
+                initializeDataGridHistory(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            },
+
+        });
+    }
+    function closeModalHistory(){
+        $('#modalHistory').modal('hide');
+
+    }
+    function initializeDataGridHistory(data) {
+
+        $("#gridContainerHistory").dxDataGrid({
+
+            dataSource: data,    
+            allowColumnResizing: true,  // Dữ liệu từ server
+
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
+
+            showBorders: false,
+            onRowClick: function(e) {
+                console.log("ID được click:", e.data.id);
+            }
+
+        });
     }
 </script>
