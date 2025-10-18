@@ -455,14 +455,14 @@ namespace Profile.Controllers
         {
             try
             {
-                var list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll()).Where(x => x.ID == id).ToList();
-                if (list.Count > 0)
+                ProfileModel list = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(id);
+                if (list != null && list.ID != 0)
                 {
                     return Json(new
                     {
                         code = 0,
                         msg = "Success",
-                        profile = list[0]
+                        profile = list
                     });
                 }
                 else
@@ -491,7 +491,7 @@ namespace Profile.Controllers
             try
             {
                 int id = int.Parse(Request.Form["ID"].ToString());
-                ProfileModel profile = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll()).Where(x => x.ID == id).ToList()[0];
+                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(id);
                 profile.Type = 0;
                 profile.Code = Request.Form["CodeIndividual"].ToString();
                 profile.Account = Request.Form["AccountIndividual"].ToString();
@@ -505,15 +505,15 @@ namespace Profile.Controllers
                 profile.HomeAddress = "";
                 profile.City = Request.Form["CityIndividual"].ToString();
                 profile.PostalCode = Request.Form["PostalIndividual"].ToString();
-                profile.CountryID = int.Parse(Request.Form["CountryIndividual"].ToString());
+                profile.CountryID =  int.Parse(Request.Form["CountryIndividual"].ToString());
                 profile.StateID = int.Parse(Request.Form["StateIndividual"].ToString());
                 profile.Salutation = Request.Form["SalutationIndividual"].ToString();
-                profile.VIPID = int.Parse(Request.Form["VIPIndividual"].ToString());
+                profile.VIPID = !string.IsNullOrEmpty(Request.Form["VIPIndividual"].ToString()) ? int.Parse(Request.Form["VIPIndividual"].ToString()) : 0;
                 profile.VIPReason = Request.Form["ReasonIndividual"].ToString();
                 profile.PrefRoom = Request.Form["PrefRoomIndividual"].ToString();
                 profile.PassPort = Request.Form["PassportIndividual"].ToString();
                 profile.Keyword = Request.Form["KeywordIndividual"].ToString();
-                profile.DateOfBirth = DateTime.Parse(Request.Form["DobIndividual"].ToString());
+                profile.DateOfBirth = !string.IsNullOrEmpty(Request.Form["DobIndividual"].ToString()) ? DateTime.Parse(Request.Form["DobIndividual"].ToString()) : DateTime.MinValue;
                 profile.NationalityID = int.Parse(Request.Form["NationalityIndividual"].ToString());
                 profile.Description = "";
                 profile.Telephone = Request.Form["TelephoneIndividual"].ToString();
