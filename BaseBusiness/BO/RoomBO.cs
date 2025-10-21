@@ -33,7 +33,7 @@ namespace BaseBusiness.BO
             var zoneInClause = string.Join(",", zoneList);
 
             string query = $@"
-        SELECT count(ID) as zone
+        SELECT *
         FROM Room WITH(NOLOCK) 
         WHERE ({roomtypeInt} = 0 OR RoomTypeID = {roomtypeInt})
           AND (ZoneID IN ({zoneInClause}) OR '{zone}' = '0')  AND HKStatusID = 7";

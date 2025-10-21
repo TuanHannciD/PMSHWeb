@@ -194,15 +194,24 @@
             <div class="d-flex align-items-center">
                 <label class="fw-bold me-3">View by:</label>
 
-                <div class="d-flex align-items-center me-3">
-                    <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" name="zone" class="tomselect-custom" multiple>
-                        @foreach (var item in zoneList)
-                        {
-                            <option value="@item.Code">@item.Code</option>
-                        }
-                    </select>
-
+                <div class="d-flex align-items-center">
+                    <label class="fw-bold me-3">View by:</label>
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Zone:</label>
+                        <select id="zone" name="zone" class="tomselect-custom" multiple>
+                            @foreach (var item in zoneList)
+                            {
+                                if (item == zoneList[0])
+                                {
+                                    <option value="@item.Code" selected>@item.Code</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Code">@item.Code</option>
+                                }
+                            }
+                        </select>
+                    </div>
                 </div>
 
 
@@ -261,7 +270,10 @@
 
              // Gán vào input type="date"
              $('#fromDate').val(formatDate(parsedBusinessDate));
-               $('#toDate').val(formatDate(parsedBusinessDate));
+                 var toDate = new Date(parsedBusinessDate);
+                    toDate.setDate(toDate.getDate() + 13);
+
+                    $('#toDate').val(formatDate(toDate));
             initializeTomSelects();
 
 

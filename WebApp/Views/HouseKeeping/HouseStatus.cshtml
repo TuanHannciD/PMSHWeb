@@ -644,38 +644,29 @@
 </div>
 <script>
 
-
+           let parsedBusinessDate = null;
         $(document).ready(function () {
                  document.getElementById("reportTitle").innerText = 'House Status';
+                        var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
+                       console.log(businessDateStr);
+                        // Lấy phần ngày tháng năm
+                        var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
+                        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
 
-
+                        // Parse đúng thứ tự: new Date(year, monthIndex, day)
+                         parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
+                                  console.log(formatDate(parsedBusinessDate));
+                                    $('#datebunisess').val(formatDate(parsedBusinessDate));
+                       $("#btnPrint").trigger("click");
 
         });
 
-                window.onload = function () {
-                    var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
-
-                    // Lấy phần ngày tháng năm
-                    var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
-                    var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
-
-                    // Parse đúng thứ tự: new Date(year, monthIndex, day)
-                    var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-                    console.log(parsedBusinessDate);
-                    // Gán vào input type="date"
-                    $('#datebunisess').val(formatDate(parsedBusinessDate));
-                      
-                    // Format đúng chuẩn yyyy-MM-dd
-                    function formatDate(date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        return `${year}-${month}-${day}`;
-                    }
-                        $("#btnPrint").trigger("click");
-                };
-
-
+            function formatDate(date) {
+                let year = date.getFullYear();
+                let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
+                let day = date.getDate().toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
+                return `${year}-${month}-${day}`;
+            }
 
           $(document).off("click", ".ellipsis-icon").on("click", ".ellipsis-icon", function () {
                      
@@ -1136,7 +1127,17 @@ const roundedAmount = Math.round(amount);
 const formattedAmount = roundedAmount.toLocaleString('vi-VN');
 
 $('#roomRevennue').val(formattedAmount);
-    $('#roomAVG').val((formattedAmount/maxaccRoom).toFixed(3));
+ 
+    var roomCount = parseFloat(maxaccRoom) || 0;
+            console.log(amount);
+        if (roomCount > 0) {
+                    var avg = amount / roomCount;
+                    var formattedAvg = avg.toLocaleString('vi-VN', { maximumFractionDigits: 0 });
+
+            $('#roomAVG').val(formattedAvg);
+    } else {
+        $('#roomAVG').val('0.000'); // hoặc để trống nếu bạn muốn
+    }
 
 
              $('#stayoverRoom').val(result.stayOver[0].totalRooms);
@@ -1198,6 +1199,8 @@ $('#roomRevennue').val(formattedAmount);
                 // Tính tổng và gán vào cleanTotal
                 let vacanthkD = parseInt(result.hkDirty[0].vacant) || 0;
                 let occhkD = parseInt(result.hkDirty[0].occ) || 0;
+                        let txtDO = parseInt(result.roomzone.length) || 0;
+               
                 $('#dirtyTotal').val(vacanthkD + occhkD);
 
 
@@ -1212,7 +1215,7 @@ $('#roomRevennue').val(formattedAmount);
                 // let occhkD = parseInt(result.hkDirty[0].occ) || 0;
 
                    $('#totalVacant').val(vacantIns + vacanthk+vacanthkD);
-                   $('#totalOccupied').val(occIns + occhk+occhkD);
+                       $('#totalOccupied').val(occIns + occhk+occhkD+txtDO);
 
                    $('#outoforderVacant').val(result.hkOutOfOrder[0].vacant);
                     $('#outofserviveVacant').val(result.hkOutOfService[0].vacant);
