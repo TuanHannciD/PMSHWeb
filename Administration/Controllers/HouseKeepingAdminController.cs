@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -550,6 +551,368 @@ namespace Administration.Controllers
             {
 
                 hkpEmployeeBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region  LostAndFoundZone
+
+        public IActionResult LostAndFoundZone()
+        {
+
+            return View("~/Views/Administration/HouseKeepingAdmin/LostAndFoundZone.cshtml");
+        }
+        [HttpGet]
+        public IActionResult LostAndFoundZoneData()
+        {
+           
+            try
+            {
+                DataTable dataTable = TextUtils.Select("select a.ID,a.Code,a.Name,a.Inactive,a.CreatedBy,a.CreatedDate,a.UpdatedBy,a.UpdateDate from lafZone a");
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+         
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"] == DBNull.Value ? null : Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdateDate = d["UpdateDate"] == DBNull.Value ? null : Convert.ToDateTime(d["UpdateDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  Inactive = d["Inactive"]?.ToString() ?? ""
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult LostAndFoundZoneSave(int id, string codenew, string descriptionnew, int isActive, string user)
+        {
+            var pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                user = (user ?? string.Empty).Replace("\"", "").Trim();
+
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                var businessDate = businessDates[0].BusinessDate;
+
+                lafZoneModel model;
+                bool isNew = (id == 0);
+
+                if (isNew)
+                {
+                    model = new lafZoneModel
+                    {
+                        Code = codenew?.Trim(),
+                        Name = descriptionnew?.Trim(),
+                        Inactive = (isActive == 1),
+                        CreatedBy = user,
+                        CreatedDate = businessDate,
+                        UpdatedBy = user,
+                        UpdateDate = businessDate
+                    };
+
+                    lafZoneBO.Instance.Insert(model);
+                }
+                else
+                {
+                    model = (lafZoneModel)lafZoneBO.Instance.FindByPrimaryKey(id);
+                    if (model == null)
+                    {
+                        throw new Exception($"Không tìm thấy lafZone có ID = {id}");
+                    }
+
+                    model.Code = codenew?.Trim();
+                    model.Name = descriptionnew?.Trim();
+                    model.Inactive = (isActive == 1);
+                    model.UpdatedBy = user;
+                    model.UpdateDate = businessDate;
+
+                    hkpSectionBO.Instance.Update(model);
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new
+                {
+                    success = true,
+                    message = isNew ? "Insert success!" : "Update success!"
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public IActionResult LostAndFoundZoneDelete(int id)
+        {
+            try
+            {
+
+                lafZoneBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region LostAndFoundStatus
+        public IActionResult LostAndFoundStatus()
+        {
+
+            return View("~/Views/Administration/HouseKeepingAdmin/LostAndFoundStatus.cshtml");
+        }
+        [HttpGet]
+        public IActionResult LostAndFoundStatusData()
+        {
+
+            try
+            {
+                DataTable dataTable = TextUtils.Select("select * from lafStatus");
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"] == DBNull.Value ? null : Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdateDate = d["UpdateDate"] == DBNull.Value ? null : Convert.ToDateTime(d["UpdateDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  Inactive = d["Inactive"]?.ToString() ?? "",
+                                  IsDefault = d["IsDefault"]?.ToString() ?? ""
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult LostAndFoundStatusSave(int id, string codenew, string descriptionnew, int isActive, int isDefault, string user)
+        {
+            var pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                user = (user ?? string.Empty).Replace("\"", "").Trim();
+
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                var businessDate = businessDates[0].BusinessDate;
+
+                lafStatusModel model;
+                bool isNew = (id == 0);
+
+                if (isNew)
+                {
+                    model = new lafStatusModel
+                    {
+                        Code = codenew?.Trim(),
+                        Name = descriptionnew?.Trim(),
+                        Inactive = (isActive == 1),
+                        IsDefault = (isDefault == 1),
+                        CreatedBy = user,
+                        CreatedDate = businessDate,
+                        UpdatedBy = user,
+                        UpdateDate = businessDate
+                    };
+
+                    lafStatusBO.Instance.Insert(model);
+                }
+                else
+                {
+                    model = (lafStatusModel)lafStatusBO.Instance.FindByPrimaryKey(id);
+                    if (model == null)
+                    {
+                        throw new Exception($"Không tìm thấy lafZone có ID = {id}");
+                    }
+
+                    model.Code = codenew?.Trim();
+                    model.Name = descriptionnew?.Trim();
+                    model.Inactive = (isActive == 1);
+                    model.IsDefault = (isDefault == 1);
+                    model.UpdatedBy = user;
+                    model.UpdateDate = businessDate;
+
+                    lafStatusBO.Instance.Update(model);
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new
+                {
+                    success = true,
+                    message = isNew ? "Insert success!" : "Update success!"
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public IActionResult LostAndFoundStatusDelete(int id)
+        {
+            try
+            {
+
+                lafStatusBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region LostAndFoundQuality
+        public IActionResult LostAndFoundQuality()
+        {
+
+            return View("~/Views/Administration/HouseKeepingAdmin/LostAndFoundQuality.cshtml");
+        }
+        [HttpGet]
+        public IActionResult LostAndFoundQualityData()
+        {
+
+            try
+            {
+                DataTable dataTable = TextUtils.Select("select a.ID,a.Code,a.Name,a.Inactive ,a.CreatedBy,a.CreatedDate,a.UpdatedBy,a.UpdateDate from lafQualityType a");
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"]?.ToString() ?? "",
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"] == DBNull.Value ? null : Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdateDate = d["UpdateDate"] == DBNull.Value ? null : Convert.ToDateTime(d["UpdateDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                                  Inactive = d["Inactive"]?.ToString() ?? ""
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult LostAndFoundQualitySave(int id, string codenew, string descriptionnew, int isActive,  string user)
+        {
+            var pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                user = (user ?? string.Empty).Replace("\"", "").Trim();
+
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                var businessDate = businessDates[0].BusinessDate;
+
+                lafQualityTypeModel model;
+                bool isNew = (id == 0);
+
+                if (isNew)
+                {
+                    model = new lafQualityTypeModel
+                    {
+                        Code = codenew?.Trim(),
+                        Name = descriptionnew?.Trim(),
+                        Inactive = (isActive == 1),
+                  
+                        CreatedBy = user,
+                        CreatedDate = businessDate,
+                        UpdatedBy = user,
+                        UpdateDate = businessDate
+                    };
+
+                    lafQualityTypeBO.Instance.Insert(model);
+                }
+                else
+                {
+                    model = (lafQualityTypeModel)lafQualityTypeBO.Instance.FindByPrimaryKey(id);
+                    if (model == null)
+                    {
+                        throw new Exception($"Không tìm thấy lafZone có ID = {id}");
+                    }
+
+                    model.Code = codenew?.Trim();
+                    model.Name = descriptionnew?.Trim();
+                    model.Inactive = (isActive == 1);
+                    model.UpdatedBy = user;
+                    model.UpdateDate = businessDate;
+
+                    lafQualityTypeBO.Instance.Update(model);
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new
+                {
+                    success = true,
+                    message = isNew ? "Insert success!" : "Update success!"
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public IActionResult LostAndFoundQualityDelete(int id)
+        {
+            try
+            {
+
+                lafQualityTypeBO.Instance.Delete(id);
 
                 return Json(new { success = true, message = "Success Delete!" });
             }
