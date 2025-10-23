@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -5495,5 +5496,158 @@ namespace Administration.Controllers
             ViewBag.UsersList = listuser;
             return View();
         }
+
+        #region PersonInCharge
+        public ActionResult PersonInCharge()
+        {
+
+            List<PersonInChargeGroupModel> listpic = PropertyUtils.ConvertToList<PersonInChargeGroupModel>(PersonInChargeGroupBO.Instance.FindAll());
+
+            ViewBag.PersonInChargeGroupList = listpic;
+
+            List<PersonInChargeZoneModel> listzone = PropertyUtils.ConvertToList<PersonInChargeZoneModel>(PersonInChargeZoneBO.Instance.FindAll());
+
+            ViewBag.PersonInChargeZoneList = listzone;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult PersonInChargeData( string code, string description, string group, string zone,string  isActive)
+        {
+            code = code ?? "";
+            description = description ?? "";
+            group = group ?? "";
+            zone = zone ?? "";
+            if (isActive == "1")
+            {
+                isActive = "";
+            }
+
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PersonInChargeData(code, description, group, zone, isActive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"] != DBNull.Value ? Convert.ToInt32(d["ID"]) : 0,
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+                                  TelePhone = d["TelePhone"]?.ToString() ?? "",
+                                  Mobile = d["Mobile"]?.ToString() ?? "",
+                                  Email = d["Email"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  ZoneID = d["ZoneID"] != DBNull.Value ? Convert.ToInt32(d["ZoneID"]) : 0,
+                                  GroupID = d["GroupID"] != DBNull.Value ? Convert.ToInt32(d["GroupID"]) : 0,
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"] != DBNull.Value ? Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
+                                  Inactive = d["Inactive"]?.ToString() ?? "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+           
+        }
+        [HttpPost]
+        public IActionResult PersonInChargeSave(int id, string codenew, string telephonenew, string handphonenew, string emailnew, string namenew, string descriptionnew, string group, string zone, int isActive, string user)
+        {
+            var pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                user = (user ?? string.Empty).Replace("\"", "").Trim();
+
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                var businessDate = businessDates[0].BusinessDate;
+
+                PersonInChargeModel model;
+                bool isNew = (id == 0);
+
+                if (isNew)
+                {
+                    model = new PersonInChargeModel
+                    {
+                        Code = codenew?.Trim(),
+                        Name = namenew?.Trim(),
+                        Description = descriptionnew?.Trim(),
+                        Inactive = (isActive == 1),
+                        Telephone= telephonenew,
+                        MobilePhone= handphonenew,
+                        Email= emailnew,
+                        CreatedBy = user,
+                        PersonInChargeGroupID = int.Parse(group),
+                        PersonInChargeZoneID = int.Parse(zone),
+                        CreatedDate = businessDate,
+                        UpdatedBy = user,
+                        UpdatedDate = businessDate
+                    };
+
+                    PersonInChargeBO.Instance.Insert(model);
+                }
+                else
+                {
+                    model = (PersonInChargeModel)PersonInChargeBO.Instance.FindByPrimaryKey(id);
+                    if (model == null)
+                    {
+                        throw new Exception($"Không tìm thấy lafZone có ID = {id}");
+                    }
+
+                    model.Code = codenew?.Trim();
+                    model.Name = namenew?.Trim();
+                    model.Description = descriptionnew?.Trim();
+                    model.Inactive = (isActive == 1);
+                    model.Telephone = telephonenew;
+                    model.MobilePhone = handphonenew;
+                    model.Email = emailnew;
+
+                    model.PersonInChargeGroupID = int.Parse(group);
+                    model.PersonInChargeZoneID = int.Parse(zone);
+                    model.UpdatedBy = user;
+                    model.UpdatedDate = businessDate;
+
+                    PersonInChargeBO.Instance.Update(model);
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new
+                {
+                    success = true,
+                    message = isNew ? "Insert success!" : "Update success!"
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public IActionResult PersonInChargelete(int id)
+        {
+            try
+            {
+
+                PersonInChargeBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
     }
 }

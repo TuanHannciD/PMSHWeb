@@ -3,7 +3,7 @@
 
 @{
     var selectedReport = @ViewBag.ReportHeader;
-    var listFacilityCode = ViewBag.hkpFacilityCode;
+    var listSection = ViewBag.hkpSection;
 
 }
 <style>
@@ -93,7 +93,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-<div class="text-center" id="reportTitle" style="font-size: 20px">Facility Code</div>
+<div class="text-center" id="reportTitle" style="font-size: 20px">Section</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
         <!-- From Date -->
@@ -118,16 +118,16 @@
                     <!-- Clean Uncheck -->
                     <div class="form-check me-3">
                         <span class="status-color-box color-clean-uncheck"></span>
-                        <input class="form-check-input" type="checkbox" id="isActive" name="includeOptions" value="1" checked>
+                        <input class="form-check-input" type="checkbox" id="isActive" name="includeOptions" value="1" >
                         <label class="form-check-label" for="cleanUncheck">Show Inactive</label>
                     </div>
 
                 </div>
 
-              
+
             </div>
         </div>
-      
+
 
 
 
@@ -140,26 +140,26 @@
         <button id="btnExportExcel" class="mui-button mui-button-export" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
 
     </div>
- 
+
 </div>
 <div class="mui-card">
     @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
     <div id="gridContainer" class="gridContainer mt-2"></div>
 </div>
 <div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;"></div>
-<div id="popupNewFacilityCode" style="display: none; position: fixed; top: 50%; left: 50%;
+<div id="popupNewSection" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
     z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
 
     <div class="d-flex justify-content-between mb-2">
-        <h5 class="mb-0">Facility Code Screen</h5>
+        <h5 class="mb-0">Section Screen</h5>
 
     </div>
     <div class="d-flex justify-content-start mb-3 gap-2">
 
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-       
-        <button onclick="$('#popupNewFacilityCode').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
+
+        <button onclick="$('#popupNewSection').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
     </div>
@@ -168,37 +168,16 @@
             <div class="d-flex align-items-center flex-wrap mb-2">
                 <div class="d-flex align-items-start mb-3">
                     <!-- Trace Time -->
-                    <input type="text" id="idhkpFacilityCode" name="hkpFacilityCode" style="display:none !important" class="form-control form-control-sm w-auto" />
+                    <input type="text" id="idhkpSection" name="idhkpSection" style="display:none !important" class="form-control form-control-sm w-auto" />
                     <div class="d-flex align-items-center me-4">
                         <label for="tracetime" class="me-2 mb-0">Code:</label>
                         <input type="text" id="codenew" name="codenew"
                                class="form-control form-control-sm w-auto" />
                     </div>
-                  
-                    <div class="d-flex align-items-start">
-                        <label for="tracetext" class="me-2 mt-1">Facility Category:</label>
-                        <input type="text" id="facilityCategory" name="facilityCategory"
-                               class="form-control form-control-sm w-auto" />
-                        <i id="listfacCategory" class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;margin-right:20px;margin-left:10px"></i>
-                    </div>
                     <div class="form-check me-3">
                         <span class="status-color-box color-clean-uncheck"></span>
                         <input class="form-check-input" type="checkbox" id="isActivenew" name="includeOptions" value="1" checked>
                         <label class="form-check-label" for="cleanUncheck"> Inactive</label>
-                    </div>
-                </div>
-                <div class="d-flex align-items-start mb-3">
-                    <div class="d-flex align-items-center me-3">
-
-
-                        <!-- Clean Uncheck -->
-                      
-
-                    </div>
-                    <div class="d-flex align-items-center me-4">
-                        <label for="tracetime" class="me-2 mb-0">Sequence:</label>
-                        <input type="number" id="sequence" name="sequence"
-                               class="form-control form-control-sm w-auto" />
                     </div>
                     <div class="d-flex align-items-start">
                         <label for="tracetext" class="me-2 mt-1">Description:</label>
@@ -206,9 +185,9 @@
                                   class="form-control form-control-sm"
                                   rows="3" style="width:250px; height:150px;"></textarea>
                     </div>
-                    
                 </div>
-        
+         
+
             </div>
 
 
@@ -219,66 +198,6 @@
 
 </div>
 
-<div id="popupfacCategory" style="display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; height: 688px; overflow-y: auto;">
-
-    <div class="d-flex justify-content-between mb-2">
-        <h5 class="mb-0"> Facility Category</h5>
-
-    </div>
-    <div class="d-flex justify-content-start mb-3 gap-2">
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnPrintfacCategory" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkSelect" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-        <button onclick="$('#popupfacCategory').hide()" id="btnCloseppopupfacCategory" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
-            <i class="fa-solid fa-xmark me-1"></i> Close
-        </button>
-    </div>
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
-        <!-- From Date -->
-
-        <div class="d-flex flex-column ">
-
-            <div class="d-flex align-items-center">
-                <input type="text" id="idattendant" name="idattendant" style="display:none !important" class="form-control form-control-sm w-auto" />
-                <div class="d-flex align-items-center me-4">
-                    <label for="tracetime" class="me-2 mb-0">Code:</label>
-                    <input type="text" id="codefacCategory" name="codefacCategory"
-                           class="form-control form-control-sm w-auto" />
-                </div>
-                <div class="d-flex align-items-center me-3">
-
-
-                    <!-- Clean Uncheck -->
-                    <div class="form-check me-3">
-                        <span class="status-color-box color-clean-uncheck"></span>
-                        <input class="form-check-input" type="checkbox" id="isActivefacCategory" name="includeOptions" value="1" checked>
-                        <label class="form-check-label" for="cleanUncheck">Show Inactive</label>
-                    </div>
-
-                </div>
-                <div class="d-flex align-items-center me-4">
-                    <label for="tracetime" class="me-2 mb-0">Description:</label>
-                    <input type="text" id="descriptionfacCategory" name="descriptionfacCategory" class="form-control form-control-sm w-auto" />
-                </div>
-
-             
-
-
-            </div>
-        </div>
-
-
-
-
-    </div>
-    <div class="mui-card">
-
-        <div id="gridContainerfacCategory" class="gridContainer mt-2"></div>
-
-
-    </div>
-</div>
 
 
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
@@ -290,7 +209,7 @@
        $(document).ready(function () {
 
         $("#btnPrint").trigger("click");
-              $("#btnPrintfacCategory").trigger("click");
+             
     });
 
 
@@ -299,7 +218,7 @@
               let isActive  = $("#isActive").is(":checked") ? 1 : 0;
             $("#loadingSpinner").show();
             $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCodeData',
+                url: '/HouseKeepingAdmin/SectionData',
                 type: 'GET',
                 data: {
                           code: $("#code").val(),
@@ -312,7 +231,7 @@
                 success: function (result) {
 
                 console.log(result);
-            initializeFacilityCodeGrid(result);
+            initializeSectionGrid(result);
                         $("#loadingSpinner").hide();
                 },
                 error: function () {
@@ -322,7 +241,7 @@
             });
         });
         var selectedRowData=null;
-     function initializeFacilityCodeGrid(data) {
+     function initializeSectionGrid(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,
             showBorders: true,
@@ -338,20 +257,9 @@
                 { dataField: "id", caption: "ID", width: 80, visible: false },
                 { dataField: "code", caption: "Code", width: 200 },
                 { dataField: "description", caption: "Description", width: 120 },
-               
-               
-                  { dataField: "inactive", caption: "Inactive", width: 80,
-                    cellTemplate: function(container, options) {
-                         let checked = (options.value === true || options.value === "True");
-                        $("<div>")
-                            .dxCheckBox({
-                                value: checked,
-                                readOnly: true
-                            })
-                            .css("transform", "scale(0.8)")
-                            .appendTo(container);
-                    }
-                },
+
+
+                  { dataField: "inactiveText", caption: "Inactive", width: 80 },
                 { dataField: "updatedBy", caption: "Updated By", width: 120 },
                 { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
                 { dataField: "createdBy", caption: "Updated By", width: 120 },
@@ -386,126 +294,25 @@
      }
     $("#btnNew").on("click", function () {
 
-       clearFacilityCode();
+       clearSection();
             $('#overlay').fadeIn(200);
-            $('#popupNewFacilityCode').fadeIn(200);
+            $('#popupNewSection').fadeIn(200);
 
     });
-    $("#listfacCategory").on("click", function () {
-          
-            $('#popupfacCategory').fadeIn(200);
-    });
-       $(document).off("click", "#btnPrintfacCategory").on("click", "#btnPrintfacCategory", function () {
-              let isActive  = $("#isActivefacCategory").is(":checked") ? 1 : 0;
-            $("#loadingSpinner").show();
-            $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCategoryData',
-                type: 'GET',
-                data: {
-                          code: $("#codefacCategory").val(),
-                           description: $("#descriptionfacCategory").val(),
-                           isActive: isActive
-                },
-                traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
 
-                console.log(result);
-            initializeFacilityCategoryGrid(result);
-                        $("#loadingSpinner").hide();
-                },
-                error: function () {
-                    alert("Không th? t?i báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
-        });
-        var selectedRowDatafc=null;
-     function initializeFacilityCategoryGrid(data) {
-        $("#gridContainerfacCategory").dxDataGrid({
-            dataSource: data,
-            showBorders: true,
-            selection: { mode: "single" },
-            paging: { pageSize: 20 },
-            pager: {
-                showPageSizeSelector: true,
-                allowedPageSizes: [20, 50, 100],
-                showInfo: true
-            },
-            filterRow: { visible: true },
-            columns: [
-                { dataField: "id", caption: "ID", width: 80, visible: false },
-                { dataField: "code", caption: "Code", width: 200 },
-                { dataField: "description", caption: "Description", width: 120 },
-
-
-                  { dataField: "inactive", caption: "Inactive", width: 80,
-                    cellTemplate: function(container, options) {
-                         let checked = (options.value === true || options.value === "True");
-                        $("<div>")
-                            .dxCheckBox({
-                                value: checked,
-                                readOnly: true
-                            })
-                            .css("transform", "scale(0.8)")
-                            .appendTo(container);
-                    }
-                },
-                { dataField: "updatedBy", caption: "Updated By", width: 120 },
-                { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
-                { dataField: "createdBy", caption: "Updated By", width: 120 },
-                { dataField: "createdDate", caption: "Created Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
-            ],
-            scrolling: {
-                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
-                    showScrollbar: "always",
-                    scrollByContent: true
-                },
-                paging: {
-                    pageSize: 50
-                },
-                pager: {
-                    visible: true,
-                    allowedPageSizes: [50, 100, 'all'],
-                    showPageSizeSelector: true,
-                    showInfo: true,
-                    showNavigationButtons: true
-                },
-                    filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            // 🔥 Quan trọng: gán selectedRowData khi click chọn
-             onRowClick: function (e) {
-                selectedRowDatafc = e.data; // 🔥 lấy data của row vừa click
-                console.log("Selected Row (RowClick):", selectedRowDatafc);
-
-            }
-        });
-     }
          $("#btnOkAuto").on("click", function () {
 
             let isActive  = $("#isActivenew").is(":checked") ? 1 : 0;
-                if (selectedRowDatasa.length === 0) {
-                showToast('Error', "Please select at least one account!", false);
-                return;
-            }
+              
 
             // Lấy giá trị các input
             let codeNew = $("#codenew").val().trim();
-            let facilityCategory = $("#facilityCategory").val().trim();
             let descriptionNew = $("#descriptionnew").val().trim();
 
             // ✅ Kiểm tra rỗng
             if (codeNew === "") {
                 showToast('Error', "Code cannot be blank.", false);
                 $("#codenew").focus();
-                return;
-            }
-            if (facilityCategory === "") {
-                showToast('Error', "Facility Category cannot be blank.", false);
-                $("#facilityCategory").focus();
                 return;
             }
             if (descriptionNew === "") {
@@ -515,15 +322,13 @@
             }
           $("#loadingSpinner").show();
             $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCodeSave',
+                url: '/HouseKeepingAdmin/SectionSave',
                 type: 'POST',
-                 contentType: "application/json; charset=utf-8", // ✅ gửi JSON chuẩn
                  data: {
-                      id: $("#idhkpFacilityCode").val(),
+                      id: $("#idhkpSection").val(),
                     codenew: $("#codenew").val(),
-                    facilityCategory: $("#facilityCategory").val(),
+                   
                     descriptionnew: $("#descriptionnew").val(),
-                    sequence: $("#sequence").val(),
                     user: localStorage.getItem("Loginname"),
                     isActive: isActive
                 },
@@ -533,10 +338,10 @@
                 success: function (result) {
                         if (result.success) {
                                 showToast('Success', result.message, true);
-                                $('#popupNewFacilityCode').fadeOut(200);
+                                $('#popupNewSection').fadeOut(200);
                                  $('#overlay').fadeOut(200);
                                    $("#btnPrint").trigger("click");
-                                    clearFacilityCode();
+                                    clearSection();
                        } else {
                                 showToast('Error', 'Please select before saving.', false);
                        }
@@ -553,24 +358,22 @@
 
 
     $("#btnUpdate").on("click", function () {
-            var listFacilityCode = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.hkpFacilityCode ?? new List<object>()));
+            var listSection = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.hkpSection ?? new List<object>()));
             if (selectedRowData.length === 0) {
                     showToast('Error', "Please select !", false);
                 return;
             }
             // Tìm trong listFacilityCode theo ID
            let selectedId = parseInt(selectedRowData.id);
-            let selectedItem = listFacilityCode.find(x => x.ID === selectedId);
+            let selectedItem = listSection.find(x => x.ID === selectedId);
             console.log(selectedItem);
             if (!selectedItem) {
                 showToast('Error', "No matching data found!", false);
                 return;
             }
 
-            $("#idhkpFacilityCode").val(selectedItem.ID);
+            $("#idhkpSection").val(selectedItem.ID);
               $("#codenew").val(selectedItem.Code || "");
-              $("#facilityCategory").val(selectedItem.FacilityCategory || "");
-              $("#sequence").val(selectedItem.Sequence || "");
               $("#descriptionnew").val(selectedItem.Description || "");
 
               // Checkbox Inactive
@@ -579,23 +382,21 @@
               } else {
                   $("#isActivenew").prop("checked", false);
               }
-                  $("#popupNewFacilityCode").fadeIn(200);
+                  $("#popupNewSection").fadeIn(200);
                      $('#overlay').fadeIn(200);
     });
 
 
 
     $('#btnClosePopup, #overlay').click(function () {
-            $('#popupNewFacilityCode').fadeOut(200);
+            $('#popupNewSection').fadeOut(200);
                          $("#btnOkAuto").show();
             $('#overlay').fadeOut(200);
     });
-        function clearFacilityCode() {
+        function clearSection() {
               $("#codenew").val("");
-            $("#facilityCategory").val("");
-            $("#sequence").val("");
             $("#descriptionnew").val("");
-            $("#idhkpFacilityCode").val("");
+            $("#idhkpSection").val("");
 
             // Bỏ check checkbox Inactive (hoặc thiết lập lại trạng thái mặc định nếu cần)
             $("#isActivenew").prop("checked", false);
@@ -614,7 +415,7 @@
                 return; // Nếu chọn Cancel thì dừng
             }
             $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCodeDelete',
+                url: '/HouseKeepingAdmin/SectionDelete',
                 type: 'POST',
                 data: {
                        id:selectedRowData.id
@@ -669,7 +470,7 @@
         worksheet.addRow([]);
 
         // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
-        const reportRow = worksheet.addRow(['FacilityCode']);
+        const reportRow = worksheet.addRow(['Section']);
         worksheet.mergeCells('A5:D5');
         reportRow.font = { bold: true, size: 14 };
         reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -691,7 +492,7 @@
             worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
             // Ghi file
-            let fileName = "FacilityCode.xlsx";
+            let fileName = "Section.xlsx";
             workbook.xlsx.writeBuffer().then(function (buffer) {
                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
             });

@@ -11,5 +11,7 @@ namespace Administration.Services.Interfaces
     {
         public DataTable FacilityCodeData(string code, string description, int isActive);
         public DataTable FacilityCategoryData(string code, string description, int isActive);
+        public DataTable SectionData(string code, string description, int isActive);
+        public DataTable HouseKeepingEmployeeData(string description, int isActive);
     }
 }

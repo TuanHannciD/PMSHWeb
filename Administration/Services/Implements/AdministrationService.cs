@@ -436,5 +436,20 @@ namespace Administration.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spSearchPostingHistoryGeneral", param);
             return myTable;
         }
+
+        public DataTable PersonInChargeData(string code, string description, string group, string zone, string  isActive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code),
+                new SqlParameter("@Name", description),
+                new SqlParameter("@GroupID", group),
+                new SqlParameter("@ZoneID",zone),
+                new SqlParameter("@Inactive", isActive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spPersonInChargeSearch", param);
+            return myTable;
+        }
     }
 }

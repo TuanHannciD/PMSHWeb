@@ -366,7 +366,7 @@ namespace HouseKeeping.Controllers
                     // Tính % OCC = (Booked / Availability) × 100
                     if (hasValidBookedValue && availabilityValue != 0 && !double.IsNaN(availabilityValue))
                     {
-                        occPercentages[columnName] = $"{Math.Round((bookedValue / availabilityValue) * 100, 2)}%";
+                        occPercentages[columnName] = $"{Math.Round((bookedValue / availabilityValue) * 100, 1)}%";
                     }
                     else
                     {
