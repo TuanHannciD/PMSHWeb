@@ -8,55 +8,55 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="button-group">
-                <button type="button" class="mui-button mui-button-search" onclick="EditPosting();">Save</button>
-                <button type="button" class="mui-button mui-button-clear" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="submit-button-clear-reservation" onclick="EditPosting();">Save</button>
+                <button type="button" class="submit-button-clear-reservation" data-bs-dismiss="modal">Close</button>
             </div>
             <div class="modal-body">
                 <div class="row mb-2">
                     <div class="col-6">
                         <div class="form-group">
                             <label for="room" class="form-label">Room</label>
-                            <input type="text" class="form-control small-input" id="roomEditPosting" readonly>
+                            <input type="text" id="roomEditPosting" readonly>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="nameEditPosting" readonly>
+                            <input type="text"  id="nameEditPosting" readonly>
                         </div>
                     </div>
                 </div>
                 <hr class="hr">
                 <div class="form-group">
                     <label for="code" class="form-label">Code</label>
-                    <input type="text" class="form-control small-input" id="codeEditPosting" readonly>
+                    <input type="text"  id="codeEditPosting" readonly>
                     <span class="input-span" id="nameTransactionEditPosting"></span>
                 </div>
                 <hr class="hr">
                 <div class="row mb-2">
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="price" class="form-label">Price</label>
-                            <input type="text" class="form-control" id="priceEditPosting" style="text-align:right">
+                            <label>Price</label>
+                            <input type="text" id="priceEditPosting" style="text-align:right">
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantityEditPosting" style="text-align:right">
+                            <label >Quantity</label>
+                            <input type="number" id="quantityEditPosting" style="text-align:right">
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="amount" class="form-label">Amount</label>
-                            <input type="text" class="form-control" id="amountEditPosing" readonly style="text-align:right">
+                            <label >Amount</label>
+                            <input type="text"  id="amountEditPosing" readonly style="text-align:right">
                         </div>
                     </div>
 
-                    <div class="col-3">
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <label for="currency" class="form-label">Currency</label>
-                            <input type="text" class="form-control" id="currency" value="VND">
+                            <label >Currency</label>
+                            <input type="text" id="currency" value="VND">
                         </div>
                     </div>
                 </div>
@@ -65,13 +65,13 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label for="crashier" class="form-label">Crashier</label>
-                            <input type="text" class="form-control medium-input" id="crashierEditPosting" readonly>
+                            <input type="text"  id="crashierEditPosting" readonly>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label for="winNo" class="form-label">Win.No</label>
-                            <input type="text" class="form-control medium-input" id="winNoEditPosting" value="1" readonly>
+                            <input type="text"  id="winNoEditPosting" value="1" readonly>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label for="postingDate" class="form-label">Posting Date</label>
-                            <input type="date" class="form-control medium-input" id="postingDate" value="2023-08-01" readonly>
+                            <input type="date"  id="postingDate" value="2023-08-01" readonly>
                         </div>
                     </div>
                     <div class="col-6">
@@ -93,19 +93,19 @@
                 <hr class="hr">
                 <div class="form-group">
                     <label for="articleCode" class="form-label">Article Code</label>
-                    <input type="text" class="form-control" id="articleCodeEditPosting" readonly>
+                    <input type="text"  id="articleCodeEditPosting" readonly>
                 </div>
                 <div class="form-group">
                     <label for="supplement" class="form-label">Supplement</label>
-                    <input type="text" class="form-control" id="supplementEditPosting">
+                    <input type="text"  id="supplementEditPosting">
                 </div>
                 <div class="form-group">
                     <label for="reference" class="form-label">Reference</label>
-                    <input type="text" class="form-control" id="referenceEditPosting">
+                    <input type="text"  id="referenceEditPosting">
                 </div>
                 <div class="form-group">
                     <label for="checkNo" class="form-label">Check No</label>
-                    <input type="text" class="form-control" id="checkNoEditPosting" readonly>
+                    <input type="text"  id="checkNoEditPosting" readonly>
                 </div>
             </div>
         </div>
