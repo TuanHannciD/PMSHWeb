@@ -113,10 +113,7 @@
 </div>
 <script>
     function openModalEditPosting(){
-        if(transactionNoPost == 0){
-            showToast('Error', 'Please choose service', false);
-            return;
-        }
+        
         getFolioDetailMaster();
             $('#modalEditPosting').modal('show');
     }
@@ -125,6 +122,14 @@
     }
 
     function getFolioDetailMaster() {
+        var grid = $("#gridContainerBilling").dxDataGrid("instance");
+        var selectedRows = grid.getSelectedRowsData();
+        var selectedIds = selectedRows.map(row => row.transactionNo);
+        transactionNoPost = selectedIds[0];
+        if(transactionNoPost == 0){
+            showToast('Error', 'Please choose service', false);
+            return;
+        }
         $.ajax({
             url: '/Billing/GetFolioDetailMaster',
             type: 'get',
