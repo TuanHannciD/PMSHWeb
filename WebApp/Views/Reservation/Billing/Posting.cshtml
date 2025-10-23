@@ -541,10 +541,10 @@
             $('#articleCodePostBilling').text().split('-')[0],
             $('#articleCodePostBilling').text().split('-')[1],
             $('#quantityPostBilling').val(),
-            $('#priceNetPostBilling').val(),
-            $('#pricePostBilling').val(),
-            $('#amountPostBilling').val(),
-            $('#amountNetPostBilling').val()
+            $('#priceNetPostBilling').val().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+            $('#pricePostBilling').val().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+            $('#amountPostBilling').val().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+            $('#amountNetPostBilling').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
         ));
         listSelected();
         resetInfoPost();

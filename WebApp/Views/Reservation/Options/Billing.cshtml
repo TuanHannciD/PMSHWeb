@@ -426,9 +426,13 @@
 
     }
     $("#deleteTransactionBilling").on("click", function() {
+        console.log('check a');
         var grid = $("#gridContainerBilling").dxDataGrid("instance");
+
         var selectedRows = grid.getSelectedRowsData();
+
         var selectedIds = selectedRows.map(row => row.id);
+
         $.ajax({
             url: '/Billing/DeleteTransaction',
             type: 'POST',
@@ -445,6 +449,10 @@
         });
     });
     function openModalBilling(){
+        if(reservationStatus == 0 || reservationStatus == 7){
+            showToast('Error', 'Booking status must not be Reservation or Cancel', false);
+            return;
+        }
         getInforServices();
         getFolioNo();
         // searchFolioDetail(0);
@@ -639,7 +647,7 @@
                     { header: 'Time', key: 'time', width: 15 },
                     { header: 'Group Code', key: 'groupCode', width: 15 },
                     { header: 'Sub Group Code', key: 'subgroupCode', width: 15 },
-                    { header: 'Website', key: 'shiftID', width: 15 },
+                    { header: 'Shift', key: 'shiftID', width: 15 },
                     { header: 'Property', key: 'property', width: 15 },
                     { header: 'Transaction No', key: 'transactionNo', width: 15 }
                 ];

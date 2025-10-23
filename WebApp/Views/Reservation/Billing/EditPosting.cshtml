@@ -113,6 +113,10 @@
 </div>
 <script>
     function openModalEditPosting(){
+        if(transactionNoPost == 0){
+            showToast('Error', 'Please choose service', false);
+            return;
+        }
         getFolioDetailMaster();
             $('#modalEditPosting').modal('show');
     }
