@@ -169,9 +169,9 @@
 
     <!-- Buttons -->
     <div class="mt-3 d-flex flex-wrap gap-2">
-        <button class="btn btn-secondary" id="btnView"><i class="fa-solid fa-eye me-1"></i>View</button>
-        <button class="btn btn-primary" id="btnOK" type="button"><i class="fa-solid fa-pen-to-square me-1"></i>OK</button>
-        <button class="btn btn-danger" id="btnCancelCard" type="button"><i class="fa-solid fa-trash me-1"></i>Cancel Card</button>
+        <button class="mui-button button-report-view" id="btnView"><i class="fa-solid fa-eye me-1"></i>View</button>
+       <button class="mui-button button-report-view" id="btnOK" type="button"><i class="fa-solid fa-floppy-disk"></i>OK</button>
+        <button class="mui-button button-report-delete" id="btnCancelCard" type="button"><i class="fa-solid fa-trash me-1"></i>Cancel Card</button>
 
     <div class="d-flex align-items-center ms-auto me-auto">
         <label for="cardID" class="form-label">Input CardID</label>
@@ -217,6 +217,35 @@
         }
 
       $(document).ready(function () {
+            // Khởi tạo kết nối tới SignalR Hub
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/tagScanHub")
+                .build();
+
+            // Khi server gửi code RFID về
+            connection.on("ReceiveCode", function (code) {
+                console.log("Mã quét được:", code);
+
+                // Gán giá trị vào ô input
+                $("#cardID")
+                .val(code)
+                .trigger("change") // 🔥 Thêm dòng này để on("change") hoạt động
+                .addClass("border-success")
+                .fadeOut(100)
+        .fadeIn(100);
+
+          
+            });
+
+            // Bắt đầu kết nối
+            connection.start()
+                .then(function () {
+                    console.log("✅ Kết nối SignalR thành công!");
+                })
+                .catch(function (err) {
+                    console.error("❌ Lỗi kết nối SignalR:", err);
+                });
+
                 const today = new Date();
                 const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
                 // Lấy ngày cuối cùng của tháng
@@ -251,14 +280,15 @@
                             $("#toDate").prop("disabled", true).val("");
                         }
                     });
-                     $("#cardID").on("input", function () {
-                let value = $(this).val();
+                     $("#cardID").on("change", function () {
+                        let value = $(this).val();
 
-                // Kiểm tra nếu đủ 8 số và toàn là số
-                if (value.length === 8 && /^\d+$/.test(value)) {
-                    insertCard(value);
-                }
-                });
+                        // Kiểm tra nếu đủ 8 số và toàn là số
+                        if (value.length === 8 && /^\d+$/.test(value)) {
+                            insertCard(value);
+                        }
+                    });
+
 
                 initializeTomSelects();
                 reloadGrid();
@@ -392,7 +422,7 @@
             // Hàm gọi AddCard API
         function insertCard(cardID) {
         if (!selectedRowsData || selectedRowsData.length === 0) {
-            alert("Vui lòng chọn 1 guest trong danh sách trước khi thêm card!");
+            showToast('Error', 'Please select 1 guest from the list before adding a card!', false);
             return;
         }
 
@@ -400,7 +430,8 @@
         const gridData = $("#gridContainerRateCode").dxDataGrid("instance").option("dataSource");
         const exists = Array.isArray(gridData) && gridData.some(row => String(row.cardID) === String(cardID));
         if (exists) {
-            alert("CardID này đã tồn tại trong danh sách. Vui lòng kiểm tra lại!");
+               showToast('Error', 'This CardID already exists in the list. Please check again!', false);
+ 
             return;
         }
 
@@ -420,9 +451,15 @@
             data: JSON.stringify(requestData),
             success: function(response) {
                 $("#loadingSpinnerRateCode").hide();
-                showToast("Success", "Card added successfully!", true);
-                $("#cardID").val('');
-                reloadGrid();
+                if (response && response.success) {
+                    // ✅ Khi thêm thành công
+                    showToast("Success", response.message || "Card added successfully!", true);
+                    $("#cardID").val('');
+                    reloadGrid();
+                } else {
+                    // ⚠️ Khi server trả về success = false nhưng không lỗi HTTP
+                    showToast("Error", response.message || "Có lỗi xảy ra khi thêm thẻ.", false);
+                }
             },
             error: function(xhr, status, error) {
                 $("#loadingSpinnerRateCode").hide();

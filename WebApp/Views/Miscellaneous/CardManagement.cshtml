@@ -25,10 +25,10 @@
     </div>
     <div class=" mt-1">
        
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #28a745;" id="btnNew" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> New</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #007bff;" id="btnEdit" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Edit</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #dc3545;" id="btnDelete" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Delete</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #007bff;" id="btnSave" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Save</button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: #28a745;" id="btnNew" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-plus"></i> New</button>
+        <button class="mui-button mui-button-edit" id="btnEdit" ctype="button"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button class="mui-button button-report-delete" id="btnDelete"  type="button"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button class="mui-button mui-button-advance" id="btnSave" type="button"> <i class="fa-solid fa-floppy-disk"></i> Save</button>
     </div>
 </div>
 
@@ -51,14 +51,43 @@
                return `${year}-${month}-${day}`;
            }
          $(document).ready(function () {
-                     $("#cardID").on("input", function () {
-                let value = $(this).val();
+                 const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/tagScanHub")
+                .build();
 
-                // Kiểm tra nếu đủ 8 số và toàn là số
-                if (value.length === 8 && /^\d+$/.test(value)) {
-                    insertCard(value);
-                }
-            });
+            // Khi server gửi code RFID về
+                    connection.on("ReceiveCode", function (code) {
+                        console.log("Mã quét được:", code);
+
+                        // Gán giá trị vào ô input
+                        $("#cardID")
+                        .val(code)
+                        .trigger("change") // 🔥 Thêm dòng này để on("change") hoạt động
+                        .addClass("border-success")
+                        .fadeOut(100)
+                .fadeIn(100);
+
+
+                    });
+
+            // Bắt đầu kết nối
+                 connection.start()
+                .then(function () {
+                    console.log("✅ Kết nối SignalR thành công!");
+                })
+                .catch(function (err) {
+                    console.error("❌ Lỗi kết nối SignalR:", err);
+                });
+
+
+                $("#cardID").on("change", function () {
+                    let value = $(this).val();
+
+                    // Kiểm tra nếu đủ 8 số và toàn là số
+                    if (value.length === 8 && /^\d+$/.test(value)) {
+                        insertCard(value);
+                    }
+                });
 
 
 
@@ -80,9 +109,15 @@
                 CanSell: false // mặc định
             }),
             success: function (res) {
-                showToast("Seccess", "Insert success", 2000);
-                $("#gridContainerRateCode").dxDataGrid("instance").refresh();
-                $("#cardID").val("");
+                
+                if (res.success) {
+                    showToast("Success", "Insert success", 2000);
+                    $("#gridContainerRateCode").dxDataGrid("instance").refresh();
+                    $("#cardID").val("");
+                } else {
+                    // Khi server trả về success = false (nhưng vẫn status 200)
+                    showToast("Error", res.message, false);
+                }
             },
             error: function (xhr) {
                showToast("Error", "Insert error!", false);
@@ -153,7 +188,7 @@
                     selectedRow = null;
                     $("#cardID").val("");
                 } else {
-                    showToast("Error", "Update failed!", false);
+                    showToast("Error", res.message , false);
                 }
             },
 

@@ -26,6 +26,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using DevExpress.Data.ODataLinq;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using DevExpress.DataAccess.DataFederation;
+using Microsoft.AspNetCore.SignalR;
+using Miscellaneous.Hubs;
 namespace Miscellaneous.Controllers
 {
     public class MiscellaneousController : Controller
@@ -35,17 +37,24 @@ namespace Miscellaneous.Controllers
         private readonly IMemoryCache _cache;
         private readonly IMiscellaneousService _iMiscellaneousService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHubContext<TagScanHub> _hubContext;
         public MiscellaneousController(ILogger<MiscellaneousController> logger,
-             IMemoryCache cache, IConfiguration configuration, IMiscellaneousService iMiscellaneousService, IHttpContextAccessor httpContextAccessor)
+             IMemoryCache cache, IConfiguration configuration, IMiscellaneousService iMiscellaneousService, IHttpContextAccessor httpContextAccessor, IHubContext<TagScanHub> hubContext)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iMiscellaneousService = iMiscellaneousService;
             _httpContextAccessor = httpContextAccessor;
+            _hubContext = hubContext;
         }
         public IActionResult CardManagement()
         {
+            int baudRate = 9600;
+            TagScannerHelper.Instance.CodeReceived += MainForm_TagScanCodeReceived;
+
+            // Ensure connection from settings (will show message if missing)
+            TagScannerHelper.Instance.ConnectFromSettings(_configuration, baudRate);
             return View();
         }
         [HttpGet]
@@ -99,7 +108,7 @@ namespace Miscellaneous.Controllers
                     int count = (int)checkCmd.ExecuteScalar();
                     if (count > 0)
                     {
-                        return BadRequest(new { success = false, message = "Card ID đã tồn tại trong DB" });
+                        return Json(new { success = false, message = "Card ID does not exist" });
                     }
                 }
 
@@ -143,7 +152,7 @@ namespace Miscellaneous.Controllers
                     int count = (int)checkCmd.ExecuteScalar();
                     if (count == 0)
                     {
-                        return NotFound(new { success = false, message = "Card ID không tồn tại trong DB" });
+                        return Json(new { success = false, message = "Card ID does not exist " });
                     }
                 }
 
@@ -189,7 +198,7 @@ namespace Miscellaneous.Controllers
                     int count = (int)checkCmd.ExecuteScalar();
                     if (count == 0)
                     {
-                        return NotFound(new { success = false, message = "Card ID không tồn tại trong DB" });
+                        return Json(new { success = false, message = "Card ID does not exist" });
                     }
                 }
 
@@ -508,8 +517,21 @@ namespace Miscellaneous.Controllers
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
             ViewBag.ZoneList = listzo;
+            int baudRate = 9600;
+            TagScannerHelper.Instance.CodeReceived += MainForm_TagScanCodeReceived;
+      
+            // Ensure connection from settings (will show message if missing)
+            TagScannerHelper.Instance.ConnectFromSettings(_configuration, baudRate);
             return View();
 
+        }
+        private async void MainForm_TagScanCodeReceived(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code)) return;
+            string tag8 = TagScannerHelper.Instance.Convert10To8TagNo(code);
+
+            // Gửi mã quét được ra client qua SignalR
+            await _hubContext.Clients.All.SendAsync("ReceiveCode", tag8);
         }
         [HttpPost]
         public IActionResult AddCard([FromBody] AddCardRequest request)
@@ -535,7 +557,7 @@ namespace Miscellaneous.Controllers
                         if (exists == 0)
                         {
                             tran.Rollback();
-                            return BadRequest(new { message = "CardID này không tồn tại trong hệ thống, không thể update!" });
+                            return BadRequest(new { message = "This CardID does not exist in the system, cannot be updated!" });
                         }
 
                         // Nếu tồn tại mới update Reservation và Card

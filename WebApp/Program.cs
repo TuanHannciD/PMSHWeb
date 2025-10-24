@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.FileProviders;
 using Miscellaneous.Controllers;
+using Miscellaneous.Hubs;
 using Miscellaneous.Services.Implements;
 using Miscellaneous.Services.Interfaces;
 using NightAudit.Controllers;
@@ -195,6 +196,8 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "node_modules")),
     RequestPath = "/node_modules",
 });
+
+app.MapHub<TagScanHub>("/tagScanHub");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
