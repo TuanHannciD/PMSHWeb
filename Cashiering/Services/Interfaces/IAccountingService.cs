@@ -25,7 +25,7 @@ namespace Cashiering.Services.Interfaces
 
 
         /// <returns>Data table chứa danh sáchaccount maintenacnce</returns>
-        DataTable AccountMaintence(int arID, string folioNo, string isActive,string paymentOnly,string print,DateTime fromDate, DateTime toDate);
+        DataTable AccountMaintence(string dateCheck,int arID, string folioNo, string isActive,string paymentOnly,string print,DateTime fromDate, DateTime toDate);
 
 
         /// <summary>

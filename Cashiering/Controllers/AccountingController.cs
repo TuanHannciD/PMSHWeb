@@ -187,12 +187,12 @@ namespace Cashiering.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchMaintenance(int arID, string folioNo,string isActive,string paymentOnly,string print,DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> SearchMaintenance(string dateCheck,int arID, string folioNo,string isActive,string paymentOnly,string print,DateTime fromDate, DateTime toDate)
         {
             try
             {
 
-                var data = _iAccountingService.AccountMaintence( arID,  folioNo ?? "",  isActive ?? "",  paymentOnly ?? "",  print??"",  fromDate,  toDate);
+                var data = _iAccountingService.AccountMaintence(dateCheck ?? "", arID,  folioNo ?? "",  isActive ?? "",  paymentOnly ?? "",  print??"",  fromDate,  toDate);
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()
                                   .ToDictionary(
