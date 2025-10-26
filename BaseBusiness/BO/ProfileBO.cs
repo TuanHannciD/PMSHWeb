@@ -1,5 +1,6 @@
 ﻿using BaseBusiness.bc;
 using BaseBusiness.Facade;
+using BaseBusiness.Model;
 using BaseBusiness.util;
 using Microsoft.Data.SqlClient;
 using System;
@@ -139,6 +140,16 @@ namespace BaseBusiness.BO
             DataTable myTable = dataSet.Tables[0];
             int totalCount = Convert.ToInt32(dataSet.Tables[1].Rows[0][0]);
             return (myTable, totalCount);
+        }
+
+        public static List<ProfileModel> GetListProfileByBOD(DateTime fromDate, DateTime toDate)
+        {
+            // Định dạng ngày thành YYYY-MM-DD
+            string toDateStr = toDate.ToString("yyyy-MM-dd");
+            string fromDateStr = fromDate.ToString("yyyy-MM-dd");
+
+            string query = $"SELECT * FROM Profile WHERE CAST(DateOfBirth AS DATE) >= CAST('{fromDateStr}' AS DATE) AND CAST(DateOfBirth AS DATE) <= CAST('{toDateStr}' AS DATE) ORDER BY id DESC";
+            return instance.GetList<ProfileModel>(query);
         }
     }
 }

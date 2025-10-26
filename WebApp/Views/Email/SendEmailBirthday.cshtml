@@ -115,6 +115,7 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
+                console.log(result);
                 initializeDataGridSearch(result);
             },
             error: function (xhr, statusText, err) {
@@ -127,10 +128,9 @@
 
     }
     function initializeDataGridSearch(data) {
-        const limitedData = data.slice(0, 100);
 
         $("#gridContainer").dxDataGrid({
-            dataSource: limitedData,
+            dataSource: data,
             allowColumnResizing: true,
             columnMinWidth: 90,
             paging: {
@@ -177,13 +177,37 @@
             },
         });
     }
-    $(document).ready(function() {
-        let today = new Date().toISOString().split('T')[0];
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
 
-        // Set default value for both date inputs
-        $('#fromDate').val(today);
-        $('#toDate').val(today);
-        searchProfile();
+                // Lấy ngày từ result (giả sử result có định dạng ISO như 'YYYY-MM-DDTHH:mm:ss')
+                $('#fromDate').val(result.split('T')[0]);
+                $('#toDate').val(result.split('T')[0]);
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $.when(
+            getBusinessDate()
+
+        ).done(function () {
+            // Tất cả bốn lệnh gọi AJAX đã hoàn tất, bây giờ gọi getBusinessDate
+            searchProfile();
+        });
+        
     });
     function SendEmailGuest() {
         var grid = $("#gridContainer").dxDataGrid("instance");
