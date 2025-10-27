@@ -641,30 +641,17 @@ namespace Administration.Controllers
 
         #region DatVP __ SendEmail:  Get Profile by dob
         [HttpGet]
-        public async Task<IActionResult> GetAllProfiles(DateTime fromDate, DateTime toDate, int page = 1, int pageSize = 15)
+        public async Task<IActionResult> GetAllProfiles(DateTime fromDate, DateTime toDate)
         {
             try
             {
                 // Lấy danh sách profile và lọc theo điều kiện
-                var profiles = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindAll())
-                    .Where(x => fromDate <= x.DateOfBirth && toDate >= x.DateOfBirth && x.Type == 0)
-                    .ToList();
+                var profiles = ProfileBO.GetListProfileByBOD(fromDate,toDate);
 
-                // Tính tổng số bản ghi
-                int totalRecords = profiles.Count;
 
-                // Phân trang
-                var paginatedProfiles = profiles
-                    .Skip((page - 1) * pageSize) // Bỏ qua các bản ghi của các trang trước
-                    .Take(pageSize) // Lấy số bản ghi của trang hiện tại
-                    .ToList();
 
                 // Trả về dữ liệu cùng với thông tin phân trang
-                return Json(new
-                {
-                    data = paginatedProfiles,
-                    totalRecords = totalRecords
-                });
+                return Json(profiles);
             }
             catch (Exception ex)
             {

@@ -14,10 +14,17 @@ namespace Cashiering.Services.Implements
 {
     public class AccountingService : IAccountingService
     {
-        public DataTable AccountMaintence(int arID, string folioNo, string isActive, string paymentOnly, string print, DateTime fromDate, DateTime toDate)
+        public DataTable AccountMaintence(string dateCheck, int arID, string folioNo, string isActive, string paymentOnly, string print, DateTime fromDate, DateTime toDate)
         {
             try
             {
+                string fromDateString = fromDate.ToString("yyyy-MM-dd");
+                string toDateString = toDate.ToString("yyyy-MM-dd");
+                if (dateCheck == "")
+                {
+                    fromDateString = "";
+                    toDateString = "";
+                }
                 SqlParameter[] param = new SqlParameter[]
                 {
                     new SqlParameter("@ARID", arID),
@@ -25,8 +32,8 @@ namespace Cashiering.Services.Implements
                     new SqlParameter("@IsActive", isActive),
                     new SqlParameter("@PaymentOnly",paymentOnly),
                     new SqlParameter("@Print",print),
-                    new SqlParameter("@FromDate",fromDate ),
-                    new SqlParameter("@ToDate",  toDate),
+                    new SqlParameter("@FromDate",fromDateString ),
+                    new SqlParameter("@ToDate",  toDateString),
                 };
 
                 DataTable myTable = DataTableHelper.getTableData("spARAccountReceivableTransSearch", param);

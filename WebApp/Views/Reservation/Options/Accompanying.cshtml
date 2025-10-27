@@ -109,6 +109,7 @@
          $('#modalAccompanying').modal('show');
     }
     function closeModalAccompanying(){
+         idAccompanying = 0;
         clearProfileAccompanying();
         $('#clearProfileAccompanying').hide();
          $('#modalAccompanying').modal('hide');
@@ -140,7 +141,7 @@
             url: '/Reservation/DettachAccompanying',
             type: 'POST',
             // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data: {id:profileID},
+             data: {id:idAccompanying},
             success: function (data) {
                 if (data.code == 0) {
                     getInfoByProfileIDAccompanying(idReservation);
@@ -188,7 +189,7 @@
         });
 
     }
-
+    var idAccompanying = 0;
     function initializeDataGridAccompanying(data) {
 
         $("#gridContainerAccompanying").dxDataGrid({
@@ -224,8 +225,7 @@
             },
             onRowClick: function(e) {
                 profileID = e.data.ProfileID;
-                                 console.log(profileID);
-
+                 idAccompanying = e.data.ID;
                 $('#detach').show();
             }
         });

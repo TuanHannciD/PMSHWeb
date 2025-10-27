@@ -80,27 +80,27 @@
                     <div class="row">
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Room</label>
-                            <select type="text" class="form-control col-md-10" id="roomRouting" disabled></select>
+                            <select type="text" class="col-md-10" id="roomRouting" disabled></select>
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Transaction</label>
-                            <select type="text" class="form-control col-md-10" id="transactionRouting" asp-items="ViewBag.cboTransaction" ></select>
+                            <select type="text" class="col-md-10" id="transactionRouting" asp-items="ViewBag.cboTransaction" ></select>
                         </div>
                         <div class="col-md-6 mb-2 row">
                             <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Limit</label>
-                            <input type="text" class="form-control col-md-8" id="limitRouting" value="0">
+                            <input type="text" class="col-md-8" id="limitRouting" value="0">
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Name</label>
-                            <input type="text" class="form-control col-md-10" id="nameRouting" disabled>
+                            <input type="text" class="col-md-10" id="nameRouting" disabled>
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Address</label>
-                            <input type="text" class="form-control col-md-10" id="addressRouting" disabled>
+                            <input type="text" class="col-md-10" id="addressRouting" disabled>
                         </div>
                         <div class="col-md-6 mb-2 row">
                             <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Window</label>
-                            <select type="text" class="form-control col-md-8" id="windowRouting">
+                            <select type="text" class="col-md-8" id="windowRouting">
                                 <option value="1" selected>--Master Folio--</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -128,6 +128,8 @@
           let formattedDate2 = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#endDateRouting').val(formattedDate2);
         GetRoutingByReservationID(idReservation,confirmationNo);
+                    searchRoomRouting();
+
         $('#modalRouting').modal('show');
     }
     function closeModalRouting(){
@@ -243,6 +245,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     GetRoutingByReservationID(idReservation,confirmationNo);
+                    showToast("Success",data.msg,true);
                     closeModalNewRouting();
                 } else {
                     showToast('Error', data.msg, false);
@@ -278,7 +281,7 @@
             success: function (result) {
                 console.log(result);
                 $('#roomRouting').empty();
-                var html = `<option value="0"></option>`;
+                var html = `<option value="0" selected>Select room </option>`;
                 if(result.length > 0){
                     for(var i = 0;i<result.length;i++){
                         html += `<option value="${result[i].id}">${result[i].lastName}</option>`
@@ -299,7 +302,6 @@
             $('#roomRouting').prop('disabled', false);
             $('#amountDepositRequest').prop('disabled', false);
             $('#amountDepositRequest').prop('disabled', false);
-            searchRoomRouting();
         }
     });
     var reservationMaster = 0;
