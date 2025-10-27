@@ -3534,7 +3534,7 @@ namespace Reservation.Controllers
 
 
                 #region Reinstate booking với đang ở trạng thái check out -> booking trở về trạng thái due out
-                if (statusCode == 3)
+                if (statusCode == 2)
                 {
                     #region update reservation
                     reservation.Status = 6;
