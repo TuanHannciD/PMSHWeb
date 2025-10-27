@@ -5649,5 +5649,133 @@ namespace Administration.Controllers
             }
         }
         #endregion
+
+        #region PersonInChargeGroup
+        public ActionResult PersonInChargeGroup()
+        {
+
+         
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult PersonInChargeGroupData(string code, string description, string isActive)
+        {
+            code = code ?? "";
+            description = description ?? "";
+           
+
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PersonInChargeGroupData(code, description, isActive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = d["ID"] != DBNull.Value ? Convert.ToInt32(d["ID"]) : 0,
+                                  Code = d["Code"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
+                                  Description = d["Description"]?.ToString() ?? "",
+                                  InactiveText = d["InactiveText"]?.ToString() ?? "",
+                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
+                                  CreatedDate = d["CreatedDate"] != DBNull.Value ? Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
+                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
+                                  UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
+                                  Inactive = d["Inactive"]?.ToString() ?? "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+        }
+        [HttpPost]
+        public IActionResult PersonInChargeGroupSave(int id, string codenew,  string namenew, string descriptionnew,  int isActive, string user)
+        {
+            var pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                user = (user ?? string.Empty).Replace("\"", "").Trim();
+
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                var businessDate = businessDates[0].BusinessDate;
+
+                PersonInChargeGroupModel model;
+                bool isNew = (id == 0);
+
+                if (isNew)
+                {
+                    model = new PersonInChargeGroupModel
+                    {
+                        Code = codenew?.Trim(),
+                        Name = namenew?.Trim(),
+                        Description = descriptionnew?.Trim(),
+                        Inactive = (isActive == 1),
+                        CreatedBy = user,
+                        CreatedDate = businessDate,
+                        UpdatedBy = user,
+                        UpdatedDate = businessDate
+                    };
+
+                    PersonInChargeGroupBO.Instance.Insert(model);
+                }
+                else
+                {
+                    model = (PersonInChargeGroupModel)PersonInChargeGroupBO.Instance.FindByPrimaryKey(id);
+                    if (model == null)
+                    {
+                        throw new Exception($"Không tìm thấy lafZone có ID = {id}");
+                    }
+
+                    model.Code = codenew?.Trim();
+                    model.Name = namenew?.Trim();
+                    model.Description = descriptionnew?.Trim();
+                    model.Inactive = (isActive == 1);
+                  
+                    model.UpdatedBy = user;
+                    model.UpdatedDate = businessDate;
+
+                    PersonInChargeGroupBO.Instance.Update(model);
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new
+                {
+                    success = true,
+                    message = isNew ? "Insert success!" : "Update success!"
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        [HttpPost]
+        public IActionResult PersonInChargeGroupDelete(int id)
+        {
+            try
+            {
+
+                PersonInChargeGroupBO.Instance.Delete(id);
+
+                return Json(new { success = true, message = "Success Delete!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
     }
 }
