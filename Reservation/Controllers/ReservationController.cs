@@ -5150,7 +5150,7 @@ namespace Reservation.Controllers
                         }
                     }
                 }
-                rsv.Status = 6;
+                rsv.Status = 2;
                 ReservationBO.Instance.Update(rsv);
 
                 #region thêm log activity log
