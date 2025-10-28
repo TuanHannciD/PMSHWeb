@@ -1195,7 +1195,7 @@ namespace Reservation.Controllers
                     ReservationAmountByCurrencyBO.Instance.Insert(reservationAmountCurrency);
                     #endregion
                     pt.CommitTransaction();
-                    return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
+                    return Json(new { code = 0, msg = $"The number Confirmation No : {reservationModel.ConfirmationNo}" });
 
                 }
                 else
