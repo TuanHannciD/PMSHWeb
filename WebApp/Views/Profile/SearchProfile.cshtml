@@ -1721,7 +1721,10 @@
     }
 
     function GetProfileHistory() {
-
+        if(profileID == 0){
+            showToast("Error","Please chooe at least 1 profile",false);
+            return;
+        }
         $.ajax({
             url: '/Profile/SearchProfileHistory',
             type: 'get',
@@ -1749,7 +1752,40 @@
 
     }
     function initializeDataGridHistory(data) {
+        const columnWidth = 150;
 
+        const columns = [
+            { dataField: 'ConfirmationNo', caption: 'Conf.No', visible: true,width:columnWidth  },
+            { dataField: 'CRSNo', caption: 'CRSNo', visible: true,width:columnWidth },
+            { dataField: 'ArrivalDate', caption: 'ArrivalDate', visible: true,width:columnWidth },
+            { dataField: 'DepartureDate', caption: 'DepartureDate', visible: true,width:columnWidth },
+            { dataField: 'RoomNo', caption: 'Room', visible: true,width:columnWidth },
+            { dataField: 'RoomType', caption: 'Room Type', visible: true ,width:columnWidth},
+            { dataField: 'Rate', caption: 'Rate', visible: true,width:columnWidth },
+            { dataField: 'CurrencyID', caption: 'Currency', visible: true,width:columnWidth },
+            { dataField: 'RateCode', caption: 'Rate Code', visible: true ,width:columnWidth},
+            { dataField: 'NoOfAdult', caption: 'A', visible: true ,width:columnWidth},
+            { dataField: 'NoOfChild', caption: 'C', visible: true,width:columnWidth },
+            { dataField: 'NoOfChild1', caption: 'C1', visible: true,width:columnWidth },
+            { dataField: 'NoOfChild2', caption: 'C2', visible: true,width:columnWidth },
+            { dataField: 'LastName', caption: 'Guest Name', visible: true,width:columnWidth },
+            { dataField: 'BusinessBlockCode', caption: 'Block', visible: true,width:columnWidth },
+            { dataField: 'MarketCode', caption: 'Market', visible: true ,width:columnWidth},
+            { dataField: 'SourceCode', caption: 'Source', visible: true,width:columnWidth },
+            { dataField: 'ReservationHolder', caption: 'Reservation Holder', visible: true ,width:columnWidth},
+            { dataField: 'Status', caption: 'Status', visible: true,width:columnWidth },
+            { dataField: 'TotalRevenue', caption: 'Total Rev', visible: true,width:columnWidth },
+            { dataField: 'RoomRevenue', caption: 'Room Rev', visible: true ,width:columnWidth},
+            { dataField: 'FBRevenue', caption: 'F&B Rev', visible: true,width:columnWidth },
+            { dataField: 'ExtraRevenue', caption: 'Extra Rev', visible: true,width:columnWidth },
+            { dataField: 'NonRevenue', caption: 'Non Rev', visible: true,width:columnWidth },
+            { dataField: 'UserInsert', caption: 'Created By', visible: true,width:columnWidth },
+            { dataField: 'CreateDate', caption: 'Created On', visible: true ,width:columnWidth},
+            { dataField: 'UserUpdate', caption: 'Updated By', visible: true,width:columnWidth },
+            { dataField: 'UpdateDate', caption: 'Update On', visible: true,width:columnWidth },
+
+            
+        ];
         $("#gridContainerHistory").dxDataGrid({
 
             dataSource: data,    
@@ -1759,6 +1795,8 @@
             scrolling: {
                 rowRenderingMode: 'virtual',
             },
+            allowColumnResizing: true,
+            columnAutoWidth: true,
             pager: {
                 visible: true,
                 allowedPageSizes: [15, 20, 'all'],
@@ -1771,6 +1809,7 @@
                 mode: "multiple",
                 showCheckBoxesMode: "none"
             },
+            columns: columns,
 
             showBorders: false,
             onRowClick: function(e) {
