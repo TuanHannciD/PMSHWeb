@@ -802,6 +802,12 @@ namespace Reservation.Controllers
                 if (!string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
                 {
                     roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
+
+                }
+                if(roomTypeID == 0)
+                {
+                    return Json(new { code = 1, msg = "Room Type cannot be blank" });
+
                 }
                 if (string.IsNullOrEmpty(Request.Form["profileIndividualID"].ToString()))
                 {
@@ -811,7 +817,11 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Reservation Type cannot be blank" });
                 }
+                if (string.IsNullOrEmpty(Request.Form["marketID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "M cannot be blank" });
 
+                }
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);

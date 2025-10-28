@@ -637,19 +637,22 @@
     function closeModalOption(){
         $('#modalOption').modal('hide');
     }
+    var checkEdit = false;
     $(document).ready(async function (){
-        getBusinessDate();
-        setUpIconClear();
-        await setTomSelect();
+        checkEdit = false;
         var result = @Json.Serialize(ViewBag.Reservation);
         $('#btnOption').hide();
         $('#btnClear').show();
         if(result.id != 0){
+            checkEdit = true;
             idReservation = result.id;
             setUpReservation(result);
             $('#btnOption').show();
             $('#btnClear').hide();
         }
+        getBusinessDate();
+        setUpIconClear();
+        await setTomSelect();
     });
 
     function setUpReservation(result){
@@ -670,7 +673,12 @@
         $("#txtContactPhone").val(result.contactPhone);
         $("#txtID").val(result.id);
         $('#txtName').val(result.lastName);
-
+        let arrival = result.arrivalDate.split('T')[0];
+        
+        $('#arrival').val(arrival);
+        let departure = result.departureDate.split('T')[0];
+        console.log(departure);
+        $('#departure').val(departure);
         $("#txtFirstName").val(result.firstName);
         $("#txtTitleID").val(result.title)
         $("#txtPhone").val('');
@@ -709,7 +717,8 @@
                 $("#roomSelect").val(result.roomNo);
                 $("#txtRoomType").val(result.roomTypeId);
             }
-        } else {
+        } 
+        else {
             // fallback nếu localStorage trống
             $("#arrival").val(result.arrivalDate.split("T")[0]);
             $("#departure").val(result.departureDate.split("T")[0]);
@@ -955,13 +964,16 @@
             success: function (result) {
                 const businessDate = new Date(result);
                 const formattedBusinessDate = result.split('T')[0];
-                $('#arrival').val(formattedBusinessDate);
                 $('#pickUpDate').val(formattedBusinessDate);
 
                 const departureDate = new Date(businessDate);
-                departureDate.setDate(businessDate.getDate() + 7);
+                departureDate.setDate(businessDate.getDate() + 2);
                 const formattedDepartureDate = departureDate.toISOString().split('T')[0];
-                $('#departure').val(formattedDepartureDate);
+                if(!checkEdit){
+                    $('#arrival').val(formattedBusinessDate);
+                    $('#departure').val(formattedDepartureDate);
+
+                }
                 $('#dropOffDate').val(formattedDepartureDate);
                 updateDates();
 
@@ -1449,10 +1461,11 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
+                    showToast('Success', data.msg, true);
                     resetForm();
-                        showToast('Success', data.msg, true);
+
                 } else {
-                        showToast('Error', data.msg, false);
+                    showToast('Error', data.msg, false);
                 }
 
             },
@@ -1463,6 +1476,8 @@
 
     }
     function resetForm(){
+                checkEdit = false;
+
             $('#txtAgent').val('');
             $('#txtAgentID').val('0');
             $('#txtCompany').val('');
@@ -1497,8 +1512,8 @@
             $("#txtVIP").val('');
             $("#txtRTC").val('');
             $("#roomSelect").val('');
-            $("#txtETA").val(eta);
-            $("#txtETD").val(etd);
+            $("#txtETA").val('6:00');
+            $("#txtETD").val('12:00');
             $("#txtResType").val('');
             $("#txtMarketID").val('');
             $("#txtMarket").val('');
