@@ -463,5 +463,29 @@ namespace Administration.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spFrmPersonInChargeGroupSearch", param);
             return myTable;
         }
+        public DataTable PersonInChargeZoneData(string code, string description, string isActive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code),
+                new SqlParameter("@Name", description),
+                new SqlParameter("@Inactive", isActive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPersonInChargeZoneSearch", param);
+            return myTable;
+        }
+        public DataTable ApproveListData(string code, string description, string isActive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code),
+                new SqlParameter("@Name", description),
+                new SqlParameter("@Inactive", isActive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmApprovedbySearch", param);
+            return myTable;
+        }
     }
 }

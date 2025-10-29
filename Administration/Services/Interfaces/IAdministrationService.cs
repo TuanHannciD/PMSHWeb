@@ -47,5 +47,7 @@ namespace Administration.Services.Interfaces
         public DataTable PostingHistory(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string actionType, string user);
         public DataTable PersonInChargeData(string code, string description, string group, string zone, string  isActive);
         public DataTable PersonInChargeGroupData(string code, string description, string isActive);
+        public DataTable PersonInChargeZoneData(string code, string description, string isActive);
+        public DataTable ApproveListData(string code, string description, string isActive);
     }
 }
