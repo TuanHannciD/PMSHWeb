@@ -802,6 +802,12 @@ namespace Reservation.Controllers
                 if (!string.IsNullOrEmpty(Request.Form["roomTypeID"].ToString()))
                 {
                     roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
+
+                }
+                if(roomTypeID == 0)
+                {
+                    return Json(new { code = 1, msg = "Room Type cannot be blank" });
+
                 }
                 if (string.IsNullOrEmpty(Request.Form["profileIndividualID"].ToString()))
                 {
@@ -811,7 +817,11 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Reservation Type cannot be blank" });
                 }
+                if (string.IsNullOrEmpty(Request.Form["marketID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "M cannot be blank" });
 
+                }
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
@@ -1185,7 +1195,7 @@ namespace Reservation.Controllers
                     ReservationAmountByCurrencyBO.Instance.Insert(reservationAmountCurrency);
                     #endregion
                     pt.CommitTransaction();
-                    return Json(new { code = 0, msg = $"New reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
+                    return Json(new { code = 0, msg = $"The number Confirmation No : {reservationModel.ConfirmationNo}" });
 
                 }
                 else
@@ -3534,7 +3544,7 @@ namespace Reservation.Controllers
 
 
                 #region Reinstate booking với đang ở trạng thái check out -> booking trở về trạng thái due out
-                if (statusCode == 3)
+                if (statusCode == 2)
                 {
                     #region update reservation
                     reservation.Status = 6;
@@ -5140,7 +5150,7 @@ namespace Reservation.Controllers
                         }
                     }
                 }
-                rsv.Status = 6;
+                rsv.Status = 2;
                 ReservationBO.Instance.Update(rsv);
 
                 #region thêm log activity log

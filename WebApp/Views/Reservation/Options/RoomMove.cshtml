@@ -15,11 +15,11 @@
                 <div style="margin: 4px" class="bg-light border rounded row">
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Guest Name</label>
-                        <input id="guestNameRoomMove" class="col-md-8 form-control" disabled>
+                        <input id="guestNameRoomMove" class="col-md-8" disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Room Current</label>
-                        <input id="roomCurrentRoomMove" class="col-md-8 form-control" disabled>
+                        <input id="roomCurrentRoomMove" class="col-md-8" disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Move to Room</label>
@@ -29,11 +29,11 @@
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Extensions</label>
-                        <input id="extensionRoomMove" class="col-md-8 form-control" value="0" disabled>
+                        <input id="extensionRoomMove" class="col-md-8 " value="0" disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Move date</label>
-                        <input id="moveDateRoomMove" class="col-md-8 form-control" disabled>
+                        <input id="moveDateRoomMove" class="col-md-8 " disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Reason</label>
@@ -156,6 +156,10 @@
             return;
         }
         clearRoomMove();
+        console.log(arivalDate.split(' ')[0]);
+        console.log(departureDate.split(' ')[0]);
+        $('#fromSearch2').val(arivalDate.split(' ')[0]);
+        $('#toSearch2').val(departureDate.split(' ')[0]);
         $('#modalRoomMove').modal('show');
     }
     function clearRoomMove(){
@@ -171,9 +175,9 @@
         $('#modalRoomMove').modal('hide');
     }
     function openRoomMoveAdd(){
-        $('#fromSearch2').val($('#arrival').val());
-        $('#toSearch2').val($('#departure').val());
+        
         getAllRooms2();
+
         $('#modalRoomMoveAdd').modal('show');
     }
     function closeRoomMoveAdd(){

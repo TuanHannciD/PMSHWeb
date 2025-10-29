@@ -514,27 +514,27 @@
             }
         });
 
-           $(".dropdown-item:contains('Update Room Status')").on("click", function () {
-                $.ajax({
-                    url: '/HouseKeeping/UpdateRoomStatus',
-                    type: 'GET',
-                    traditional: true,
-                    crossDomain: false,
-                    headers: {
-                        "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
-                    },
-                    success: function (result) {
-                        showToast('Success', result.message, true);
-                        $('#popupNewGridAddUser').hide();
-                        $("#loadingSpinner").hide();
-                        $("#btnPrint").trigger("click");
-                    },
-                    error: function () {
-                        alert("Không thể tải báo cáo.");
-                        $("#loadingSpinner").hide();
-                    }
-                });
+        $(".dropdown-item:contains('Update Room Status')").on("click", function () {
+            $.ajax({
+                url: '/HouseKeeping/UpdateRoomStatus',
+                type: 'GET',
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (result) {
+                    showToast('Success', result.message, true);
+                    $('#popupNewGridAddUser').hide();
+                    $("#loadingSpinner").hide();
+                    $("#btnPrint").trigger("click");
+                },
+                error: function () {
+                    alert("Không thể tải báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
             });
+        });
 
 
         // Lắng nghe sự kiện thay đổi trạng thái toàn màn hình
@@ -576,7 +576,7 @@
             }
         });
         const businessDate = JSON.parse(localStorage.getItem("businessDate"));
-        $("#businessDate").text(`Business Date: ${businessDate.split(' ')[0]}`);
+        $("#businessDate").text(`Business Date: ${businessDate}`);
         const currentPath = window.location.pathname.toLowerCase();
         $('.navbar-nav .nav-link').each(function () {
             const linkPath = $(this).attr('href')?.toLowerCase();

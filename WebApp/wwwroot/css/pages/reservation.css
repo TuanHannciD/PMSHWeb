@@ -628,9 +628,22 @@ textarea {
     padding: 6px 12px;
     font-size: 16px;
     background-color: #2b6cb0;
- 
 }
-
+.box-function {
+    grid-column: span 2;
+    padding: 6px 12px;
+    font-size: 16px;
+    border: 1px solid #ececec;
+    background-color: #ffffff;
+}
+.box-function:hover {
+    color:#ffffff;
+    background-color: #2b6cb0;
+}
+.box-function:active {
+    color: #ffffff;
+    background-color: #2b6cb0;
+}
 .checkbox-row-new-reservation {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

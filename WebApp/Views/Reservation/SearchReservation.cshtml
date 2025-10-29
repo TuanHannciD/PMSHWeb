@@ -204,9 +204,8 @@
                     <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1 text-start">Routing</a>
                     <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1 text-start">WaitList</a>
                     <a href="#" onclick="openModalTraces();" class="font-semibold col-md-4 mb-1 text-start">Traces</a>
-                    <a href="#" onclick="exportExcel();" class="font-semibold col-md-4 mb-1 text-start">Export Excel</a>
                     <a href="#" onclick="LoadConfirmationLetter();" class="font-semibold col-md-4 mb-1 text-start">Confirmation Letter</a>
-                    <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1 text-start">Columns</a>
+
 
 
                 </div>
@@ -214,16 +213,24 @@
         </div>
         <!-- Nội dung bên phải -->
         <div class="col-md-9" id="rightContent">
+            <div class="header" style="border:none;display:flex;justify-content:space-between">
+                <h3 id="content-title">
+                    Booking Data
+                </h3>
+                <div class="mb-2" style="display:flex;column-gap:4px">
+                    <div class="box-function" onclick="toggleLeftMenu();" id="toggleLeftWrapper">
+                        <i class="fa-solid fa-filter-circle-xmark" id="toggleLeftMenu"></i>
+                    </div>
+                    <div class="box-function" onclick="openVisibleColumns();"><i class="fa-solid fa-gear"></i></div>
+                    <div class="box-function" onclick="exportExcel();"><i class="fa-solid fa-file-excel"></i></div>
+
+                </div>
+            </div>
             <div class="content-right">
                 <div class="mui-card">
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="header" style="border:none">
-                                <h3 id="content-title">
-                                    <i class="fa-solid fa-bars" id="toggleLeftMenu" onclick="toggleLeftMenu();" title="Toggle left menu"></i>
-                                    Booking Data
-                                </h3>
-                            </div>
+                            
 
                             <div class="toolbar-menu max-w-7xl row" id="functionAndOptionTable" style="display:none;column-gap:4px">
                                 <a href="#" class="font-semibold col-md-2 mb-2" style="background-color:#0055b8;color:white" onclick="openModalBilling();">Billing</a>
@@ -338,12 +345,12 @@
         if (leftMenu.is(':visible')) {
             leftMenu.hide();
             rightContent.removeClass('col-md-9 col-md-8').addClass('col-md-12');
-            toggleIcon.removeClass('fa-bars').addClass('fa-arrow-left');
+            toggleIcon.removeClass('fa-solid fa-filter-circle-xmark').addClass('fa-solid fa-filter');
             toggleIcon.attr('title', 'Show left menu');
         } else {
             leftMenu.show();
             rightContent.removeClass('col-md-12 col-md-8').addClass('col-md-9');
-            toggleIcon.removeClass('fa-arrow-left').addClass('fa-bars');
+            toggleIcon.removeClass('fa-solid fa-filter').addClass('fa-solid fa-filter-circle-xmark');
             toggleIcon.attr('title', 'Hide left menu');
         }
     }
@@ -402,6 +409,7 @@
                 $('#dateTraces').val(formattedBusinessDate);
                 $('#fromDateAddNewTrace').val(formattedBusinessDate);
                 $('#toDateAddNewTrace').val(formattedBusinessDate);
+                
                 // Chỉ set giá trị nếu các trường ngày trống
                 if (!$('#arrivalForm').val()) {
                     $('#arrivalForm').val(formattedBusinessDate);
@@ -581,10 +589,10 @@
                 thousandsSeparator: ','
             } },
             { dataField: 'ReservationHolder', caption: 'Reservation Holder', visible: true },
-            { dataField: 'BalanceVND', caption: 'Balance (VND)', visible: false },
+            { dataField: 'BalanceVND', caption: 'Balance (VND)', visible: false, alignment: 'right' },
             { dataField: 'ARNo', caption: 'AR No', visible: false },
             { dataField: 'AllotmentCode', caption: 'Allotment Code', visible: false },
-            { dataField: 'BalanceUSD', caption: 'Balance (USD)', visible: false },
+            { dataField: 'BalanceUSD', caption: 'Balance (USD)', visible: false, alignment: 'right' },
             { dataField: 'BookerName', caption: 'Booker Name', visible: false },
             { dataField: 'CI', caption: 'Check-in Time', visible: false },
             { dataField: 'CO', caption: 'Check-out Time', visible: false },
@@ -597,8 +605,8 @@
             { dataField: 'Currency', caption: 'Currency', visible: false },
             { dataField: 'DepositPayment', caption: 'Deposit Payment', visible: false },
             { dataField: 'DepositRequest', caption: 'Deposit Request', visible: false },
-            { dataField: 'DiscountAmount', caption: 'Discount Amount', visible: false },
-            { dataField: 'DiscountRate', caption: 'Discount Rate', visible: false },
+            { dataField: 'DiscountAmount', caption: 'Discount Amount', visible: false, alignment: 'right' },
+            { dataField: 'DiscountRate', caption: 'Discount Rate', visible: false , alignment: 'right'},
             { dataField: 'DropOffDescription', caption: 'Drop-off Description', visible: false },
             { dataField: 'DropOffReqdID', caption: 'Drop-off Request ID', visible: false },
             { dataField: 'DropOffTransportNo', caption: 'Drop-off Transport No', visible: false },

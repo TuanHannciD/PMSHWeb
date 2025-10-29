@@ -656,7 +656,7 @@ namespace Cashiering.Controllers
                 shift.Status = true;
                 ShiftBO.Instance.Update(shift);
                 return Json(new {
-                    code = 1,
+                    code = 0,
                     msg = "Close shift was successfully"
                 });
 

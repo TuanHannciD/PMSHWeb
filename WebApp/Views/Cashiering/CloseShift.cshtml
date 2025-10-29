@@ -184,8 +184,12 @@
     function closeShift(){
         var formData = new FormData();
         const userID = localStorage.getItem("shiftID");
+        console.log('userID: ' + userID);
+        if(!userID){
+            showToast("Error","Could not find shift. Please login shift",false);
+            return;
+        }
         formData.append('shiftID', userID);
-
         $.ajax({
             url: '/Cashiering/CloseShiftIn',
             type: 'POST',
@@ -221,14 +225,14 @@
             script2.onload = function() {
                 // Kiểm tra nếu DataGrid chưa được initialize
                 if (!$("#gridContainerCloseShift").length || !$("#gridContainerCloseShift").dxDataGrid("instance")) {
-                    // alert("DataGrid chưa được tải. Vui lòng chờ dữ liệu load xong rồi thử lại.");
+                    showToast("Error","Data have not ben init into grid",false);
                     return;
                 }
 
                 // Load toàn bộ dữ liệu từ server (giống như getTransactionShift)
                 const shiftID = localStorage.getItem("shiftID");
                 if (!shiftID) {
-                    // alert("Không tìm thấy shiftID trong localStorage.");
+                        showToast("Error","Could not find shift. Please login shift",false);
                     return;
                 }
 
@@ -341,10 +345,10 @@
             script1.onload();
         }
     }
-                    function previewDataGrid() {
+    function previewDataGrid() {
         // Kiểm tra DataGrid (tùy chọn)
         if (!$("#gridContainerCloseShift").length || !$("#gridContainerCloseShift").dxDataGrid("instance")) {
-            alert("DataGrid chưa được tải. Vui lòng chờ dữ liệu load xong rồi thử lại.");
+            showToast("Error","Data have not been init into grid",false);
             return;
         }
 
@@ -360,7 +364,7 @@
         // Lấy data từ server
         const shiftID = localStorage.getItem("shiftID");
         if (!shiftID) {
-            alert("Không tìm thấy shiftID trong localStorage.");
+            showToast("Error","Could not find shift. Please login shift",false);
             return;
         }
 
@@ -373,7 +377,6 @@
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 if (!result || (!result.resultPayment && !result.resultExchange)) {
-                    alert("Không có dữ liệu từ server.");
                     return;
                 }
 
@@ -384,7 +387,6 @@
                 ].sort((a, b) => a.Type.localeCompare(b.Type));
 
                 if (combinedData.length === 0) {
-                    alert("Không có dữ liệu để in PDF.");
                     return;
                 }
 
