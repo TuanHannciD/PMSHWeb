@@ -232,7 +232,7 @@ namespace Reservation.Controllers
         }
 
 
-        public IActionResult GroupAdmin(string key)
+        public IActionResult GroupAdmin(string key,string displayType,string name,string roomNo)
         {
             int? id = null;
             if (!string.IsNullOrEmpty(key))
@@ -247,11 +247,10 @@ namespace Reservation.Controllers
                     return BadRequest("Invalid key");
                 }
             }
-
             List<Dictionary<string, object>> reservations = new List<Dictionary<string, object>>();
             if (id.HasValue)
             {
-                DataTable reservationTable = _iGroupAdminService.spReservationSearchByConfirmationNo(id.ToString());
+                DataTable reservationTable = _iGroupAdminService.SearchGroupAdmin(id.ToString(),displayType,name,roomNo);
                 reservations = reservationTable.AsEnumerable().Select(row =>
                     reservationTable.Columns.Cast<DataColumn>()
                         .ToDictionary(
@@ -804,7 +803,7 @@ namespace Reservation.Controllers
                     roomTypeID = int.Parse(Request.Form["roomTypeID"].ToString());
 
                 }
-                if(roomTypeID == 0)
+                if (roomTypeID == 0)
                 {
                     return Json(new { code = 1, msg = "Room Type cannot be blank" });
 
@@ -819,13 +818,13 @@ namespace Reservation.Controllers
                 }
                 if (string.IsNullOrEmpty(Request.Form["marketID"].ToString()))
                 {
-                    return Json(new { code = 1, msg = "M cannot be blank" });
+                    return Json(new { code = 1, msg = "Market cannot be blank" });
 
                 }
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
-                if(int.Parse(Request.Form["reservationID"].ToString()) == 0)
+                if (int.Parse(Request.Form["reservationID"].ToString()) == 0)
                 {
                     ReservationModel reservationModel = new ReservationModel();
                     #region lưu reservation
@@ -1194,6 +1193,42 @@ namespace Reservation.Controllers
                     reservationAmountCurrency.CreateDate = reservationAmountCurrency.UpdateDate = DateTime.Now;
                     ReservationAmountByCurrencyBO.Instance.Insert(reservationAmountCurrency);
                     #endregion
+
+                    #region update profile
+                    ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["profileIndividualID"].ToString()));
+                    if (profile == null || profile.ID == 0)
+                    {
+                        pt.RollBack();
+                        return Json(new { code = 1, msg = "Could not find profile" });
+                    }
+                    //string Title = Request.Form["Title"].ToString();
+                    //string Phone = Request.Form["Phone"].ToString();
+                    //string Passport = Request.Form["Passport"].ToString();
+                    //string IdentityCard = Request.Form["IdentityCard"].ToString();
+                    //string Email = Request.Form["Email"].ToString();
+                    //string Address = Request.Form["Address"].ToString();
+                    //string DateOfBirth = Request.Form["DateOfBirth"].ToString();
+                    //string Nationality = Request.Form["Nationality"].ToString();
+                    //string City = Request.Form["City"].ToString();
+                    //string VIP = Request.Form["VIP"].ToString();
+                    //string MemberType = Request.Form["MemberType"].ToString();
+                    //string CardNo = Request.Form["CardNo"].ToString();
+                    //string GroupCode = Request.Form["GroupCode"].ToString();
+                    //string ContactPhone = Request.Form["ContactPhone"].ToString();
+                    //string PrefRoom = Request.Form["PrefRoom"].ToString();
+                    profile.TitleID = !string.IsNullOrEmpty(Request.Form["title"].ToString()) ? int.Parse(Request.Form["title"].ToString()) : 0;
+                    profile.HandPhone = !string.IsNullOrEmpty(Request.Form["phone"].ToString()) ? Request.Form["phone"].ToString() : "";
+                    profile.Email = !string.IsNullOrEmpty(Request.Form["email"].ToString()) ? Request.Form["email"].ToString() : "";
+                    profile.Address = !string.IsNullOrEmpty(Request.Form["address"].ToString()) ? Request.Form["address"].ToString() : "";
+                    profile.PassPort = !string.IsNullOrEmpty(Request.Form["passport"].ToString()) ? Request.Form["passport"].ToString() : "";
+                    profile.IdentityCard = !string.IsNullOrEmpty(Request.Form["identityCard"].ToString()) ? Request.Form["identityCard"].ToString() : "";
+                    profile.DateOfBirth = !string.IsNullOrEmpty(Request.Form["dateOfBirth"].ToString()) ? DateTime.Parse(Request.Form["dateOfBirth"].ToString()) : DateTime.Now;
+                    profile.NationalityID = !string.IsNullOrEmpty(Request.Form["nationality"].ToString()) ? int.Parse(Request.Form["nationality"].ToString()) : 0;
+                    profile.City = !string.IsNullOrEmpty(Request.Form["city"].ToString()) ? Request.Form["city"].ToString() : "";
+                    profile.VIPID = !string.IsNullOrEmpty(Request.Form["vipID"].ToString()) ? int.Parse(Request.Form["vipID"].ToString()) : 0;
+                    profile.CreditCard = !string.IsNullOrEmpty(Request.Form["memberNo"].ToString()) ? Request.Form["memberNo"].ToString() : "";
+                    ProfileBO.Instance.Update(profile);
+                    #endregion
                     pt.CommitTransaction();
                     return Json(new { code = 0, msg = $"The number Confirmation No : {reservationModel.ConfirmationNo}" });
 
@@ -1201,7 +1236,7 @@ namespace Reservation.Controllers
                 else
                 {
                     ReservationModel reservationModel = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["reservationID"].ToString()));
-                    if(reservationModel == null || reservationModel.ID == 0)
+                    if (reservationModel == null || reservationModel.ID == 0)
                     {
                         return Json(new { code = 1, msg = "Could not fint reservation" });
 
@@ -1479,11 +1514,46 @@ namespace Reservation.Controllers
                     ActivityLogBO.Instance.Insert(activityLog);
                     #endregion
 
+                    #region update profile
+                    ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["profileIndividualID"].ToString()));
+                    if (profile == null || profile.ID == 0)
+                    {
+                        pt.RollBack();
+                        return Json(new { code = 1, msg = "Could not find profile" });
+                    }
+                    //string Title = Request.Form["Title"].ToString();
+                    //string Phone = Request.Form["Phone"].ToString();
+                    //string Passport = Request.Form["Passport"].ToString();
+                    //string IdentityCard = Request.Form["IdentityCard"].ToString();
+                    //string Email = Request.Form["Email"].ToString();
+                    //string Address = Request.Form["Address"].ToString();
+                    //string DateOfBirth = Request.Form["DateOfBirth"].ToString();
+                    //string Nationality = Request.Form["Nationality"].ToString();
+                    //string City = Request.Form["City"].ToString();
+                    //string VIP = Request.Form["VIP"].ToString();
+                    //string MemberType = Request.Form["MemberType"].ToString();
+                    //string CardNo = Request.Form["CardNo"].ToString();
+                    //string GroupCode = Request.Form["GroupCode"].ToString();
+                    //string ContactPhone = Request.Form["ContactPhone"].ToString();
+                    //string PrefRoom = Request.Form["PrefRoom"].ToString();
+                    profile.TitleID = !string.IsNullOrEmpty(Request.Form["title"].ToString()) ? int.Parse(Request.Form["title"].ToString()) : 0;
+                    profile.HandPhone = !string.IsNullOrEmpty(Request.Form["phone"].ToString()) ? Request.Form["phone"].ToString() : "";
+                    profile.Email = !string.IsNullOrEmpty(Request.Form["email"].ToString()) ? Request.Form["email"].ToString() : "";
+                    profile.Address = !string.IsNullOrEmpty(Request.Form["address"].ToString()) ? Request.Form["address"].ToString() : "";
+                    profile.PassPort = !string.IsNullOrEmpty(Request.Form["passport"].ToString()) ? Request.Form["passport"].ToString() : "";
+                    profile.IdentityCard = !string.IsNullOrEmpty(Request.Form["identityCard"].ToString()) ? Request.Form["identityCard"].ToString() : "";
+                    profile.DateOfBirth = !string.IsNullOrEmpty(Request.Form["dateOfBirth"].ToString()) ? DateTime.Parse(Request.Form["dateOfBirth"].ToString()) : DateTime.Now;
+                    profile.NationalityID = !string.IsNullOrEmpty(Request.Form["nationality"].ToString()) ? int.Parse(Request.Form["nationality"].ToString()) : 0;
+                    profile.City = !string.IsNullOrEmpty(Request.Form["city"].ToString()) ? Request.Form["city"].ToString() : "";
+                    profile.VIPID = !string.IsNullOrEmpty(Request.Form["vipID"].ToString()) ? int.Parse(Request.Form["vipID"].ToString()) : 0;
+                    profile.CreditCard = !string.IsNullOrEmpty(Request.Form["memberNo"].ToString()) ? Request.Form["memberNo"].ToString() : "";
+                    ProfileBO.Instance.Update(profile);
+                    #endregion
                     pt.CommitTransaction();
                     return Json(new { code = 0, msg = $"Update reservation created successfully. ConfirmationNo : {reservationModel.ConfirmationNo}" });
                 }
 
-
+                
             }
             catch (Exception ex)
             {
@@ -2118,24 +2188,33 @@ namespace Reservation.Controllers
                 ActivityLogBO.Instance.Insert(activityLog);
                 #endregion
                 #region update status reservation
-                rsv.Status = 3;
-                rsv.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
-                rsv.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
-                rsv.UpdateBy = rsv.SpecialUpdateBy = Request.Form["userName"].ToString();
-                ReservationBO.Instance.Update(rsv);
+                List<ReservationModel> listRsv = PropertyUtils.ConvertToList<ReservationModel>(ReservationBO.Instance.FindByAttribute("ConfirmationNo", rsv.ConfirmationNo));
+                foreach (var item in listRsv)
+                {
+                    item.Status = 3;
+                    item.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
+                    item.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
+                    item.UpdateBy = rsv.SpecialUpdateBy = Request.Form["userName"].ToString();
+                    ReservationBO.Instance.Update(item);
+                }
+                
                 #endregion
 
-                string cancellationNo = ReservationCancellationBO.GetTopCancellatioNo();
                 #region insert ReservationCancellation 
-                ReservationCancellationModel reservationCancellation = new ReservationCancellationModel();
-                reservationCancellation.ReservationID = rsv.ID;
-                reservationCancellation.CancellationDate = DateTime.Now;
-                reservationCancellation.CancellationNo = !string.IsNullOrEmpty(cancellationNo) ? cancellationNo : "0";
-                reservationCancellation.ReasonCancellation = Request.Form["reasonCancellation"].ToString();
-                reservationCancellation.Description = Request.Form["description"].ToString();
-                reservationCancellation.CreateDate = reservationCancellation.UpdateDate = DateTime.Now;
-                reservationCancellation.UserInsertID = reservationCancellation.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
-                ReservationCancellationBO.Instance.Insert(reservationCancellation);
+                foreach(var item in listRsv)
+                {
+                    string cancellationNo = ReservationCancellationBO.GetTopCancellatioNo();
+                    ReservationCancellationModel reservationCancellation = new ReservationCancellationModel();
+                    reservationCancellation.ReservationID = item.ID;
+                    reservationCancellation.CancellationDate = DateTime.Now;
+                    reservationCancellation.CancellationNo = !string.IsNullOrEmpty(cancellationNo) ? cancellationNo : "0";
+                    reservationCancellation.ReasonCancellation = Request.Form["reasonCancellation"].ToString();
+                    reservationCancellation.Description = Request.Form["description"].ToString();
+                    reservationCancellation.CreateDate = reservationCancellation.UpdateDate = DateTime.Now;
+                    reservationCancellation.UserInsertID = reservationCancellation.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                    ReservationCancellationBO.Instance.Insert(reservationCancellation);
+                }
+                
                 #endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Cancel reservation successfully" });
@@ -4397,7 +4476,7 @@ namespace Reservation.Controllers
 
         #region  DatVP __ Reservation: Group check in
         [HttpGet]
-        public async Task<IActionResult> SearchGroupCheckInRoom(string confirmationNo,int type)
+        public async Task<IActionResult> SearchGroupCheckInRoom(string confirmationNo,int type,string name,string roomNo)
         {
             try
             {
@@ -4421,7 +4500,9 @@ namespace Reservation.Controllers
                 {
                     @CleanAndInspected = confirmationNo;
                 }
-                var data = _iGroupAdminService.SearchGroupCheckInRoom(confirmationNo, @Inspected, @Clean, @AllRooms, @CleanAndInspected);
+                
+                //var data = _iGroupAdminService.SearchGroupCheckInRoom(confirmationNo, @Inspected, @Clean, @AllRooms, @CleanAndInspected);
+                var data = _iGroupAdminService.SearchGroupAdmin(confirmationNo,type.ToString(),name,roomNo);
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()
                                   //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
@@ -4942,13 +5023,17 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "No days selected" });
                 }
+                if(days.Count < 1)
+                {
+                    return Json(new { code = 1, msg = "Please click to checkbox that match with from date and to date" });
 
+                }
                 var fromDateStr = Request.Form["fromDate"].ToString();
                 var toDateStr = Request.Form["toDate"].ToString();
                 var roomType = Request.Form["roomType"].ToString();
-                var obLevel = Request.Form["obLevel"].ToString();
+                var obLevel = Request.Form["obLevel"].ToString() ;
                 var quantity = Request.Form["quantity"].ToString();
-                var noToSell = Request.Form["noToSell"].ToString();
+                var noToSell =  Request.Form["noToShell"].ToString();
                 var type = Request.Form["type"].ToString();
                 var userName = Request.Form["userName"].ToString();
                 var userID = Request.Form["userID"].ToString();
@@ -4976,20 +5061,18 @@ namespace Reservation.Controllers
                             continue;
                         }
 
-                        OverbookingModel overBooking = new OverbookingModel
-                        {
-                            RoomTypeID = roomTypeModel.ID,
-                            RoomType = roomTypeModel.Code,
-                            Quantity = int.Parse(quantity),
-                            Date = currentDate,
-                            OverbookLevel = int.Parse(quantity) + int.Parse(obLevel),
-                            Type = type == "Number" ? 0 : 1,
-                            CreateBy = userName,
-                            UpdateBy = userName,
-                            CreateDate = DateTime.Now,
-                            UpdateDate = DateTime.Now
-                        };
-
+                        OverbookingModel overBooking = new OverbookingModel();
+                        overBooking.RoomTypeID = (roomTypeModel == null || roomTypeModel.ID == 0) ? 0 : roomTypeModel.ID;
+                        overBooking.RoomType = (roomTypeModel == null || roomTypeModel.ID == 0) ? "" : roomTypeModel.Code;
+                        overBooking.Quantity = int.Parse(quantity);
+                        overBooking.Date = currentDate;
+                        overBooking.OverbookLevel = !string.IsNullOrEmpty(obLevel) ? (int.Parse(quantity) + int.Parse(obLevel)) : int.Parse(quantity);
+                        overBooking.Type = type == "Number" ? 0 : 1;
+                        overBooking.CreateBy = userName;
+                        overBooking.UpdateBy = userName;
+                        overBooking.CreateDate = DateTime.Now;
+                        overBooking.UpdateDate = DateTime.Now;
+                       
                         OverbookingBO.Instance.Insert(overBooking);
                     }
 
@@ -4997,6 +5080,7 @@ namespace Reservation.Controllers
                 }
 
                 // Ghi log hoạt động
+                string logRoom = (roomTypeModel == null || roomTypeModel.ID == 0) ? "" : roomTypeModel.Code;
                 ActivityLogModel activity = new ActivityLogModel
                 {
                     TableName = "Overbooking",
@@ -5006,7 +5090,7 @@ namespace Reservation.Controllers
                     ChangeDate = DateTime.Now,
                     Change = "Insert",
                     OldValue = "",
-                    NewValue = $"Ro.Type: {roomTypeModel.Code} - Qty: {int.Parse(quantity)} - On: {fromDate:dd/MM/yyyy} - {toDate:dd/MM/yyyy}"
+                    NewValue = $"Ro.Type: {logRoom} - Qty: {int.Parse(quantity)} - On: {fromDate:dd/MM/yyyy} - {toDate:dd/MM/yyyy}"
                 };
                 ActivityLogBO.Instance.Insert(activity);
 

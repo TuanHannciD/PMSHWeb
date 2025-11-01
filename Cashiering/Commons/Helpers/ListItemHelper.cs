@@ -104,7 +104,35 @@ namespace Cashiering.Commons.Helpers
                 return new List<SelectListItem>();
             }
         }
+        /// <summary>
+        /// Lấy tất cả danh sách City
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách City</returns>
+        public static List<SelectListItem> GetCityText(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
+                var items = new List<SelectListItem>();
+                List<CityModel> list = PropertyUtils.ConvertToList<CityModel>(CityBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.Name.ToString(), Text = p.Description, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
         /// <summary>
         /// Lấy tất cả danh sách Country
         /// </summary>

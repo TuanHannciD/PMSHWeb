@@ -42,7 +42,7 @@ namespace BaseBusiness.BO
         }
         public static int GetNumberOfRoom(int roomTypeID)
         {
-            string query = $"select count(*) from Room left join RoomType on Room.RoomTypeID = RoomType.ID where Room.RoomTypeID = {roomTypeID} and RoomType.IsPseudo = 0";
+            string query = $"DECLARE @roomType AS INT\r\nSET @roomType = {roomTypeID}\r\n\r\nSELECT COUNT(*) \r\nFROM Room \r\nLEFT JOIN RoomType ON Room.RoomTypeID = RoomType.ID \r\nWHERE \r\n    (@roomType = 0 OR Room.RoomTypeID = @roomType)\r\n    AND (RoomType.IsPseudo = 0 OR RoomType.ID IS NULL) ";
             return instance.GetFirst<int>(query);
         }
         public static List<RoomModel> GetRoomCountPlan()

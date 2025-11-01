@@ -875,7 +875,9 @@
             data: { id: confirmationNo },
             success: function(response) {
                 if (response.success) {
-                    window.location.href = '/Reservation/GroupAdmin?key=' + encodeURIComponent(response.encryptedId);
+                    var nameSearch = $('#name').val() ?? '';
+                    var roomNoSearch = $('#roomNo').val() ?? '';
+                    window.location.href = '/Reservation/GroupAdmin?key=' + encodeURIComponent(response.encryptedId) + '&displayType=' + $('#searchType').val() + '&name=' + nameSearch + '&roomNo='+ roomNoSearch;
                 } else {
                     alert('Lỗi khi mã hóa ID');
                 }
