@@ -80,16 +80,40 @@
         line-height: 1.2;
     }
 
-    .tomselect-custom {
-        width: 250px;
-        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
-        font-size: 0.65rem;
-    }
 
     .sort-select {
         max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
         font-size: 12px;
         padding: 0.15rem 0.5rem;
+    }
+
+    .tomselect-custom .ts-control {
+        min-height: 28px !important; /* chiều cao tối thiểu */
+        max-height: 70px !important; /* ✅ giới hạn chiều cao tối đa khi có nhiều tag */
+        overflow-y: auto !important; /* ✅ bật thanh cuộn dọc */
+        height: auto !important; /* cho phép auto để hiển thị đúng */
+        padding: 2px 6px !important;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+        display: flex;
+        flex-wrap: wrap; /* đảm bảo tag xuống dòng */
+    }
+
+    /* Ô nhập khi gõ */
+    .tomselect-custom .ts-input > input {
+        min-height: 20px !important;
+        height: 20px !important;
+        padding: 0 !important;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Tag hiển thị khi chọn */
+    .tomselect-custom .item {
+        font-size: 0.75rem !important;
+        padding: 1px 4px !important;
+        line-height: 1.2 !important;
+        margin: 1px !important;
     }
 
     .sort-select {
@@ -301,7 +325,7 @@
                 </div>
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Task Code:</label>
-                    <select id="taskcode" name="taskcode" class="tomselect-custom" multiple>
+                    <select id="taskcode" name="taskcode" class="tomselect-custom"  style="width: 200px" multiple>
                         @foreach (var item in listhkpFT)
                         {
                             <option value="@item.Description">@item.Description</option>
@@ -312,7 +336,7 @@
                
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Task Sheet:</label>
-                    <select id="tasksheet" name="tasksheet" class="tomselect-custom" multiple>
+                    <select id="tasksheet" name="tasksheet" class="tomselect-custom"  style="width: 200px" multiple>
                         @foreach (var item in listhkpTS)
                         {
                             <option value="@item.TaskSheetNo">@item.TaskSheetNo</option>
@@ -322,7 +346,7 @@
                 </div>
                 <div class="d-flex align-items-center me-3">
                     <label class="me-2 mb-0">Zone:</label>
-                    <select id="zone" name="zone" class="tomselect-custom" multiple>
+                    <select id="zone" name="zone" class="tomselect-custom"  style="width: 200px" multiple>
                         @foreach (var item in listzone)
                         {
                             <option value="@item.Code">@item.Name</option>
@@ -414,8 +438,8 @@
             <div id="taskcodenewshow">
                 <div class="d-flex align-items-center me-3 mb-2" >
                     <label class="me-2 mb-0">Task Code:</label>
-                    <select id="taskcodenew" name="taskcodenew" class="tomselect-custom" multiple>
-                        <option value=""></option> 
+                    <select id="taskcodenew" name="taskcodenew" class="tomselect-custom"  style="width: 200px" multiple>
+                 
                         @foreach (var item in listhkpFT)
                         {
                             <option value="@item.ID">@item.Description</option>
@@ -479,7 +503,7 @@
             </div>
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">Task Code:</label>
-                <select id="taskcodenewroom" name="taskcodenewroom" class="tomselect-custom" multiple>
+                <select id="taskcodenewroom" name="taskcodenewroom" class="tomselect-custom"  style="width: 200px" multiple>
                     <option value=""></option>
                     @foreach (var item in listhkpFT)
                     {
@@ -640,7 +664,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Room Type:</label>
-                        <select id="roomTypead" name="roomTypead" class="tomselect-custom" multiple>
+                        <select id="roomTypead" name="roomTypead" class="tomselect-custom"  style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in listrt)
                             {
@@ -654,7 +678,7 @@
                 <div class="d-flex align-items-center me-3 mb-2">
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Section:</label>
-                        <select id="sectionAd" name="sectionAd" class="tomselect-custom" multiple>
+                        <select id="sectionAd" name="sectionAd" class="tomselect-custom"  style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in hkpSectionlist)
                             {
@@ -665,7 +689,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Zone:</label>
-                        <select id="zoneAd" name="zoneAd" class="tomselect-custom" multiple>
+                        <select id="zoneAd" name="zoneAd" class="tomselect-custom"  style="width: 200px" multiple>
                             <option value=""></option>
                             @foreach (var item in listzone)
                             {
@@ -695,7 +719,7 @@
     <div class="d-flex justify-content-start mb-3 gap-2">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnViewpopExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-eye"></i> View</button>
 
-        <button onclick="$('#popupNewGridReport').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style="background-color: #3b9ac6; border-radius: 4px;">
+        <button onclick="$('#popupNewGridReport').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" >
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
     </div>
@@ -707,7 +731,7 @@
             </div>
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">To:</label>
-                <input type="date" id="toDatere" name="toDatere" class="form-control form-control-sm w-auto" />
+                <input readonly type="date" id="toDatere" name="toDatere" class="form-control form-control-sm w-auto" />
             </div>
          
             <div class="d-flex align-items-center me-3 mb-2">
@@ -734,7 +758,7 @@
             </div>
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">Task Sheet:</label>
-                <select id="tasksheetpopre" name="tasksheetpopre" class="tomselect-custom" multiple>
+                <select id="tasksheetpopre" name="tasksheetpopre" class="tomselect-custom"  style="width: 200px" multiple>
                     @foreach (var item in listhkpTS)
                     {
                         <option value="@item.TaskSheetNo">@item.TaskSheetNo</option>
@@ -1162,7 +1186,7 @@
 </div>
 <div id="popupAuTo" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 600px; max-height: 800px; overflow-y: auto;">
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; min-height: 688px; overflow-y: auto;">
 
     <div class="d-flex justify-content-between mb-2">
         <h5 class="mb-0"> Automatic Generation of Tasks</h5>
@@ -1263,33 +1287,42 @@
                     <div class="d-flex align-items-center me-3 mb-2">
                         <div class="form-check me-3">
                            
-                            <input class="form-check-input" type="checkbox" id="arrivalOnly" name="includeOptionsRoomstatus" value="1" checked>
+                            <input class="form-check-input" type="checkbox" id="arrivalOnly" name="includeOptionsRoomstatus" value="1" >
                             <label class="form-check-label" for="outofServices">Arrival Only</label>
                         </div>
                         <div class="d-flex align-items-center me-3">
                             <label class="me-2 mb-0">Floor:</label>
-                            <select id="floorauto" name="floorauto" class="tomselect-custom" multiple>
-                                <option value=""></option>
+                            <select id="floorauto" name="floorauto" class="tomselect-custom"  style="width: 200px" multiple>
+                      
                                 @foreach (var item in listflo)
-                                {
-                                    <option value="@item.ID">@item.Code</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="d-flex align-items-center me-3">
-                            <label class="me-2 mb-0">Room Type:</label>
-                            <select id="roomTypeauto" name="roomTypeauto" class="tomselect-custom" multiple>
-                                <option value=""></option>
-                                @foreach (var item in listrt)
                                 {
                                     <option value="@item.Code">@item.Code</option>
                                 }
                             </select>
                         </div>
                         <div class="d-flex align-items-center me-3">
+                            <label class="me-2 mb-0">Room Type:</label>
+                            <select id="roomTypeauto" name="roomTypeauto" class="tomselect-custom"  style="width: 200px" multiple>
+                                
+                                @foreach (var item in listrt)
+                                {
+                                    <option value="@item.Code">@item.Code</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
+                   
+                </div>
+                <div class="d-flex flex-column">
+                    <!-- Row 1 -->
+                    <div class="d-flex align-items-center me-3 mb-2">
+                       
+                        <div class="d-flex align-items-center me-3">
                             <label class="me-2 mb-0">Zone:</label>
-                            <select id="zonecodeauto" name="zonecodeauto" class="tomselect-custom" multiple>
-                                <option value=""></option>
+                            <select id="zonecodeauto" name="zonecodeauto" class="tomselect-custom" style="width: 200px" multiple>
+
                                 @foreach (var item in listzone)
                                 {
                                     <option value="@item.Code">@item.Code</option>
@@ -1300,35 +1333,35 @@
                             <label class="me-2 mb-0">Sub Zone:</label>
                             <select id=">subzonecodeauto" name="subzonecodeauto" class="form-control form-control-sm" style="width:80px">
                                 <option value=""></option>
-                                
+
                             </select>
                         </div>
                     </div>
 
-                   
+
                 </div>
                 <div class="d-flex flex-column">
                     <!-- Row 1 -->
-                    <div class="d-flex align-items-center me-3 mb-2">
+                    <div class="d-flex align-items-center me-3">
                        
                      
-                        <div class="d-flex align-items-center me-3 mb-2">
+                        <div class="d-flex align-items-center me-3 ">
                             <label class="me-2 mb-0">Task Code:</label>
-                            <select id="taskcodeauto" name="taskcodeauto" class="tomselect-custom" multiple>
-                                <option value=""></option>
+                            <select id="taskcodeauto" name="taskcodeauto" class="tomselect-custom"  style="width: 200px" multiple>
+                                
                                 @foreach (var item in listhkpFT)
                                 {
-                                    <option value="@item.ID">@item.Description</option>
+                                    <option value="@item.ID">@item.Code</option>
                                 }
                             </select>
 
                         </div>
                         
                       
-                        <div class="d-flex align-items-center me-3 mb-2">
+                        <div class="d-flex align-items-center me-3 ">
                             <label class="me-2 mb-0"> Attendant ID:</label>
-                            <select id="attendantauto" name="attendantauto" class="tomselect-custom" multiple>
-                                <option value=""></option>
+                            <select id="attendantauto" name="attendantauto" class="tomselect-custom"  style="width: 200px" multiple>
+                              
                                 @foreach (var item in listatt)
                                 {
                                     <option value="@item.ID">@item.Name</option>
@@ -1336,6 +1369,17 @@
                             </select>
 
                         </div>
+                       
+                    </div>
+
+
+                </div>
+                <div class="d-flex flex-column">
+                    <!-- Row 1 -->
+                    <div class="d-flex align-items-center me-3 mb-2">
+
+
+                        
                         <div class="d-flex align-items-center me-3 mb-2">
                             <label class="me-2 mb-0">Max. Credits:</label>
                             <input type="text" id="maxcreditauto" name="maxcreditauto" class="form-control form-control-sm w-auto" value="0" />
@@ -1533,6 +1577,10 @@
 
                 }
             }
+                $('#fromDatere').on('change', function () {
+                    var fromDate = $(this).val();
+                    $('#toDatere').val(fromDate);
+                });
              function initializeTomSelecttaskcodenewroom() {
                 const selectors = ["#taskcodenewroom"];
 
@@ -1872,7 +1920,7 @@
                         odAuto: $("#odAuto").is(':checked') ? 1 : 0,
                         oooAuto: $("#oooAuto").is(':checked') ? 1 : 0,
                         oosAuto: $("#oooAuto").is(':checked') ? 1 : 0,
-                        arrivalOnly: $("#arrivalOnly").is(':checked') ? 1 : 0,
+                        arrivalOnly: $("#arrivalOnly").is(':checked') ? 1 : "",
                         floorauto: $("#floorauto").val()?.map(r => r.replace("''")).join(",") || "",
                         roomTypeauto: $("#roomTypeauto").val()?.map(r => r.replace("''")).join(",") || "",
                         zonecodeauto: $("#zonecodeauto").val()?.map(r => r.replace("''")).join(",") || "",

@@ -360,7 +360,7 @@ namespace HouseKeeping.Services.Implements
             {
                new SqlParameter("@FromDate", fromDatere),
                 new SqlParameter("@ToDate",toDatere) ,
-                 new SqlParameter("@FacilityTask",taskcodeexpan),
+                 new SqlParameter("@FacilityTask",""),
                  new SqlParameter("@AttendantID",attendantrepop),
                  new SqlParameter("@TaskSheetNo",tasksheetpopre),
                  new SqlParameter("@DueOutOnly",dueoutonly),
@@ -376,7 +376,7 @@ namespace HouseKeeping.Services.Implements
             {
                new SqlParameter("@FromDate", fromDatere),
                 new SqlParameter("@ToDate",toDatere) ,
-                 new SqlParameter("@FacilityTask",taskcodeexpan),
+                 new SqlParameter("@FacilityTask",""),
                  new SqlParameter("@AttendantID",attendantrepop),
                  new SqlParameter("@TaskSheetNo",tasksheetpopre),
                  new SqlParameter("@DueOutOnly",dueoutonly),
@@ -392,7 +392,7 @@ namespace HouseKeeping.Services.Implements
             {
                new SqlParameter("@FromDate", fromDatere),
                 new SqlParameter("@ToDate",toDatere) ,
-                 new SqlParameter("@FacilityTask",taskcodeexpan),
+                 new SqlParameter("@FacilityTask",""),
                  new SqlParameter("@AttendantID",attendantrepop),
                  new SqlParameter("@TaskSheetNo",tasksheetpopre),
                  new SqlParameter("@DueOutOnly",dueoutonly),

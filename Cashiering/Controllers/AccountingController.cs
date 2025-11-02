@@ -1120,7 +1120,30 @@ namespace Cashiering.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public IActionResult ARTraceUpdate(int  idselectedRowData,DateTime tracetime,string tracetext, string user)
+        {
+            try
+            {
+                user = user?.Replace("\"", "").Trim();
+                ARTraceModel model = (ARTraceModel)ARTraceBO.Instance.FindByPrimaryKey(idselectedRowData);
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                tracetext = model.TraceText;
+                tracetime = model.TraceAt;
+                model.UpdatedBy = user;
+                model.UpdatedDate = businessDateModel[0].BusinessDate;
+                // Gọi Business Object để lưu
+                ARTraceBO.Instance.Update(model);
+                
 
+
+                return Json(new { success = true, message = "Update success!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         public IActionResult ARTraceSave([FromBody] ARTraceSaveModel model)

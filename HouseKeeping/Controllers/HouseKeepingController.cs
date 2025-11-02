@@ -2570,19 +2570,51 @@ namespace HouseKeeping.Controllers
                 DateTime businessDate = businessDateModel[0].BusinessDate;
 
                 // Iterate through pages -1, 0, 1
+                DataTable combinedDataTable = new DataTable();
+                bool isFirst = true;
+
                 foreach (int page in new int[] { -1, 0, 1 })
                 {
                     DataTable dataTable = _iHouseKeepingService.HKPGetTaskSheets(businessDate, page, zoneexpan, taskcodeExpanded, hkpSectionExpanded);
-                    int rowCount = dataTable?.Rows.Count ?? 0;
-                    if (rowCount > maxRows)
+
+                    if (dataTable != null && dataTable.Rows.Count > 0)
                     {
-                        maxRows = rowCount;
-                        bestPage = page;
-                        bestDataTable = dataTable;
+                        if (isFirst)
+                        {
+                            combinedDataTable = dataTable.Copy();
+                            isFirst = false;
+                        }
+                        else
+                        {
+                            combinedDataTable.Merge(dataTable, false, MissingSchemaAction.Add);
+                        }
                     }
                 }
 
-                // Chuyển đổi bestDataTable thành danh sách DTO
+                if (combinedDataTable.Rows.Count == 0)
+                {
+                    bestDataTable = combinedDataTable;
+                }
+                else
+                {
+                    var uniqueRows = combinedDataTable.AsEnumerable()
+                        .GroupBy(row => row["ID"])
+                        .Select(g => g.First())
+                        .OrderBy(row =>
+                        {
+                            var idVal = row["ID"];
+                            return idVal == DBNull.Value ? int.MinValue : Convert.ToInt32(idVal);
+                        })
+                        .ToList();
+
+                    bestDataTable = combinedDataTable.Clone();
+                    foreach (var row in uniqueRows)
+                    {
+                        bestDataTable.ImportRow(row);
+                    }
+                }
+
+                // Tiếp tục phần chuyển đổi result...
                 var result = (from d in bestDataTable.AsEnumerable()
                               select new
                               {
@@ -4003,14 +4035,26 @@ namespace HouseKeeping.Controllers
         {
             var getdetailts = hkpTaskSheetDetailBO.GethkpTaskSheetDetail(taskdateauto);
             DataTable dt = PropertyUtils.ConvertToDataTable(getdetailts);
+            List<hkpFacilityTaskModel> listhkpft = PropertyUtils.ConvertToList<hkpFacilityTaskModel>(hkpFacilityTaskBO.Instance.FindAll());
 
+            // Tách taskcodeauto thành mảng ID (chuỗi)
+            var arrId = taskcodeauto.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            // Lọc danh sách theo ID và lấy ra chuỗi Code
+            var listCode = listhkpft
+                .Where(x => arrId.Contains(x.ID.ToString()))  // So sánh theo ID
+                .Select(x => x.Code)                          // Lấy trường Code
+                .ToList();
+
+            // Gộp các Code lại thành 1 chuỗi, cách nhau dấu phẩy
+            string resultCodes = string.Join(",", listCode);
 
             _ListRoomNotAss = "";
             if (dt.Rows.Count > 0)
             {
                 if (taskcodeauto != "")
                 {
-                    string[] _arrTaskCode = taskcodeauto.Split(',');
+                    string[] _arrTaskCode = resultCodes.Split(',');
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         string[] _arrRo = dt.Rows[i]["FacilityTask"].ToString().Split(',');
