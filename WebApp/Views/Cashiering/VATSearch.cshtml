@@ -1,39 +1,16 @@
 ﻿@* <link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" /> *@
 
-<div class="header" style="justify-content:space-between;border-bottom:none">
-    <div class="header2">
-        <h3 id="content-title">
-            VAT Search
+<div class="header" style="justify-content:center;border:none">
+    <h3 id="content-title">New Reservation</h3>
+</div>
+<div class="mb-2">
+    <button class="submit-button-clear-reservation" onclick="searchReservation()">Search</button>
+    <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
 
-        </h3>
-        <i class="fas fa-info-circle info-icon" title="How to use?"></i>
-    </div>
-
-    <div class="header2">
-        <button class="submit-button-clear-reservation" onclick="searchReservation()">Search</button>
-
-        <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
-    </div>
 </div>
 <div class="mb-2">
     <div class="mui-card">
-        <div class="header" style="justify-content:space-between">
-            <div class="header2">
-                <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
 
-                <h3 id="content-title">
-                    Filter
-
-                </h3>
-                <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
-                <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
-            </div>
-
-            <div class="header2">
-                <i class="fa-solid fa-magnifying-glass" onclick="searchReservation();"></i>
-
-            </div>
-        </div>
 
         <div id="filter" class="tab-pane ">
             <div class="row">
@@ -102,6 +79,7 @@
         // Set default values for From Date and To Date
         $('#fromDate').val(today);
         $('#toDate').val(today);
+        searchReservation();
     });
 
     function getSelectedRadio(name) {
@@ -109,7 +87,7 @@
         return radio ? radio.value : null;
     }
     function searchReservation() {
-                const selectedHKStatus = getSelectedCheckboxes('searchType');
+                // const selectedHKStatus = getSelectedCheckboxes('searchType');
 
         $.ajax({
             url: '/Cashiering/GuestInHouse',
@@ -122,9 +100,9 @@
                 group:$('#group').val(),
                 company:$('#company').val(),
                 confirmationNo:$('#confirmationNo').val(),
-                arrivalDate:$('#arrivalForm').val(),
-                arrivalTo:$('#arrivalTo').val(),
-                departure:$('#departure').val(),
+                arrivalDate:$('#fromDate').val(),
+                arrivalTo:$('#toDate').val(),
+                departure:$('#toDate').val(),
                 crsNo:$('#crsNo').val(),
                 package:$('#package').val(),
                 guestName:$('#guestType').val(),

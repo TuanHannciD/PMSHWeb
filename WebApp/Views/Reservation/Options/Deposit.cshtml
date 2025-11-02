@@ -122,7 +122,7 @@
                     </div>
                     <div class="col-md-5 form-group-new-reservation row">
                         <label >Amount</label>
-                        <input  id="amountDepositPayment">
+                        <input  id="amountDepositPayment" style="text-align:right" value="0">
                     </div>
                     <div class="col-md-5 form-group-new-reservation row">
                         <label >Reference</label>
@@ -157,7 +157,15 @@
             return;
         }
         GetDepositRequestByReservationID(idReservation);
-        $('#modalDeposit').modal('show');
+        localStorage.setItem("currentFromID", "modalDeposit");
+        const crashierLogin = localStorage.getItem("crashierLogin");
+        if(crashierLogin == "NotYet"){
+            openModalShilftLogin();
+
+        }
+        else{
+            $('#modalDeposit').modal('show');
+        }
     }
     function closeModalDeposit(){
         clearDepositRequest(); 
@@ -276,9 +284,12 @@
         getDepositRule();
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#dueDateDepositRequest').val(formattedDate);
-        if(reservationStatus == 0){
+        if(reservationStatus == 0 || reservationStatus == 5){
             $('#modalDepositRequest').modal('show');
 
+        }
+        else{
+            showToast("Error","Please choose booking has status Reservation or Due In",false);
         }
     }
     function closeDepositRequest(){
@@ -434,11 +445,13 @@
         getTransactionPayment();
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#dateDepositPayment').val(formattedDate);
-        if(reservationStatus == 0){
+        if(reservationStatus == 0 || reservationStatus == 5){
             $('#modalDepositPayment').modal('show');
 
         }
-
+        else{
+            showToast("Error","Please choose booking has status Reservation or Due In",false);
+        }
     }
     function closeModalDepositPayment(){
         let formattedDate = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
@@ -485,7 +498,8 @@
 
     function SaveDepositPayment() {
         const userID = JSON.parse(localStorage.getItem("userID"));
-                const userName = JSON.parse(localStorage.getItem("userName"));
+        const userName = JSON.parse(localStorage.getItem("userName"));
+        const shiftID = localStorage.getItem("shiftID");
 
         var formData = new FormData();
 
@@ -498,6 +512,8 @@
         formData.append('amount', $('#amountDepositPayment').val());
         formData.append('curencyID', $('#currencyDepositPayment').val());
         formData.append('reservationType',  $('#reservationTypeDepositPayment').val());
+        formData.append('shiftID',  shiftID);
+
         formData.append('userName',userName);
         formData.append('userID',userID);
 

@@ -2772,6 +2772,9 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Payment amount can be not equal 0" });
                 }
+                #region lấy user
+                UsersModel userLogin = (UsersModel)UsersBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["userID"].ToString()));
+                #endregion
                 #region lấy transaction code thanh toán
                 TransactionsModel trans = (TransactionsModel)TransactionsBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["transCode"].ToString()));
                 #endregion
@@ -2793,8 +2796,8 @@ namespace Reservation.Controllers
                 payment.IsMasterFolio = false;
                 payment.UserID = int.Parse(Request.Form["userID"].ToString());
                 payment.UserName = Request.Form["userName"].ToString();
-                payment.CashierNo = "1";
-                payment.ShiftID = 3;
+                payment.CashierNo = userLogin.CashierNo.ToString();
+                payment.ShiftID = int.Parse(Request.Form["shiftID"].ToString());
                 payment.UserInsertID = int.Parse(Request.Form["userID"].ToString());
                 payment.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
                 payment.CreateDate = DateTime.Now;
@@ -2829,8 +2832,8 @@ namespace Reservation.Controllers
                 paymentDefault.IsMasterFolio = false;
                 paymentDefault.UserID = int.Parse(Request.Form["userID"].ToString());
                 paymentDefault.UserName = Request.Form["userName"].ToString();
-                paymentDefault.CashierNo = "1";
-                paymentDefault.ShiftID = 3;
+                paymentDefault.CashierNo = userLogin.CashierNo.ToString();
+                paymentDefault.ShiftID = int.Parse(Request.Form["shiftID"].ToString());
                 paymentDefault.UserInsertID = int.Parse(Request.Form["userID"].ToString());
                 paymentDefault.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
                 paymentDefault.CreateDate = DateTime.Now;
@@ -2839,6 +2842,8 @@ namespace Reservation.Controllers
                 paymentDefault.PaymentCode = trans.Code;
                 DepositPaymentBO.Instance.Insert(paymentDefault);
                 #endregion
+
+                
 
                 #region update lại paid và due của các deposit payment
                 decimal totalDepositAmountPayment = decimal.Parse(Request.Form["amount"].ToString());
@@ -2862,7 +2867,25 @@ namespace Reservation.Controllers
                     i++;
                 }
                 #endregion
-
+                #region insert deposit request
+                DepositRsqModel depositRsq = new DepositRsqModel();
+                depositRsq.ReservationID = int.Parse(Request.Form["rsvID"].ToString());
+                depositRsq.RequestDate = businessDate[0].BusinessDate;
+                depositRsq.Description = "";
+                depositRsq.ChargeType = 0;
+                depositRsq.DepositRuleID = 0;
+                depositRsq.DueDate = DateTime.Parse(Request.Form["dueDate"].ToString());
+                depositRsq.Amount = depositRsq.AmountMaster = 0;
+                depositRsq.CurrencyID = "VND";
+                depositRsq.CurrencyMaster = "";
+                depositRsq.IsMasterFolio = false;
+                depositRsq.UserInsertID = depositRsq.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                depositRsq.UpdateDate = depositRsq.CreateDate = DateTime.Now;
+                depositRsq.IsAuto = false;
+                depositRsq.RequestType = 0;
+                depositRsq.PaidAmount = depositRsq.DueAmount = 0 - decimal.Parse(Request.Form["amount"].ToString());
+                DepositRsqBO.Instance.Insert(depositRsq);
+                #endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Deposit Payment was created successfully" });
 

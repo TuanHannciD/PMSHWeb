@@ -26,7 +26,6 @@
 
     function openModalShilftLogin(){
         const userName = JSON.parse(localStorage.getItem("Loginname"));
-        console.log(userName);
         $('#crashierNoInput').val(userName);
         $('#modalShiftLogin').modal('show');
     }
@@ -76,10 +75,11 @@
             // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             data: formData,
             success: function (data) {
-                    localStorage.setItem("shiftID", data[0].id);
-                    localStorage.setItem("shiftName", data[0].userName);
-                    localStorage.setItem("crashierLogin", "InShift");
-
+                localStorage.setItem("shiftID", data[0].id);
+                localStorage.setItem("shiftName", data[0].userName);
+                localStorage.setItem("crashierLogin", "InShift");
+                const currentFromID = localStorage.getItem("currentFromID");
+                $(`#${currentFromID}`).modal('show');
             },
             error: function (xhr, statusText, err) {
 

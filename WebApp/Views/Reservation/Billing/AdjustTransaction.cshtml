@@ -96,6 +96,7 @@
     function adjustTransaction() {
         var grid = $("#gridContainerBilling").dxDataGrid("instance");
         var selectedRows = grid.getSelectedRowsData();
+
         if(selectedRows.length){
             $.ajax({
                 url: '/Billing/CheckAdjustCode',
@@ -127,7 +128,10 @@
 
             });
         }
+        else{
+            showToast('Error', "Please choose service to adjust", false);
 
+        }
     }
 
     function GetReasonAdjustmentTransaction() {
@@ -162,6 +166,7 @@
         });
     }
     function openModalAdjustTransaction(){
+        
         $('#amountAdjust').val('0');
         $('#amountAdjustNet').val('0');
         GetReasonAdjustmentTransaction();

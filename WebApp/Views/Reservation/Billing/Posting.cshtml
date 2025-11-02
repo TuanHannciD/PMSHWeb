@@ -222,15 +222,19 @@
 <script>
     var postType = 1;
     function openModalPosting() {
+        localStorage.setItem("currentFromID", "modalPosting");
+
         const crashierLogin = localStorage.getItem("crashierLogin");
+        $('#winNoPostBilling').val(folioPosting);
+        setGroupTransactionPosting();
+        setSubGroupTransactionPosting($('#transactionGroupIDPosting').val());
+        getTransactionPosting($('#transactionGroupIDPosting').val(), $('#subTransactionGroupIDPosting').val());
         if(crashierLogin == "NotYet"){
             openModalShilftLogin();
+
         }
         else{
-            $('#winNoPostBilling').val(folioPosting);
-            setGroupTransactionPosting();
-            setSubGroupTransactionPosting($('#transactionGroupIDPosting').val());
-            getTransactionPosting($('#transactionGroupIDPosting').val(), $('#subTransactionGroupIDPosting').val());
+            
             $('#modalPosting').modal('show');
         }
 
