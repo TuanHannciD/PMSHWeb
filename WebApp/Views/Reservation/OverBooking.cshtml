@@ -171,13 +171,14 @@
         getBusinessDate().then(function () {
             searchReservation();
         });
-        
+        getNumberOfRoom($('#roomType').val());
 
     });
     function openModalNew(){
         $('#modalNewOverBooking').modal('show');
     }
     function closeModalNew(){
+                                    clearForm();
         $('#modalNewOverBooking').modal('hide');
     }
 
@@ -348,7 +349,6 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
-                    clearForm();
                     closeModalNew();
                     searchReservation();
                     showToast('Success', data.msg, true);
@@ -366,6 +366,8 @@
         $('#obLevel').val('');
        $('#noToSell').val('');
        getBusinessDate();
+        getNumberOfRoom($('#roomType').val());
+
     }
 
     function getActivityLog() {
@@ -430,6 +432,7 @@
         });
     }
     function closeActivityLog(){
+
                 $('#modalActivityLog').modal('hide');
 
     }

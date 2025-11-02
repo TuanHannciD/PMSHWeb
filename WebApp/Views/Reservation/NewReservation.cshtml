@@ -423,9 +423,9 @@
                                     <div class="form-group-new-reservation col-md-12">
                                         <label for="txtTotal">Total</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
-                                            <input type="number" value="0" id="txtTotal" class="col-md-5" readonly style="text-align:right">
+                                            <input  value="0" id="txtTotal" class="col-md-5" readonly style="text-align:right">
                                             <span style="font-size:12px" class="col-md-2">+ net</span>
-                                            <input type="number" value="0" id="txtTotalNet" class="col-md-5" readonly style="text-align:right">
+                                            <input  value="0" id="txtTotalNet" class="col-md-5" readonly style="text-align:right">
                                         </div>
 
                                     </div>
@@ -480,7 +480,7 @@
                                     <div class="form-group-new-reservation col-md-4">
                                         <label for="txtCurrency"> Folio Balance</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
-                                            <input type="number" value="0" id="txtCurrency">
+                                            <input type="number" value="0" id="txtCurrency" style="text-align:right">
                                         </div>
                                     </div>
                                     
@@ -1385,6 +1385,9 @@
         formData.append('memberNo', $("#txtCardNo").val());
         formData.append('address', $("#txtAddress").val());
         formData.append('city', $("#txtCity").val());
+        formData.append('identityCard', $("#txtIdentityCard").val());
+        formData.append('dateOfBirth', $("#txtDob").val());
+
         formData.append('nationality', $("#txtNationality").val());
         formData.append('arrival', $("#arrival").val());
         formData.append('departure', $("#departure").val());
@@ -1395,7 +1398,7 @@
         formData.append('noOfNight', $("#nights").val());
         formData.append('noOfRoom', $("#numRooms").val());
         formData.append('roomTypeID', $("#txtRoomType").val());
-        formData.append('vipID', $("#txtVIP").val());
+        formData.append('vipID', $("#txtVIP").val() ?? '');
         formData.append('rtcID', $("#txtRTC").val());
         formData.append('roomID', $("#roomID").val());
         formData.append('roomNo',$('#roomSelect').val());
@@ -1429,6 +1432,7 @@
         formData.append('dropOffDate', $("#dropOffDate").val());
         formData.append('dropOffDescription', $("#dropOffDescription").val());
         formData.append('packageID', $("#txtPackage").val());
+        formData.append('passport', $("#txtPassport").val());
         formData.append('packages', $('#txtPackage').find('option:selected').text());
         formData.append('rateCodeID', $("#txtRateCodeID").val());
         formData.append('rateCode', $("#txtRateCode").val());
@@ -1489,7 +1493,7 @@
             $("#txtID").val('0');
             $("#txtName").val('');
             $("#txtFirstName").val('');
-            $("#txtTitleID").val('0')
+            $("#txtTitleID").val(0)
             $("#txtPhone").val('');
             $("#txtEmail").val('');
             $("#txtMemberType").val('');
@@ -1538,6 +1542,8 @@
             $("#dropOffDate").val('');
             $("#dropOffDescription").val('');
             $("#txtPackage").val('');
+            $("#txtPassport").val('');
+            $("#txtIdentityCard").val('');
             $("#txtRateCodeID").val('');
             $("#txtRateCode").val('');
             $("#txtRateAmount").val('');
@@ -1608,6 +1614,7 @@
         formData.append('FirstNameIndividual', firstName);
         formData.append('MiddleNameIndividual', middleName);
         formData.append('userID',userID);
+
 
         $.ajax({
             url: '/Profile/SaveProfileInReservation',

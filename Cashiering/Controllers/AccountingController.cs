@@ -46,6 +46,7 @@ namespace Cashiering.Controllers
             ViewBag.cboAccountType = ListItemHelper.GetARAccountType();
             ViewBag.cboCountry = ListItemHelper.GetCountry();
             ViewBag.cboCity = ListItemHelper.GetCity();
+            ViewBag.cboCity2 = ListItemHelper.GetCityText();
 
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }
