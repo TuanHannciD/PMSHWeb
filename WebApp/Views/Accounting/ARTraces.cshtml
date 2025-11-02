@@ -115,12 +115,13 @@
     z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
 
     <div class="d-flex justify-content-between mb-2">
-        <h5 class="mb-0"> AR Trace New</h5>
+        <h5 id="textPopup" class="mb-0"> AR Trace New</h5>
 
     </div>
     <div class="d-flex justify-content-start mb-3 gap-2">
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnSearchAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Search</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAutoUpdate" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
         <button onclick="$('#popupNewArtraces').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
             <i class="fa-solid fa-xmark me-1"></i> Close
@@ -139,6 +140,19 @@
 
                 </div>
                 <div class="d-flex align-items-start mb-3">
+                    <input type="text" id="idselectedRowData" name="idselectedRowData" style="display:none !important" class="form-control form-control-sm w-auto" />
+                    <div class="d-flex align-items-center me-4">
+                        <label for="tracetime" class="me-2 mb-0">Created By:</label>
+                        <input readonly id="createdBy" name="tracetime"
+                               class="form-control form-control-sm w-auto" />
+                    </div>
+                    <div class="d-flex align-items-center me-4">
+                        <label for="tracetime" class="me-2 mb-0">Created At:</label>
+                        <input readonly type="datetime-local" id="createdDate" name="tracetime"
+                               class="form-control form-control-sm w-auto" />
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-3">
                     <!-- Trace Time -->
                     <div class="d-flex align-items-center me-4">
                         <label for="tracetime" class="me-2 mb-0">Trace Time:</label>
@@ -151,9 +165,11 @@
                         <label for="tracetext" class="me-2 mt-1">Trace Text:</label>
                         <textarea id="tracetext" name="tracetext"
                                   class="form-control form-control-sm"
-                                  rows="3" style="width:300px; height:300px;"></textarea>
+                                  rows="3" style="width:300px; height:200px;"></textarea>
                     </div>
+                   
                 </div>
+          
 
 
               
@@ -319,12 +335,42 @@
        if (!selectedRowDatasa || selectedRowDatasa.length === 0) {
         
            $("#btnSearchAuto").trigger("click"); 
+           $("#gridSelectedAccount").show();
+             $("#btnSearchAuto").show();
+                                    $("#btnOkAuto").show();
+                                             $("#btnSaveAuto").show();
         }
         else {
-           
+             $("#gridSelectedAccount").show();
+     
+                           $("#btnSearchAuto").show();
+                                    $("#btnOkAuto").show();
+                                             $("#btnSaveAuto").show();
+                      $("#createdBy").hide();
+                       $("#createdDate").hide();
             $('#overlay').fadeIn(200);
             $('#popupNewArtraces').fadeIn(200);
         }
+            $("#textPopup").text("AR Trace New");
+    });
+    $("#btnUpdate").on("click", function () {
+            $("#textPopup").text("AR Trace Edit");
+                if (selectedRowData.length === 0) {
+                       showToast('Error', "Please select at least one account!", false);
+                   return;
+               }
+                  $("#gridSelectedAccount").hide();
+                           $("#btnSearchAuto").hide();
+                                    $("#btnOkAuto").hide();
+                                             $("#btnSaveAuto").hide();
+                     $("#idselectedRowData").val(selectedRowData.id);
+                $("#tracetime").val(selectedRowData.traceAt);
+               $("#tracetext").val(selectedRowData.traceText);
+                   $("#createdDate").val(selectedRowData.createdDate);
+                      $("#createdBy").val(selectedRowData.createdBy);
+                $('#overlay').fadeIn(200);
+                $('#popupNewArtraces').fadeIn(200);
+        
     });
 
      $("#btnSearchAuto").on("click", function () {
@@ -408,6 +454,47 @@
         });
     }
 
+       $("#btnOkAutoUpdate").on("click", function () {
+
+           if (selectedRowData.length === 0) {
+                    showToast('Error', "Please select at least one account!", false);
+                return;
+            }
+
+          $("#loadingSpinner").show();
+            $.ajax({
+                url: '/Accounting/ARTraceUpdate',
+                type: 'POST',             
+                data: {
+                     idselectedRowData: $("#idselectedRowData").val(),
+                    tracetime: $("#tracetime").val(),
+                    tracetext: $("#tracetext").val(),
+                     user: localStorage.getItem("Loginname")
+          
+                },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                        if (result.success) {
+                                showToast('Success', result.message, true);
+                                $('#popupNewArtraces').fadeOut(200);
+                                 $('#overlay').fadeOut(200);
+                                   $("#btnPrint").trigger("click");
+                                    clearNewArtraces();
+                       } else {
+                                showToast('Error', 'Please select before saving.', false);
+                       }
+                console.log(result);
+
+                        $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không th? t?i báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+     });
      $("#btnOkAuto").on("click", function () {
 
            if (selectedRowDatasa.length === 0) {
@@ -565,13 +652,14 @@
     function clearNewArtraces() {
      
         $("#tracetext").val("");
-      
+      $("#createdBy").val("");
     }
     $('#btnClosePopup, #overlay').click(function () {
             $('#popupNewArtraces').fadeOut(200);
             $('#popupSearchArtraces').fadeOut(200);
             $('#overlay').fadeOut(200);
     });
+
 
     $('#btnClosepSearchArtracesPopup, #overlay').click(function () {
               
