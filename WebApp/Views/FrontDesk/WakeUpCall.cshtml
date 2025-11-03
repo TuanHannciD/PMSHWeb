@@ -107,6 +107,38 @@
     .ellipsis-icon {
        
         margin-left: 10px;
+        left: 0;
+        top: 0;
+        position: relative;
+    }
+
+    .tomselect-custom .ts-control {
+        min-height: 28px !important; /* chiều cao tối thiểu */
+        max-height: 70px !important; /* ✅ giới hạn chiều cao tối đa khi có nhiều tag */
+        overflow-y: auto !important; /* ✅ bật thanh cuộn dọc */
+        height: auto !important; /* cho phép auto để hiển thị đúng */
+        padding: 2px 6px !important;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+        display: flex;
+        flex-wrap: wrap; /* đảm bảo tag xuống dòng */
+    }
+
+    /* Ô nhập khi gõ */
+    .tomselect-custom .ts-input > input {
+        min-height: 20px !important;
+        height: 20px !important;
+        padding: 0 !important;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Tag hiển thị khi chọn */
+    .tomselect-custom .item {
+        font-size: 0.75rem !important;
+        padding: 1px 4px !important;
+        line-height: 1.2 !important;
+        margin: 1px !important;
     }
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px">Wake Up Call</div>
@@ -131,13 +163,13 @@
             <div class="d-flex align-items-center me-3 mb-2" id="roomnoGroup">
                 <label class="me-2 mb-1 mt-1">Room No(s):</label>
                 <input type="text" id="roomno" name="roomno" class="form-control form-control-sm w-auto" />
-                <i id="listRoom" class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
+                <i id="listRoom" class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;margin-left: 10px; left: 0; top: 0; position: relative;"></i>
             </div>
 
             <div class="d-flex align-items-center me-3 mb-2" id="scheduleGroup">
                 <label id="scheduleLabel" class="me-2 mb-1 mt-1">Schedule:</label>
                 <input type="text" id="roomnoCancel" name="roomnoCancel" class="form-control form-control-sm w-auto" />
-                <i id="cancleRoom" class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;"></i>
+                <i id="cancleRoom" class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;margin-left: 10px; left: 0; top: 0; position: relative;"></i>
             </div>
 
 
@@ -189,7 +221,7 @@
             </div>
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">Room:</label>
-                <select id="roomview" name="roomview" class="tomselect-custom" multiple>
+                <select id="roomview" name="roomview" class="tomselect-custom" style="width: 200px" multiple>
                     @foreach (var item in roomList)
                     {
                         <option value="@item.RoomNo">@item.RoomNo</option>
@@ -260,7 +292,7 @@
             </div>
             <div class="d-flex align-items-center me-3 mb-2">
                 <label class="me-2 mb-0">Zone:</label>
-                <select id="zone" name="zone" class="tomselect-custom"  multiple>
+                <select id="zone" name="zone" class="tomselect-custom"  style="width: 200px" multiple>
                     @foreach (var item in zoneList)
                     {
                         <option value="@item.Code">@item.Code</option>
@@ -476,7 +508,7 @@
             return `${year}-${month}-${day}`;
         }
     function initializeTomSelects() {
-             const selectors = ["#zone,#roomview"];
+             const selectors = ["#zone","#roomview"];
 
              for (const id of selectors) {
                  const el = document.querySelector(id);
@@ -720,6 +752,7 @@
             dataSource: data,
             allowColumnResizing: true,
             columnAutoWidth: true,
+            height :500,
             columns: [
                 { dataField: "id", caption: "ID", visible: false },
                 { dataField: "room", caption: "Room", width: 100 },
