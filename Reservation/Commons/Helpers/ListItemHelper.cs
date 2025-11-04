@@ -305,6 +305,64 @@ namespace Reservation.Commons.Helpers
                 return new List<SelectListItem>();
             }
         }
+        /// <summary>
+        /// Lấy tất cả danh sách Room cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Room</returns>
+        public static List<SelectListItem> GetRoomProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<RoomModel> list = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.RoomNo.ToString(), Text = p.RoomNo, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+        /// <summary>
+        /// Lấy tất cả danh sách Room cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Room</returns>
+        public static List<SelectListItem> GetRoomClassProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<RoomClassModel> list = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindByAttribute("InActive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Code, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
 
         /// <summary>
         /// Lấy tất cả danh sách Currency  cho dropdown

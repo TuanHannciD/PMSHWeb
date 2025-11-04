@@ -200,7 +200,8 @@ namespace Reservation.Controllers
             ViewBag.cboMarket = ListItemHelper.GetMarketProvider();
             ViewBag.cboZone = ListItemHelper.GetZoneProvider();
             ViewBag.cboRoomType = ListItemHelper.GetRoomTyeProvider();
-
+            ViewBag.cboRoom = ListItemHelper.GetRoomProvider();
+            ViewBag.cboRoomClass = ListItemHelper.GetRoomClassProvider();
             //ViewBag.cboProfile = ListItemHelper.GetProfileProvider();
             ViewBag.cboAllotmentType = ListItemHelper.GetAllotmentTypeProvider();
             ViewBag.cboPersonInCharge = ListItemHelper.GetPersonInChargeProvider();
