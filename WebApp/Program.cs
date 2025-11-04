@@ -18,6 +18,7 @@ using HouseKeeping.Controllers;
 using HouseKeeping.Services.Implements;
 using HouseKeeping.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.FileProviders;
 using Miscellaneous.Controllers;
@@ -39,6 +40,7 @@ using Reservation.Services.Interfaces;
 using RoomManagement.Controllers;
 using RoomManagement.Services.Implements;
 using RoomManagement.Services.Interfaces;
+using System.Globalization;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
@@ -72,7 +74,7 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
 builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
+.PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
 builder.Services.AddControllersWithViews()
     .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
 builder.Services.AddControllersWithViews()
@@ -134,7 +136,7 @@ builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
 builder.Services.AddSingleton<IAccountingService, AccountingService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>();
- 
+
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
 builder.Services.AddSingleton<IMembershipService, MembershipService>();
@@ -176,9 +178,15 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
-
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("vi-VN") };
+    options.DefaultRequestCulture = new RequestCulture("vi-VN");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 var app = builder.Build();
-
+app.UseRequestLocalization();  // Ph?i ??t tr??c UseEndpoints
 app.UseDevExpressControls();
 System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 

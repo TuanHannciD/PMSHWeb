@@ -205,7 +205,7 @@
                     <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1 text-start">WaitList</a>
                     <a href="#" onclick="openModalTraces();" class="font-semibold col-md-4 mb-1 text-start">Traces</a>
                     <a href="#" onclick="LoadConfirmationLetter();" class="font-semibold col-md-4 mb-1 text-start">Confirmation Letter</a>
-
+                    <a href="#" onclick="openModalWakeupCall();" class="font-semibold col-md-4 mb-1 text-start">Wake up Call</a>
 
 
                 </div>
@@ -334,6 +334,7 @@
 @await Html.PartialAsync("Options/Alerts")
 @await Html.PartialAsync("Options/Traces")
 @await Html.PartialAsync("Options/Changes")
+@await Html.PartialAsync("Options/WakeUpCall")
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 
@@ -417,6 +418,14 @@
                     $('#transDatePaymentBilling').val(formattedBusinessDate);
                     $('#fromDateSelectOption').val(formattedBusinessDate);
                     $('#toDateSelectOption').val(formattedBusinessDate);
+
+
+                    //Date openModalWakeupCall
+                    $('#singleDatewuk').val(formattedBusinessDate);
+                    $('#fromDatewuk').val(formattedBusinessDate);
+                    $('#toDatewuk').val(formattedBusinessDate);
+                    $('#fromDateviewwuk').val(formattedBusinessDate);
+                    $('#toDateviewwuk').val(formattedBusinessDate);
                 }
                 if (!$('#departureForm').val()) {
                     const departureDate = new Date(businessDate);
