@@ -571,7 +571,7 @@
                     <a href="#" onclick="openModalRouting();" class="font-semibold col-md-4 mb-1">Routing</a>
                     <a href="#" onclick="openModalWaitList();" class="font-semibold col-md-4 mb-1">WaitList</a>
                     <a href="#" onclick="openVisibleColumns();" class="font-semibold col-md-4 mb-1">Columns</a>
-
+                    <a href="#" onclick="openModalWakeupCall();" class="font-semibold col-md-4 mb-1">Wake up Call</a>
 
                 </div>
             </div>
@@ -612,12 +612,14 @@
 @await Html.PartialAsync("Options/CheckOutAll")
 @await Html.PartialAsync("Options/CheckOutZero")
 @await Html.PartialAsync("Options/CheckOut")
+@await Html.PartialAsync("Options/WakeUpCall")
 <script>
     var profileIndividualID = 0;
     var idReservation = 0;
     var status = '';
     var roomStatus = '';
     var roomNo = '';
+    var roomNowuk  = '';
     var roomID = 0;
     var arivalDate = '';
     var departureDate = '';
@@ -653,6 +655,7 @@
         getBusinessDate();
         setUpIconClear();
         await setTomSelect();
+        roomNowuk=result.roomNo;
     });
 
     function setUpReservation(result){

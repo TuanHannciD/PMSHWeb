@@ -1417,25 +1417,9 @@
             let parsedBusinessDate = null;
         $(document).ready(function () {
 
-             document.getElementById("reportTitle").innerText = 'Task Assignment';
-              var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
-                   console.log(businessDateStr);
-                    // Lấy phần ngày tháng năm
-                    var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
-                    var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+               getBusinessDate();
 
-                    // Parse đúng thứ tự: new Date(year, monthIndex, day)
-                     parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-
-                    // Gán vào input type="date"
-                    $('#fromDate').val(formatDate(parsedBusinessDate));
-                    $('#fromDatere').val(formatDate(parsedBusinessDate));
-                    $('#toDatere').val(formatDate(parsedBusinessDate));
-                    $('#datepopreport').text(formatDate(parsedBusinessDate));
-                   $('#datepopreport2').text(formatDate(parsedBusinessDate));
-                    $('#datepopreport3').text(formatDate(parsedBusinessDate));
-                   $('#taskdate').val(formatDate(parsedBusinessDate));
-                     $('#taskdateauto').val(formatDate(parsedBusinessDate));
+                  
                initializeTomSelects();
                  initializeTomSelectstasksheet();
                  initializeTomSelectzone();
@@ -1446,10 +1430,39 @@
                 initializeTomSelectRoomtype();
                         initializeTomSelectSectionAd();
                          initializeTomSelectZoneAd();
-                               $("#btnPrint").trigger("click");
+                            
 
         });
-             
+     function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+
+
+                        // Gán vào input type="date"
+              $('#singleDate').val(result.split('T')[0]);
+             // Gán vào input type="date"
+                    $('#fromDate').val(result.split('T')[0]);
+                    $('#fromDatere').val(result.split('T')[0]);
+                    $('#toDatere').val(result.split('T')[0]);
+                    $('#datepopreport').text(result.split('T')[0]);
+                   $('#datepopreport2').text(result.split('T')[0]);
+                    $('#datepopreport3').text(result.split('T')[0]);
+                   $('#taskdate').val(result.split('T')[0]);
+                     $('#taskdateauto').val(result.split('T')[0]);
+                        $("#btnPrint").trigger("click");
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
         function initializeTomSelects() {
                    const selectors = ["#taskcode", "#taskcodeauto", "#floorauto","#zonecodeauto","#attendantauto"];
 
