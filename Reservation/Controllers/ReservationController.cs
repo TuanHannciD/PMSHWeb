@@ -23,6 +23,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
@@ -1050,6 +1051,7 @@ namespace Reservation.Controllers
                     reservationModel.Party = "";
                     reservationModel.PartyGuest = "";
                     reservationModel.IsPasserBy = false;
+                     string color=  Request.Form["color"].ToString();
                     //reservationModel.Color = Request.Form["color"].ToString();
                     reservationModel.Color = "";
 
@@ -1462,7 +1464,12 @@ namespace Reservation.Controllers
                     reservationModel.PartyGuest = "";
                     reservationModel.IsPasserBy = false;
                     //reservationModel.Color = Request.Form["color"].ToString();
-                    reservationModel.Color = "";
+                    string colorres = Request.Form["color"].ToString();
+                    System.Drawing.Color color = ColorTranslator.FromHtml(colorres);
+
+                    // Chuyển sang ARGB int
+                    int argb = color.ToArgb();
+                    reservationModel.Color = argb.ToString();
                     reservationModel.ARNo = "";
                     reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
                     reservationModel.Specials = Request.Form["specials"].ToString();

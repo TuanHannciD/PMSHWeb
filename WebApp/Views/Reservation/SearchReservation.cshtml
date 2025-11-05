@@ -786,6 +786,30 @@
 
                 $('#cmt_wrapper').show();
 
+            },
+            onRowPrepared: function(e) {
+                if (e.rowType === "data") {
+                    const colorValue = e.data?.Color;
+
+                    // 🧩 Nếu có giá trị màu thì mới tô
+                    if (colorValue !== null && colorValue !== undefined && colorValue !== "" && colorValue !== 0) {
+                        let hexColor = "";
+
+                        // Nếu Color là số int (ví dụ -256)
+                        if (!isNaN(colorValue)) {
+                            hexColor = intToColorHex(parseInt(colorValue));
+                        }
+                        // Nếu Color là mã hex (vd "#FFFF00")
+                        else if (typeof colorValue === "string" && colorValue.startsWith("#")) {
+                            hexColor = colorValue;
+                        }
+
+                        // Nếu có màu hợp lệ => tô nền
+                        if (hexColor) {
+                            e.rowElement.css("background-color", hexColor);
+                        }
+                    }
+                }
             }
         }).dxDataGrid('instance');
         // Update column list when opening offcanvas
@@ -806,6 +830,10 @@
         $('#clearSelectedColumns').on('click', function() {
             $('.column-checkbox').prop('checked', false);
         });
+    }
+    function intToColorHex(value) {
+        const hex = (value >>> 0).toString(16).padStart(8, "0");
+        return "#" + hex.substring(2).toUpperCase();
     }
     function formatNumberBilling(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

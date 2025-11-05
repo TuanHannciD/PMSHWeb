@@ -779,12 +779,31 @@
         $('#txtRateAfterDiscount').val(formattedAmount);
         $('#txtNetAfterDiscount').val(formattedNet);
         // $("#txtColor").val(result.color);
+        if (result.color) {
+            // Hiển thị dạng HEX để trình duyệt hiểu
+              
+             console.log(intToHexColor(result.color));
+            $("#txtColor").val(intToHexColor(result.color));
+        } else {
+            $("#txtColor").val("");
+        }
+
         // $("#txtItemInventory").val('');
         // $("#txtPreference").val();
         $("#txtAllotmentID").val(result.allotmentId);
         $("#txtAllotment").val(result.allotmentCode);
         $("#txtPersonInCharge").val(result.personInChargeId);
     }
+            function intToHexColor(colorInt) {
+        // Chuyển số âm thành số không dấu 32-bit
+        const color = colorInt >>> 0;
+        // Lấy 24 bit thấp nhất (RRGGBB)
+        const hex = (color & 0xFFFFFF).toString(16).toUpperCase();
+        // Đảm bảo đủ 6 chữ số
+        return "#" + ("000000" + hex).slice(-6);
+    }
+
+
     // Hàm định dạng ngày thành chuỗi YYYY-MM-DD
     function formatDate(date) {
         const year = date.getFullYear();
