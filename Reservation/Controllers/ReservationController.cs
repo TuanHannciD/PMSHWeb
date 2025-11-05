@@ -2157,6 +2157,7 @@ namespace Reservation.Controllers
                 {
                     return Json(new { code = 1, msg = "Can not find reservation" });
                 }
+
                 #region  check xem Reservation có deposit không
                 var deposit = DepositPaymentBO.Instance.FindByAttribute("ReservationID", rsv.ID);
                 if(deposit.Count > 0)
@@ -2166,47 +2167,91 @@ namespace Reservation.Controllers
                 }
                 #endregion
 
-                #region insert vào  bảng ActivityLog
-                string status = "";
-                if (rsv.Status == 0)
+                if(rsv.MainGuest == true)
                 {
-                    status = "RESERVED";
-                }
-                if (rsv.Status == 5)
-                {
-                    status = "DUE IN";
-                }
-                ActivityLogModel activityLog = new ActivityLogModel();
-                activityLog.TableName = "Reservation";
-                activityLog.ObjectID = rsv.ID;
-                activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
-                activityLog.UserName = Request.Form["userName"].ToString();
-                activityLog.ChangeDate = DateTime.Now;
-                activityLog.Change = "Status";
-                activityLog.NewValue = "CANCEL";
-                activityLog.OldValue = status;
-                activityLog.Description = "";
-                ActivityLogBO.Instance.Insert(activityLog);
-                #endregion
-                #region update status reservation
-                List<ReservationModel> listRsv = PropertyUtils.ConvertToList<ReservationModel>(ReservationBO.Instance.FindByAttribute("ConfirmationNo", rsv.ConfirmationNo));
-                foreach (var item in listRsv)
-                {
-                    item.Status = 3;
-                    item.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
-                    item.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
-                    item.UpdateBy = rsv.SpecialUpdateBy = Request.Form["userName"].ToString();
-                    ReservationBO.Instance.Update(item);
-                }
-                
-                #endregion
+                    // neu la main guest thi update status cac row co conformation no giong no thanh cancel
+                    List<ReservationModel> listRsv = PropertyUtils.ConvertToList<ReservationModel>(ReservationBO.Instance.FindByAttribute("ConfirmationNo", rsv.ConfirmationNo));
+                    foreach (var item in listRsv)
+                    {
+                        item.Status = 3;
+                        item.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
+                        item.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
+                        item.UpdateBy = rsv.SpecialUpdateBy = Request.Form["userName"].ToString();
+                        ReservationBO.Instance.Update(item);
 
-                #region insert ReservationCancellation 
-                foreach(var item in listRsv)
+                        #region insert vào  bảng ActivityLog
+                        string status = "";
+                        if (item.Status == 0)
+                        {
+                            status = "RESERVED";
+                        }
+                        if (item.Status == 5)
+                        {
+                            status = "DUE IN";
+                        }
+                        ActivityLogModel activityLog = new ActivityLogModel();
+                        activityLog.TableName = "Reservation";
+                        activityLog.ObjectID = item.ID;
+                        activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                        activityLog.UserName = Request.Form["userName"].ToString();
+                        activityLog.ChangeDate = DateTime.Now;
+                        activityLog.Change = "Status";
+                        activityLog.NewValue = "CANCEL";
+                        activityLog.OldValue = status;
+                        activityLog.Description = "";
+                        ActivityLogBO.Instance.Insert(activityLog);
+                        #endregion
+
+                        #region insert ReservationCancellation 
+                        string cancellationNo = ReservationCancellationBO.GetTopCancellatioNo();
+                        ReservationCancellationModel reservationCancellation = new ReservationCancellationModel();
+                        reservationCancellation.ReservationID = item.ID;
+                        reservationCancellation.CancellationDate = DateTime.Now;
+                        reservationCancellation.CancellationNo = !string.IsNullOrEmpty(cancellationNo) ? cancellationNo : "0";
+                        reservationCancellation.ReasonCancellation = Request.Form["reasonCancellation"].ToString();
+                        reservationCancellation.Description = Request.Form["description"].ToString();
+                        reservationCancellation.CreateDate = reservationCancellation.UpdateDate = DateTime.Now;
+                        reservationCancellation.UserInsertID = reservationCancellation.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                        ReservationCancellationBO.Instance.Insert(reservationCancellation);
+                        #endregion
+                    }
+                }
+                else
                 {
+                    // neu la room sharer thi chi update row do thanh cancel
+                    rsv.Status = 3;
+                    rsv.UpdateDate = rsv.SpecialUpdateDate = DateTime.Now;
+                    rsv.UserUpdateId = int.Parse(Request.Form["userID"].ToString());
+                    rsv.UpdateBy = rsv.SpecialUpdateBy = Request.Form["userName"].ToString();
+                    ReservationBO.Instance.Update(rsv);
+
+                    #region Insert ActivityLog
+                    string status = "";
+                    if (rsv.Status == 0)
+                    {
+                        status = "RESERVED";
+                    }
+                    if (rsv.Status == 5)
+                    {
+                        status = "DUE IN";
+                    }
+                    ActivityLogModel activityLog = new ActivityLogModel();
+                    activityLog.TableName = "Reservation";
+                    activityLog.ObjectID = rsv.ID;
+                    activityLog.UserID = int.Parse(Request.Form["userID"].ToString());
+                    activityLog.UserName = Request.Form["userName"].ToString();
+                    activityLog.ChangeDate = DateTime.Now;
+                    activityLog.Change = "Status";
+                    activityLog.NewValue = "CANCEL";
+                    activityLog.OldValue = status;
+                    activityLog.Description = "";
+                    ActivityLogBO.Instance.Insert(activityLog);
+                    #endregion
+
+                    #region insert ReservationCancellation 
                     string cancellationNo = ReservationCancellationBO.GetTopCancellatioNo();
                     ReservationCancellationModel reservationCancellation = new ReservationCancellationModel();
-                    reservationCancellation.ReservationID = item.ID;
+                    reservationCancellation.ReservationID = rsv.ID;
                     reservationCancellation.CancellationDate = DateTime.Now;
                     reservationCancellation.CancellationNo = !string.IsNullOrEmpty(cancellationNo) ? cancellationNo : "0";
                     reservationCancellation.ReasonCancellation = Request.Form["reasonCancellation"].ToString();
@@ -2214,9 +2259,9 @@ namespace Reservation.Controllers
                     reservationCancellation.CreateDate = reservationCancellation.UpdateDate = DateTime.Now;
                     reservationCancellation.UserInsertID = reservationCancellation.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
                     ReservationCancellationBO.Instance.Insert(reservationCancellation);
+                    #endregion
                 }
-                
-                #endregion
+
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Cancel reservation successfully" });
 
@@ -5732,6 +5777,81 @@ namespace Reservation.Controllers
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi khi thay thế văn bản trong tài liệu: {ex.Message}");
+            }
+        }
+        #endregion
+
+        #region DatVP __ Reservation: Room Move
+        [HttpPost]
+        public ActionResult RoomMove()
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                ReservationModel rsv = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["rsvID"].ToString()));
+                if (rsv == null || rsv.ID == 0)
+                {
+                    return Json(new { code = 1, msg = " Could not find Reservation" });
+                }
+                if (string.IsNullOrEmpty(Request.Form["reason"].ToString()) || Request.Form["reason"].ToString() == "0")
+                {
+                    return Json(new { code = 1, msg = " Please choose reason" });
+                }
+                if( string.IsNullOrEmpty(Request.Form["moveRoomMove"].ToString()))
+                {
+                    return Json(new { code = 1, msg = " Please choose new room" });
+                }
+
+                RoomModel roomCurrent = (RoomModel)RoomBO.Instance.FindByPrimaryKey(rsv.RoomId);
+                if(roomCurrent == null || roomCurrent.ID == 0)
+                {
+                    return Json(new { code = 1, msg = " Could not find current room" });
+                }
+                var roomNew = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindByAttribute("RoomNo", Request.Form["moveRoomMove"].ToString())); 
+                if(roomNew.Count < 1)
+                {
+                    return Json(new { code = 1, msg = " Could not find new room" });
+                }
+                if(roomCurrent.ID == roomNew[0].ID)
+                {
+                    return Json(new { code = 1, msg = " Room was choosen to move have not to equal room current" });
+
+                }
+                ReasonModel reason = (ReasonModel)ReasonBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["reason"].ToString()));
+                if(reason == null || reason.ID == 0)
+                {
+                    return Json(new { code = 1, msg = " Could not find reason" });
+                }
+                RoomMoveModel roomMoveModel = new RoomMoveModel();
+                roomMoveModel.ReservationID = rsv.ID;
+                roomMoveModel.FromRoomID = roomCurrent.ID;
+                roomMoveModel.FromStatus = roomCurrent.HKStatusID;
+                roomMoveModel.ToRoomID = roomNew[0].ID;
+                roomMoveModel.ToStatus = roomNew[0].HKStatusID;
+                roomMoveModel.MoveDate = DateTime.Parse(Request.Form["moveDate"].ToString());
+                roomMoveModel.Reason = reason.Description;
+                roomMoveModel.CreateDate = roomMoveModel.UpdateDate = DateTime.Now;
+                roomMoveModel.UserInsertID = roomMoveModel.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                RoomMoveBO.Instance.Insert(roomMoveModel);
+
+
+                rsv.RoomId = roomNew[0].ID;
+                rsv.RoomNo = roomNew[0].RoomNo;
+                ReservationBO.Instance.Update(rsv);
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Room Move was successfully"});
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
             }
         }
         #endregion
