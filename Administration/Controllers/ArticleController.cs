@@ -35,6 +35,7 @@ namespace Administration.Controllers
             _httpContextAccessor = httpContextAccessor;
             _iArticleService = iArticleService;
         }
+        #region Article 
         public IActionResult Search()
         {
             return View();
@@ -164,5 +165,6 @@ namespace Administration.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+        #endregion
     }
 }
