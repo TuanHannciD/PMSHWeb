@@ -631,7 +631,7 @@
         <h5 class="mb-0">Detail House Status</h5>
         <div class="d-flex justify-content-start mb-3 gap-2">
             <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-            <button onclick="$('#popupLogGrid').hide()" class="btn btn-sm btn-danger" style="background-color: #3b9ac6; border-radius: 4px;">
+            <button onclick="$('#popupLogGrid').hide()" class="btn btn-sm btn-danger" >
                 <i class="fa-solid fa-xmark me-1"></i> Close
             </button>
         </div>
@@ -646,21 +646,32 @@
 
            let parsedBusinessDate = null;
         $(document).ready(function () {
-                 document.getElementById("reportTitle").innerText = 'House Status';
-                        var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
-                       console.log(businessDateStr);
-                        // Lấy phần ngày tháng năm
-                        var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
-                        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
-
-                        // Parse đúng thứ tự: new Date(year, monthIndex, day)
-                         parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-                                  console.log(formatDate(parsedBusinessDate));
-                                    $('#datebunisess').val(formatDate(parsedBusinessDate));
-                       $("#btnPrint").trigger("click");
+             getBusinessDate();
+                                   
+                      
 
         });
+         function getBusinessDate() {
+            return $.ajax({
+                url: '/Reservation/GetBusinessDate',
+                type: 'get',
+                dataType: 'json',
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
 
+
+                            // Gán vào input type="date"
+                      $('#datebunisess').val(result.split('T')[0]);
+                     $("#btnPrint").trigger("click");
+                },
+                error: function (xhr, statusText, err) {
+                    if (xhr.status == 401) {
+                        sessionTimeout();
+                    }
+                }
+            });
+        }
             function formatDate(date) {
                 let year = date.getFullYear();
                 let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
