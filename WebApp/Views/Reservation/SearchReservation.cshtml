@@ -561,6 +561,30 @@
     var folioNoID = 0;
     var reservationStatus = 0;
     function initializeDataGridSearch(data) {
+        // 1. BUỘC DÙNG LOCALE TIẾNG ANH (MỸ) - DẤU CHẤM LÀ THẬP PHÂN
+        DevExpress.localization.locale('en');
+
+        // 2. CHUYỂN DỮ LIỆU: "85123,00" → 85123 (number)
+        const processedData = data.map(item => {
+            const cleanNumber = (str) => {
+                if (typeof str !== 'string' || !str.trim()) return 0;
+                return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+            };
+
+            return {
+                ...item,
+                PriceNet: cleanNumber(item.PriceNet),
+                BalanceVND: cleanNumber(item.BalanceVND),
+                BalanceUSD: cleanNumber(item.BalanceUSD),
+                DiscountAmount: cleanNumber(item.DiscountAmount),
+                FixedCharge: cleanNumber(item.FixedCharge),
+                Price: cleanNumber(item.Price),
+                DepositPayment: cleanNumber(item.DepositPayment),
+                DepositRequest: cleanNumber(item.DepositRequest),
+            };
+        });
+
+        // 3. ĐỊNH NGHĨA CỘT - TẤT CẢ CỘT TIỀN DÙNG precision: 0 → 85,123
         const columns = [
             { dataField: 'ID', caption: 'ID', visible: false },
             { dataField: 'ConfirmationNo', caption: 'Confirmation No', visible: true },
@@ -571,18 +595,22 @@
             { dataField: 'RoomNo', caption: 'Room No', visible: true, alignment: 'right' },
             { dataField: 'RoomStatus', caption: 'Rm Status', visible: true },
             { dataField: 'RoomType', caption: 'Room Type', visible: true },
-            { dataField: 'Arrival', caption: 'Arrival', visible: true
-                ,customizeText: function(cellInfo) {
-                // Assuming cellInfo.value is a string like "16/10/2024 00:00:00"
-                return cellInfo.value.split(" ")[0]; // Returns only "16/10/2024"
+            {
+                dataField: 'Arrival',
+                caption: 'Arrival',
+                visible: true,
+                customizeText: function(cellInfo) {
+                    return cellInfo.value ? cellInfo.value.split(" ")[0] : '';
                 }
             },
             { dataField: 'ETA', caption: 'ETA', visible: true },
             { dataField: 'NoOfNight', caption: 'No of Nights', visible: true, alignment: 'right' },
-            { dataField: 'Departure', caption: 'Departure', visible: true 
-                ,customizeText: function(cellInfo) {
-                // Assuming cellInfo.value is a string like "16/10/2024 00:00:00"
-                return cellInfo.value.split(" ")[0]; // Returns only "16/10/2024"
+            {
+                dataField: 'Departure',
+                caption: 'Departure',
+                visible: true,
+                customizeText: function(cellInfo) {
+                    return cellInfo.value ? cellInfo.value.split(" ")[0] : '';
                 }
             },
             { dataField: 'ETD', caption: 'ETD', visible: true },
@@ -592,16 +620,39 @@
             { dataField: 'Child2', caption: 'Child 2', visible: true, alignment: 'right' },
             { dataField: 'Status', caption: 'Status', visible: true },
             { dataField: 'Packages', caption: 'Packages', visible: true },
-            { dataField: 'PriceNet', caption: 'Price Net', visible: true, alignment: 'right', format: {
-                type: 'fixedPoint',
-                precision: 0,
-                thousandsSeparator: ','
-            } },
+
+            // CỘT TIỀN - ĐÃ LOẠI BỎ .00 → 85,123
+            {
+                dataField: 'PriceNet',
+                caption: 'Price Net',
+                visible: true,
+                alignment: 'right',
+                format: {
+                    type: 'fixedPoint',
+                    precision: 0,
+                    thousandsSeparator: ','
+                }
+            },
+
             { dataField: 'ReservationHolder', caption: 'Reservation Holder', visible: true },
-            { dataField: 'BalanceVND', caption: 'Balance (VND)', visible: false, alignment: 'right' },
+
+            // CÁC CỘT TIỀN KHÁC - ĐỀU DÙNG precision: 0
+            {
+                dataField: 'BalanceVND',
+                caption: 'Balance (VND)',
+                visible: false,
+                alignment: 'right',
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
             { dataField: 'ARNo', caption: 'AR No', visible: false },
             { dataField: 'AllotmentCode', caption: 'Allotment Code', visible: false },
-            { dataField: 'BalanceUSD', caption: 'Balance (USD)', visible: false, alignment: 'right' },
+            {
+                dataField: 'BalanceUSD',
+                caption: 'Balance (USD)',
+                visible: false,
+                alignment: 'right',
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
             { dataField: 'BookerName', caption: 'Booker Name', visible: false },
             { dataField: 'CI', caption: 'Check-in Time', visible: false },
             { dataField: 'CO', caption: 'Check-out Time', visible: false },
@@ -612,15 +663,36 @@
             { dataField: 'CreateBy', caption: 'Created By', visible: false },
             { dataField: 'CreateDate', caption: 'Create Date', visible: false },
             { dataField: 'Currency', caption: 'Currency', visible: false },
-            { dataField: 'DepositPayment', caption: 'Deposit Payment', visible: false },
-            { dataField: 'DepositRequest', caption: 'Deposit Request', visible: false },
-            { dataField: 'DiscountAmount', caption: 'Discount Amount', visible: false, alignment: 'right' },
-            { dataField: 'DiscountRate', caption: 'Discount Rate', visible: false , alignment: 'right'},
+            {
+                dataField: 'DepositPayment',
+                caption: 'Deposit Payment',
+                visible: false,
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
+            {
+                dataField: 'DepositRequest',
+                caption: 'Deposit Request',
+                visible: false,
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
+            {
+                dataField: 'DiscountAmount',
+                caption: 'Discount Amount',
+                visible: false,
+                alignment: 'right',
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
+            { dataField: 'DiscountRate', caption: 'Discount Rate', visible: false, alignment: 'right' },
             { dataField: 'DropOffDescription', caption: 'Drop-off Description', visible: false },
             { dataField: 'DropOffReqdID', caption: 'Drop-off Request ID', visible: false },
             { dataField: 'DropOffTransportNo', caption: 'Drop-off Transport No', visible: false },
             { dataField: 'DropOffTransportType', caption: 'Drop-off Transport Type', visible: false },
-            { dataField: 'FixedCharge', caption: 'Fixed Charge', visible: false },
+            {
+                dataField: 'FixedCharge',
+                caption: 'Fixed Charge',
+                visible: false,
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
             { dataField: 'GroupCode', caption: 'Group Code', visible: false },
             { dataField: 'MainGuest', caption: 'Main Guest', visible: false },
             { dataField: 'MarketCode', caption: 'Market Code', visible: false },
@@ -634,7 +706,12 @@
             { dataField: 'PickupReqdID', caption: 'Pickup Request ID', visible: false },
             { dataField: 'PickupTransportNo', caption: 'Pickup Transport No', visible: false },
             { dataField: 'PickupTransportType', caption: 'Pickup Transport Type', visible: false },
-            { dataField: 'Price', caption: 'Price', visible: false },
+            {
+                dataField: 'Price',
+                caption: 'Price',
+                visible: false,
+                format: { type: 'fixedPoint', precision: 0, thousandsSeparator: ',' }
+            },
             { dataField: 'PrintRate', caption: 'Print Rate', visible: false },
             { dataField: 'ProfileCode', caption: 'Profile Code', visible: false },
             { dataField: 'ProfileComment', caption: 'Profile Comment', visible: false },
@@ -655,6 +732,8 @@
             { dataField: 'VIP', caption: 'VIP', visible: false },
             { dataField: 'VoucherNo', caption: 'Voucher No', visible: false }
         ];
+
+        // 4. CẬP NHẬT DANH SÁCH CỘT TRONG OFFCANVAS
         function updateColumnList() {
             const columnList = $('#columnList');
             columnList.empty();
@@ -668,14 +747,13 @@
                 columnList.append(blockHtml);
             });
         }
+
+        // 5. KHỞI TẠO GRID
         const grid = $("#gridContainer").dxDataGrid({
-            dataSource: data,
+            dataSource: processedData,
             allowColumnResizing: true,
             columnAutoWidth: true,
-            paging: {
-                enabled: true,
-                pageSize: 24
-            },
+            paging: { enabled: true, pageSize: 24 },
             pager: {
                 visible: true,
                 allowedPageSizes: [24, 30, 35],
@@ -683,46 +761,45 @@
                 showInfo: true,
                 showNavigationButtons: true
             },
-            scrolling: {
-                mode: 'standard',
-                showScrollbar: 'always',
-                useNative: false
-            },
-            filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            selection: {
-                mode: "single"
-            },
+            scrolling: { mode: 'standard', showScrollbar: 'always', useNative: false },
+            filterRow: { visible: true, applyFilter: "auto" },
+            selection: { mode: "single" },
             columns: columns,
-            onRowDblClick: function(e) {
-                editBooking();
-            },
+            onRowDblClick: function(e) { editBooking(); },
             onRowClick: function(e) {
                 $('#functionAndOptionTable').show();
                 $('#listFunction').show();
                 idReservation = e.data.ID;
                 $('#moreInfo').empty();
-                let html = ``;
-                if (e.data.ProfileComment) {
-                    html += `<span style="margin:0;padding:0">-${e.data.ProfileComment}</span>`;
-                }
-                if (e.data.CommentGroup) {
-                    html += `<span style="margin:0;padding:0">-${e.data.CommentGroup}</span>`;
-                }
-                if (e.data.DepositRequest) {
-                    html += `<span style="margin:0;padding:0">-${e.data.DepositRequest}</span>`;
-                }
-                if (e.data.FixedCharge) {
-                    html += `<span style="margin:0;padding:0">-${e.data.FixedCharge}</span>`;
-                }
-                if (e.data.ItemInventory) {
-                    html += `<span style="margin:0;padding:0">-${e.data.ItemInventory}</span>`;
-                }
-                if (e.data.Specials) {
-                    html += `<span style="margin:0;padding:0">-${e.data.Specials}</span>`;
-                }
+                let html = '';
+                ['ProfileComment', 'CommentGroup', 'DepositRequest', 'FixedCharge', 'ItemInventory', 'Specials'].forEach(field => {
+                    if (e.data[field]) html += `<span style="margin:0;padding:0">-${e.data[field]}</span>`;
+                });
+                $('#moreInfo').append(html);
+                $('#cmt_wrapper').empty().append(`<span><b>Comment:</b> <i>${e.data.Comment || ''}</i></span>`).show();
+
+                // Cập nhật billing
+                $('#rsvStatusBilling').text(e.data.Status);
+                $('#conNoBilling').text(e.data.ConfirmationNo);
+                $('#arivalBilling').text(e.data.Arrival.split(' ')[0]);
+                $('#departureBilling').text(e.data.Departure.split(' ')[0]);
+                $('#balanceBilling').text(formatNumberBilling(Math.floor(e.data.BalanceVND)));
+                $('#totalBilling').text(formatNumberBilling(Math.floor(e.data.BalanceVND)));
+
+                // Xử lý nút assign/unassign
+                const isSingleRoom = e.data.NoOfRoom == '1';
+                const hasRoomID = e.data.RoomID != 0;
+                ['assignRoom', 'unAssignRoom'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const canClick = (id === 'assignRoom' && isSingleRoom) || (id === 'unAssignRoom' && isSingleRoom && hasRoomID);
+                        el.style.pointerEvents = canClick ? 'auto' : 'none';
+                        el.style.color = canClick ? '' : 'gray';
+                        el.style.cursor = canClick ? 'pointer' : 'not-allowed';
+                    }
+                });
+
+                // Gán biến toàn cục
                 reservationStatus = e.data.ReservationStatus;
                 getFolioNo();
                 listReservationByConfirmationNo = listData.filter(item => item.ConfirmationNo === e.data.ConfirmationNo);
@@ -738,76 +815,23 @@
                 confirmationNo = e.data.ConfirmationNo;
                 lastname = e.data.GuestName;
                 profileID = e.data.ProfileIndividualID;
-                $('#rsvStatusBilling').text(e.data.Status);
-                $('#conNoBilling').text(e.data.ConfirmationNo);
-                $('#groupBillingg').text('');
-                $('#companyBilling').text('');
-                $('#arivalBilling').text(e.data.Arrival.split(' ')[0]);
-                $('#departureBilling').text(e.data.Departure.split(' ')[0]);
-                $('#balanceBilling').text(formatNumberBilling(e.data.BalanceVND.split('.')[0]));
-                $('#totalBilling').text(formatNumberBilling(e.data.BalanceVND.split('.')[0]));
-                if (e.data.NoOfRoom != '1') {
-                    ['assignRoom', 'unAssignRoom'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            el.style.pointerEvents = 'none';
-                            el.style.color = 'gray';
-                            el.style.cursor = 'not-allowed';
-                        }
-                    });
-                } else {
-                    ['assignRoom', 'unAssignRoom'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            el.style.pointerEvents = 'auto';
-                            el.style.color = '';
-                            el.style.cursor = 'pointer';
-                        }
-                    });
-                }
-                if (e.data.roomID == 0) {
-                    ['unAssignRoom'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            el.style.pointerEvents = 'none';
-                            el.style.color = 'gray';
-                            el.style.cursor = 'not-allowed';
-                        }
-                    });
-                } else {
-                    ['unAssignRoom'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            el.style.pointerEvents = 'auto';
-                            el.style.color = '';
-                            el.style.cursor = 'pointer';
-                        }
-                    });
-                }
-                $('#moreInfo').append(html);
-                $('#cmt_wrapper').empty();
-
-                $('#cmt_wrapper').append(`<span><b>Comment:</b> <i>${e.data.Comment}</i></span>`);
-
-                $('#cmt_wrapper').show();
-
             }
         }).dxDataGrid('instance');
-        // Update column list when opening offcanvas
+
+        // 6. XỬ LÝ OFFCANVAS
         updateColumnList();
-        // Handle "Add" button in offcanvas
+
         $('#addSelectedColumns').on('click', function() {
             $('.column-checkbox').each(function() {
                 const columnName = $(this).attr('data-column');
                 const isChecked = $(this).is(':checked');
                 grid.columnOption(columnName, 'visible', isChecked);
-                columns.find(col => col.dataField === columnName).visible = isChecked;
+                const col = columns.find(c => c.dataField === columnName);
+                if (col) col.visible = isChecked;
             });
-            const offcanvasElement = document.getElementById('columnOffcanvas');
-            const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
-            offcanvas.hide();
+            bootstrap.Offcanvas.getInstance(document.getElementById('columnOffcanvas')).hide();
         });
-        // Handle "Clear" button in offcanvas
+
         $('#clearSelectedColumns').on('click', function() {
             $('.column-checkbox').prop('checked', false);
         });
