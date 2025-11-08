@@ -241,7 +241,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">Adj.Code:</label>
-                        <select id="transactionsList" name="transactionsList" class="form-control form-control-sm w-auto">
+                        <select id="transactionsListnew" name="transactionsListnew" class="form-control form-control-sm w-auto">
                             <option value="">-ALL--</option>
                             @foreach (var item in transactionsList)
                             {
@@ -440,37 +440,39 @@
                 var group = transactionGroupList.find(x => x.ID === groupId);
 
                 if (group) {
-                    $("#groupnew").val(group.Description);
+                    $("#groupnew").val(group.Code);
                     $("#groupnew").data("groupid", group.ID);
                     generateID=group.GenerateID;
                     // Lấy Type (GroupType)
                      groupType = group.Type;
                          groupCode = group.Code;
                     // --- Điều khiển hiển thị theo type ---
-                    if (groupType === 0) { // revenue
-                        $('[name="pnlPayment"]').hide();
-                        $('[name="pnlPaymentType"]').hide();
-                        $('[name="pnlRevenue"]').show();
+                  if (groupType === 0) { // revenue
+                        $('[name="pnlPayment"]').find('input[type="checkbox"]').prop('disabled', true);
+                        $('[name="pnlPaymentType"]').find('input[type="checkbox"]').prop('disabled', true);
+                        $('[name="pnlRevenue"]').find('input[type="checkbox"]').prop('disabled', false);
 
                         $("#transactionTypeList").prop("disabled", false);
                         $("#transactionTypeList").prop("selectedIndex", 0);
                     }
                     else if (groupType === 1) { // payment
-                        $('[name="pnlPayment"]').show();
-                        $('[name="pnlPaymentType"]').show();
-                        $('[name="pnlRevenue"]').hide();
+                        $('[name="pnlPayment"]').find('input[type="checkbox"]').prop('disabled', false);
+                        $('[name="pnlPaymentType"]').find('input[type="checkbox"]').prop('disabled', false);
+                        $('[name="pnlRevenue"]').find('input[type="checkbox"]').prop('disabled', true);
 
                         $("#transactionTypeList").prop("disabled", true);
                         $("#transactionTypeList").prop("selectedIndex", $("#transactionTypeList option").length - 1);
                     }
                     else if (groupType === 2) { // wrapper
-                        $('[name="pnlPayment"]').show();
-                        $('[name="pnlPaymentType"]').show();
-                       // $('[name="pnlRevenue"]').hide();
+                        $('[name="pnlPayment"]').find('input[type="checkbox"]').prop('disabled', false);
+                        $('[name="pnlPaymentType"]').find('input[type="checkbox"]').prop('disabled', false);
+                        // Nếu muốn tắt luôn phần Revenue thì mở dòng dưới:
+                        // $('[name="pnlRevenue"]').find('input[type="checkbox"]').prop('disabled', true);
 
                         $("#transactionTypeList").prop("disabled", true);
                         $("#transactionTypeList").prop("selectedIndex", $("#transactionTypeList option").length - 1);
                     }
+
                 } else {
                     $("#groupnew").val("");
                 }
@@ -792,45 +794,63 @@
     });
 
 
-     $("#btnOkAuto").on("click", function () {
-           
-               if (!ValidateForm()) return;
-           var  id= $("#idselectedRowDatasa").val();
-            var  codenew= $("#codenew").val();
-             var  subgroupCode= subgroupCode;
-             var  groupCode= groupCode;
-              var  groupType= groupType;
-             var  adjustmentCode=  $("#transactionsList").val();
-                 var  descriptionnew= $("#descriptionnew").val();
-               var  defaultPrice = $("#dfprice").val();
-                var  currList = $("#currList").val();
-                     var  groupId = $("#groupnew").val();
-                var  subGroupID = $("#transactionNewSubGroupList").val();
-               var  generateID = generateID;
-              let depositPayments  = $("#depositPayments").is(":checked") ? 1 : 0;
-              let frontOfficePayments  = $("#frontOfficePayments").is(":checked") ? 1 : 0;
-                let arPayments  = $("#arPayments").is(":checked") ? 1 : 0;
-                 let revenueGroup  = $("#revenueGroup").is(":checked") ? 1 : 0;
-              let manualPosting  = $("#manualPosting").is(":checked") ? 1 : 0;
-               let paidOut  = $("#paidOut").is(":checked") ? 1 : 0;
-                 let isTaxInclude  = $("#isTaxInclude").is(":checked") ? 1 : 0;
-                 let inactive  = $("#inactive").is(":checked") ? 1 : 0;
-          $("#loadingSpinner").show();
-            $.ajax({
-                url: '/Article/ArticleListSave',
-                type: 'POST',
-                 data: {
-                      id: $("#idselectedRowDatasa").val(),
-                    codenew: $("#codenew").val(),
+        $("#btnOkAuto").on("click", function () {
+            if (!ValidateForm()) return; // ✅ Kiểm tra form trước khi gửi
 
-                    dfprice: $("#dfprice").val(),
-                    descriptionnew: $("#descriptionnew").val(),
-                    transactionsListnew: $("#transactionsListnew").val(),
-                    currList: $("#currList").val(),
-                    supplementNew: $("#supplementNew").val(),
-                    user: localStorage.getItem("Loginname"),
-                    userID: localStorage.getItem("userID"),
-                    isActive: isActive
+            // ✅ Lấy giá trị từ form
+            var id = $("#idselectedRowDatasa").val();
+            var codenew = $("#codenew").val();
+            var descriptionnew = $("#descriptionnew").val();
+            var defaultPrice = $("#dfprice").val();
+            var currList = $("#currList").val();
+            var groupId = $("#groupnew").val();
+            var subGroupID = $("#transactionNewSubGroupList").val();
+            var adjustmentCode = $("#transactionsListnew").val();
+            var subgroupCode = $("#transactionNewSubGroupList option:selected").text();
+            var groupCode = $("#groupnew").val();
+            var groupType = $("#groupType").val(); // nếu có input groupType
+            var generateID = $("#generateID").val(); // nếu có input generateID
+
+            // ✅ Checkbox (chuyển sang 1 hoặc 0)
+            let depositPayments = $("#depositPayments").is(":checked");
+            let frontOfficePayments = $("#frontOfficePayments").is(":checked");
+            let arPayments = $("#arPayments").is(":checked");
+            let revenueGroup = $("#revenueGroup").is(":checked");
+            let manualPosting = $("#manualPosting").is(":checked");
+            let paidOut = $("#paidOut").is(":checked");
+            let isTaxInclude = $("#isTaxInclude").is(":checked");
+            let inactive = $("#inactive").is(":checked");
+
+            // ✅ Hiện spinner
+            $("#loadingSpinner").show();
+
+            // ✅ Gửi AJAX
+            $.ajax({
+                url: '/Transaction/TransactionListSave',
+                type: 'POST',
+                data: {
+                    ID: id,
+                    Code: codenew,
+                    Description: descriptionnew,
+                    DefaultPrice: defaultPrice,
+                    CurrencyID: currList,
+                    GroupID: groupId,
+                    SubGroupID: subGroupID,
+                    AdjustmentCode: adjustmentCode,
+                    SubGroupCode: subgroupCode,
+                    GroupCode: groupCode,
+                    GroupType: groupType,
+                    GenerateID: generateID,
+                    DepositPayments: depositPayments,
+                    FrontOfficePayments: frontOfficePayments,
+                    ARPayments: arPayments,
+                    RevenueGroup: revenueGroup,
+                    ManualPosting: manualPosting,
+                    PaidOut: paidOut,
+                    IsTaxInclude: isTaxInclude,
+                    Inactive: inactive,
+                    CreatedBy: localStorage.getItem("Loginname"),
+                    UserInsertID: localStorage.getItem("userID"),
                 },
                 traditional: true,
                   crossDomain: false,

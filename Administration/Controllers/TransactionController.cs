@@ -62,6 +62,8 @@ namespace Administration.Controllers
             ViewBag.listARAccountList = listARAccount;
             return View();
         }
+
+        #region Transaction 
         [HttpGet]
         public IActionResult SearchTransaction(string code, string description,int groupID, int subGroupID)
         {
@@ -85,5 +87,78 @@ namespace Administration.Controllers
             }
 
         }
+
+        [HttpPost]
+        public IActionResult TransactionListSave(TransactionsModel model)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            pt.OpenConnection();
+            pt.BeginTransaction();
+
+            model.CreatedBy = model.CreatedBy?.Replace("\"", "").Trim();
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            var businessDate = businessDateModel[0].BusinessDate;
+            try
+            {
+                bool isNew = (model.ID == 0);
+
+
+                if (isNew)
+                {
+                    model = new TransactionsModel
+                    {
+                        CreateDate = businessDate,
+                        UpdateDate = businessDate
+                    };
+
+                    TransactionsBO.Instance.Insert(model);
+                }
+                else
+                {
+                    model = (TransactionsModel)TransactionsBO.Instance.FindByPrimaryKey(model.ID);
+                    if (model == null)
+                    {
+                        throw new Exception($"Không tìm thấy Article có ID = {model.ID}");
+                    }
+
+                    //model.Code = codenew;
+                    //model.Description = descriptionnew;
+
+                    //model.DefaultPrice = dfprice;
+                    //model.CurrencyID = currList;
+
+                    //model.TransactionCode = transactionsListnew;
+                    //model.Supplement = supplementNew;
+                    //model.UpdateDate = businessDate;
+                    //model.UserUpdateID = userID;
+
+                    //ArticleBO.Instance.Update(model);
+                    //#region Update thông tin bến bảng RestaurantClassArticleLnk
+                    //model.Description = model.Description.Replace("'", "`");
+                    //pt.UpdateCommand("Update RestaurantClassArticleLnk set ArticleDescription=N'" + model.Description + "' where ArticleCode= N'" + model.Code + "' ");
+                    #endregion
+                }
+
+                pt.CommitTransaction();
+
+                return Json(new
+                {
+                    success = true,
+                    message = isNew ? "Insert success!" : "Update success!"
+                });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+            //return BadRequest(new { success = false });
+        }
+
     }
+
 }
