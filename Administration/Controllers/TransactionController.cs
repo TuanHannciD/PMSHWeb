@@ -1,5 +1,8 @@
 ﻿using Administration.Services.Implements;
 using Administration.Services.Interfaces;
+using BaseBusiness.BO;
+using BaseBusiness.Model;
+using BaseBusiness.util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -33,6 +36,30 @@ namespace Administration.Controllers
         }
         public IActionResult Search()
         {
+            return View();
+        }
+        public IActionResult Transaction()
+        {
+            List<TransactionsModel> listTransac = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
+            ViewBag.TransactionsList = listTransac;
+
+            List<TransactionGroupModel> listTransacgroup  = PropertyUtils.ConvertToList<TransactionGroupModel>(TransactionGroupBO.Instance.FindAll());
+            ViewBag.TransactionGroupList = listTransacgroup;
+
+            List<TransactionSubGroupModel> listTransacsubgroup = PropertyUtils.ConvertToList<TransactionSubGroupModel>(TransactionSubGroupBO.Instance.FindAll());
+            ViewBag.TransactionSubGroupList = listTransacsubgroup;
+
+            List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listCurr;
+
+            List<VatTypeModel> listvattype = PropertyUtils.ConvertToList<VatTypeModel>(VatTypeBO.Instance.FindAll());
+            ViewBag.VatTypeList = listvattype;
+
+            List<TransactionTypeModel> listTransactionType = PropertyUtils.ConvertToList<TransactionTypeModel>(TransactionTypeBO.Instance.FindAll());
+            ViewBag.TransactionTypeList = listTransactionType;
+
+            List<ARAccountReceivableModel> listARAccount = PropertyUtils.ConvertToList<ARAccountReceivableModel>(ARAccountReceivableBO.Instance.FindAll());
+            ViewBag.listARAccountList = listARAccount;
             return View();
         }
         [HttpGet]

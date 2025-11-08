@@ -9,6 +9,6 @@ namespace Administration.Services.Interfaces
 {
     public interface IArticleService
     {
-        public DataTable SearchArticle(string articleCode,string articleDescription,string articleSupplement,string transactionCode);
+        public DataTable SearchArticle(string tranCode, string articleCode, string articleDescription, string articleSupplement);
     }
 }
