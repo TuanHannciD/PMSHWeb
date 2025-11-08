@@ -1,0 +1,999 @@
+﻿@using DevExpress.XtraReports.UI
+
+
+@{
+    var transactionsList = @ViewBag.TransactionsList;
+    var currList = @ViewBag.CurrencyList;
+    var transactionGroupList = @ViewBag.TransactionGroupList;
+    var transactionSubGroupList = @ViewBag.TransactionSubGroupList;
+    var vatTypeList = @ViewBag.VatTypeList;
+    var transactionTypeList = @ViewBag.TransactionTypeList;
+    var listARAccountList = @ViewBag.listARAccountList;
+}
+<style>
+
+
+    .dx-datagrid-headers .dx-header-row td {
+        white-space: pre-line !important;
+        text-align: center;
+        font-size: 11px;
+    }
+
+
+    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
+        display: none;
+    }
+
+
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+
+    .sticky-header input[type="date"].form-control-sm {
+        font-size: 12px !important; /* dúng 12?px */
+        height: calc(1.1em + .2rem + 2px); /* gi? cùng chi?u cao */
+    }
+
+    .sticky-header label {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
+
+    .tomselect-custom {
+        width: 250px;
+        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
+        font-size: 0.65rem;
+    }
+
+    .sort-select {
+        max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
+        font-size: 12px;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .sort-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none !important;
+        padding-right: 10px !important;
+    }
+
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<div class="text-center" style="font-size: 20px">Transaction Code Search</div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+        <!-- From Date -->
+
+        <div class="d-flex flex-column ">
+
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Group.Code:</label>
+                    <select id="transactionGroupList" name="transactionGroupList" class="form-control form-control-sm w-auto">
+                        <option value="">-- Group --</option>
+                        @foreach (var item in transactionGroupList)
+                        {
+                            <option value="@item.ID">@item.Code</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-3">
+                    <label class="me-2 mb-0">Subgroup.Code:</label>
+                    <select id="transactionSubGroupList" name="transactionSubGroupList" class="form-control form-control-sm w-auto">
+                        <option value="">-- Subgroup --</option>
+                        @foreach (var item in transactionSubGroupList)
+                        {
+                            <option value="@item.ID" data-groupid="@item.TransactionGroupID">@item.Code</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center me-4">
+                    <label for="tracetime" class="me-2 mb-0">Trans.Code:</label>
+                    <input type="text" id="transCode" name="transCode"
+                           class="form-control form-control-sm w-auto" />
+                </div>
+                <div class="d-flex align-items-center me-4">
+                    <label for="tracetime" class="me-2 mb-0">Adj.Code:</label>
+                    <input type="text" id="adjCode" name="adjCode" class="form-control form-control-sm w-auto" />
+                </div>
+                <div class="d-flex align-items-center me-4">
+                    <label for="tracetime" class="me-2 mb-0">Description:</label>
+                    <input type="text" id="description" name="description" class="form-control form-control-sm w-auto" />
+                </div>
+            
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <div class="">
+        <button id="btnPrint" class="mui-button button-report-view"><i class="fa-solid fa-eye"></i> View</button>
+        <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
+        <button id="btnUpdate" class="mui-button mui-button-edit"> <i class="fa-solid fa-pen"></i> Edit</button>
+        <button id="btnDelete" class="mui-button button-report-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button id="btnExportExcel" class="mui-button mui-button-export" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+
+    </div>
+
+</div>
+<div class="mui-card">
+    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+    <div id="gridContainer" class="gridContainer mt-2"></div>
+</div>
+<div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;"></div>
+<div id="popupNewTransaction" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
+
+    <div class="d-flex justify-content-between mb-2">
+        <h5 class="mb-0">Transaction Screen</h5>
+
+    </div>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+        <button onclick="$('#popupNewTransaction').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
+    <div class="sticky-header bg-white p-2 shadow-sm z-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+            <div class="d-flex align-items-center flex-wrap mb-2">
+                <div class="d-flex align-items-start mb-3">
+                    <!-- Trace Time -->
+                    <input type="text" id="idselectedRowDatasa" name="idselectedRowDatasa" style="display:none !important" class="form-control form-control-sm w-auto" />
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">SubGroup:</label>
+                        <select id="transactionNewSubGroupList" name="transactionNewSubGroupList" class="form-control form-control-sm w-auto">
+                            <option value="">-- Subgroup --</option>
+                            @foreach (var item in transactionSubGroupList)
+                            {
+                                <option value="@item.ID" data-groupid="@item.TransactionGroupID" data-groupcode="@item.Code" data-des="@item.Description">@item.Code</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex align-items-center me-4">
+                        <label for="groupnew" class="me-2 mb-0">Group:</label>
+                        <input type="text" id="groupnew" name="groupnew" class="form-control form-control-sm w-auto" readonly />
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">VAT.Infor:</label>
+                        <select id="transactionNewSubGroupList" name="transactionNewSubGroupList" class="form-control form-control-sm w-auto">
+                            <option value="">-- Select a Item --</option>
+                            @foreach (var item in vatTypeList)
+                            {
+                                <option value="@item.ID" >@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Trans.Type:</label>
+                        <select id="transactionTypeList" name="transactionTypeList" class="form-control form-control-sm w-auto">
+                            <option value=""></option>
+                            @foreach (var item in transactionTypeList)
+                            {
+                                <option value="@item.ID">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center me-4">
+                        <label for="tracetime" class="me-2 mb-0">Code:</label>
+                        <input type="text" id="codenew" name="codenew"
+                               class="form-control form-control-sm w-auto" />
+                    </div>
+
+
+                   
+                </div>
+                <div class="d-flex align-items-start mb-3">
+
+                    <div class="d-flex align-items-center me-4">
+                        <label for="tracetext" class="me-2 mt-1">Description:</label>
+                        <input type="text" id="descriptionnew" name="descriptionnew"
+                               class="form-control form-control-sm w-auto" />
+
+                    </div>
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Adj.Code:</label>
+                        <select id="transactionsList" name="transactionsList" class="form-control form-control-sm w-auto">
+                            <option value="">-ALL--</option>
+                            @foreach (var item in transactionsList)
+                            {
+                                <option value="@item.Code">@item.Code-@item.Description</option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="d-flex align-items-center me-4">
+                        <label for="tracetext" class="me-2 mt-1">Price:</label>
+                        <input type="text" id="dfprice" name="dfprice"
+                               class="form-control form-control-sm w-auto" />
+
+                    </div>
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Currency:</label>
+                        <select id="currList" name="currList" class="form-control form-control-sm w-auto">
+                            <option value="">-ALL--</option>
+                            @foreach (var item in currList)
+                            {
+                                <option value="@item.ID">@item.ID-@item.Description</option>
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-clean-uncheck"></span>
+                        <input class="form-check-input" type="checkbox" id="isTaxInclude" name="isTaxInclude" value="1" >
+                        <label class="form-check-label" for="cleanUncheck"> Tax Include</label>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center flex-wrap me-3">
+
+                    <!-- ===== pnlRevenue ===== -->
+                    <div class="form-check me-4 mb-2" name="pnlRevenue">
+                        <input class="form-check-input" type="checkbox" id="revenueGroup">
+                        <label class="form-check-label" for="revenueGroup">Revenue group</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlRevenue">
+                        <input class="form-check-input" type="checkbox" id="memberShip">
+                        <label class="form-check-label" for="memberShip">Member ship</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlRevenue">
+                        <input class="form-check-input" type="checkbox" id="manualPosting">
+                        <label class="form-check-label" for="manualPosting">Manual posting</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlRevenue">
+                        <input class="form-check-input" type="checkbox" id="paidOut">
+                        <label class="form-check-label" for="paidOut">Paid out</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlRevenuedis">
+                        <input class="form-check-input" type="checkbox" id="generateInclusive">
+                        <label class="form-check-label" for="generateInclusive">Generates inclusive</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlRevenuedis">
+                        <input class="form-check-input" type="checkbox" id="trackNights">
+                        <label class="form-check-label" for="trackNights">Track nights</label>
+                    </div>
+
+
+                    <!-- ===== pnlPayment ===== -->
+                    <div class="form-check me-4 mb-2" name="pnlPayment">
+                        <input class="form-check-input" type="checkbox" id="frontOfficePayments">
+                        <label class="form-check-label" for="frontOfficePayments">Front Office Payments</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlPayment">
+                        <input class="form-check-input" type="checkbox" id="arPayments">
+                        <label class="form-check-label" for="arPayments">AR Payments</label>
+                    </div>
+
+                    <div class="form-check me-4 mb-2" name="pnlPayment">
+                        <input class="form-check-input" type="checkbox" id="depositPayments">
+                        <label class="form-check-label" for="depositPayments">Deposit Payments</label>
+                    </div>
+
+
+                    <!-- ===== Các checkbox khác ===== -->
+                    <div class="form-check me-4 mb-2" name="interHotelSales">
+                        <input class="form-check-input" type="checkbox" id="interHotelSales">
+                        <label class="form-check-label" for="interHotelSales">Inter Hotel Sales</label>
+                    </div>
+
+                 
+
+                </div>
+
+
+                <!-- ===== pnlPaymentType ===== -->
+                <div class="d-flex align-items-center flex-wrap me-3">
+
+                    <div class="form-check me-3 mb-2" name="pnlPaymentType">
+                        <input class="form-check-input" type="checkbox" id="creditCard" value="CreditCard">
+                        <label class="form-check-label" for="creditCard">Credit Card</label>
+                    </div>
+
+                    <div class="form-check me-3 mb-2" name="pnlPaymentType">
+                        <input class="form-check-input" type="checkbox" id="cash" value="Cash">
+                        <label class="form-check-label" for="cash">Cash</label>
+                    </div>
+
+                    <div class="form-check me-3 mb-2" name="pnlPaymentType">
+                        <input class="form-check-input" type="checkbox" id="check" value="Check">
+                        <label class="form-check-label" for="check">Check</label>
+                    </div>
+
+                    <div class="form-check me-3 mb-2" name="pnlPaymentType">
+                        <input class="form-check-input" type="checkbox" id="others" value="Others">
+                        <label class="form-check-label" for="others">Others</label>
+                    </div>
+
+                    <div class="form-check me-3 mb-2" name="pnlPaymentTypedis">
+                        <input class="form-check-input" type="checkbox" id="eft" value="EFT">
+                        <label class="form-check-label" for="eft">EFT</label>
+                    </div>
+
+                    <div class="form-check me-3 mb-2" name="pnlPaymentTypedis">
+                        <input class="form-check-input" type="checkbox" id="manual" value="Manual">
+                        <label class="form-check-label" for="manual">Manual</label>
+                    </div>
+                    <div class="form-check me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="inactive">
+                        <label class="form-check-label" for="inactive">Inactive</label>
+                    </div>
+                    <div class="d-flex align-items-center me-4 mb-2" name="listARAccountList">
+                        <label class="me-2 mb-0">AR. Account</label>
+                        <select id="listARAccountList"  class="form-control form-control-sm w-auto">
+                            <option value=""></option>
+                            @foreach (var item in listARAccountList)
+                            {
+                                <option value="@item.AccountNo">@item.AccountNo</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+      let groupType=null;
+      let  generateID=null;
+      let groupCode=null;
+       let subgroupCode=null;
+    $(document).ready(function () {
+        $('[name="listARAccountList"]').find('select').prop('disabled', true);
+        $('[name="pnlRevenuedis"]').find('input[type="checkbox"]').prop('disabled', true);
+          $('[name="interHotelSales"]').find('input[type="checkbox"]').prop('disabled', true);
+            $('[name="pnlPaymentTypedis"]').find('input[type="checkbox"]').prop('disabled', true);
+        $("#btnPrint").trigger("click");
+        $("#transactionGroupList").on("change", function () {
+            var groupId = $(this).val();
+
+            // Reset lại danh sách subgroup
+            $("#transactionSubGroupList option").each(function () {
+                var subgroupGroupId = $(this).data("groupid");
+
+                if (!groupId || subgroupGroupId == groupId || $(this).val() === "") {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // Reset lại giá trị chọn subgroup
+            $("#transactionSubGroupList").val("");
+        });
+         var transactionGroupList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TransactionGroupList ?? new List<object>()));
+         console.log(transactionGroupList);
+          $("#transactionNewSubGroupList").on("change", function () {
+            var selectedOption = $(this).find("option:selected");
+            var groupId = selectedOption.data("groupid");
+
+            if (groupId) {
+                var group = transactionGroupList.find(x => x.ID === groupId);
+
+                if (group) {
+                    $("#groupnew").val(group.Description);
+                    $("#groupnew").data("groupid", group.ID);
+                    generateID=group.GenerateID;
+                    // Lấy Type (GroupType)
+                     groupType = group.Type;
+                         groupCode = group.Code;
+                    // --- Điều khiển hiển thị theo type ---
+                    if (groupType === 0) { // revenue
+                        $('[name="pnlPayment"]').hide();
+                        $('[name="pnlPaymentType"]').hide();
+                        $('[name="pnlRevenue"]').show();
+
+                        $("#transactionTypeList").prop("disabled", false);
+                        $("#transactionTypeList").prop("selectedIndex", 0);
+                    }
+                    else if (groupType === 1) { // payment
+                        $('[name="pnlPayment"]').show();
+                        $('[name="pnlPaymentType"]').show();
+                        $('[name="pnlRevenue"]').hide();
+
+                        $("#transactionTypeList").prop("disabled", true);
+                        $("#transactionTypeList").prop("selectedIndex", $("#transactionTypeList option").length - 1);
+                    }
+                    else if (groupType === 2) { // wrapper
+                        $('[name="pnlPayment"]').show();
+                        $('[name="pnlPaymentType"]').show();
+                       // $('[name="pnlRevenue"]').hide();
+
+                        $("#transactionTypeList").prop("disabled", true);
+                        $("#transactionTypeList").prop("selectedIndex", $("#transactionTypeList option").length - 1);
+                    }
+                } else {
+                    $("#groupnew").val("");
+                }
+            } else {
+                $("#groupnew").val("");
+            }
+        });
+    });
+
+
+     function ValidateForm() {
+        let codeNew = $("#codenew").val().trim();
+        let descriptionNew = $("#descriptionnew").val().trim();
+        let transactionsListNew = $("#transactionsListnew").val()?.trim() || "";
+        let dfprice = $("#dfprice").val().trim();
+        let currency = $("#currencyNewList").val();
+        let transType = $("#transactionNewTypeList").val();
+        let subgroup = $("#transactionNewSubGroupList").val();
+        let adjustCode = $("#adjustmentNew").val()?.trim() || "";
+
+        // ✅ Kiểm tra Code trống
+        if (codeNew === "") {
+            showToast("Error", "Code is not empty.", false);
+            $("#codenew").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra Description trống
+        if (descriptionNew === "") {
+            showToast("Error", "Description is not empty.", false);
+            $("#descriptionnew").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra SubGroup
+        if (subgroup === "") {
+            showToast("Error", "Subgroup is not empty.", false);
+            $("#transactionNewSubGroupList").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra Transaction
+        if (transactionsListNew === "") {
+            showToast("Error", "Transaction is not empty.", false);
+            $("#transactionsListnew").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra giá
+        if (dfprice === "" || isNaN(parseFloat(dfprice))) {
+            showToast("Error", "Price must be a valid number and cannot be empty.", false);
+            $("#dfprice").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra Currency
+        if (currency === "" || currency === "0") {
+            showToast("Error", "Please select a currency.", false);
+            $("#currencyNewList").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra Transaction Type
+        if (transType === "" || transType === "-1") {
+            showToast("Error", "Please select a transaction type.", false);
+            $("#transactionNewTypeList").focus();
+            return false;
+        }
+
+        // ✅ Kiểm tra Adjust code trùng code (nếu có)
+        if (adjustCode !== "" && codeNew !== "") {
+            if (adjustCode === codeNew) {
+                showToast("Error", "Adjust code not equal Trans. Code. Please choose another Adjust code.", false);
+                $("#adjustmentNew").focus();
+                return false;
+            }
+        }
+
+        // ✅ Nếu tất cả đều hợp lệ
+        return true;
+    }
+
+     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+            
+            $("#loadingSpinner").show();
+            $.ajax({
+                 url: '/Transaction/SearchTransaction',
+                type: 'GET',
+                data: {
+                          code: $('#transCode').val(),
+                        description: $('#description').val(),
+                        groupID: $('#transactionGroupList').val(),
+                        subGroupID: $('#transactionSubGroupList').val()
+                },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+
+                console.log(result);
+            initializeTransactionGrid(result);
+                        $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không th? t?i báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+        });
+        var selectedRowData=null;
+     function initializeTransactionGrid(data) {
+
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            showBorders: true,
+            selection: { mode: "single" },
+            paging: { pageSize: 20 },
+            height: 500,
+            pager: {
+                showPageSizeSelector: true,
+                allowedPageSizes: [20, 50, 100],
+                showInfo: true
+            },
+            filterRow: { visible: true },
+         columns: [
+                { dataField: "ID", caption: "ID",visible: false },
+
+                { dataField: "GroupCode", caption: "Group Code" },
+                { dataField: "SubgroupCode", caption: "Sub Group Code" },
+                { dataField: "Code", caption: "Code" },
+                { dataField: "Description", caption: "Description" },
+                { dataField: "DefaultPrice", caption: "Default Price" },
+                { dataField: "CurrencyID", caption: "Cur" },
+                { dataField: "AdjustmentCode", caption: "Adj.Code" },
+                { dataField: "TransactionTypeName", caption: "Transaction Type" },
+                {
+                    dataField: "RevenueGroup",
+                    caption: "Revenue Group" ,
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "ManualPosting",
+                    caption: "Manual Posting",
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "TaxInclude",
+                    caption: "Tax Include" ,
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "FOPayments",
+                    caption: "FO Payments" ,
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "ARPayments",
+                    caption: "AR Payments",
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "DepositPayments",
+                    caption: "Deposit Payments" ,
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "Paidout",
+                    caption: "Paid out",
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                },
+                {
+                    dataField: "IsActive",
+                    caption: "Hoạt Động",
+                    dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
+
+                            })
+                            .appendTo(container);
+                    }
+                } ,
+                { dataField: "PaymentTypeName", caption: "Payment Type" },
+
+            ],
+            groupPanel: {
+                visible: false // ✅ Cho phép người dùng kéo thả để group thêm
+            },
+            scrolling: {
+                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
+                    showScrollbar: "always",
+                    scrollByContent: true
+                },
+                paging: {
+                    pageSize: 50
+                },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [50, 100, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                    filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            // 🔥 Quan trọng: gán selectedRowData khi click chọn
+             onRowClick: function (e) {
+                selectedRowData = e.data; // 🔥 lấy data của row vừa click
+                console.log("Selected Row (RowClick):", selectedRowData);
+
+            }
+        });
+     }
+    $("#btnNew").on("click", function () {
+
+       clearArticleList();
+            $('#overlay').fadeIn(200);
+            $('#popupNewTransaction').fadeIn(200);
+
+    });
+
+
+     $("#btnOkAuto").on("click", function () {
+           
+               if (!ValidateForm()) return;
+           var  id= $("#idselectedRowDatasa").val();
+            var  codenew= $("#codenew").val();
+             var  subgroupCode= subgroupCode;
+             var  groupCode= groupCode;
+              var  groupType= groupType;
+             var  adjustmentCode=  $("#transactionsList").val();
+                 var  descriptionnew= $("#descriptionnew").val();
+               var  defaultPrice = $("#dfprice").val();
+                var  currList = $("#currList").val();
+                     var  groupId = $("#groupnew").val();
+                var  subGroupID = $("#transactionNewSubGroupList").val();
+               var  generateID = generateID;
+              let depositPayments  = $("#depositPayments").is(":checked") ? 1 : 0;
+              let frontOfficePayments  = $("#frontOfficePayments").is(":checked") ? 1 : 0;
+                let arPayments  = $("#arPayments").is(":checked") ? 1 : 0;
+                 let revenueGroup  = $("#revenueGroup").is(":checked") ? 1 : 0;
+              let manualPosting  = $("#manualPosting").is(":checked") ? 1 : 0;
+               let paidOut  = $("#paidOut").is(":checked") ? 1 : 0;
+                 let isTaxInclude  = $("#isTaxInclude").is(":checked") ? 1 : 0;
+                 let inactive  = $("#inactive").is(":checked") ? 1 : 0;
+          $("#loadingSpinner").show();
+            $.ajax({
+                url: '/Article/ArticleListSave',
+                type: 'POST',
+                 data: {
+                      id: $("#idselectedRowDatasa").val(),
+                    codenew: $("#codenew").val(),
+
+                    dfprice: $("#dfprice").val(),
+                    descriptionnew: $("#descriptionnew").val(),
+                    transactionsListnew: $("#transactionsListnew").val(),
+                    currList: $("#currList").val(),
+                    supplementNew: $("#supplementNew").val(),
+                    user: localStorage.getItem("Loginname"),
+                    userID: localStorage.getItem("userID"),
+                    isActive: isActive
+                },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                        if (result.success) {
+                                showToast('Success', result.message, true);
+                                $('#popupNewTransaction').fadeOut(200);
+                                 $('#overlay').fadeOut(200);
+                                   $("#btnPrint").trigger("click");
+                                    clearArticleList();
+                       } else {
+                                showToast('Error', 'Please select before saving.', false);
+                       }
+                console.log(result);
+
+                        $("#loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không th? t?i báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+     });
+
+
+    $("#btnUpdate").on("click", function () {
+
+            if (selectedRowData.length === 0) {
+                    showToast('Error', "Please select !", false);
+                return;
+            }
+
+
+            $("#idselectedRowDatasa").val(selectedRowData.ID);
+              $("#codenew").val(selectedRowData.Code || "");
+           $("#dfprice").val(selectedRowData.Price || "");
+              $("#descriptionnew").val(selectedRowData.Description || "");
+               $("#transactionsListnew").val(selectedRowData.TransactionCode || "");
+                 $("#currList").val(selectedRowData.Currency || "");
+                     $("#supplementNew").val(selectedRowData.Supplement || "");
+              // Checkbox Inactive
+              if (selectedRowData.IsActive === "True") {
+                  $("#isActivenew").prop("checked", true);
+              } else {
+                  $("#isActivenew").prop("checked", false);
+              }
+                  $("#popupNewTransaction").fadeIn(200);
+                     $('#overlay').fadeIn(200);
+    });
+
+
+
+    $('#btnClosePopup, #overlay').click(function () {
+            $('#popupNewTransaction').fadeOut(200);
+                         $("#btnOkAuto").show();
+            $('#overlay').fadeOut(200);
+    });
+           function clearArticleList() {
+        $("#idselectedRowDatasa").val("");
+        $("#codenew").val("");
+        $("#descriptionnew").val("");
+        $("#transactionsListnew").val("");
+        $("#dfprice").val("");
+        $("#currList").val("");
+        $("#supplementNew").val("");
+        $("#isActivenew").prop("checked", false); // bỏ chọn checkbox
+    }
+
+
+
+
+
+         $(document).off("click", "#btnDelete").on("click", "#btnDelete", function () {
+            if (!selectedRowData) {
+                    showToast('Error', 'Please select 1 row to delete.', false);
+                return;
+            }
+            if (!confirm("Are you sure you want to delete item?")) {
+                return; // Nếu chọn Cancel thì dừng
+            }
+            $.ajax({
+                url: '/Article/ArticleListDelete',
+                type: 'POST',
+                data: {
+                       id:selectedRowData.ID
+
+
+                },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                     if (result.success) {
+
+                              $("#btnPrint").trigger("click");
+                     } else {
+                              showToast('Error', result.message, false);
+                     }
+
+                },
+                error: function () {
+                    alert("Không th? t?i báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+
+
+        });
+
+
+
+       $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");   // 🔥 khai báo grid
+
+        const workbook = new ExcelJS.Workbook();
+        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        // === Dòng 1: Tên công ty (merge theo 4 cột) ===
+        worksheet.addRow([companyName]);
+        worksheet.mergeCells('A1:D1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+        // === Dòng 2: Ngày giờ xuất (bên phải) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', exportDate]);
+        worksheet.mergeCells('D2:D2');  // cột D thôi
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+        // === Dòng 3–4: trống
+        worksheet.addRow([]);
+        worksheet.addRow([]);
+
+        // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
+        const reportRow = worksheet.addRow(['Transaction']);
+        worksheet.mergeCells('A5:D5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // === Dòng 6: trống
+        worksheet.addRow([]);
+
+        // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 }
+        }).then(function () {
+            // Footer (sau cùng)
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+            // Ghi file
+            let fileName = "Transaction.xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+</script>

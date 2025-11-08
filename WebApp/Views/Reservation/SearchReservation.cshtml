@@ -420,12 +420,7 @@
                     $('#toDateSelectOption').val(formattedBusinessDate);
 
 
-                    //Date openModalWakeupCall
-                    $('#singleDatewuk').val(formattedBusinessDate);
-                    $('#fromDatewuk').val(formattedBusinessDate);
-                    $('#toDatewuk').val(formattedBusinessDate);
-                    $('#fromDateviewwuk').val(formattedBusinessDate);
-                    $('#toDateviewwuk').val(formattedBusinessDate);
+                
                 }
                 if (!$('#departureForm').val()) {
                     const departureDate = new Date(businessDate);
@@ -815,6 +810,86 @@
                 confirmationNo = e.data.ConfirmationNo;
                 lastname = e.data.GuestName;
                 profileID = e.data.ProfileIndividualID;
+<<<<<<< HEAD
+=======
+                $('#rsvStatusBilling').text(e.data.Status);
+                $('#conNoBilling').text(e.data.ConfirmationNo);
+                $('#groupBillingg').text('');
+                $('#companyBilling').text('');
+                $('#arivalBilling').text(e.data.Arrival.split(' ')[0]);
+                $('#departureBilling').text(e.data.Departure.split(' ')[0]);
+                $('#balanceBilling').text(formatNumberBilling(e.data.BalanceVND.split('.')[0]));
+                $('#totalBilling').text(formatNumberBilling(e.data.BalanceVND.split('.')[0]));
+                if (e.data.NoOfRoom != '1') {
+                    ['assignRoom', 'unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'none';
+                            el.style.color = 'gray';
+                            el.style.cursor = 'not-allowed';
+                        }
+                    });
+                } else {
+                    ['assignRoom', 'unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'auto';
+                            el.style.color = '';
+                            el.style.cursor = 'pointer';
+                        }
+                    });
+                }
+                if (e.data.roomID == 0) {
+                    ['unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'none';
+                            el.style.color = 'gray';
+                            el.style.cursor = 'not-allowed';
+                        }
+                    });
+                } else {
+                    ['unAssignRoom'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.style.pointerEvents = 'auto';
+                            el.style.color = '';
+                            el.style.cursor = 'pointer';
+                        }
+                    });
+                }
+                $('#moreInfo').append(html);
+                $('#cmt_wrapper').empty();
+
+                $('#cmt_wrapper').append(`<span><b>Comment:</b> <i>${e.data.Comment}</i></span>`);
+
+                $('#cmt_wrapper').show();
+
+            },
+            onRowPrepared: function(e) {
+                if (e.rowType === "data") {
+                    const colorValue = e.data?.Color;
+
+                    // 🧩 Nếu có giá trị màu thì mới tô
+                    if (colorValue !== null && colorValue !== undefined && colorValue !== "" && colorValue !== 0) {
+                        let hexColor = "";
+
+                        // Nếu Color là số int (ví dụ -256)
+                        if (!isNaN(colorValue)) {
+                            hexColor = intToColorHex(parseInt(colorValue));
+                        }
+                        // Nếu Color là mã hex (vd "#FFFF00")
+                        else if (typeof colorValue === "string" && colorValue.startsWith("#")) {
+                            hexColor = colorValue;
+                        }
+
+                        // Nếu có màu hợp lệ => tô nền
+                        if (hexColor) {
+                            e.rowElement.css("background-color", hexColor);
+                        }
+                    }
+                }
+>>>>>>> a90825de161a792789f19b406b70e4e4327540fe
             }
         }).dxDataGrid('instance');
 
@@ -835,6 +910,10 @@
         $('#clearSelectedColumns').on('click', function() {
             $('.column-checkbox').prop('checked', false);
         });
+    }
+    function intToColorHex(value) {
+        const hex = (value >>> 0).toString(16).padStart(8, "0");
+        return "#" + hex.substring(2).toUpperCase();
     }
     function formatNumberBilling(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

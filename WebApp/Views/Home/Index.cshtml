@@ -251,50 +251,68 @@
     }
                
     $(document).ready(function () {
-        var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // "29/08/2024 00:00:00"
+         getBusinessDate();
 
-        var dateOnly = parsedBusinessDate.split(' ')[0]; // "29/08/2024"
-        var dateParts = dateOnly.split('/'); // ["29", "08", "2024"]
 
-        var businessDate =  new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
-   
-         var parsedBusinessDate =  formatDate(businessDate);
-             $("#loadingSpinner").show();
-         $.ajax({
+        });
+        function getBusinessDate() {
+            return $.ajax({
+                url: '/Reservation/GetBusinessDate',
+                type: 'get',
+                dataType: 'json',
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+
+                      const businessDate = new Date(result);
+                    const formattedBusinessDate = result.split('T')[0];
+                    loadDashboardData(formattedBusinessDate);
+
+                },
+                error: function (xhr, statusText, err) {
+                    if (xhr.status == 401) {
+                        sessionTimeout();
+                    }
+                }
+            });
+        }
+
+        function loadDashboardData(businessDate) {
+        $("#loadingSpinner").show();
+
+        $.ajax({
             url: '/Report/DashBoard',
             type: 'GET',
             data: {
-                businessDate: parsedBusinessDate,
+                businessDate: businessDate,
             },
             headers: {
                 "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
             },
             success: function (data) {
-              
-               console.log(data);
-                   $("#dueInCheckedInCount").text(data.totalDueinCheckedint);
-                    $("#checkedOutCount").text(data.totaCheckedoutint);
-                    $("#dueoutCount").text(data.totalDueoutint);
-                    $("#guestInHouseCount").text(data.guestInHouseCount);
-                    $("#rsvCount").text(data.rsvCount);
-                    $("#totalA").text(data.totalA);
-                    $("#totalC").text(data.totalC);
-                    $("#occupancyPercent").text(data.occupancyPercent + "%");
+                console.log(data);
 
-                                renderHighchartBar(data.chartStatus);
-                                renderHighchartPie(data.chartStatus);
-                       
+                $("#dueInCheckedInCount").text(data.totalDueinCheckedint);
+                $("#checkedOutCount").text(data.totaCheckedoutint);
+                $("#dueoutCount").text(data.totalDueoutint);
+                $("#guestInHouseCount").text(data.guestInHouseCount);
+                $("#rsvCount").text(data.rsvCount);
+                $("#totalA").text(data.totalA);
+                $("#totalC").text(data.totalC);
+                $("#occupancyPercent").text(data.occupancyPercent + "%");
 
-                $("#loadingSpinner").hide(); 
+                renderHighchartBar(data.chartStatus);
+                renderHighchartPie(data.chartStatus);
+
+                $("#loadingSpinner").hide();
             },
             error: function () {
                 alert("Không thể tải dữ liệu.");
-            $("#loadingSpinner").hide();
+                $("#loadingSpinner").hide();
             }
         });
+    }
 
-    
-    });
       function renderHighchartBar(data) {
     const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
 

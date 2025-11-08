@@ -343,9 +343,38 @@
             showToast("Error", "Please choose booking", false);
             return;
         }
-        $("#roomnoCancel").val(roomNo);
-           $("#roomno").val(roomNo);
+        $("#roomnoCancel").val(roomNo || roomNowuk);
+           $("#roomno").val(roomNo || roomNowuk);
         $('#modalWakeUpCall').modal('show');
+        getBusinessDate();
+    }
+         getBusinessDate();
+       function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                
+                  const businessDate = new Date(result);
+                const formattedBusinessDate = result.split('T')[0];
+                console.log(formattedBusinessDate);
+                    //Date openModalWakeupCall
+                    $('#singleDatewuk').val(formattedBusinessDate);
+                    $('#fromDatewuk').val(formattedBusinessDate);
+                    $('#toDatewuk').val(formattedBusinessDate);
+                    $('#fromDateviewwuk').val(formattedBusinessDate);
+                    $('#toDateviewwuk').val(formattedBusinessDate);
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
     }
     function closeModalWakeUpCall(){
         $('#modalWakeUpCall').modal('hide');
