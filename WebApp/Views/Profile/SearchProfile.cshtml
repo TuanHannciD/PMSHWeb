@@ -946,7 +946,8 @@
                         $("#txtOtherIndividual").val(result.profile.other);
                         $("#txtPassportIndividual").val(result.profile.passPort);
                         $("#txtCardIndividual").val(result.profile.identityCard);
-                        $("#txtDobIndividual").val(result.profile.dateOfBirth);
+                        console.log("dob: " + result.profile.dateOfBirth);
+                        $("#txtDobIndividual").val(formatDateForInputISO(result.profile.dateOfBirth));
                         if (result.profile.active) {
                             $("#txtActiveIndividual").prop("checked", true);
                         } else {
