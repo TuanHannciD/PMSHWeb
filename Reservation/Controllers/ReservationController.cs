@@ -2737,7 +2737,7 @@ namespace Reservation.Controllers
         {
             try
             {
-                List<DepositRuleModel> depositRules = PropertyUtils.ConvertToList<DepositRuleModel>(DepositRuleBO.Instance.FindByAttribute("Inactive", 0));
+                List<DepositRuleModel> depositRules = PropertyUtils.ConvertToList<DepositRuleModel>(DepositRuleBO.Instance.FindAll());
 
                 return Json(depositRules);
             }
