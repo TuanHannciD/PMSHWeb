@@ -7,7 +7,7 @@
         /*         background: white; */
     }
 
-    .group-box {
+    .group-box-wakeup {
         border: 1px solid #ccc;
         padding: 15px;
         border-radius: 5px;
@@ -19,23 +19,13 @@
         margin-bottom: 15px;
     }
 
-    .form-group {
+    .form-group-wakeup {
         display: flex;
         flex-direction: column;
         gap: 10px;
         margin-top: 10px;
     }
 
-    .form-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-        .form-row label {
-            width: 80px;
-            text-align: right;
-        }
 
 
     .browse-btn {
@@ -45,7 +35,7 @@
         margin-left: 5px;
     }
 
-    .btn-row {
+    .btn-row-wakeup {
         display: flex;
         justify-content: center;
         gap: 15px;
@@ -53,14 +43,7 @@
     }
 
 
-        .btn-delete:hover {
-            background: #fdd;
-            border-color: red;
-        }
-
-        .btn-close:hover {
-            background: #ddd;
-        }
+   
 
     .hidden-important {
         display: none !important;
@@ -111,20 +94,20 @@
                 <div class="mui-card mt-2">
                     <div class="wake-container">
                         <!-- Left Group -->
-                        <div class="group-box">
+                        <div class="group-box-wakeup">
                             <label><input type="radio" name="wake" value="set" id="rdoSet" checked> Set Wake Up Call</label><br />
                             <label><input type="radio" name="wake" value="cancel" id="rdoCancle"> Cancel Wake Up Call</label><br />
                             <label><input type="radio" name="wake" value="view" id="rdoView"> View Wake Up Calls</label>
                         </div>
 
                         <!-- Right Group -->
-                        <div class="group-box" id="setWakeup">
+                        <div class="group-box-wakeup" id="setWakeup">
                             <div class="radio-inline">
                                 <label><input type="radio" name="call" id="rdoDate" value="date" checked> Date </label>
                                 <label><input type="radio" name="call" id="rdoDaily" value="daily"> Daily</label>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group-wakeup">
                                 <!-- Room -->
                                 <div class="d-flex align-items-center me-3 mb-2" id="roomnoGroup">
                                     <label class="me-2 mb-1 mt-1">Room No(s):</label>
@@ -170,10 +153,10 @@
                             </div>
                         </div>
 
-                        <div class="group-box" id="viewWakeupcall">
+                        <div class="group-box-wakeup" id="viewWakeupcall">
 
 
-                            <div class="form-group">
+                            <div class="form-group-wakeup">
                                 <!-- Room -->
                                 <div class="d-flex align-items-center me-3 mb-2">
                                     <label class="me-2 mb-1 mt-1">Name:</label>
@@ -217,7 +200,7 @@
                         </div>
                     </div>
 
-                    <div class="btn-row">
+                    <div class="btn-row-wakeup">
                         <button style="border-radius: 4px;  margin-right: 6px;" id="btnCancelwakeup" class="mui-button mui-button-cancel" type="button"><i class="fa-solid fa-trash"></i> Delete</button>
                         <button style="border-radius: 4px;  margin-right: 6px;" id="btnSetwakeup" class="mui-button mui-button-card" type="button"><i class="fa-solid fa-gear"></i> Set</button>
                         <button style="border-radius: 4px;  margin-right: 6px;" id="btnViewwakeup" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-eye"></i> View</button>
