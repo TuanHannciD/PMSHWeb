@@ -213,6 +213,7 @@ namespace Reservation.Controllers
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
             ViewBag.cboTransaction = ListItemHelper.GetTransactionProvider();
+            ViewBag.cboTransaction2 = ListItemHelper.GetTransactionProvider2(true, "— Chọn giao dịch —");
             return View();
         }
 
@@ -3019,16 +3020,16 @@ namespace Reservation.Controllers
                               {
                                   AccountName = d["AccountName"].ToString(),
                                   TransactionCodes = d["TransactionCodes"].ToString(),
-                                  FromDate = d["FromDate"].ToString(),
-                                  ToDate = d["ToDate"].ToString(),
+                                  FromDate = Convert.ToDateTime(d["FromDate"]).ToString("dd/MM/yyyy"),
+                                  ToDate = Convert.ToDateTime(d["ToDate"]).ToString("dd/MM/yyyy"),
                                   RoomNo = d["RoomNo"].ToString(),
                                   ToFolioNo = d["ToFolioNo"].ToString(),
                                   Limit = d["Limit"].ToString(),
                                   IsMasterFolio = d["IsMasterFolio"].ToString(),
                                   UserInsertID = d["UserInsertID"].ToString(),
-                                  CreateDate = d["CreateDate"].ToString(),
+                                  CreateDate = Convert.ToDateTime(d["CreateDate"]).ToString("dd/MM/yyyy"),
                                   UserUpdateID = d["UserUpdateID"].ToString(),
-                                  UpdateDate = d["UpdateDate"].ToString(),
+                                  UpdateDate = Convert.ToDateTime(d["UpdateDate"]).ToString("dd/MM/yyyy"),
                                   ID = d["ID"].ToString(),
                                   ToReservationID = d["ToReservationID"].ToString(),
 

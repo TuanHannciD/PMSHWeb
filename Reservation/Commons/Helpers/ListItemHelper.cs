@@ -847,7 +847,47 @@ namespace Reservation.Commons.Helpers
             }
         }
 
+        public static List<SelectListItem> GetTransactionProvider2(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = "— Chọn giao dịch —";
+                var items = new List<SelectListItem>();
 
+                var list = PropertyUtils.ConvertToList<TransactionsModel>(
+                    TransactionsBO.Instance.FindByAttribute("IsActive", 1));
+
+                if (list?.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem
+                    {
+                        Value = p.Code.ToString(),
+                        Text = p.Code + " - " + p.Description
+                    }).ToList();
+                }
+
+                // Luôn thêm option mặc định nếu cần
+                if (defaultValue)
+                {
+                    items.Insert(0, new SelectListItem
+                    {
+                        Text = textDefault,
+                        Value = "0",
+                        Selected = true  // Chỉ có tác dụng nếu không bị model binding ghi đè
+                    });
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>
+        {
+            new SelectListItem { Text = "— Lỗi tải dữ liệu —", Value = "0" }
+        };
+            }
+        }
         /// <summary>
         /// Lấy tất cả danh sách transaction cho dropdown
         /// </summary>

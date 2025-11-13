@@ -19,6 +19,7 @@
                     <div class="form-group-new-reservation col-md-3 ">
                         <label>Member Name</label>
                         <div class="row" style="margin-left:1px;margin-right:2px">
+
                             <input id="memberName"/>   
                         </div>
                     </div>
@@ -40,7 +41,7 @@
     </div>
 </div>
 
-<!-- Modal cancel-->
+<!-- Modal add-->
 <div class="modal fade modal" id="modalNewMembership" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -51,27 +52,62 @@
             </div>
             <div class="modal-body">
                 <div class="mt-2">
-                    <button class="submit-button-clear-reservation" onclick="CancelReservation();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="SaveMemberShip();"> OK</button>
                     <button class="submit-button-clear-reservation" onclick="closeModalNewMembership()">Close</button>
                 </div>
                 <div class="row mt-2">
-                    <div class="form-group-new-reservation" >
+                    <div class="form-group-new-reservation ">
                         <label>Member Name</label>
                         <div class="row" style="margin-left:1px;margin-right:2px">
-                            <input type="text" id="memberNameAdd">
+                            <input id="memberNameAdd" />
+                            <input id="memberNameProfile" style="display:none" />
+
                         </div>
                     </div>
                     <div class="form-group-new-reservation ">
                         <label>Type</label>
                         <div class="row" style="margin-left:1px;margin-right:2px">
-                            <select type="text" id="memberTypeAdd"></select>
+                            <select id="memberTypeAdd" asp-items="ViewBag.cboMemberType">
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group-new-reservation ">
+                    <div class="form-group-new-reservation  ">
+                        <label>Name on Card</label>
+                        <div class="row" style="margin-left:1px;margin-right:2px">
+                            <input id="nameOnCardAdd" />
+                        </div>
+                    </div>
+                    <div class="form-group-new-reservation  ">
                         <label>Card Number</label>
                         <div class="row" style="margin-left:1px;margin-right:2px">
-                            <input type="text" id="cardNumberAdd">
+                            <input id="cardNumberAdd" />
                         </div>
+                    </div>
+                    <div class="form-group-new-reservation  ">
+                        <label>Expire Date</label>
+                        <div class="row" style="margin-left:1px;margin-right:2px">
+                            <input id="expireDateAdd" type="date" />
+                        </div>
+                    </div>
+                    <div class="form-group-new-reservation  ">
+                        <label>Sequence</label>
+                        <div class="row" style="margin-left:1px;margin-right:2px">
+                            <input id="sequenceAdd" />
+                        </div>
+                    </div>
+
+                    <div class="form-group-new-reservation  ">
+                        <label>Description</label>
+                        <div class="row" style="margin-left:1px;margin-right:2px">
+                            <input id="descriptionAdd" />
+                        </div>
+                    </div>
+                    <div class="form-group-new-reservation  mt-1" style="display:flex">
+                        <div style="margin-left:1px;margin-right:2px">
+                            <input type="checkbox" id="inactiveAdd">
+                        </div>
+                        <label>Inactive</label>
+
                     </div>
                 </div>
 
@@ -155,9 +191,84 @@
     }
 
     function openModalNewMembership(){
+
+        resetFormMembershipAdd();
         $('#modalNewMembership').modal('show');
+    }
+    function resetFormMembershipAdd(){
+        $('#memberNameAdd').val(profileName);
+        $('#memberNameProfile').val(profileID);
+        $('#memberTypeAdd').val(0);
+        $('#nameOnCardAdd').val('');
+        $('#cardNumberAdd').val('');
+        const today = new Date().toISOString().split('T')[0];
+        // Gán giá trị cho input
+        $('#expireDateAdd').val(today);
+        $('#sequenceAdd').val('');
+        $('#descriptionAdd').val('');
+        $('#inactiveAdd').prop('checked', false);
     }
     function closeModalNewMembership(){
         $('#modalNewMembership').modal('hide');
+    }
+    $('#memberTypeAdd').change(function(){
+        let id = $(this).val();
+        if(id != 0){
+            GetMemberTypeByID(id);
+        }
+    });
+    function GetMemberTypeByID(id){
+        $.ajax({
+            url: '/Profile/GetMemberTypeByID',
+            type: 'GET',
+            data: {
+                id: id
+            },
+            success: function (data) {
+                $('#nameOnCardAdd').val(data.name);
+            },
+            error: function () {
+                alert('Error retrieving membership data.');
+            }
+        });
+
+    }
+
+
+    function SaveMemberShip() {
+        var formData = new FormData();
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        formData.append('profileID',$('#memberNameProfile').val());
+        formData.append('userName',userName);
+
+        formData.append('memberNo', $('#cardNumberAdd').val());
+        formData.append('memberTypeID', $('#memberTypeAdd').val());
+        formData.append('description', $('#descriptionAdd').val());
+        formData.append('expiry', $('#expireDateAdd').val());
+        formData.append('sequence', $("#sequenceAdd").val());
+        let valuePrint = $('#inactiveAdd').is(':checked') ? 1 : 0;
+        formData.append('inactive',valuePrint);
+        $.ajax({
+            url: '/Profile/SaveMembership',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    GetMembership();
+                    showToast('Success', data.msg, true);
+                    closeModalNewMembership();
+
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
     }
 </script>

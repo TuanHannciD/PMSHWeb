@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Profile.Commons.Helpers;
 using Profile.Services.Interfaces;
 namespace Profile.Controllers
 {
@@ -401,6 +402,8 @@ namespace Profile.Controllers
         #region SearchProfile
         public IActionResult SearchProfile()
         {
+            ViewBag.cboMemberType = ListItemHelper.GetMemberTypeProvider();
+
             return View();
         }
         [HttpGet]
@@ -1129,6 +1132,61 @@ namespace Profile.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMemberTypeByID(int id)
+        {
+            try
+            {
+                MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(id);
+                return Json(memberType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveMembership()
+        {
+            try
+            {
+                int profileID = int.Parse(Request.Form["profileID"].ToString());
+                if(profileID == 0 || string.IsNullOrEmpty(Request.Form["profileID"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Profile ID is required" });
+                }
+                if(string.IsNullOrEmpty(Request.Form["memberTypeID"].ToString()) || int.Parse(Request.Form["memberTypeID"].ToString()) == 0)
+                {
+                    return Json(new { code = 1, msg = "Member Type ID is required" });
+                }
+                if (string.IsNullOrEmpty(Request.Form["memberNo"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Card No  is required" });
+                }
+                ProfileMemberCardModel membership = new ProfileMemberCardModel();
+                membership.ProfileID = profileID;
+                membership.MemberNo = Request.Form["memberNo"].ToString();
+                membership.MemberTypeID = int.Parse(Request.Form["memberTypeID"].ToString());
+                membership.Description = Request.Form["description"].ToString();
+                membership.Expiry = DateTime.Parse(Request.Form["expiry"].ToString());
+                membership.Status = 1;
+                membership.InActive = int.Parse(Request.Form["inactive"].ToString()) == 1 ? true : false;
+                membership.IsDeleted = false;
+                membership.Sequence = !string.IsNullOrEmpty(Request.Form["sequence"].ToString()) ? int.Parse(Request.Form["sequence"].ToString()) : 0;
+                membership.CreatedDate = membership.UpdatedDate = DateTime.Now;
+                membership.CreatedBy = membership.UpdatedBy = Request.Form["userName"].ToString();
+                ProfileMemberCardBO.Instance.Insert(membership);
+                return Json(new { code = 0, msg = "Membership was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 1, msg = ex.Message });
+            }
+
         }
         #endregion
     }

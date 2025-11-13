@@ -833,6 +833,7 @@
         });
     }
     var profileID = 0;
+    var profileName = "";
     function initializeDataGrid(data) {
         var columnWidth = 150; // Độ rộng muốn đặt cho tất cả các cột
 
@@ -884,6 +885,7 @@
             showBorders: false,
             onRowClick: function(e) {
                 profileID = e.data.id;
+                profileName = e.data.account;
             }
 
         });
