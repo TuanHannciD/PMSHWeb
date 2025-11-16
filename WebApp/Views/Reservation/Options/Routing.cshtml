@@ -68,11 +68,11 @@
                         <div class="col-md-6 row">
                             <div class="mb-2">
                                 <label class="col-md-2" style="text-align:left;min-width:0">BeginDate</label>
-                                <input type="date" class="form-control col-md-10" id="beginDateRouting">
+                                <input type="date" class="col-md-10" id="beginDateRouting">
                             </div>
                             <div class="mb-2">
                                 <label  class="col-md-2" style="text-align:left;min-width:0">EndDate</label>
-                                <input type="date" class="form-control col-md-10" id="endDateRouting">
+                                <input type="date" class="col-md-10" id="endDateRouting">
                             </div>
                         </div>
                     </div>
@@ -99,8 +99,8 @@
                             <input type="text" class="col-md-10" id="addressRouting" disabled>
                         </div>
                         <div class="col-md-12 mb-2 row">
-                            <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Window</label>
-                            <select type="text" class="col-md-8" id="windowRouting">
+                            <label for="input1" style="min-width:0;text-align:left">Window</label>
+                            <select type="text" id="windowRouting">
                                 <option value="1" selected>--Master Folio--</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -193,7 +193,7 @@
                 { dataField: "fromDate", caption: "Begin Date"},
                 { dataField: "toDate", caption: "End Date"},
                 { dataField: "roomNo", caption: "RoomNo"},
-                { dataField: "toFolioNo", caption: "Windon"},
+                { dataField: "toFolioNo", caption: "Window"},
                 { dataField: "limit", caption: "Limit"},
  
             ],

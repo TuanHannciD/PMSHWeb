@@ -4759,6 +4759,56 @@ namespace Reservation.Controllers
 
             }
         }
+
+        [HttpPost]
+        public ActionResult ResolveTraces(int userID, string userName, List<int> selectedIds)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+                if(selectedIds.Count <= 0)
+                {
+                    return Json(new { code = 1, msg = $"Please choose at least 1 traces" });
+                }
+                for (int i = 0; i < selectedIds.Count; i++)
+                {
+                    ReservationTracesModel traces = (ReservationTracesModel)ReservationTracesBO.Instance.FindByPrimaryKey(selectedIds[i]);
+                    if (traces.ID == 0 || traces == null)
+                    {
+                        return Json(new { code = 1, msg = $"Could not trace in trace list" });
+
+                    }
+                }
+                for (int i = 0; i < selectedIds.Count; i++)
+                {
+                    ReservationTracesModel traces = (ReservationTracesModel)ReservationTracesBO.Instance.FindByPrimaryKey(selectedIds[i]);
+                    if (traces.Resolved == 1)
+                    {
+                        continue;
+                    }
+                    traces.Resolved = 1;
+                    traces.ResolvedBy = userName;
+                    traces.UserUpdateID = userID;
+                    traces.UpdateDate = DateTime.Now;
+                    ReservationTracesBO.Instance.Update(traces);
+                }
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = $"Trace was created successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+
+            }
+        }
         #endregion
 
         #region DatVP __ Reservation: Alerts

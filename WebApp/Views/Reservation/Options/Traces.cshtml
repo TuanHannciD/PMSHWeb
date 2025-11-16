@@ -11,6 +11,8 @@
                     <button class="submit-button-clear-reservation" onclick="searchTrace();">Search</button>
 
                     <button class="submit-button-clear-reservation" onclick="openModalNewTrace();">New</button>
+                    <button class="submit-button-clear-reservation" onclick="ResolveTrace();">Resolve</button>
+
                 </div>
                 <div class="row mt-2">
                     <div class="form-group-new-reservation col-md-3">
@@ -168,11 +170,18 @@
             }
         });
     }
-     function initializeDataGridTraces(data) {
+    function initializeDataGridTraces(data) {
         $("#gridContainerTraces").dxDataGrid({
 
         dataSource: data, allowColumnResizing: true,
             columns: [
+                {
+                    type: "selection",
+                    width: 50,
+                    allowFiltering: false,
+                    allowSorting: false,
+                    headerCellTemplate: function() { return $("<div>"); }
+                },
                 { dataField: "ID", caption: "ID",  visible: false},
                 { dataField: "Account", caption: "Name"},
                 { dataField: "RoomNo", caption: "Room No"},
@@ -206,7 +215,8 @@
                     applyFilter: "auto"
             },
             selection: {
-                mode: "single"
+                mode: "multiple",
+                showCheckBoxesMode: "always"
             },
             onRowClick: function(e) {
                 setShowButtonAlerts();
@@ -261,5 +271,38 @@
             }
         });
 
+    }
+
+    function ResolveTrace(){
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var grid = $("#gridContainerTraces").dxDataGrid("instance");
+
+        var selectedRows = grid.getSelectedRowsData();
+
+        var selectedIds = selectedRows.map(row => row.ID);
+        $.ajax({
+            url: '/Reservation/ResolveTraces',
+            type: 'POST',
+
+            data: {
+               userID: userID,
+               userName: userName,
+               selectedIds: selectedIds
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    closeModalNewTrace();
+                    searchTrace();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
     }
 </script>
