@@ -235,7 +235,7 @@ namespace Billing.Controllers
                     FolioDetailModel folioArticle = new FolioDetailModel();
                     folioArticle.UserID = int.Parse(Request.Form["userID"].ToString());
                     folioArticle.ShiftID = shiftID;
-                    folioArticle.UserName =  Request.Form["userID"].ToString();
+                    folioArticle.UserName =  Request.Form["userName"].ToString();
                     folioArticle.CashierNo = shiftName;
                     folioArticle.ReservationID = folioArticle.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                     folioArticle.FolioID = folioArticle.OriginFolioID = folio[0].ID;
@@ -333,7 +333,7 @@ namespace Billing.Controllers
                                 FolioDetailModel folioSub = new FolioDetailModel();
                                 folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
                                 folioSub.ShiftID = shiftID;
-                                folioSub.UserName =  Request.Form["userID"].ToString();
+                                folioSub.UserName =  Request.Form["userName"].ToString();
                                 folioSub.CashierNo = shiftName;
                                 folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                                 folioSub.FolioID = folioSub.OriginFolioID = folio[0].ID;
@@ -395,7 +395,7 @@ namespace Billing.Controllers
                                 FolioDetailModel folioSub = new FolioDetailModel();
                                 folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
                                 folioSub.ShiftID = shiftID;
-                                folioSub.UserName =  Request.Form["userID"].ToString();
+                                folioSub.UserName =  Request.Form["userName"].ToString();
                                 folioSub.CashierNo = shiftName;
                                 folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                                 folioSub.FolioID = folioSub.OriginFolioID = folio[0].ID;
@@ -462,7 +462,7 @@ namespace Billing.Controllers
                                 FolioDetailModel folioSub = new FolioDetailModel();
                                 folioSub.UserID =  int.Parse(Request.Form["userID"].ToString());
                                 folioSub.ShiftID = shiftID;
-                                folioSub.UserName = Request.Form["userID"].ToString();
+                                folioSub.UserName = Request.Form["userName"].ToString();
                                 folioSub.CashierNo = shiftName;
                                 folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                                 folioSub.FolioID = folioSub.OriginFolioID = folio[0].ID;
@@ -1239,7 +1239,7 @@ namespace Billing.Controllers
 
         #region DatVP __ Billing: Split Transaction
         [HttpPost]
-        public ActionResult SplitTransaction(int folioDetailID,decimal discountAmount, decimal discountPercent,decimal amount,string userName,string userID)
+        public ActionResult SplitTransaction(int folioDetailID,decimal discountAmount, decimal discountPercent,decimal amount,string userName,string userID,int shiftID,string shiftName)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -1256,7 +1256,7 @@ namespace Billing.Controllers
                 List<FolioDetailModel> listFolioDetail = PropertyUtils.ConvertToList<FolioDetailModel>(FolioDetailBO.Instance.FindByAttribute("TransactionNo", folioDetail.TransactionNo));
                 // precentMain là tỉ lệ của transaction sẽ được thêm, percentSub là tỉ lệ của transaction sẽ được update
                 decimal percentMain = discountPercent/100;
-                decimal percentSub = 100-(discountPercent / 100);
+                decimal percentSub = (100-discountPercent) / 100;
                 if(discountAmount > 0)
                 {
                     percentMain = discountAmount / amount;
@@ -1275,13 +1275,14 @@ namespace Billing.Controllers
                         folioDetailMain.AmountMasterBeforeTax = Math.Round(item.AmountMasterBeforeTax * percentMain);
                         folioDetailMain.AmountGross = Math.Round(item.AmountGross * percentMain);
                         folioDetailMain.AmountMasterGross = Math.Round(item.AmountMasterGross * percentMain);
-
+                        folioDetailMain.ShiftID = shiftID;
+                        folioDetailMain.CashierNo = shiftName.ToString();
                         folioDetailMain.UserID = int.Parse(userID);
                         folioDetailMain.UserName = userName;
                         folioDetailMain.ReservationID = folioDetailMain.OriginReservationID = item.ReservationID;
                         folioDetailMain.FolioID = folioDetailMain.OriginFolioID = item.FolioID;
-                        folioDetailMain.InvoiceNo = item.InvoiceNo;
-                        folioDetailMain.TransactionNo = item.TransactionNo;
+                        folioDetailMain.InvoiceNo = (FolioDetailBO.GetTopInvoiceNo() + 1).ToString();
+                        folioDetailMain.TransactionNo = (FolioDetailBO.GetTopTransactioNo() + 1).ToString();
                         folioDetailMain.ReceiptNo = item.ReceiptNo;
                         folioDetailMain.TransactionDate = item.TransactionDate;
                         folioDetailMain.ProfitCenterID = item.ProfitCenterID;

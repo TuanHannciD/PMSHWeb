@@ -149,14 +149,14 @@
 
                     <div class="col-md-12 row ">
     
-                        <label class="form-label col-md-2">RSV Status: <i><span id="rsvStatusBilling"></span></i></label>
-                        <label class="form-label col-md-2">Conf.No: <i><span id="conNoBilling"></span></i></label>
-                        <label class="form-label col-md-2">Group: <i><span id="groupBilling"></span></i></label>
-                        <label class="form-label col-md-2">Company: <i><span id="companyBilling"></span></i></label>
-                        <label class="form-label col-md-2">Arrival: <i><span id="arivalBilling"></span></i></label>
-                        <label class="form-label col-md-2">Departure: <i><span id="departureBilling"></span></i></label>
-                        <label class="form-label col-md-2">Balance: <i><span id="balanceBilling"></span></i></label>
-                        <label class="form-label col-md-2">Total: <i><span id="totalBilling"></span></i></label>
+                        <label class="form-label col-md-4">RSV Status: <span id="rsvStatusBilling"></span></label>
+                        <label class="form-label col-md-4">Conf.No: <span id="conNoBilling"></span></label>
+                        <label class="form-label col-md-4">Group: <span id="groupBilling"></span></label>
+                        <label class="form-label col-md-4">Company: <span id="companyBilling"></span></label>
+                        <label class="form-label col-md-4">Arrival: <span id="arivalBilling"></span></label>
+                        <label class="form-label col-md-4">Departure: <span id="departureBilling"></span></label>
+                        <label class="form-label col-md-4">Balance: <span id="balanceBilling"></span></label>
+                        <label class="form-label col-md-4">Total: <span id="totalBilling"></span></label>
   
                     </div>
                 </div>
@@ -342,7 +342,7 @@
     var transCodeBilling = "";
     function initializeDataGridBilling(data) {
         totalAmountBilling = getTotalAmount(data);
-        $('#balanceBillingMaster').text(totalAmountBilling.toLocaleString('en-US'));
+        $('#balanceBillingMaster').text(totalAmountBilling.toLocaleString('vi-VI'));
 
         $("#gridContainerBilling").dxDataGrid({
             dataSource: data,
@@ -361,7 +361,30 @@
                 { dataField: "code", caption: "Trans Code" },
                 { dataField: "description", caption: "description" },
                 { dataField: "invoiceNo", caption: "Inv .No" },
-                { dataField: "amount", caption: "Amount" },
+                {
+                    dataField: "amount",
+                    caption: "Amount",
+                    dataType: "number",
+                    format: {
+                        type: "fixedPoint",
+                        precision: 0,  // Không hiển thị thập phân
+                        thousandsSeparator: ".",
+                        // decimalSeparator không cần nữa vì không có thập phân
+                    },
+                    cellTemplate: function(container, options) {
+                        const value = options.value;
+                        if (value == null || value === '') {
+                            container.text('0');
+                            return;
+                        }
+                        // Định dạng số nguyên với dấu chấm phân cách hàng nghìn
+                        const formatted = Number(value).toLocaleString('vi-VI', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                        container.text(formatted);
+                    }
+                },
                 { dataField: "supplement", caption: "Suplement" },
                 { dataField: "reference", caption: "Reference" },
                 { dataField: "userName", caption: "User" },
@@ -392,20 +415,15 @@
                 showCheckBoxesMode: "always"
             },
             onRowClick: function(e) {
-                // Cập nhật thông tin giao dịch
-                
+
+                // Cập nhật các biến toàn cục
                 invoiceNoPosting = e.data.invoiceNo;
-                folioDetailID = e.data.id;
-                $("#transactionInfoSplit").text(e.data.code + ' - ' + e.data.description);
-                $("#amountTtoalSplit").text(formatNumberBilling(e.data.amount.split('.')[0]));
-                $("#valueSplitTransaction").val(formatNumberBilling(e.data.amount.split('.')[0]));
-                if (e.data.amount == '0.00') {
-                    $("#amountTtoalSplit").text('0');
-                    $("#valueSplitTransaction").val('0');
-                }
-                // Hiển thị menu chức năng khi click vào dòng
+
+
+                // Hiển thị menu
                 $("#functionMenu").show();
-                // Chọn dòng được click
+
+                // Chọn dòng
                 const grid = $("#gridContainerBilling").dxDataGrid("instance");
                 grid.selectRows([e.key], false);
             },
@@ -424,6 +442,18 @@
         });
 
 
+    }
+    function clearSelectedRowsBilling() {
+        const grid = $("#gridContainerBilling").dxDataGrid("instance");
+        if (grid) {
+            grid.deselectAll();  // Bỏ chọn tất cả các hàng
+            // Optional: Cập nhật lại UI hoặc biến nếu cần
+            // Ví dụ: Reset các biến liên quan đến lựa chọn
+            invoiceNoPosting = null;
+            folioDetailID = null;
+            $("#transactionInfoSplit").text('');
+            $("#functionMenu").hide();
+        }
     }
     $("#deleteTransactionBilling").on("click", function() {
         var grid = $("#gridContainerBilling").dxDataGrid("instance");
