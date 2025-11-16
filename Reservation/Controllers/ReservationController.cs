@@ -229,7 +229,7 @@ namespace Reservation.Controllers
         }
         public IActionResult WaitList()
         {
-
+            ViewBag.cboRoomType = ListItemHelper.GetRoomTyeCodeProvider();
             return View();
         }
 

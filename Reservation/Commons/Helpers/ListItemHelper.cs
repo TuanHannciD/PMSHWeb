@@ -305,6 +305,36 @@ namespace Reservation.Commons.Helpers
                 return new List<SelectListItem>();
             }
         }
+
+        /// <summary>
+        /// Lấy tất cả danh sách RoomType cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách RoomType</returns>
+        public static List<SelectListItem> GetRoomTyeCodeProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<RoomTypeModel> list = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindByAttribute("InActive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.Code.ToString(), Text = p.Code + "- " + p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
         /// <summary>
         /// Lấy tất cả danh sách Room cho dropdown
         /// </summary>
