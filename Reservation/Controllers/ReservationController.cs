@@ -5292,8 +5292,9 @@ namespace Reservation.Controllers
 
                                     item.coStatus = "Not OK";
                                     item.message = "Folio Not Balance with currency VND";
-                                    continue;
                                 }
+                                continue;
+
                             }
                         }
                         item.coStatus = "OK";

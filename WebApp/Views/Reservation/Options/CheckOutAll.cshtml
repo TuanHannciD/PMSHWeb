@@ -21,22 +21,20 @@
 </div>
 <script>
     function openModalCheckOutAll(type) {
-        if (reservationStatus != 1 && reservationStatus != 6) {
-            showToast('Error', "Please just choose booking has status CHECKED IN or DUE OUT", false);
-            return;
-        }
+        // if (reservationStatus != 1 && reservationStatus != 6) {
+        //     showToast('Error', "Please just choose booking has status CHECKED IN or DUE OUT", false);
+        //     return;
+        // }
 
         var grid = $("#gridContainer").dxDataGrid("instance");
         var dataSource = grid.getDataSource();
         var allData = dataSource.items();
 
         // Filter data based on type
-        var filteredData = allData;
-        if (type == 2) {
-            filteredData = allData.filter(function(item) {
-                return item.ReservationStatus == 6;
-            });
-        }
+        filteredData = allData.filter(function(item) {
+            return item.ReservationStatus == 6;
+        });
+        
 
         // Map the filtered data
         filteredData = filteredData.map(function(item) {
