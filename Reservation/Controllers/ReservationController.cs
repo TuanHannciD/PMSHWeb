@@ -212,8 +212,7 @@ namespace Reservation.Controllers
             ViewBag.cboTransportType = ListItemHelper.GetTransportTypeProvider();
             ViewBag.businesDate = businessDateModel[0].BusinessDate;
             ViewBag.cboItem = ListItemHelper.GetItemInventoryProvider();
-            ViewBag.cboTransaction = ListItemHelper.GetTransactionProvider();
-            ViewBag.cboTransaction2 = ListItemHelper.GetTransactionProvider2(true, "— Chọn giao dịch —");
+            ViewBag.cboTransaction = ListItemHelper.GetTransactionProvider(true,"Choose Transaction");
             return View();
         }
 
