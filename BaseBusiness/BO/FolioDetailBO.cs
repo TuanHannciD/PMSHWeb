@@ -41,7 +41,7 @@ namespace BaseBusiness.BO
         }
         public static decimal CalculateBalance(int reservationID)
         {
-            string query = $"select sum(AmountMaster) as Amount from FolioDetail where ReservationID = {reservationID} and RowState = 1 AND Status = 0";
+            string query = $"select isnull(sum(AmountMaster),0) as Amount from FolioDetail where ReservationID = {reservationID} and RowState = 1 AND Status = 0";
             return instance.GetFirst<decimal>(query);
         }
 
