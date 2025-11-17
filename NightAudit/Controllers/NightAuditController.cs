@@ -4667,8 +4667,7 @@ namespace NightAudit.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult ChangeBusinessDate()
+          public ActionResult ChangeBusinessDate()
         {
             try
             {
@@ -4688,7 +4687,19 @@ namespace NightAudit.Controllers
                 //Xác định danh sách phòng để post tiền
                 #endregion
 
+                #region cập nhật booking có departure = business date về due out
+                DateTime time = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate;
 
+                List<ReservationModel> reservationModels = ReservationBO.GetReservationByBusinessDate(time.ToString("yyyy-MM-dd"));
+                if(reservationModels.Count > 0)
+                {
+                    foreach(var item in reservationModels)
+                    {
+                        item.Status = 6; // due out
+                        ReservationBO.Instance.Update(item);
+                    }
+                }
+                #endregion
 
                 #region B11.Change business date
                 // Thực hiện
@@ -4764,6 +4775,8 @@ namespace NightAudit.Controllers
                 pt.ExcuteSQL("Update NightAuditTaskList Set FinishDate = '" + pt.GetBusinessDateTime().AddDays(-1).ToString("yyyy/MM/dd HH:mm:ss") + "'");
                 //Cập nhật lại ngày Bussiness Date
                 time = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate.ToString();
+
+
 
                 //Thông báo
                 _IsRunning = false;
