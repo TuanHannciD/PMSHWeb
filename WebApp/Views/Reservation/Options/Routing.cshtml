@@ -264,7 +264,7 @@
         $('#windowRouting').val(1);
         const tomselectInstance = $('#transactionRouting')[0].tomselect;
         tomselectInstance.setValue('0');
-        $('#limit').val('0');
+        $('#limitRouting').val('0');
         const parsedDate = moment(arivalDate, ['DD/MM/YYYY', 'MM/DD/YYYY']); // Hỗ trợ cả hai định dạng
         const formattedDate = parsedDate.format('YYYY-MM-DD'); // Chuyển thành yyyy-mm-d        
         $('#beginDateRouting').val(formattedDate);

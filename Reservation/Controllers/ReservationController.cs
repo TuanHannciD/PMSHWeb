@@ -3088,7 +3088,7 @@ namespace Reservation.Controllers
                 routing.UpdateDate = routing.CreateDate = DateTime.Now;
                 RoutingBO.Instance.Insert(routing);
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "Routing transâction was created successfully" });
+                return Json(new { code = 0, msg = "Routing transaction was created successfully" });
 
             }
             catch (Exception ex)
