@@ -1027,38 +1027,49 @@
             return;
         }
 
-        return $.ajax({
-            url: '/Reservation/ReadDoc?id=' + idReservation,
-            type: 'GET',
-            xhrFields: {
-                responseType: 'blob' // Nhận phản hồi dưới dạng blob để tải tệp
-            },
-            headers: { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() },
-            success: function (data, status, xhr) {
-                // Lấy tên tệp từ header Content-Disposition hoặc sử dụng tên mặc định
-                var filename = xhr.getResponseHeader('Content-Disposition')?.match(/filename="(.+)"/)?.[1] || 'confirmation_letter.docx';
 
-                // Tạo URL tạm thời cho blob
-                var blob = new Blob([data]);
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = filename;
 
-                // Kích hoạt tải xuống
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                // Giải phóng URL
-                window.URL.revokeObjectURL(link.href);
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
+        // Dùng fetch thay vì $.ajax để kiểm soát hoàn toàn response
+        fetch('/Reservation/ReadDoc?id=' + idReservation, {
+            method: 'GET',
+  
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
                     sessionTimeout();
-                } else {
-                    console.error('Lỗi khi tải tài liệu:', err);
-                    alert('Không thể tải tài liệu. Vui lòng thử lại sau.');
+                    throw new Error('Unauthorized');
                 }
+                throw new Error('Network response was not ok');
+            }
+
+            // Lấy tên file từ header
+            const disposition = response.headers.get('Content-Disposition');
+            let filename = 'confirmation_letter.docx';
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                    filename = matches[1].replace(/['"]/g, '');
+                }
+            }
+
+            return response.blob().then(blob => ({ blob, filename }));
+        })
+        .then(({ blob, filename }) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(err => {
+            console.error('Lỗi khi tải tài liệu:', err);
+            if (err.message !== 'Unauthorized') {
+                alert('Không thể tải tài liệu. Vui lòng thử lại sau.');
             }
         });
     }
