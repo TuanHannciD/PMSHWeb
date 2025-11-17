@@ -13,7 +13,7 @@ namespace Cashiering.Services.Implements
 {
     public class CashieringManagerService : ICashieringManagerService
     {
-        public DataTable GetGUestInHouse(string room, string name, string block, string group, string party, string company, string confirmationNo, DateTime arrivalDate, DateTime arrivalTo, DateTime departure, string crsNo, string package, string guestName, int zone, int typeSearch)
+        public DataTable GetGUestInHouse(string room, string name, string block, string group, string party, string company, string confirmationNo, string arrivalDate, string arrivalTo, string departure, string crsNo, string package, string guestName, int zone, int typeSearch)
         {
             try
             {

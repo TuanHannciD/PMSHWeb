@@ -679,12 +679,27 @@ namespace Cashiering.Controllers
         }
 
         [HttpGet]
-        public IActionResult GuestInHouse(string room, string name, string block, string group, string company, string confirmationNo, DateTime arrivalDate, DateTime arrivalTo, DateTime departure, string crsNo, string package, string guestName, int zone, int typeSearch)
+        public IActionResult GuestInHouse(string room, string name, string block, string group, string company, string confirmationNo, DateTime arrivalDate, DateTime arrivalTo, DateTime departure, string crsNo, string package, string guestName, int zone, int typeSearch,int chooseArrivalFrom,int chooseArrivalTo,int chooseDeparture)
         {
             try
             {
+                string formattedArrivalFrom = arrivalDate.ToString("yyyy-MM-dd");
+                string formattedArrivalTo = arrivalTo.ToString("yyyy-MM-dd");
+                string formattedDeparture = departure.ToString("yyyy-MM-dd");
 
-                DataTable resultExchangeData = _iCashieringManagerService.GetGUestInHouse(room, name, block, group, "", company, confirmationNo, arrivalDate, arrivalTo, departure,  crsNo,  package,  guestName,  zone,  typeSearch);
+                if (chooseArrivalFrom == 0)
+                {
+                    formattedArrivalFrom = "";
+                }
+                if (chooseArrivalTo == 0)
+                {
+                    formattedArrivalTo = "";
+                }
+                if(chooseDeparture == 0)
+                {
+                    formattedDeparture = "";
+                }
+                DataTable resultExchangeData = _iCashieringManagerService.GetGUestInHouse(room, name, block, group, "", company, confirmationNo, formattedArrivalFrom, formattedArrivalTo, formattedDeparture,  crsNo,  package,  guestName,  zone,  typeSearch);
                 var resultExchange = (from d in resultExchangeData.AsEnumerable()
                                       select d.Table.Columns.Cast<DataColumn>()
                                           //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")

@@ -1,129 +1,112 @@
 ﻿@* <link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" /> *@
 
-<div class="header" style="justify-content:space-between;border-bottom:none">
-    <div class="header2">
-        <h3 id="content-title">
-            Cashiering Manager
+<div class="header mt-2" style="border-bottom:none;justify-content:center">
+    <h3 id="content-title">
+        Carshiering Manager
+    </h3>
+</div>
+<div class="header">
+    <button class="submit-button-clear-reservation" onclick="searchReservation()">Search</button>
 
-        </h3>
-        <i class="fas fa-info-circle info-icon" title="How to use?"></i>
-    </div>
-
-    <div class="header2">
-        <button class="submit-button-clear-reservation" onclick="searchReservation()">Search</button>
-
-        <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
-    </div>
+    <button class="submit-button-new-reservation" onclick="resetForm()">Clear</button>
 </div>
 <div class="mb-2">
-    <div class="mui-card">
-        <div class="header" style="justify-content:space-between">
-            <div class="header2">
-                <i class="fa-solid fa-sliders" style="background-color:#2b6cb0;color:white;padding:4px"></i>
+    <div class="mui-card row" style="column-gap:25px;margin:0 4px">
+        <div class="col-md-1 row">
+            <label>Room</label>
+            <input type="text" id="room">
+        </div>
+        <div class="col-md-1 row">
+            <label>Conf .No</label>
+            <input type="text" id="confirmationNo">
+        </div>
+        <div class="col-md-1 row">
+            <label>Name</label>
+            <input type="text" id="name">
+        </div>
+        <div class="col-md-1 row">
+            <label>CRS .No</label>
+            <input type="text" id="crsNo">
+        </div>
+        <div class="col-md-1 row">
+            <label>Group</label>
+            <input type="text" id="group">
+        </div>
+        <div class="col-md-1 row">
+            <label>Package</label>
+            <input type="text" id="package">
+        </div>
+        <div class="col-md-1 row">
+            <label>Company</label>
+            <input type="text" id="company">
+        </div>
+        <div class="col-md-1 row">
+            <label>Block</label>
+            <input type="text" id="block">
+        </div>
+        <div class="col-md-1 row">
+            <label>Zone</label>
+            <select id="zone" asp-items="ViewBag.cboZone">
+   
+            </select>
+        </div>
+        <div class="col-md-1 row">
+            <label>Guest Type</label>
+            <select id="guestType">
+                <option value="0" selected>All</option>
+                <option value="1">Main Guest</option>
 
-                <h3 id="content-title">
-                    Filter
-
-                </h3>
-                <i class="fa-solid fa-caret-down" id="caretDownFilter" onclick="clickCaretDownFilter();" title="Click to show filter"></i>
-                <i class="fa-solid fa-caret-up" id="caretUpFilter" onclick="clickCaretUpFilter();" title="Click to hide ffilter"></i>
-            </div>
-
-            <div class="header2">
-                <i class="fa-solid fa-magnifying-glass" onclick="searchReservation();"></i>
-
+                <option value="2">RoomSharer</option>
+            </select>
+        </div>
+        <div class="col-md-2 row">
+            <label>Arrival From</label>
+            <div class="row">
+                <input type="date" class="col-md-11" id="arrivalForm" disabled>
+                <input type="checkbox" class="col-md-1" id="chooseArrivalForm">
             </div>
         </div>
-
-        <div id="filter" class="tab-pane ">
+        <div class="col-md-2 row">
+            <label>Arrival To</label>
             <div class="row">
-
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Room</label>
-                    <input type="text" id="room">
+                <input type="date" class="col-md-11" id="arrivalTo" disabled>
+                <input type="checkbox" id="chooseArrivalTo" class="col-md-1" >
+            </div>
+            
+        </div>
+        <div class="col-md-2 row">
+            <label>Departure</label>
+            <div class="row">
+                <input type="date" id="departure" class="col-md-11" disabled>
+                <input type="checkbox" id="chooseDeparture" class="col-md-1" >
+            </div>
+            
+        </div>
+        <div class="col-md-10 row" >
+            <label>Search Type</label>
+            <div style="display:flex;column-gap:4px">
+                <div class="form-group-new-reservation">
+                    <input type="radio" name="searchType" checked value="0" style="height:auto">
+                    <label>GuestInHouse</label>
                 </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Conf .No</label>
-                    <input type="text" id="confirmationNo">
+                <div class="form-group-new-reservation">
+                    <input type="radio" name="searchType" value="1" style="height:auto">
+                    <label>Checked out</label>
                 </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Name</label>
-                    <input type="text" id="name">
+                <div class="form-group-new-reservation">
+                    <input type="radio" name="searchType" value="3" style="height:auto">
+                    <label>Due Out</label>
                 </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>CRS .No</label>
-                    <input type="text" id="crsNo">
+                <div class="form-group-new-reservation">
+                    <input type="radio" name="searchType" value="4" style="height:auto">
+                    <label>Checked Out ToDay</label>
                 </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Group</label>
-                    <input type="text" id="group">
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Package</label>
-                    <input type="text" id="package">
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Company</label>
-                    <input type="text" id="company">
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Block</label>
-                    <input type="text" id="block">
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Zone</label>
-                    <select id="zone" asp-items="ViewBag.cboZone">
-   
-                    </select>
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Guest Type</label>
-                    <select id="guestType">
-                        <option value="0" selected>All</option>
-                        <option value="1">Main Guest</option>
-
-                        <option value="2">RoomSharer</option>
-                    </select>
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Arriva From</label>
-                    <input type="date" id="arrivalForm">
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Arriva To</label>
-                    <input type="date" id="arrivalTo">
-                </div>
-                <div class="form-group-new-reservation col-md-2">
-                    <label>Departure</label>
-                    <input type="date" id="departure">
-                </div>
-                <div class="col-md-10" >
-                    <label>Search Type</label>
-                    <div style="display:flex;column-gap:4px">
-                        <div class="form-group-new-reservation">
-                            <input type="radio" name="searchType" checked value="0" style="height:auto">
-                            <label>GuestInHouse</label>
-                        </div>
-                        <div class="form-group-new-reservation">
-                            <input type="radio" name="searchType" value="1" style="height:auto">
-                            <label>Checked out</label>
-                        </div>
-                        <div class="form-group-new-reservation">
-                            <input type="radio" name="searchType" value="3" style="height:auto">
-                            <label>Due Out</label>
-                        </div>
-                        <div class="form-group-new-reservation">
-                            <input type="radio" name="searchType" value="4" style="height:auto">
-                            <label>Checked Out ToDay</label>
-                        </div>
-                        <div class="form-group-new-reservation">
-                            <input type="radio" name="searchType" value="5" style="height:auto">
-                            <label>Check Out Today</label>
-                        </div>
-                    </div>
-
+                <div class="form-group-new-reservation">
+                    <input type="radio" name="searchType" value="5" style="height:auto">
+                    <label>Check Out Today</label>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -152,7 +135,11 @@
                     package:$('#package').val(),
                     guestName:$('#guestType').val(),
                     zone:$('#zone').val(),
-                    typeSearch:$('input[name="searchType"]:checked').val()
+                    typeSearch:$('input[name="searchType"]:checked').val(),
+                    chooseArrivalFrom:$('#chooseArrivalForm').is(':checked') ? 1 : 0,
+                    chooseArrivalTo:$('#chooseArrivalTo').is(':checked') ? 1 : 0,
+                    chooseDeparture:$('#chooseDeparture').is(':checked') ? 1 : 0,
+
                 },
                 crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
@@ -191,12 +178,12 @@
             }
         });
     }
-    function initializeDataGridBilling(data) {
-
+        function initializeDataGridBilling(data) {
         $("#gridContainer").dxDataGrid({
             dataSource: data,
-            keyExpr: "id", // Khóa chính của grid là id
             allowColumnResizing: true,
+            columnResizingMode: "widget", // cho phép kéo giãn cột mượt mà
+            columnAutoWidth: true,        // <<< Đây là dòng quan trọng nhất để cột tự động fit nội dung
 
             paging: { pageSize: 15 },
             scrolling: {
@@ -214,10 +201,27 @@
                 applyFilter: "auto"
             },
             selection: {
-                mode: "multiple",
-                showCheckBoxesMode: "always"
+                mode: "single"
             },
+
 
         });
     }
+
+    function toggleDateInput(checkboxId, inputId) {
+        const $checkbox = $('#' + checkboxId);
+        const $input    = $('#' + inputId);
+
+        // Khi thay đổi trạng thái checkbox
+        $checkbox.on('change', function () {
+            if (this.checked) {
+                $input.prop('disabled', false);   // bật input
+            } else {
+                $input.prop('disabled', true);    // tắt input
+            }
+        });
+    }
+    toggleDateInput('chooseArrivalForm', 'arrivalForm');
+    toggleDateInput('chooseArrivalTo',   'arrivalTo');
+    toggleDateInput('chooseDeparture',  'departure');
 </script>
