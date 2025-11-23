@@ -1027,50 +1027,120 @@
             return;
         }
 
+        // Hiển thị loading (tùy chọn - bạn có thể thêm spinner)
+        const loadingIndicator = showLoading(); // bạn có thể tự định nghĩa hàm này
 
+        // ÉP LUÔN DÙNG HTTPS - đây là chìa khóa để hết lỗi blob:http
+        const currentOrigin = window.location.origin;
+        const secureOrigin = currentOrigin.replace(/^http:/, 'https:'); // ép http → https
 
-        // Dùng fetch thay vì $.ajax để kiểm soát hoàn toàn response
-        fetch('/Reservation/ReadDoc?id=' + idReservation, {
+        const url = `${secureOrigin}/Reservation/ReadDoc?id=${idReservation}`;
+
+        fetch(url, {
             method: 'GET',
-  
+            credentials: 'include', // Quan trọng: giữ session, cookie (Forms Auth, Identity, v.v.)
+            cache: 'no-cache'        // Đảm bảo không bị cache cũ
         })
         .then(response => {
+            // Xử lý lỗi HTTP (401, 403, 404, 500...)
             if (!response.ok) {
                 if (response.status === 401) {
-                    sessionTimeout();
+                    sessionTimeout(); // hàm bạn đã có
                     throw new Error('Unauthorized');
                 }
-                throw new Error('Network response was not ok');
+                if (response.status === 404) {
+                    throw new Error('Không tìm thấy tài liệu');
+                }
+                if (response.status === 500) {
+                    throw new Error('Lỗi máy chủ');
+                }
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            // Lấy tên file từ header
-            const disposition = response.headers.get('Content-Disposition');
+            // Lấy tên file từ header Content-Disposition (hỗ trợ tiếng Việt, dấu cách, UTF-8)
             let filename = 'confirmation_letter.docx';
-            if (disposition && disposition.indexOf('attachment') !== -1) {
-                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const disposition = response.headers.get('Content-Disposition');
+            if (disposition) {
+                // Hỗ trợ cả filename và filename*
+                const filenameRegex = /filename\*?=([^';]*)/gi;
                 const matches = filenameRegex.exec(disposition);
-                if (matches != null && matches[1]) {
-                    filename = matches[1].replace(/['"]/g, '');
+                if (matches && matches[1]) {
+                    // Nếu có filename* (UTF-8 encoded)
+                    let raw = matches[1].trim();
+                    if (raw.toLowerCase().startsWith("utf-8''")) {
+                        raw = raw.substring(7); // bỏ utf-8''
+                        filename = decodeURIComponent(raw);
+                    } else {
+                        // Xóa dấu nháy nếu có
+                        filename = raw.replace(/^['"](.*)['"]$/, '$1');
+                    }
                 }
             }
 
-            return response.blob().then(blob => ({ blob, filename }));
+            return response.blob().then(blob => ({
+                blob,
+                filename
+            }));
         })
         .then(({ blob, filename }) => {
-            const url = window.URL.createObjectURL(blob);
+            if (!blob || blob.size === 0) {
+                throw new Error('File rỗng hoặc không tải được');
+            }
+
+            // Tạo link tải
+            const blobUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
+            a.href = blobUrl;
             a.download = filename;
+            a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+
+            // Dọn dẹp
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+            }, 100);
         })
         .catch(err => {
             console.error('Lỗi khi tải tài liệu:', err);
             if (err.message !== 'Unauthorized') {
-                alert('Không thể tải tài liệu. Vui lòng thử lại sau.');
+                alert(err.message || 'Không thể tải tài liệu. Vui lòng thử lại sau.');
             }
+        })
+        .finally(() => {
+            // Ẩn loading
+            if (loadingIndicator) hideLoading(loadingIndicator);
         });
+    }
+
+    // Hàm tiện ích (tùy chọn - bạn có thể bỏ qua hoặc dùng thư viện như SweetAlert, Toastr...)
+    function showLoading() {
+        const overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(0,0,0,0.5)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '9999';
+        overlay.innerHTML = `
+            <div style="background:white;padding:20px;border-radius:10px;text-align:center;">
+                <p>Loading....</p>
+                <div style="width:50px;height:50px;border:5px solid #f3f3f3;border-top:5px solid #3498db;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    function hideLoading(element) {
+        if (element && element.parentNode) {
+            element.parentNode.removeChild(element);
+        }
     }
 </script>
