@@ -1887,7 +1887,7 @@
             formData.append('AddressIndividual', $("#txtAddressIndividual").val());
             formData.append('SalutationIndividual', $("#txtSalutationIndividual").val());
             formData.append('VIPIndividual', $("#txtVIPIndividual").val());
-            formData.append('ReasonIndividual', $("#ReasonIndividual").val());
+            formData.append('ReasonIndividual', $("#txtReasonIndividual").val());
             formData.append('PrefRoomIndividual', $("#txtPrefRoomIndividual").val());
             formData.append('OtherIndividual', $("#txtOtherIndividual").val());
             formData.append('PassportIndividual', $("#txtPassportIndividual").val());
@@ -1896,7 +1896,6 @@
             formData.append('ActiveIndividual', $("#txtActiveIndividual").is(":checked"));
             formData.append('ContactIndividual', $("#txtContactIndividual").is(":checked"));
             formData.append('KeywordIndividual', $("#txtKeywordIndividual").val());
-            formData.append('CompanyIndividual', $("#txtCompanyIndividual").val());
             formData.append('TaxIndividual', $("#txtTaxIndividual").val());
             formData.append('BusAddressIndividual', $("#txtBusAddressIndividual").val());
             formData.append('TelephoneIndividual', $("#txtTelephoneIndividual").val());
@@ -1904,7 +1903,7 @@
             formData.append('FaxIndividual', $("#txtFaxIndividual").val());
             formData.append('EmailIndividual', $("#txtEmailIndividual").val());
             formData.append('WebsiteIndividual', $("#txtWebsiteIndividual").val());
-            formData.append('Company2Individual', $("#txtTelephtxtCompany2").val());
+            formData.append('Company2Individual', $("#txtCompanyIndividual").val());
             formData.append('BusinessTitleIndividual', $("#txtBusinessTitleIndividual").val());
             formData.append('BlackListIndividual', $("#txtBlackListIndividual").is(":checked"));
             formData.append('BlackListReasonIndividual', $("#blackListIndividual").val());
@@ -2001,9 +2000,10 @@
             success: function (data) {
                 if (data.code == 0) {
                     resetForm();
-                    informBox(TOAST_STATUS.INFO, data.msg);
+                    showToast("Success", data.msg,true);
+
                 } else {
-                    informBox(TOAST_STATUS.WARNING, data.msg);
+                    showToast("Error", data.msg,false);
                 }
 
             },
