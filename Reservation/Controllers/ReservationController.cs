@@ -791,6 +791,9 @@ namespace Reservation.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
                 List<BusinessDateModel> businessDate = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+
+                ConfigSystemModel configSystems = PropertyUtils.ConvertToList<ConfigSystemModel>(ConfigSystemBO.Instance.FindByAttribute("KeyName", "RoomChargeVND")).FirstOrDefault();
+
                 int memberTypeID = 0; int roomTypeID = 0; int vipID = 0;
                 if (string.IsNullOrEmpty(Request.Form["memberType"].ToString()))
                 {
@@ -1232,6 +1235,44 @@ namespace Reservation.Controllers
                     profile.CreditCard = !string.IsNullOrEmpty(Request.Form["memberNo"].ToString()) ? Request.Form["memberNo"].ToString() : "";
                     ProfileBO.Instance.Update(profile);
                     #endregion
+
+                    #region lưu reservation rate
+                    ReservationRateModel reservationRate = new ReservationRateModel();
+                    reservationRate.ReservationID = (int)reservationID;
+                    reservationRate.RateCodeID = reservationModel.RateCodeId;
+                    reservationRate.RateDate = businessDate[0].BusinessDate;
+                    reservationRate.Rate = reservationModel.Rate;
+                    reservationRate.FixedRate = false;
+                    reservationRate.CurrencyID = "VND";
+                    reservationRate.RoomID = reservationModel.RoomId;
+                    reservationRate.RoomNo = reservationModel.RoomNo;
+                    reservationRate.RoomTypeID = reservationModel.RoomTypeId;
+                    reservationRate.RoomType = reservationModel.RoomType;
+                    reservationRate.ChangeRateStatus = false;
+                    reservationRate.TransactionCode = configSystems.KeyValue;
+                    reservationRate.RoomRevenueBeforeTax = reservationModel.Rate;
+                    reservationRate.RoomRevenueAfterTax = reservationModel.RateAfterTax;
+                    reservationRate.DiscountAmount = reservationModel.DiscountAmount;
+                    reservationRate.DiscountRate = reservationModel.DiscountRate;
+                    reservationRate.RateAfterTax = reservationModel.RateAfterTax;
+                    reservationRate.IsTaxInclude = false;
+                    reservationRate.NoOfAdult = reservationModel.NoOfAdult;
+                    reservationRate.NoOfChild = reservationModel.NoOfChild;
+                    reservationRate.NoOfChild1 = reservationModel.NoOfChild1;
+                    reservationRate.NoOfChild2 = reservationModel.NoOfChild2;
+                    reservationRate.MarketID = reservationModel.MarketId;
+                    reservationRate.SourceID = reservationModel.SourceId;
+                    reservationRate.UserInsertID = reservationRate.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                    reservationRate.CreateDate = reservationRate.UpdateDate = DateTime.Now;
+                    reservationRate.AllotmentID = reservationModel.AllotmentId;
+                    reservationRate.FixedRateByUser = "";
+                    reservationRate.RTCID = reservationModel.RtcId;
+                    reservationRate.UpgradeBy = "";
+                    reservationRate.UpgradeWhy = "";
+                    reservationRate.DiscountReason = reservationModel.DiscountReason;
+                    reservationRate.Breakfast = reservationRate.Lunch = reservationRate.Dinner = reservationRate.FixedMeal = false;
+                    ReservationRateBO.Instance.Insert(reservationRate);
+                    #endregion
                     pt.CommitTransaction();
                     return Json(new { code = 0, msg = $"The number Confirmation No : {reservationModel.ConfirmationNo}" });
 
@@ -1508,6 +1549,34 @@ namespace Reservation.Controllers
                     reservationModel.FixedMeal = false;
                     reservationModel.VoucherId = "";
                     ReservationBO.Instance.Update(reservationModel);
+                    #endregion
+
+                    #region edit reservation rate
+                    ReservationRateModel reservationRate = PropertyUtils.ConvertToList<ReservationRateModel>(ReservationRateBO.Instance.FindByAttribute("ReservationID", reservationModel.ID)).FirstOrDefault();
+                    reservationRate.RateCodeID = reservationModel.RateCodeId;
+                    reservationRate.RateDate = businessDate[0].BusinessDate;
+                    reservationRate.Rate = reservationModel.Rate;
+                    reservationRate.RoomID = reservationModel.RoomId;
+                    reservationRate.RoomNo = reservationModel.RoomNo;
+                    reservationRate.RoomTypeID = reservationModel.RoomTypeId;
+                    reservationRate.RoomType = reservationModel.RoomType;
+                    reservationRate.RoomRevenueBeforeTax = reservationModel.Rate;
+                    reservationRate.RoomRevenueAfterTax = reservationModel.RateAfterTax;
+                    reservationRate.DiscountAmount = reservationModel.DiscountAmount;
+                    reservationRate.DiscountRate = reservationModel.DiscountRate;
+                    reservationRate.RateAfterTax = reservationModel.RateAfterTax;
+                    reservationRate.NoOfAdult = reservationModel.NoOfAdult;
+                    reservationRate.NoOfChild = reservationModel.NoOfChild;
+                    reservationRate.NoOfChild1 = reservationModel.NoOfChild1;
+                    reservationRate.NoOfChild2 = reservationModel.NoOfChild2;
+                    reservationRate.MarketID = reservationModel.MarketId;
+                    reservationRate.SourceID = reservationModel.SourceId;
+                    reservationRate.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
+                    reservationRate.UpdateDate = DateTime.Now;
+                    reservationRate.AllotmentID = reservationModel.AllotmentId;
+                    reservationRate.RTCID = reservationModel.RtcId;
+                    reservationRate.DiscountReason = reservationModel.DiscountReason;
+                    ReservationRateBO.Instance.Update(reservationRate);
                     #endregion
 
                     #region lưu log activity insert reservation
