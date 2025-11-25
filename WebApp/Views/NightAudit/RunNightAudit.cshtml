@@ -286,6 +286,9 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("FormNotice/NotCheckIn")
+@await Html.PartialAsync("FormNotice/NotCheckOut")
+
 <script>
     $(document).ready(function () {
         getBusinessDate();
@@ -396,7 +399,7 @@
             }
         });
     }
-
+    
     function CheckInNotCI() {
         updateProgress(2, 'Arrivals Not Yet Checked In');
         const startTime2 = getCurrentTime();
@@ -416,9 +419,9 @@
                     setStatus('status2', 'Success');
                     CheckOutNotCO();
                 } else {
-                    setProcess('process2', '<i class="fa-solid fa-circle-xmark"></i>');
-                    setStatus('status2', 'Fail');
                     hideProgressOverlay();
+                    openModalNotCheckIn(data.data);
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -450,9 +453,8 @@
                     setStatus('status3', 'Success');
                     Preprocess();
                 } else {
-                    setProcess('process3', '<i class="fa-solid fa-circle-xmark"></i>');
-                    setStatus('status3', 'Fail');
                     hideProgressOverlay();
+                    openModalNotCheckOut(data.data);
                 }
             },
             error: function (xhr, statusText, err) {

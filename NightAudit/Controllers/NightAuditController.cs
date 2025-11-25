@@ -2,6 +2,7 @@
 using BaseBusiness.Model;
 using BaseBusiness.util;
 using BaseBusiness.Utils;
+using DevExpress.ClipboardSource.SpreadsheetML;
 using DevExpress.CodeParser;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -133,11 +134,11 @@ namespace NightAudit.Controllers
         /// <summary>
         /// Kiểm tra danh sách khách chưa CI
         /// </summary>
-        private void _CheckGuestCI(ref bool _IsNotCI)
+        private void _CheckGuestCI(ref bool _IsNotCI,ref DataTable dataNotCheckIn)
         {
-            if (pt.getTable("spNightAuditNotCheckInSearch", new SqlParameter("@ArrivalDate", pt.GetBusinessDateTime()), "tblNotCheckIn").Rows.Count > 0)
+            dataNotCheckIn = pt.getTable("spNightAuditNotCheckInSearch", new SqlParameter("@ArrivalDate", pt.GetBusinessDateTime()), "tblNotCheckIn");
+            if (dataNotCheckIn.Rows.Count > 0)
             {
-
                 _IsNotCI = true;
                 //if (MessageBox.Show(this, "Do you want to continue night audit?", TextUtils.Caption_Message, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 //{
@@ -154,10 +155,11 @@ namespace NightAudit.Controllers
 
         /// </summary>
         /// <param name="_IsNotCO"></param>
-        private void _CheckGuestCO(ref bool _IsNotCO)
+        private void _CheckGuestCO(ref bool _IsNotCO, ref DataTable dataNotCheckIn)
         {
+            dataNotCheckIn = pt.getTable("spNightAuditNotCheckOutSearch", new SqlParameter("@DeparturDate", pt.GetBusinessDateTime()), "tblNotCheckOut");
             //Kiểm tra những người đến ngày checkout nhưng chưa check out
-            if (pt.getTable("spNightAuditNotCheckOutSearch", new SqlParameter("@DeparturDate", pt.GetBusinessDateTime()), "tblNotCheckOut").Rows.Count > 0)
+            if (dataNotCheckIn.Rows.Count > 0)
             {
 
                 _IsNotCO = true;
@@ -4196,12 +4198,35 @@ namespace NightAudit.Controllers
 
                 // Thực hiện
                 bool _IsNotCI = false;
-                _CheckGuestCI(ref _IsNotCI);
+                DataTable dataNotCheckIn = null;
+                _CheckGuestCI(ref _IsNotCI,ref dataNotCheckIn);
                 if (_IsNotCI == true)
                 {
                     _Error = "";
                     _EndNightAudit(ref _IsOK);
-                    return Json(new { code = 1, msg = "loi check in not CI" });
+                    var dateColumns = new HashSet<string> { "ArrivalDate","DepartureDate"}; // liệt kê các cột ngày cần format
+
+                    var data = dataNotCheckIn.AsEnumerable()
+                        .Select(row => row.Table.Columns.Cast<DataColumn>()
+                            .ToDictionary(
+                                col => col.ColumnName,
+                                col =>
+                                {
+                                    var value = row[col];
+                                    if (value is DBNull || value == null)
+                                        return null;
+
+                                    // Nếu là cột ngày và là kiểu DateTime
+                                    if (dateColumns.Contains(col.ColumnName) && value is DateTime dt)
+                                    {
+                                        return dt.ToString("dd/MM/yyyy");
+                                    }
+
+                                    return value.ToString();
+                                }
+                            ))
+                        .ToList();
+                    return Json(new { code = 1, msg = "loi check in not CI", data = data });
                 }
 
                 #endregion
@@ -4243,12 +4268,35 @@ namespace NightAudit.Controllers
                 #region B3. Check out not CO. 
                 // Thực hiện
                 bool _IsNotCO = false;
-                _CheckGuestCO(ref _IsNotCO);
+                DataTable dataNotCheckIn = null;
+                _CheckGuestCO(ref _IsNotCO,ref dataNotCheckIn);
                 if (_IsNotCO == true)
                 {
                     _Error = "";
                     _EndNightAudit(ref _IsOK);
-                    return Json(new { code = 1, msg = "Loi check out not C0" });
+                    var dateColumns = new HashSet<string> { "ArrivalDate", "DepartureDate" }; // liệt kê các cột ngày cần format
+
+                    var data = dataNotCheckIn.AsEnumerable()
+                        .Select(row => row.Table.Columns.Cast<DataColumn>()
+                            .ToDictionary(
+                                col => col.ColumnName,
+                                col =>
+                                {
+                                    var value = row[col];
+                                    if (value is DBNull || value == null)
+                                        return null;
+
+                                    // Nếu là cột ngày và là kiểu DateTime
+                                    if (dateColumns.Contains(col.ColumnName) && value is DateTime dt)
+                                    {
+                                        return dt.ToString("dd/MM/yyyy");
+                                    }
+
+                                    return value.ToString();
+                                }
+                            ))
+                        .ToList();
+                    return Json(new { code = 1, msg = "Loi check out not C0",data = data });
                 }
                 #endregion
 
