@@ -203,7 +203,7 @@
 
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">VAT.Infor:</label>
-                        <select id="transactionNewSubGroupList" name="transactionNewSubGroupList" class="form-control form-control-sm w-auto">
+                        <select id="vatinfor" name="vatinfor" class="form-control form-control-sm w-auto">
                             <option value="">-- Select a Item --</option>
                             @foreach (var item in vatTypeList)
                             {
@@ -406,6 +406,7 @@
       let groupType=null;
       let  generateID=null;
       let groupCode=null;
+         let transactionGroupID=null;
        let subgroupCode=null;
     $(document).ready(function () {
         $('[name="listARAccountList"]').find('select').prop('disabled', true);
@@ -435,10 +436,11 @@
           $("#transactionNewSubGroupList").on("change", function () {
             var selectedOption = $(this).find("option:selected");
             var groupId = selectedOption.data("groupid");
-
+              console.log("groupId" + groupId);
+            transactionGroupID = selectedOption.data("groupid");
             if (groupId) {
                 var group = transactionGroupList.find(x => x.ID === groupId);
-
+                       console.log("group:", group);
                 if (group) {
                     $("#groupnew").val(group.Code);
                     $("#groupnew").data("groupid", group.ID);
@@ -515,11 +517,11 @@
         }
 
         // ✅ Kiểm tra Transaction
-        if (transactionsListNew === "") {
-            showToast("Error", "Transaction is not empty.", false);
-            $("#transactionsListnew").focus();
-            return false;
-        }
+        // if (transactionsListNew === "") {
+        //     showToast("Error", "Transaction is not empty.", false);
+        //     $("#transactionsListnew").focus();
+        //     return false;
+        // }
 
         // ✅ Kiểm tra giá
         if (dfprice === "" || isNaN(parseFloat(dfprice))) {
@@ -787,7 +789,7 @@
      }
     $("#btnNew").on("click", function () {
 
-       clearArticleList();
+       clearTransaction();
             $('#overlay').fadeIn(200);
             $('#popupNewTransaction').fadeIn(200);
 
@@ -802,15 +804,15 @@
             var codenew = $("#codenew").val();
             var descriptionnew = $("#descriptionnew").val();
             var defaultPrice = $("#dfprice").val();
+                  var vatinfor = $("#vatinfor").val();
             var currList = $("#currList").val();
             var groupId = $("#groupnew").val();
             var subGroupID = $("#transactionNewSubGroupList").val();
             var adjustmentCode = $("#transactionsListnew").val();
             var subgroupCode = $("#transactionNewSubGroupList option:selected").text();
-            var groupCode = $("#groupnew").val();
-            var groupType = $("#groupType").val(); // nếu có input groupType
+          
             var generateID = $("#generateID").val(); // nếu có input generateID
-
+                        var transactionTypeList = $("#transactionTypeList").val(); // nếu có input generateID
             // ✅ Checkbox (chuyển sang 1 hoặc 0)
             let depositPayments = $("#depositPayments").is(":checked");
             let frontOfficePayments = $("#frontOfficePayments").is(":checked");
@@ -820,7 +822,20 @@
             let paidOut = $("#paidOut").is(":checked");
             let isTaxInclude = $("#isTaxInclude").is(":checked");
             let inactive = $("#inactive").is(":checked");
+            let paymentType = 0;
 
+            if ($("#creditCard").is(":checked")) {
+                paymentType = 1;
+            } 
+            else if ($("#cash").is(":checked")) {
+                paymentType = 2;
+            } 
+            else if ($("#check").is(":checked")) {
+                paymentType = 3;
+            } 
+            else if ($("#others").is(":checked")) {
+                paymentType = 4;
+            }
             // ✅ Hiện spinner
             $("#loadingSpinner").show();
 
@@ -835,20 +850,24 @@
                     DefaultPrice: defaultPrice,
                     CurrencyID: currList,
                     GroupID: groupId,
-                    SubGroupID: subGroupID,
+                    TransactionSubGroupID: subGroupID,
                     AdjustmentCode: adjustmentCode,
-                    SubGroupCode: subgroupCode,
+                    SubgroupCode: subgroupCode,
                     GroupCode: groupCode,
                     GroupType: groupType,
+                    TransactionGroupID: transactionGroupID,
+                     TransactionType: transactionTypeList,
                     GenerateID: generateID,
                     DepositPayments: depositPayments,
-                    FrontOfficePayments: frontOfficePayments,
+                    FOPayments : frontOfficePayments,
                     ARPayments: arPayments,
+                          PaymentType: paymentType,
                     RevenueGroup: revenueGroup,
                     ManualPosting: manualPosting,
-                    PaidOut: paidOut,
-                    IsTaxInclude: isTaxInclude,
-                    Inactive: inactive,
+                    Paidout: paidOut,
+                    TaxInclude: isTaxInclude,
+                    IsActive: inactive,
+                    VatTypeID: vatinfor,
                     CreatedBy: localStorage.getItem("Loginname"),
                     UserInsertID: localStorage.getItem("userID"),
                 },
@@ -861,7 +880,7 @@
                                 $('#popupNewTransaction').fadeOut(200);
                                  $('#overlay').fadeOut(200);
                                    $("#btnPrint").trigger("click");
-                                    clearArticleList();
+                                    clearTransaction();
                        } else {
                                 showToast('Error', 'Please select before saving.', false);
                        }
@@ -876,31 +895,63 @@
             });
      });
 
+$("#btnUpdate").on("click", function () {
+    if (selectedRowData.length === 0) {
+        showToast('Error', "Please select !", false);
+        return;
+    }
 
-    $("#btnUpdate").on("click", function () {
+    // Lấy object đầu tiên trong selectedRowData (giả sử chỉ chọn 1)
+    var data = selectedRowData
 
-            if (selectedRowData.length === 0) {
-                    showToast('Error', "Please select !", false);
-                return;
-            }
+    // Hiển thị popup
+    $("#popupNewTransaction").fadeIn(200);
+    $('#overlay').fadeIn(200);
 
+    // Điền dữ liệu vào các input text
+    $("#codenew").val(data.Code);
+    $("#descriptionnew").val(data.Description);
+    $("#dfprice").val(data.DefaultPrice);
+    $("#groupnew").val(data.GroupCode);
 
-            $("#idselectedRowDatasa").val(selectedRowData.ID);
-              $("#codenew").val(selectedRowData.Code || "");
-           $("#dfprice").val(selectedRowData.Price || "");
-              $("#descriptionnew").val(selectedRowData.Description || "");
-               $("#transactionsListnew").val(selectedRowData.TransactionCode || "");
-                 $("#currList").val(selectedRowData.Currency || "");
-                     $("#supplementNew").val(selectedRowData.Supplement || "");
-              // Checkbox Inactive
-              if (selectedRowData.IsActive === "True") {
-                  $("#isActivenew").prop("checked", true);
-              } else {
-                  $("#isActivenew").prop("checked", false);
-              }
-                  $("#popupNewTransaction").fadeIn(200);
-                     $('#overlay').fadeIn(200);
-    });
+    // Điền dữ liệu vào select
+    $("#transactionNewSubGroupList").val(data.TransactionSubGroupID);
+    $("#vatinfor").val(data.VatTypeID);
+    $("#transactionTypeList").val(data.TransactionType);
+
+    $("#transactionsListnew").val(data.AdjustmentCode); // nếu muốn map AdjustmentCode vào select
+    $("#currList").val(data.CurrencyID);
+    $("#listARAccountList").val(data.ARNo); // nếu bạn muốn điền AR Account
+
+    // Điền dữ liệu vào checkbox
+    $("#isTaxInclude").prop('checked', data.TaxInclude === "True");
+    $("#revenueGroup").prop('checked', data.RevenueGroup === "True");
+    $("#memberShip").prop('checked', data.MemberShip === "True"); // nếu có field MemberShip
+    $("#manualPosting").prop('checked', data.ManualPosting === "True");
+    $("#paidOut").prop('checked', data.Paidout === "True");
+    $("#generateInclusive").prop('checked', data.GenerateInclusive === "True"); // nếu có field
+    $("#trackNights").prop('checked', data.TrackNights === "True"); // nếu có field
+    $("#frontOfficePayments").prop('checked', data.FOPayments === "True");
+    $("#arPayments").prop('checked', data.ARPayments === "True");
+    $("#depositPayments").prop('checked', data.DepositPayments === "True");
+    $("#interHotelSales").prop('checked', data.InterHotelSales === "True"); // nếu có field
+
+    // Payment Type checkboxes
+    $("#creditCard").prop('checked', data.PaymentTypeName === "CreditCard");
+    $("#cash").prop('checked', data.PaymentTypeName === "Cash");
+    $("#check").prop('checked', data.PaymentTypeName === "Check");
+    $("#others").prop('checked', data.PaymentTypeName === "Others");
+    $("#eft").prop('checked', data.PaymentTypeName === "EFT");
+    $("#manual").prop('checked', data.PaymentTypeName === "Manual");
+
+    // Inactive checkbox
+    $("#inactive").prop('checked', data.IsActive === "False");
+            // Gán select + chạy onchange
+        $("#transactionNewSubGroupList")
+            .val(data.TransactionSubGroupID)
+            .trigger("change");   // chạy onchange
+});
+
 
 
 
@@ -909,16 +960,17 @@
                          $("#btnOkAuto").show();
             $('#overlay').fadeOut(200);
     });
-           function clearArticleList() {
-        $("#idselectedRowDatasa").val("");
-        $("#codenew").val("");
-        $("#descriptionnew").val("");
-        $("#transactionsListnew").val("");
-        $("#dfprice").val("");
-        $("#currList").val("");
-        $("#supplementNew").val("");
-        $("#isActivenew").prop("checked", false); // bỏ chọn checkbox
-    }
+function clearTransaction() {
+    // Clear text inputs
+    $("#idselectedRowDatasa, #groupnew, #codenew, #descriptionnew, #dfprice").val('');
+
+    // Reset selects
+    $("#transactionNewSubGroupList, #vatinfor, #transactionTypeList, #transactionsListnew, #currList, #listARAccountList").prop('selectedIndex', 0);
+
+    // Uncheck all checkboxes
+    $("#isTaxInclude, #revenueGroup, #memberShip, #manualPosting, #paidOut, #generateInclusive, #trackNights, #frontOfficePayments, #arPayments, #depositPayments, #interHotelSales, #creditCard, #cash, #check, #others, #eft, #manual, #inactive").prop('checked', false);
+}
+
 
 
 
