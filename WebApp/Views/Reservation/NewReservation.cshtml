@@ -771,13 +771,15 @@
         $("#txtRateCodeID").val(result.rateCodeId);
         $("#txtRateCode").val(result.rateCode);
         let amount = result.rate; // Giả sử result.rate là 4409171
-        let formattedAmount = amount.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
+        let formattedAmount = amount.toLocaleString('vi-VN').replace(/,/g, '.'); // Đảm bảo dấu phẩy
         let amountNet = result.rateAfterTax; // Giả sử result.rate là 4409171
-        let formattedNet = amountNet.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
+        let formattedNet = amountNet.toLocaleString('vi-VN').replace(/,/g, '.'); // Đảm bảo dấu phẩy
         $("#txtRateAmount").val(formattedAmount); // Kết quả: 4,409,171
         $("#txtNetAmount").val(formattedNet);
         $('#txtRateAfterDiscount').val(formattedAmount);
         $('#txtNetAfterDiscount').val(formattedNet);
+        $('#txtTotal').val(formattedAmount);
+        $('#txtTotalNet').val(formattedNet);
         // $("#txtColor").val(result.color);
         if (result.color) {
             // Hiển thị dạng HEX để trình duyệt hiểu
@@ -1173,24 +1175,27 @@
             },
             success: function (result) {
                 var value = parseFloat(result.priceAfter);
-                    valueFloat =  Math.round(value).toLocaleString('en-US', {
+                    valueFloat =  Math.round(value).toLocaleString('vi-VN', {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
                             });
                 $('#txtNetAmount').val(valueFloat);
 
                 var valueRateAfter = parseFloat(result.priceDiscount);
-                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('en-US', {
+                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('vi-VN', {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0
                         });
                 $('#txtRateAfterDiscount').val(valueRateAfterFloat);
+                $('#txtTotal').val(valueRateAfterFloat);
+
                 var valueNetAfter = parseFloat(result.priceAfterDiscount);
-                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('en-US', {
+                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('vi-VN', {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0
                         });
                 $('#txtNetAfterDiscount').val(valueNetAfterFloat);
+                $('#txtTotalNet').val(valueNetAfterFloat);
 
             },
             error: function (xhr, statusText, err) {
@@ -1221,26 +1226,28 @@
             },
             success: function (result) {
                 var value = parseFloat(result.priceAfter);
-                    valueFloat =  Math.round(value).toLocaleString('en-US', {
+                    valueFloat =  Math.round(value).toLocaleString('vi-VN', {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
                             });
                 $('#txtNetAmount').val(valueFloat);
 
                 var valueRateAfter = parseFloat(result.priceDiscount);
-                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('en-US', {
+                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('vi-VN', {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0
                         });
                 $('#txtRateAmount').val(valueRateAfterFloat);
+                $('#txtTotal').val(valueRateAfterFloat);
 
                 $('#txtRateAfterDiscount').val(valueRateAfterFloat);
                 var valueNetAfter = parseFloat(result.priceAfterDiscount);
-                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('en-US', {
+                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('vi-VN', {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0
                         });
                 $('#txtNetAfterDiscount').val(valueNetAfterFloat);
+                $('#txtTotalNet').val(valueNetAfterFloat);
 
             },
             error: function (xhr, statusText, err) {
@@ -1259,7 +1266,7 @@
             // Sử dụng toLocaleString để định dạng số
             let formattedValue = parseInt(value).toLocaleString('vi-VN');
             // Thay dấu chấm thành dấu phẩy
-            formattedValue = formattedValue.replace(/\./g, ',');
+            formattedValue = formattedValue.replace(/\./g, '.');
             $(this).val(formattedValue);
         } else {
             // Nếu không có giá trị, đặt lại input thành rỗng
