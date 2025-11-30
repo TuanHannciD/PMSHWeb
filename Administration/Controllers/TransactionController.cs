@@ -105,11 +105,8 @@ namespace Administration.Controllers
 
                 if (isNew)
                 {
-                    model = new TransactionsModel
-                    {
-                        CreateDate = businessDate,
-                        UpdateDate = businessDate
-                    };
+                    model.CreateDate = businessDate;
+                    model.UpdateDate = businessDate;
 
                     TransactionsBO.Instance.Insert(model);
                 }
