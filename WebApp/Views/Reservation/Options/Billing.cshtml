@@ -227,6 +227,33 @@
         </div>
     </div>
 </div>
+
+<!-- Modal confirm delete transaction-->
+<div class="modal fade modal" id="modalConfirmDeleteTransaction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Deletion Reason</h5>
+                <button type="button" class="btn-close" onclick="closeModalConfirmTransaction()"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <button class="submit-button-clear-reservation" onclick="confirmDelete();"> OK</button>
+                    <button class="submit-button-clear-reservation" onclick="closeModalConfirmTransaction();">Close</button>
+                </div>
+                <div class="row mt-2">
+                    <label >Reason</label>
+                    <select id="codeDeletionReason" ></select>
+                </div>
+                <div class="mt-2">
+                    <textarea class="form-control" id="descriptionDeletionReason" rows="3"></textarea>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @await Html.PartialAsync("Billing/Posting")
 @await Html.PartialAsync("Billing/Payment")
 @await Html.PartialAsync("Billing/NewFolio")
@@ -244,6 +271,7 @@
         $("#toggleFunctionMenu").on("click", function() {
             $("#functionMenu").toggle();
         });
+        getDeletionReason();
     });
     var folioPosting = 1;
     var transactionNoPost = "0";
@@ -456,19 +484,39 @@
         }
     }
     $("#deleteTransactionBilling").on("click", function() {
+
+        localStorage.setItem("currentFromID", "modalConfirmDeleteTransaction");
+        const crashierLogin = localStorage.getItem("crashierLogin");
+        if(crashierLogin == "NotYet"){
+            openModalShilftLogin();
+        }
+        else{
+            openModalConfirmTransaction();
+        }
+
+    });
+    function confirmDelete(){
         var grid = $("#gridContainerBilling").dxDataGrid("instance");
 
         var selectedRows = grid.getSelectedRowsData();
 
         var selectedIds = selectedRows.map(row => row.id);
-
+        if(selectedIds.length == 0){
+            showToast('Error', "Please choose at least 1 Transaction", false);
+            return;
+         }
         $.ajax({
             url: '/Billing/DeleteTransaction',
             type: 'POST',
-            data: {folioDetailID :  selectedIds},
+            data: {
+                folioDetailID :  selectedIds,
+                reasonCode: $('#codeDeletionReason').val(),
+                reasonText: $('#descriptionDeletionReason').val(),
+            },
             success: function (data) {
                 if (data.code == 0) {
                     getFolioNo();
+                    closeModalConfirmTransaction();
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);
@@ -476,7 +524,7 @@
             },
             error: function (xhr, statusText, err) { }
         });
-    });
+    }
     function openModalBilling(){
         if(reservationStatus == 0 || reservationStatus == 3){
             showToast('Error', 'Booking status must not be Reservation or Cancel', false);
@@ -796,4 +844,67 @@
         });
     }
 
+    function openModalConfirmTransaction(){
+        $('#modalConfirmDeleteTransaction').modal('show');
+    }
+    function closeModalConfirmTransaction(){
+        $('#codeDeletionReason').val("");
+        $('#descriptionDeletionReason').val("");
+
+        $('#modalConfirmDeleteTransaction').modal('hide');
+
+    }
+    function getDeletionReason(){
+        $.ajax({
+            url: '/Billing/GetDeletionReason',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                var html = '<option value="">Please choose reason</option>';
+                if(result.length > 0){
+                    for(var i = 0;i < result.length;i++){
+                        html += `<option value='${result[i].code}'>${result[i].code}</option>`;
+                    }
+                }
+                $('#codeDeletionReason').empty();
+                $('#codeDeletionReason').html(html);
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                }
+            }
+        });
+    }
+    $('#codeDeletionReason').change(function() {
+        getDeletionReasonByCode();
+    });
+    function getDeletionReasonByCode(){
+        if($('#codeDeletionReason').val() != ""){
+            $.ajax({
+                url: '/Billing/GetDeletionReasonByCode',
+                type: 'get',
+                data:{
+                    code: $('#codeDeletionReason').val()
+                },
+                dataType: 'json',
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    $('#descriptionDeletionReason').val(result.description);
+
+                },
+                error: function (xhr, statusText, err) {
+                    if (xhr.status == 401) {
+                        sessionTimeout();
+                    } else {
+                    }
+                }
+            });
+        }
+    }
 </script>
