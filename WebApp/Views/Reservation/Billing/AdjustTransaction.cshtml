@@ -166,11 +166,18 @@
         });
     }
     function openModalAdjustTransaction(){
-        
+        localStorage.setItem("currentFromID", "modalAdjustTransaction");
+        const crashierLogin = localStorage.getItem("crashierLogin");
         $('#amountAdjust').val('0');
         $('#amountAdjustNet').val('0');
         GetReasonAdjustmentTransaction();
-        $('#modalAdjustTransaction').modal('show');
+        if(crashierLogin == "NotYet"){
+            openModalShilftLogin();
+        }
+        else{
+            $('#modalAdjustTransaction').modal('show');
+        }
+
     }
     function closeModalAdjustTransaction(){
         $('#transCodeAdjust').val().split('-')[0];
@@ -247,6 +254,8 @@
         var selectedValue = $('input[name="typeAdjustTransPrice"]:checked').val();
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
+        const shiftID = localStorage.getItem("shiftID");
+        const shiftName = localStorage.getItem("shiftName");
         var formData = new FormData();
         formData.append('rsvID', idReservation);
         formData.append('roomID', roomID);
@@ -260,7 +269,8 @@
         formData.append('adjustNet', $('#amountAdjustNet').val().replace(/,/g, ''));
         formData.append('folioDetailAdjustID', folioDetailAdjust);
         formData.append('percentage', $('#percentageAdjust').val());
-
+        formData.append('shiftID', shiftID);
+        formData.append('shiftName', shiftName);
         $.ajax({
             url: '/Billing/PostAdjustmentTransaction',
             type: 'POST',
@@ -270,7 +280,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     closeModalAdjustTransaction();
-                    searchFolioDetail(1);
+                    searchFolioDetail(0);
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);

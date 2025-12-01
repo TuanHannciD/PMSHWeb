@@ -1161,7 +1161,7 @@ namespace Billing.Controllers
 
         #region DatVP __ Billing: Delete Transaction
         [HttpPost]
-        public ActionResult DeleteTransaction(List<int> folioDetailID)
+        public ActionResult DeleteTransaction(List<int> folioDetailID,string reasonCode,string reasonText)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -1195,8 +1195,8 @@ namespace Billing.Controllers
                                 postingHistory.Code = folioItem.TransactionCode;
                                 postingHistory.Description = folioItem.Description;
                                 postingHistory.TransactionDate = businessDateModel[0].BusinessDate;
-                                postingHistory.ReasonCode = "";
-                                postingHistory.ReasonCode = "";
+                                postingHistory.ReasonCode = reasonCode;
+                                postingHistory.ReasonCode = reasonText;
                                 postingHistory.Terminal = "";
                                 postingHistory.Machine = Environment.MachineName;
                                 postingHistory.Action_FolioID = postingHistory.AfterAction_FolioID = folioItem.FolioID;
@@ -1233,6 +1233,35 @@ namespace Billing.Controllers
             {
                 pt.CloseConnection();
 
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDeletionReason()
+        {
+            try
+            {
+                List<CommentModel> users = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindByAttribute("CommentTypeID",8));
+
+                return Json(users);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetDeletionReasonByCode(string code)
+        {
+            try
+            {
+                CommentModel users = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindByAttribute("Code", code)).FirstOrDefault();
+
+                return Json(users);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
             }
         }
         #endregion
@@ -1774,12 +1803,15 @@ namespace Billing.Controllers
                     return Json(new { code = 1, msg = $"Can not post. Folio has been being locked" });
 
                 }
-
+                int shiftID = int.Parse(Request.Form["shiftID"].ToString());
+                string shiftName = Request.Form["shiftName"].ToString();
                 #region lưu transaction chính vào folio detail
                 // kiểm tra xem transaction chọn để post có article không
                 FolioDetailModel folioArticle = new FolioDetailModel();
-                folioArticle.UserID = folioArticle.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                folioArticle.UserName = folioArticle.CashierNo = Request.Form["userID"].ToString();
+                folioArticle.UserID = int.Parse(Request.Form["userID"].ToString());
+                folioArticle.ShiftID = shiftID;
+                folioArticle.CashierNo = shiftName;
+                folioArticle.UserName =  Request.Form["userID"].ToString();
                 folioArticle.ReservationID = folioArticle.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                 folioArticle.FolioID = folioArticle.OriginFolioID = folio.ID;
                 folioArticle.InvoiceNo = invoiceNo;
@@ -1855,11 +1887,13 @@ namespace Billing.Controllers
                         if (item.GroupCode == "Tax" && item.SubgroupCode == "Tax")
                         {
                             FolioDetailModel folioSub = new FolioDetailModel();
-                            folioSub.UserID = folioSub.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName = folioSub.CashierNo = Request.Form["userID"].ToString();
+                            folioSub.UserID  = int.Parse(Request.Form["userID"].ToString());
+                            folioSub.UserName  = Request.Form["userID"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
+                            folioSub.ShiftID = shiftID;
+                            folioSub.CashierNo = shiftName;
                             folioSub.TransactionNo = transactionNo;
                             folioSub.ReceiptNo = "";
                             folioSub.TransactionDate = businessDateModel[0].BusinessDate;
@@ -1908,11 +1942,13 @@ namespace Billing.Controllers
 
                             }
                             FolioDetailModel folioSub = new FolioDetailModel();
-                            folioSub.UserID = folioSub.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName = folioSub.CashierNo = Request.Form["userID"].ToString();
+                            folioSub.UserID  = int.Parse(Request.Form["userID"].ToString());
+                            folioSub.UserName  = Request.Form["userID"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
+                            folioSub.ShiftID = shiftID;
+                            folioSub.CashierNo = shiftName;
                             folioSub.TransactionNo = transactionNo;
                             folioSub.ReceiptNo = "";
                             folioSub.TransactionDate = businessDateModel[0].BusinessDate;
@@ -1967,11 +2003,13 @@ namespace Billing.Controllers
                                 priceSvc = (priceNet - priceVat) * (percent / 100) / (1 + (percent / 100));
                             }
                             FolioDetailModel folioSub = new FolioDetailModel();
-                            folioSub.UserID = folioSub.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName = folioSub.CashierNo = Request.Form["userID"].ToString();
+                            folioSub.UserID  = int.Parse(Request.Form["userID"].ToString());
+                            folioSub.UserName  = Request.Form["userID"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
+                            folioSub.ShiftID = shiftID;
+                            folioSub.CashierNo = shiftName;
                             folioSub.TransactionNo = transactionNo;
                             folioSub.ReceiptNo = "";
                             folioSub.TransactionDate = businessDateModel[0].BusinessDate;
