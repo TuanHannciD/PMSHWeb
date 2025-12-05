@@ -175,6 +175,8 @@
 
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnDeleteAuto" class="mui-button button-report-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnGenerateAuto" class="mui-button mui-button-resolve"> <i class="fa-solid fa-gear"></i> Generate</button>
         <button onclick="$('#popupNewTransaction').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
@@ -185,6 +187,7 @@
                 <div class="d-flex align-items-start mb-3">
                     <!-- Trace Time -->
                     <input type="text" id="idselectedRowDatasa" name="idselectedRowDatasa" style="display:none !important" class="form-control form-control-sm w-auto" />
+                    <input type="text" id="idselectedRowGenerateID" name="idselectedRowGenerateID" style="display:none !important" class="form-control form-control-sm w-auto" />
                     <div class="d-flex align-items-center me-3">
                         <label class="me-2 mb-0">SubGroup:</label>
                         <select id="transactionNewSubGroupList" name="transactionNewSubGroupList" class="form-control form-control-sm w-auto">
@@ -379,7 +382,7 @@
                             <option value=""></option>
                             @foreach (var item in listARAccountList)
                             {
-                                <option value="@item.AccountNo">@item.AccountNo</option>
+                                <option value="@item.AccountNo">@item.AccountNo-@item.AccountName</option>
                             }
                         </select>
                     </div>
@@ -396,7 +399,139 @@
 
 </div>
 
+<div id="popupGenerate" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
 
+    <div class="d-flex justify-content-between mb-2">
+        <h5 id="titlepopupGenerate" class="mb-0"></h5>
+
+    </div>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+
+        <button id="btnNewGenerate" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
+        <button id="btnUpdateGenerate" class="mui-button mui-button-edit"> <i class="fa-solid fa-pen"></i> Edit</button>
+        <button id="btnDeleteGenerate" class="mui-button button-report-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button onclick="$('#popupGenerate').hide()"  class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
+    <div class="sticky-header bg-white p-2 shadow-sm z-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+            <div class="d-flex align-items-center flex-wrap mb-2">
+             
+            </div>
+
+
+
+
+        </div>
+    </div>
+    <div class="mui-card">
+        @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
+        <div id="gridContainerGenerate" class="gridContainer mt-2"></div>
+    </div>
+</div>
+
+
+<div id="popupGenerateNewEdit" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
+    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
+
+    <div class="d-flex justify-content-between mb-2">
+        <h5 id="titlepopupGenerateNew" class="mb-0"></h5>
+
+    </div>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+
+        <button id="btnOkeGenerate" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> OK</button>
+        <button onclick="$('#popupGenerateNewEdit').hide()" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+        </button>
+    </div>
+    <div class="sticky-header bg-white p-2 shadow-sm z-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
+            <div class="d-flex align-items-center flex-wrap mb-2">
+                <div class="d-flex align-items-start mb-3">
+
+                    <div class="d-flex align-items-center me-3">
+                        <label class="me-2 mb-0">Transactions Code:</label>
+                        <select id="transactionsGernew" name="transactionsGernew" class="form-control form-control-sm w-auto">
+                            <option value="">-ALL--</option>
+                            @foreach (var item in transactionsList)
+                            {
+                                <option value="@item.Code">@item.Code-@item.Description</option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="d-flex align-items-center me-4">
+                        <input type="radio" id="percentageRadio" name="percenOption" class="me-2" />
+                        <label for="tracetext" class="me-2 mt-1">Percentage:</label>
+                        <input type="text" id="percentagetext" name="percentagetext"
+                               class="form-control form-control-sm w-auto" />
+                        <label class="me-2 mb-0">%</label>
+                        <select id="percengegre" name="percengegre" class="form-control form-control-sm w-auto">
+                            <option value=""></option>
+                            <option value="0">Base</option>
+                            <option value="1">Sub_total1</option>
+                            <option value="2">Sub_total2</option>
+                            <option value="2">Sub_total3</option>
+
+                        </select>
+
+                    </div>
+                  
+                </div>
+                <div class="d-flex align-items-start mb-3">
+
+                    <div class="d-flex align-items-center me-4">
+                        <input type="radio" id="amountRadio" name="percenOption" class="me-2" />
+                        <label for="tracetext" class="me-2 mt-1">Amount:</label>
+                        <input type="text" id="amountPer" name="amountPer"
+                               class="form-control form-control-sm w-auto" />
+
+                    </div>
+
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-clean-uncheck"></span>
+                        <input class="form-check-input" type="checkbox" id="subTotal1" name="subTotal" value="1">
+                        <label class="form-check-label" for="cleanUncheck"> Sub total 1</label>
+                    </div>
+
+                     <div class="form-check me-3">
+                        <span class="status-color-box color-clean-uncheck"></span>
+                        <input class="form-check-input" type="checkbox" id="subTotal2" name="subTotal" value="2">
+                        <label class="form-check-label" for="cleanUncheck"> Sub total 2</label>
+                    </div>
+                    <div class="form-check me-3">
+                        <span class="status-color-box color-clean-uncheck"></span>
+                        <input class="form-check-input" type="checkbox" id="subTotal3" name="subTotal" value="3">
+                        <label class="form-check-label" for="cleanUncheck"> Sub total 3</label>
+                    </div>
+    
+
+                </div>
+                <div class="d-flex align-items-start mb-3">
+
+       
+                    <div class="d-flex align-items-center me-4">
+                        <input type="radio" id="formularRadio" name="percenOption" class="me-2" />
+                        <label for="tracetext" class="me-2 mt-1">Formular:</label>
+                        <input type="text" id="formular" name="formular"
+                               class="form-control form-control-sm w-auto" />
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
 
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -456,6 +591,7 @@
 
                         $("#transactionTypeList").prop("disabled", false);
                         $("#transactionTypeList").prop("selectedIndex", 0);
+                                $('[name="listARAccountList"]').find('select').prop('disabled', true);
                     }
                     else if (groupType === 1) { // payment
                         $('[name="pnlPayment"]').find('input[type="checkbox"]').prop('disabled', false);
@@ -464,6 +600,7 @@
 
                         $("#transactionTypeList").prop("disabled", true);
                         $("#transactionTypeList").prop("selectedIndex", $("#transactionTypeList option").length - 1);
+                                $('[name="listARAccountList"]').find('select').prop('disabled', false);
                     }
                     else if (groupType === 2) { // wrapper
                         $('[name="pnlPayment"]').find('input[type="checkbox"]').prop('disabled', false);
@@ -472,6 +609,7 @@
                         // $('[name="pnlRevenue"]').find('input[type="checkbox"]').prop('disabled', true);
 
                         $("#transactionTypeList").prop("disabled", true);
+                                           $('[name="listARAccountList"]').find('select').prop('disabled', true);
                         $("#transactionTypeList").prop("selectedIndex", $("#transactionTypeList option").length - 1);
                     }
 
@@ -483,7 +621,12 @@
             }
         });
     });
-
+    $("input[name='pnlPaymentType']").on("change", function () {
+        $("input[name='pnlPaymentType']").not(this).prop("checked", false);
+    });
+    $("input[name='percenOption']").on("change", function () {
+        $("input[name='percenOption']").not(this).prop("checked", false);
+    });
 
      function ValidateForm() {
         let codeNew = $("#codenew").val().trim();
@@ -585,6 +728,7 @@
             });
         });
         var selectedRowData=null;
+        var selectedRowDatagre=null;
      function initializeTransactionGrid(data) {
 
         $("#gridContainer").dxDataGrid({
@@ -601,12 +745,37 @@
             filterRow: { visible: true },
          columns: [
                 { dataField: "ID", caption: "ID",visible: false },
+                {
+                dataField: "IsActive",
+                caption: "Hoạt Động",
+                dataType: "boolean", // Định dạng dữ liệu là boolean
+                    cellTemplate: function (container, options) {
+                        // Tùy chỉnh hiển thị checkbox
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .css({
+                                "width": "15px", // Kích thước checkbox
+                                "height": "15px",
 
+                            })
+                            .appendTo(container);
+                    }
+                } ,
                 { dataField: "GroupCode", caption: "Group Code" },
                 { dataField: "SubgroupCode", caption: "Sub Group Code" },
                 { dataField: "Code", caption: "Code" },
                 { dataField: "Description", caption: "Description" },
-                { dataField: "DefaultPrice", caption: "Default Price" },
+                {
+                    dataField: "DefaultPrice",
+                    caption: "Default Price",
+                    format: {
+                        type: "fixedPoint",
+                        precision: 0
+                    },
+                },
+
                 { dataField: "CurrencyID", caption: "Cur" },
                 { dataField: "AdjustmentCode", caption: "Adj.Code" },
                 { dataField: "TransactionTypeName", caption: "Transaction Type" },
@@ -736,24 +905,7 @@
                             .appendTo(container);
                     }
                 },
-                {
-                    dataField: "IsActive",
-                    caption: "Hoạt Động",
-                    dataType: "boolean", // Định dạng dữ liệu là boolean
-                    cellTemplate: function (container, options) {
-                        // Tùy chỉnh hiển thị checkbox
-                        const isChecked = options.value === "True" || options.value === true;
-                        $("<input>")
-                            .attr("type", "checkbox")
-                            .prop("checked", isChecked)
-                            .css({
-                                "width": "15px", // Kích thước checkbox
-                                "height": "15px",
-
-                            })
-                            .appendTo(container);
-                    }
-                } ,
+               
                 { dataField: "PaymentTypeName", caption: "Payment Type" },
 
             ],
@@ -795,6 +947,147 @@
 
     });
 
+    $("#btnNewGenerate").on("click", function () {  
+            $('#overlay').fadeIn(200);
+            $('#popupGenerateNewEdit').fadeIn(200);
+    });
+    $("#btnUpdateGenerate").on("click", function () {
+        $('#overlay').fadeIn(200);
+        $('#popupGenerateNewEdit').fadeIn(200);
+               var id = idselectedRowGenerateID.id;
+        $.ajax({
+            url: '/Transaction/SearchGenerateDetail',
+            type: 'GET',
+            data: {
+                id: id,
+
+            },
+            traditional: true,
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+
+            console.log(result);
+                 let item = result[0];
+
+                    console.log(item);
+
+                    // ------ Percentage (radio + text + select)
+                    if (item.percentage && item.percentage !== "0") {
+                        $("#percentageRadio").prop("checked", true);
+                        $("#percentagetext").val(item.percentage);
+                        $("#percengegre").val(item.baseAmount); // Base / Subtotal chọn theo BaseAmount
+                    }
+
+                    // ------ Amount
+                    if (item.amount && item.amount !== "0") {
+                        $("#amountRadio").prop("checked", true);
+                        $("#amountPer").val(item.amount);
+                    }
+
+                    // ------ Formular
+                    if (item.UDFFunction) {
+                        $("#formularRadio").prop("checked", true);
+                        $("#formular").val(item.udfFunction);
+                    }
+
+                    // ------ Checkbox subtotal (1 = check, 0 = uncheck)
+                    $("#subTotal1").prop("checked", item.subtotal1 == "True");
+                    $("#subTotal2").prop("checked", item.subtotal2 == "True");
+                    $("#subTotal3").prop("checked", item.subtotal3 == "True");
+
+                    // ------ Transaction code dropdown
+                    $("#transactionsGernew").val(item.transactionCodeDetail);
+
+            },
+            error: function () {
+                alert("Không th? t?i báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+
+
+    $("#btnGenerateAuto").on("click", function () {
+
+        $('#overlay').fadeIn(200);
+        $('#popupGenerate').fadeIn(200);
+        $("#titlepopupGenerate").text("Generate For " + selectedRowData.Code);
+            var code = selectedRowData.Code;
+            loadGenerateData(code);
+    });
+    function loadGenerateData(code) {
+        $.ajax({
+            url: '/Transaction/SearchGenerate',
+            type: 'GET',
+            data: { code: code },
+            traditional: true,
+            crossDomain: false,
+            headers: { 
+                "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() 
+            },
+            success: function(result) {
+                console.log(result);
+                // Xử lý trực tiếp dữ liệu ở đây
+                initializeGenerateGrid(result);
+            },
+            error: function() {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    }
+         function initializeGenerateGrid(data) {
+
+                $("#gridContainerGenerate").dxDataGrid({
+                dataSource: data,
+                showBorders: true,
+                selection: { mode: "single" },
+                paging: { pageSize: 20 },
+                height: 200,
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [20, 50, 100],
+                    showInfo: true
+                },
+                filterRow: { visible: true },
+             columns: [
+                    { dataField: "id", caption: "ID",visible: false },
+                    { dataField: "transactionCode", caption: "TransactionCode" },
+                    { dataField: "description", caption: "Description" },
+                    { dataField: "percentage", caption: "Percentage" },
+
+                ],
+                groupPanel: {
+                    visible: false // ✅ Cho phép người dùng kéo thả để group thêm
+                },
+                scrolling: {
+                        mode: "standard", // Không dùng virtual để footer hiển thị đúng
+                        showScrollbar: "always",
+                        scrollByContent: true
+                    },
+                    paging: {
+                        pageSize: 50
+                    },
+                    pager: {
+                        visible: true,
+                        allowedPageSizes: [50, 100, 'all'],
+                        showPageSizeSelector: true,
+                        showInfo: true,
+                        showNavigationButtons: true
+                    },
+                        filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                // 🔥 Quan trọng: gán selectedRowData khi click chọn
+                 onRowClick: function (e) {
+                        idselectedRowGenerateID = e.data; // 🔥 lấy data của row vừa click
+                    console.log("Selected Row (RowClick):", selectedRowData);
+
+                }
+            });
+         }
 
         $("#btnOkAuto").on("click", function () {
             if (!ValidateForm()) return; // ✅ Kiểm tra form trước khi gửi
@@ -807,6 +1100,7 @@
                   var vatinfor = $("#vatinfor").val();
             var currList = $("#currList").val();
             var groupId = $("#groupnew").val();
+            var Arno = $("#listARAccountList").val();
             var subGroupID = $("#transactionNewSubGroupList").val();
             var adjustmentCode = $("#transactionsListnew").val();
             var subgroupCode = $("#transactionNewSubGroupList option:selected").text();
@@ -821,7 +1115,7 @@
             let manualPosting = $("#manualPosting").is(":checked");
             let paidOut = $("#paidOut").is(":checked");
             let isTaxInclude = $("#isTaxInclude").is(":checked");
-            let inactive = $("#inactive").is(":checked");
+          let inactive = $("#inactive").is(":checked") ? 0 : 1;
             let paymentType = 0;
 
             if ($("#creditCard").is(":checked")) {
@@ -868,6 +1162,7 @@
                     TaxInclude: isTaxInclude,
                     IsActive: inactive,
                     VatTypeID: vatinfor,
+                     ARNo: Arno,
                     CreatedBy: localStorage.getItem("Loginname"),
                     UserInsertID: localStorage.getItem("userID"),
                 },
@@ -895,6 +1190,174 @@
             });
      });
 
+         $("#btnSaveAuto").on("click", function () {
+                if (!ValidateForm()) return; // ✅ Kiểm tra form trước khi gửi
+
+                // ✅ Lấy giá trị từ form
+                var id = $("#idselectedRowDatasa").val();
+                var codenew = $("#codenew").val();
+                var descriptionnew = $("#descriptionnew").val();
+                var defaultPrice = $("#dfprice").val();
+                      var vatinfor = $("#vatinfor").val();
+                var currList = $("#currList").val();
+                var groupId = $("#groupnew").val();
+                var Arno = $("#listARAccountList").val();
+                var subGroupID = $("#transactionNewSubGroupList").val();
+                var adjustmentCode = $("#transactionsListnew").val();
+                var subgroupCode = $("#transactionNewSubGroupList option:selected").text();
+
+                var generateID = $("#generateID").val(); // nếu có input generateID
+                            var transactionTypeList = $("#transactionTypeList").val(); // nếu có input generateID
+                // ✅ Checkbox (chuyển sang 1 hoặc 0)
+                let depositPayments = $("#depositPayments").is(":checked");
+                let frontOfficePayments = $("#frontOfficePayments").is(":checked");
+                let arPayments = $("#arPayments").is(":checked");
+                let revenueGroup = $("#revenueGroup").is(":checked");
+                let manualPosting = $("#manualPosting").is(":checked");
+                let paidOut = $("#paidOut").is(":checked");
+                let isTaxInclude = $("#isTaxInclude").is(":checked");
+              let inactive = $("#inactive").is(":checked") ? 0 : 1;
+                let paymentType = 0;
+
+                if ($("#creditCard").is(":checked")) {
+                    paymentType = 1;
+                }
+                else if ($("#cash").is(":checked")) {
+                    paymentType = 2;
+                }
+                else if ($("#check").is(":checked")) {
+                    paymentType = 3;
+                }
+                else if ($("#others").is(":checked")) {
+                    paymentType = 4;
+                }
+                // ✅ Hiện spinner
+                $("#loadingSpinner").show();
+
+                // ✅ Gửi AJAX
+                $.ajax({
+                    url: '/Transaction/TransactionListSave',
+                    type: 'POST',
+                    data: {
+                        ID: id,
+                        Code: codenew,
+                        Description: descriptionnew,
+                        DefaultPrice: defaultPrice,
+                        CurrencyID: currList,
+                        GroupID: groupId,
+                        TransactionSubGroupID: subGroupID,
+                        AdjustmentCode: adjustmentCode,
+                        SubgroupCode: subgroupCode,
+                        GroupCode: groupCode,
+                        GroupType: groupType,
+                        TransactionGroupID: transactionGroupID,
+                         TransactionType: transactionTypeList,
+                        GenerateID: generateID,
+                        DepositPayments: depositPayments,
+                        FOPayments : frontOfficePayments,
+                        ARPayments: arPayments,
+                              PaymentType: paymentType,
+                        RevenueGroup: revenueGroup,
+                        ManualPosting: manualPosting,
+                        Paidout: paidOut,
+                        TaxInclude: isTaxInclude,
+                        IsActive: inactive,
+                        VatTypeID: vatinfor,
+                         ARNo: Arno,
+                        CreatedBy: localStorage.getItem("Loginname"),
+                        UserInsertID: localStorage.getItem("userID"),
+                    },
+                    traditional: true,
+                      crossDomain: false,
+                        headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                    success: function (result) {
+                            if (result.success) {
+                                    showToast('Success', result.message, true);
+                               
+                                       $("#btnPrint").trigger("click");
+                                        clearTransaction();
+                           } else {
+                                    showToast('Error', 'Please select before saving.', false);
+                           }
+                    console.log(result);
+
+                            $("#loadingSpinner").hide();
+                    },
+                    error: function () {
+                        alert("Không th? t?i báo cáo.");
+                        $("#loadingSpinner").hide();
+                    }
+                });
+         });
+
+
+               $("#btnOkeGenerate").on("click", function () {
+                    // ✅ Lấy giá trị từ form
+                     var id = $("#idselectedRowGenerateID").val();
+                    var transactionsGernew = $("#transactionsGernew").val();
+                     var percentagetext = $("#percentagetext").val();
+                      var percengegre = $("#percengegre").val();
+                      var amountPer = $("#amountPer").val();
+                    var formular = $("#formular").val();
+                        let percenOption = 0;
+
+                            if ($("#percentageRadio").is(":checked")) {
+                        percenOption = 1;
+                    }
+                            else if ($("#amountRadio").is(":checked")) {
+                        percenOption = 2;
+                    }
+                            else if ($("#formularRadio").is(":checked")) {
+                                percenOption = 3;
+                    }
+
+                         let subTotal1 = $("#subTotal1").is(":checked") ? 1 : 0;
+                        let subTotal2 = $("#subTotal2").is(":checked") ? 1 : 0;
+                        let subTotal3 = $("#subTotal3").is(":checked") ? 1 : 0;
+                    // ✅ Hiện spinner
+                    $("#loadingSpinner").show();
+
+                    // ✅ Gửi AJAX
+                    $.ajax({
+                        url: '/Transaction/GenerateSave',
+                        type: 'POST',
+                        data: {
+                            ID: id,
+                            transactionsGernew: transactionsGernew,
+                            percentagetext: percentagetext,
+                            percengegre: percengegre,
+                            amountPer: amountPer,
+                            formular: formular,
+                            percenOption: percenOption,
+                            CreatedBy: localStorage.getItem("Loginname"),
+                            UserInsertID: localStorage.getItem("userID"),
+                                subTotal1:subTotal1,
+                            subTotal2:subTotal2,
+                                subTotal3:subTotal3
+                        },
+                        traditional: true,
+                          crossDomain: false,
+                            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                        success: function (result) {
+                                if (result.success) {
+                                        showToast('Success', result.message, true);
+
+                                           $("#btnPrint").trigger("click");
+                                            clearTransaction();
+                               } else {
+                                        showToast('Error', 'Please select before saving.', false);
+                               }
+                        console.log(result);
+
+                                $("#loadingSpinner").hide();
+                        },
+                        error: function () {
+                            alert("Không th? t?i báo cáo.");
+                            $("#loadingSpinner").hide();
+                        }
+                    });
+             });
+
 $("#btnUpdate").on("click", function () {
     if (selectedRowData.length === 0) {
         showToast('Error', "Please select !", false);
@@ -907,13 +1370,13 @@ $("#btnUpdate").on("click", function () {
     // Hiển thị popup
     $("#popupNewTransaction").fadeIn(200);
     $('#overlay').fadeIn(200);
-
+                $("#idselectedRowDatasa").val(data.ID);
     // Điền dữ liệu vào các input text
     $("#codenew").val(data.Code);
     $("#descriptionnew").val(data.Description);
     $("#dfprice").val(data.DefaultPrice);
     $("#groupnew").val(data.GroupCode);
-
+                        $("#idselectedRowGenerateID").val(data.GenerateID);
     // Điền dữ liệu vào select
     $("#transactionNewSubGroupList").val(data.TransactionSubGroupID);
     $("#vatinfor").val(data.VatTypeID);
@@ -937,15 +1400,15 @@ $("#btnUpdate").on("click", function () {
     $("#interHotelSales").prop('checked', data.InterHotelSales === "True"); // nếu có field
 
     // Payment Type checkboxes
-    $("#creditCard").prop('checked', data.PaymentTypeName === "CreditCard");
-    $("#cash").prop('checked', data.PaymentTypeName === "Cash");
-    $("#check").prop('checked', data.PaymentTypeName === "Check");
-    $("#others").prop('checked', data.PaymentTypeName === "Others");
+       $("#creditCard").prop('checked', data.PaymentType == "1");
+    $("#cash").prop('checked',      data.PaymentType == "2");
+    $("#check").prop('checked',     data.PaymentType == "3");
+    $("#others").prop('checked',    data.PaymentType == "4");
     $("#eft").prop('checked', data.PaymentTypeName === "EFT");
     $("#manual").prop('checked', data.PaymentTypeName === "Manual");
 
     // Inactive checkbox
-    $("#inactive").prop('checked', data.IsActive === "False");
+        $("#inactive").prop('checked', data.IsActive === "False");
             // Gán select + chạy onchange
         $("#transactionNewSubGroupList")
             .val(data.TransactionSubGroupID)
@@ -972,11 +1435,7 @@ function clearTransaction() {
 }
 
 
-
-
-
-
-         $(document).off("click", "#btnDelete").on("click", "#btnDelete", function () {
+    $(document).off("click", "#btnDelete, #btnDeleteAuto").on("click", "#btnDelete, #btnDeleteAuto", function () {
             if (!selectedRowData) {
                     showToast('Error', 'Please select 1 row to delete.', false);
                 return;
@@ -985,7 +1444,7 @@ function clearTransaction() {
                 return; // Nếu chọn Cancel thì dừng
             }
             $.ajax({
-                url: '/Article/ArticleListDelete',
+                        url: '/Transaction/TransactionDelete',
                 type: 'POST',
                 data: {
                        id:selectedRowData.ID
@@ -999,6 +1458,47 @@ function clearTransaction() {
                      if (result.success) {
 
                               $("#btnPrint").trigger("click");
+                                             clearTransaction();
+                     } else {
+                              showToast('Error', result.message, false);
+                     }
+
+                },
+                error: function () {
+                    alert("Không th? t?i báo cáo.");
+                    $("#loadingSpinner").hide();
+                }
+            });
+
+
+
+
+
+
+    $(document).off("click", "btnDeleteGenerate").on("click", "btnDeleteGenerate", function () {
+            if (!idselectedRowGenerateID) {
+                    showToast('Error', 'Please select 1 row to delete.', false);
+                return;
+            }
+            if (!confirm("Are you sure you want to delete item?")) {
+                return; // Nếu chọn Cancel thì dừng
+            }
+            $.ajax({
+                        url: '/Transaction/TransactionGenerateDelete',
+                type: 'POST',
+                data: {
+                       id:idselectedRowGenerateID.id
+
+
+                },
+                traditional: true,
+                  crossDomain: false,
+                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                     if (result.success) {
+
+                          var code = selectedRowData.Code;
+                              loadGenerateData(code);
                      } else {
                               showToast('Error', result.message, false);
                      }
