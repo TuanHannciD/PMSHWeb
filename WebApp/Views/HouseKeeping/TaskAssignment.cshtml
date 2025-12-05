@@ -813,6 +813,9 @@
                 type="button">
             <i class="fa-solid fa-file-excel"></i> Excel
         </button>
+       <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid1" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-print"></i> Print
+        </button>
 
         <!-- Nút Close bên phải -->
         <span onclick="$('#gridContainerInner').fadeOut(200)"
@@ -922,6 +925,9 @@
                 type="button">
             <i class="fa-solid fa-file-excel"></i> Excel
         </button>
+           <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid2" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-print"></i> Print
+        </button>
         <span onclick="$('#gridContainerInner2').fadeOut(200)"
               style="cursor: pointer; font-size: 18px; color: BLACK;"
               title="Close">
@@ -995,6 +1001,9 @@
                 class="mui-button mui-button-new"
                 type="button">
             <i class="fa-solid fa-file-excel"></i> Excel
+        </button>
+        <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid3" class="mui-button mui-button-new" type="button">
+            <i class="fa-solid fa-print"></i> Print
         </button>
         <span onclick="$('#gridContainerInner3').fadeOut(200)"
               style="cursor: pointer; font-size: 18px; color: BLACK;"
@@ -2881,7 +2890,7 @@
             });
         });
 
-            function initializeRoomAttendantDailyWorkSheetGrid(data) {
+   function initializeRoomAttendantDailyWorkSheetGrid(data) {
         const columnWidth = 100;
 
         $("#logGridReportContainer").dxDataGrid({
@@ -2890,7 +2899,7 @@
             columnAutoWidth: false,
                 height: "100%",
                  grouping: {
-            autoExpandAll: false
+            autoExpandAll: true
         },
         groupPanel: {
             visible: false
@@ -3016,7 +3025,7 @@
             columnAutoWidth: false,
                 height: "100%",
                  grouping: {
-            autoExpandAll: false
+             autoExpandAll: true
         },
         groupPanel: {
             visible: false
@@ -3160,7 +3169,7 @@
             columnAutoWidth: false,
                 height: "100%",
                  grouping: {
-            autoExpandAll: false
+             autoExpandAll: true
         },
         groupPanel: {
             visible: false
@@ -3524,62 +3533,68 @@
                 });
             });
         });
-                $("#btnExportExcel3").click(function () {
-                   const grid = $("#logGridReportContainer3").dxDataGrid("instance");
-                var selectedReport = 'Supervisor Hoor Checklist';
-            if (!selectedReport) {
-                alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
-                return;
-            }
 
-                         const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-            const worksheet = workbook.addWorksheet("Sheet 1");
+    $("#btnExportExcel3").click(function () {
+                const grid = $("#logGridReportContainer3").dxDataGrid("instance");
+            var selectedReport = 'Supervisor Hoor Checklist';
+        if (!selectedReport) {
+            alert("Vui lòng ch?n báo cáo tru?c khi xu?t Excel.");
+            return;
+        }
 
-            // === T?o header công ty (dòng 1) ===
-              worksheet.addRow([companyName]);
-            worksheet.mergeCells('A1:E1');
-            worksheet.getRow(1).font = { bold: true };
-            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+                        const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const worksheet = workbook.addWorksheet("Sheet 1");
 
-            // === Dòng 2: Th?i gian xu?t (ph?i) ===
-            const now = new Date();
-            const exportDate = now.toLocaleString("vi-VN");
-            worksheet.addRow(['', '', '', '', ' ' + exportDate]);
-            worksheet.mergeCells('E2:H2');
-            worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+        // === T?o header công ty (dòng 1) ===
+            worksheet.addRow([companyName]);
+        worksheet.mergeCells('A1:E1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
 
-            // === Dòng 3–4: Tr?ng
-            worksheet.addRow([]);
-            worksheet.addRow([]);
+        // === Dòng 2: Th?i gian xu?t (ph?i) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+        worksheet.mergeCells('E2:H2');
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
 
-            // === Dòng 5: Tên báo cáo ? gi?a ===
-            const reportRow = worksheet.addRow(['', '', selectedReport]);
-            worksheet.mergeCells('C5:F5');
-            reportRow.font = { bold: true, size: 14 };
-            reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+        // === Dòng 3–4: Tr?ng
+        worksheet.addRow([]);
+        worksheet.addRow([]);
 
-            // === Dòng 6: Tr?ng tru?c khi xu?t d? li?u
-            worksheet.addRow([]);
+        // === Dòng 5: Tên báo cáo ? gi?a ===
+        const reportRow = worksheet.addRow(['', '', selectedReport]);
+        worksheet.mergeCells('C5:F5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            // === Export d? li?u t? DevExtreme (b?t d?u t? dòng 7)
-            DevExpress.excelExporter.exportDataGrid({
-                component: grid,
-                worksheet: worksheet,
-                autoFilterEnabled: true,
-                topLeftCell: { row: 7, column: 1 } // d? li?u b?t d?u t? dòng 7
-            }).then(function () {
-                // Footer
-                const lastRow = worksheet.lastRow.number + 2;
-                worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
-                worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
-                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-                worksheet.getCell(`A${lastRow}`).font = { italic: true };
+        // === Dòng 6: Tr?ng tru?c khi xu?t d? li?u
+        worksheet.addRow([]);
 
-                // Ghi file
-                let fileName = selectedReport + ".xlsx";
-                workbook.xlsx.writeBuffer().then(function (buffer) {
-                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
-                });
+        // === Export d? li?u t? DevExtreme (b?t d?u t? dòng 7)
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 } // d? li?u b?t d?u t? dòng 7
+        }).then(function () {
+            // Footer
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+            // Ghi file
+            let fileName = selectedReport + ".xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
             });
         });
+    });
+
+
+
+   
+   
 </script>

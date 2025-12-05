@@ -25,12 +25,17 @@ namespace BaseBusiness.BO
         }
         public static List<hkpTaskSheetDetailModel> GethkpTaskSheetDetail(DateTime taskdateauto)
         {
-           
+            string date = taskdateauto.ToString("yyyy-MM-dd");
 
-            string query = $@"SELECT DISTINCT a.RoomNo, a.FacilityTask FROM dbo.hkpTaskSheetDetail a WITH (NOLOCK), dbo.hkpTaskSheet b WITH (NOLOCK) " +
-                                            "WHERE a.TaskSheetID = b.ID AND  a.Status = 0 AND DATEDIFF(DAY,b.TaskSheetDate,'" + taskdateauto + "')=0 ";
+            string query = $@"
+        SELECT DISTINCT a.RoomNo, a.FacilityTask 
+        FROM dbo.hkpTaskSheetDetail a WITH (NOLOCK)
+        JOIN dbo.hkpTaskSheet b WITH (NOLOCK) ON a.TaskSheetID = b.ID
+        WHERE a.Status = 0
+          AND CAST(b.TaskSheetDate AS DATE) = '{date}'";
 
             return instance.GetList<hkpTaskSheetDetailModel>(query);
         }
+
     }
 }

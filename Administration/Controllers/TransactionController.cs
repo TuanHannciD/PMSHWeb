@@ -204,11 +204,11 @@ namespace Administration.Controllers
             try
             {
 
-                hkpAttendantPointBO.Instance.Delete(id);
+                TransactionsBO.Instance.Delete(id);
 
 
 
-                return Json(new { success = true, message = "AttendantPoint delete successfully." });
+                return Json(new { success = true, message = "Transaction  delete successfully." });
             }
             catch (Exception ex)
             {
