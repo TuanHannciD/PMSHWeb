@@ -484,7 +484,15 @@
         }
     }
     $("#deleteTransactionBilling").on("click", function() {
+        var grid = $("#gridContainerBilling").dxDataGrid("instance");
 
+        var selectedRows = grid.getSelectedRowsData();
+
+        var selectedIds = selectedRows.map(row => row.id);
+        if(selectedIds.length == 0){
+            showToast('Error', "Please choose at least 1 Transaction", false);
+            return;
+         }
         localStorage.setItem("currentFromID", "modalConfirmDeleteTransaction");
         const crashierLogin = localStorage.getItem("crashierLogin");
         if(crashierLogin == "NotYet"){
@@ -501,10 +509,10 @@
         var selectedRows = grid.getSelectedRowsData();
 
         var selectedIds = selectedRows.map(row => row.id);
-        if(selectedIds.length == 0){
-            showToast('Error', "Please choose at least 1 Transaction", false);
+        if($('#codeDeletionReason').val() == ""){
+            showToast('Error', "Please choose Reason", false);
             return;
-         }
+        }
         $.ajax({
             url: '/Billing/DeleteTransaction',
             type: 'POST',
