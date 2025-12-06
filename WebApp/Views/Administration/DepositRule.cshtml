@@ -1,0 +1,272 @@
+﻿@using DevExpress.XtraReports.UI
+
+@{
+    var listUser = ViewBag.UsersList;
+}
+<style>
+
+
+    .dx-datagrid-headers .dx-header-row td {
+        white-space: pre-line !important;
+        text-align: center;
+        font-size: 11px;
+    }
+
+
+    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
+        display: none;
+    }
+
+
+    .filter_wrapper {
+        /*     background-color: #ececec; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+        .button_wrapper .fa-solid {
+            margin-right: 5px;
+        }
+
+    .selected {
+        background-color: #4CAF50; /* Màu xanh */
+        color: white;
+    }
+
+
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+
+    .sticky-header input[type="date"].form-control-sm {
+        font-size: 12px !important; /* dúng 12?px */
+        height: calc(1.1em + .2rem + 2px); /* gi? cùng chi?u cao */
+    }
+
+    .sticky-header label {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
+
+    .tomselect-custom {
+        width: 250px;
+        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
+        font-size: 0.65rem;
+    }
+
+    .sort-select {
+        max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
+        font-size: 12px;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .sort-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none !important;
+        padding-right: 10px !important;
+    }
+
+</style>
+<div class="text-center" id="reportTitle" style="font-size: 20px">Deposit Rules Search</div>
+
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex align-items-center gap-3 p-2" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+
+        <div class="d-flex flex-column ">
+
+            <div class="d-flex align-items-center">
+                <input type="text" id="idattendant" name="idattendant" style="display:none !important" class="form-control form-control-sm w-auto" />
+                <div class="d-flex align-items-center me-4">
+                    <label for="tracetime" class="me-2 mb-0">Deposit Code:</label>
+                    <input type="text" id="codeInput"
+                           class="form-control form-control-sm w-auto" />
+                </div>
+                <div class="d-flex align-items-center me-4">
+                    <label for="tracetime" class="me-2 mb-0">Description:</label>
+                    <input type="text" id="descriptionInput" class="form-control form-control-sm w-auto" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-2">
+        <button id="btnSearch" class="mui-button button-report-view"><i class="fa-solid fa-eye"></i> View</button>
+        <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
+        <button id="btnUpdate" class="mui-button mui-button-edit"> <i class="fa-solid fa-pen"></i> Edit</button>
+        <button id="btnDelete" class="mui-button button-report-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button id="btnExportExcel" class="mui-button mui-button-export" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
+    </div>
+
+</div>
+<div class="mui-card">
+    <div id="gridContainer" class="gridContainer mt-2"></div>
+</div>
+<!-- Modal Popup for New Item -->
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="itemModalLabel">New/Edit Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form id="itemForm">
+                    <div class="container-fluid" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+
+                        <div class="row mb-1 align-items-center">
+                            <div class="col-auto">
+                                <label for="txtcode" class="form-label mb-0">Deposit Rule Code</label>
+                                <input type="text" id="txtcode" name="txtcode" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-auto d-flex align-items-center">
+                                <input type="checkbox" id="inactive" name="inactive" class="form-check-input me-2" />
+                                <label for="inactive" class="form-check-label text-danger mb-0">Inactive</label>
+                            </div>
+                        </div>
+
+                        <div class="row mb-1">
+                            <div class="col">
+                                <label for="txtname" class="form-label">Name</label>
+                                <input type="text" id="txtname" name="txtname" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-1">
+                            <div class="col">
+                                <label for="txtdescription" class="form-label">Description</label>
+                                <textarea id="txtdescription" name="txtdescription" class="form-control" rows="4" style="background-color:#ffffe6"></textarea>
+                            </div>
+                        </div>
+                        <input type="hidden" id="id" name="id" value="0" />
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+
+<script>
+    $(document).ready(function () {
+         $("#btnSearch").trigger("click");
+    });
+    let selectedRowData = null;
+      $("#btnNew").click(function () {
+           $("#itemForm")[0].reset();
+           $("#id").val("0");
+           $("#itemModalLabel").text("Add Deposit Rule");
+           $("#itemModal").modal("show");
+      });
+         function getData(data){
+           var listUser = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.UsersList ?? new List<object>()));
+          $("#gridContainer").dxDataGrid({
+              dataSource: data,
+              showBorders: true,
+              selection: { mode: "single" },
+              paging: { pageSize: 20 },
+              height: 500,
+              width: "100%",
+              pager: {
+                  visible: true,
+                  showPageSizeSelector: true,
+                  allowedPageSizes: [20, 50, 100],
+                  showInfo: true,
+                  showNavigationButtons:true
+              },
+              filterRow: { visible: true },
+             columns: [
+                         { dataField: "id", caption: "ID", width: 80, visible: false },
+                         { dataField: "code", caption: "Code" , width: 130 },
+                         { dataField: "description", caption: "Description", width: 250 },
+                         { dataField: "type", caption: "Type", width: 100 },
+                         { dataField: "amountValue", caption: "Amount", width: 70 },
+                         { dataField: "currencyID", caption: "$", width: 50 },
+                         { dataField: "daysBeforeArrival", caption: "Days Before Arrival", width: 120 },
+                         { dataField: "daysAfterBooking", caption: "Days After Booking", width: 120 },
+                         {
+                            dataField: "userInsertID",
+                            caption: "Create By",
+                            width: 70,
+                            lookup: {
+                                dataSource: listUser,
+                                valueExpr: "ID",   // giá trị thực tế trong data gốc (userInsertID)
+                                displayExpr: "LoginName" // hiển thị login name từ danh sách
+                            }
+                         },
+                         { dataField: "createDate", caption: "Create Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 150 },
+                         {
+                            dataField: "userUpdateID",
+                            caption: "Update By",
+                            width: 70,
+                            lookup: {
+                                dataSource: listUser,
+                                valueExpr: "ID",   // giá trị thực tế trong data gốc (userInsertID)
+                                displayExpr: "LoginName" // hiển thị login name từ danh sách
+                            }
+                         },
+                         { dataField: "updateDate", caption: "Update Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 150 },
+                     ],
+              scrolling: {
+                      mode: "standard",
+                      showScrollbar: "always",
+                      scrollByContent: true
+                  },
+               onSelectionChanged: function(e){
+                  selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+                  console.log("Selected Row:", selectedRowData);
+              }
+         });
+     }
+
+       $(document).off("click", "#btnSearch").on("click", "#btnSearch", function () {
+          $("#loadingSpinner").show();
+          $.ajax({
+              url: "/Administration/GetDepositRule/",
+              type: "GET",
+              data: {
+                 code: $("#codeInput").val(),
+                 description: $("#descriptionInput").val(),
+              },
+              traditional: true,
+                   crossDomain: false,
+                     headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+              success: function(data){
+                  getData(data);
+                  $("#loadingSpinner").hide();
+              },
+              error: function(xhr, status, error){
+                 alert("Không thể tải dữ liệu");
+                 $("#loadingSpinner").hide();
+              }
+        });
+    });
+
+</script>
