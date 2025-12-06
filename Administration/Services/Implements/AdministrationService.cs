@@ -333,9 +333,9 @@ namespace Administration.Services.Implements
                       ORDER BY Sequence ASC")
                     };
 
-                    DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
-                    return myTable;
-                }
+            DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+            return myTable;
+        }
         public DataTable Currency()
         {
             SqlParameter[] param = new SqlParameter[]
@@ -383,7 +383,7 @@ namespace Administration.Services.Implements
         {
             SqlParameter[] param = new SqlParameter[]
             {
-                new SqlParameter("@UserID", userID ?? "")        
+                new SqlParameter("@UserID", userID ?? "")
             };
 
             DataTable myTable = DataTableHelper.getTableData("spPropertyPermissionSearch", param);
@@ -437,7 +437,7 @@ namespace Administration.Services.Implements
             return myTable;
         }
 
-        public DataTable PersonInChargeData(string code, string description, string group, string zone, string  isActive)
+        public DataTable PersonInChargeData(string code, string description, string group, string zone, string isActive)
         {
             SqlParameter[] param = new SqlParameter[]
             {

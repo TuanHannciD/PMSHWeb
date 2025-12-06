@@ -42,7 +42,7 @@ namespace Administration.Controllers
         }
         [HttpGet]
 
-        public IActionResult GetMemberList(string code, string name, int inactive)
+        public IActionResult GetMemberList(string code, string name, int inactive) //Get Member Card
         {
             try
             {
@@ -203,6 +203,7 @@ namespace Administration.Controllers
             }
         }
         [HttpPost]
+        #region DeleteMenber
         public ActionResult DeleteMember()
         {
             try
@@ -224,6 +225,7 @@ namespace Administration.Controllers
             }
 
         }
+        #endregion
         [HttpGet]
         public IActionResult GetMemberCategory(string code, string name, int inactive)
         {
@@ -1716,7 +1718,7 @@ namespace Administration.Controllers
                               {
                                   Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
                                   Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",                               
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
                                   InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
                                   CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
                                   CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
@@ -1928,7 +1930,7 @@ namespace Administration.Controllers
 
             // return PartialView("_ReportViewerPartial", report);
         }
-      
+
         public IActionResult MarketType()
         {
             return View(); // View này sẽ chứa DataGrid + script gọi API
@@ -3305,7 +3307,7 @@ namespace Administration.Controllers
             {
                 pt.CloseConnection();
             }
-        }     
+        }
         [HttpPost]
         public ActionResult UpdateCommentType()
         {
@@ -4082,7 +4084,7 @@ namespace Administration.Controllers
             }
 
         }
-         [HttpGet]
+        [HttpGet]
         public IActionResult GetPropertyType(string code, string description, int sequence)
         {
             try
@@ -4199,7 +4201,7 @@ namespace Administration.Controllers
                 string loginName = HttpContext.Session.GetString("LoginName") ?? "";
                 if (string.IsNullOrWhiteSpace(member.Code))
                     return Json(new { success = false, message = "Code không được để trống." });
-              
+
                 if (member.ID == 0) // Insert mới
                 {
                     member.CreatedBy = loginName;
@@ -4312,7 +4314,7 @@ namespace Administration.Controllers
                 pt.BeginTransaction();
 
                 ReservationTypeModel member = new ReservationTypeModel();
-                
+
                 // Lấy dữ liệu từ form
                 member.Code = Request.Form["code"].ToString();
                 member.Name = Request.Form["name"].ToString();
@@ -4743,7 +4745,7 @@ namespace Administration.Controllers
 
                 hkpEmployeeModel member = new hkpEmployeeModel();
 
-  
+
 
                 member.Name = Request.Form["txtname"].ToString();
                 member.Description = Request.Form["txtdescription"].ToString();
@@ -5115,7 +5117,7 @@ namespace Administration.Controllers
                                   PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
                                   PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
                                   UserID = !string.IsNullOrEmpty(d["UserID"].ToString()) ? d["UserID"] : "",
-                                  LoginName = !string.IsNullOrEmpty(d["LoginName"].ToString()) ? d["LoginName"] : "",                               
+                                  LoginName = !string.IsNullOrEmpty(d["LoginName"].ToString()) ? d["LoginName"] : "",
                                   CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
                                   CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
                                   UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
@@ -5155,17 +5157,17 @@ namespace Administration.Controllers
 
                 PropertyPermissionModel member = new PropertyPermissionModel();
 
-             
+
                 string propertyTypeValue = Request.Form["propertyType"];
                 member.PropertyID = int.TryParse(propertyTypeValue, out int cId) ? cId : 0;
 
                 string userValue = Request.Form["chooseuser"];
                 member.UserID = int.TryParse(userValue, out int uId) ? uId : 0;
-                
+
                 member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
                 member.UpdatedBy = member.CreatedBy;
                 member.CreatedDate = DateTime.Now;
-                member.UpdatedDate = DateTime.Now;               
+                member.UpdatedDate = DateTime.Now;
 
                 long memberId = PropertyPermissionBO.Instance.Insert(member);
 
@@ -5369,7 +5371,7 @@ namespace Administration.Controllers
             {
                 pt.CloseConnection();
             }
-        }     
+        }
 
         public ActionResult CreateMessage()
         {
@@ -5455,7 +5457,7 @@ namespace Administration.Controllers
         {
             try
             {
-                DataTable dataTable = _iAdministrationService.PostingHistory(fromDate, toDate, fromFolioID, toFolioID, actionType , user);
+                DataTable dataTable = _iAdministrationService.PostingHistory(fromDate, toDate, fromFolioID, toFolioID, actionType, user);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -5512,7 +5514,7 @@ namespace Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult PersonInChargeData( string code, string description, string group, string zone,string  isActive)
+        public IActionResult PersonInChargeData(string code, string description, string group, string zone, string isActive)
         {
             code = code ?? "";
             description = description ?? "";
@@ -5551,7 +5553,7 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-           
+
         }
         [HttpPost]
         public IActionResult PersonInChargeSave(int id, string codenew, string telephonenew, string handphonenew, string emailnew, string namenew, string descriptionnew, string group, string zone, int isActive, string user)
@@ -5578,9 +5580,9 @@ namespace Administration.Controllers
                         Name = namenew?.Trim(),
                         Description = descriptionnew?.Trim(),
                         Inactive = (isActive == 1),
-                        Telephone= telephonenew,
-                        MobilePhone= handphonenew,
-                        Email= emailnew,
+                        Telephone = telephonenew,
+                        MobilePhone = handphonenew,
+                        Email = emailnew,
                         CreatedBy = user,
                         PersonInChargeGroupID = int.Parse(group),
                         PersonInChargeZoneID = int.Parse(zone),

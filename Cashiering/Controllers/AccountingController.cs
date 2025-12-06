@@ -835,8 +835,7 @@ namespace Cashiering.Controllers
                     _Model.UpdatedBy = user;
                     _Model.UpdatedDate = businessDateModel[0].BusinessDate;
                     _Model.ID = int.Parse(id);
-                    ARAccountTypeBO.Instance.Update(_Model);
-              
+                    ARAccountTypeBO.Instance.Update(_Model);           
                 }
                 else
                 {

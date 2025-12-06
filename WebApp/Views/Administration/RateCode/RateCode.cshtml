@@ -1,0 +1,477 @@
+@using DevExpress.XtraReports.UI
+
+@{
+    dynamic? listRateCode = @ViewBag.RateCodeList;
+    dynamic? listRateCate = @ViewBag.RateCateList;
+    dynamic? listRateClass = @ViewBag.RateClass;
+}
+<style>
+    .dx-datagrid-headers .dx-header-row td {
+        white-space: pre-line !important;
+        text-align: center;
+        font-size: 11px;
+    }
+
+
+    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default,
+    .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
+        display: none;
+    }
+
+    .filter_wrapper {
+        /*     ; */
+        /*   margin: 0px 8px 14px 8px; */
+        padding: 18px 0px 0px 14px;
+        border-radius: 8px;
+    }
+
+    .gridContainer {
+        margin: 0px 8px;
+    }
+
+    .button_wrapper {
+        display: flex;
+        column-gap: 12px;
+        margin: 0px 8px;
+    }
+
+    .button_wrapper .fa-solid {
+        margin-right: 5px;
+    }
+
+    .selected {
+        ;
+        /* Màu xanh */
+        color: white;
+    }
+
+    .sticky-header .form-control-sm {
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
+    }
+
+    .sticky-header label[class*="me-"] {
+        margin-right: .5rem !important;
+    }
+
+    .sticky-header input[type="date"].form-control-sm {
+        font-size: 12px !important;
+        /* dúng 12?px */
+        height: calc(1.1em + .2rem + 2px);
+        /* gi? cùng chi?u cao */
+    }
+
+    .sticky-header label {
+        font-size: 12px !important;
+        line-height: 1.2;
+    }
+
+
+    .sort-select {
+        max-width: 130px;
+        /* ho?c 100px n?u mu?n nh? hon */
+        font-size: 12px;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .sort-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        -image: none !important;
+        padding-right: 10px !important;
+    }
+
+    button:disabled {
+        pointer-events: none;
+        /* Không cho hover/click */
+        opacity: 0.6;
+        /* Cho nó mờ đi */
+        cursor: not-allowed;
+        /* Hiện con trỏ cấm */
+        important;
+        /* tuỳ chỉnh màu khi disable */
+    }
+
+    .tomselect-custom {
+        width: 100px;
+        min-height: 30px;
+        /* hoặc tùy theo chiều cao bạn muốn */
+        font-size: 12px !important;
+    }
+
+    .tomselect-custom .ts-control {
+        padding-left: 8px !important;
+        /* hoặc bất kỳ giá trị nào bạn muốn */
+    }
+
+    .hide-band .dx-datagrid-bands>tr:first-child {
+        display: none !important;
+    }
+
+    .ts-dropdown .ts-dropdown-content>div:first-child {
+        position: sticky;
+        top: 0;
+        : #f8f9fa;
+        z-index: 10;
+    }
+
+    .custom-modal-width {
+        max-width: 560px !important;
+        /* bạn chỉnh số px tuỳ ý */
+
+
+    }
+</style>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+<div class="text-center" id="reportTitle" style="font-size: 20px">Rate Code vs </div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1"
+        style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
+        <div class="d-flex align-items-center me-2">
+            <label class="me-2 mb-0">Rate Code:</label>
+
+            <select id="code" class="form-control form-control-sm w-auto">
+                <option value="0">-- Rate Code --</option>
+                @foreach (dynamic u in ViewBag.RateCodeList)
+                {
+                    <option value="@u.RateCode">@u.RateCode \ @u.Descripton</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-center me-2">
+            <label class="me-2 mb-0">Rate Category:</label>
+
+            <select id="category" class="form-control form-control-sm w-auto">
+                <option value="0">-- Select Rate Category --</option>
+                @foreach (dynamic u in ViewBag.RateCateList)
+                {
+                    <option value="@u.Code">@u.Code \ @u.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="">
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnView" class="mui-button mui-button-new"><i
+                class="fa-solid fa-eye"></i>View</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnNew" class="mui-button mui-button-new"
+            type="button"> <i class="fa-solid fa-file-excel"></i> New</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnEdit" class="mui-button mui-button-new"
+            type="button"> <i class="fa-solid fa-file-excel"></i> Edit</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnDelete" class="mui-button mui-button-new"
+            type="button"> <i class="fa-solid fa-file-excel"></i> Delete</button>
+        <button style="border-radius: 4px;  margin-right: 6px;" id="btnHistory" class="mui-button mui-button-new"
+            type="button"> <i class="fa-solid fa-file-excel"></i> History</button>
+    </div>
+</div>
+<div class="mui-card">
+    <div id="gridWrapper" style="max-height: 500px;">
+        <div class="gridContainer mt-2" id="gridContainer"></div>
+    </div>
+    <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-width">
+            <!-- modal-lg để form rộng hơn -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="itemModalLabel">New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="itemForm">
+                        <input type="hidden" id="modalItemId" name="id" value="0" />
+                        <div class="row g-3">
+                            <div style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
+                                <label>Rate code:</label>
+                                <input type="text" id="txtRateCode" name="rateCode" class="form-control mb-2" />
+                                <label>Description</label>
+                                <input type="text" id="txtDescription" name="description" class="form-control mb-2" />
+
+                                <div class="">
+                                    <label class="">Rate Class:</label>
+                                    <select id="modalRateCodeSel" name="rateClass"
+                                        class="form-control form-control-sm ">
+                                        <option value="0">-- Rate Class --</option>
+                                        @foreach (dynamic u in ViewBag.RateClass)
+                                        {
+                                            <option value="@u.ID">@u.Code \ @u.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="">
+                                    <label class="">Rate Category:</label>
+                                    <select id="modalRateCategorySel" name="rateCategory"
+                                        class="form-control form-control-sm ">
+                                        <option value="0">-- Rate Category --</option>
+                                        @foreach (dynamic u in ViewBag.RateCateList)
+                                        {
+                                            <option value="@u.ID">@u.Code \ @u.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <label>Sequence:</label>
+                                <input type="number" id="txtSequence" name="sequence" class="form-control mb-2"
+                                    min="1" />
+                                <div class="radio">
+                                    <label for="">Default Display</label>
+                                    <div class="group-box">
+                                        <label><input type="radio" name="display" value="1" id="rdonet" checked>
+                                            .Net</label><br />
+                                        <label><input type="radio" name="display" value="0" id="rdoC++">
+                                            C++</label><br />
+                                    </div>
+                                </div>
+                                @* Check box *@
+                                <div class="checkbox-option mt-2">
+                                    <label>Properties:</label>
+                                    <div class="checkbox">
+                                        <input class="form-check-input" type="checkbox" id="chkDayUse" name="dayUse"
+                                            value="1">
+                                        <label class="form-check-label" for="chkDayUse" style="margin-bottom: 0;">
+                                            DayUse
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input class="form-check-input" type="checkbox" id="chkActive" name="active"
+                                            value="1">
+                                        <label class="form-check-label" for="chkActive" style="margin-bottom: 0;">
+                                            Active
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input class="form-check-input" type="checkbox" id="chkNegotiated"
+                                            name="negotiated" value="1">
+                                        <label class="form-check-label" for="chkNegotiated" style="margin-bottom: 0;">
+                                            Negotiated
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input class="form-check-input" type="checkbox" id="chkIndividualOnly"
+                                            name="individualOnly" value="1">
+                                        <label class="form-check-label" for="chkIndividualOnly"
+                                            style="margin-bottom: 0;">
+                                            Individual Only
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input class="form-check-input" type="checkbox" id="chkIsModifiable"
+                                            name="isModifiable" value="1">
+                                        <label class="form-check-label" for="chkIsModifiable" style="margin-bottom: 0;">
+                                            Is Modifiable
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loadingSpinner"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+</div>
+<script>
+    DevExpress.localization.locale("vi");
+
+    var selectedRowData = null;
+
+    $(document).ready(function () {
+        reloadGrid()
+    });
+    function reloadGrid() {
+        console.log("Calling reloadGrid");
+
+        $("#loadingSpinner").show();
+
+        $.ajax({
+            url: '/Administration/RateCode/GetAllRateCode',
+            type: 'GET',
+            data: {
+                rateCode: $("#code").val() || "",
+                rateCategory: $("#category").val() || ""
+            },
+            success: function (data) {
+                loadTelephoneGrid(data);
+                $("#loadingSpinner").hide();
+            },
+            error: function () {
+                alert("Không thể tải dữ liệu");
+                $("#loadingSpinner").hide();
+            }
+        });
+    }
+
+
+    function initializeTomSelects() {
+        const selectors = [];
+
+        for (const id of selectors) {
+            const el = document.querySelector(id);
+            if (!el) continue;
+
+            if (el.tomselect) el.tomselect.destroy();
+
+            const ts = new TomSelect(el, {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                allowEmptyOption: true,
+                placeholder: '',
+                persist: false,
+                maxOptions: 1000,
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                }
+            });
+
+        }
+    }
+
+    $(document).off("click", "#btnView").on("click", "#btnView", function () {
+        reloadGrid();
+    });
+
+    $(document).ready(function () {
+        initializeTomSelects();
+    })
+
+    function loadTelephoneGrid(data) {
+        $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            height: 500,
+            width: "100%",
+            columnAutoWidth: false,
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            selection: { mode: "single" },
+            columns: [
+                { dataField: "rateCode", caption: "Code", width: "30%" },
+                { dataField: "description", caption: "Description", width: "30%" },
+                { dataField: "category", caption: "Category", width: "30%" },
+            ],
+            scrolling: {
+                mode: "standard", // Không dùng virtual để footer hiển thị đúng
+                showScrollbar: "always",
+                scrollByContent: true
+            },
+            paging: {
+                pageSize: 20
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [20, 50, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            columnAutoWidth: true,
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            summary: {
+                totalItems: [{
+                    column: "noOfNights",
+                    summaryType: "sum",
+                    displayFormat: "Total: {0}",
+                    showInColumn: "noOfNights"
+                }]
+            },
+            // 🔥 Quan trọng: gán selectedRowData khi click chọn
+            onSelectionChanged: function (e) {
+                if (e.selectedRowsData.length > 0) {
+                    selectedRowData = e.selectedRowsData[0]; // gán row đang chọn
+                    console.log("Selected Row:", selectedRowData);
+                } else {
+                    selectedRowData = null;
+                }
+            }
+        });
+    }
+
+    $("#btnNew").click(function () {
+        $("#itemForm")[0].reset();
+        $("#modalItemId").val(0);
+        $("#itemModalLabel").text("New Rate Code");
+        $("#itemModal").modal("show");
+    });
+
+    // Edit: open modal and populate values from API
+    $(document).off("click", "#btnEdit").on("click", "#btnEdit", function () {
+        if (!selectedRowData) {
+            showToast('Error', 'Please select a row first!', false);
+            return;
+        }
+        console.log("selectedRowData", selectedRowData)
+        openEditRateCode(selectedRowData);
+    });
+
+    function openEditRateCode(selectedRowData) {
+
+    }
+
+    // Shared save function for New and Edit
+    $(document).off("click", "#btnSaveItem").on("click", "#btnSaveItem", function () {
+        saveRateCode();
+    });
+
+    function saveRateCode() {
+        var formElement = document.getElementById("itemForm");
+        var fd = new FormData(formElement);
+
+        // Lấy UserID từ localStorage
+        var userId = localStorage.getItem("userID");
+        fd.append("userID", userId);
+
+        $("#loadingSpinner").show();
+
+        $.ajax({
+            url: "/Administration/RateCode/Save",
+            type: "POST",
+            data: fd,
+            processData: false, // bắt buộc khi dùng FormData
+            contentType: false, // bắt buộc khi dùng FormData
+
+            success: function (res) {
+                $("#loadingSpinner").hide();
+                var ok = false;
+                var msg = "Saved successfully";
+
+                if (res) {
+                    if (typeof res === 'object') {
+                        ok = !!res.success || !!res.isSuccess || res === true;
+                        msg = res.message || msg;
+                    } else if (res.toString().toLowerCase().includes('success')) {
+                        ok = true;
+                    }
+                }
+
+                if (ok) {
+                    DevExpress.ui.notify("Save success", "success", 2000);
+                    $("#itemModal").modal("hide");
+                    reloadGrid();
+                } else {
+                    DevExpress.ui.notify(msg || "Save failed", "error", 3000);
+                }
+            },
+
+            error: function () {
+                $("#loadingSpinner").hide();
+                DevExpress.ui.notify("Request error", "error", 2000);
+            }
+        });
+    }
+
+</script>

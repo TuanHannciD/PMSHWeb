@@ -9,7 +9,7 @@ namespace BaseBusiness.util
 {
     public class DataTableHelper
     {
-         static public DataTable getTableData(string procedureName)
+        static public DataTable getTableData(string procedureName)
         {
             DataTable table = new DataTable();
             SqlConnection mySqlConnectionConnFromDB = null;
@@ -77,6 +77,27 @@ namespace BaseBusiness.util
                 }
             }
         }
+
+        static public async Task<DataTable> getTableDataAsync(string procedureName, SqlParameter[] mySqlParameter)
+        {
+            DataTable table = new DataTable();
+            string connStr = DBUtils.GetDBConnectionString();
+
+            await using var conn = new SqlConnection(connStr);
+            await using var cmd = new SqlCommand(procedureName, conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            if (mySqlParameter != null)
+                cmd.Parameters.AddRange(mySqlParameter);
+
+            await conn.OpenAsync();
+            await using var reader = await cmd.ExecuteReaderAsync();
+            table.Load(reader);
+            return table;
+        }
+
 
 
         static public DataTable getTableData(string procedureName, SqlParameter[] mySqlParameter)

@@ -9,8 +9,7 @@ using Cashiering.Services.Implements;
 using Cashiering.Services.Interfaces;
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
-using DevExpress.CodeParser;
-using DevExpress.XtraCharts;
+
 using FrontDesk.Controllers;
 using FrontDesk.Services.Implements;
 using FrontDesk.Services.Interfaces;
@@ -134,7 +133,7 @@ builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
 builder.Services.AddSingleton<IAccountingService, AccountingService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>();
- 
+
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
 builder.Services.AddSingleton<IMembershipService, MembershipService>();
@@ -153,6 +152,13 @@ builder.Services.AddSingleton<IGroupReservationService, GroupReservationService>
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddSingleton<IShareService, ShareService>();
 builder.Services.AddSingleton<IGroupAdminService, GroupAdminService>();
+
+//Tuan
+builder.Services.AddSingleton<IRateClassService, RateClassService>();
+builder.Services.AddSingleton<IRateCategoryService, RateCategory>();
+builder.Services.AddSingleton<IRateCodeService, RateCodeService>();
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
