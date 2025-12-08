@@ -1,4 +1,8 @@
 using System.Data;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Administration.Services.Interfaces;
 using BaseBusiness.BO;
 using BaseBusiness.Model;
@@ -55,68 +59,181 @@ namespace Administration.Controllers
                 return Json(ex.Message);
             }
         }
-
-        [HttpPost("Save")]
-        public IActionResult Save(RateCodeDto model)
+        [HttpGet("GetByID")]
+        public async Task<IActionResult> GetByID(int id)
         {
             try
             {
-                // Lấy BusinessDate từ BO (giống controller mẫu của bạn)
-                List<BusinessDateModel> businessDates =
-                    PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-
-                // Tạo model để insert/update
-                RateCodeModel entity = new()
+                // 1. Validate ID trước
+                if (id <= 0)
                 {
-                    // Map dữ liệu từ DTO sang entity
-                    ID = model.Id,
-                    RateCode = model.RateCode,
-                    Descripton = model.Description,
-                    RateCategoryID = model.RateCategory,
-                    RateClassID = model.RateClass,
-                    Sequence = model.Sequence,
-                    DefaultDisplay = (byte)Math.Clamp(model.Display, 0, 255),
-                    DayUse = model.DayUse == 1,
-                    Status = model.Active,
-                    Negotiated = model.Negotiated,
-                    IndividualOnly = model.IndividualOnly,
-                    IsModify = model.IsModifiable
-                };
-
-                // Insert hoặc Update
-                if (model.Id > 0)
-                {
-                    // UPDATE
-                    entity.UserUpdateID = model.UserID;
-                    entity.UpdateDate = businessDates[0].BusinessDate;
-
-                    RateCodeBO.Instance.Update(entity);
-                }
-                else
-                {
-                    // INSERT
-                    entity.UserUpdateID = model.UserID;
-                    entity.CreateDate = businessDates[0].BusinessDate;
-
-                    entity.UserUpdateID = model.UserID;
-                    entity.UpdateDate = entity.CreateDate;
-
-                    RateCodeBO.Instance.Insert(entity);
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid ID"
+                    });
                 }
 
+                // 2. Lấy dữ liệu từ BO
+                var codeModel = RateCodeBO.Instance.FindByPrimaryKey(id) as RateCodeModel;
+
+                // 3. Kiểm tra dữ liệu tồn tại
+                if (codeModel == null || codeModel.ID == 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Rate Code not found (ID = {id})"
+                    });
+                }
+
+                // 4. Trả dữ liệu ra FE
                 return Json(new
                 {
                     success = true,
-                    message = "Success"
+                    message = "Success",
+                    data = codeModel
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new
+                // TODO: nếu bạn có logger thì bật dòng sau
+                // _logger.LogError(ex, $"GetByID failed with ID {id}");
+
+                return Json(new
                 {
                     success = false,
-                    message = ex.Message
+                    message = "Error: " + ex.Message
                 });
+            }
+        }
+
+
+        [HttpPost("Save")]
+        public IActionResult Save([FromBody] RateCodeDto model)
+        {
+            try
+            {
+                // Basic null check
+                if (model == null)
+                {
+                    return BadRequest(new { success = false, message = "Payload is null" });
+                }
+
+                // Collect validation errors
+                List<string> errors = new();
+
+                if (string.IsNullOrWhiteSpace(model.RateCode))
+                    errors.Add("RateCode is required.");
+                else if (model.RateCode.Length > 100)
+                    errors.Add("RateCode must be at most 100 characters.");
+
+                if (!string.IsNullOrEmpty(model.Description) && model.Description.Length > 500)
+                    errors.Add("Description must be at most 500 characters.");
+
+                if (model.Sequence < 0)
+                    errors.Add("Sequence must be greater than or equal to 0.");
+
+                if (model.Display < 0 || model.Display > 255)
+                    errors.Add("Display must be between 0 and 255.");
+
+                if (model.DayUse != 0 && model.DayUse != 1)
+                    errors.Add("DayUse must be 0 or 1.");
+
+                if (model.UserID <= 0)
+                    errors.Add("UserID is required and must be > 0.");
+
+                // Validate business date availability early
+                List<BusinessDateModel> businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                if (businessDates == null || businessDates.Count == 0)
+                    errors.Add("Business date not available. Contact system administrator.");
+
+                // Check duplicate RateCode (case-insensitive) for insert/update
+                var allRateCodes = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll()) ?? new List<RateCodeModel>();
+                if (!string.IsNullOrWhiteSpace(model.RateCode))
+                {
+                    bool duplicate = allRateCodes.Any(r => string.Equals(r.RateCode?.Trim(), model.RateCode.Trim(), StringComparison.OrdinalIgnoreCase) && r.ID != model.Id);
+                    if (duplicate)
+                        errors.Add("RateCode already exists.");
+                }
+
+                // If there are validation errors, return them
+                if (errors.Any())
+                {
+                    return BadRequest(new { success = false, message = "Validation failed.", errors });
+                }
+
+                // Prepare entity (for update try to fetch existing)
+                RateCodeModel entity;
+                if (model.Id > 0)
+                {
+                    var existing = RateCodeBO.Instance.FindByPrimaryKey(model.Id) as RateCodeModel;
+                    if (existing == null || existing.ID == 0)
+                    {
+                        return NotFound(new { success = false, message = $"RateCode not found (ID = {model.Id})" });
+                    }
+                    entity = existing;
+                }
+                else
+                {
+                    entity = new RateCodeModel();
+                }
+
+                // Map properties from DTO to entity
+                entity.RateCode = model.RateCode?.Trim() ?? string.Empty;
+                entity.Descripton = model.Description ?? string.Empty;
+                entity.RateCategoryID = model.RateCategory;
+                entity.RateClassID = model.RateClass;
+                entity.Sequence = model.Sequence;
+                entity.DefaultDisplay = (byte)Math.Clamp(model.Display, 0, 255);
+                entity.DayUse = model.DayUse == 1;
+                entity.Status = model.Active;
+                entity.Negotiated = model.Negotiated;
+                entity.IndividualOnly = model.IndividualOnly;
+                entity.IsModify = model.IsModifiable;
+
+                // Insert or Update with timestamps
+                var businessDate = businessDates![0].BusinessDate;
+
+                if (model.Id > 0)
+                {
+                    entity.UserUpdateID = model.UserID;
+                    entity.UpdateDate = businessDate;
+                    RateCodeBO.Instance.Update(entity);
+                }
+                else
+                {
+                    entity.UserUpdateID = model.UserID;
+                    entity.CreateDate = businessDate;
+                    entity.UpdateDate = entity.CreateDate;
+                    RateCodeBO.Instance.Insert(entity);
+                }
+
+                return Json(new { success = true, message = "Success", data = new { id = entity.ID } });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost("RateCodeDelete")]
+        public IActionResult RateCodeDelete(int id)
+        {
+            try
+            {
+                var existing = RateCodeBO.Instance.FindByPrimaryKey(id) as RateCodeModel;
+                if (existing == null || existing.ID == 0)
+                {
+                    return NotFound(new { success = false, message = $"RateCode ID {id} not found." });
+                }
+
+                RateCodeBO.Instance.Delete(id);
+                return Json(new { success = true, message = $"Successfully deleted RateCode ID {id}." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
             }
         }
 
