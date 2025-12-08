@@ -338,7 +338,6 @@
                     }
                 }
             });
-
         }
     }
 
@@ -403,6 +402,7 @@
             }
         });
     }
+
 
     $("#btnNew").click(function () {
         $("#modalItemId").val(0);
@@ -526,19 +526,19 @@
 
     function saveRateCode() {
         var data = {
-            id: $("#modalItemId").val(),
+            id: parseInt($("#modalItemId").val()) || 0,
             rateCode: $("#txtRateCode").val(),
             description: $("#txtDescription").val(),
-            rateClass: $("#modalRateCodeSel").val(),
-            rateCategory: $("#modalRateCategorySel").val(),
-            sequence: $("#txtSequence").val(),
-            display: $("input[name='display']:checked").val(),
-            dayUse: $("#chkDayUse").is(":checked") ? 1 : 0,
-            active: $("#chkActive").is(":checked") ? 1 : 0,
-            negotiated: $("#chkNegotiated").is(":checked") ? 1 : 0,
-            individualOnly: $("#chkIndividualOnly").is(":checked") ? 1 : 0,
-            isModifiable: $("#chkIsModifiable").is(":checked") ? 1 : 0,
-            userID: localStorage.getItem("userID")
+            rateClass: parseInt($("#modalRateCodeSel").val()) || 0,
+            rateCategory: parseInt($("#modalRateCategorySel").val()) || 0,
+            sequence: parseInt($("#txtSequence").val()) || 0,
+            display: parseInt($("input[name='display']:checked").val()) || 0,
+            dayUse: ($("#chkDayUse").is(":checked") ? 1 : 0),  // Chuyển checkbox thành 0/1
+            active: $("#chkActive").is(":checked"),
+            negotiated: $("#chkNegotiated").is(":checked"),
+            individualOnly: $("#chkIndividualOnly").is(":checked"),
+            isModifiable: $("#chkIsModifiable").is(":checked"),
+            userID: parseInt(localStorage.getItem("userID")) || 0
         };
 
         $("#loadingSpinner").show();
@@ -547,7 +547,7 @@
             url: "/Administration/RateCode/Save",
             type: "POST",
             contentType: "application/json",   // gửi JSON
-            data: JSON.stringify(data),         // convert object thành JSON
+            data: JSON.stringify(data),         // convert object -> JSON
             success: function (res) {
                 $("#loadingSpinner").hide();
                 if (res.success) {
@@ -555,12 +555,20 @@
                     $("#itemModal").modal("hide");
                     reloadGrid();
                 } else {
-                    showToast('Error', 'Please select a Task Code before saving.', false);
+                    showToast('Error', res.message || 'Validation failed.', false);
                 }
             },
-            error: function (jqXHR) {
+            error: function (xhr, status, error) {
+                // Nếu có mảng errors thì hiển thị từng cái
+                    if (Array.isArray(xhr.responseJSON?.errors)) {
+        xhr.responseJSON.errors.forEach((err, index) => {
+            setTimeout(() => {
+                showToast("Error", err, false);
+            }, index * 1000); // delay 300ms mỗi toast
+        });
+    }
+
                 $("#loadingSpinner").hide();
-                showToast('Error', jqXHR.responseJSON.message, false);
             }
         });
     }
