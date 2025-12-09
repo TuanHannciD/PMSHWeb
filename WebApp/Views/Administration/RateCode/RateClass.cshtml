@@ -337,9 +337,8 @@
                     showToast('Success', result.message, true);
                     $("#btnPrint").trigger("click");
                 } else {
-                    showToast('Error', 'Please select a Task Code before saving.', false);
+                    showToast('Error',result.message, false);
                 }
-
             },
             error: function () {
                 alert("Không thể tải báo cáo.");
@@ -374,18 +373,14 @@
 
     $(document).off("click", "#btnOkAuto").on("click", "#btnOkAuto", function () {
         try {
-            console.log("Button #btnOkAuto clicked");
-
             // Hiển thị loading spinner
             $("#loadingSpinner").show();
-            console.log("Loading spinner shown");
-
             // Chuẩn bị dữ liệu gửi lên server
             var dataToSend = {
-                codeClass: $("#codeClass").val(),
-                descriptionaccty: $("#descriptionaccty").val(),
-                inactive: $("#inactive").is(":checked") ? "1" : "0",
-                idRateClass: $("#idRateClass").val(),
+                code: $("#codeClass").val().trim(),
+                description: $("#descriptionaccty").val().trim(),
+                inactive: $("#inactive").is(":checked") ? 1 : 0,
+                id: $("#idRateClass").val() || 0,
                 user: localStorage.getItem("Loginname")
             };
             console.log("Data to send:", dataToSend);
@@ -398,31 +393,39 @@
                 crossDomain: false,
                 headers: { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() },
                 success: function (result) {
-                    console.log("AJAX success, server returned:", result);
                     try {
                         if (result.success) {
                             showToast('Success', result.message, true);
-                            console.log("Form cleared after success");
                             clearRateClassForm();
                             $('#popupNewRateClass').fadeOut(200);
                             $('#overlay').fadeOut(200);
                             $("#btnPrint").trigger("click");
                         } else {
-                            showToast('Error', 'Please select a Task Code before saving.', false);
-                            console.warn("Validation failed on server:", result);
+                            if (result.message) {
+                                showToast('Error', result.message, false);
+                            }
+                            if (Array.isArray(result.errors)) {
+                                result.errors.forEach(err => {
+                                    showToast('Error', err, false);
+                                });
+                            }
                         }
                     } catch (innerErr) {
                         console.error("Error processing AJAX success response:", innerErr);
                     } finally {
                         $("#loadingSpinner").hide();
-                        console.log("Loading spinner hidden after AJAX success");
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("AJAX error:", status, error);
-                    alert("Không thể tải báo cáo.");
+                    let msg = xhr.responseJSON?.message || "Unable to save record.";
+                    showToast("Error", msg, false);
+                    // Nếu có mảng errors thì hiển thị từng cái
+                    if (Array.isArray(xhr.responseJSON?.errors)) {
+                        xhr.responseJSON.errors.forEach(err => {
+                            showToast("Error", err, false);
+                        });
+                    }
                     $("#loadingSpinner").hide();
-                    console.log("Loading spinner hidden after AJAX error");
                 }
             });
         } catch (err) {
@@ -430,6 +433,8 @@
             $("#loadingSpinner").hide();
         }
     });
+
+
     $("#btnExportExcel").click(function () {
         const grid = $("#gridContainer").dxDataGrid("instance");   // 🔥 khai báo grid
 
