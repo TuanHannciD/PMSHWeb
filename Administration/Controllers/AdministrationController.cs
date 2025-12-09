@@ -5688,12 +5688,8 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreatedBy = model.CreatedBy;
                     model.CreatedDate = DateTime.Now;
-                    model.UpdatedBy = model.UpdatedBy;
                     model.UpdatedDate = DateTime.Now;
-                    model.UserInsertID = model.UserInsertID;
-                    model.UserUpdateID = model.UserUpdateID;
 
                     RateCategoryBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -5705,14 +5701,12 @@ namespace Administration.Controllers
                     if (oldData != null)
                     {
                         model.CreatedBy = oldData.CreatedBy;
-                        model.CreatedDate = oldData.CreateDate;
+                        model.CreatedDate = oldData.CreatedDate;
 
                         model.UserInsertID = oldData.UserInsertID;
                     }
 
-                    model.UpdatedBy = model.UpdatedBy;
-                    model.UpdateDate = DateTime.Now;
-                    model.UserUpdateID = model.UserUpdateID;
+                    model.UpdatedDate = DateTime.Now;
 
                     RateCategoryBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -5747,18 +5741,24 @@ namespace Administration.Controllers
         #region Deposit/Cancellation Rules Search 
         public IActionResult DepositRule()
         {
-            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            List<UsersModel> listUser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listUser;
 
-            ViewBag.UsersList = listuser;
+            List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listCurr;
             return View();
         }
         public IActionResult CancellationRule()
         {
-            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            List<UsersModel> listUser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listUser;
 
-            ViewBag.UsersList = listuser;
+            List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listCurr;
             return View();
         }
+
+        [HttpGet]
         public IActionResult GetDepositRule(string code, string description)
         {
             try
@@ -5787,6 +5787,92 @@ namespace Administration.Controllers
                 return Json(ex.Message);
             }
         }
+        [HttpGet]
+        public IActionResult GetDepositRuleById(int id)
+        {
+            var data = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(id);
+
+            if (data == null)
+            {
+                return Json(new { inactive = false, sequence = 0 });
+            }
+
+            return Json(new
+            {
+                inactive = data.Inactive,
+                sequence = data.Sequence
+            });
+        }
+        [HttpPost]
+        public IActionResult DepositRuleSave([FromBody] DepositRuleModel model)
+        {
+            string message = "";
+
+            try
+            {
+                if (model.Code == null || model.Code == "")
+                    throw new Exception(" Code is not empty!");
+                if (model.AmountValue <= 0)
+                    throw new Exception("Amount must be greater than zero!");
+                if (!decimal.TryParse(model.AmountValue.ToString(), out decimal amount))
+                    throw new Exception("Amount is not a valid number!");
+                if (string.IsNullOrWhiteSpace(Convert.ToString(model.AmountValue)))
+                    throw new Exception("Amount is not correct!");
+                if (string.IsNullOrWhiteSpace(Convert.ToString(model.DaysBeforeArrival)) ||
+                    string.IsNullOrWhiteSpace(Convert.ToString(model.DaysAfterBooking)))
+                    throw new Exception("Please enter days before arrival or days after arrival !");
+                if (model.DaysBeforeArrival < 0 || model.DaysAfterBooking < 0)
+                    throw new Exception("DaysBeforeArrival or days after arrival cannot be negative!");
+
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+
+                    DepositRuleBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.CreateDate = oldData.CreateDate;
+                        model.UserInsertID = oldData.UserInsertID;
+                    }
+                    model.UpdateDate = model.UpdateDate;
+
+                    DepositRuleBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DepositRuleDelete(long id)
+        {
+            try
+            {
+                DepositRuleBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+
+        [HttpGet]
         public IActionResult GetCancellationRule(string code, string description)
         {
             try
@@ -5815,7 +5901,24 @@ namespace Administration.Controllers
                 return Json(ex.Message);
             }
         }
-        public IActionResult DepositRuleSave([FromBody] DepositRuleModel model)
+        [HttpGet]
+        public IActionResult GetCancellationRuleById(int id)
+        {
+            var data = (CancellationRuleModel)CancellationRuleBO.Instance.FindByPrimaryKey(id);
+
+            if (data == null)
+            {
+                return Json(new { inactive = false, sequence = 0 });
+            }
+
+            return Json(new
+            {
+                inactive = data.Inactive,
+                sequence = data.Sequence
+            });
+        }
+        [HttpPost]
+        public IActionResult CancellationRuleSave([FromBody] CancellationRuleModel model)
         {
             string message = "";
 
@@ -5829,35 +5932,32 @@ namespace Administration.Controllers
                     throw new Exception("Amount is not a valid number!");
                 if (string.IsNullOrWhiteSpace(Convert.ToString(model.AmountValue)))
                     throw new Exception("Amount is not correct!");
-                if (string.IsNullOrWhiteSpace(Convert.ToString(model.DaysBeforeArrival)) ||
-                    string.IsNullOrWhiteSpace(Convert.ToString(model.DaysAfterBooking)))
-                    throw new Exception("Please enter days before arrival or days after arrival !");
-                if (model.DaysBeforeArrival < 0 || model.DaysBeforeArrival < 0)
-                    throw new Exception("DaysBeforeArrival or days after arrival cannot be negative!");
+                if (string.IsNullOrWhiteSpace(Convert.ToString(model.DaysBeforeArrival)))
+                    throw new Exception("Please enter days before arrival or cancel before time !");
+                if (model.DaysBeforeArrival < 0)
+                    throw new Exception("DaysBeforeArrival or cancel before time cannot be negative!");
 
 
                 if (model.ID == 0)
                 {
                     model.CreateDate = DateTime.Now;
                     model.UpdateDate = DateTime.Now;
-                    model.UserInsertID = model.UserInsertID;
-                    model.UserUpdateID = model.UserUpdateID;
 
-                    DepositRuleBO.Instance.Insert(model);
+                    CancellationRuleBO.Instance.Insert(model);
                     message = "Insert successfully!";
                 }
                 else
                 {
-                    var oldData = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(model.ID);
+                    var oldData = (CancellationRuleModel)CancellationRuleBO.Instance.FindByPrimaryKey(model.ID);
 
                     if (oldData != null)
                     {
-                    model.UserInsertID = oldData.UserInsertID;
+                        model.CreateDate = oldData.CreateDate;
+                        model.UserInsertID = oldData.UserInsertID;
                     }
+                    model.UpdateDate = model.UpdateDate;
 
-
-
-                    DepositRuleBO.Instance.Update(model);
+                    CancellationRuleBO.Instance.Update(model);
                     message = "Update successfully!";
                 }
 
@@ -5870,7 +5970,20 @@ namespace Administration.Controllers
 
             return Json(new { success = true, message });
         }
+        [HttpPost]
+        public IActionResult CancellationRuleDelete(long id)
+        {
+            try
+            {
+                CancellationRuleBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
 
+            return Json(new { success = true });
+        }
         #endregion
     }
 

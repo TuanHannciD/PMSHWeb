@@ -1,92 +1,9 @@
 ﻿@using DevExpress.XtraReports.UI
 
 @{
-	var listUser = ViewBag.UsersList;
+	var listCurr = ViewBag.CurrencyList;
 }
-<style>
 
-
-	.dx-datagrid-headers .dx-header-row td {
-		white-space: pre-line !important;
-		text-align: center;
-		font-size: 11px;
-	}
-
-
-	.dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
-		display: none;
-	}
-
-
-	.filter_wrapper {
-		/*     background-color: #ececec; */
-		/*   margin: 0px 8px 14px 8px; */
-		padding: 18px 0px 0px 14px;
-		border-radius: 8px;
-	}
-
-	.gridContainer {
-		margin: 0px 8px;
-	}
-
-	.button_wrapper {
-		display: flex;
-		column-gap: 12px;
-		margin: 0px 8px;
-	}
-
-		.button_wrapper .fa-solid {
-			margin-right: 5px;
-		}
-
-	.selected {
-		background-color: #4CAF50; /* Màu xanh */
-		color: white;
-	}
-
-
-
-	.sticky-header .form-control-sm {
-		padding: .1rem .35rem;
-		height: calc(1.1em + .2rem + 2px);
-	}
-
-	.sticky-header label[class*="me-"] {
-		margin-right: .5rem !important;
-	}
-
-
-	.sticky-header input[type="date"].form-control-sm {
-		font-size: 12px !important; /* dúng 12?px */
-		height: calc(1.1em + .2rem + 2px); /* gi? cùng chi?u cao */
-	}
-
-	.sticky-header label {
-		font-size: 12px !important;
-		line-height: 1.2;
-	}
-
-	.tomselect-custom {
-		width: 250px;
-		min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
-		font-size: 0.65rem;
-	}
-
-	.sort-select {
-		max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
-		font-size: 12px;
-		padding: 0.15rem 0.5rem;
-	}
-
-	.sort-select {
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		background-image: none !important;
-		padding-right: 10px !important;
-	}
-
-</style>
 <div class="text-center" id="reportTitle" style="font-size: 20px">Cancellation Rules Search</div>
 
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
@@ -122,53 +39,114 @@
 </div>
 <!-- Modal Popup for New Item -->
 <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-md">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="itemModalLabel">New/Edit Item</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="itemModalLabel">New/Edit Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
 
-				<form id="itemForm">
-					<div class="container-fluid" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+                <form id="itemForm">
+                    <div class="container-fluid" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
 
-						<div class="row mb-1 align-items-center">
-							<div class="col-auto">
-								<label for="txtcode" class="form-label mb-0">Code</label>
-								<input type="text" id="txtcode" name="txtcode" class="form-control form-control-sm" />
-							</div>
-							<div class="col-auto d-flex align-items-center">
-								<input type="checkbox" id="inactive" name="inactive" class="form-check-input me-2" />
-								<label for="inactive" class="form-check-label text-danger mb-0">Inactive</label>
-							</div>
-						</div>
+                        <div class="row mb-1 align-items-center">
+                            <div class="col-auto">
+                                <label for="txtCode" class="form-label mb-0">Cancellation Rule Code</label>
+                                <input type="text" id="txtCode" name="txtCode" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-auto d-flex align-items-center">
+                                <input type="checkbox" id="inActive" name="inActive" class="form-check-input me-2" />
+                                <label for="inActive" class="form-check-label text-danger mb-0">Inactive</label>
+                            </div>
+                        </div>
 
-						<div class="row mb-1">
-							<div class="col">
-								<label for="txtname" class="form-label">Name</label>
-								<input type="text" id="txtname" name="txtname" class="form-control" />
-							</div>
-						</div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <label for="txtDescription" class="form-label">Description</label>
+                                <textarea id="txtDescription" name="txtDescription" class="form-control" rows="4" style="background-color:#ffffe6"></textarea>
+                            </div>
+                        </div>
 
-						<div class="row mb-1">
-							<div class="col">
-								<label for="txtdescription" class="form-label">Description</label>
-								<textarea id="txtdescription" name="txtdescription" class="form-control" rows="4" style="background-color:#ffffe6"></textarea>
-							</div>
-						</div>
-						<input type="hidden" id="id" name="id" value="0" />
-					</div>
-				</form>
+                        <div class="row mb-2 align-items-center">
+                            <label class="col-sm-2 col-form-label">Type</label>
+
+                            <div class="col-sm-10">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="typeFlat" value="0" checked>
+                                    <label class="form-check-label" for="typeFlat">Flat</label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="typePercentage" value="1">
+                                    <label class="form-check-label" for="typePercentage">Percentage</label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="typeNights" value="2">
+                                    <label class="form-check-label" for="typeNights">Nights</label>
+                                </div>
+								<div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="typeNights" value="2">
+                                    <label class="form-check-label" for="typeNightsPercentage">Nights Percentage</label>
+                                </div>
+								<div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="typeNights" value="2">
+                                    <label class="form-check-label" for="typeNonCancelable">Non Cancelable</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-1 align-items-center">
+
+                            <div class="col-auto">
+                                <label class="form-label mb-0">Deposit Amount</label>
+                                <input type="text" class="form-control form-control-sm" id="depositAmount">
+                            </div>
+
+                            <div class="col-md-3 align-items-center" id="divCurrency" style="display:none;">
+                                <label class="me-2 mb-0">Currency:</label>
+                                <select id="currencyID" class="form-select form-select-sm w-auto">
+                                    <option value="">--ALL--</option>
+                                    @foreach (var item in listCurr)
+                                    {
+                                        <option value="@item.ID">@item.ID</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-1 align-items-center">
+
+                            <div class="col-auto">
+                                <label class="me-2 mb-0" style="white-space: nowrap;">Days before Arrival</label>
+                                <input type="text" id="daysBeforeArrival" class="form-control form-control-sm" style="width: 80px;">
+                            </div>
+
+                            <div class="col-auto">
+								<label class="me-2 mb-0" style="white-space: nowrap;">Cancel before Time</label>
+								<input type="time" id="cancelBeforeTime" class="form-control form-control-sm" style="width: 120px;">
+							</div>	
+
+                            <div class="col-auto">
+                                <label class="me-2 mb-0" style="white-space: nowrap;">Sequence</label>
+                                <input type="text" id="sequence" class="form-control form-control-sm" style="width: 80px;">
+                            </div>
+
+                        </div>
+
+                        <input type="hidden" id="id" name="id" value="0" />
+                    </div>
+                </form>
 
 
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
-			</div>
-		</div>
-	</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
 	<i class="fa-solid fa-spinner fa-spin"></i>
