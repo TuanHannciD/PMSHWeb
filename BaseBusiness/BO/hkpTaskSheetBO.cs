@@ -25,11 +25,15 @@ namespace BaseBusiness.BO
         }
         public static List<hkpTaskSheetModel> GetMaxTasksheetNo(DateTime taskdateauto)
         {
+            string date = taskdateauto.ToString("yyyy-MM-dd");
 
-
-            string query = $@"SELECT  MAX(TaskSheetNo) as TaskSheetNo FROM dbo.hkpTaskSheet WITH (NOLOCK) WHERE DATEDIFF(day,TaskSheetDate, '" + taskdateauto + "') = 0 ";
+            string query = $@"
+        SELECT MAX(TaskSheetNo) AS TaskSheetNo
+        FROM dbo.hkpTaskSheet WITH (NOLOCK)
+        WHERE CAST(TaskSheetDate AS DATE) = '{date}'";
 
             return instance.GetList<hkpTaskSheetModel>(query);
         }
+
     }
 }

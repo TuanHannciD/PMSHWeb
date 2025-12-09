@@ -286,7 +286,7 @@
                         <label class="form-check-label" for="revenueGroup">Revenue group</label>
                     </div>
 
-                    <div class="form-check me-4 mb-2" name="pnlRevenue">
+                    <div class="form-check me-4 mb-2" name="pnlRevenuememberShip">
                         <input class="form-check-input" type="checkbox" id="memberShip">
                         <label class="form-check-label" for="memberShip">Member ship</label>
                     </div>
@@ -545,6 +545,10 @@
        let subgroupCode=null;
     $(document).ready(function () {
         $('[name="listARAccountList"]').find('select').prop('disabled', true);
+           $('#memberShip').prop('disabled', true);
+
+
+
         $('[name="pnlRevenuedis"]').find('input[type="checkbox"]').prop('disabled', true);
           $('[name="interHotelSales"]').find('input[type="checkbox"]').prop('disabled', true);
             $('[name="pnlPaymentTypedis"]').find('input[type="checkbox"]').prop('disabled', true);
@@ -1364,9 +1368,10 @@ $("#btnUpdate").on("click", function () {
         return;
     }
 
+
     // Lấy object đầu tiên trong selectedRowData (giả sử chỉ chọn 1)
     var data = selectedRowData
-
+            console.log(data.TransactionType);
     // Hiển thị popup
     $("#popupNewTransaction").fadeIn(200);
     $('#overlay').fadeIn(200);
@@ -1380,7 +1385,7 @@ $("#btnUpdate").on("click", function () {
     // Điền dữ liệu vào select
     $("#transactionNewSubGroupList").val(data.TransactionSubGroupID);
     $("#vatinfor").val(data.VatTypeID);
-    $("#transactionTypeList").val(data.TransactionType);
+
 
     $("#transactionsListnew").val(data.AdjustmentCode); // nếu muốn map AdjustmentCode vào select
     $("#currList").val(data.CurrencyID);
@@ -1413,6 +1418,7 @@ $("#btnUpdate").on("click", function () {
         $("#transactionNewSubGroupList")
             .val(data.TransactionSubGroupID)
             .trigger("change");   // chạy onchange
+                    $("#transactionTypeList").val(data.TransactionType);
 });
 
 
@@ -1470,102 +1476,103 @@ function clearTransaction() {
                 }
             });
 
-
+    });
 
 
 
 
     $(document).off("click", "btnDeleteGenerate").on("click", "btnDeleteGenerate", function () {
-            if (!idselectedRowGenerateID) {
-                    showToast('Error', 'Please select 1 row to delete.', false);
+        if (!idselectedRowGenerateID) {
+                showToast('Error', 'Please select 1 row to delete.', false);
                 return;
+        }
+
+        if (!confirm("Are you sure you want to delete item?")) {
+            return; // Nếu chọn Cancel thì dừng
+        }
+        $.ajax({
+                    url: '/Transaction/TransactionGenerateDelete',
+            type: 'POST',
+            data: {
+                    id:idselectedRowGenerateID.id
+
+
+            },
+            traditional: true,
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                    if (result.success) {
+
+                        var code = selectedRowData.Code;
+                            loadGenerateData(code);
+                    } else {
+                            showToast('Error', result.message, false);
+                    }
+
+            },
+            error: function () {
+                alert("Không th? t?i báo cáo.");
+                $("#loadingSpinner").hide();
             }
-            if (!confirm("Are you sure you want to delete item?")) {
-                return; // Nếu chọn Cancel thì dừng
-            }
-            $.ajax({
-                        url: '/Transaction/TransactionGenerateDelete',
-                type: 'POST',
-                data: {
-                       id:idselectedRowGenerateID.id
-
-
-                },
-                traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                     if (result.success) {
-
-                          var code = selectedRowData.Code;
-                              loadGenerateData(code);
-                     } else {
-                              showToast('Error', result.message, false);
-                     }
-
-                },
-                error: function () {
-                    alert("Không th? t?i báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
-
-
         });
+
+
+    });
 
 
 
        $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");   // 🔥 khai báo grid
+            const grid = $("#gridContainer").dxDataGrid("instance");   // 🔥 khai báo grid
 
-        const workbook = new ExcelJS.Workbook();
-        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-        const worksheet = workbook.addWorksheet("Sheet 1");
+            const workbook = new ExcelJS.Workbook();
+            const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const worksheet = workbook.addWorksheet("Sheet 1");
 
-        // === Dòng 1: Tên công ty (merge theo 4 cột) ===
-        worksheet.addRow([companyName]);
-        worksheet.mergeCells('A1:D1');
-        worksheet.getRow(1).font = { bold: true };
-        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+            // === Dòng 1: Tên công ty (merge theo 4 cột) ===
+            worksheet.addRow([companyName]);
+            worksheet.mergeCells('A1:D1');
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
 
-        // === Dòng 2: Ngày giờ xuất (bên phải) ===
-        const now = new Date();
-        const exportDate = now.toLocaleString("vi-VN");
-        worksheet.addRow(['', '', '', exportDate]);
-        worksheet.mergeCells('D2:D2');  // cột D thôi
-        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+            // === Dòng 2: Ngày giờ xuất (bên phải) ===
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(['', '', '', exportDate]);
+            worksheet.mergeCells('D2:D2');  // cột D thôi
+            worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
 
-        // === Dòng 3–4: trống
-        worksheet.addRow([]);
-        worksheet.addRow([]);
+            // === Dòng 3–4: trống
+            worksheet.addRow([]);
+            worksheet.addRow([]);
 
-        // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
-        const reportRow = worksheet.addRow(['Transaction']);
-        worksheet.mergeCells('A5:D5');
-        reportRow.font = { bold: true, size: 14 };
-        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
+            const reportRow = worksheet.addRow(['Transaction']);
+            worksheet.mergeCells('A5:D5');
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-        // === Dòng 6: trống
-        worksheet.addRow([]);
+            // === Dòng 6: trống
+            worksheet.addRow([]);
 
-        // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
-        DevExpress.excelExporter.exportDataGrid({
-            component: grid,
-            worksheet: worksheet,
-            autoFilterEnabled: true,
-            topLeftCell: { row: 7, column: 1 }
-        }).then(function () {
-            // Footer (sau cùng)
-            const lastRow = worksheet.lastRow.number + 2;
-            worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
-            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+            // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                // Footer (sau cùng)
+                const lastRow = worksheet.lastRow.number + 2;
+                worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
-            // Ghi file
-            let fileName = "Transaction.xlsx";
-            workbook.xlsx.writeBuffer().then(function (buffer) {
-                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+                // Ghi file
+                let fileName = "Transaction.xlsx";
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+                });
             });
-        });
     });
 </script>
