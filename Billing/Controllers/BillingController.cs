@@ -1811,7 +1811,7 @@ namespace Billing.Controllers
                 folioArticle.UserID = int.Parse(Request.Form["userID"].ToString());
                 folioArticle.ShiftID = shiftID;
                 folioArticle.CashierNo = shiftName;
-                folioArticle.UserName =  Request.Form["userID"].ToString();
+                folioArticle.UserName =  Request.Form["userName"].ToString();
                 folioArticle.ReservationID = folioArticle.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                 folioArticle.FolioID = folioArticle.OriginFolioID = folio.ID;
                 folioArticle.InvoiceNo = invoiceNo;
@@ -1888,7 +1888,7 @@ namespace Billing.Controllers
                         {
                             FolioDetailModel folioSub = new FolioDetailModel();
                             folioSub.UserID  = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName  = Request.Form["userID"].ToString();
+                            folioSub.UserName  = Request.Form["userName"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
@@ -1943,7 +1943,7 @@ namespace Billing.Controllers
                             }
                             FolioDetailModel folioSub = new FolioDetailModel();
                             folioSub.UserID  = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName  = Request.Form["userID"].ToString();
+                            folioSub.UserName  = Request.Form["userName"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
@@ -2004,7 +2004,7 @@ namespace Billing.Controllers
                             }
                             FolioDetailModel folioSub = new FolioDetailModel();
                             folioSub.UserID  = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName  = Request.Form["userID"].ToString();
+                            folioSub.UserName  = Request.Form["userName"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
