@@ -53,8 +53,11 @@
 				<h5 class="modal-title" id="itemModalLabel">New/Edit Item</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
+			<div class="modal-footer justify-content-start">
+				<button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
 			<div class="modal-body">
-
 				<form id="itemForm">
 					<div class="container-fluid" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
 
@@ -85,12 +88,6 @@
 						<input type="hidden" id="id" name="id" value="0" />
 					</div>
 				</form>
-
-
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" id="btnSaveItem" class="btn btn-primary">Save</button>
 			</div>
 		</div>
 	</div>
@@ -127,7 +124,7 @@
 				  showNavigationButtons:true
 			  },
 			  filterRow: { visible: true },
-			 columns: [
+			  columns: [
 						 { dataField: "code", caption: "Code" , width: 200 },
 						 { dataField: "name", caption: "Name" , width: 200},
 						 { dataField: "description", caption: "Description", width: 150 },

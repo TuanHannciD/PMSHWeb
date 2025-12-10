@@ -5806,57 +5806,65 @@ namespace Administration.Controllers
         [HttpPost]
         public IActionResult DepositRuleSave([FromBody] DepositRuleModel model)
         {
-            string message = "";
+            var errors = new List<string>();
 
-            try
+            if (model == null)
             {
-                if (model.Code == null || model.Code == "")
-                    throw new Exception(" Code is not empty!");
-                if (model.AmountValue <= 0)
-                    throw new Exception("Amount must be greater than zero!");
-                if (!decimal.TryParse(model.AmountValue.ToString(), out decimal amount))
-                    throw new Exception("Amount is not a valid number!");
-                if (string.IsNullOrWhiteSpace(Convert.ToString(model.AmountValue)))
-                    throw new Exception("Amount is not correct!");
-                if (string.IsNullOrWhiteSpace(Convert.ToString(model.DaysBeforeArrival)) ||
-                    string.IsNullOrWhiteSpace(Convert.ToString(model.DaysAfterBooking)))
-                    throw new Exception("Please enter days before arrival or days after arrival !");
-                if (model.DaysBeforeArrival < 0 || model.DaysAfterBooking < 0)
-                    throw new Exception("DaysBeforeArrival or days after arrival cannot be negative!");
-
-
-                if (model.ID == 0)
-                {
-                    model.CreateDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-
-                    DepositRuleBO.Instance.Insert(model);
-                    message = "Insert successfully!";
-                }
-                else
-                {
-                    var oldData = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(model.ID);
-
-                    if (oldData != null)
-                    {
-                        model.CreateDate = oldData.CreateDate;
-                        model.UserInsertID = oldData.UserInsertID;
-                    }
-                    model.UpdateDate = model.UpdateDate;
-
-                    DepositRuleBO.Instance.Update(model);
-                    message = "Update successfully!";
-                }
-
+                errors.Add("Invalid data. Model is null.");
+                return Json(new { success = false, errors });
             }
-            catch (Exception ex)
+
+            if (string.IsNullOrWhiteSpace(model.Code))
+                errors.Add("Code is required.");
+
+            if (model.AmountValue <= 0)
+                errors.Add("Amount must be greater than zero.");
+
+            if (model.Type != 0)
+                model.CurrencyID = null;
+
+            if (model.DaysBeforeArrival < 0 || model.DaysAfterBooking < 0)
+                errors.Add("Days cannot be negative.");
+
+            if (model.DaysBeforeArrival == 0 && model.DaysAfterBooking == 0)
+                errors.Add("Please enter Days Before or Days After.");
+
+            if (errors.Any())
             {
-                message = ex.Message;
-                return Json(new { success = false, message });
+                return Json(new
+                {
+                    success = false,
+                    errors
+                });
+            }
+
+            string message;
+
+            if (model.ID == 0)
+            {
+                model.CreateDate = DateTime.Now;
+                model.UpdateDate = DateTime.Now;
+                DepositRuleBO.Instance.Insert(model);
+                message = "Insert successfully!";
+            }
+            else
+            {
+                var old = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(model.ID);
+                if (old != null)
+                {
+                    model.CreateDate = old.CreateDate;
+                    model.UserInsertID = old.UserInsertID;
+                }
+
+                model.UpdateDate = DateTime.Now;
+                DepositRuleBO.Instance.Update(model);
+                message = "Update successfully!";
             }
 
             return Json(new { success = true, message });
         }
+
+
         [HttpPost]
         public IActionResult DepositRuleDelete(long id)
         {
