@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ActiveDebugProfile>https</ActiveDebugProfile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Billing\Templates\Preview\PreviewBilling.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Cashiering\Reports\RptExchangeCurrencyByCashier.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Cashiering\Reports\RptExchangeCurrencyPrint.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\GroupReservationReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\GuestMarketReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\GuestStayOverReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\GuestStayReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\RatecodebyDateReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\Report1.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\Report2.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\Report3.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\ReportNationalityStatistics.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\ReservationSummaryReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\RptExchangeCurrencyByCashier.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report\TraceReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Reservation\Templates\DepositReceipt\DepositReceipt.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Reservation\Templates\RegistrationCard\V_RegistrationCard.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

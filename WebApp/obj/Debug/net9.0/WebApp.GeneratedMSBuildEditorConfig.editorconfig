@@ -1,0 +1,1103 @@
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = WebApp
+build_property.RootNamespace = WebApp
+build_property.ProjectDir = D:\TinHoc\OneS\WebApp\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\TinHoc\OneS\WebApp
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/AccountingSearch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xBY2NvdW50aW5nU2VhcmNoLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/AccountType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xBY2NvdW50VHlwZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/ARAgingLevels.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xBUkFnaW5nTGV2ZWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/AROpening.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xBUk9wZW5pbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/ARTraces.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xBUlRyYWNlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/Options/Adjust.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xPcHRpb25zXEFkanVzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/Options/Invoice.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xPcHRpb25zXEludm9pY2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/Options/Maintenance.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xPcHRpb25zXE1haW50ZW5hbmNlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/Options/Posting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xPcHRpb25zXFBvc3RpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/Options/ShiftLogin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xPcHRpb25zXFNoaWZ0TG9naW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Accounting/Options/Transfer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudGluZ1xPcHRpb25zXFRyYW5zZmVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/AlertsSetup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQWxlcnRzU2V0dXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/CancellationRule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ2FuY2VsbGF0aW9uUnVsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/City.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ2l0eS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Comment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ29tbWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/CommentType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ29tbWVudFR5cGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/ConfigStatusColor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ29uZmlnU3RhdHVzQ29sb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Country.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ291bnRyeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/CreateMessage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ3JlYXRlTWVzc2FnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Currency.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cQ3VycmVuY3kuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Department.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cRGVwYXJ0bWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/DepositRule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cRGVwb3NpdFJ1bGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/hkpEmployee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25caGtwRW1wbG95ZWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/Attendants.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cQXR0ZW5kYW50cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/FacilityCategory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cRmFjaWxpdHlDYXRlZ29yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/FacilityCode.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cRmFjaWxpdHlDb2RlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/HouseKeepingEmployee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cSG91c2VLZWVwaW5nRW1wbG95ZWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/LostAndFoundQuality.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cTG9zdEFuZEZvdW5kUXVhbGl0eS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/LostAndFoundStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cTG9zdEFuZEZvdW5kU3RhdHVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/LostAndFoundZone.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cTG9zdEFuZEZvdW5kWm9uZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/HouseKeepingAdmin/Section.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSG91c2VLZWVwaW5nQWRtaW5cU2VjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Language.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTGFuZ3VhZ2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Market.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTWFya2V0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/MarketType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTWFya2V0VHlwZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/MemberCategory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTWVtYmVyQ2F0ZWdvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/MemberList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTWVtYmVyTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/MemberTypeSearch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTWVtYmVyVHlwZVNlYXJjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Nationality.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTmF0aW9uYWxpdHkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Origin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cT3JpZ2luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Owner.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cT3duZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/PersonInCharge.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUGVyc29uSW5DaGFyZ2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/PickupDropPlace.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUGlja3VwRHJvcFBsYWNlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Property.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUHJvcGVydHkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/PropertyPermission.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUHJvcGVydHlQZXJtaXNzaW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/PropertyType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUHJvcGVydHlUeXBlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/RateCategory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUmF0ZUNhdGVnb3J5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Reason.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUmVhc29uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/ReservationType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cUmVzZXJ2YXRpb25UeXBlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Season.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cU2Vhc29uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Source.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cU291cmNlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/State.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cU3RhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Territory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cVGVycml0b3J5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Title.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cVGl0bGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/TransportType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cVHJhbnNwb3J0VHlwZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/VIP.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cVklQLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Administration/Zone.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cWm9uZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Article/Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXJ0aWNsZVxTZWFyY2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/CashierAudit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xDYXNoaWVyQXVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/CashieringManager.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xDYXNoaWVyaW5nTWFuYWdlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/CashierReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xDYXNoaWVyUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/CloseShift.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xDbG9zZVNoaWZ0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/ExchangeCurrency.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xFeGNoYW5nZUN1cnJlbmN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/ExchangeCurrencyReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xFeGNoYW5nZUN1cnJlbmN5UmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/ExchangeRate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xFeGNoYW5nZVJhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/FolioHistoryView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xGb2xpb0hpc3RvcnlWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/FolioVATSearch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xGb2xpb1ZBVFNlYXJjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/FolioVATSearchByAccouting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xGb2xpb1ZBVFNlYXJjaEJ5QWNjb3V0aW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/PostingJournal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xQb3N0aW5nSm91cm5hbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Cashiering/VATSearch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzaGllcmluZ1xWQVRTZWFyY2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Email/EmailSendingHistory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1haWxcRW1haWxTZW5kaW5nSGlzdG9yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Email/SendEmail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1haWxcU2VuZEVtYWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Email/SendEmailBirthday.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1haWxcU2VuZEVtYWlsQmlydGhkYXkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Email/SendSMS.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1haWxcU2VuZFNNUy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Email/SetupEmail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1haWxcU2V0dXBFbWFpbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/FrontDesk/DialingInformation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnREZXNrXERpYWxpbmdJbmZvcm1hdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/FrontDesk/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnREZXNrXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/FrontDesk/TelephoneBook.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnREZXNrXFRlbGVwaG9uZUJvb2suY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/FrontDesk/TelephoneSwitch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnREZXNrXFRlbGVwaG9uZVN3aXRjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/FrontDesk/WakeUpCall.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnREZXNrXFdha2VVcENhbGwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/AttendantPoint.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXEF0dGVuZGFudFBvaW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/FloorPlan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXEZsb29yUGxhbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/GuestServiceStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXEd1ZXN0U2VydmljZVN0YXR1cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/HouseStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXEhvdXNlU3RhdHVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/LostAndFound.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXExvc3RBbmRGb3VuZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/MakeupServiceRoom.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXE1ha2V1cFNlcnZpY2VSb29tLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/RoomAttendentDailyWorksheet.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFJvb21BdHRlbmRlbnREYWlseVdvcmtzaGVldC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/RoomAvailability.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFJvb21BdmFpbGFiaWxpdHkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/RoomControlPanel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFJvb21Db250cm9sUGFuZWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/RoomFacilityForecast.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFJvb21GYWNpbGl0eUZvcmVjYXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/RoomPlan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFJvb21QbGFuLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/RoomStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFJvb21TdGF0dXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/TaskAssignment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFRhc2tBc3NpZ25tZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/TaskSheetStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFRhc2tTaGVldFN0YXR1cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/HouseKeeping/TurndownTasksheet.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG91c2VLZWVwaW5nXFR1cm5kb3duVGFza3NoZWV0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/CardManagement.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xDYXJkTWFuYWdlbWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/IssuingCardToGuests.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xJc3N1aW5nQ2FyZFRvR3Vlc3RzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/MealReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xNZWFsUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/ReportCancelMeal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xSZXBvcnRDYW5jZWxNZWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/ReportCustom.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xSZXBvcnRDdXN0b20uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/ReportUseBreakFastMeal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xSZXBvcnRVc2VCcmVha0Zhc3RNZWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/ReportUsedBreakFastMeal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xSZXBvcnRVc2VkQnJlYWtGYXN0TWVhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Miscellaneous/ReportWaiveMeal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlzY2VsbGFuZW91c1xSZXBvcnRXYWl2ZU1lYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/NightAudit/RoomRate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmlnaHRBdWRpdFxSb29tUmF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/NightAudit/RunNightAudit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmlnaHRBdWRpdFxSdW5OaWdodEF1ZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Profile/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Profile/Options/Membership.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxPcHRpb25zXE1lbWJlcnNoaXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Profile/ProfileExport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxQcm9maWxlRXhwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Profile/SearchProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxTZWFyY2hQcm9maWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/Alerts.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEFsZXJ0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/AnnualRoomOccupancy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEFubnVhbFJvb21PY2N1cGFuY3kuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ArrivalDetailedGroupbyHolder.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEFycml2YWxEZXRhaWxlZEdyb3VwYnlIb2xkZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ArrivalsandCheckInToday.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEFycml2YWxzYW5kQ2hlY2tJblRvZGF5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ArrivalsDetailed.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEFycml2YWxzRGV0YWlsZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ArticleByRoom.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEFydGljbGVCeVJvb20uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/BlacklistReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEJsYWNrbGlzdFJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/BookingSource.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEJvb2tpbmdTb3VyY2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/BookingSummaryByStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEJvb2tpbmdTdW1tYXJ5QnlTdGF0dXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/CancellationJournal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XENhbmNlbGxhdGlvbkpvdXJuYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/CashierAudit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XENhc2hpZXJBdWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/CashierSummary.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XENhc2hpZXJTdW1tYXJ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DailyBreakfastDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERhaWx5QnJlYWtmYXN0RGV0YWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DailyMinibarReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERhaWx5TWluaWJhclJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DailyPickupReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERhaWx5UGlja3VwUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DailyRevenueReport(V2).cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERhaWx5UmV2ZW51ZVJlcG9ydChWMikuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DailyRevenueReportNew.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERhaWx5UmV2ZW51ZVJlcG9ydE5ldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DepartureExtended.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcGFydHVyZUV4dGVuZGVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DepartureIndividualAndGroup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcGFydHVyZUluZGl2aWR1YWxBbmRHcm91cC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DeparturesReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcGFydHVyZXNSZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DepositActivity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcG9zaXRBY3Rpdml0eS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DepositLedger.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcG9zaXRMZWRnZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DepositRequestLogReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcG9zaXRSZXF1ZXN0TG9nUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/DepositTransferAtCheckIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XERlcG9zaXRUcmFuc2ZlckF0Q2hlY2tJbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/FixChargeReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEZpeENoYXJnZVJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/FreeUpgradeReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEZyZWVVcGdyYWRlUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/GroupReservationReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEdyb3VwUmVzZXJ2YXRpb25SZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/GuestLedger.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEd1ZXN0TGVkZ2VyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/GuestMarketReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEd1ZXN0TWFya2V0UmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/GuestStayOverReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEd1ZXN0U3RheU92ZXJSZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/GuestStayReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEd1ZXN0U3RheVJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/GuestTrialBalance.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEd1ZXN0VHJpYWxCYWxhbmNlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/IncurringDepositCollection.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluY3VycmluZ0RlcG9zaXRDb2xsZWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/IncurringDepositPaymentPlan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluY3VycmluZ0RlcG9zaXRQYXltZW50UGxhbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/IncurringDepositReturn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluY3VycmluZ0RlcG9zaXRSZXR1cm4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/IncurringDepositSummary.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluY3VycmluZ0RlcG9zaXRTdW1tYXJ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/JournalByCashierAndArticle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEpvdXJuYWxCeUNhc2hpZXJBbmRBcnRpY2xlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/LeadTimeReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XExlYWRUaW1lUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ManagerReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE1hbmFnZXJSZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/NationalStatistics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE5hdGlvbmFsU3RhdGlzdGljcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/NoShowReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE5vU2hvd1JlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/OccupancyByPercon.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE9jY3VwYW5jeUJ5UGVyY29uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/OTAsMonthlyReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE9UQXNNb250aGx5UmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/OtherReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE90aGVyUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/OtherReportChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE90aGVyUmVwb3J0Q2hhcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/PostingJournalInvoicing.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFBvc3RpbmdKb3VybmFsSW52b2ljaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ProductActivity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFByb2R1Y3RBY3Rpdml0eS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RatecodebyDateReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJhdGVjb2RlYnlEYXRlUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RatecodeReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJhdGVjb2RlUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReportNationalityStatistics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlcG9ydE5hdGlvbmFsaXR5U3RhdGlzdGljcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationbyCompany.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uYnlDb21wYW55LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationCancellation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uQ2FuY2VsbGF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationCancellationChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uQ2FuY2VsbGF0aW9uQ2hhcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationPreblocked.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uUHJlYmxvY2tlZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationRateCheck.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uUmF0ZUNoZWNrLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationStatistics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uU3RhdGlzdGljcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationSummary.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uU3VtbWFyeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/ReservationSummaryReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlc2VydmF0aW9uU3VtbWFyeVJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueBy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVCeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueByChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVCeUNoYXJ0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVEZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueDetailChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVEZXRhaWxDaGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVSZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueReportChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVSZXBvcnRDaGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueSpa.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVTcGEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RevenueSummary.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJldmVudWVTdW1tYXJ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomDiscrepancy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21EaXNjcmVwYW5jeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomMoves.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21Nb3Zlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomOccupancy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21PY2N1cGFuY3kuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomOccupancyChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21PY2N1cGFuY3lDaGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomOccupancyStatistics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21PY2N1cGFuY3lTdGF0aXN0aWNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomStatistic.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21TdGF0aXN0aWMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/RoomTypeStatistic.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJvb21UeXBlU3RhdGlzdGljLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/SaleinChargeActivity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFNhbGVpbkNoYXJnZUFjdGl2aXR5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/SaleinChargeReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFNhbGVpbkNoYXJnZVJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/SummarybyArticle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFN1bW1hcnlieUFydGljbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/TAProductionReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFRBUHJvZHVjdGlvblJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/TraceReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFRyYWNlUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/TransferARReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFRyYW5zZmVyQVJSZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/Transportation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFRyYW5zcG9ydGF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/TrialBalance.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFRyaWFsQmFsYW5jZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/VacantRoom.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFZhY2FudFJvb20uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Report/_ReportViewerPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XF9SZXBvcnRWaWV3ZXJQYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/AdjustTransaction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xBZGp1c3RUcmFuc2FjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/EditPosting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xFZGl0UG9zdGluZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/NewFolio.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xOZXdGb2xpby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/Payment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xQYXltZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/Post.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xQb3N0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/Posting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xQb3N0aW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/PostingHistory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xQb3N0aW5nSGlzdG9yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/SelectOption.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xTZWxlY3RPcHRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/ShiftLogin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xTaGlmdExvZ2luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/SplitTransaction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xTcGxpdFRyYW5zYWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Billing/TransferTransaction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cQmlsbGluZ1xUcmFuc2ZlclRyYW5zYWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/GroupAdmin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cR3JvdXBBZG1pbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/GroupAdmin/GroupCheckIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cR3JvdXBBZG1pblxHcm91cENoZWNrSW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/GroupReservation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cR3JvdXBSZXNlcnZhdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/GroupReservation/ModalSearchProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cR3JvdXBSZXNlcnZhdGlvblxNb2RhbFNlYXJjaFByb2ZpbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalMoreFields.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbE1vcmVGaWVsZHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalRateCode.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFJhdGVDb2RlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchAgent.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaEFnZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchAllotment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaEFsbG90bWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchBooker.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaEJvb2tlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchCompany.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaENvbXBhbnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchContact.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaENvbnRhY3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchMarket.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaE1hcmtldC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchPreference.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaFByZWZlcmVuY2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaFByb2ZpbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/ModalNewReservation/ModalSearchRoom.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTW9kYWxOZXdSZXNlcnZhdGlvblxNb2RhbFNlYXJjaFJvb20uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/NewReservation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cTmV3UmVzZXJ2YXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Accompanying.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xBY2NvbXBhbnlpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/AddOn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xBZGRPbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Alerts.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xBbGVydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Billing.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xCaWxsaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Cancel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xDYW5jZWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Changes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xDaGFuZ2VzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/CheckIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xDaGVja0luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/CheckOut.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xDaGVja091dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/CheckOutAll.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xDaGVja091dEFsbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/CheckOutZero.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xDaGVja091dFplcm8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Deposit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xEZXBvc2l0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/FixedCharges.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xGaXhlZENoYXJnZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Invoicing.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xJbnZvaWNpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Message.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xNZXNzYWdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Option.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xPcHRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/RegistrationCard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xSZWdpc3RyYXRpb25DYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Reinstate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xSZWluc3RhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/RoomAssignment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xSb29tQXNzaWdubWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/RoomMove.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xSb29tTW92ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Routing.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xSb3V0aW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Share.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xTaGFyZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Split.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xTcGxpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/Traces.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xUcmFjZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/ViewProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xWaWV3UHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/Options/WaitList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3B0aW9uc1xXYWl0TGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/OverBooking.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cT3ZlckJvb2tpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/RateCodeAuthor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cUmF0ZUNvZGVBdXRob3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/SearchReservation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cU2VhcmNoUmVzZXJ2YXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Reservation/WaitList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVzZXJ2YXRpb25cV2FpdExpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/RoomManagement/Discrepancy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbU1hbmFnZW1lbnRcRGlzY3JlcGFuY3kuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/RoomManagement/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbU1hbmFnZW1lbnRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/RoomManagement/ItemDailyInventory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbU1hbmFnZW1lbnRcSXRlbURhaWx5SW52ZW50b3J5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/RoomManagement/ItemInventoryAvailable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbU1hbmFnZW1lbnRcSXRlbUludmVudG9yeUF2YWlsYWJsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/RoomManagement/ItemSearch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbU1hbmFnZW1lbnRcSXRlbVNlYXJjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/RoomManagement/OOOSload.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbU1hbmFnZW1lbnRcT09PU2xvYWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Shared/Navbar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXE5hdmJhci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/TransactionGroup/TransGroup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNhY3Rpb25Hcm91cFxUcmFuc0dyb3VwLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/TransactionSubGroup/TransSubGroup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNhY3Rpb25TdWJHcm91cFxUcmFuc1N1Ykdyb3VwLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Transaction/Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNhY3Rpb25cU2VhcmNoLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/User/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TinHoc/OneS/WebApp/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-7882z672yd

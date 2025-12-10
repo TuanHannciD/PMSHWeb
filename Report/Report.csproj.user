@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="Report\GroupReservationReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\GuestMarketReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\GuestStayOverReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\GuestStayReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\RatecodebyDateReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report1.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report2.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\Report3.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\ReportNationalityStatistics.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\ReservationSummaryReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+    <Compile Update="Report\TraceReport.cs">
+      <SubType>XtraReport</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

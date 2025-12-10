@@ -1,0 +1,207 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\TinHoc\\OneS\\Cashiering\\Cashiering.csproj": {}
+  },
+  "projects": {
+    "D:\\TinHoc\\OneS\\BaseBusiness\\BaseBusiness.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\TinHoc\\OneS\\BaseBusiness\\BaseBusiness.csproj",
+        "projectName": "BaseBusiness",
+        "projectPath": "D:\\TinHoc\\OneS\\BaseBusiness\\BaseBusiness.csproj",
+        "packagesPath": "C:\\Users\\Tuna\\.nuget\\packages\\",
+        "outputPath": "D:\\TinHoc\\OneS\\BaseBusiness\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\DevExpress 22.2\\Components\\Offline Packages",
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Tuna\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 22.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\DevExpress 22.2\\Components\\System\\Components\\Packages": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.66, )"
+            },
+            "DevExpress.AspNetCore.Reporting": {
+              "target": "Package",
+              "version": "[22.2.3, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.12.0, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "System.IO.Ports": {
+              "target": "Package",
+              "version": "[10.0.0-rc.2.25502.107, )"
+            },
+            "log4net": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\TinHoc\\OneS\\Cashiering\\Cashiering.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\TinHoc\\OneS\\Cashiering\\Cashiering.csproj",
+        "projectName": "Cashiering",
+        "projectPath": "D:\\TinHoc\\OneS\\Cashiering\\Cashiering.csproj",
+        "packagesPath": "C:\\Users\\Tuna\\.nuget\\packages\\",
+        "outputPath": "D:\\TinHoc\\OneS\\Cashiering\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\DevExpress 22.2\\Components\\Offline Packages",
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Tuna\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 22.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\DevExpress 22.2\\Components\\System\\Components\\Packages": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\TinHoc\\OneS\\BaseBusiness\\BaseBusiness.csproj": {
+                "projectPath": "D:\\TinHoc\\OneS\\BaseBusiness\\BaseBusiness.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
