@@ -46,6 +46,7 @@ using User.Services.Implements;
 using User.Services.Interfaces;
 
 using WebApp.Commons.Containts;
+using static BaseBusiness.Global;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -178,6 +179,8 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
+builder.Services.Configure<ContactInfo>(builder.Configuration.GetSection("ContactInfo"));
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[] { new CultureInfo("vi-VN") };

@@ -309,34 +309,43 @@
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <script>
-        function formatDate(date) {
-            let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
-            let day = date.getDate().toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
-            return `${year}-${month}-${day}`;
-        }
-                let parsedBusinessDate = null;
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
+        let day = date.getDate().toString().padStart(2, '0'); // Ð?m b?o có 2 ch? s?
+        return `${year}-${month}-${day}`;
+    }
+     let parsedBusinessDate = null;
 
-        $(document).ready(function () {
-             document.getElementById("reportTitle").innerText = 'Room Availability';
-          var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
-            console.log(businessDateStr);
-             // Lấy phần ngày tháng năm
-             var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
-             var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+    $(document).ready(function () {
+        getBusinessDate();
+            //$('#toDate').val(formatDate(parsedBusinessDate));
+        initializeTomSelects();
 
-             // Parse đúng thứ tự: new Date(year, monthIndex, day)
-              parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
 
-             // Gán vào input type="date"
-             $('#fromDate').val(formatDate(parsedBusinessDate));
-               //$('#toDate').val(formatDate(parsedBusinessDate));
-            initializeTomSelects();
 
-            $("#btnPrint").trigger("click");
+    });
 
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+
+                    $('#fromDate').val(result.split('T')[0]);
+                           $("#btnPrint").trigger("click");
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
         });
-        function initializeTomSelects() {
+    }
+    function initializeTomSelects() {
         const selectors = ["#zone","#restype"];
 
         for (const id of selectors) {
