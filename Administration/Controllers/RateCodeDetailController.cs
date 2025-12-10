@@ -20,13 +20,17 @@ namespace Administration.Controllers
         [HttpGet("RateCodeDetail")] // Truyeenf DataGrid , script api
         public IActionResult RateCodeDetail()
         {
+            List<RateCodeModel> listRateCode = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
+            List<RateCategoryModel> listRateCate = PropertyUtils.ConvertToList<RateCategoryModel>(RateCategoryBO.Instance.FindAll());
+            ViewBag.RateCodeList = listRateCode;
+            ViewBag.RateCateList = listRateCate;
             return View("~/Views/Administration/RateCode/RateCodeDetail.cshtml");
             // Truyền đường dẫn chuẩn vào để tìm đúng
         }
 
 
 
-        // [HttpGet("GetAllRateClass")]
+
         // public async Task<IActionResult> RateClassGetAll(int inactive = 0)
         // {
         //     try

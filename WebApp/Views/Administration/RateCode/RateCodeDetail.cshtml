@@ -2,6 +2,7 @@
 
 @{
     dynamic? listRateCode = @ViewBag.RateCodeList;
+    dynamic? listRateCate = @ViewBag.RateCateList;
     dynamic? listRoomType = @ViewBag.RoomTypeList;
     dynamic? listTransaction = @ViewBag.TransactionList;
     dynamic? listPackage = @ViewBag.PackageList;
@@ -133,18 +134,36 @@
 
 <div class="text-center" id="reportTitle" style="font-size: 20px">Rate Code Detail</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-<div class="searchFilter">
+    <div class="d-flex align-items-center me-2 gap-2" style="padding:8px">
+        <label class="me-2 mb-0">Rate Code:</label>
 
-</div>
-    <div>
-        <button id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i> View</button>
-        <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
-        <button id="btnUpdate" class="mui-button mui-button-edit"><i class="fa-solid fa-pen"></i> Edit</button>
-        <button id="btnDelete" class="mui-button button-report-delete"><i class="fa-solid fa-trash-can"></i>
-            Delete</button>
-        <button id="btnExportExcel" class="mui-button mui-button-export" type="button"><i
-                class="fa-solid fa-file-excel"></i> Excel</button>
+        <select id="code" class="form-control form-control-sm w-auto">
+            <option value="0">-- Rate Code --</option>
+            @foreach (dynamic u in ViewBag.RateCodeList)
+            {
+                <option value="@u.RateCode">@u.RateCode \ @u.Descripton</option>
+            }
+        </select>
+        <label class="me-2 mb-0">Rate Category:</label>
+        <select id="category" class="form-control form-control-sm w-auto">
+            <option value="0">-- Select Rate Category --</option>
+            @foreach (dynamic u in ViewBag.RateCateList)
+            {
+                <option value="@u.Code">@u.Code \ @u.Name</option>
+            }
+        </select>
+        <label class="me-2 mb-0">Choose type of date:</label>
     </div>
+</div>
+<div>
+    <button id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i> View</button>
+    <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
+    <button id="btnUpdate" class="mui-button mui-button-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+    <button id="btnDelete" class="mui-button button-report-delete"><i class="fa-solid fa-trash-can"></i>
+        Delete</button>
+    <button id="btnExportExcel" class="mui-button mui-button-export" type="button"><i
+            class="fa-solid fa-file-excel"></i> Excel</button>
+</div>
 </div>
 <div class="mui-card">
     <div class="grid-container"><!-- Left Grid: Rate Codes -->

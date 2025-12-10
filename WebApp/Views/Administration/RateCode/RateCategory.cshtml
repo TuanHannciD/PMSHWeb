@@ -159,6 +159,10 @@
                     <label for="codeClass" class="me-2 mb-0" style="width: 80px;">Code:</label>
                     <input type="text" id="codeClass" name="codeClass" class="form-control form-control-sm flex-fill" />
                 </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <label for="nameClass" class="me-2 mb-0" style="width: 80px;">Name:</label>
+                    <input type="text" id="codeClass" name="codeClass" class="form-control form-control-sm flex-fill" />
+                </div>
 
                 <div class="mb-2 d-flex align-items-center">
                     <label for="descriptionaccty" class="me-2 mb-0" style="width: 80px;">Description:</label>
@@ -252,6 +256,7 @@
             columns: [
                 { dataField: "id", caption: "ID", width: 80, visible: false },
                 { dataField: "code", caption: "Code", dataType: "number", format: { type: "fixedPoint", precision: 0 }, width: 130 },
+                { dataField: "name", caption: "Name", dataType: "string", width: 130 },
                 { dataField: "description", caption: "Description", width: 200 },
                 { dataField: "createdBy", caption: "CreatedBy", width: 120 },
                 {
@@ -368,6 +373,7 @@
 
             var dataToSend = {
                 codeClass: $("#codeClass").val(),
+                nameClass: $("#nameClass").val(),
                 descriptionaccty: $("#descriptionaccty").val(),
                 inactive: $("#inactive").is(":checked") ? "1" : "0",
                 idRateCategory: $("#idRateCategory").val(),

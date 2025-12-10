@@ -38,6 +38,7 @@ namespace Administration.Controllers
                               {
                                   ID = d["ID"]?.ToString() ?? "",
                                   Code = d["Code"]?.ToString() ?? "",
+                                  Name = d["Name"]?.ToString() ?? "",
                                   Description = d["Description"]?.ToString() ?? "",
                                   CreatedDate = d["CreatedDate"] != DBNull.Value ? Convert.ToDateTime(d["CreatedDate"]) : (DateTime?)null,
                                   UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]) : (DateTime?)null,
@@ -55,7 +56,7 @@ namespace Administration.Controllers
             }
         }
         [HttpPost("RateCategorySave")]
-        public async Task<IActionResult> RateCategorySave(string idRateCategory, string codeClass, string descriptionaccty, string user, string inactive)
+        public async Task<IActionResult> RateCategorySave(string idRateCategory, string codeClass, string nameClass, string descriptionaccty, string user, string inactive)
         {
             try
             {
@@ -68,6 +69,10 @@ namespace Administration.Controllers
                     errors.Add("Code is required.");
                 else if (codeClass.Length > 50)
                     errors.Add("Code must be at most 50 characters.");
+                if (string.IsNullOrWhiteSpace(nameClass))
+                    errors.Add("Name is required.");
+                else if (nameClass.Length > 50)
+                    errors.Add("Name must be at most 50 characters.");
 
                 if (!string.IsNullOrEmpty(descriptionaccty) && descriptionaccty.Length > 500)
                     errors.Add("Description must be at most 500 characters.");
@@ -117,6 +122,7 @@ namespace Administration.Controllers
                 // Prepare model
                 RateCategoryModel _Model = new();
                 _Model.Code = codeClass.Trim();
+                _Model.Name = nameClass.Trim();
                 _Model.Description = descriptionaccty ?? string.Empty;
                 _Model.Inactive = inactive == "1";
 
