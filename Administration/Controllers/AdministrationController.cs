@@ -5847,8 +5847,6 @@ namespace Administration.Controllers
 
             return Json(new { success = true, message });
         }
-
-
         [HttpPost]
         public IActionResult DepositRuleDelete(long id)
         {
@@ -5914,6 +5912,7 @@ namespace Administration.Controllers
 
             return Json(new
             {
+                cancelBeforeTime = data.CancelBeforeTime,
                 inactive = data.Inactive,
                 sequence = data.Sequence
             });
