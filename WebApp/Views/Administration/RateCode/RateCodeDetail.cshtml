@@ -121,12 +121,14 @@
     /* bảng hàng 1 phải */
     .grid-top-right {
         grid-column: 2;
+        padding: 15px;
         /* cột 2 */
     }
 
     /* bảng hàng 2 chiếm 2 cột */
     .grid-bottom {
         grid-column: 1 / span 2;
+        padding: 15px;
         /* trải rộng 2 cột */
 
     }
@@ -138,21 +140,37 @@
         <label class="me-2 mb-0">Rate Code:</label>
 
         <select id="code" class="form-control form-control-sm w-auto">
-            <option value="0">-- Rate Code --</option>
+            <option value="">-- Rate Code --</option>
             @foreach (dynamic u in ViewBag.RateCodeList)
             {
-                <option value="@u.RateCode">@u.RateCode \ @u.Descripton</option>
+                <option value="@u.RateCode">@u.RateCode</option>
             }
         </select>
         <label class="me-2 mb-0">Rate Category:</label>
         <select id="category" class="form-control form-control-sm w-auto">
-            <option value="0">-- Select Rate Category --</option>
+            <option value="">-- Select Rate Category --</option>
             @foreach (dynamic u in ViewBag.RateCateList)
             {
-                <option value="@u.Code">@u.Code \ @u.Name</option>
+                <option value="@u.Code">@u.Code</option>
             }
         </select>
         <label class="me-2 mb-0">Choose type of date:</label>
+        <select id="typeDate" class="form-control form-control-sm w-auto">
+            <option value="0">--Not choose--</option>
+            <option value="1">See date</option>
+        </select>
+        <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center me-3">
+                <label class="me-2 mb-0">From :</label>
+                <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+            </div>
+
+            <div class="d-flex align-items-center me-3">
+                <label class="me-2 mb-0">To :</label>
+                <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+            </div>
+        </div>
+
     </div>
 </div>
 <div>
@@ -169,19 +187,19 @@
     <div class="grid-container"><!-- Left Grid: Rate Codes -->
         <div class="grid-left">
             <div class="grid-title">Rate Codes</div>
-            <div class="grid-content gridContainer" id="gridRateCodes"></div>
+            <div class="grid-content gridContainer mt-2" id="gridRateCodes"></div>
         </div>
 
         <!-- Top Right Grid: Rate Details Grouped -->
         <div class="grid-top-right">
             <div class="grid-title">Rate Details Grouped</div>
-            <div class="grid-content gridContainer" id="gridRateDetailsGrouped"></div>
+            <div class="grid-content gridContainer mt-2" id="gridRateDetailsGrouped"></div>
         </div>
 
         <!-- Bottom Right Grid: Details -->
         <div class="grid-bottom grid-details">
             <div class="grid-title">Details</div>
-            <div class=" grid-content gridContainer" id="gridDetails"></div>
+            <div class=" grid-content gridContainer mt-2" id="gridDetails"></div>
         </div>
     </div>
 </div>
@@ -402,16 +420,64 @@
         $("#chkActive").prop("checked", false);
     }
 
+    async function RateCodeGroupDataByID(rateCodeID) {
+        return $.ajax({
+            url: "/Administration/RateCode/RateCodeGroupDataByID",
+            type: "GET",
+            data: { rateCodeID: rateCodeID }
+        });
+    }
+
     var selectedRowData = null;
     var selectedRateCode = null;
 
-    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
-        $("#loadingSpinner").show();
-        // Using sample data for testing
-        console.log("Loading sample data...", sampleRateDetails);
-        initializeGrids(sampleRateCodes, sampleRateDetails);
-        $("#loadingSpinner").hide();
-    });
+    async function loadRateCodeReport() {
+        try {
+            $("#loadingSpinner").show();
+
+            // Lấy dữ liệu chính
+            let result = await $.ajax({
+                url: "/Administration/RateCode/GetAllRateCodeDetail",
+                type: "GET",
+                data: {
+                    rateCode: $("#code").val(),
+                    rateCategory: $("#category").val(),
+                    typeOfDate: $("#typeDate").val(),
+                    fromDate: $("#fromDate").val(),
+                    toDate: $("#toDate").val()
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                }
+            });
+
+            if (result && result.length > 0) {
+                let ids = result[0].idRateCode;
+
+                // Lấy dữ liệu group
+                let groupData = await RateCodeGroupDataByID(ids);
+                console.log("Group: ", groupData);
+                console.log('ID', ids);
+                console.log('GetAllRateCodeDetail', result);
+
+                // Gọi initialize grids sau khi có dữ liệu
+                initializeGrids(result, groupData);
+            } else {
+                alert("Không tìm thấy dữ liệu RateCode.");
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Không thể tải báo cáo.");
+        } finally {
+            $("#loadingSpinner").hide(); // luôn hide spinner ở cuối
+        }
+    }
+
+    // Gắn sự kiện
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", loadRateCodeReport);
 
     function initializeGrids(rateCodes, rateDetails) {
         // Left Grid: Rate Codes
@@ -467,7 +533,7 @@
                 { dataField: "curr", caption: "Curr.", width: "100px" }
             ],
             scrolling: { mode: "standard" },
-            paging: { pageSize: 10 },
+            paging: { pageSize: 20 },
             onSelectionChanged: function (e) {
                 if (e.selectedRowsData.length > 0) {
                     selectedRowData = e.selectedRowsData[0];
