@@ -159,21 +159,26 @@
     </div>
 </div>
 <script>
-        $(document).on("click", ".menu-group-title", function (e) {
+    // Xử lý Toggle Menu 
+    $(document).on("click", ".menu-group-title", function (e) {
         e.preventDefault();
-
-        // 2. Lấy submenu (dùng next() là đúng rồi)
         const submenu = $(this).next(".menu-left");
         const icon = $(this).find("i");
-
-        // 3. Đóng các menu khác đang mở (Optional - nếu muốn kiểu Accordion: mở cái này đóng cái kia)
-        // $(".menu-left .menu-left").not(submenu).slideUp(200);
-        // $(".menu-group-title i").not(icon).removeClass("fa-chevron-up").addClass("fa-chevron-down");
-
-        // 4. Toggle menu hiện tại
-        submenu.stop(true, true).slideToggle(200); // Thêm stop() để tránh click liên tục bị lag
-
-        // 5. Đổi icon
+        submenu.stop(true, true).slideToggle(200);
         icon.toggleClass("fa-chevron-down fa-chevron-up");
+    });
+
+    // Tự động Active menu item dựa trên URL hiện tại 
+    $(document).ready(function () {
+        var currentUrl = window.location.pathname;
+        $('.menu-item').each(function() {
+            var href = $(this).attr('href');
+            if (href && currentUrl.toLowerCase().includes(href.toLowerCase())) {
+                $(this).addClass('active');
+                // Mở menu cha của item đang active
+                $(this).closest('.menu-left').show();
+                $(this).closest('.menu-left').prev('.menu-group-title').find('i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            }
+        });
     });
 </script>

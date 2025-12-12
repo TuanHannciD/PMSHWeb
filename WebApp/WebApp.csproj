@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Administration\ItemCategory\" />
     <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 
