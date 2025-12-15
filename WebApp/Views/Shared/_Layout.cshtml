@@ -1,9 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Extensions.Options
+@using static BaseBusiness.Global
+@inject IOptions<ContactInfo> ContactConfig
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oneS-PMSh.Report</title>
+    <title>oneS-PMSh</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     @* css assets *@
@@ -99,8 +102,14 @@
         <!-- Contact and User Info Section -->
         <div class="contact-user-section">
             <div class="contact-info">
-                <span class="contact-item"><i class="fas fa-envelope"></i> Email: support@hotelresort.com</span>
-                <span class="contact-item"><i class="fas fa-phone"></i> Hotline: +1-800-123-4567</span>
+                <span class="contact-item">
+                    <i class="fas fa-envelope"></i> Email: @ContactConfig.Value.Email
+                </span>
+
+                <span class="contact-item">
+                    <i class="fas fa-phone"></i> Hotline: @ContactConfig.Value.Hotline
+                </span>
+
             </div>
             <div class="user-info">
                 <i class="fa-solid fa-compress fullscreen-icon" title="Toàn màn hình"></i>

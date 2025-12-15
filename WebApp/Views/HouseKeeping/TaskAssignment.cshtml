@@ -806,17 +806,17 @@
 ">
 
     <div class="d-flex justify-content-between mb-2">
-
-        <button style="border-radius: 4px; margin-right: 10px; background-color: green; color: white;"
-                id="btnExportExcel1"
-                class="mui-button mui-button-new"
-                type="button">
-            <i class="fa-solid fa-file-excel"></i> Excel
-        </button>
-       <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid1" class="mui-button mui-button-new" type="button">
-            <i class="fa-solid fa-print"></i> Print
-        </button>
-
+        <div class="d-flex justify-content-start mb-3 gap-2">
+                <button style="border-radius: 4px; margin-right: 10px; background-color: green; color: white;"
+                        id="btnExportExcel1"
+                        class="mui-button mui-button-new"
+                        type="button">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </button>
+               <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid1" class="mui-button mui-button-new" type="button">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+        </div>
         <!-- Nút Close bên phải -->
         <span onclick="$('#gridContainerInner').fadeOut(200)"
               style="cursor: pointer; font-size: 18px; color: BLACK;"
@@ -832,74 +832,75 @@
         <strong>Room Attendant Daily Work Sheet</strong>
     </div>
 
-    <!-- LEGEND FLEX HÀNG NGANG -->
-    <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px;">
-        <!-- BED ROOM -->
-        <div style="flex: 1;">
-            <div style="text-align: left; margin-bottom: 5px;">
-                <i><strong>Legends:</strong></i>
-            </div>
-            <table border="1" style="width: 100%; text-align: center; font-size: 13px; border-collapse: collapse;">
-                <tr>
-                    <th colspan="4">BED ROOM</th>
-                </tr>
-                <tr style="border-top: solid 1px;">
-                    <td>Water</td>
-                    <td>Café</td>
-                    <td>Tea</td>
-                    <td>Sugar</td>
-                </tr>
-            </table>
-        </div>
 
-        <!-- BATH ROOM -->
-        <div style="flex: 2;">
-            <div style="visibility: hidden; height: 24px; margin-bottom: 5px;">Placeholder</div>
-            <!-- Ẩn dòng Legends để 2 bảng thẳng hàng -->
-            <table border="1" style="width: 100%; text-align: center; font-size: 13px; border-collapse: collapse;">
-                <tr>
-                    <th colspan="10">BATH ROOM</th>
-                </tr>
-                <tr style="border-top: solid 1px;">
-                    <td style="font-weight:bold">BT</td>
-                    <td>Bath Towel</td>
-                    <td style ="font-weight:bold">FT</td>
-                    <td>Face Towel</td>
-                    <td style ="font-weight:bold">HT</td>
-                    <td>Hand Towel</td>
-                    <td style="font-weight:bold">BM</td>
-                    <td>Bathmat</td>
-                    <td style="font-weight:bold">AM</td>
-                    <td>Amenities</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-
-    <!-- PHẦN THÔNG TIN -->
-    <div class="row mb-3" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-        <div style="width: 23%;">
-            <label><strong>Floor/Area:</strong></label>
-            <div style="border-bottom: 1px solid black; height: 20px;"></div>
-        </div>
-        <div style="width: 23%;">
-            <label><strong>Card No.:</strong></label>
-            <div style="border-bottom: 1px solid black; height: 20px;"></div>
-        </div>
-        <div style="width: 23%;">
-            <label><strong>Shift:</strong></label>
-            <div style="border-bottom: 1px solid black; height: 20px;"></div>
-        </div>
-        <div style="width: 23%;">
-            <label><strong>Date:</strong></label>
-            <div id="datepopreport" style="border-bottom: 1px solid black; height: 20px;"></div>
-        </div>
-    </div>
 
     <!-- PHẦN BẢNG SCROLL -->
     <!-- PHẦN BẢNG SCROLL (sửa lại calc) -->
-    <div style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 230px);">
+    <div id="logGridReportContainerrp1"  style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 230px);">
+        <!-- LEGEND FLEX HÀNG NGANG -->
+        <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px;">
+            <!-- BED ROOM -->
+            <div style="flex: 1;">
+                <div style="text-align: left; margin-bottom: 5px;">
+                    <i><strong>Legends:</strong></i>
+                </div>
+                <table border="1" style="width: 100%; text-align: center; font-size: 13px; border-collapse: collapse;">
+                    <tr>
+                        <th colspan="4">BED ROOM</th>
+                    </tr>
+                    <tr style="border-top: solid 1px;">
+                        <td>Water</td>
+                        <td>Café</td>
+                        <td>Tea</td>
+                        <td>Sugar</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- BATH ROOM -->
+            <div style="flex: 2;">
+                <div style="visibility: hidden; height: 24px; margin-bottom: 5px;">Placeholder</div>
+                <!-- Ẩn dòng Legends để 2 bảng thẳng hàng -->
+                <table border="1" style="width: 100%; text-align: center; font-size: 13px; border-collapse: collapse;">
+                    <tr>
+                        <th colspan="10">BATH ROOM</th>
+                    </tr>
+                    <tr style="border-top: solid 1px;">
+                        <td style="font-weight:bold">BT</td>
+                        <td>Bath Towel</td>
+                        <td style="font-weight:bold">FT</td>
+                        <td>Face Towel</td>
+                        <td style="font-weight:bold">HT</td>
+                        <td>Hand Towel</td>
+                        <td style="font-weight:bold">BM</td>
+                        <td>Bathmat</td>
+                        <td style="font-weight:bold">AM</td>
+                        <td>Amenities</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- PHẦN THÔNG TIN -->
+        <div class="row mb-3" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+            <div style="width: 23%;">
+                <label><strong>Floor/Area:</strong></label>
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
+            </div>
+            <div style="width: 23%;">
+                <label><strong>Card No.:</strong></label>
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
+            </div>
+            <div style="width: 23%;">
+                <label><strong>Shift:</strong></label>
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
+            </div>
+            <div style="width: 23%;">
+                <label><strong>Date:</strong></label>
+                <div id="datepopreport" style="border-bottom: 1px solid black; height: 20px;"></div>
+            </div>
+        </div>
         <div id="logGridReportContainer" class="gridContainer mt-2"></div>
     </div>
 
@@ -919,15 +920,17 @@
 ">
 
     <div class="d-flex justify-content-between mb-2">
-        <button style="border-radius: 4px; margin-right: 10px; background-color: green; color: white;"
-                id="btnExportExcel2"
-                class="mui-button mui-button-new"
-                type="button">
-            <i class="fa-solid fa-file-excel"></i> Excel
-        </button>
-           <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid2" class="mui-button mui-button-new" type="button">
-            <i class="fa-solid fa-print"></i> Print
-        </button>
+            <div class="d-flex justify-content-start mb-3 gap-2">
+                <button style="border-radius: 4px; margin-right: 10px; background-color: green; color: white;"
+                        id="btnExportExcel2"
+                        class="mui-button mui-button-new"
+                        type="button">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </button>
+                   <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid2" class="mui-button mui-button-new" type="button">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+            </div>
         <span onclick="$('#gridContainerInner2').fadeOut(200)"
               style="cursor: pointer; font-size: 18px; color: BLACK;"
               title="Close">
@@ -940,43 +943,44 @@
         <strong>Housekeeping Department</strong><br>
         <strong>R/A Evening Worksheet</strong>
     </div>
-    <div style="font-size: 13px; margin-bottom: 20px;">
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="width: 15%;"><strong>Floor:</strong> ___________</td>
-                <td style="width: 15%; text-align: center;"><strong>Special assignment:</strong> ___________</td>
-                <td style="width: 15%; text-align: center;">
-                    <strong>Date:</strong> <span id="datepopreport2"></span>
-                </td>
 
-            </tr>
-            <tr>
-                <td colspan="3" style="padding-top: 10px;">
-                    <strong>Legends:</strong><br />
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            <td><strong>VD</strong><br />Vacant Dirty</td>
-                            <td><strong>VC</strong><br />Vacant Clean</td>
-                            <td><strong>VM</strong><br />Vacant Maintenance</td>
-                            <td><strong>OD</strong><br />Occupied Dirty</td>
-                            <td><strong>OC</strong><br />Occupied Clean</td>
-                            <td><strong>RS</strong><br />Refused Service</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DND</strong><br />Do Not Disturb</td>
-                            <td><strong>LB</strong><br />Light Baggage</td>
-                            <td><strong>ED</strong><br />Expected Departure</td>
-                            <td><strong>EA</strong><br />Expected Arrival</td>
-                            <td><strong>NB</strong><br />No Baggage</td>
-                            <td><strong>SO</strong><br />Slept Out</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    <div style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 230px);">
+    <div id="logGridReportContainerrp2" style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 230px);">
+        <div style="font-size: 13px; margin-bottom: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 15%;"><strong>Floor:</strong> ___________</td>
+                    <td style="width: 15%; text-align: center;"><strong>Special assignment:</strong> ___________</td>
+                    <td style="width: 15%; text-align: center;">
+                        <strong>Date:</strong> <span id="datepopreport2"></span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="3" style="padding-top: 10px;">
+                        <strong>Legends:</strong><br />
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td><strong>VD</strong><br />Vacant Dirty</td>
+                                <td><strong>VC</strong><br />Vacant Clean</td>
+                                <td><strong>VM</strong><br />Vacant Maintenance</td>
+                                <td><strong>OD</strong><br />Occupied Dirty</td>
+                                <td><strong>OC</strong><br />Occupied Clean</td>
+                                <td><strong>RS</strong><br />Refused Service</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DND</strong><br />Do Not Disturb</td>
+                                <td><strong>LB</strong><br />Light Baggage</td>
+                                <td><strong>ED</strong><br />Expected Departure</td>
+                                <td><strong>EA</strong><br />Expected Arrival</td>
+                                <td><strong>NB</strong><br />No Baggage</td>
+                                <td><strong>SO</strong><br />Slept Out</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <div id="logGridReportContainer2" class="gridContainer mt-2"></div>
     </div>
 
@@ -996,15 +1000,17 @@
 ">
 
     <div class="d-flex justify-content-between mb-2">
-        <button style="border-radius: 4px; margin-right: 10px; background-color: green; color: white;"
-                id="btnExportExcel3"
-                class="mui-button mui-button-new"
-                type="button">
-            <i class="fa-solid fa-file-excel"></i> Excel
-        </button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid3" class="mui-button mui-button-new" type="button">
-            <i class="fa-solid fa-print"></i> Print
-        </button>
+        <div class="d-flex justify-content-start mb-3 gap-2">
+            <button style="border-radius: 4px; margin-right: 10px; background-color: green; color: white;"
+                    id="btnExportExcel3"
+                    class="mui-button mui-button-new"
+                    type="button">
+                <i class="fa-solid fa-file-excel"></i> Excel
+            </button>
+            <button style="border-radius: 4px;  margin-right: 6px;background-color: crimson;" id="btnPrintGrid3" class="mui-button mui-button-new" type="button">
+                <i class="fa-solid fa-print"></i> Print
+            </button>
+       </div>
         <span onclick="$('#gridContainerInner3').fadeOut(200)"
               style="cursor: pointer; font-size: 18px; color: BLACK;"
               title="Close">
@@ -1017,7 +1023,10 @@
         <strong>Housekeeping Department</strong><br>
         <strong>Supervisor Hoor Checklist</strong>
     </div>
-    <div style="font-size: 13px; margin-bottom: 20px;">
+ 
+
+    <div id="logGridReportContainerrp3" style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 125px);">
+           <div style="font-size: 13px; margin-bottom: 20px;">
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
                 <td style="width: 15%;"><strong>Name:</strong> ___________</td>
@@ -1030,8 +1039,6 @@
       
         </table>
     </div>
-
-    <div style="overflow-x: auto; overflow-y: hidden; white-space: nowrap; height: calc(100% - 125px);">
         <div id="logGridReportContainer3" class="gridContainer mt-2"></div>
     </div>
 
@@ -1045,7 +1052,7 @@
     <div class="d-flex justify-content-start mb-3 gap-2">
         <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportpopExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
 
-        <button onclick="$('#popupNewGrid').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style="background-color: #3b9ac6; border-radius: 4px;">
+        <button onclick="$('#popupNewGrid').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" >
             <i class="fa-solid fa-xmark me-1"></i> Close
         </button>
     </div>
@@ -3593,8 +3600,341 @@
         });
     });
 
+  $("#btnPrintGrid1").on("click", function () {
+        var container = document.getElementById("logGridReportContainerrp1");
+    
+    // Clone toàn bộ container để tránh ảnh hưởng đến trang gốc
+    var clone = container.cloneNode(true);
 
+    // BƯỚC QUAN TRỌNG: Mở rộng chiều cao để hiển thị toàn bộ nội dung (bỏ scroll)
+    clone.style.height = "auto !important";
+    clone.style.maxHeight = "none !important";
+    clone.style.overflow = "visible !important";
 
-   
-   
+    // Nếu bảng hoặc div con có height cố định, cũng mở rộng
+    var tables = clone.querySelectorAll("table");
+    tables.forEach(function(table) {
+        table.style.height = "auto !important";
+        table.style.maxHeight = "none !important";
+    });
+
+    var scrollableDivs = clone.querySelectorAll("div[style*='overflow'], div.scrollable, div.k-grid-content");
+    scrollableDivs.forEach(function(div) {
+        div.style.height = "auto !important";
+        div.style.maxHeight = "none !important";
+        div.style.overflow = "visible !important";
+    });
+
+    var gridHtml = clone.outerHTML;
+
+    var printWindow = window.open("", "", "width=1200,height=800");
+    var doc = printWindow.document;
+    doc.open();
+
+    var html = doc.createElement("html");
+    var head = doc.createElement("head");
+    var title = doc.createElement("title");
+    title.innerText = "Housekeeping Department - Room Attendant Daily Work Sheet";
+    head.appendChild(title);
+
+    // Copy tất cả <link rel="stylesheet">
+    var links = document.querySelectorAll("link[rel='stylesheet']");
+    links.forEach(function(link) {
+        if (link.href) {
+            var newLink = doc.createElement("link");
+            newLink.rel = "stylesheet";
+            newLink.href = link.href;
+            head.appendChild(newLink);
+        }
+    });
+
+    // Copy tất cả <style>
+    var styles = document.querySelectorAll("style");
+    var allStyles = "";
+    styles.forEach(function(s) {
+        allStyles += s.innerHTML + "\n";
+    });
+
+    // CSS bắt buộc để in đầy đủ + đẹp
+    allStyles += `
+        <style type="text/css">
+            body {
+                font-family: Arial, sans-serif;
+                margin: 15mm;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            #logGridReportContainer,
+            table, div, .k-grid, .k-grid-content {
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse;
+                page-break-inside: auto;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            th, td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                font-size: 12px !important;
+                text-align: left;
+            }
+            @@media print {
+                body { margin: 10mm; }
+                .no-print { display: none !important; }
+                @@page { margin: 10mm; }
+            }
+        </style>
+    `;
+
+    var styleTag = doc.createElement("style");
+    styleTag.innerHTML = allStyles;
+    head.appendChild(styleTag);
+
+    html.appendChild(head);
+
+    var body = doc.createElement("body");
+    body.innerHTML = gridHtml;
+    html.appendChild(body);
+
+    doc.write(html.outerHTML);
+    doc.close();
+
+    printWindow.onload = function () {
+        printWindow.focus();
+        printWindow.print();
+        // printWindow.close();
+    };
+});
+
+    $("#btnPrintGrid2").on("click", function () {
+        var container = document.getElementById("logGridReportContainerrp2");
+
+    // Clone toàn bộ container để tránh ảnh hưởng đến trang gốc
+    var clone = container.cloneNode(true);
+
+    // BƯỚC QUAN TRỌNG: Mở rộng chiều cao để hiển thị toàn bộ nội dung (bỏ scroll)
+    clone.style.height = "auto !important";
+    clone.style.maxHeight = "none !important";
+    clone.style.overflow = "visible !important";
+
+    // Nếu bảng hoặc div con có height cố định, cũng mở rộng
+    var tables = clone.querySelectorAll("table");
+    tables.forEach(function(table) {
+        table.style.height = "auto !important";
+        table.style.maxHeight = "none !important";
+    });
+
+    var scrollableDivs = clone.querySelectorAll("div[style*='overflow'], div.scrollable, div.k-grid-content");
+    scrollableDivs.forEach(function(div) {
+        div.style.height = "auto !important";
+        div.style.maxHeight = "none !important";
+        div.style.overflow = "visible !important";
+    });
+
+    var gridHtml = clone.outerHTML;
+
+    var printWindow = window.open("", "", "width=1200,height=800");
+    var doc = printWindow.document;
+    doc.open();
+
+    var html = doc.createElement("html");
+    var head = doc.createElement("head");
+    var title = doc.createElement("title");
+        title.innerText = "Housekeeping Department - R/A Evening Worksheet";
+    head.appendChild(title);
+
+    // Copy tất cả <link rel="stylesheet">
+    var links = document.querySelectorAll("link[rel='stylesheet']");
+    links.forEach(function(link) {
+        if (link.href) {
+            var newLink = doc.createElement("link");
+            newLink.rel = "stylesheet";
+            newLink.href = link.href;
+            head.appendChild(newLink);
+        }
+    });
+
+    // Copy tất cả <style>
+    var styles = document.querySelectorAll("style");
+    var allStyles = "";
+    styles.forEach(function(s) {
+        allStyles += s.innerHTML + "\n";
+    });
+
+    // CSS bắt buộc để in đầy đủ + đẹp
+    allStyles += `
+        <style type="text/css">
+            body {
+                font-family: Arial, sans-serif;
+                margin: 15mm;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            #logGridReportContainer2,
+            table, div, .k-grid, .k-grid-content {
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse;
+                page-break-inside: auto;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            th, td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                font-size: 12px !important;
+                text-align: left;
+            }
+            @@media print {
+                body { margin: 10mm; }
+                .no-print { display: none !important; }
+                @@page { margin: 10mm; }
+            }
+        </style>
+    `;
+
+    var styleTag = doc.createElement("style");
+    styleTag.innerHTML = allStyles;
+    head.appendChild(styleTag);
+
+    html.appendChild(head);
+
+    var body = doc.createElement("body");
+    body.innerHTML = gridHtml;
+    html.appendChild(body);
+
+    doc.write(html.outerHTML);
+    doc.close();
+
+    printWindow.onload = function () {
+        printWindow.focus();
+        printWindow.print();
+        // printWindow.close();
+    };
+});
+       $("#btnPrintGrid3").on("click", function () {
+            var container = document.getElementById("logGridReportContainerrp3");
+
+        // Clone toàn bộ container để tránh ảnh hưởng đến trang gốc
+        var clone = container.cloneNode(true);
+
+        // BƯỚC QUAN TRỌNG: Mở rộng chiều cao để hiển thị toàn bộ nội dung (bỏ scroll)
+        clone.style.height = "auto !important";
+        clone.style.maxHeight = "none !important";
+        clone.style.overflow = "visible !important";
+
+        // Nếu bảng hoặc div con có height cố định, cũng mở rộng
+        var tables = clone.querySelectorAll("table");
+        tables.forEach(function(table) {
+            table.style.height = "auto !important";
+            table.style.maxHeight = "none !important";
+        });
+
+        var scrollableDivs = clone.querySelectorAll("div[style*='overflow'], div.scrollable, div.k-grid-content");
+        scrollableDivs.forEach(function(div) {
+            div.style.height = "auto !important";
+            div.style.maxHeight = "none !important";
+            div.style.overflow = "visible !important";
+        });
+
+        var gridHtml = clone.outerHTML;
+
+        var printWindow = window.open("", "", "width=1200,height=800");
+        var doc = printWindow.document;
+        doc.open();
+
+        var html = doc.createElement("html");
+        var head = doc.createElement("head");
+        var title = doc.createElement("title");
+                title.innerText = "Housekeeping Department - Supervisor Hoor Checklist";
+        head.appendChild(title);
+
+        // Copy tất cả <link rel="stylesheet">
+        var links = document.querySelectorAll("link[rel='stylesheet']");
+        links.forEach(function(link) {
+            if (link.href) {
+                var newLink = doc.createElement("link");
+                newLink.rel = "stylesheet";
+                newLink.href = link.href;
+                head.appendChild(newLink);
+            }
+        });
+
+        // Copy tất cả <style>
+        var styles = document.querySelectorAll("style");
+        var allStyles = "";
+        styles.forEach(function(s) {
+            allStyles += s.innerHTML + "\n";
+        });
+
+        // CSS bắt buộc để in đầy đủ + đẹp
+        allStyles += `
+            <style type="text/css">
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 15mm;
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+                #logGridReportContainer3,
+                table, div, .k-grid, .k-grid-content {
+                    height: auto !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                }
+                table {
+                    width: 100% !important;
+                    border-collapse: collapse;
+                    page-break-inside: auto;
+                }
+                tr {
+                    page-break-inside: avoid;
+                    page-break-after: auto;
+                }
+                th, td {
+                    border: 1px solid #000 !important;
+                    padding: 6px !important;
+                    font-size: 12px !important;
+                    text-align: left;
+                }
+                @@media print {
+                    body { margin: 10mm; }
+                    .no-print { display: none !important; }
+                    @@page { margin: 10mm; }
+                }
+            </style>
+        `;
+
+        var styleTag = doc.createElement("style");
+        styleTag.innerHTML = allStyles;
+        head.appendChild(styleTag);
+
+        html.appendChild(head);
+
+        var body = doc.createElement("body");
+        body.innerHTML = gridHtml;
+        html.appendChild(body);
+
+        doc.write(html.outerHTML);
+        doc.close();
+
+        printWindow.onload = function () {
+            printWindow.focus();
+            printWindow.print();
+            // printWindow.close();
+        };
+    });
 </script>
