@@ -385,7 +385,14 @@
                     headerCellTemplate: function() { return $("<div>"); }
                 },
                 { dataField: "id", caption: "ID", visible: false },
-                { dataField: "date", caption: "Date" },
+                {
+                    dataField: 'date',
+                    caption: 'Date',
+                    visible: true,
+                    customizeText: function(cellInfo) {
+                        return cellInfo.value ? cellInfo.value.split(" ")[0] : '';
+                    }
+                },
                 { dataField: "code", caption: "Trans Code" },
                 { dataField: "description", caption: "description" },
                 { dataField: "invoiceNo", caption: "Inv .No" },
@@ -815,7 +822,7 @@
                 arrivalDate:arivalDate.split(' ')[0],
                 departureDate:departureDate.split(' ')[0],
                 folioNo:folioNoID,
-                confirmationNo:' ',
+                confirmationNo: confirmationNo,
                 roomNo: roomNo,
                 dataBilling: data,
                 customerName: lastname

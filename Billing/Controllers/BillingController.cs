@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -61,13 +62,26 @@ namespace Billing.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
                 string url = "";
+                DataTable myData = _invoicingService.GetPreviewBillingAmount(int.Parse(confirmationNo), int.Parse(folioNo));
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("vi-VN");
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("vi-VN");
                 XtraReport report = new Billing.Templates.Preview.PreviewBilling();
+                decimal total = Convert.ToDecimal(myData.Rows[0]["Total"] ?? 0);
+                decimal net = Convert.ToDecimal(myData.Rows[0]["Net"] ?? 0);
+                decimal svc = Convert.ToDecimal(myData.Rows[0]["Svc"] ?? 0);
+                decimal vat = Convert.ToDecimal(myData.Rows[0]["Tax"] ?? 0);
                 report.Parameters["arrival_date"].Value = arrivalDate;
                 report.Parameters["departure_date"].Value = departureDate;
                 report.Parameters["folio_no"].Value = folioNo;
                 report.Parameters["confirmation_no"].Value = confirmationNo;
                 report.Parameters["room_no"].Value = roomNo;
                 report.Parameters["name_customer"].Value = customerName;
+                report.Parameters["company_name"].Value = "";
+                report.Parameters["total_amount"].Value = total.ToString();
+                report.Parameters["net_amount"].Value = net.ToString();
+                report.Parameters["svc_amount"].Value = svc.ToString();
+                report.Parameters["vat_amount"].Value = vat.ToString();
+                report.Parameters["balance_amount"].Value = "";
 
                 report.DataSource = dataBilling;
                 report.CreateDocument();
@@ -1766,8 +1780,8 @@ namespace Billing.Controllers
                 }
                 else
                 {
-                    price = folioAdjust.AmountBeforeTax * decimal.Parse(Request.Form["percentage"].ToString()); 
-                    priceNet = folioAdjust.AmountGross * decimal.Parse(Request.Form["percentage"].ToString());
+                    price = folioAdjust.AmountBeforeTax * (decimal.Parse(Request.Form["percentage"].ToString())/100); 
+                    priceNet = folioAdjust.AmountGross * (decimal.Parse(Request.Form["percentage"].ToString())/100);
                 }
                 // tìm invoice lớn nhất 
                 string invoiceNo = (FolioDetailBO.GetTopInvoiceNo() + 1).ToString();
