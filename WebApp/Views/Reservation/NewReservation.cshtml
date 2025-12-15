@@ -456,7 +456,7 @@
                                     <div class="form-group-new-reservation col-md-6">
                                         <label for="txtItemInventory">Item Inventory</label>
                                         <div class="row" style="margin-left:1px;margin-right:2px">
-                                            <select id="txtItemInventory" disabled multiple asp-items="ViewBag.cboItem" style="height:24px"></select>
+                                            <select id="txtItemInventory"  multiple asp-items="ViewBag.cboItem" style="height:24px"></select>
                                         </div>
                                     </div>
                                     <div class="form-group-new-reservation col-md-6">
@@ -680,7 +680,6 @@
         
         $('#arrival').val(arrival);
         let departure = result.departureDate.split('T')[0];
-        console.log(departure);
         $('#departure').val(departure);
         $("#txtFirstName").val(result.firstName);
         $("#txtTitleID").val(result.title)
@@ -784,7 +783,6 @@
         if (result.color) {
             // Hiển thị dạng HEX để trình duyệt hiểu
               
-             console.log(intToHexColor(result.color));
             $("#txtColor").val(intToHexColor(result.color));
         } else {
             $("#txtColor").val("");
@@ -795,6 +793,7 @@
         $("#txtAllotmentID").val(result.allotmentId);
         $("#txtAllotment").val(result.allotmentCode);
         $("#txtPersonInCharge").val(result.personInChargeId);
+        getItemInvetory(result.id);
     }
     function intToHexColor(colorInt) {
         // Chuyển số âm thành số không dấu 32-bit
@@ -1005,6 +1004,75 @@
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
                     sessionTimeout();
+                }
+            }
+        });
+    }
+    function getItemInvetory(id) {
+        return $.ajax({
+            url: '/Reservation/GetReservationItemByResevationID',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                reservationID: id
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log("Result từ server:", result);
+
+                // Xác định mảng dữ liệu thực tế chứa các item
+                let items = [];
+                if (Array.isArray(result)) {
+                    items = result;
+                } else if (result && Array.isArray(result.data)) {
+                    items = result.data;
+                } else if (result && Array.isArray(result.items)) {
+                    items = result.items;
+                }
+                // Thêm các trường hợp khác nếu cần
+
+                if (items.length === 0) {
+                    return;
+                }
+
+                // Lấy instance TomSelect của txtItemInventory
+                const tomSelectInstance = $('#txtItemInventory')[0]?.tomselect;
+
+                if (!tomSelectInstance) {
+                    console.warn("TomSelect chưa được khởi tạo cho #txtItemInventory");
+                    return;
+                }
+
+                // Chuẩn bị danh sách value cần chọn và thêm option nếu chưa có
+                const valuesToSelect = [];
+
+                items.forEach(item => {
+                    const value = String(item.itemID); // hoặc item.id, item.ItemID tùy backend
+                    const text = item.itemName || item.name || item.text || value; // tên hiển thị
+
+                    // Nếu option chưa tồn tại thì thêm vào
+                    if (!tomSelectInstance.options[value]) {
+                        tomSelectInstance.addOption({
+                            value: value,
+                            text: text
+                        });
+                    }
+
+                    valuesToSelect.push(value);
+                });
+
+                // Chọn tất cả các giá trị vào select multiple
+                tomSelectInstance.setValue(valuesToSelect);
+
+                // Optional: Đồng bộ lại giao diện (nếu cần)
+                tomSelectInstance.sync();
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    console.error("Lỗi tải item inventory:", xhr.responseText);
                 }
             }
         });
@@ -1580,7 +1648,8 @@
             $("#txtRateAmount").val('');
             $("#txtNetAmount").val('');
             $("#txtColor").val('');
-            $("#txtItemInventory").val('');
+            let select = $('#txtItemInventory')[0].tomselect; // Lấy instance của TomSelect
+            select.clear(); // Xóa giá trị hiện tại
             $("#txtPreference").val('');
             $("#txtAllotmentID").val('');
             $("#txtAllotment").val('');
@@ -1657,6 +1726,8 @@
                 if (data.code == 0) {
                     showToast('Success', data.msg, true);
                     $('#txtID').val(data.id);
+                    $('#txtItemInventory').prop('disabled', false);
+
                 } else {
                         showToast('Error', data.msg, false);
                 }
