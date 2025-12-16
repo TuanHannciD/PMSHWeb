@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BaseBusiness.Model;
-using BaseBusiness.bc;
+
 
 namespace BaseBusiness.Facade
 {

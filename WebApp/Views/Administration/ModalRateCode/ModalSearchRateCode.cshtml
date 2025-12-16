@@ -1,5 +1,5 @@
 <!-- Modal search User -->
-<div class="modal fade modal-xl" id="modalUser" tabindex="-1">
+<div class="modal fade modal-md mt-2" id="modalUser" tabindex="-1" style="height: 80%;">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -17,7 +17,6 @@
                             onkeyup="filterUserList()" />
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover table-sm">
                         <thead class="table-light">
@@ -26,7 +25,7 @@
                                 <th>Job Description</th>
                             </tr>
                         </thead>
-                        <tbody id="UserTableBody">
+                        <tbody id="userTableBody">
                             @foreach (var u in ViewBag.UserList)
                             {
                                 <tr onclick="selectUser('@u.ID','@u.LoginName')" style="cursor:pointer">
@@ -43,7 +42,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade modal-xl" id="modalRateCode" tabindex="-1">
+<div class="modal fade modal-md" id="modalRateCode" tabindex="-1" style="height: 80%;">
     <div class="modal-dialog">
         <div class="modal-content">
 

@@ -4191,7 +4191,7 @@ namespace Administration.Controllers
                     var oldData = (OccupancyModel)OccupancyBO.Instance.FindByPrimaryKey(model.ID);
                     if (oldData != null)
                     {
-                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateBy = oldData.CreateBy;
                         model.CreateDate = oldData.CreateDate;
                     }
                     OccupancyBO.Instance.Update(model);
