@@ -826,6 +826,25 @@ namespace Reservation.Controllers
                     return Json(new { code = 1, msg = "Market cannot be blank" });
 
                 }
+                string itemInventoryString = Request.Form["itemInventory"].ToString();
+                List<int> itemInventory = itemInventoryString.Split(',')
+                                                    .Select(x => int.Parse(x)).Where(x => x != 0)
+                                                    .ToList();
+
+                string itemInventoryRes = "";
+                if(itemInventory.Count > 0)
+                {
+                    foreach(var item in itemInventory)
+                    {
+                        ItemModel itemModel = (ItemModel)ItemBO.Instance.FindByPrimaryKey(item);
+                        if (itemModel != null && itemModel.ID != 0)
+                        {
+
+                            itemInventoryRes += itemModel.Code + ",";
+
+                        }
+                    }
+                }
                 MemberTypeModel memberType = (MemberTypeModel)MemberTypeBO.Instance.FindByPrimaryKey(memberTypeID);
                 VIPModel vip = (VIPModel)VIPBO.Instance.FindByPrimaryKey(vipID);
                 RoomTypeModel roomType = (RoomTypeModel)RoomTypeBO.Instance.FindByPrimaryKey(roomTypeID);
@@ -1059,7 +1078,7 @@ namespace Reservation.Controllers
                     reservationModel.Color = "";
 
                     reservationModel.ARNo = "";
-                    reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
+                    reservationModel.ItemInventory = itemInventoryRes;
                     reservationModel.Specials = Request.Form["specials"].ToString();
                     reservationModel.ShareRoom = ReservationBO.GetTopID() + 1;
                     reservationModel.NoShowStatus = false;
@@ -1139,10 +1158,6 @@ namespace Reservation.Controllers
                     #endregion
 
                     #region lưu reservation item inventory
-                    string itemInventoryString = Request.Form["itemInventory"].ToString();
-                    List<int> itemInventory = itemInventoryString.Split(',')
-                                                        .Select(x => int.Parse(x)).Where(x => x != 0)
-                                                        .ToList();
                     if (itemInventory.Count > 0)
                     {
                         foreach (var item in itemInventory)
@@ -5979,6 +5994,26 @@ namespace Reservation.Controllers
             finally
             {
                 pt.CloseConnection();
+            }
+        }
+        #endregion
+
+
+        #region DatVP __ Reservation: Reservation Item Inventory
+        [HttpGet]
+        public async Task<IActionResult> GetReservationItemByResevationID(int reservationID)
+        {
+            try
+            {
+                List<ReservationItemInventoryModel> result = PropertyUtils.ConvertToList<ReservationItemInventoryModel>(ReservationItemInventoryBO.Instance.FindAll())
+                    .Where(x => x.ReservationID == reservationID)
+                    .ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
             }
         }
         #endregion

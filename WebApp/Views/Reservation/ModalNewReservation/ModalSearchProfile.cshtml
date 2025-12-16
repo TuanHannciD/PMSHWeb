@@ -163,6 +163,7 @@
             onRowDblClick: function (e) {
                 getInfoByProfileID(e.data.id);
                 $('#modalProfile').modal('hide');
+                $('#txtItemInventory').prop('disabled', false);
             }
         });
     }

@@ -64,5 +64,6 @@ namespace BaseBusiness.BO
             const string sql = "SELECT ID, TransactionCode, Price, Description, TransactionDate, ArticleCode, Reference, CheckNo, UserID, UserName, UserInsertID, CreateDate,  UserUpdateID, UpdateDate FROM FolioDetail WHERE ID = @id";
             return conn.QuerySingleOrDefault<FolioDetailModel>(sql, new { id }, tx);
         }
+
     }
 }
