@@ -369,7 +369,7 @@
                         <div class="row mt-4" style="justify-content:space-between">
                             <div class="col-sm-2" style="color:red">Notes</div>
                             <div class="col-sm-10">
-                                <textarea id="textArea" class="form-control" rows="4" id="txtNoteIndividual"></textarea>
+                                <textarea  class="form-control" rows="4" id="txtNoteIndividual"></textarea>
                             </div>
                         </div>
                         <div class="col-md-12 row mt-4" style="justify-content:space-between">
@@ -929,8 +929,13 @@
                         $("#txtCodeIndividual").val(result.profile.code);
                         $("#txtFullNameIndividual").val(result.profile.account);
                         $("#txtLastNameIndividual").val(result.profile.lastName);
-                        $("#txtFirstNameIndividual").val(result.profile.firstName);
+                        $("#txtFirstNameIndividual").val(result.profile.firstname);
                         $("#txtMiddleNameIndividual").val(result.profile.middleName);
+                       // $("#txtCityIndividual").val(result.profile.city);
+                        $("#txtReasonIndividual").val(result.profile.vipReason);
+                        let selectCity = $('#txtCityIndividual')[0].tomselect;
+                        selectCity.setValue(result.profile.city);
+
                         let selectLanguage = $('#txtLanguageIndividual')[0].tomselect;
                         selectLanguage.setValue(result.profile.languageID);
                         let selectTitle= $('#txtTitleIndividual')[0].tomselect;
@@ -948,8 +953,8 @@
                         $("#txtAddressIndividual").val(result.profile.address);
                         $("#txtSalutationIndividual").val(result.profile.salutation);
                         let selectVIP = $('#txtVIPIndividual')[0].tomselect;
-                        selectVIP.setValue(result.profile.vipID);
-                        $("#ReasonIndividual").val(result.profile.vipReason);
+                        selectVIP.setValue(result.profile.vipid);
+                        //$("#ReasonIndividual").val(result.profile.vipReason);
                         $("#txtPrefRoomIndividual").val(result.profile.prefRoom);
                         $("#txtOtherIndividual").val(result.profile.other);
                         $("#txtPassportIndividual").val(result.profile.passPort);
@@ -966,10 +971,11 @@
                             $("#txtContactIndividual").prop("checked", false);
                         }
                         $("#txtKeywordIndividual").val(result.profile.keyword);
-                        $("#txtCompanyIndividual").val(result.profile.company);
+                        $("#txtCompanyIndividual").val(result.profile.fullAccount);
+                        $("#txtCompany2Individual").val(result.profile.company);
                         $("#txtAddressIndividual").val(result.profile.address);
                         $("#txtTaxIndividual").val(result.profile.taxCode);
-                        $("#txtBusAddressIndividual").val('');
+                        $("#txtBusAddressIndividual").val(result.profile.homeAddress);
                         $("#txtTelephoneIndividual").val(result.profile.telephone);
                         $("#txtHandPhoneIndividual").val(result.profile.handPhone);
                         $("#txtFaxIndividual").val(result.profile.fax);
@@ -982,15 +988,21 @@
                             $("#txtBlackListIndividual").prop("checked", false);
                         }
                         $("#blackListIndividual").val(result.profile.blackListReason);
-                        $("#txtNoteIndividual").val('');
+                        $("#txtNoteIndividual").val(result.profile.description);
                         $('#modalEdit').modal('show');
                    }
                    else if(result.profile.type == 1 || result.profile.type == 2 || result.profile.type == 3){
                        $("#txtCodeCOM").val(result.profile.code);
+                        $("#txtCityCOM").val(result.profile.city);
                         $("#txtAccountCOM").val(result.profile.account);
                         $("#txtAddressCOM").val(result.profile.address);
-                        $("#txtCountryCOM").val(result.profile.countryID);
-                        $("#txtCityCOM").val(result.profile.city);
+                        // $("#txtCountryCOM").val(result.profile.countryID);
+                        // $("#txtCityCOM").val(result.profile.city);
+                            let selectCountryCOM = $('#txtCountryCOM')[0].tomselect;
+                        selectCountryCOM.setValue(result.profile.countryID);
+
+                            let selectCityCOM = $('#txtCityCOM')[0].tomselect;
+                        selectCityCOM.setValue(result.profile.city);
                         $("#txtPostalCOM").val(result.profile.postalCode);
                         $("#txtStateCOM").val(result.profilestateID);
                         $("#txtCompanyCOM").val(result.profile.company);
@@ -1188,6 +1200,7 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
+                console.log(result);
                 if (result.length > 0) {
                     let select = $('#txtStateIndividual')[0].tomselect; // Lấy instance của TomSelect
                     select.clear(); // Xóa giá trị hiện tại
@@ -1195,7 +1208,8 @@
 
                     select.addOption({ value: '0', text: 'Please select state' });
                     result.forEach(item => {
-                        select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                       // select.addOption({ value: item.id, text: `${item.StateName} - ${item.name}` });
+                                    select.addOption({ value: item.id, text: `${item.stateName}` });
                     });
 
                     select.setValue('0'); // Chọn giá trị mặc định
@@ -1204,8 +1218,9 @@
                     select2.clear(); // Xóa giá trị hiện tại
                     select2.clearOptions(); // Xóa tất cả option cũ
                     select2.addOption({ value: '0', text: 'Please select state' });
-                    result2.forEach(item => {
-                        select2.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                    result.forEach(item => {
+                      //  select2.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                         select.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select2.setValue('0'); // Chọn giá trị mặc định
 
@@ -1293,6 +1308,23 @@
                     });
 
                     select.setValue('0'); // Chọn giá trị mặc định
+                              select.on('change', function (value) {
+                        if (!value || value === '0') {
+                            $('#txtReasonIndividual').val('');
+                            return;
+                        }
+
+                        // Lấy option đang chọn
+                        let option = select.options[value];
+
+                        if (option) {
+                            // option.text = "CODE - NAME"
+                            // Nếu chỉ muốn lấy NAME
+                            let name = option.text.split(' - ').slice(1).join(' - ');
+
+                            $('#txtReasonIndividual').val(name);
+                        }
+                    });
                 }
             },
             error: function (xhr, statusText, err) {
@@ -1601,7 +1633,7 @@
             formData.append('AddressIndividual', $("#txtAddressIndividual").val());
             formData.append('SalutationIndividual', $("#txtSalutationIndividual").val());
             formData.append('VIPIndividual', $("#txtVIPIndividual").val());
-            formData.append('ReasonIndividual', $("#ReasonIndividual").val());
+            formData.append('ReasonIndividual', $("#txtReasonIndividual").val());
             formData.append('PrefRoomIndividual', $("#txtPrefRoomIndividual").val());
             formData.append('OtherIndividual', $("#txtOtherIndividual").val());
             formData.append('PassportIndividual', $("#txtPassportIndividual").val());
@@ -1610,7 +1642,8 @@
             formData.append('ActiveIndividual', $("#txtActiveIndividual").is(":checked"));
             formData.append('ContactIndividual', $("#txtContactIndividual").is(":checked"));
             formData.append('KeywordIndividual', $("#txtKeywordIndividual").val());
-            formData.append('CompanyIndividual', $("#txtCompanyIndividual").val());
+          //  formData.append('CompanyIndividual', $("#txtCompanyIndividual").val());
+               formData.append('FullAccount', $("#txtCompanyIndividual").val());
             formData.append('TaxIndividual', $("#txtTaxIndividual").val());
             formData.append('BusAddressIndividual', $("#txtBusAddressIndividual").val());
             formData.append('TelephoneIndividual', $("#txtTelephoneIndividual").val());
@@ -1618,7 +1651,7 @@
             formData.append('FaxIndividual', $("#txtFaxIndividual").val());
             formData.append('EmailIndividual', $("#txtEmailIndividual").val());
             formData.append('WebsiteIndividual', $("#txtWebsiteIndividual").val());
-            formData.append('Company2Individual', $("#txtTelephtxtCompany2").val());
+            formData.append('Company2Individual', $("#txtCompany2Individual").val());
             formData.append('BusinessTitleIndividual', $("#txtBusinessTitleIndividual").val());
             formData.append('BlackListIndividual', $("#txtBlackListIndividual").is(":checked"));
             formData.append('BlackListReasonIndividual', $("#blackListIndividual").val());

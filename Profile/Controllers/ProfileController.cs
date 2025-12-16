@@ -142,7 +142,8 @@ namespace Profile.Controllers
             List<StateModel> list = new List<StateModel>();
             try
             {
-                list = PropertyUtils.ConvertToList<StateModel>(StateBO.Instance.FindAll()).Where(x => x.Inactive == true).ToList();
+               // list = PropertyUtils.ConvertToList<StateModel>(StateBO.Instance.FindAll()).Where(x => x.Inactive == true).ToList();
+                list = PropertyUtils.ConvertToList<StateModel>(StateBO.Instance.FindAll()).ToList();
             }
             catch (Exception ex)
             {
@@ -498,15 +499,16 @@ namespace Profile.Controllers
                 profile.Type = 0;
                 profile.Code = Request.Form["CodeIndividual"].ToString();
                 profile.Account = Request.Form["AccountIndividual"].ToString();
-                profile.FullAccount = "";
+                profile.FullAccount = Request.Form["FullAccount"].ToString(); ;
                 profile.LastName = Request.Form["LastNameIndivdual"].ToString();
                 profile.Firstname = Request.Form["FirstNameIndividual"].ToString();
                 profile.MiddleName = Request.Form["MiddleNameIndividual"].ToString();
                 profile.LanguageID = int.Parse(Request.Form["LanguageIndividual"].ToString());
                 profile.TitleID = int.Parse(Request.Form["TitleIndividual"].ToString());
                 profile.Address = Request.Form["AddressIndividual"].ToString();
-                profile.HomeAddress = "";
+             //   profile.HomeAddress = "";
                 profile.City = Request.Form["CityIndividual"].ToString();
+                profile.HomeAddress = Request.Form["BusAddressIndividual"].ToString();
                 profile.PostalCode = Request.Form["PostalIndividual"].ToString();
                 profile.CountryID =  int.Parse(Request.Form["CountryIndividual"].ToString());
                 profile.StateID = int.Parse(Request.Form["StateIndividual"].ToString());
@@ -518,9 +520,9 @@ namespace Profile.Controllers
                 profile.Keyword = Request.Form["KeywordIndividual"].ToString();
                 profile.DateOfBirth = !string.IsNullOrEmpty(Request.Form["DobIndividual"].ToString()) ? DateTime.Parse(Request.Form["DobIndividual"].ToString()) : DateTime.MinValue;
                 profile.NationalityID = int.Parse(Request.Form["NationalityIndividual"].ToString());
-                profile.Description = "";
+                profile.Description = Request.Form["NoteIndividual"].ToString();
                 profile.Telephone = Request.Form["TelephoneIndividual"].ToString();
-                profile.Fax = "";
+                profile.Fax = Request.Form["FaxIndividual"].ToString();
                 profile.Email = Request.Form["EmailIndividual"].ToString();
                 profile.Website = Request.Form["WebsiteIndividual"].ToString();
                 profile.HandPhone = Request.Form["HandPhoneIndividual"].ToString();
@@ -550,7 +552,7 @@ namespace Profile.Controllers
                 profile.LastARNo = "";
                 profile.LastMemberNo = "";
                 profile.ReturnGuest = -1;
-                profile.IsBlackList = Request.Form["ActiveIndividual"].ToString().ToLower() == "true";
+                profile.IsBlackList = Request.Form["BlackListIndividual"].ToString().ToLower() == "true";
                 profile.BlackListReason = Request.Form["BlackListReasonIndividual"].ToString();
                 profile.SpecialUpdateBy = "";
                 profile.SpecialUpdateDate = DateTime.Now;
@@ -670,7 +672,7 @@ namespace Profile.Controllers
                     profile.LanguageID = int.Parse(Request.Form["LanguageIndividual"].ToString());
                     profile.TitleID = int.Parse(Request.Form["TitleIndividual"].ToString());
                     profile.Address = Request.Form["AddressIndividual"].ToString();
-                    profile.HomeAddress = "";
+                    profile.HomeAddress = Request.Form["BusAddressIndividual"].ToString();
                     profile.City = Request.Form["CityIndividual"].ToString();
                     profile.PostalCode = Request.Form["PostalIndividual"].ToString();
                     profile.CountryID = int.Parse(Request.Form["CountryIndividual"].ToString());
@@ -685,7 +687,6 @@ namespace Profile.Controllers
                     profile.NationalityID = int.Parse(Request.Form["NationalityIndividual"].ToString());
                     profile.Description = "";
                     profile.Telephone = Request.Form["TelephoneIndividual"].ToString();
-                    profile.Fax = "";
                     profile.Email = Request.Form["EmailIndividual"].ToString();
                     profile.Website = Request.Form["WebsiteIndividual"].ToString();
                     profile.HandPhone = Request.Form["HandPhoneIndividual"].ToString();
@@ -715,7 +716,7 @@ namespace Profile.Controllers
                     profile.LastARNo = "";
                     profile.LastMemberNo = "";
                     profile.ReturnGuest = -1;
-                    profile.IsBlackList = Request.Form["ActiveIndividual"].ToString().ToLower() == "true";
+                    profile.IsBlackList = Request.Form["BlackListIndividual"].ToString().ToLower() == "true";
                     profile.BlackListReason = Request.Form["BlackListReasonIndividual"].ToString();
                     profile.SpecialUpdateBy = "";
                     profile.SpecialUpdateDate = DateTime.Now;
@@ -741,6 +742,7 @@ namespace Profile.Controllers
                     profile.EventTurnover = 0;
                     profile.OtherTurnover = 0;
                     profile.Company = Request.Form["Company2Individual"].ToString();
+                    profile.FullAccount = Request.Form["CompanyIndividual"].ToString();
                     profile.BusinessTitle = Request.Form["BusinessTitleIndividual"].ToString();
                     profile.Other = Request.Form["OtherIndividual"].ToString();
                     profile.Religion = Request.Form["ReligionIndividual"].ToString();
@@ -748,6 +750,7 @@ namespace Profile.Controllers
                     profile.PurposeOfStay = Request.Form["PurposeIndividual"].ToString();
                     profile.MarketID = 0;
                     profile.IsTransfer = false;
+                    profile.Fax = Request.Form["PurposeIndividual"].ToString();
 
                 }
                 else if (profileType == 1 || profileType == 2 || profileType == 3)

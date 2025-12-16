@@ -2473,8 +2473,6 @@ namespace HouseKeeping.Controllers
                     return Json(result);
                 }
 
-
-
                 return Json("");
             }
             catch (Exception ex)

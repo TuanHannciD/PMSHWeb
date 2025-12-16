@@ -66,7 +66,7 @@
 
         <!--profile individual-->
         <div class="main-infor mt-4 row" style="justify-content:space-between" id="profile_individual">
-            <div class="col-md-6 mui-card" style="position: relative;">
+            <div class="col-md-6 mui-card" style="position: relative;padding-left: 17px;">
                 <div style="position: absolute; top: -10px; left: 10px; background-color: white; padding: 0 5px;color:#9F0010">
                     <b>Address Information</b>
                 </div>
@@ -1389,7 +1389,8 @@
 
                     select.addOption({ value: '0', text: 'Please select state' });
                     result.forEach(item => {
-                        select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                        // select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                          select.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select.setValue('0'); // Chọn giá trị mặc định
 
@@ -1397,8 +1398,8 @@
                     select2.clear(); // Xóa giá trị hiện tại
                     select2.clearOptions(); // Xóa tất cả option cũ
                     select2.addOption({ value: '0', text: 'Please select state' });
-                    result2.forEach(item => {
-                        select2.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                    result.forEach(item => {
+                         select.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select2.setValue('0'); // Chọn giá trị mặc định
 
@@ -1406,8 +1407,8 @@
                     select3.clear(); // Xóa giá trị hiện tại
                     select3.clearOptions(); // Xóa tất cả option cũ
                     select3.addOption({ value: '0', text: 'Please select state' });
-                    result3.forEach(item => {
-                        select3.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                    result.forEach(item => {
+                        select.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select3.setValue('0'); // Chọn giá trị mặc định
 
@@ -1415,8 +1416,8 @@
                     select4.clear(); // Xóa giá trị hiện tại
                     select4.clearOptions(); // Xóa tất cả option cũ
                     select4.addOption({ value: '0', text: 'Please select state' });
-                    result3.forEach(item => {
-                        select4.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                    result.forEach(item => {
+                        select.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select4.setValue('0'); // Chọn giá trị mặc định
                 }
@@ -1548,6 +1549,24 @@
                     });
 
                     select2.setValue('0'); // Chọn giá trị mặc định
+
+                    select.on('change', function (value) {
+                        if (!value || value === '0') {
+                            $('#txtReasonIndividual').val('');
+                            return;
+                        }
+
+                        // Lấy option đang chọn
+                        let option = select.options[value];
+
+                        if (option) {
+                            // option.text = "CODE - NAME"
+                            // Nếu chỉ muốn lấy NAME
+                            let name = option.text.split(' - ').slice(1).join(' - ');
+
+                            $('#txtReasonIndividual').val(name);
+                        }
+                    });
                 }
             },
             error: function (xhr, statusText, err) {
@@ -1903,7 +1922,8 @@
             formData.append('FaxIndividual', $("#txtFaxIndividual").val());
             formData.append('EmailIndividual', $("#txtEmailIndividual").val());
             formData.append('WebsiteIndividual', $("#txtWebsiteIndividual").val());
-            formData.append('Company2Individual', $("#txtCompanyIndividual").val());
+            formData.append('CompanyIndividual', $("#txtCompanyIndividual").val());
+            formData.append('Company2Individual', $("#txtCompany2Individual").val());
             formData.append('BusinessTitleIndividual', $("#txtBusinessTitleIndividual").val());
             formData.append('BlackListIndividual', $("#txtBlackListIndividual").is(":checked"));
             formData.append('BlackListReasonIndividual', $("#blackListIndividual").val());
