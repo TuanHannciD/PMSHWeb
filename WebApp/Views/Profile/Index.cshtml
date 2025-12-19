@@ -498,7 +498,7 @@
                     <div class="form-group row mt-1">
                         <label for="inputPassword" class="col-sm-4 col-form-label text-right">Contract Name</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="txtContractName">
+                            <input type="text" class="form-control" id="txtContactNameCOM">
                         </div>
                     </div>
 
@@ -588,8 +588,8 @@
                     <div class="form-group row mt-1">
                         <label for="inputPassword" class="col-sm-4 col-form-label text-right">Sale In Charge</label>
                         <div class="col-sm-8">
-                            <select type="text" class="form-select" id="txtSaleInChargeCOM">
-                                <option value="0">text</option>
+                            <select type="text" id="txtSaleInChargeCOM">
+                                <option value="value">text</option>
                             </select>
                         </div>
                     </div>
@@ -1032,7 +1032,7 @@
          getAllState();
          getAllCity();
          getAllVIP();
-
+         getPersonInCharge2();
          getAllOwner();
          getAllTerritory();
          getCompanyType();
@@ -1106,7 +1106,7 @@
             "#txtCurrencyCOM", "#txtMarketTypeCOM", "#txtMarketCOM", "#txtStateGroup",
             "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
             "#txtVIPGroup", "#txtLanguageContact", "#txtTitleContact", "#txtCityContact",
-            "#txtStateContact", "#txtCountryContact", "#txtOwnerContact", "#txtTerritoryContact"
+            "#txtStateContact", "#txtCountryContact", "#txtOwnerContact", "#txtTerritoryContact", "#txtSaleInChargeCOM"
         ];
 
         for (const id of ids) {
@@ -1399,7 +1399,7 @@
                     select2.clearOptions(); // Xóa tất cả option cũ
                     select2.addOption({ value: '0', text: 'Please select state' });
                     result.forEach(item => {
-                         select.addOption({ value: item.id, text: `${item.stateName}` });
+                         select2.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select2.setValue('0'); // Chọn giá trị mặc định
 
@@ -1456,6 +1456,63 @@
             }
         });
     }
+      function getPersonInCharge2() {
+        $.ajax({
+            url: '/Administration/PersonInChargeData',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log(result);
+                if (result.length > 0) {
+                    let select = $('#txtSaleInChargeCOM')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+
+                    select.addOption({ value: '0', text: 'Please select SaleInCharge' });
+                    result.forEach(item => {
+                        select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                    });
+
+                    select.setValue('0'); // Chọn giá trị mặc định
+
+
+                    // let select2 = $('#txtCurrencyGroup')[0].tomselect; // Lấy instance của TomSelect
+                    // select2.clear(); // Xóa giá trị hiện tại
+                    // select2.clearOptions(); // Xóa tất cả option cũ
+
+                    // select2.addOption({ value: '0', text: 'Please select Currency' });
+                    // result.forEach(item => {
+                    //     select2.addOption({ value: item.id, text: `${item.description}` });
+                    // });
+
+                    // select2.setValue('0'); // Chọn giá trị mặc định
+                }
+                else{
+                    let select = $('#txtSaleInChargeCOM')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+                    select.addOption({ value: '0', text: 'Please select SaleInCharge' });
+                    select.setValue('0');
+
+                    // let select2 = $('#txtCurrencyGroup')[0].tomselect; // Lấy instance của TomSelect
+                    // select2.clear(); // Xóa giá trị hiện tại
+                    // select2.clearOptions(); // Xóa tất cả option cũ
+                    // select2.addOption({ value: '0', text: 'Please select Currency' });
+                    // select2.setValue('0');
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải danh sách tiêu đề hoặc bạn không có quyền tải");
+                }
+            }
+        });
+    }
     function getAllCity() {
         $.ajax({
             url: '/Profile/GetAllCity',
@@ -1482,7 +1539,7 @@
 
                     select2.addOption({ value: '0', text: 'Please select city' });
                     result.forEach(item => {
-                        select2.addOption({ value: item.name, text: `${item.code} - ${item.name}` });
+                        select2.addOption({ value: item.code, text: `${item.code} - ${item.name}` });
                     });
 
                     select2.setValue('0'); // Chọn giá trị mặc định
@@ -1493,7 +1550,7 @@
 
                     select3.addOption({ value: '0', text: 'Please select city' });
                     result.forEach(item => {
-                        select3.addOption({ value: item.name, text: `${item.code} - ${item.name}` });
+                        select3.addOption({ value: item.code, text: `${item.code} - ${item.name}` });
                     });
 
                     select3.setValue('0'); // Chọn giá trị mặc định
@@ -1504,7 +1561,7 @@
 
                     select4.addOption({ value: '0', text: 'Please select city' });
                     result.forEach(item => {
-                        select4.addOption({ value: item.name, text: `${item.code} - ${item.name}` });
+                        select4.addOption({ value: item.code, text: `${item.code} - ${item.name}` });
                     });
 
                     select4.setValue('0'); // Chọn giá trị mặc định
@@ -1938,7 +1995,7 @@
             formData.append('CityCOM', $("#txtCityCOM").val());
             formData.append('PostalCOM', $("#txtPostalCOM").val());
             formData.append('StateCOM', $("#txtStateCOM").val());
-            formData.append('CompanyCOM', $("#txtCompanyCOM").val());
+            formData.append('FullAccount', $("#txtCompanyCOM").val());
             formData.append('TaxCOM', $("#txtTaxCOM").val());
             formData.append('BusAddressCOM', $("#txtBusAddressCOM").val());
             formData.append('TelephoneCOM', $("#txtTelephoneCOM").val());

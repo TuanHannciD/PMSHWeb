@@ -202,8 +202,8 @@
                 { dataField: "type", caption: "Type"},
                 { dataField: "request", caption: "Request"},
                 { dataField: "dueDate", caption: "Due Date"},
-                { dataField: "paidAmount", caption: "Paid"},
-                { dataField: "dueAmount", caption: "Due"},
+                { dataField: "paidAmount", caption: "Paid", format: "#,##0", dataType: "number"},
+                { dataField: "dueAmount", caption: "Due", format: "#,##0", dataType: "number"},
                 { dataField: "currency", caption: "Currency"},
                 { dataField: "comment", caption: "Description"},
                 { dataField: "ruleCode", caption: "Rule Code"},
@@ -241,7 +241,7 @@
                 { dataField: "paymentID", caption: "ID",  visible: false},
                 { dataField: "transactionDate", caption: "Date"},
                 { dataField: "description", caption: "Payment Method"},
-                { dataField: "amount", caption: "Amount"},
+                { dataField: "amount", caption: "Amount", format: "#,##0", dataType: "number"},
                 { dataField: "reference", caption: "Reference"},
                 { dataField: "receiptNo", caption: "Receipt.No"},
                 { dataField: "createBy", caption: "Created By"},
@@ -265,6 +265,16 @@
             },
             selection: {
                 mode: "single"
+            },
+            onContentReady: function (e) {
+                const grid = e.component;
+                const dataSource = grid.getDataSource();
+                const items = dataSource.items();
+
+                if (items.length > 0 && grid.getSelectedRowKeys().length === 0) {
+                    grid.selectRowsByIndexes([0]);
+                    depoistPaymentID = items[0].paymentID;
+                }
             },
             onRowClick: function(e) {
                 depoistPaymentID = e.data.paymentID;
@@ -542,11 +552,19 @@
 
     }
     function PrinReceipt() {
+
+        if (!depoistPaymentID || depoistPaymentID === 0) {
+            showToast('Error', 'No deposit value available for printing.', false);
+            return;
+        }
+
+        const userName =localStorage.getItem("shiftName");
         $.ajax({
             url: '/Reservation/PrintReceipt',
             type: 'POST',
             data:{
-                id: depoistPaymentID
+                id: depoistPaymentID,
+                userName:userName
             },
             success: function (data) {
                 try {

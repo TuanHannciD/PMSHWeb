@@ -855,24 +855,25 @@
 
 
         let selectedRoomIds = [];
-           function initializeRoomStatusGrid(data) {
-        const columnWidth = 120;
+    function initializeRoomStatusGrid(data) {
+         const columnWidth = 120;
 
         $("#gridContainer").dxDataGrid({
             dataSource: data,     
             allowColumnResizing: true,
+              height: 500,
             columnAutoWidth: true,
             columns: [
                  { dataField: "id", caption: "ID", width: columnWidth -10 , visible: false},
-                { dataField: "roomNumber", caption: "Room No", width: columnWidth -10 },
+                { dataField: "roomNumber", caption: "Room No", width: columnWidth },
                 { dataField: "roomType", caption: "Room Type", width: columnWidth  },
                 { dataField: "roomName", caption: "Room Name", width: columnWidth +50 },
-                { dataField: "roomStatus", caption: "Room Status", width: columnWidth+ 30 },
+                { dataField: "roomStatus", caption: "Room Status", width: columnWidth+ 50 },
                 { dataField: "foStatus", caption: "FO Status", width: columnWidth  },
-        { dataField: "floor", caption: "Floor", width: columnWidth, dataType: "number", format: "#,##0" },
+                { dataField: "floor", caption: "Floor", width: columnWidth, dataType: "number", format: "#,##0" },
                 { dataField: "roomClass", caption: "Room Class", width: columnWidth  },
-                { dataField: "reservationStatus", caption: "Resv.Type", width: columnWidth  },
-                 { dataField: "arrival", caption: "Arrivals", width: columnWidth , dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "reservationStatus", caption: "Resv.Type", width: columnWidth +columnWidth },
+                 { dataField: "arrival", caption: "Arrivals", width: columnWidth+columnWidth , dataType: "date", format: "dd/MM/yyyy" },
             ],
 
             paging: { pageSize: 25 },

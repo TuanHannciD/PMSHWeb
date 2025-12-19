@@ -3,7 +3,14 @@
 }
 
 @* <link href="~/css/pages/reservation.css" rel="stylesheet" asp-append-version="true" /> *@
+<style>
+    .form-control,
+    .form-control-sm {
+        position: relative;
+        right: 10px; /* thử -1px hoặc -2px nếu còn lệch */
+    }
 
+</style>
 <div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
@@ -16,12 +23,12 @@
         <div class="function-menu col-md-10">
             <a href="#" onclick="getAllProfiles();">Search</a>
 
-            <a href="#" onclick="openModalPosting();" onclick="window.location.href='@Url.Action("Index", "Profile")'">New</a>
-            <a href="#" onclick="editProfile();">Edit</a>
-            <a href="#" onclick="openModalEditPosting();">Clear</a>
+            <a href="#" onclick="editProfile('NEW');">New</a>
+            <a href="#" onclick="editProfile('EDIT');">Edit</a>
+            <a href="#" onclick="clearSearchForm();">Clear</a>
             <a href="#" onclick="openModalOption();">Option</a>
-            <a href="#" onclick="openModalEditPosting();">Future</a>
-            <a href="#" onclick="openModalEditPosting();" onclick="window.location.href='@Url.Action("Index", "Home")'">Close</a>
+            <a href="#" onclick="();">Future</a>
+            <a href="#"  onclick="window.location.href='@Url.Action("Index", "Home")'">Close</a>
         </div>
         
     </div>
@@ -36,7 +43,7 @@
                     <option value="3">Individual</option>
                     <option value="4">Group</option>
                     <option value="4">Contact</option>
-                    <option value="6" selected>View by All</option>
+                    <option value="" selected>View by All</option>
                 </select>
             </div>
         </div>
@@ -442,10 +449,10 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="profileTypeModalLabel">Edit Profile</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="profileTypeModalLabelCOM">Edit Profile</h5>
+              @*   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
+                </button> *@
             </div>
             <div class="modal-body">
                 <div class="main-infor mt-4 row" style="justify-content:space-between;" id="profile_com_ta_source">
@@ -624,12 +631,12 @@
                             <div class="form-group row">
                                 <label for="inputPassword" class="col-sm-4 col-form-label text-right">Sale In Charge</label>
                                 <div class="col-sm-8">
-                                    <select type="text" class="form-select" id="txtSaleInChargeCOM">
-                                        <option value="0">text</option>
+                                    <select type="text"  id="txtSaleInChargeCOM">
+                                        <option value="value">text</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div style="display:none" class="form-group row">
                                 <label for="inputPassword" class="col-sm-4 col-form-label text-right">Market Type</label>
                                 <div class="col-sm-8">
                                     <select type="text" id="txtMarketTypeCOM">
@@ -664,7 +671,7 @@
                         <div class="row mt-4">
                             <div class="col-sm-12">Notes</div>
                             <div class="col-sm-12">
-                                <textarea id="txtNoteCOM" class="form-control" rows="4"></textarea>
+                                <textarea class="form-control" rows="4" id="txtNoteCOM"></textarea>
                             </div>
 
                         </div>
@@ -770,6 +777,7 @@
          getCompanyType2();
          getCurrency2();
          getMarketType2();
+         getPersonInCharge2();
     });
     function openModalOption(){
         $('#modalOption').modal('show');
@@ -838,6 +846,33 @@
             }
         });
     }
+        function clearSearchForm() {
+
+        /* ========================= */
+        /* Clear input text */
+        /* ========================= */
+        $('#txtAccount').val('');
+        $('#txtKeyword').val('');
+        $('#txtFirstName').val('');
+        $('#txtCode').val('');
+
+        /* ========================= */
+        /* Clear select */
+        /* ========================= */
+        $('#txtType').val('');      // View by All
+        $('#txtCity').val(null);
+
+        /* Nếu dùng TomSelect */
+        if ($('#txtCity')[0]?.tomselect) {
+            $('#txtCity')[0].tomselect.clear();
+        }
+
+        /* ========================= */
+        /* Optional: reload grid */
+        /* ========================= */
+        // getAllProfiles();
+    }
+
     var profileID = 0;
     var profileName = "";
     function initializeDataGrid(data) {
@@ -902,143 +937,294 @@
     }
 
 
-    function editProfile(){
+    function editProfile(mode){
         var grid = $("#gridContainer").dxDataGrid("instance");
         var selectedRowsData = grid.getSelectedRowsData();
-        if(selectedRowsData.length < 1){
-            informBox(TOAST_STATUS.DANGER, "Please choose 1 profile to edit");
+        console.log(mode);
+        if (mode === 'NEW') {
+
+            clearProfileForm();          // clear toàn bộ form
+                console.log($('#txtType').val());
+             if($('#txtType').val() == 0  || $('#txtType').val() === ''){
+                $('#modalEdit').modal('show');
+                    $("#profileTypeModalLabel").text("New Profile");
+             }else {
+                  $('#modalEditCOM').modal('show');
+                      $("#profileTypeModalLabelCOM").text("New Profile");
+             }
+
+           
+             selectedRowsData = null;
             return;
         }
-        $.ajax({
-            url: '/Profile/GetProfileByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{
-                id: selectedRowsData[0].id
-            },
-            success: function (result) {
-                console.log(result);
-               if(result.code != 0){
-                    informBox(TOAST_STATUS.DANGER, result.msg);
-                    return;
-               }
-               else{
-                   if(result.profile.type == 0){
-                        $("#txtCodeIndividual").val(result.profile.code);
-                        $("#txtFullNameIndividual").val(result.profile.account);
-                        $("#txtLastNameIndividual").val(result.profile.lastName);
-                        $("#txtFirstNameIndividual").val(result.profile.firstname);
-                        $("#txtMiddleNameIndividual").val(result.profile.middleName);
-                       // $("#txtCityIndividual").val(result.profile.city);
-                        $("#txtReasonIndividual").val(result.profile.vipReason);
-                        let selectCity = $('#txtCityIndividual')[0].tomselect;
-                        selectCity.setValue(result.profile.city);
-
-                        let selectLanguage = $('#txtLanguageIndividual')[0].tomselect;
-                        selectLanguage.setValue(result.profile.languageID);
-                        let selectTitle= $('#txtTitleIndividual')[0].tomselect;
-                        selectTitle.setValue(result.profile.titleID);
-                        let selectNationality = $('#txtNationalityIndividual')[0].tomselect;
-                        selectNationality.setValue(result.profile.nationalityID);
-                        let selectCountry = $('#txtCountryIndividual')[0].tomselect;
-                        selectCountry.setValue(result.profile.countryID);
-                        $("#txtPostalIndividual").val(result.profile.postalCode);
-                        $("#txtReligionIndividual").val(result.profile.religion);
-                        $("#txtNationIndividual").val(result.profile.nation);
-                        let selectState = $('#txtStateIndividual')[0].tomselect;
-                        selectState.setValue(result.profile.stateID);
-                        $("#txtPurposeIndividual").val(result.profile.purposeOfStay);
-                        $("#txtAddressIndividual").val(result.profile.address);
-                        $("#txtSalutationIndividual").val(result.profile.salutation);
-                        let selectVIP = $('#txtVIPIndividual')[0].tomselect;
-                        selectVIP.setValue(result.profile.vipid);
-                        //$("#ReasonIndividual").val(result.profile.vipReason);
-                        $("#txtPrefRoomIndividual").val(result.profile.prefRoom);
-                        $("#txtOtherIndividual").val(result.profile.other);
-                        $("#txtPassportIndividual").val(result.profile.passPort);
-                        $("#txtCardIndividual").val(result.profile.identityCard);
-                        $("#txtDobIndividual").val(formatDateForInputISO(result.profile.dateOfBirth));
-                        if (result.profile.active) {
-                            $("#txtActiveIndividual").prop("checked", true);
-                        } else {
-                            $("#txtActiveIndividual").prop("checked", false);
-                        }
-                        if (result.profile.contact) {
-                            $("#txtContactIndividual").prop("checked", true);
-                        } else {
-                            $("#txtContactIndividual").prop("checked", false);
-                        }
-                        $("#txtKeywordIndividual").val(result.profile.keyword);
-                        $("#txtCompanyIndividual").val(result.profile.fullAccount);
-                        $("#txtCompany2Individual").val(result.profile.company);
-                        $("#txtAddressIndividual").val(result.profile.address);
-                        $("#txtTaxIndividual").val(result.profile.taxCode);
-                        $("#txtBusAddressIndividual").val(result.profile.homeAddress);
-                        $("#txtTelephoneIndividual").val(result.profile.telephone);
-                        $("#txtHandPhoneIndividual").val(result.profile.handPhone);
-                        $("#txtFaxIndividual").val(result.profile.fax);
-                        $("#txtEmailIndividual").val(result.profile.email);
-                        $("#txtWebsiteIndividual").val(result.profile.website);
-                        $("#txtBusinessTitleIndividual").val(result.profile.businessTitle);
-                        if (result.profile.isBlackList) {
-                            $("#txtBlackListIndividual").prop("checked", true);
-                        } else {
-                            $("#txtBlackListIndividual").prop("checked", false);
-                        }
-                        $("#blackListIndividual").val(result.profile.blackListReason);
-                        $("#txtNoteIndividual").val(result.profile.description);
-                        $('#modalEdit').modal('show');
-                   }
-                   else if(result.profile.type == 1 || result.profile.type == 2 || result.profile.type == 3){
-                       $("#txtCodeCOM").val(result.profile.code);
-                        $("#txtCityCOM").val(result.profile.city);
-                        $("#txtAccountCOM").val(result.profile.account);
-                        $("#txtAddressCOM").val(result.profile.address);
-                        // $("#txtCountryCOM").val(result.profile.countryID);
-                        // $("#txtCityCOM").val(result.profile.city);
-                            let selectCountryCOM = $('#txtCountryCOM')[0].tomselect;
-                        selectCountryCOM.setValue(result.profile.countryID);
-
-                            let selectCityCOM = $('#txtCityCOM')[0].tomselect;
-                        selectCityCOM.setValue(result.profile.city);
-                        $("#txtPostalCOM").val(result.profile.postalCode);
-                        $("#txtStateCOM").val(result.profilestateID);
-                        $("#txtCompanyCOM").val(result.profile.company);
-                        $("#txtTaxCOM").val(result.profile.taxCode);
-                        $("#txtBusAddressCOM").val("");
-                        $("#txtTelephoneCOM").val(result.profiletelephone);
-                        $("#txtContactNameCOM").val(result.profile.acctContact);
-                        $("#txtEmailCOM").val(result.profile.email);
-                        $("#txtWebsiteCOM").val(result.profile.website);
-                        $("#txtHandPhoneCOM").val(result.profile.handPhone);
-                        $("#txtCompany2COM").val(result.profile.company);
-                        $("#txtBusTitleCOM").val(result.profile.businessTitle);
-                        $("#txtOwnerCOM").val(result.profile.ownerID);
-                        $("#txtTerritoryCOM").val(result.profile.territoryID);
-                        $("#txtKeywordCOM").val(result.profile.keyword);
-                        $("#txtCompanyTypeCOM").val(0);
-                        $("#txtARCOM").val(result.profile.aRNo);
-                        $("#txtCurrencyCOM").val(result.profile.currencyID);
-                        $("#txtSaleInChargeCOM").val(0);
-                        $("#txtMarketCOM").val(result.profile.marketID);
-                        $("#txtActiveCOM").is(":checked");
-                        $("#txtBlackListCOM").is(":checked");
-                        $("#blackListCOM").val(result.profile.blackListReason);
-                        $("#txtNotECOM").val("");
-                        $('#modalEditCOM').modal('show');
+  
+        if (mode === 'EDIT') {
+             if(selectedRowsData.length < 1){
+                informBox(TOAST_STATUS.DANGER, "Please choose 1 profile to edit");
+                return;
+            }
+            $("#profileTypeModalLabel").text("Edit  Profile");
+            $.ajax({
+                url: '/Profile/GetProfileByID',
+                type: 'get',
+                dataType: 'json',
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+                data:{
+                    id: selectedRowsData[0].id
+                },
+                success: function (result) {
+                    console.log(result);
+                   if(result.code != 0){
+                        informBox(TOAST_STATUS.DANGER, result.msg);
+                        return;
                    }
                    else{
+                       if(result.profile.type == 0){
+                            $("#txtCodeIndividual").val(result.profile.code);
+                            $("#txtFullNameIndividual").val(result.profile.account);
+                            $("#txtLastNameIndividual").val(result.profile.lastName);
+                            $("#txtFirstNameIndividual").val(result.profile.firstname);
+                            $("#txtMiddleNameIndividual").val(result.profile.middleName);
+                           // $("#txtCityIndividual").val(result.profile.city);
+                            $("#txtReasonIndividual").val(result.profile.vipReason);
+                            let selectCity = $('#txtCityIndividual')[0].tomselect;
+                            selectCity.setValue(result.profile.city);
 
+                            let selectLanguage = $('#txtLanguageIndividual')[0].tomselect;
+                            selectLanguage.setValue(result.profile.languageID);
+                            let selectTitle= $('#txtTitleIndividual')[0].tomselect;
+                            selectTitle.setValue(result.profile.titleID);
+                            let selectNationality = $('#txtNationalityIndividual')[0].tomselect;
+                            selectNationality.setValue(result.profile.nationalityID);
+                            let selectCountry = $('#txtCountryIndividual')[0].tomselect;
+                            selectCountry.setValue(result.profile.countryID);
+                            $("#txtPostalIndividual").val(result.profile.postalCode);
+                            $("#txtReligionIndividual").val(result.profile.religion);
+                            $("#txtNationIndividual").val(result.profile.nation);
+                            let selectState = $('#txtStateIndividual')[0].tomselect;
+                            selectState.setValue(result.profile.stateID);
+                            $("#txtPurposeIndividual").val(result.profile.purposeOfStay);
+                            $("#txtAddressIndividual").val(result.profile.address);
+                            $("#txtSalutationIndividual").val(result.profile.salutation);
+                            let selectVIP = $('#txtVIPIndividual')[0].tomselect;
+                            selectVIP.setValue(result.profile.vipid);
+                            //$("#ReasonIndividual").val(result.profile.vipReason);
+                            $("#txtPrefRoomIndividual").val(result.profile.prefRoom);
+                            $("#txtOtherIndividual").val(result.profile.other);
+                            $("#txtPassportIndividual").val(result.profile.passPort);
+                            $("#txtCardIndividual").val(result.profile.identityCard);
+                            $("#txtDobIndividual").val(formatDateForInputISO(result.profile.dateOfBirth));
+                            if (result.profile.active) {
+                                $("#txtActiveIndividual").prop("checked", true);
+                            } else {
+                                $("#txtActiveIndividual").prop("checked", false);
+                            }
+                            if (result.profile.contact) {
+                                $("#txtContactIndividual").prop("checked", true);
+                            } else {
+                                $("#txtContactIndividual").prop("checked", false);
+                            }
+                            $("#txtKeywordIndividual").val(result.profile.keyword);
+                            $("#txtCompanyIndividual").val(result.profile.fullAccount);
+                            $("#txtCompany2Individual").val(result.profile.company);
+                            $("#txtAddressIndividual").val(result.profile.address);
+                            $("#txtTaxIndividual").val(result.profile.taxCode);
+                            $("#txtBusAddressIndividual").val(result.profile.homeAddress);
+                            $("#txtTelephoneIndividual").val(result.profile.telephone);
+                            $("#txtHandPhoneIndividual").val(result.profile.handPhone);
+                            $("#txtFaxIndividual").val(result.profile.fax);
+                            $("#txtEmailIndividual").val(result.profile.email);
+                            $("#txtWebsiteIndividual").val(result.profile.website);
+                            $("#txtBusinessTitleIndividual").val(result.profile.businessTitle);
+                            if (result.profile.isBlackList) {
+                                $("#txtBlackListIndividual").prop("checked", true);
+                            } else {
+                                $("#txtBlackListIndividual").prop("checked", false);
+                            }
+                            $("#blackListIndividual").val(result.profile.blackListReason);
+                            $("#txtNoteIndividual").val(result.profile.description);
+                            $('#modalEdit').modal('show');
+                       }
+                       else if(result.profile.type == 1 || result.profile.type == 2 || result.profile.type == 3){
+                           $("#txtCodeCOM").val(result.profile.code);
+                            //$("#txtCityCOM").val(result.profile.city);
+                            $("#txtAccountCOM").val(result.profile.account);
+                            $("#txtAddressCOM").val(result.profile.address);
+                            // $("#txtCountryCOM").val(result.profile.countryID);
+                            // $("#txtCityCOM").val(result.profile.city);
+                                let selectCountryCOM = $('#txtCountryCOM')[0].tomselect;
+                            selectCountryCOM.setValue(result.profile.countryID);
+
+                                let selectCityCOM = $('#txtCityCOM')[0].tomselect;
+                            selectCityCOM.setValue(result.profile.city);
+
+                        
+                                let selectStateCOM = $('#txtStateCOM')[0].tomselect;
+                            selectStateCOM.setValue(result.profile.stateID);
+
+                                            let selectOwnerCOM = $('#txtOwnerCOM')[0].tomselect;
+                            selectOwnerCOM.setValue(result.profile.ownerID);
+
+                                let selectTerritoryCOM = $('#txtTerritoryCOM')[0].tomselect;
+                            selectTerritoryCOM.setValue(result.profile.territoryID);
+
+                                   let selectCompanyTypeCOM = $('#txtCompanyTypeCOM')[0].tomselect;
+                            selectCompanyTypeCOM.setValue(result.profile.memberType);
+
+                                     let selectCurrencyCOM = $('#txtCurrencyCOM')[0].tomselect;
+                            selectCurrencyCOM.setValue(result.profile.currencyID);
+
+                               let selectMarketCOM = $('#txtMarketCOM')[0].tomselect;
+                            selectMarketCOM.setValue(result.profile.marketID);
+                        
+                             let selectSaleInChargeCOM = $('#txtSaleInChargeCOM')[0].tomselect;
+                            selectSaleInChargeCOM.setValue(result.profile.personInChargeID);
+                        
+                            $("#txtPostalCOM").val(result.profile.postalCode);
+                           // $("#txtStateCOM").val(result.profilestateID);
+                            $("#txtCompanyCOM").val(result.profile.fullAccount);
+                            $("#txtTaxCOM").val(result.profile.taxCode);
+                            $("#txtBusAddressCOM").val(result.profile.homeAddress);
+                            $("#txtContractName").val(result.profile.acctContact);
+                            $("#txtTelephoneCOM").val(result.profile.telephone);
+                            $("#txtContactNameCOM").val(result.profile.acctContact);
+                            $("#txtEmailCOM").val(result.profile.email);
+                            $("#txtWebsiteCOM").val(result.profile.website);
+                            $("#txtHandPhoneCOM").val(result.profile.handPhone);
+                            $("#txtCompany2COM").val(result.profile.company);
+                            $("#txtBusTitleCOM").val(result.profile.businessTitle);
+                        //    $("#txtOwnerCOM").val(result.profile.ownerID);
+                           // $("#txtTerritoryCOM").val(result.profile.territoryID);
+                            $("#txtKeywordCOM").val(result.profile.keyword);
+                           // $("#txtCompanyTypeCOM").val(0);
+                            $("#txtARCOM").val(result.profile.arNo);
+                            //$("#txtCurrencyCOM").val(result.profile.currencyID);
+                           // $("#txtSaleInChargeCOM").val(result.profile.personInChargeID);
+                          //  $("#txtMarketCOM").val(result.profile.marketID);
+                            if (result.profile.active === true) {
+                                $("#txtActiveCOM").prop("checked", true);
+                            }else{
+                                $("#txtActiveCOM").prop("checked", false);
+                            }
+
+                             if (result.profile.isBlackList === true) {
+                                $("#txtBlackListCOM").prop("checked", true);
+                            }else{
+                                $("#txtBlackListCOM").prop("checked", false);
+                            }
+                           //$("#txtBlackListCOM").is(":checked");
+                            $("#blackListCOM").val(result.profile.blackListReason);
+                                      console.log(result.profile.description);
+                            $("#txtNoteCOM").val(result.profile.description);
+                            $('#modalEditCOM').modal('show');
+                       }
+                       else{
+
+                       }
                    }
-               }
-            },
-            error: function (xhr, statusText, err) {
+                },
+                error: function (xhr, statusText, err) {
 
+                }
+            });
+        }
+    }
+    function clearProfileForm() {
+
+
+        const individualInputs = [
+            "#txtCodeIndividual", "#txtFullNameIndividual",
+            "#txtLastNameIndividual", "#txtFirstNameIndividual",
+            "#txtMiddleNameIndividual", "#txtReasonIndividual",
+            "#txtPostalIndividual", "#txtReligionIndividual",
+            "#txtNationIndividual", "#txtPurposeIndividual",
+            "#txtAddressIndividual", "#txtSalutationIndividual",
+            "#txtPrefRoomIndividual", "#txtOtherIndividual",
+            "#txtPassportIndividual", "#txtCardIndividual",
+            "#txtDobIndividual", "#txtKeywordIndividual",
+            "#txtCompanyIndividual", "#txtCompany2Individual",
+            "#txtTaxIndividual", "#txtBusAddressIndividual",
+            "#txtTelephoneIndividual", "#txtHandPhoneIndividual",
+            "#txtFaxIndividual", "#txtEmailIndividual",
+            "#txtWebsiteIndividual", "#txtBusinessTitleIndividual",
+            "#blackListIndividual", "#txtNoteIndividual"
+        ];
+
+        individualInputs.forEach(id => {
+            if ($(id).length) {
+                $(id).val("");
+            }
+        });
+
+        const individualCheckboxes = [
+            "#txtActiveIndividual", "#txtContactIndividual",
+            "#txtBlackListIndividual"
+        ];
+
+        individualCheckboxes.forEach(id => {
+            if ($(id).length) {
+                $(id).prop("checked", false);
+            }
+        });
+
+        const individualTomSelects = [
+            "#txtCityIndividual", "#txtLanguageIndividual",
+            "#txtTitleIndividual", "#txtNationalityIndividual",
+            "#txtCountryIndividual", "#txtStateIndividual",
+            "#txtVIPIndividual"
+        ];
+
+        individualTomSelects.forEach(id => {
+            if ($(id).length && $(id)[0].tomselect) {
+                $(id)[0].tomselect.clear();
+            }
+        });
+
+        /* ===================== */
+        /* COMPANY (TYPE = 1–3)  */
+        /* ===================== */
+
+        const companyInputs = [
+            "#txtCodeCOM", "#txtAccountCOM", "#txtAddressCOM",
+            "#txtPostalCOM", "#txtCompanyCOM", "#txtTaxCOM",
+            "#txtBusAddressCOM", "#txtContractName",
+            "#txtContactNameCOM", "#txtTelephoneCOM",
+            "#txtEmailCOM", "#txtWebsiteCOM",
+            "#txtHandPhoneCOM", "#txtCompany2COM",
+            "#txtBusTitleCOM", "#txtKeywordCOM",
+            "#txtARCOM", "#blackListCOM", "#txtNoteCOM"
+        ];
+
+        companyInputs.forEach(id => {
+            if ($(id).length) {
+                $(id).val("");
+            }
+        });
+
+        const companyCheckboxes = [
+            "#txtActiveCOM", "#txtBlackListCOM"
+        ];
+
+        companyCheckboxes.forEach(id => {
+            if ($(id).length) {
+                $(id).prop("checked", false);
+            }
+        });
+
+        const companyTomSelects = [
+            "#txtCountryCOM", "#txtCityCOM", "#txtStateCOM",
+            "#txtOwnerCOM", "#txtTerritoryCOM", "#txtCompanyTypeCOM",
+            "#txtCurrencyCOM", "#txtMarketCOM", "#txtSaleInChargeCOM"
+        ];
+
+        companyTomSelects.forEach(id => {
+            if ($(id).length && $(id)[0].tomselect) {
+                $(id)[0].tomselect.clear();
             }
         });
     }
+
     async function setSelect2(){
         const ids = [
             "#txtLanguageIndividual", "#txtTitleIndividual", "#txtNationalityIndividual",
@@ -1046,7 +1232,7 @@
                 "#txtVIPIndividual", "#txtCityCOM", "#txtCountryCOM",
             "#txtStateCOM"
             , "#txtOwnerCOM", "#txtTerritoryCOM", "#txtCompanyTypeCOM",
-            "#txtCurrencyCOM", "#txtMarketTypeCOM", "#txtMarketCOM"
+            "#txtCurrencyCOM", "#txtMarketTypeCOM", "#txtMarketCOM","#txtSaleInChargeCOM"
             //,
             //"#txtStateGroup",
             // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
@@ -1220,7 +1406,7 @@
                     select2.addOption({ value: '0', text: 'Please select state' });
                     result.forEach(item => {
                       //  select2.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
-                         select.addOption({ value: item.id, text: `${item.stateName}` });
+                         select2.addOption({ value: item.id, text: `${item.stateName}` });
                     });
                     select2.setValue('0'); // Chọn giá trị mặc định
 
@@ -1273,7 +1459,7 @@
 
                     select2.addOption({ value: '0', text: 'Please select city' });
                     result.forEach(item => {
-                        select2.addOption({ value: item.name, text: `${item.code} - ${item.name}` });
+                        select2.addOption({ value: item.code, text: `${item.code} - ${item.name}` });
                     });
 
                     select2.setValue('0'); // Chọn giá trị mặc định
@@ -1527,6 +1713,63 @@
         });
     }
 
+    function getPersonInCharge2() {
+        $.ajax({
+            url: '/Administration/PersonInChargeData',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                console.log(result);
+                if (result.length > 0) {
+                    let select = $('#txtSaleInChargeCOM')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+
+                    select.addOption({ value: '0', text: 'Please select SaleInCharge' });
+                    result.forEach(item => {
+                        select.addOption({ value: item.id, text: `${item.code} - ${item.name}` });
+                    });
+
+                    select.setValue('0'); // Chọn giá trị mặc định
+
+
+                    // let select2 = $('#txtCurrencyGroup')[0].tomselect; // Lấy instance của TomSelect
+                    // select2.clear(); // Xóa giá trị hiện tại
+                    // select2.clearOptions(); // Xóa tất cả option cũ
+
+                    // select2.addOption({ value: '0', text: 'Please select Currency' });
+                    // result.forEach(item => {
+                    //     select2.addOption({ value: item.id, text: `${item.description}` });
+                    // });
+
+                    // select2.setValue('0'); // Chọn giá trị mặc định
+                }
+                else{
+                    let select = $('#txtSaleInChargeCOM')[0].tomselect; // Lấy instance của TomSelect
+                    select.clear(); // Xóa giá trị hiện tại
+                    select.clearOptions(); // Xóa tất cả option cũ
+                    select.addOption({ value: '0', text: 'Please select SaleInCharge' });
+                    select.setValue('0');
+
+                    // let select2 = $('#txtCurrencyGroup')[0].tomselect; // Lấy instance của TomSelect
+                    // select2.clear(); // Xóa giá trị hiện tại
+                    // select2.clearOptions(); // Xóa tất cả option cũ
+                    // select2.addOption({ value: '0', text: 'Please select Currency' });
+                    // select2.setValue('0');
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                } else {
+                    informBox(TOAST_STATUS.DANGER, "Lỗi tải danh sách tiêu đề hoặc bạn không có quyền tải");
+                }
+            }
+        });
+    }
 
     function getMarketType2() {
         $.ajax({
@@ -1613,9 +1856,10 @@
         var formData = new FormData();
           var grid = $("#gridContainer").dxDataGrid("instance");
         var selectedRowsData = grid.getSelectedRowsData();
-        formData.append('ID', selectedRowsData[0].id);
-
-        formData.append('CodeIndividual', $("#txtCodeIndividual").val());
+        console.log(selectedRowsData);
+        if (selectedRowsData[0].type === 0) {
+            formData.append('ID', selectedRowsData[0].id);
+             formData.append('CodeIndividual', $("#txtCodeIndividual").val());
             formData.append('AccountIndividual', $("#txtFullNameIndividual").val());
             formData.append('LastNameIndivdual', $("#txtLastNameIndividual").val());
             formData.append('FirstNameIndividual', $("#txtFirstNameIndividual").val());
@@ -1656,6 +1900,43 @@
             formData.append('BlackListIndividual', $("#txtBlackListIndividual").is(":checked"));
             formData.append('BlackListReasonIndividual', $("#blackListIndividual").val());
             formData.append('NoteIndividual', $("#txtNoteIndividual").val());
+        }
+         else if (selectedRowsData[0].type === 2) {
+            formData.append('ID', selectedRowsData[0].id);
+             formData.append('CodeCOM', $("#txtCodeCOM").val());
+            formData.append('AccountCOM', $("#txtAccountCOM").val());         
+            formData.append('CountryCOM', $("#txtCountryCOM").val());
+            formData.append('CityCOM', $("#txtCityCOM").val());
+            formData.append('PostalCOM', $("#txtPostalCOM").val());
+          
+            formData.append('StateCOM', $("#txtStateCOM").val());
+         
+            formData.append('AddressCOM', $("#txtAddressCOM").val());
+          
+            formData.append('ActiveCOM', $("#txtActiveCOM").is(":checked"));
+            formData.append('KeywordCOM', $("#txtKeywordCOM").val());
+          //  formData.append('CompanyIndividual', $("#txtCompanyIndividual").val());
+               formData.append('FullAccount', $("#txtCompanyCOM").val());
+            formData.append('TaxCOM', $("#txtTaxCOM").val());
+            formData.append('BusAddressCOM', $("#txtBusAddressCOM").val());
+            formData.append('TelephoneCOM', $("#txtTelephoneCOM").val());
+            formData.append('HandPhoneCOM', $("#txtHandPhoneCOM").val());
+            formData.append('ContractName', $("#txtContractName").val());
+            formData.append('EmailCOM', $("#txtEmailCOM").val());
+            formData.append('WebsiteCOM', $("#txtWebsiteCOM").val());
+            formData.append('Company2COM', $("#txtCompany2COM").val());
+            formData.append('BusTitleCOM', $("#txtBusTitleCOM").val());
+            formData.append('BlackListCOMchecked', $("#txtBlackListCOM").is(":checked"));
+            formData.append('BlackListCOM', $("#blackListCOM").val());
+            formData.append('NoteCOM', $("#txtNoteCOM").val());
+            formData.append('OwnerCOM', $("#txtOwnerCOM").val());
+            formData.append('TerritoryCOM', $("#txtTerritoryCOM").val());
+            formData.append('CompanyTypeCOM', $("#txtCompanyTypeCOM").val());
+            formData.append('ARCOM', $("#txtARCOM").val());
+            formData.append('CurrencyCOM', $("#txtCurrencyCOM").val());
+            formData.append('SaleInChargeCOM', $("#txtSaleInChargeCOM").val());
+            formData.append('MarketCOM', $("#txtMarketCOM").val());
+        }
             $.ajax({
             url: '/Profile/EditProfile',
             type: 'POST',
@@ -1667,6 +1948,7 @@
                 if (data.code == 0) {
                     $('#modalEdit').modal('hide');
                     getAllProfiles();
+                    clearProfileForm();
                     showToast("Success",data.msg,true);
                 } else {
                     showToast("Faile",data.msg,false);

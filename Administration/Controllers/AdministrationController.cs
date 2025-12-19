@@ -5518,6 +5518,7 @@ namespace Administration.Controllers
             description = description ?? "";
             group = group ?? "";
             zone = zone ?? "";
+            isActive = isActive ?? "";
             if (isActive == "1")
             {
                 isActive = "";

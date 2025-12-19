@@ -1035,7 +1035,8 @@
         const currentOrigin = window.location.origin;
         const secureOrigin = currentOrigin.replace(/^http:/, 'https:'); // ép http → https
 
-        const url = `${secureOrigin}/Reservation/ReadDoc?id=${idReservation}`;
+    const url = `${window.location.origin}/Reservation/ReadDoc?id=${idReservation}`;
+
 
         fetch(url, {
             method: 'GET',

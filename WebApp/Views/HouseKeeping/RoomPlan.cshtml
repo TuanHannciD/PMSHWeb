@@ -524,18 +524,19 @@
         }
 
 
-          $(document).ready(function () {
+   $(document).ready(function () {
+              getBusinessDate();
               setTomSelect();
         // Khi nhấn nút Filter
-          $('#toggleFilterBtn').on('click', function (e) {
-        e.stopPropagation();
+        $('#toggleFilterBtn').on('click', function (e) {
+            e.stopPropagation();
 
-        // Gắn filterPopup ngay sau nút
-        $(this).after($('#filterPopup'));
+            // Gắn filterPopup ngay sau nút
+            $(this).after($('#filterPopup'));
 
-        // Toggle hiển thị
-        $('#filterPopup').toggle();
-    });
+            // Toggle hiển thị
+            $('#filterPopup').toggle();
+        });
 
         // Click ra ngoài sẽ đóng popup và overlay
         $(document).on('click', function (e) {
@@ -551,7 +552,7 @@
                 $('#overlay').hide();
             }
         });
-      let currentScaleX = 1.0;      // Zoom ngang mặc định 100%
+       let currentScaleX = 1.0;      // Zoom ngang mặc định 100%
         const step = 0.1;             // Mỗi lần zoom ±10%
         const minScaleX = 0.5;        // Tối thiểu 50%
         const maxScaleX = 2.0;        // Tối đa 200%
@@ -580,28 +581,8 @@
             }
         });
              document.getElementById("reportTitle").innerText = 'Room Plan';
-            var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
-        console.log(businessDateStr);
-        // Lấy phần ngày tháng năm
-        var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
-        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
 
-        // Parse đúng thứ tự: new Date(year, monthIndex, day)
-            parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-
-               const lastDayOfMonth = new Date(parsedBusinessDate.getFullYear(), parsedBusinessDate.getMonth() + 2, 0);
-
-            // Định dạng theo local time
-            const formattedFirstDay = formatDate(parsedBusinessDate);
-            const formattedLastDay = formatDate(lastDayOfMonth);
-
-            console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-            console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-            // Gán giá trị cho input date
-               $('#fromDate').val(formattedFirstDay);
-             $('#toDate').val(formattedLastDay);
-
-               $("#btnPrint").trigger("click");
+      
            initializeRoomListTomSelect();
                     initializeZoneListTomSelect();
            initializeRoomTypeListTomSelect();
@@ -647,7 +628,35 @@
             }
          }
 
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
 
+                  const baseDateStr = result.split('T')[0]; // YYYY-MM-DD
+
+             const baseDate = new Date(baseDateStr);
+             const toDate = new Date(baseDate);
+             toDate.setDate(toDate.getDate() + 30);
+
+             // format YYYY-MM-DD
+             const formatDate = (d) => d.toISOString().split('T')[0];
+
+             $('#fromDate').val(formatDate(baseDate));
+             $('#toDate').val(formatDate(toDate));
+                           $("#btnPrint").trigger("click");
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
          function initializeRoomTypeListTomSelect() {
             const el = document.querySelector("#roomType");
             if (!el) return;

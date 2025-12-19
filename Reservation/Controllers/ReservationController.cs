@@ -3040,7 +3040,7 @@ namespace Reservation.Controllers
         }
 
         [HttpPost]
-        public ActionResult PrintReceipt(int id)
+        public ActionResult PrintReceipt(int id,string userName)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -3059,10 +3059,16 @@ namespace Reservation.Controllers
                 report.Parameters["ReceiptReason"].Value = $"Deposit Res.No {deposit.ReservationID}";
                 report.Parameters["RoomNo"].Value = reservation.RoomNo.ToString();
                 report.Parameters["Time"].Value = deposit.TransactionDate.ToString("hh:mm");
-                report.Parameters["User"].Value = deposit.UserName.ToString();
-                report.Parameters["TotalAmount"].Value = deposit.AmountMaster.ToString();
+                report.Parameters["User"].Value = userName;
+                report.Parameters["TotalAmount"].Value =
+          Math.Abs(deposit.AmountMaster)
+              .ToString("#,##0.00", System.Globalization.CultureInfo.InvariantCulture)
+              .Replace(",", ".");
 
-
+                report.Parameters["ConfNo"].Value = reservation.ConfirmationNo;
+                report.Parameters["ArrDate"].Value = reservation.ArrivalDate.ToString("dd/MM/yyyy");
+                report.Parameters["DepDate"].Value = reservation.DepartureDate.ToString("dd/MM/yyyy");
+                report.Parameters["CurrencyID"].Value = reservation.CurrencyId;
                 report.CreateDocument();
 
                 using (MemoryStream msPdf = new MemoryStream())

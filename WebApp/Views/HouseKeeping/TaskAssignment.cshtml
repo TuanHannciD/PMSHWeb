@@ -306,6 +306,66 @@
         width: 500px;
         overflow-x: auto; /* ✅ Scroll ngang */
     }
+    /* GRID FORM */
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px 12px;
+    }
+
+    .filter-col {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    /* FORM ROW */
+    .form-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .form-row label {
+            width: 95px;
+            font-size: 12px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+    /* INPUT */
+    .form-control-sm {
+        height: 28px;
+        font-size: 12px;
+    }
+
+    /* TOM SELECT */
+    .tomselect-custom {
+        width: 200px;
+    }
+
+        .tomselect-custom .ts-control {
+            min-height: 28px;
+            max-height: 70px;
+            overflow-y: auto;
+            font-size: 12px;
+            padding: 2px 6px;
+        }
+
+    /* CHECKBOX */
+    .form-check {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-check-input {
+        margin-top: 0;
+    }
+
+    /* POPUP SCROLL */
+    #popupAuTo {
+        overflow-y: auto;
+    }
 
 
 </style>
@@ -1200,219 +1260,156 @@
         <!-- Chừa padding-top 50px để nút X không che nội dung -->
     </div>
 </div>
-<div id="popupAuTo" style="display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; min-height: 688px; overflow-y: auto;">
+<div id="popupAuTo"
+     style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%, -50%);
+     background:#fff; padding:16px;
+     border-radius:10px; z-index:1050;
+     width:654px; min-height:400px;
+     box-shadow:0 0 10px rgba(0,0,0,.3);">
 
+    <!-- HEADER -->
     <div class="d-flex justify-content-between mb-2">
-        <h5 class="mb-0"> Automatic Generation of Tasks</h5>
-
+        <h5 class="mb-0">Automatic Generation of Tasks</h5>
     </div>
-    <div class="d-flex justify-content-start mb-3 gap-2">
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-        <button onclick="$('#popupAuTo').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;">
-            <i class="fa-solid fa-xmark me-1"></i> Close
-        </button>
-    </div>
-    <div class="sticky-header bg-white p-2 shadow-sm z-3">
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
-            <div class="d-flex align-items-center flex-wrap mb-2">
-                <div class="d-flex flex-column">
-                    <div class="d-flex align-items-center me-3">
-                       <div class="d-flex align-items-center me-3 mb-2">
-                            <label class="me-2 mb-0">Task Date:</label>
-                            <input type="date" id="taskdateauto" name="taskdateauto" class="form-control form-control-sm w-auto" />
-                        </div>
 
-                        <!-- Clean Uncheck -->
-                        <div class="form-check me-3">
+    <!-- BUTTON -->
+    <div class="d-flex justify-content-start mb-3 gap-2"> <button style="border-radius: 4px; margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button> <button onclick="$('#popupAuTo').hide()" id="btnClosePopup" class="btn btn-sm btn-danger" style=" border-radius: 4px;"> <i class="fa-solid fa-xmark me-1"></i> Close </button> </div>
 
-                            <input class="form-check-input" type="checkbox" id="includeroomAS" name="includeOptionsAssigned" value="1" >
-                            <label class="form-check-label" for="required">Include Room Assigned</label>
-                        </div>
-                    </div>
+    <!-- FILTER -->
+    <div class="sticky-header bg-white p-2">
+
+        <div class="filter-grid">
+
+            <!-- COLUMN 1 -->
+            <div class="filter-col">
+                <div class="form-row">
+                    <label>Task Date</label>
+                    <input type="date" id="taskdateauto"
+                           class="form-control form-control-sm">
                 </div>
 
-
-
-                <div class="d-flex flex-column">
-                    <div class="d-flex align-items-center me-3">
-                      
-
-                        <!-- Clean Uncheck -->
-                        <div class="form-check me-3">
-                        
-                            <input class="form-check-input" type="checkbox" id="vcAuto" name="includeOptionsAuto" value="1" >
-                            <label class="form-check-label" for="cleanNoncheck">VC</label>
-                        </div>
-
-                        <!-- Dirty -->
-                        <div class="form-check me-3">
-                      
-                            <input class="form-check-input" type="checkbox" id="vcnAuto" name="includeOptionsAuto" value="2" >
-                            <label class="form-check-label" for="dirty">VCN</label>
-                        </div>
-
-                        <!-- Out of Order -->
-                        <div class="form-check me-3">
-                        
-                            <input class="form-check-input" type="checkbox" id="vdAuto" name="includeOptionsAuto" value="5" >
-                            <label class="form-check-label" for="outofOrder">VD</label>
-                        </div>
-
-                      
-                        <div class="form-check me-3">
-                     
-                            <input class="form-check-input" type="checkbox" id="doAuto" name="includeOptionsAuto" value="4" checked>
-                            <label class="form-check-label" for="clean">DO</label>
-                        </div>
-
-                        <!-- Out of Services -->
-                        <div class="form-check me-3">
-                          
-                            <input class="form-check-input" type="checkbox" id="ocAuto" name="includeOptionsAuto" value="6" >
-                            <label class="form-check-label" for="outofServices">OC</label>
-                        </div>
-                        <!-- Out of Services -->
-                        <div class="form-check me-3">
-                        
-                            <input class="form-check-input" type="checkbox" id="ocnAuto" name="includeOptionsAuto" value="6" >
-                            <label class="form-check-label" for="outofServices">OCN</label>
-                        </div>
-                        <div class="form-check me-3">
-                           
-                            <input class="form-check-input" type="checkbox" id="odAuto" name="includeOptionsAuto" value="6"checked >
-                            <label class="form-check-label" for="outofServices">OD</label>
-                        </div>
-                        <div class="form-check me-3">
-                        
-                            <input class="form-check-input" type="checkbox" id="oooAuto" name="includeOptionsAuto" value="6" >
-                            <label class="form-check-label" for="outofServices">OOO</label>
-                        </div>
-                          <div class="form-check me-3">
-                           
-                            <input class="form-check-input" type="checkbox" id="oosAuto" name="includeOptionsAuto" value="6" >
-                            <label class="form-check-label" for="outofServices">OOS</label>
-                        </div>
+                <div class="form-row">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeroomAS">
+                        <label class="form-check-label">Include Room Assigned</label>
                     </div>
                 </div>
+            </div>
 
-
-                <div class="d-flex flex-column">
-                    <!-- Row 1 -->
-                    <div class="d-flex align-items-center me-3 mb-2">
-                        <div class="form-check me-3">
-                           
-                            <input class="form-check-input" type="checkbox" id="arrivalOnly" name="includeOptionsRoomstatus" value="1" >
-                            <label class="form-check-label" for="outofServices">Arrival Only</label>
-                        </div>
-                        <div class="d-flex align-items-center me-3">
-                            <label class="me-2 mb-0">Floor:</label>
-                            <select id="floorauto" name="floorauto" class="tomselect-custom"  style="width: 200px" multiple>
-                      
-                                @foreach (var item in listflo)
-                                {
-                                    <option value="@item.Code">@item.Code</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="d-flex align-items-center me-3">
-                            <label class="me-2 mb-0">Room Type:</label>
-                            <select id="roomTypeauto" name="roomTypeauto" class="tomselect-custom"  style="width: 200px" multiple>
-                                
-                                @foreach (var item in listrt)
-                                {
-                                    <option value="@item.Code">@item.Code</option>
-                                }
-                            </select>
-                        </div>
-
-                    </div>
-
-                   
+            <!-- COLUMN 2 -->
+            <div class="filter-col">
+                <div class="form-row">
+                    <label>Floor</label>
+                    <select id="floorauto" class="tomselect-custom" multiple>
+                        @foreach (var item in listflo)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
                 </div>
-                <div class="d-flex flex-column">
-                    <!-- Row 1 -->
-                    <div class="d-flex align-items-center me-3 mb-2">
-                       
-                        <div class="d-flex align-items-center me-3">
-                            <label class="me-2 mb-0">Zone:</label>
-                            <select id="zonecodeauto" name="zonecodeauto" class="tomselect-custom" style="width: 200px" multiple>
 
-                                @foreach (var item in listzone)
-                                {
-                                    <option value="@item.Code">@item.Code</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="d-flex align-items-center me-3">
-                            <label class="me-2 mb-0">Sub Zone:</label>
-                            <select id=">subzonecodeauto" name="subzonecodeauto" class="form-control form-control-sm" style="width:80px">
-                                <option value=""></option>
-
-                            </select>
-                        </div>
-                    </div>
-
-
+                <div class="form-row">
+                    <label>Room Type</label>
+                    <select id="roomTypeauto" class="tomselect-custom" multiple>
+                        @foreach (var item in listrt)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
                 </div>
-                <div class="d-flex flex-column">
-                    <!-- Row 1 -->
-                    <div class="d-flex align-items-center me-3">
-                       
-                     
-                        <div class="d-flex align-items-center me-3 ">
-                            <label class="me-2 mb-0">Task Code:</label>
-                            <select id="taskcodeauto" name="taskcodeauto" class="tomselect-custom"  style="width: 200px" multiple>
-                                
-                                @foreach (var item in listhkpFT)
-                                {
-                                    <option value="@item.ID">@item.Code</option>
-                                }
-                            </select>
+            </div>
 
-                        </div>
-                        
-                      
-                        <div class="d-flex align-items-center me-3 ">
-                            <label class="me-2 mb-0"> Attendant ID:</label>
-                            <select id="attendantauto" name="attendantauto" class="tomselect-custom"  style="width: 200px" multiple>
-                              
-                                @foreach (var item in listatt)
-                                {
-                                    <option value="@item.ID">@item.Name</option>
-                                }
-                            </select>
-
-                        </div>
-                       
-                    </div>
-
-
+            <!-- COLUMN 3 -->
+            <div class="filter-col">
+                <div class="form-row">
+                    <label>Zone</label>
+                    <select id="zonecodeauto" class="tomselect-custom" multiple>
+                        @foreach (var item in listzone)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>
                 </div>
-                <div class="d-flex flex-column">
-                    <!-- Row 1 -->
-                    <div class="d-flex align-items-center me-3 mb-2">
 
+                <div class="form-row">
+                    <label>Sub Zone</label>
+                    <select id="subzonecodeauto"
+                            class="form-control form-control-sm">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
 
-                        
-                        <div class="d-flex align-items-center me-3 mb-2">
-                            <label class="me-2 mb-0">Max. Credits:</label>
-                            <input type="text" id="maxcreditauto" name="maxcreditauto" class="form-control form-control-sm w-auto" value="0" />
-                        </div>
-                        <div class="d-flex align-items-center me-3 mb-2">
-                            <label class="me-2 mb-0">Description:</label>
-                            <input type="text" id="descriptionauto" name="descriptionauto" class="form-control form-control-sm w-auto" />
-                        </div>
-                    </div>
+            <!-- COLUMN 4 -->
+            <div class="filter-col">
+                <div class="form-row">
+                    <label>Task Code</label>
+                    <select id="taskcodeauto" class="tomselect-custom" multiple>
+                        @foreach (var item in listhkpFT)
+                        {
+                            <option value="@item.ID">@item.Code</option>
+                        }
+                    </select>
+                </div>
 
+                <div class="form-row">
+                    <label>Attendant</label>
+                    <select id="attendantauto" class="tomselect-custom" multiple>
+                        @foreach (var item in listatt)
+                        {
+                            <option value="@item.ID">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
 
+            <!-- COLUMN 5 -->
+            <div class="filter-col">
+                <div class="form-row">
+                    <label>Max Credits</label>
+                    <input type="text" id="maxcreditauto"
+                           class="form-control form-control-sm" value="0">
+                </div>
+
+                <div class="form-row">
+                    <label>Description</label>
+                    <input type="text" id="descriptionauto"
+                           class="form-control form-control-sm">
                 </div>
             </div>
 
         </div>
+
+        <!-- ROOM STATUS -->
+        <div class="mt-2 d-flex flex-wrap">
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="vcAuto">
+                <label class="form-check-label">VC</label>
+            </div>
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="vcnAuto">
+                <label class="form-check-label">VCN</label>
+            </div>
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="vdAuto">
+                <label class="form-check-label">VD</label>
+            </div>
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="doAuto" checked>
+                <label class="form-check-label">DO</label>
+            </div>
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="ocAuto">
+                <label class="form-check-label">OC</label>
+            </div>
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="arrivalOnly">
+                <label class="form-check-label">Arrival Only</label>
+            </div>
+        </div>
+
     </div>
- 
 </div>
 
 
