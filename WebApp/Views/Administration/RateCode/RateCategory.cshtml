@@ -274,12 +274,13 @@
                 allowedPageSizes: [20, 50, 100],
                 showInfo: true
             },
+            width: "100%",
             filterRow: { visible: true },
             columns: [
                 { dataField: "id", caption: "ID", width: 80, visible: false },
                 { dataField: "code", caption: "Code", dataType: "number", format: { type: "fixedPoint", precision: 0 }, width: 130 },
-                { dataField: "name", caption: "Name", dataType: "string", width: 130 },
-                { dataField: "description", caption: "Description", width: 200 },
+                { dataField: "name", caption: "Name", dataType: "string" },
+                { dataField: "description", caption: "Description" },
                 { dataField: "createdBy", caption: "CreatedBy", width: 120 },
                 {
                     dataField: "inactive",
