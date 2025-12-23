@@ -379,34 +379,34 @@ namespace Administration.Controllers
         #endregion
 
         #region Currency
-        [HttpGet]
-        public IActionResult GetCurrency()
-        {
-            try
-            {
-                DataTable dataTable = _iAdministrationService.Currency();
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  IsMaster = !string.IsNullOrEmpty(d["IsMaster"].ToString()) ? d["IsMaster"] : "",
-                                  Trans = !string.IsNullOrEmpty(d["Trans"].ToString()) ? d["Trans"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
+        // [HttpGet]
+        // public IActionResult GetCurrency()
+        // {
+        //     try
+        //     {
+        //         DataTable dataTable = _iAdministrationService.Currency();
+        //         var result = (from d in dataTable.AsEnumerable()
+        //                       select new
+        //                       {
+        //                           IsMaster = !string.IsNullOrEmpty(d["IsMaster"].ToString()) ? d["IsMaster"] : "",
+        //                           Trans = !string.IsNullOrEmpty(d["Trans"].ToString()) ? d["Trans"] : "",
+        //                           Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+        //                           Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+        //                           ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+        //                       }).ToList();
+        //         return Json(result);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Json(ex.Message);
+        //     }
+        //  report.DataSource = dataTable;
 
-            // Không cần gán parameter
-            // report.RequestParameters = false;
+        // Không cần gán parameter
+        // report.RequestParameters = false;
 
-            // return PartialView("_ReportViewerPartial", report);
-        }
+        // return PartialView("_ReportViewerPartial", report);
+        //}
         public IActionResult Currency()
         {
             return View();
@@ -2303,7 +2303,7 @@ namespace Administration.Controllers
                 message = ex.Message;
                 return Json(new { success = false, message });
             }
-            
+
             return Json(new { success = true, message });
         }
         [HttpPost]
@@ -4441,7 +4441,7 @@ namespace Administration.Controllers
         }
         public IActionResult PropertyPermission()
         {
-            List<PropertyModel> listProperty= PropertyUtils.ConvertToList<PropertyModel>(PropertyBO.Instance.FindAll());
+            List<PropertyModel> listProperty = PropertyUtils.ConvertToList<PropertyModel>(PropertyBO.Instance.FindAll());
             ViewBag.PropertyList = listProperty;
             List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
             ViewBag.UsersList = listuser;
