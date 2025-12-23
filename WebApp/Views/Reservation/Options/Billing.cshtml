@@ -115,7 +115,7 @@
                                 <a href="#" onclick="openBilling2();">By Detail : Not Include Tax</a>
                             </div>
                         </div>
-                        <a href="#" onclick="openModalPosting();">Posting</a>
+                        <a href="#" id="btnPostingBilling" onclick="openModalPosting();">Posting</a>
                         <a href="#" onclick="openModalEditPosting();">Edit</a>
                         <div class="dropdown">
                             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Preview && Print</a>
@@ -134,7 +134,7 @@
                             </div>
                         </div>
 
-                        <a href="#" onclick="openModalPaymentBilling();">Payment</a>
+                        <a href="#" id="btnPaymentBilling" onclick="openModalPaymentBilling();">Payment</a>
                         <a href="#" onclick="openModalEditPosting();">Deposit</a>
 
                     </div>
@@ -272,7 +272,9 @@
             $("#functionMenu").toggle();
         });
         getDeletionReason();
+          
     });
+  
     var folioPosting = 1;
     var transactionNoPost = "0";
     var totalAmountBilling = 0;
@@ -325,6 +327,7 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
+                console.log(result);
                 listFolioNoID = [];
                 $('#listFolioNo').empty();
                 $('#listTransferToWindow').empty();

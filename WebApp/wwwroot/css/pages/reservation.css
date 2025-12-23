@@ -583,9 +583,9 @@ button{
 }
 
 
-button:hover {
+/*button:hover {
     background-color: #2c5282;
-}
+}*/
 
 .action-button-new-reservation {
     display: flex;

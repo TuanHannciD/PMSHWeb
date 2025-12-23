@@ -57,5 +57,25 @@ namespace Profile.Services.Implements
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
         }
+        public DataTable ExportXML(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@FromDate", fromDate),
+                    new SqlParameter("@ToDate", toDate)
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spProfileExportToXML", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }

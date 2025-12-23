@@ -26,7 +26,7 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
-        public static DataTable GetAllProfile(string code, string account, string firstName, string keyWord, string city, int type, bool showSaleInCharge)
+        public static DataTable GetAllProfile(string code, string account, string firstName, string keyWord, string city, string type, bool showSaleInCharge)
         {
             if (string.IsNullOrEmpty(code))
             {
@@ -50,37 +50,41 @@ namespace BaseBusiness.BO
             }
 
             string typeS = "";
-            if (type == 0)
+            if (type == "0")
             {
                 typeS = "1";
             }
+            if (string.IsNullOrEmpty(type))
+            {
+                typeS = "";
+            }
             //Company
-            else if (type == 1)
+            else if (type == "1")
             {
                 typeS = "2";
             }
             //Source
-            else if (type == 2)
+            else if (type == "2")
             {
                 typeS = "3";
             }
             //Individual
-            else if (type == 3)
+            else if (type == "3")
             {
                 typeS = "0";
             }
             //Group
-            else if (type == 4)
+            else if (type == "4")
             {
                 typeS = "4";
             }
             //Contact
-            else if (type == 5)
+            else if (type == "5")
             {
                 typeS = "5";
             }
             //All
-            else if (type == 6)
+            else if (type == "6")
             {
                 typeS = "";
             }

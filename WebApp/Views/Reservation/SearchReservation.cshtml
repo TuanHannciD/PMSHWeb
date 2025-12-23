@@ -785,6 +785,13 @@
 
                 // Billing – dùng format mới (không thập phân)
                 $('#rsvStatusBilling').text(e.data.Status);
+                 if (e.data.Status === 'CHECKED OUT') {
+                    $('#btnPaymentBilling').hide(); // chỉ ẩn Payment
+                    $('#btnPostingBilling').hide(); // chỉ ẩn Payment
+                } else {
+                    $('#btnPaymentBilling').show();
+                    $('#btnPostingBilling').show();
+                }
                 $('#conNoBilling').text(e.data.ConfirmationNo);
                 $('#arivalBilling').text(e.data.Arrival ? e.data.Arrival.split(' ')[0] : '');
                 $('#departureBilling').text(e.data.Departure ? e.data.Departure.split(' ')[0] : '');

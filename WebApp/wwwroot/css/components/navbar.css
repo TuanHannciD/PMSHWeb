@@ -229,6 +229,73 @@ body {
         margin-right: 5px;
         color: var(--main-color);
     }
+.section-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.section-left,
+.section-right {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
+.section-left {
+    width: 30%;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.section-right {
+    width: 70%;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+@media (max-width: 768px) {
+    .contact-user-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .contact-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .user-name {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .section-bottom {
+        flex-direction: column; /* ✅ LEFT LÊN TRÊN */
+    }
+
+    .section-left,
+    .section-right {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .section-left {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 cột cho tablet */
+        gap: 16px;
+    }
+}
 
 .user-info {
     display: flex;

@@ -4,12 +4,15 @@
       margin-bottom: 8px;
     }
     .form-label {
-      font-weight: 500;
-      color: #333;
-      font-size: 0.9rem;
-      margin-bottom: 0;
-      width: 120px;
-      margin-right: 5px;
+        font-weight: 500;
+        color: #333;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        width: 120px;
+        margin-right: 5px;
+        display: flex; /* ✅ quan trọng */
+        flex-direction: column; /* ✅ label trên – span dưới */
+        line-height: 1.4;
     }
     .form-control {
       border-radius: 4px;

@@ -141,6 +141,7 @@ builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
 builder.Services.AddSingleton<IMembershipService, MembershipService>();
+builder.Services.AddSingleton<IFutureService, FutureService>();
 builder.Services.AddSingleton<IHouseKeepingAdminService, HouseKeepingAdminService>();
 builder.Services.AddSingleton<ITransactionSubGroupService, TransactionSubGroupService>();
 builder.Services.AddSingleton<IArticleService, ArticleService>();

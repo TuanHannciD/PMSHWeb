@@ -409,6 +409,8 @@ namespace Report.Services.Implements
 
         public DataTable ArrivalsandCheckInTodayData(string roomClass, string roomtype, string paymethod, string vip, string viewBy, string pseudo, string chkviponly, int disRoomSharer, string nopost)
         {
+            List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+            var businessDate = businessDateModel[0].BusinessDate;
             SqlParameter[] param = new SqlParameter[]
             {
                    new SqlParameter("@RoomClass", roomClass),
@@ -418,7 +420,7 @@ namespace Report.Services.Implements
                    new SqlParameter("@SortOrder",viewBy),
                    new SqlParameter("@Pseudo", pseudo),
                    new SqlParameter("@ChkVIPOnly",chkviponly),
-                   new SqlParameter("@BusinessDate", DateTime.Now.Date),
+                   new SqlParameter("@BusinessDate", businessDate.Date),
                    new SqlParameter("@DisRoomSharer", disRoomSharer),
                    new SqlParameter("@NoPost",nopost),
             };

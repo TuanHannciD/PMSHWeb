@@ -21,6 +21,7 @@ using Reservation.Services.Interfaces;
 using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -32,6 +33,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Xml;
 using static DevExpress.CodeParser.CodeStyle.Formatting.Rules;
 using static log4net.Appender.RollingFileAppender;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -824,6 +826,11 @@ namespace Reservation.Controllers
                 if (string.IsNullOrEmpty(Request.Form["marketID"].ToString()))
                 {
                     return Json(new { code = 1, msg = "Market cannot be blank" });
+
+                }
+                if (string.IsNullOrEmpty(Request.Form["nationality"].ToString()))
+                {
+                    return Json(new { code = 1, msg = "Nationality cannot be blank" });
 
                 }
                 string itemInventoryString = Request.Form["itemInventory"].ToString();
@@ -3286,7 +3293,7 @@ namespace Reservation.Controllers
                 return Json(ex.Message);
             }
         }
-
+       
 
         [HttpGet]
         public async Task<IActionResult> GetRoomAvailable( DateTime fromDate, DateTime toDate)
@@ -6022,6 +6029,32 @@ namespace Reservation.Controllers
                 return Json(new { error = ex.Message });
             }
         }
+        #endregion
+
+        #region  Nam_Packages
+        [HttpGet]
+        public async Task<IActionResult> GetPackageByReservationID(int reservationID)
+        {
+            try
+            {
+
+                var data = _iReservationService.SearchReservationPackages(reservationID);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
         #endregion
     }
 }

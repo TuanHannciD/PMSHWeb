@@ -16,8 +16,8 @@
         <div class="function-menu col-md-10">
             <a href="#" onclick="getAllProfilesSearch();">Search</a>
             <a href="#" onclick="exportExcel();">Excel</a>
-            <a href="#" onclick="getAllProfiles();">XML</a>
-            <a href="#" onclick="openModalEditPosting();" onclick="window.location.href='@Url.Action("Index", "Home")'">Close</a>
+            <a href="#" onclick="exportXML();">XML</a>
+            <a href="#"  onclick="window.location.href='@Url.Action("Index", "Home")'">Close</a>
         </div>
 
     </div>
@@ -106,6 +106,22 @@
             }
         });
     }
+
+       function exportXML() {
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        $("#loadingSpinner").show();
+
+        // 🔥 Trình duyệt tự download
+        window.location.href =
+            `/Profile/ExportXML?fromDate=${fromDate}&toDate=${toDate}`;
+
+        setTimeout(() => {
+            $("#loadingSpinner").hide();
+        }, 1500);
+    }
+
 
     function initializeDataGrid(data) {
 

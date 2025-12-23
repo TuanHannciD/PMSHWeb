@@ -26,5 +26,6 @@ namespace Profile.Services.Interfaces
         /// <param name="confirmationNo">confirmation no</param>
         /// <returns>Data table chứa danh sách profile history</returns>
         DataTable SearchProfileHistory(int profileID, int type, string confirmationNo);
+        DataTable ExportXML(DateTime fromDate, DateTime toDate);
     }
 }

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -23,15 +27,17 @@ namespace Profile.Controllers
         private readonly IMemoryCache _cache;
         private readonly IProfileExportService _iProfileService;
         private readonly IMembershipService _iMembershipService;
+        private readonly IFutureService _iFutureService;
 
         public ProfileController(ILogger<ProfileController> logger,
-             IMemoryCache cache, IConfiguration configuration, IProfileExportService iProfileService,IMembershipService iMembershipService)
+             IMemoryCache cache, IConfiguration configuration, IProfileExportService iProfileService,IMembershipService iMembershipService, IFutureService iFutureService)
         {
             _cache = cache;
             _logger = logger;
             _configuration = configuration;
             _iProfileService = iProfileService;
             _iMembershipService = iMembershipService;
+            _iFutureService = iFutureService;
         }
         
         public IActionResult Index()
@@ -415,7 +421,7 @@ namespace Profile.Controllers
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllProfiles(string code, string account, string firstName, string keyWord, string city, int type, bool showSaleInCharge)
+        public async Task<IActionResult> GetAllProfiles(string code, string account, string firstName, string keyWord, string city, string type, bool showSaleInCharge)
         {
             try
             {
@@ -505,7 +511,7 @@ namespace Profile.Controllers
                 int.TryParse(Request.Form["ID"], out id);
 
                 bool isNew = id <= 0;
-
+                string Message = "";
                 ProfileModel profile;
 
                 if (isNew)
@@ -522,9 +528,59 @@ namespace Profile.Controllers
                     if (profile == null)
                         return Json(new { code = 1, msg = "Profile not found" });
                 }
-                if (profile.Type == 0)
+                if (int.Parse(Request.Form["Type"]) == 0)
                 {
-                    profile.Type = 0;
+                    if (Request.Form["LastNameIndivdual"].ToString() == "")
+                    {
+                        Message += "Last name not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+
+                    if (Request.Form["FirstNameIndividual"].ToString() == "")
+                    {
+                        Message += "First name not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["NationalityIndividual"].ToString() == "" || int.Parse(Request.Form["NationalityIndividual"].ToString()) == 0)
+                    {
+                        Message += "Nationality not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["BlackListIndividual"].ToString().ToLower() == "true")
+                    {
+                        if (Request.Form["BlackListReasonIndividual"].ToString() == "")
+                        {
+                            Message += "Reason Black list not blank\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+                    string codeIndividual = Request.Form["CodeIndividual"].ToString();
+
+                    if (!string.IsNullOrEmpty(codeIndividual))
+                    {
+                        List<ProfileModel> tran =
+                            PropertyUtils.ConvertToList<ProfileModel>(
+                                ProfileBO.Instance.FindByAttribute("Code", codeIndividual)
+                            );
+
+                        if (tran != null && tran.Count > 0)
+                        {
+                            Message += "Profile code existing in system!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+
+                    if (Request.Form["CodeIndividual"].ToString() != "")
+                    {
+                        if (Request.Form["CodeIndividual"].ToString().Trim().Length != 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+                    profile.Type = int.Parse(Request.Form["Type"]); 
                     profile.Code = Request.Form["CodeIndividual"].ToString();
                     profile.Account = Request.Form["AccountIndividual"].ToString();
                     profile.FullAccount = Request.Form["FullAccount"].ToString(); ;
@@ -614,9 +670,55 @@ namespace Profile.Controllers
                     profile.MarketID = 0;
                     profile.IsTransfer = false;
                   
-                } else if (profile.Type == 2)
+                }
+                else if (int.Parse(Request.Form["Type"]) == 1 || int.Parse(Request.Form["Type"]) == 2 || int.Parse(Request.Form["Type"]) == 3)
                 {
-                    profile.Type = 2;
+                    if (Request.Form["CodeCOM"].ToString() == "")
+                    {
+                        Message += "Code not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["AccountCOM"].ToString() == "")
+                    {
+                        Message += "Account not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["BlackListCOMchecked"].ToString().ToLower() == "true")
+                    {
+                        if (Request.Form["BlackListCOM"].ToString() == "")
+                        {
+                            Message += "Reason Black list not blank\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+
+
+                    if (Request.Form["CodeCOM"].ToString() != "")
+                    {
+                        if (Request.Form["CodeCOM"].ToString().Length != 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+                    string codeIndividual = Request.Form["CodeCOM"].ToString();
+
+                    if (!string.IsNullOrEmpty(codeIndividual))
+                    {
+                        List<ProfileModel> tran =
+                            PropertyUtils.ConvertToList<ProfileModel>(
+                                ProfileBO.Instance.FindByAttribute("Code", codeIndividual)
+                            );
+
+                        if (tran != null && tran.Count > 0)
+                        {
+                            Message += "Profile code existing in system!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+                    profile.Type = int.Parse(Request.Form["Type"]);
 
                     profile.Code = Request.Form["CodeCOM"].ToString();
                     profile.Account = Request.Form["AccountCOM"].ToString();
@@ -673,6 +775,86 @@ namespace Profile.Controllers
                         ? int.Parse(Request.Form["MarketCOM"])
                         : 0;
 
+                }
+                else if (int.Parse(Request.Form["Type"]) == 4)
+                {
+                    if (Request.Form["CodeGroup"].ToString() == "")
+                    {
+                        Message += "Code not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+              
+                    if (Request.Form["CodeGroup"].ToString() != "")
+                    {
+                        if (Request.Form["CodeGroup"].ToString().Length != 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+                    string codeIndividual = Request.Form["CodeGroup"].ToString();
+
+                    if (!string.IsNullOrEmpty(codeIndividual))
+                    {
+                        List<ProfileModel> tran =
+                            PropertyUtils.ConvertToList<ProfileModel>(
+                                ProfileBO.Instance.FindByAttribute("Code", codeIndividual)
+                            );
+
+                        if (tran != null && tran.Count > 0)
+                        {
+                            Message += "Profile code existing in system!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+                    if (Request.Form["GroupName"].ToString() == "")
+                    {
+                        Message += "Group Name not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+
+                    profile.Type = int.Parse(Request.Form["Type"]);
+
+                    profile.Code = Request.Form["CodeGroup"].ToString();
+                    profile.Account = Request.Form["GroupName"].ToString();
+                    profile.LanguageID = int.Parse(Request.Form["LanguageGroup"]); // dễ crash
+
+                    profile.CountryID = !string.IsNullOrEmpty(Request.Form["CountryGroup"])
+                        ? int.Parse(Request.Form["CountryGroup"])
+                        : 0;
+
+                    profile.City = Request.Form["CityGroup"].ToString();
+                    profile.PostalCode = Request.Form["PostalGroup"].ToString();
+
+                    profile.StateID = !string.IsNullOrEmpty(Request.Form["StateGroup"])
+                        ? int.Parse(Request.Form["StateGroup"])
+                        : 0;
+
+                    profile.Address = Request.Form["AddressGroup"].ToString();
+                    profile.HomeAddress = Request.Form["HomeAddressGroup"].ToString();
+
+                    profile.History = Request.Form["HistoryGroup"].ToString().ToLower() == "true";
+
+                    profile.VIPID = int.Parse(Request.Form["VipGroup"]);
+                    profile.VIPReason = Request.Form["VipReasonGroup"].ToString();
+                    profile.HandPhone = Request.Form["HandPhoneGroup"].ToString();
+                    profile.Email = Request.Form["EmailGroup"].ToString();
+                    profile.Website = Request.Form["WebsiteGroup"].ToString();
+                    profile.Fax = Request.Form["Fax"].ToString();
+                    profile.Description = Request.Form["NotesGroup"].ToString();
+
+                    profile.AcctContact = Request.Form["AcctContact"].ToString();
+                    profile.CurrencyID = Request.Form["CurrGroup"].ToString();
+                    profile.DateOfBirth = DateTime.Now;
+                    profile.SpecialUpdateDate = Convert.ToDateTime("01/01/1900");
+                    profile.Lastvisit = Convert.ToDateTime("01/01/1900");
+                    profile.FirstReservation = Convert.ToDateTime("01/01/1900");
+                    profile.LastReservation = Convert.ToDateTime("01/01/1900");
+                    profile.WeddingAnniversary = Convert.ToDateTime("01/01/1900");
+                    profile.Firstvisit = Convert.ToDateTime("01/01/1900");
+                    profile.Expiry = Convert.ToDateTime("01/01/1900");
+                    profile.LastContact = Convert.ToDateTime("01/01/1900");
                 }
                 if (isNew)
                     ProfileBO.Instance.Insert(profile);
@@ -756,8 +938,61 @@ namespace Profile.Controllers
                 int profileType = int.Parse(Request.Form["Type"].ToString());
                 ProfileModel profile = new ProfileModel();
                 profile.Type = profileType;
+       
+                string Message = "";
                 if (profileType == 0)
                 {
+              
+                    if (Request.Form["LastNameIndivdual"].ToString() == "")
+                    {
+                        Message += "Last name not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                  
+                    if (Request.Form["FirstNameIndividual"].ToString() == "")
+                    {
+                        Message += "First name not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["NationalityIndividual"].ToString() == "" || int.Parse(Request.Form["NationalityIndividual"].ToString()) == 0)
+                    {
+                        Message += "Nationality not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["BlackListIndividual"].ToString().ToLower() == "true")
+                    {
+                        if (Request.Form["BlackListReasonIndividual"].ToString() == "")
+                        {
+                            Message += "Reason Black list not blank\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+                    string codeIndividual = Request.Form["CodeIndividual"].ToString();
+
+                    if (!string.IsNullOrEmpty(codeIndividual))
+                    {
+                        List<ProfileModel> tran =
+                            PropertyUtils.ConvertToList<ProfileModel>(
+                                ProfileBO.Instance.FindByAttribute("Code", codeIndividual)
+                            );
+
+                        if (tran != null && tran.Count > 0)
+                        {
+                            Message += "Profile code existing in system!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+
+                    if (Request.Form["CodeIndividual"].ToString() != "")
+                    {
+                        if (Request.Form["CodeIndividual"].ToString().Trim().Length != 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
                     profile.Code = Request.Form["CodeIndividual"].ToString();
                     profile.Account = Request.Form["AccountIndividual"].ToString();
                     profile.FullAccount = "";
@@ -850,6 +1085,51 @@ namespace Profile.Controllers
                 }
                 else if (profileType == 1 || profileType == 2 || profileType == 3)
                 {
+                    if (Request.Form["CodeCOM"].ToString() == "")
+                    {
+                        Message += "Code not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["AccountCOM"].ToString() == "")
+                    {
+                        Message += "Account not blank\n";
+                        return Json(new { code = 1, msg = Message });
+                    }
+                    if (Request.Form["BlackListCOM"].ToString().ToLower() == "true")
+                    {
+                        if (Request.Form["BlackListReasonCOM"].ToString() == "")
+                        {
+                            Message += "Reason Black list not blank\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+
+
+                    if (Request.Form["CodeCOM"].ToString()!= "")
+                    {
+                        if (Request.Form["CodeCOM"].ToString().Length != 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+                    string codeIndividual = Request.Form["CodeCOM"].ToString();
+
+                    if (!string.IsNullOrEmpty(codeIndividual))
+                    {
+                        List<ProfileModel> tran =
+                            PropertyUtils.ConvertToList<ProfileModel>(
+                                ProfileBO.Instance.FindByAttribute("Code", codeIndividual)
+                            );
+
+                        if (tran != null && tran.Count > 0)
+                        {
+                            Message += "Profile code existing in system!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
                     profile.Code = Request.Form["CodeCOM"].ToString();
                     profile.Account = Request.Form["AccountCOM"].ToString();
                     profile.FullAccount = Request.Form["FullAccount"].ToString(); ;
@@ -946,18 +1226,20 @@ namespace Profile.Controllers
                 else if (profileType == 4)
                 {
                     profile.Code = Request.Form["CodeGroup"].ToString();
-                    profile.Account = "";
+                    profile.Account = Request.Form["GroupNameGroup"].ToString(); ;
                     profile.FullAccount = "";
                     profile.LastName = "";
                     profile.Firstname = "";
                     profile.MiddleName = "";
-                    profile.LanguageID = int.Parse(Request.Form["LanguageGroup"].ToString());
+                    profile.LanguageID = int.Parse(Request.Form["LanguageGruop"].ToString());
                     profile.TitleID = 0;
-                    profile.Address = "";
+                    profile.Address = Request.Form["AddressGroup"].ToString();
                     profile.HomeAddress = Request.Form["HomeAddressGroup"].ToString();
                     profile.City = Request.Form["CityGroup"].ToString();
                     profile.PostalCode = Request.Form["PostalGroup"].ToString();
-                    profile.CountryID = 0;
+                    profile.CountryID = !string.IsNullOrEmpty(Request.Form["CountryGroup"])
+                        ? int.Parse(Request.Form["CountryGroup"])
+                        : 0;
                     profile.StateID = int.Parse(Request.Form["StateGroup"].ToString());
                     profile.Salutation = "";
                     profile.VIPID = int.Parse(Request.Form["VIPGroup"].ToString());
@@ -967,7 +1249,7 @@ namespace Profile.Controllers
                     profile.Keyword = "";
                     profile.DateOfBirth = DateTime.MinValue;
                     profile.NationalityID = 0;
-                    profile.Description = "";
+                    profile.Description = Request.Form["NotesGroup"].ToString();
                     profile.Telephone = Request.Form["TelephoneGroup"].ToString();
                     profile.Fax = Request.Form["FaxGroup"].ToString();
                     profile.Email = Request.Form["EmailGroup"].ToString();
@@ -985,7 +1267,7 @@ namespace Profile.Controllers
                     profile.OwnerID = 0;
                     profile.TerritoryID = 0;
                     profile.PersonInChargeID = 0;
-                    profile.AcctContact = Request.Form["ContractNameGroup"].ToString();
+                    profile.AcctContact = Request.Form["AcctContact"].ToString();
                     profile.CurrencyID = Request.Form["CurrencyGroup"].ToString();
                     profile.TaxCode = "";
                     profile.Type = int.Parse(Request.Form["Type"].ToString());
@@ -1189,6 +1471,39 @@ namespace Profile.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet]
+        public IActionResult ExportXML(DateTime fromDate, DateTime toDate)
+        {
+            DataTable myData = _iProfileService.ExportXML(fromDate, toDate);
+
+            if (myData == null || myData.Rows.Count == 0)
+                return BadRequest("No data to export");
+
+            DataSet ds = new DataSet("KHAI_BAO_TAM_TRU");
+            ds.Tables.Add(myData.Copy());
+
+            var ms = new MemoryStream();
+
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                Indent = true,
+                CloseOutput = false   // 🔥 CỰC KỲ QUAN TRỌNG
+            };
+
+            using (XmlWriter writer = XmlWriter.Create(ms, settings))
+            {
+                ds.WriteXml(writer);
+            }
+
+            ms.Position = 0;
+
+            string fileName = $"ThongTinKhach_{DateTime.Now.Ticks}.xml";
+
+            return File(ms, "application/xml", fileName);
+        }
+
+
         #endregion
 
         #region DatVP __ Profile History
@@ -1249,6 +1564,33 @@ namespace Profile.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetMembershipByID(int id)
+        {
+            try
+            {
+                ProfileMemberCardModel memberShip = (ProfileMemberCardModel)ProfileMemberCardBO.Instance.FindByPrimaryKey(id);
+                return Json(memberShip);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteNewMembership(string  id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id)) return null;
+                ProfileMemberCardBO.Instance.Delete(int.Parse(id));
+                return Json(new { code = 0, msg = "ProfileMemberCard deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost]
         public ActionResult SaveMembership()
@@ -1290,6 +1632,58 @@ namespace Profile.Controllers
             }
 
         }
+        #endregion
+        #region Nam __ Profile changes
+        [HttpGet]
+        public async Task<IActionResult> SearchProfileChanges(int profileID)
+        {
+            try
+            {
+
+                string sql = $"SELECT UserName,  Convert(varchar,ChangeDate, 108) Time, ChangeDate Date, Change, OldValue,NewValue, Description FROM ActivityLog WITH (NOLOCK)WHERE TableName = 'Profile' AND ObjectID = '{profileID}' ORDER BY ChangeDate";
+
+                DataTable dataTable = TextUtils.Select(sql);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        #endregion
+        #region Nam __ Profile future
+        [HttpGet]
+        public async Task<IActionResult> SearchProfileFuture(int profileID, int profileType)
+        {
+            try
+            {
+                var data = _iFutureService.SearchProfileFuture(profileID, profileType);
+
+                var result = (from d in data.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col => d[col.ColumnName]?.ToString()
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
         #endregion
     }
 }

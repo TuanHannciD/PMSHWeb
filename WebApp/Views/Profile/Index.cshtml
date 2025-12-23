@@ -664,7 +664,12 @@
                                     </select>
                                 </div>
                             </div>
-
+                                    <div class="form-group row mt-1">
+                                        <label for="inputPassword" class="col-sm-4 col-form-label text-right"><b>Address</b></label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtAddressGroup">
+                                        </div>
+                                    </div>
 
                             <div class="form-group row mt-1">
                                 <label for="inputPassword" class="col-sm-4 col-form-label text-right">Home Address</label>
@@ -739,7 +744,7 @@
                         <label for="inputPassword" class="col-sm-4 col-form-label text-right">Account Type</label>
                         <div class="col-sm-8">
                             <select type="text" class="form-select">
-                                <option value="value">text</option>
+                     
                             </select>
                         </div>
                     </div>
@@ -760,7 +765,7 @@
                     <div class="form-group row mt-1">
                         <label for="inputPassword" class="col-sm-4 col-form-label text-right">Notes</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="txtNotesGroup">
                         </div>
                     </div>
                     <div class="form-group row mt-1 mb-4">
@@ -2023,6 +2028,7 @@
             formData.append('GroupNameGroup', $("#txtGroupNameGroup").val());
             formData.append('LanguageGruop', $("#txtLanguageGroup").val());
             formData.append('HomeAddressGroup', $("#txtHomeAddressGroup").val());
+            formData.append('AddressGroup', $("#txtHomeAddressGroup").val());
             formData.append('CityGroup', $("#txtCityGroup").val());
             formData.append('PostalGroup', $("#txtPostalCodeGroup").val());
             formData.append('CountryGroup', $("#txtCountryGroup").val());
@@ -2035,8 +2041,10 @@
             formData.append('ContactNameGroup', $("#txtContactGroup").val());
             formData.append('CurrencyGroup', $("#txtCurrencyGroup").val());
             formData.append('VIPGroup', $("#txtVIPIndividual").val());
-            formData.append(' ', $("#txtVIPReasonGroup").val());
+            formData.append('VIPReason', $("#txtVIPReasonGroup").val());
             formData.append('HistoryGroup', $("#txtHistory").is(":checked"));
+                formData.append('NotesGroup', $("#txtNotesGroup").val());
+                            formData.append('AcctContact', $("#txtContactGroup").val());
 
         }
         else{
@@ -2170,6 +2178,7 @@
         $("#txtGroupNameGroup").val();
         $("#txtLanguageGroup").val();
         $("#txtHomeAddressGroup").val();
+                $("#txtAddressGroup").val();
         $("#txtCityGroup").val();
         $("#txtPostalCodeGroup").val();
         $("#txtCountryGroup").val();

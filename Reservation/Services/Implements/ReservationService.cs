@@ -633,5 +633,24 @@ namespace Reservation.Services.Implements
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
         }
+        public DataTable SearchReservationPackages(int reservationID)
+        {
+            try
+            {
+                SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@ReservationID", reservationID),
+
+                };
+
+                DataTable myTable = DataTableHelper.getTableData("spReservationPackage", param);
+                return myTable;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new Exception($"ERROR: {ex.Message}", ex);
+            }
+        }
     }
 }

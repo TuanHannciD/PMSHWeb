@@ -119,5 +119,6 @@ namespace Reservation.Services.Interfaces
         /// <returns>datatable list room auto assign</returns>
         DataTable ReservationAutoRoomAssignment(int type,string roomType,string roomClass,string smoking,string floor,
             string startFromRoom,DateTime arrivalDate,DateTime departureDate,string hkStatusID,string confirmationNo,string rsvRoomTypeID,string notAssRoomNo);
+        DataTable SearchReservationPackages(int reservationID);
     }
 }
