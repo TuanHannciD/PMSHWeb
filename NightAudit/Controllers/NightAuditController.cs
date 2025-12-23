@@ -625,8 +625,8 @@ namespace NightAudit.Controllers
                             _Account = _dtR3.Rows[i]["AccountName"].ToString();
                             _ToRsvID = TextUtils.ToInt(_dtR3.Rows[i]["ToReservationID"].ToString());
                             _FolioID = _GetFolioID(TextUtils.ToInt(_dtR3.Rows[i]["ToReservationID"].ToString()), _WindowmNo, _Confirm);
-                            if (_FolioID == 0)
-                                _FolioID = CreateFolio(TextUtils.ToInt(_dtR1.Rows[i]["ID"].ToString()), userID);
+                            if (_FolioID == 0 )
+                                _FolioID = CreateFolio(TextUtils.ToInt(_dtR3.Rows[i]["ID"].ToString()), userID);
                             break;
                         }
                     }
@@ -3843,6 +3843,31 @@ namespace NightAudit.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult EndNightAudit()
+        {
+            try
+            {
+                pt = new ProcessTransactions();
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                _EndNightAudit(ref _IsOK);
+
+
+                pt.CommitTransaction();
+                return Json(new { code = 0, msg = "Check out was successfully" });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return Json(new { code = 1, msg = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
         #region run night audit
         [HttpPost]
         public ActionResult RunNightAuditProcess()
@@ -3886,283 +3911,7 @@ namespace NightAudit.Controllers
 
                 #endregion
 
-                //#region B2. Check in not CI.
-
-                //// Thực hiện
-                //bool _IsNotCI = false;
-                //_CheckGuestCI(ref _IsNotCI);
-                //if (_IsNotCI == true)
-                //{
-                //    _Error = "";
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "loi check in not CI" });
-                //}
-
-                //#endregion
-
-                //#region B3. Check out not CO. 
-                //// Thực hiện
-                //bool _IsNotCO = false;
-                //_CheckGuestCO(ref _IsNotCO);
-                //if (_IsNotCO == true)
-                //{
-                //    _Error = "";
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi check out not C0" });
-                //}
-                //#endregion
-
-                //#region B4. Preprocess.
-                //// Backup dữ liệu trước khi chạy NightAudit
-                //_BackupData_1(ref _IsOK);
-                //if (!_IsOK)
-                //{
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi preprocess 1" });
-                //}
-                ////Xóa dữ liệu chạy night trước nếu có
-                //_DeleteFolioDetail(ref _IsOK);
-                //if (!_IsOK)
-                //{
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi preprocess 2" });
-                //}
-                ////Xóa dữ liệu temp trong đặt phòng
-                //_DeleteRsvTemp(ref _IsOK);
-                //if (!_IsOK)
-                //{
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi preprocess 3" });
-                //}
-
-                //#endregion
-
-                //#region B5. Close cashier.
-
-                //// Thực hiện
-                //_CloseShift(ref _IsOK);
-                //if (!_IsOK)
-                //{
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi close cashier" });
-                //}
-                //// Kết thúc.
-
-                //#endregion
-
-
-                //#region B6. Posting Room Charge.
-                //// Thực hiện
-                //_PostRoomCharge(ref _IsOK, ref _dtR, int.Parse(userID),userName);
-                //if (!_IsOK)
-                //{
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi posting room charge" });
-                //}
-                //#endregion
-
-                //#region B7. Posting FixedCharge.
-                //// Thực hiện
-                //_PostFixedCharge(ref _IsOK, _dtR,int.Parse(userID),userName);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK); 
-                //    return Json(new { code = 1, msg = "Loi posint fixed charge" });
-                //}
-
-
-                //#endregion
-
-                //#region B8. Posting Package.
-                //// Thực hiện
-                //_PostPackage(ref _IsOK, _dtR,int.Parse(userID),userName);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi posting package" });
-                //}
-
-
-                //#endregion
-
-                //#region B8.1 Posting hoa hong.
-
-                //////// Bắt đầu
-                //////SetStep_8("", 0, 1000);
-                //////// Thực hiện
-                //////_PostPackage(ref _IsOK, _dtR);
-                //////if (!_IsOK) { _EndNightAudit(ref _IsOK); SetStep_8(_Error, 3, 500); return; }
-                //////// Kết thúc.
-                //////SetStep_8("", 2, 1000);
-
-
-                //DataTable dt = pt.Select("SELECT a.ID, ProfileIndividualID, LastName, a.ConfirmationNo, a.RateCode, " +
-                //                                 "ArrivalDate, DepartureDate, RoomTypeID, RoomType, RoomID, RoomNo, a.DiscountRate, a.DiscountAmount " +
-                //                                 "FROM Reservation a WITH (NOLOCK), RoomType b WITH (NOLOCK), ReservationCommission c WITH (NOLOCK) " +
-                //                                 "WHERE a.RoomTypeID = b.ID " +
-                //                                 "AND a.ID = c.ReservationID " +
-                //                                 "AND a.Status IN (1,6) AND a.ReservationNo > 0 AND b.IsPseudo = 0 " +
-                //                                 //"and a.ID in (273324,276010,276007,276011,276013,276014,276008) "+
-                //                                 "Order By RoomNo ");
-                //bool _OK = true;
-                //_PostCommission(ref _OK, dt,int.Parse(userID),userName);
-
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 0, msg = "Loi posting hoa hong" });
-                //}
-
-                //#endregion
-
-                //#region B9. Change room status.
-                //// B9.1. Cập nhật trạng thái phòng của những phòng OOO, OOS
-                //_UpdateRoomStatus_1(ref _IsOK,userName);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi Posting chnage room status 1" });
-                //}
                 
-
-                ////B9.2. Chuyển trạng thái phòng sang trạng thái dirty đối với những phòng đang Occ
-                //_ChangeRoomStatus_1(ref _IsOK);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi Posting chnage room status 2" });
-                //}
-
-                //// B9.3. Chuyển trạng thái phiếu đặt phòng về DI đối với phòng sẽ đến ngày hôm sau
-                //_ChangeRsvStatus_1(ref _IsOK);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi Posting chnage room status 2" });
-                //}
-
-                //// B9.4. Chuyển trạng thái phiếu đặt phòng về DO đối với phòng sẽ đi ngày hôm sau
-                //_ChangeRsvStatus_2(ref _IsOK,int.Parse(userID),userName);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi Posting chnage room status 4" });
-                //}
-
-
-                //// B9.5. Chuyển trạng thái phiếu đặt phòng về NS đối với phòng đến ngày hnay nhưng không đến
-                //_ChangeRsvStatus_3(ref _IsOK);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi Posting chnage room status 5" });
-                //}
-
-                //// B9.6. Xử lý xung đột trạng thái phòng - 27.09.2018
-                //_ChangeRsvStatus_4(ref _IsOK,userID);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi Posting chnage room status 6" });
-                //}
-
-
-                //#endregion
-
-                //#region B10.Update information system.
-
-                //// B10.1. Tính lại balance
-                //_FolioBalance(ref _IsOK);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi update infomation system 1" });
-                //}
-
-                //// B10.3. Chuyển trạng thái những phòng sạch sang trạng thái Clean non-check
-                //_ChangeRoomStatus_2(ref _IsOK,userName);
-                //if (!_IsOK)
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi update infomation system 2" });
-                //}
-
-                //// B10.4. Chuyển trạng thái phòng sang DO đối với những phòng sẽ đi vào ngày hôm sau
-                //_ChangeRoomStatus_3(ref _IsOK,userName);
-                //if (!_IsOK)
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi update infomation system 3" });
-                //}
-
-
-                //// B10.5. Chuyển thông tin chi tiết ngày hôm sau lên bảng Reservation
-                //_UpdateReseration(ref _IsOK);
-                //if (!_IsOK)
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi update infomation system 4" });
-                //}
-
-                //// B10.6. Tính lại Return Guest
-                //_ReturnGuest(ref _IsOK);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi update infomation system 5" });
-
-                //}
-
-                //// B10.7. CutOff Allotment
-                //_CutoffAllotment(ref _IsOK,userName);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi update infomation system 6" });
-                //}
-
-                //#endregion
-
-                //#region B11.Change business date
-                //// Thực hiện
-                //_ChangeBusinessDate(ref _IsOK);
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "loi chnage business date" });
-                //}
-                //// Kết thúc.
-                //#endregion
-
-                //#region B12.Rechecking system.
-                //// B12.1. Insert tỷ giá cho ngày tiếp theo
-                //_InsertExchangeRate(ref _IsOK,int.Parse(userID));
-                //if (!_IsOK) 
-                //{ 
-                //    _EndNightAudit(ref _IsOK);
-                //    return Json(new { code = 1, msg = "Loi final" });
-                //}
-
-                //// B12.2. Update lại trạng thái chạy Night Audit khi đã chạy xong
-                //_EndNightAudit(ref _IsOK);
-
-                //// B12.3. Backup dữ liệu sau khi chạy NightAudit
-                //_BackupData_1(ref _IsOK);
-                
-
-                //// B12.4. Save log
-                //SaveLog("===================Ket thuc chay Nightaudit ========================!");
-                
-
-                ////B12.5. Kết thúc chạy
-
-                //pt.ExcuteSQL("Update NightAuditTaskList Set FinishDate = '" + pt.GetBusinessDateTime().AddDays(-1).ToString("yyyy/MM/dd HH:mm:ss") + "'");
-                ////Cập nhật lại ngày Bussiness Date
-                //time = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate.ToString();
-                ////Thông báo
-                //_IsRunning = false;
-
-                //#endregion
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Check out was successfully" });
             }

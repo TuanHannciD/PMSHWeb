@@ -356,7 +356,19 @@
         const now = new Date();
         return now.toLocaleTimeString('en-US', { hour12: false });
     }
+    function EndNightAudit() {
+        $.ajax({
+            url: '/NightAudit/EndNightAudit',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
 
+            },
+            error: function (xhr, statusText, err) {
+            }
+        });
+    }
     function RunNightAudit() {
         showProgressOverlay();
         updateProgress(1, 'System Checking');
@@ -388,6 +400,7 @@
                     setProcess('process1', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status1', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -396,6 +409,7 @@
                 setProcess('process1', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status1', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -421,7 +435,7 @@
                 } else {
                     hideProgressOverlay();
                     openModalNotCheckIn(data.data);
-
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -430,6 +444,7 @@
                 setProcess('process2', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status2', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -455,6 +470,8 @@
                 } else {
                     hideProgressOverlay();
                     openModalNotCheckOut(data.data);
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -463,6 +480,7 @@
                 setProcess('process3', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status3', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -489,6 +507,7 @@
                     setProcess('process4', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status4', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -497,6 +516,7 @@
                 setProcess('process4', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status4', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -531,6 +551,7 @@
                 setProcess('process5', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status5', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -579,6 +600,7 @@
                     setProcess('process8', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status8', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -593,6 +615,8 @@
                 setProcess('process8', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status8', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -627,6 +651,8 @@
                     setProcess('process9', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status9', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -635,6 +661,8 @@
                 setProcess('process9', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status9', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -669,6 +697,8 @@
                     setProcess('process10', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status10', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -677,6 +707,8 @@
                 setProcess('process10', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status10', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -711,6 +743,8 @@
                     setProcess('process11', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status11', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -719,6 +753,8 @@
                 setProcess('process11', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status11', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -750,10 +786,11 @@
                     setStatus('status12', 'Success');
                     localStorage.setItem("businessDate", JSON.stringify(formattedNextDate));
                     const businessDateF = JSON.parse(localStorage.getItem("businessDate"));
-                            $("#businessDate").text(`Business Date : ${businessDateF}`);
+                    $("#businessDate").text(`Business Date : ${businessDateF}`);
                 } else {
                     setProcess('process12', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status12', 'Fail');
+                    EndNightAudit();
                 }
                 hideProgressOverlay();
             },
@@ -763,6 +800,8 @@
                 setProcess('process12', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status12', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
