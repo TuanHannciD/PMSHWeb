@@ -338,6 +338,31 @@ namespace Administration.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
             return myTable;
         }
+        public DataTable PackageForecastGroup(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPackageForecastGroupSearch", param);
+            return myTable;
+        }
+        public DataTable PreferenceGroup(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPreferenceGroupSearch", param);
+            return myTable;
+        }
+        public DataTable Currency()
         public List<CurrencyModel> Currency(
     string? ID,
     bool IsShow = false,
