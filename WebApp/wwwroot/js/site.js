@@ -45,7 +45,7 @@ function applyValidationErrors(errors, formSelector) {
         if ($field.length) {
             $field.addClass("is-invalid");
             // Gán nội dung vào invalid-feedback ngay sau field
-            $field.next(".invalid-feedback").text(err.message);
+            $field.siblings(".invalid-feedback").text(err.message);
         }
     });
 }
