@@ -49,6 +49,29 @@ function applyValidationErrors(errors, formSelector) {
         }
     });
 }
+//Hàm validation
+/**
+ * Áp dụng lỗi JSON vào form bất kỳ với Bootstrap validation
+ * @param {Array} errors - Array {field, message} từ backend
+ * @param {string} formSelector - selector của form/modal
+ */
+function applyValidationErrors(errors, formSelector) {
+    // Reset các lỗi cũ
+    $(`${formSelector} .form-control, ${formSelector} select, ${formSelector} textarea`).removeClass("is-invalid");
+    $(`${formSelector} .invalid-feedback`).text("");
+
+    if (!errors || errors.length === 0) return;
+
+    errors.forEach(function(err) {
+        // Tìm input/select/textarea theo name
+        let $field = $(`${formSelector} [name='${err.field}']`);
+        if ($field.length) {
+            $field.addClass("is-invalid");
+            // Gán nội dung vào invalid-feedback ngay sau field
+            $field.siblings(".invalid-feedback").text(err.message);
+        }
+    });
+}
 
 $(document).ready(function () {
     getBusinessDate();

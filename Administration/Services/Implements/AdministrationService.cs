@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Administration.Services.Interfaces;
+using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
 using DevExpress.XtraRichEdit.Model;
@@ -362,24 +363,39 @@ namespace Administration.Services.Implements
             return myTable;
         }
         public DataTable Currency()
+        public List<CurrencyModel> Currency(
+    string? ID,
+    bool IsShow = false,
+    bool Inactive = false,
+    bool IsMaster = false)
         {
-            SqlParameter[] param = new SqlParameter[]
+            try
             {
-        new SqlParameter("@sqlCommand",
-            @"SELECT a.ID,
-                     (CASE a.MasterStatus WHEN 0 THEN '' WHEN 1 THEN 'X' END) AS IsMaster,
-                     (CASE a.Inactive WHEN 0 THEN '' WHEN 1 THEN 'X' END) AS Inactive,
-                     (b.Code + ' - ' + b.Description) AS Trans,
-                     a.Description
-              FROM Currency a
-              LEFT JOIN Transactions b ON a.TransactionCode = b.Code
-              WHERE 1 = 1
-              ORDER BY a.ID DESC")
-            };
+                var list = CurrencyBO.Instance.FindAll(); // ArrayList
 
-            DataTable myTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
-            return myTable;
+                var result = PropertyUtils
+                    .ConvertToList<CurrencyModel>(list)
+                    ?.Where(x =>
+                        // ID filter: chỉ lọc khi ID có giá trị
+                        (string.IsNullOrWhiteSpace(ID) || x.ID == ID.Trim()) &&
+
+                        // bool filters
+                        x.IsShow == IsShow &&
+                        x.Inactive == Inactive &&
+                        x.MasterStatus == IsMaster
+                    )
+                    .ToList();
+
+                return result ?? [];
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ERROR Currency(): {ex.Message}", ex);
+            }
         }
+
+
+
 
         public List<CurrencyModel> GetAllCurrency()
         {
