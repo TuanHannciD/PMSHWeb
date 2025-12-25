@@ -127,6 +127,7 @@
     function openModalMembership(){
         GetMembership();
         $('#modalMembership').modal('show');
+                      $('#memberName').val(profileName);
     }
     function closeModalMembership(){
         $('#memberName').val('');
@@ -227,6 +228,7 @@
     }
     function resetFormMembershipAdd(){
         $('#memberNameAdd').val(profileName);
+  
         $('#memberNameProfile').val(profileID);
         $('#memberTypeAdd').val(0);
         $('#nameOnCardAdd').val('');

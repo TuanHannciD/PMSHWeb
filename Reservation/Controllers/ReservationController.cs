@@ -828,10 +828,11 @@ namespace Reservation.Controllers
                     return Json(new { code = 1, msg = "Market cannot be blank" });
 
                 }
-                if (string.IsNullOrEmpty(Request.Form["nationality"].ToString()))
+                var nationalitycheck  = Request.Form["nationality"];
+
+                if (string.IsNullOrWhiteSpace(nationalitycheck) || nationalitycheck == "0")
                 {
                     return Json(new { code = 1, msg = "Nationality cannot be blank" });
-
                 }
                 string itemInventoryString = Request.Form["itemInventory"].ToString();
                 List<int> itemInventory = itemInventoryString.Split(',')

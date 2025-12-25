@@ -26,7 +26,8 @@ namespace BaseBusiness.BO
         }
         public static int GetTopInvoiceNo()
         {
-            string query = "select max(cast(InvoiceNo as int)) as InvoiceNo from FolioDetail";
+            string query = @"SELECT ISNULL(MAX(CAST(InvoiceNo AS INT)), 0)FROM FolioDetail";
+
             return instance.GetFirst<int>(query);
         }
         public static int GetTopTransactioNo()

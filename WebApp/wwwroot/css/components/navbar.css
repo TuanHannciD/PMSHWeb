@@ -181,30 +181,51 @@ body {
 /* Remaining styles for other sections */
 .banner {
     position: relative;
+    width: 100%;
+    height: 116px; /* chỉnh chiều cao banner */
+    background: url('/images/banner.PNG') center center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
-    .banner img {
-        width: 100%;
-        height: auto;
-        display: block;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
+/* Chữ ở giữa */
 .banner-text {
+    font-family: 'Cinzel', serif;
+    font-weight: 900; /* hoặc 700 tùy độ dày */
+    text-transform: uppercase;
+    letter-spacing: 3px; /* giãn chữ cho giống */
+    font-size: 20px;
+    color: #1f7a2e;
+    text-align: center;
+    white-space: nowrap;
+    /* TEXT SHADOW NHẸ */
+    text-shadow: -3px 4px 3px rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.45);
+    padding: 10px 26px;
+    border-radius: 6px;
+}
+
+
+
+/* Ảnh góc trái & phải */
+.banner-icon {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 22px;
-    font-weight: 700;
-    text-align: center;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    padding: 10px 20px;
-    border-radius: 6px;
-    max-width: 85%;
+    transform: translateY(-50%);
+    height: 100px; /* chỉnh kích thước icon */
+    z-index: 2;
 }
+
+    .banner-icon.left {
+        left: 20px;
+    }
+
+    .banner-icon.right {
+        right: 20px;
+    }
+
 
 .contact-user-section {
     display: flex;
@@ -294,6 +315,19 @@ body {
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* 2 cột cho tablet */
         gap: 16px;
+    }
+
+    .banner {
+        height: 220px;
+    }
+
+    .banner-text {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+
+    .banner-icon {
+        height: 50px;
     }
 }
 

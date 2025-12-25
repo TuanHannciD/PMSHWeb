@@ -1163,38 +1163,57 @@
       }
     });
     $('#txtFullNameIndividual').on('blur', function () {
-      var input = $(this).val().trim();
-      var regex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*,\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*$/i;
-      // Ví dụ: Nguyen Van, Tuan Anh
+        var input = $(this).val().trim();
 
-      if (regex.test(input)) {
-        $('#errorMessage').hide();
-        $(this).removeClass('is-invalid').addClass('is-valid');
+        if (input === '') return;
 
-        // Tách chuỗi theo định dạng "LastName, FirstName MiddleName"
-        var parts = input.split(',');
-        var lastName = parts[0].trim();          // "Nguyen Van"
-        var firstMiddlePart = parts[1].trim();   // "Tuan Anh"
-        var nameTokens = firstMiddlePart.split(/\s+/); // ["Tuan", "Anh"]
+        $.ajax({
+            url: '/Profile/FullNameChange',
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: false,
+            headers: {
+                "X-CSRF-TOKEN-HEADERNAME": $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: {
+                fullName: input
+            },
+            success: function (res) {
+                console.log(res);
+                if (res && res.success) {
 
-        var firstName = nameTokens[0];
-        var middleName = nameTokens.slice(1).join(' '); // Có thể là rỗng
+                    // Full name đã chuẩn hóa
+                    if (res.FullName) {
+                        $('#txtFullNameIndividual').val(res.fullName);
+                    }
 
-        $('#txtFirstNameIndividual').val(firstName);
-        $('#txtMiddleNameIndividual').val(middleName);
-        $('#txtLastNameIndividual').val(lastName);
-        $('#txtSalutationIndividual').val('Dear ' + firstName);
+                    // Các field khác (nếu có)
+                    if ($('#txtFirstNameIndividual').length)
+                        $('#txtFirstName').val(res.firstName);
 
-      } else {
-        $('#errorMessage').show();
-        $(this).removeClass('is-valid').addClass('is-invalid');
+                    if ($('#txtMiddleNameIndividual').length)
+                        $('#txtMiddleNameIndividual').val(res.middleName);
 
-        $('#txtFirstNameIndividual').val('');
-        $('#txtMiddleNameIndividual').val('');
-        $('#txtLastNameIndividual').val('');
-        $('#txtSalutationIndividual').val('');
-      }
+                    if ($('#txtLastNameIndividual').length)
+                        $('#txtLastNameIndividual').val(res.lastName);
+
+                    if ($('#txtSalutationIndividual').length)
+                        $('#txtSalutationIndividual').val(res.salutation);
+
+                         
+                    // Title (nếu có dropdown)
+                    if (res.TitleID) {
+                       let selectTitle= $('#txtTitleIndividual')[0].tomselect;
+                            selectTitle.setValue(result.profile.titleID);
+                    }
+                }
+            },
+            error: function (xhr) {
+                console.error('FullNameChange API error', xhr);
+            }
+        });
     });
+
     function getAllLanguage() {
         $.ajax({
             url: '/Profile/GetAllLanguage',

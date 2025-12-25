@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -1681,8 +1682,209 @@ namespace Profile.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost]
+        public JsonResult FullNameChange(string fullName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(fullName))
+                {
+                    return Json(new { success = false });
+                }
 
+                string[] Name = SplitStringStandard(fullName, 0);
 
+                if (Name == null || Name.Length < 5 || Name[0] == null)
+                {
+                    return Json(new { success = false });
+                }
+
+                // Giữ nguyên logic cũ
+                string fullNamedone = Name[3]?.ToString().Trim();
+                string firstName = Name[0]?.ToString();
+
+                string lastName = "";
+                string middlenamedone = "";
+
+                if (Name[1] != null)
+                    lastName = Name[1].ToString();
+
+                if (Name[2] != null)
+                    middlenamedone = Name[2].ToString();
+
+                string titleCode = "";
+                int? titleID = null;
+
+                if (Name[4] != null && Name[4] != "0")
+                {
+                    var title = (TitleModel)TitleBO.Instance
+                        .FindByPrimaryKey(Convert.ToInt32(Name[4].ToString()));
+
+                    if (title != null)
+                    {
+                        titleCode = title.Code;
+                        titleID = title.ID;
+                    }
+                }
+
+                string salutation = "Dear " + firstName;
+
+                return Json(new
+                {
+                    success = true,
+                    FullName = fullNamedone,
+                    FirstName = firstName,
+                    MiddleName = middlenamedone,
+                    LastName = lastName,
+                    TitleCode = titleCode,
+                    TitleID = titleID,
+                    Salutation = salutation
+                });
+            }
+            catch (Exception ex)
+            {
+                // Có thể log ex nếu cần
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        public static string[] SplitStringStandard(string Name, int Type)
+        {
+            //0:First; 1:Last; 2:Midle; 3:Name; 4:TitleID
+            string[] Result = new string[5];
+            string[] Arr;
+            //Tách chuỗi
+            Arr = Name.Split(',');
+            //Nếu nhập không đúng quy định
+            if (Arr.Length == 1)
+                return Result;
+            else if (Arr.Length > 1)
+            {
+                //Nhặt ra LastName, MidleName
+                Arr[0] = Arr[0].Trim();
+                string[] LastName = Arr[0].Split(' ');
+                if (LastName.Length > 0)
+                {
+                    //Nhặt ra LastName
+                    Result[1] = LastName[0].Trim();
+                    //Convert chữ cái đầu thành chữ IN HOA
+                    Result[1] = char.ToUpper(LastName[0][0]) + LastName[0].Substring(1);
+
+                    //Nhặt ra MidleName
+                    for (int l = 1; l < LastName.Length; l++)
+                    {
+                        if (Result[2] != null)
+                        {
+                            //Conver chữ cái đầu sang chư IH
+                            if (LastName[l] != null && LastName[l] != "")
+                            {
+                                LastName[l] = char.ToUpper(LastName[l][0]) + LastName[l].Substring(1);
+                                Result[2] = Result[2].Trim() + " " + LastName[l];
+                            }
+                        }
+                        else
+                        {
+                            //Conver chữ cái đầu sang chư IH
+                            if (LastName[l] != null && LastName[l] != "")
+                            {
+                                LastName[l] = char.ToUpper(LastName[l][0]) + LastName[l].Substring(1);
+                                Result[2] = LastName[l].Trim();
+                            }
+                        }
+                    }
+                    if (Result[2] == null)
+                    {
+                        Result[2] = "";
+                        //Bỏ khoảng trắng
+                        Result[2] = Result[2].Trim();
+                    }
+                }
+                //Xác định Title           
+                string title = Arr[Arr.Length - 1].Trim();
+                title = title.Replace("(", ""); title = title.Replace(")", "");
+                title = title.Replace("{", ""); title = title.Replace("}", "");
+                title = title.Replace("[", ""); title = title.Replace("]", "");
+                ArrayList arr1 = TitleBO.Instance.FindByAttribute("Code", title);
+                if (arr1.Count > 0)
+                    Result[4] = ((TitleModel)arr1[0]).ID.ToString();
+                else
+                    Result[4] = "0";
+                //Nếu TitleID có tồn tại thì Remove nó trong Name
+                if (Result[4] != "0")
+                {
+                    //Bỏ Titile nếu có
+                    Name = Name.Substring(0, (Name.Length - Arr[Arr.Length - 1].Length) - 1);
+                    //Bỏ LastName, MidleName
+                    if (Arr.Length > 2)
+                    {
+                        string[] LM = Name.Split(',');
+                        Name = Name.Remove(0, (LM[0].Length + 1));
+                    }
+                }
+                else
+                {
+                    //Bỏ LastName, MidleName 
+                    string[] LM = Name.Split(',');
+                    Name = Name.Remove(0, (LM[0].Length + 1));
+                }
+                //Xác định Chuỗi còn lại trước khi Remove
+                if (Arr.Length == 2 && Result[4] != "0")
+                {
+                    Result[0] = Name;
+                    Result[0] = char.ToUpper(Name[0]) + Name.Substring(1);
+                    Result[3] = Result[0].Trim() + ", " + ((TitleModel)TitleBO.Instance.FindByPrimaryKey(int.Parse(Result[4].ToString()))).Code;
+                }
+                else
+                {
+                    //Nhặt ra FirstName
+                    Name = Name.Trim();
+                    string[] FirstName = Name.Split(',');
+                    //Nếu nhập sai Title thì remove title đi
+                    if (FirstName.Length > 1 && Result[4] == "0")
+                        Name = Name.Substring(0, (Name.Length - Arr[Arr.Length - 1].Length) - 1);
+                    //Tách FirstName
+                    FirstName = Name.Split(' ');
+                    for (int f = 0; f < FirstName.Length; f++)
+                    {
+                        if (Result[0] != null)
+                        {
+                            //Conver chữ cái đầu sang chư IH
+                            FirstName[f] = char.ToUpper(FirstName[f][0]) + FirstName[f].Substring(1);
+                            Result[0] = Result[0].Trim() + " " + FirstName[f];
+                        }
+                        else
+                        {
+                            //Conver chữ cái đầu sang chữ IH
+                            if (FirstName[f] != "")
+                            {
+                                FirstName[f] = char.ToUpper(FirstName[f][0]) + FirstName[f].Substring(1);
+                                Result[0] = FirstName[f].Trim();
+                            }
+                            else
+                            {
+                                Result[0] = "";
+                            }
+                        }
+                    }
+                    //Nhặt ra Name
+                    if (Result[4] == "0")
+                        if (Result[2].Trim() != "")
+                            Result[3] = Result[1].Trim() + " " + Result[2].Trim() + "," + " " + Result[0].Trim();
+                        else
+                            Result[3] = Result[1].Trim() + "," + " " + Result[0].Trim();
+                    else
+                        if (Result[2].Trim() != "")
+                        Result[3] = Result[1].Trim() + " " + Result[2].Trim() + ", " + Result[0].Trim() + ", " + ((TitleModel)TitleBO.Instance.FindByPrimaryKey(int.Parse(Result[4].ToString()))).Code;
+                    else
+                        Result[3] = Result[1].Trim() + ", " + Result[0].Trim() + ", " + ((TitleModel)TitleBO.Instance.FindByPrimaryKey(int.Parse(Result[4].ToString()))).Code;
+                }
+            }
+            return Result;
+        }
 
         #endregion
     }
