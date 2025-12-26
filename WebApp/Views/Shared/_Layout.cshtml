@@ -4,6 +4,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,7 +28,7 @@
     <link rel="icon" type="image/png" href="~/images/logo.png" />
 
     @* js *@
-    <script src="~/js/commons/formatdate.js" asp-append-version="true"></script>
+    @* <script src="~/js/commons/formatdate.js" asp-append-version="true"></script> *@
 
     @* jquery *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -39,9 +40,12 @@
     <link asp-append-version="true" href="~/node_modules/jquery-ui-dist/jquery-ui.min.css" rel="stylesheet" />
     <link asp-append-version="true" href="~/node_modules/devextreme/dist/css/dx.common.css" rel="stylesheet" />
     <link asp-append-version="true" href="~/node_modules/devextreme/dist/css/dx.light.css" rel="stylesheet" />
-    <link asp-append-version="true" href="~/node_modules/@@devexpress/analytics-core/dist/css/dx-analytics.common.css" rel="stylesheet" />
-    <link asp-append-version="true" href="~/node_modules/@@devexpress/analytics-core/dist/css/dx-analytics.light.css" rel="stylesheet" />
-    <link asp-append-version="true" href="~/node_modules/devexpress-reporting/dist/css/dx-webdocumentviewer.css" rel="stylesheet" />
+    <link asp-append-version="true" href="~/node_modules/@@devexpress/analytics-core/dist/css/dx-analytics.common.css"
+        rel="stylesheet" />
+    <link asp-append-version="true" href="~/node_modules/@@devexpress/analytics-core/dist/css/dx-analytics.light.css"
+        rel="stylesheet" />
+    <link asp-append-version="true" href="~/node_modules/devexpress-reporting/dist/css/dx-webdocumentviewer.css"
+        rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -66,8 +70,10 @@
     <script asp-append-version="true" src="~/node_modules/jquery-ui-dist/jquery-ui.js"></script>
     <script asp-append-version="true" src="~/node_modules/knockout/build/output/knockout-latest.js"></script>
     <script src="~/lib/devextreme/dist/js/dx.all.js"></script>
-    <script asp-append-version="true" src="~/node_modules/@@devexpress/analytics-core/dist/js/dx-analytics-core.min.js"></script>
-    <script asp-append-version="true" src="~/node_modules/devexpress-reporting/dist/js/dx-webdocumentviewer.min.js"></script>
+    <script asp-append-version="true"
+        src="~/node_modules/@@devexpress/analytics-core/dist/js/dx-analytics-core.min.js"></script>
+    <script asp-append-version="true"
+        src="~/node_modules/devexpress-reporting/dist/js/dx-webdocumentviewer.min.js"></script>
     <!-- jsPDF core -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -97,6 +103,7 @@
     </style>
 
 </head>
+
 <body class="dx-viewport" style="background-color:#f5f5f5">
     <div class="container-fluid">
         <div class="banner">
@@ -135,7 +142,8 @@
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge">3</span>
                 </div>
-                <i class="fas fa-sign-out-alt logout-icon" title="Logout" onclick="window.location.href='/User/Index'"></i>
+                <i class="fas fa-sign-out-alt logout-icon" title="Logout"
+                    onclick="window.location.href='/User/Index'"></i>
             </div>
         </div>
         <!-- Navbar -->
@@ -152,13 +160,15 @@
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="Profile" asp-action="Index">New Profile</a>
                                 <a asp-area="" asp-controller="Profile" asp-action="SearchProfile">Search Profile</a>
-                                <a asp-area="" asp-controller="Profile" asp-action="ProfileExport">Export profile to excel</a>
+                                <a asp-area="" asp-controller="Profile" asp-action="ProfileExport">Export profile to
+                                    excel</a>
 
 
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Reservation" asp-action="SearchReservation">RESERVATION</a>
+                            <a class="nav-link" asp-controller="Reservation"
+                                asp-action="SearchReservation">RESERVATION</a>
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="Home" asp-action="">Room Availability</a>
                                 <a asp-area="" asp-controller="Reservation" asp-action="NewReservation">New reservation</a>
@@ -318,10 +328,13 @@
                                     <a class="dropdown-submenu-toggle">Rate Code & Package</a>
                                     <div class="dropdown-submenu-content">
                                         <a asp-area="" asp-controller="RateClass" asp-action="RateClass">Rate class</a>
-                                        <a asp-area="" asp-controller="RateCategory" asp-action="RateCategory">Rate Category</a>
+                                        <a asp-area="" asp-controller="RateCategory" asp-action="RateCategory">Rate
+                                            Category</a>
                                         <a asp-area="" asp-controller="RateCode" asp-action="RateCode">Rate Code</a>
-                                        <a asp-area="" asp-controller="RateCodeDetail" asp-action="RateCodeDetail">Rate Code Detail</a>
-                                        <a asp-area="" asp-controller="RateCodeUserRight" asp-action="RateCodeUserRight">Rate Code User Right</a>
+                                        <a asp-area="" asp-controller="RateCodeDetail" asp-action="RateCodeDetail">Rate
+                                            Code Detail</a>
+                                        <a asp-area="" asp-controller="RateCodeUserRight"
+                                            asp-action="RateCodeUserRight">Rate Code User Right</a>
                                         <a asp-area="" asp-controller="Package" asp-action="Package">Package</a>
                                     </div>
                                 </div>
@@ -330,11 +343,14 @@
                                     <a class="dropdown-submenu-toggle">Transaction & Article</a>
                                     <div class="dropdown-submenu-content">
                                         <a asp-area="" asp-controller="Article" asp-action="Article">Article</a>
-                                        <a asp-area="" asp-controller="Transaction" asp-action="Transaction">Transaction</a>
-                                        <a asp-area="" asp-controller="TransactionSubGroup" asp-action="TransSubGroup">Transaction SubGroup</a>
-                                        <a asp-area="" asp-controller="TransactionGroup" asp-action="TransGroup">Transaction Group</a>
+                                        <a asp-area="" asp-controller="Transaction"
+                                            asp-action="Transaction">Transaction</a>
+                                        <a asp-area="" asp-controller="TransactionSubGroup"
+                                            asp-action="TransSubGroup">Transaction SubGroup</a>
+                                        <a asp-area="" asp-controller="TransactionGroup"
+                                            asp-action="TransGroup">Transaction Group</a>
                                         <a asp-area="" asp-controller="TransactionArticleLink"
-                                           asp-action="TransactionArticleLink">Transaction Article Link</a>
+                                            asp-action="TransactionArticleLink">Transaction Article Link</a>
                                     </div>
                                 </div>
 
@@ -343,8 +359,10 @@
                                 <div class="dropdown-submenu">
                                     <a class="dropdown-submenu-toggle">Deposit & Cancellation Rule</a>
                                     <div class="dropdown-submenu-content">
-                                        <a asp-area="" asp-controller="Administration" asp-action="DepositRule"> Deposit Rule </a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="CancellationRule">Cancellation Rule</a>
+                                        <a asp-area="" asp-controller="Administration" asp-action="DepositRule"> Deposit
+                                            Rule </a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="CancellationRule">Cancellation Rule</a>
                                     </div>
                                 </div>
 
@@ -404,10 +422,14 @@
                                     <a class="dropdown-submenu-toggle">PersonInCharge & Approve</a>
                                     <div class="dropdown-submenu-content">
 
-                                        <a asp-area="" asp-controller="Administration" asp-action="PersonInCharge">Person In Charge</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="PersonInChargeGroup">Person In Charge Group</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="PersonInChargeZone">Person In Charge Zone</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="ApproveList">Approve List</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="PersonInCharge">Person In Charge</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="PersonInChargeGroup">Person In Charge Group</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="PersonInChargeZone">Person In Charge Zone</a>
+                                        <a asp-area="" asp-controller="Administration" asp-action="ApproveList">Approve
+                                            List</a>
                                     </div>
                                 </div>
 
@@ -422,13 +444,20 @@
                                                 Profile
                                             </a>
                                             <div class="dropdown-submenu-content">
-                                                <a asp-area="" asp-controller="Administration" asp-action="City">City</a>
-                                                <a asp-area="" asp-controller="Administration" asp-action="Country">Country</a>
-                                                <a asp-area="" asp-controller="Administration" asp-action="Language">Language</a>
-                                                <a asp-area="" asp-controller="Administration" asp-action="Nationality">Nationality</a>
-                                                <a asp-area="" asp-controller="Administration" asp-action="Title">Title</a>
-                                                <a asp-area="" asp-controller="Administration" asp-action="Territory">Territory</a>
-                                                <a asp-area="" asp-controller="Administration" asp-action="State">State</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="City">City</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="Country">Country</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="Language">Language</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="Nationality">Nationality</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="Title">Title</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="Territory">Territory</a>
+                                                <a asp-area="" asp-controller="Administration"
+                                                    asp-action="State">State</a>
                                                 <a asp-area="" asp-controller="Administration" asp-action="VIP">Vip</a>
                                             </div>
                                         </div>
@@ -462,8 +491,10 @@
                                         <a asp-area="" asp-controller="Email" asp-action="SetupEmail">Setup Email</a>
                                         <a asp-area="" asp-controller="Email" asp-action="SendEmail">Send Email</a>
                                         <a asp-area="" asp-controller="Email" asp-action="SendSMS">Send SMS</a>
-                                        <a asp-area="" asp-controller="Email" asp-action="SendEmailBirthday">Send Email Birthday</a>
-                                        <a asp-area="" asp-controller="Email" asp-action="EmailSendingHistory">Email Sending History</a>
+                                        <a asp-area="" asp-controller="Email" asp-action="SendEmailBirthday">Send Email
+                                            Birthday</a>
+                                        <a asp-area="" asp-controller="Email" asp-action="EmailSendingHistory">Email
+                                            Sending History</a>
                                     </div>
                                 </div> *@
 
@@ -472,12 +503,16 @@
                                         Other items
                                     </a>
                                     <div class="dropdown-submenu-content">
-                                        <a asp-area="" asp-controller="Administration" asp-action="AlertsSetup">Alerts</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="AlertsSetup">Alerts</a>
                                         <a asp-area="" asp-controller="#" asp-action="#">Map Language</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="Currency">Currency</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="Currency">Currency</a>
                                         <a asp-area="" asp-controller="Administration" asp-action="Comment">Comments</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="CommentType">Comment Type</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="Department">Department</a>
+                                        <a asp-area="" asp-controller="Administration" asp-action="CommentType">Comment
+                                            Type</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="Department">Department</a>
                                         <a asp-area="" asp-controller="Administration" asp-action="Season">Season</a>
                                         <a asp-area="" asp-controller="Administration" asp-action="Zone">Zone</a>
                                         <a asp-area="" asp-controller="#" asp-action="">Sub Zone</a>
@@ -505,9 +540,12 @@
                                         Property
                                     </a>
                                     <div class="dropdown-submenu-content">
-                                        <a asp-area="" asp-controller="Administration" asp-action="PropertyType">Property Type</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="Property">Property</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="PropertyPermission">Property Permission</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="PropertyType">Property Type</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="Property">Property</a>
+                                        <a asp-area="" asp-controller="Administration"
+                                            asp-action="PropertyPermission">Property Permission</a>
                                     </div>
                                 </div>
 
@@ -517,9 +555,11 @@
                                     </a>
                                     <div class="dropdown-submenu-content">
                                         <a asp-area="" asp-controller="Administration" asp-action="Owner">Owner</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="Owner">Group Owner</a>
+                                        <a asp-area="" asp-controller="Administration" asp-action="Owner">Group
+                                            Owner</a>
                                         <a asp-area="" asp-controller="Administration" asp-action="Owner">Room Owner</a>
-                                        <a asp-area="" asp-controller="Administration" asp-action="Owner">Group And Room</a>
+                                        <a asp-area="" asp-controller="Administration" asp-action="Owner">Group And
+                                            Room</a>
                                     </div>
                                 </div>
 
@@ -553,11 +593,12 @@
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="NightAudit" asp-action="RoomRate">Room Rate</a>
                                 <a asp-area="" asp-controller="Report" asp-action="OtherReportChart">Fixed Charge</a>
-                                <a asp-area="" asp-controller="NightAudit" asp-action="RunNightAudit">Run Night Audit</a>
+                                <a asp-area="" asp-controller="NightAudit" asp-action="RunNightAudit">Run Night
+                                    Audit</a>
                             </div>
                         </li> *@
 
-                         <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" href="#">SECURITY</a>
                             <div class="dropdown-menu-custom">
                                 <a asp-area="" asp-controller="Home" asp-action="">User management</a>
@@ -568,7 +609,7 @@
                                 <a asp-area="" asp-controller="Home" asp-action="">Search ser</a>
                                 <a asp-area="" asp-controller="Home" asp-action="">Password history</a>
                             </div>
-                        </li> 
+                        </li>
 
                     </ul>
                 </div>
@@ -595,6 +636,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -832,5 +874,3 @@
         });
     });
 </script>
-
-
