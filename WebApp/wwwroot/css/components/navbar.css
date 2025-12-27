@@ -65,10 +65,6 @@ body {
     display: none;
     z-index: 1000;
     border-radius: 8px;
-
-    max-height: 450px; /* Giới hạn chiều cao (bạn có thể chỉnh số này: 50vh, 60vh...) */
-    overflow-y: auto; /* Tự động hiện thanh cuộn dọc khi nội dung dài */
-    overflow-x: hidden; /* Ẩn thanh cuộn ngang */
 }
 
     .dropdown-menu-custom a {
@@ -96,21 +92,18 @@ body {
 
 .dropdown-submenu-toggle {
     color: #000000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center; 
+    display: block;
     padding: 12px 16px;
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    width: 100%; 
 }
 
     .dropdown-submenu-toggle::after {
         content: '\25B6';
+        float: right;
         margin-left: 10px;
-        flex-shrink: 0;
     }
 
 .dropdown-submenu-content {
@@ -124,28 +117,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     z-index: 1000;
-    /* cho phép tạo scroll   */
-    overflow-y: auto;
-    overflow-x: hidden;
 }
-
-    .dropdown-submenu-content::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .dropdown-submenu-content::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    .dropdown-submenu-content::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 4px;
-    }
-
-        .dropdown-submenu-content::-webkit-scrollbar-thumb:hover {
-            background: var(--main-color);
-        }
 
 .dropdown-submenu:hover > .dropdown-submenu-content {
     display: block;
@@ -165,44 +137,11 @@ body {
         background-color: var(--secondary-color);
     }
 
-/* Tùy chỉnh thanh cuộn cho Webkit (Chrome, Edge, Safari) */
-.dropdown-menu-custom::-webkit-scrollbar {
-    width: 6px; 
-}
-
-.dropdown-menu-custom::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.dropdown-menu-custom::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-}
-
-    .dropdown-menu-custom::-webkit-scrollbar-thumb:hover {
-        background: var(--main-color);
-    }
-
 /* Desktop */
 @media (min-width: 992px) {
     .dropdown-submenu {
         position: relative;
     }
-
-        .dropdown-submenu:hover > .dropdown-submenu-content {
-            display: block;
-        }
-
-        .dropdown-submenu .dropdown-submenu-content {
-            position: fixed;
-            top: 0;
-            left: 0;
-            margin-top: 0;
-            margin-left: 0;
-            border-radius: 4px;
-            width: 220px;
-        }
 
 }
 
@@ -230,23 +169,19 @@ body {
         margin: 0;
     }
 
-    /* Màu nền nhẹ cho menu con để phân biệt */
     .dropdown-submenu-content {
         background-color: #f8f9fa;
         border-left: 2px solid #e9ecef; /* Đường kẻ chỉ dẫn bên trái */
     }
 
-    /* Mũi tên: Mặc định hướng sang phải */
     .dropdown-submenu-toggle i {
         transition: transform 0.3s ease;
     }
 
-    /* Mũi tên: Xoay xuống dưới khi menu đang mở (class active được JS thêm vào) */
     .dropdown-submenu.active > .dropdown-submenu-toggle i {
         transform: rotate(90deg);
     }
 
-    /* Đảm bảo text không bị tràn */
     .dropdown-menu-custom a {
         white-space: normal;
     }
