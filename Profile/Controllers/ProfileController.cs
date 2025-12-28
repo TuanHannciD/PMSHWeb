@@ -575,7 +575,7 @@ namespace Profile.Controllers
 
                     if (Request.Form["CodeIndividual"].ToString() != "")
                     {
-                        if (Request.Form["CodeIndividual"].ToString().Trim().Length != 13)
+                        if (Request.Form["CodeIndividual"].ToString().Trim().Length > 13 )
                         {
                             Message += "Length Code format!\n";
                             return Json(new { code = 1, msg = Message });
@@ -697,7 +697,7 @@ namespace Profile.Controllers
 
                     if (Request.Form["CodeCOM"].ToString() != "")
                     {
-                        if (Request.Form["CodeCOM"].ToString().Length != 13)
+                        if (Request.Form["CodeCOM"].ToString().Length > 13)
                         {
                             Message += "Length Code format!\n";
                             return Json(new { code = 1, msg = Message });
@@ -787,7 +787,7 @@ namespace Profile.Controllers
               
                     if (Request.Form["CodeGroup"].ToString() != "")
                     {
-                        if (Request.Form["CodeGroup"].ToString().Length != 13)
+                        if (Request.Form["CodeGroup"].ToString().Length >  13)
                         {
                             Message += "Length Code format!\n";
                             return Json(new { code = 1, msg = Message });
@@ -988,7 +988,7 @@ namespace Profile.Controllers
 
                     if (Request.Form["CodeIndividual"].ToString() != "")
                     {
-                        if (Request.Form["CodeIndividual"].ToString().Trim().Length != 13)
+                        if (Request.Form["CodeIndividual"].ToString().Trim().Length > 13)
                         {
                             Message += "Length Code format!\n";
                             return Json(new { code = 1, msg = Message });
@@ -1109,7 +1109,15 @@ namespace Profile.Controllers
 
                     if (Request.Form["CodeCOM"].ToString()!= "")
                     {
-                        if (Request.Form["CodeCOM"].ToString().Length != 13)
+                        if (Request.Form["CodeCOM"].ToString().Length > 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+                    if (Request.Form["TaxCOM"].ToString() != "")
+                    {
+                        if (Request.Form["TaxCOM"].ToString().Length > 13)
                         {
                             Message += "Length Code format!\n";
                             return Json(new { code = 1, msg = Message });
@@ -1226,6 +1234,39 @@ namespace Profile.Controllers
                 }
                 else if (profileType == 4)
                 {
+                   
+                        if (Request.Form["GroupNameGroup"].ToString() == "")
+                        {
+                            Message += "Group Name not blank\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                   
+
+                    string CodeGroup = Request.Form["CodeGroup"].ToString();
+
+                    if (!string.IsNullOrEmpty(CodeGroup))
+                    {
+                        List<ProfileModel> tran =
+                            PropertyUtils.ConvertToList<ProfileModel>(
+                                ProfileBO.Instance.FindByAttribute("Code", CodeGroup)
+                            );
+
+                        if (tran != null && tran.Count > 0)
+                        {
+                            Message += "Profile code existing in system!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
+
+
+                    if (Request.Form["CodeGroup"].ToString() != "")
+                    {
+                        if (Request.Form["CodeGroup"].ToString().Trim().Length > 13)
+                        {
+                            Message += "Length Code format!\n";
+                            return Json(new { code = 1, msg = Message });
+                        }
+                    }
                     profile.Code = Request.Form["CodeGroup"].ToString();
                     profile.Account = Request.Form["GroupNameGroup"].ToString(); ;
                     profile.FullAccount = "";

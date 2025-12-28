@@ -1354,8 +1354,7 @@
         let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
         let valueDiscountAmount = $('#txtDiscountAmount').val();
         let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
-        calculateNet($('#arrival').val(),$('#departure').val(),0,
-        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
+        calculateNet($('#arrival').val(),$('#departure').val(),0,$('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
     });
 
     $('#txtNetAmount').on('input', function() {

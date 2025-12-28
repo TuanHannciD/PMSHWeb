@@ -1,4 +1,6 @@
 
+using BaseBusiness.BO;
+using BaseBusiness.Model;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -603,7 +605,68 @@ namespace BaseBusiness.util
 			}
 			return JSONString.ToString();
 		}
+        public static void ExcuteSQL(string strSQL)
+        {
+            SqlConnection cn = new SqlConnection(DBUtils.GetDBConnectionString());
+            SqlCommand cmd = new SqlCommand(strSQL, cn);
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandTimeout = 0;
+            cn.Open();
+            cmd.CommandText = strSQL;
+            cmd.ExecuteNonQuery();
+            cn.Close();
+        }
+        public static DateTime GetBusinessDateTime()
+        {
+            try
+            {
+                #region Lay ra ngay he thong ,gio he thong
+                DateTime B_Date = GetBusinessDate();
+                DateTime S_Date = GetSystemDate();
+                #endregion
 
+                #region Gan Time
+                DateTime dt = new DateTime(B_Date.Year, B_Date.Month, B_Date.Day, S_Date.Hour, S_Date.Minute, S_Date.Second, S_Date.Millisecond);
+                #endregion
 
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public static DateTime GetSystemDate()
+        {
+            try
+            {
+                return Convert.ToDateTime(Select("SELECT GETDATE() AS SystemDate").Rows[0][0]);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public static  DateTime GetBusinessDate()
+        {
+            DateTime DateTimeValue = DateTime.Today;
+            DateTimeValue = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate;
+            return DateTimeValue;
+            //return Global.GetBusinessDate;
+        }
+        public static string GetSystemTime()
+        {
+            try
+            {
+                DateTime S_Date = GetSystemDate();
+                string st = S_Date.Hour + ":" + S_Date.Minute + ":" + S_Date.Second;
+                return st;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 }

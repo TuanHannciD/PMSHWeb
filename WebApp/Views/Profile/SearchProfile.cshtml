@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="form-group-new-reservation col-md-2">
-            <label for="txtTitle">Account</label>
+            <label for="txtTitle">Name</label>
             <div class="row" style="margin-left:1px;margin-right:2px">
                 <input type="text" id="txtAccount">
 
@@ -1123,16 +1123,21 @@
         // 👉 Các cột còn lại
         columns = columns.concat([
 
-           
+     {
+    dataField: "dateOfBirth",
+    caption: "DateOfBirth",
+    width: columnWidth,
+    dataType: "date",
+    format: "dd/MM/yyyy",
+    visible: typeValue != "1",
+    calculateCellValue: function (data) {
+        if (!data.dateOfBirth) return null;
 
-            {
-                dataField: "dateOfBirth",
-                caption: "DateOfBirth",
-                width: columnWidth,
-                dataType: "date",
-                format: "dd/MM/yyyy",
-                visible: typeValue != "1"
-            },
+        // value: "22.12.2025"
+        const parts = data.dateOfBirth.split(".");
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+},
 
             { dataField: "passPort", caption: "PassPort", width: columnWidth, visible: typeValue != "1" },
             { dataField: "identityCard", caption: "IdentityCard", width: columnWidth, visible: typeValue != "1" },
@@ -1207,6 +1212,57 @@
         });
     }
 
+      $('#txtFullNameIndividual').on('blur', function () {
+        var input = $(this).val().trim();
+
+        if (input === '') return;
+
+        $.ajax({
+            url: '/Profile/FullNameChange',
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: false,
+            headers: {
+                "X-CSRF-TOKEN-HEADERNAME": $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: {
+                fullName: input
+            },
+            success: function (res) {
+                console.log(res);
+                if (res && res.success) {
+
+                    // Full name đã chuẩn hóa
+                    if (res.FullName) {
+                        $('#txtFullNameIndividual').val(res.fullName);
+                    }
+
+                    // Các field khác (nếu có)
+                    if ($('#txtFirstNameIndividual').length)
+                        $('#txtFirstNameIndividual').val(res.firstName);
+
+                    if ($('#txtMiddleNameIndividual').length)
+                        $('#txtMiddleNameIndividual').val(res.middleName);
+
+                    if ($('#txtLastNameIndividual').length)
+                        $('#txtLastNameIndividual').val(res.lastName);
+
+                    if ($('#txtSalutationIndividual').length)
+                        $('#txtSalutationIndividual').val(res.salutation);
+
+                         
+                    // Title (nếu có dropdown)
+                    if (res.titleID) {
+                       let selectTitle= $('#txtTitleIndividual')[0].tomselect;
+                            selectTitle.setValue(res.titleID);
+                    }
+                }
+            },
+            error: function (xhr) {
+                console.error('FullNameChange API error', xhr);
+            }
+        });
+    });
 
     function reserveProfile(){
         $('#modelReservation').modal('show');

@@ -36,12 +36,12 @@ namespace NightAudit.Controllers
         DataTable dt_RoomType = null;
         bool _IsRunning = false;
         string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
-        ProcessTransactions pt = null;
+      //  ProcessTransactions pt = null;
 
 
         string time = "";
         bool _IsOK = true;
-        public string MasterCurrencyID = "1";
+        public string MasterCurrencyID = "VND";
         public const string _CURRENCY_1 = "VND";
         public const string _CURRENCY_2 = "USD";
         public DateTime SystemDate = DateTime.Now;
@@ -81,7 +81,7 @@ namespace NightAudit.Controllers
             try
             {
                 _IsOK = true;
-                pt.ExcuteSQL("Update ConfigSystem Set KeyValue = '1' Where KeyName ='RunNightAudit'");
+                TextUtils.ExcuteSQL("Update ConfigSystem Set KeyValue = '1' Where KeyName ='RunNightAudit'");
                 _IsRunning = true;
             }
             catch (Exception ex)
@@ -101,7 +101,7 @@ namespace NightAudit.Controllers
             try
             {
                 _IsOK = true;
-                pt.ExcuteSQL("Update ConfigSystem Set KeyValue = 0 Where KeyName ='RunNightAudit'");
+                TextUtils.ExcuteSQL("Update ConfigSystem Set KeyValue = 0 Where KeyName ='RunNightAudit'");
                 _IsRunning = false;
                 SaveLog("Update trang thai ket thuc chay night audit !");
             }
@@ -121,8 +121,8 @@ namespace NightAudit.Controllers
         {
             try
             {
-                pt.ExcuteSQL("Insert Into NightAuditHistory(BussinessDate,SystemDate, UserID, UserName,ComputerName, Status) Values " +
-                   " ('" + pt.GetBusinessDateTime().ToString("yyyy/MM/dd") + "', '" + pt.GetSystemDate().ToString("yyyy/MM/dd HH:mm:ss") + "', '" + userID + "', '" + userName + "','" + computerName + "', 0)");
+                TextUtils.ExcuteSQL("Insert Into NightAuditHistory(BussinessDate,SystemDate, UserID, UserName,ComputerName, Status) Values " +
+                   " ('" + TextUtils.GetBusinessDateTime().ToString("yyyy/MM/dd") + "', '" + TextUtils.GetSystemDate().ToString("yyyy/MM/dd HH:mm:ss") + "', '" + userID + "', '" + userName + "','" + computerName + "', 0)");
                 _IsOK = true;
             }
             catch (Exception ex)
@@ -137,7 +137,18 @@ namespace NightAudit.Controllers
         /// </summary>
         private void _CheckGuestCI(ref bool _IsNotCI, ref DataTable dataNotCheckIn)
         {
-            dataNotCheckIn = pt.getTable("spNightAuditNotCheckInSearch", new SqlParameter("@ArrivalDate", pt.GetBusinessDateTime()), "tblNotCheckIn");
+            DateTime businessDate = TextUtils.GetBusinessDateTime();
+            string businessDateSql = businessDate.ToString("yyyy-MM-dd");
+
+            dataNotCheckIn = TextUtils.Select(
+    "SELECT RoomNo, ReservationNo, LastName, FirstName, ArrivalDate, DepartureDate, [Address] " +
+    "FROM dbo.Reservation WITH(NOLOCK) " +
+    "WHERE  Status = 0 " +
+    "AND DATEDIFF(day, '" + businessDateSql + "', DepartureDate) = 0 " +
+    "AND ReservationNo > 0"
+);
+
+           // dataNotCheckIn = pt.getTable("spNightAuditNotCheckInSearch", new SqlParameter("@ArrivalDate", pt.GetBusinessDateTime()), "tblNotCheckIn");
             if (dataNotCheckIn.Rows.Count > 0)
             {
                 _IsNotCI = true;
@@ -158,7 +169,17 @@ namespace NightAudit.Controllers
         /// <param name="_IsNotCO"></param>
         private void _CheckGuestCO(ref bool _IsNotCO, ref DataTable dataNotCheckIn)
         {
-            dataNotCheckIn = pt.getTable("spNightAuditNotCheckOutSearch", new SqlParameter("@DeparturDate", pt.GetBusinessDateTime()), "tblNotCheckOut");
+            DateTime businessDate = TextUtils.GetBusinessDateTime();
+            string businessDateSql = businessDate.ToString("yyyy-MM-dd");
+
+            dataNotCheckIn = TextUtils.Select(
+    "SELECT RoomNo, ReservationNo, LastName, FirstName, ArrivalDate, DepartureDate, [Address] " +
+    "FROM dbo.Reservation WITH(NOLOCK) " +
+    "WHERE (Status = 1 Or Status = 6) " +
+    "AND DATEDIFF(day, '" + businessDateSql + "', DepartureDate) = 0 " +
+    "AND ReservationNo <> 0"
+);
+          //  dataNotCheckIn = pt.getTable("spNightAuditNotCheckOutSearch", new SqlParameter("@DeparturDate", TextUtils.GetBusinessDateTime()), "tblNotCheckOut");
             //Kiểm tra những người đến ngày checkout nhưng chưa check out
             if (dataNotCheckIn.Rows.Count > 0)
             {
@@ -180,15 +201,15 @@ namespace NightAudit.Controllers
                 string PathDatabaseName = "";
                 string DatabaseAutoBackup = "0";
 
-                DataTable dtCSName = pt.Select("Select KeyValue From ConfigSystem Where KeyName ='DatabaseName'");
+                DataTable dtCSName = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName ='DatabaseName'");
                 if (dtCSName.Rows.Count > 0)
                     DatabaseName = dtCSName.Rows[0]["KeyValue"].ToString();
 
-                DataTable dtCSValue = pt.Select("Select KeyValue From ConfigSystem Where KeyName ='DatabasePathBackup'");
+                DataTable dtCSValue = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName ='DatabasePathBackup'");
                 if (dtCSValue.Rows.Count > 0)
                     PathDatabaseName = dtCSValue.Rows[0]["KeyValue"].ToString();
 
-                DataTable dtAutoBackup = pt.Select("Select KeyValue From ConfigSystem Where KeyName ='DatabaseAutoBackup'");
+                DataTable dtAutoBackup = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName ='DatabaseAutoBackup'");
                 if (dtAutoBackup.Rows.Count > 0)
                     DatabaseAutoBackup = dtAutoBackup.Rows[0]["KeyValue"].ToString();
 
@@ -219,9 +240,10 @@ namespace NightAudit.Controllers
         {
             try
             {
+                 DateTime time = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate;
                 _IsOK = true;
-                string strDelete = "DELETE FROM dbo.FolioDetail WHERE UserName ='$$' AND DATEDIFF(day,TransactionDate,'" + pt.GetBusinessDateTime().ToString("yyyy/MM/dd") + "')=0";
-                pt.ExcuteSQL(strDelete);
+                string strDelete = "DELETE FROM dbo.FolioDetail WHERE UserName ='$$' AND DATEDIFF(day,TransactionDate,'" + time.ToString("yyyy/MM/dd") + "')=0";
+                TextUtils.ExcuteSQL(strDelete);
             }
             catch (Exception ex)
             {
@@ -238,19 +260,19 @@ namespace NightAudit.Controllers
             try
             {
                 //Lấy danh sách các đặt phòng nháp không sử dụng có ReservationNo = -1
-                DataTable _dtTemp = pt.Select("SELECT ID FROM Reservation WITH (NOLOCK) WHERE ReservationNo = -1");
+                DataTable _dtTemp = TextUtils.Select("SELECT ID FROM Reservation WITH (NOLOCK) WHERE ReservationNo = -1");
                 if (_dtTemp.Rows.Count > 0)
                 {
                     for (int i = 0; i < _dtTemp.Rows.Count; i++)
                     {
                         int _RsvID = TextUtils.ToInt(_dtTemp.Rows[i]["ID"].ToString());
-                        pt.ExcuteSQL("DELETE FROM dbo.Reservation WHERE ID = " + _RsvID);
-                        pt.ExcuteSQL("DELETE FROM dbo.ReservationFixedCharge WHERE ReservationID = " + _RsvID);
-                        pt.ExcuteSQL("DELETE FROM dbo.ReservationPackage WHERE ReservationID = " + _RsvID);
-                        pt.ExcuteSQL("DELETE FROM dbo.ReservationItemInventory WHERE ReservationID = " + _RsvID);
-                        pt.ExcuteSQL("DELETE FROM dbo.ReservationSpecial WHERE ReservationID = " + _RsvID);
-                        pt.ExcuteSQL("DELETE FROM dbo.ReservationOptions WHERE ReservationID = " + _RsvID);
-                        pt.ExcuteSQL("DELETE FROM dbo.ActivityLog WHERE TableName = 'Reservation' AND ObjectID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.Reservation WHERE ID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.ReservationFixedCharge WHERE ReservationID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.ReservationPackage WHERE ReservationID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.ReservationItemInventory WHERE ReservationID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.ReservationSpecial WHERE ReservationID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.ReservationOptions WHERE ReservationID = " + _RsvID);
+                        TextUtils.ExcuteSQL("DELETE FROM dbo.ActivityLog WHERE TableName = 'Reservation' AND ObjectID = " + _RsvID);
                     }
 
                 }
@@ -271,7 +293,7 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
 
-                string date = pt.GetBusinessDate().ToString("yyyy/MM/dd").ToString().Substring(0, 10) + " " + pt.GetSystemTime();// " 23:59:59";               
+                string date = TextUtils.GetBusinessDate().ToString("yyyy/MM/dd").ToString().Substring(0, 10) + " " + TextUtils.GetSystemTime();// " 23:59:59";               
                 string sqlUpdate_CloseCashier = "UPDATE Shift SET Status = 1, LogoutTime = '" + date + "' WHERE Status = 0  ";
                 SqlHelper.ExecuteNonQuery(DBUtils.GetDBConnectionString(), CommandType.Text, sqlUpdate_CloseCashier);
             }
@@ -291,14 +313,14 @@ namespace NightAudit.Controllers
         private bool _CheckAdvanceBill(int _RsvID, DateTime _BusDate)
         {
             DataTable dt = null;
-            dt = pt.Select("SELECT ID FROM AdvanceBill WHERE ReservationID =" + _RsvID + " ");
+            dt = TextUtils.Select("SELECT ID FROM AdvanceBill WHERE ReservationID =" + _RsvID + " ");
             if (dt.Rows.Count == 0)
             {
                 return false;
             }
             else
             {
-                dt = pt.Select("SELECT ID FROM AdvanceBill " +
+                dt = TextUtils.Select("SELECT ID FROM AdvanceBill " +
                                       "WHERE datediff(day, DateAdvanceBill, '" + _BusDate.ToString("yyyy/MM/dd") + "') > 0 " +
                                       "AND ReservationID =" + _RsvID + " ");
                 if (dt.Rows.Count > 0)
@@ -327,7 +349,7 @@ namespace NightAudit.Controllers
 
         private int _GetFolioDefault(int _RsvID)
         {
-            DataTable dt = pt.Select("SELECT ID FROM Folio WITH (NOLOCK) WHERE ReservationID = " + _RsvID + " AND FolioNo = 1");
+            DataTable dt = TextUtils.Select("SELECT ID FROM Folio WITH (NOLOCK) WHERE ReservationID = " + _RsvID + " AND FolioNo = 1");
             if (dt.Rows.Count > 0)
                 return TextUtils.ToInt(dt.Rows[0]["ID"].ToString());
             else
@@ -339,10 +361,10 @@ namespace NightAudit.Controllers
         {
             bool PostingStatus = false;
             int _PostingDay;
-            DateTime BusinessDate = pt.GetBusinessDate();
+            DateTime BusinessDate = TextUtils.GetBusinessDate();
             _BusDate = new DateTime(_BusDate.Year, _BusDate.Month, _BusDate.Day, 0, 0, 0);
             //Lấy theo ngày trong Rsv
-            DataTable dtRp = pt.Select("SELECT BeginDate, EndDate FROM dbo.ReservationPackage WITH (NOLOCK) WHERE ReservationID =" + _RsvID + " AND PackageDetailID =" + PackageDetailID + "");
+            DataTable dtRp = TextUtils.Select("SELECT BeginDate, EndDate FROM dbo.ReservationPackage WITH (NOLOCK) WHERE ReservationID =" + _RsvID + " AND PackageDetailID =" + PackageDetailID + "");
             if (dtRp != null)
             {
                 if (dtRp.Rows.Count > 0)
@@ -425,7 +447,7 @@ namespace NightAudit.Controllers
             dr_RoomType = GetDataRow(dt_RoomType, "ID", _RoomTypeID);
             if (dr_RoomType != null)
             {
-                DataTable dtDetail = pt.Select("Select TransactionCode From NightAuditBB Where Code = '" + TransactionCode + "' And Zone = '" + dr_RoomType["ZoneCode"].ToString() + "'");
+                DataTable dtDetail = TextUtils.Select("Select TransactionCode From NightAuditBB Where Code = '" + TransactionCode + "' And Zone = '" + dr_RoomType["ZoneCode"].ToString() + "'");
                 if (dtDetail.Rows.Count > 0)
                 {
                     rt = dtDetail.Rows[0]["TransactionCode"].ToString();
@@ -451,7 +473,7 @@ namespace NightAudit.Controllers
             {
                 if (!array[i].Trim().Equals(""))
                 {
-                    DataTable tb = pt.Select("Select * from RoutingCode Where Code =N'" + array[i].ToString().Trim() + "'");
+                    DataTable tb = TextUtils.Select("Select * from RoutingCode Where Code =N'" + array[i].ToString().Trim() + "'");
                     if (tb.Rows.Count > 0)
                     {
                         strReturn = strReturn + tb.Rows[0]["TransactionCodes"].ToString().Trim();
@@ -498,7 +520,7 @@ namespace NightAudit.Controllers
                 RoutingModel mOR = (RoutingModel)RoutingBO.Instance.FindByPrimaryKey(RoutingID);
 
                 FolioModel mF = new FolioModel();
-                mF.FolioDate = pt.GetBusinessDate();
+                mF.FolioDate = TextUtils.GetBusinessDate();
                 mF.FolioNo = mOR.ToFolioNo;
                 mF.ReservationID = mOR.ToReservationID;
                 //mF.RoomID = mOR.ToRoomID;
@@ -522,7 +544,7 @@ namespace NightAudit.Controllers
                     mF.ConfirmationNo = mOR.ConfirmationNo;
 
                 mF.UserInsertID = UserID;
-                mF.CreateDate = pt.GetSystemDate();
+                mF.CreateDate = TextUtils.GetSystemDate();
                 mF.UserUpdateID = UserID;
                 mF.UpdateDate = mF.CreateDate;
 
@@ -543,7 +565,7 @@ namespace NightAudit.Controllers
             int _type = 0;
 
             #region B1.Routing to Room
-            DataTable _dtR1 = pt.Select("SELECT ID, TransactionCodes, ToReservationID, ProfileID, AccountName, ToFolioNo " +
+            DataTable _dtR1 = TextUtils.Select("SELECT ID, TransactionCodes, ToReservationID, ProfileID, AccountName, ToFolioNo " +
                                                "FROM Routing WITH (NOLOCK) " +
                                                "WHERE IsMasterFolio = 0 AND ConfirmationNo = '" + _Confirm + "' " +
                                                "AND FromReservationID = " + _RsvID + " " +
@@ -575,7 +597,7 @@ namespace NightAudit.Controllers
             #region B2.Routing to WindownNo
             if (_type == 0)
             {
-                DataTable _dtR2 = pt.Select("SELECT ID, TransactionCodes, ToReservationID, ProfileID, AccountName, ToFolioNo " +
+                DataTable _dtR2 = TextUtils.Select("SELECT ID, TransactionCodes, ToReservationID, ProfileID, AccountName, ToFolioNo " +
                                                   "FROM Routing WITH (NOLOCK) " +
                                                   "WHERE IsMasterFolio = 0 AND ConfirmationNo = '" + _Confirm + "' " +
                                                   "AND FromReservationID = " + _RsvID + " " +
@@ -607,7 +629,7 @@ namespace NightAudit.Controllers
             #region B3.Routing to MasterFolio
             if (_type == 0)
             {
-                DataTable _dtR3 = pt.Select("SELECT ID, TransactionCodes, ToReservationID, ProfileID, AccountName, ToFolioNo " +
+                DataTable _dtR3 = TextUtils.Select("SELECT ID, TransactionCodes, ToReservationID, ProfileID, AccountName, ToFolioNo " +
                                                   "FROM Routing WITH (NOLOCK) " +
                                                   "WHERE IsMasterFolio = 1 AND ConfirmationNo = '" + _Confirm + "' " +
                                                   "AND DATEDIFF(day, FromDate, '" + _BusDate.ToString("yyyy/MM/dd") + "') >= 0 AND DATEDIFF(day, ToDate, '" + _BusDate.ToString("yyyy/MM/dd") + "') <= 0");
@@ -639,7 +661,7 @@ namespace NightAudit.Controllers
             if (_type == 0)
             {
                 //Lấy số Folio, Window từ bảng Folio
-                DataTable _dtdf = pt.Select("SELECT ProfileID, AccountName, ID, FolioNo FROM Folio " +
+                DataTable _dtdf = TextUtils.Select("SELECT ProfileID, AccountName, ID, FolioNo FROM Folio " +
                                                   "WHERE FolioNo = 1 " +
                                                   "AND ReservationID = " + _RsvID + " AND ConfirmationNo = '" + _Confirm + "' ");
                 //Get Info
@@ -655,7 +677,7 @@ namespace NightAudit.Controllers
                 {
                     ReservationModel mOR = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(_RsvID);
                     FolioModel mF = new FolioModel();
-                    mF.FolioDate = pt.GetBusinessDate();
+                    mF.FolioDate = TextUtils.GetBusinessDate();
                     mF.FolioNo = 1;
                     mF.ProfileID = mOR.ProfileIndividualId;
                     mF.AccountName = mOR.LastName;
@@ -664,7 +686,7 @@ namespace NightAudit.Controllers
                     mF.IsMasterFolio = false;
                     mF.ConfirmationNo = mOR.ConfirmationNo;
                     mF.UserInsertID = mF.UserUpdateID = userID;
-                    mF.CreateDate = mF.UpdateDate = pt.GetSystemDate();
+                    mF.CreateDate = mF.UpdateDate = TextUtils.GetSystemDate();
                     _FolioID = (int)FolioBO.Instance.Insert(mF);
                 }
             }
@@ -677,8 +699,12 @@ namespace NightAudit.Controllers
         /// <returns>Int</returns>
         public int GetOrCreateRsvMaster(DateTime _SysDate, string _ConfirmationNo, int _FromRsvID, ref string _Message, int userID)
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
                 //Kiểm tra xem RsvMA đã có hay chưa
                 BaseBusiness.util.Expression exp = new BaseBusiness.util.Expression("ConfirmationNo", _ConfirmationNo, "=");
                 exp = exp.And(new BaseBusiness.util.Expression("ReservationNo", "0", "="));
@@ -689,7 +715,8 @@ namespace NightAudit.Controllers
                 //Nếu chưa có thì tạo mới
                 else
                 {
-                    ReservationModel mR = (ReservationModel)pt.FindByPK("Reservation", _FromRsvID);
+                  
+                    ReservationModel mR = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(_FromRsvID);
                     mR.Status = 0;
                     mR.MainGuest = false;
                     mR.PostingMaster = true;
@@ -717,12 +744,13 @@ namespace NightAudit.Controllers
                     mR.ShareRoom = 0;
 
                     mR.Status = 1;
-
-                    return (int)pt.Insert(mR);
+                    pt.CommitTransaction();
+                    return (int)ReservationBO.Instance.Insert(mR);
                 }
             }
             catch (Exception ex)
             {
+                pt.RollBack();
                 _Message = ex.Message;
                 return 0;
             }
@@ -811,7 +839,7 @@ namespace NightAudit.Controllers
                     if (mF.ReservationID > 0)
                     {
                         _ReservationID_Return = mF.ReservationID;
-                        return (int)pt.Insert(mF);
+                        return (int)FolioBO.Instance.Insert(mF);
                     }
                     else
                         return 0;
@@ -928,9 +956,9 @@ namespace NightAudit.Controllers
         {
             try
             {
-                pt.UpdateCommand("Update Folio set BalanceVND=dbo.getBalanceOfFolio(" + _FolioID + ",'" + _CURRENCY_1 + "')," +
+                TextUtils.ExcuteSQL("Update Folio set BalanceVND=dbo.getBalanceOfFolio(" + _FolioID + ",'" + _CURRENCY_1 + "')," +
                                 "BalanceUSD=dbo.getBalanceOfFolio(" + _FolioID + ",'" + _CURRENCY_2 + "') Where ID=" + _FolioID);
-                pt.UpdateCommand("Update Reservation set BalanceVND=dbo.getBalanceOfGih(" + _ReservationID + ",'" + _CURRENCY_1 + "')," +
+                TextUtils.ExcuteSQL("Update Reservation set BalanceVND=dbo.getBalanceOfGih(" + _ReservationID + ",'" + _CURRENCY_1 + "')," +
                                 "BalanceUSD=dbo.getBalanceOfGih(" + _ReservationID + ",'" + _CURRENCY_2 + "') Where ID=" + _ReservationID);
                 return true;
             }
@@ -1008,7 +1036,7 @@ namespace NightAudit.Controllers
                 else
                     mPH.Property = "NIGHT";
 
-                pt.Insert(mPH);
+                PostingHistoryBO.Instance.Insert(mPH);
             }
             catch (Exception ex)
             {
@@ -1056,9 +1084,13 @@ namespace NightAudit.Controllers
                                         decimal[] _Amount, bool[] _TaxInclude, int[] _Quan, string[] _CurrencyID, string _CurrencyLocal,
                                         string[] _Ref, string[] _Supp, ref decimal _AmountLocalReturn, ref string _Message, string Description, int RoomTypeID, string RoomType, int userID, string userName)
         {
+            ProcessTransactions pt = new ProcessTransactions();
 
             try
             {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
                 #region Gán giá trị cho ngày hệ thống
                 //_BusinessDate  = TextUtils.GetBusinessDateTime();
                 #endregion
@@ -1263,7 +1295,7 @@ namespace NightAudit.Controllers
 
                     mFD_Group.RoomTypeID = RoomTypeID;
                     mFD_Group.RoomType = RoomType;
-                    mFD_Group.ID = (int)pt.Insert(mFD_Group);
+                    mFD_Group.ID = (int)FolioDetailBO.Instance.Insert(mFD_Group);
                     mFD_Group.InvoiceNo = mFD_Group.ID.ToString();
                     mFD_Group.TransactionNo = mFD_Group.InvoiceNo;
 
@@ -1349,9 +1381,9 @@ namespace NightAudit.Controllers
                                 mFD_Detail.RoomType = RoomType;
                                 mFD_Detail.RoomTypeID = RoomTypeID;
 
-                                mFD_Detail.ID = (int)pt.Insert(mFD_Detail);
+                                mFD_Detail.ID = (int)FolioDetailBO.Instance.Insert(mFD_Detail);
                                 mFD_Detail.TransactionNo = mFD_Detail.ID.ToString();
-                                pt.Update(mFD_Detail);
+                                FolioDetailBO.Instance.Update(mFD_Detail);
 
                                 //Cập nhập thông tin Invoice
                                 //Làm tròn VND
@@ -1424,7 +1456,7 @@ namespace NightAudit.Controllers
 
                                 mFD_Subgroup.RoomType = RoomType;
                                 mFD_Subgroup.RoomTypeID = RoomTypeID;
-                                mFD_Subgroup.ID = (int)pt.Insert(mFD_Subgroup); //Dong tong cap 2
+                                mFD_Subgroup.ID = (int)FolioDetailBO.Instance.Insert(mFD_Subgroup); //Dong tong cap 2
 
                                 mFD_Subgroup.InvoiceNo = mFD_Group.InvoiceNo;
                                 mFD_Subgroup.TransactionNo = mFD_Subgroup.ID.ToString();
@@ -1570,7 +1602,7 @@ namespace NightAudit.Controllers
                                     mFD_Detail.RoomType = RoomType;
                                     mFD_Detail.InvoiceNo = mFD_Subgroup.InvoiceNo;
                                     mFD_Detail.TransactionNo = mFD_Subgroup.TransactionNo;
-                                    mFD_Detail.ID = (int)pt.Insert(mFD_Detail);
+                                    mFD_Detail.ID = (int)FolioDetailBO.Instance.Insert(mFD_Detail);
                                     if (_CurrencyID[i] == "VND")
                                     {
                                         mFD_Subgroup.AmountMaster = Math.Round(mFD_Subgroup.AmountMaster + mFD_Detail.AmountMaster, 0);
@@ -1608,7 +1640,7 @@ namespace NightAudit.Controllers
 
                                 }
                                 // Update thông tin của subgroup
-                                pt.Update(mFD_Subgroup);
+                                FolioDetailBO.Instance.Update(mFD_Subgroup);
 
                                 //Làm tròn VND
                                 // Cập nhật thông tin group
@@ -1644,7 +1676,7 @@ namespace NightAudit.Controllers
                     #region Commit va Return
 
                     mFD_Group.Price = mFD_Group.Amount;
-                    pt.Update(mFD_Group);
+                    FolioDetailBO.Instance.Update(mFD_Group);
                     UpdateBalance(_RsvID, FolioID, ref _Message);
                     InsertHistory(_SysDate, _BusinessDate, mFD_Group.FolioID, mFD_Group.FolioID, mFD_Group.InvoiceNo, HistoryType.Night_Post,
                         GetActionText(HistoryType.Night_Post, mFD_Group.TransactionCode, mFD_Group.Description),
@@ -1663,7 +1695,7 @@ namespace NightAudit.Controllers
             }
             catch (Exception ex)
             {
-                pt.RollBack();
+                //pt.RollBack();
                 _Message = ex.Message;
                 return false;
             }
@@ -1685,8 +1717,8 @@ namespace NightAudit.Controllers
                 #endregion
 
                 #region 2.Process
-                DataTable _dtC = pt.Select("SELECT Desciption FROM ConfigSystem WHERE KeyName ='IF_IN' ");
-                DataTable _dtF = pt.Select("SELECT ID FROM Folio WHERE ReservationID = '" + _RsvID + "' AND FolioNo = 1 ");
+                DataTable _dtC = TextUtils.Select("SELECT Desciption FROM ConfigSystem WHERE KeyName ='IF_IN' ");
+                DataTable _dtF = TextUtils.Select("SELECT ID FROM Folio WHERE ReservationID = '" + _RsvID + "' AND FolioNo = 1 ");
                 //Not Exits
                 if (_dtC.Rows.Count > 0 && _dtF.Rows.Count > 0)
                 {
@@ -1744,12 +1776,16 @@ namespace NightAudit.Controllers
         //// </summary>
         private void _PostRoomCharge(ref bool _IsOK, ref DataTable _dtR_1, int userID, string userName)
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
 
                 _IsOK = true;
                 //Lấy danh sách phòng cần post
-                DataTable _dtR = pt.Select("SELECT a.ID, ProfileIndividualID, LastName, ConfirmationNo, a.RateCode, a.NoOfAdult, a.NoOfChild, a.NoOfChild1, a.NoOfChild2, " +
+                DataTable _dtR = TextUtils.Select("SELECT a.ID, ProfileIndividualID, LastName, ConfirmationNo, a.RateCode, a.NoOfAdult, a.NoOfChild, a.NoOfChild1, a.NoOfChild2, " +
                                                   "ArrivalDate, DepartureDate, RoomTypeID, RoomType, RoomID, RoomNo, a.DiscountRate, a.DiscountAmount " +
                                                   "FROM Reservation a WITH (NOLOCK), RoomType b WITH (NOLOCK) " +
                                                   "WHERE a.RoomTypeID = b.ID " +
@@ -1760,16 +1796,16 @@ namespace NightAudit.Controllers
                     #region 1.Khai báo biến
                     _dtR_1 = _dtR;
                     //Lấy ra ngày BB
-                    DateTime _BusDate = pt.GetBusinessDate();
-                    DateTime _SysDate = pt.GetSystemDate();
+                    DateTime _BusDate = TextUtils.GetBusinessDate();
+                    DateTime _SysDate = TextUtils.GetSystemDate();
                     //Xác định số tổng post vào code nào
-                    string _RC_P = pt.Select("Select KeyValue From ConfigSystem Where KeyName = 'RoomCharge_P'").Rows[0]["KeyValue"].ToString();
-                    string _PckBB = pt.Select("Select KeyValue From ConfigSystem Where KeyName ='PackageBB'").Rows[0]["KeyValue"].ToString();
-                    string _PckBBChild = pt.Select("Select KeyValue From ConfigSystem Where KeyName ='PackageBBChild'").Rows[0]["KeyValue"].ToString();
+                    string _RC_P = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName = 'RoomCharge_P'").Rows[0]["KeyValue"].ToString();
+                    string _PckBB = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName ='PackageBB'").Rows[0]["KeyValue"].ToString();
+                    string _PckBBChild = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName ='PackageBBChild'").Rows[0]["KeyValue"].ToString();
                     //Xác định TransactionCode (Tiền phòng)
-                    string _TransCodeUSD = pt.Select("Select KeyValue From ConfigSystem Where KeyName = 'RoomChargeFITUSD'").Rows[0]["KeyValue"].ToString();
-                    string _TransCodeVND = pt.Select("Select KeyValue From ConfigSystem Where KeyName = 'RoomChargeFITVND'").Rows[0]["KeyValue"].ToString();
-                    string PackageModeCharge = pt.Select("Select KeyValue From ConfigSystem Where KeyName = 'PackageIncludeType'").Rows[0]["KeyValue"].ToString();//Dùng để xác định chi lấy từ ReservationPackage hay PackageDetail 
+                    string _TransCodeUSD = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName = 'RoomChargeFITUSD'").Rows[0]["KeyValue"].ToString();
+                    string _TransCodeVND = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName = 'RoomChargeFITVND'").Rows[0]["KeyValue"].ToString();
+                    string PackageModeCharge = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName = 'PackageIncludeType'").Rows[0]["KeyValue"].ToString();//Dùng để xác định chi lấy từ ReservationPackage hay PackageDetail 
                     #endregion
 
                     for (int i = 0; i < _dtR.Rows.Count; i++)
@@ -1779,7 +1815,7 @@ namespace NightAudit.Controllers
                         if (_CheckAdvanceBill(TextUtils.ToInt(_dtR.Rows[i]["ID"].ToString()), _BusDate) == false)
                         {
                             //Lấy thông tin bảng Rate
-                            DataTable _dtRR = pt.Select("SELECT * FROM ReservationRate WITH (NOLOCK) " +
+                            DataTable _dtRR = TextUtils.Select("SELECT * FROM ReservationRate WITH (NOLOCK) " +
                                                                "WHERE ReservationID = " + TextUtils.ToInt(_dtR.Rows[i]["ID"].ToString()) + " " +
                                                                "AND DATEDIFF(day, RateDate, '" + _BusDate.ToString("yyyy/MM/dd") + "') = 0 ");
                             if (_dtRR.Rows.Count > 0)
@@ -1805,7 +1841,7 @@ namespace NightAudit.Controllers
                                     decimal AmountMasterReturn = 0;
                                     string _err = "";
                                     //Lấy dữ liệu trong bảng RsvPck (chỉ lấy giá IncludeRate)
-                                    DataTable _tbRPck = pt.Select("Select a.PackageDetailID, a.PackageID, a.TransactionCode, a.Description, a.Price, a.PriceAfterTax, a.CurrencyID, " +
+                                    DataTable _tbRPck = TextUtils.Select("Select a.PackageDetailID, a.PackageID, a.TransactionCode, a.Description, a.Price, a.PriceAfterTax, a.CurrencyID, " +
                                                                         "a.IsTaxInclude, a.CalculationRuleID, a.[Quantity], a.PostingRhythmID, b.TextInNightAudit, " +
                                                                         "a.PostingDay, a.PostingDate, a.[BeginDate], a.[EndDate] " +
                                                                         "FROM dbo.ReservationPackage a WITH (NOLOCK), dbo.Package b WITH (NOLOCK) " +
@@ -1816,7 +1852,7 @@ namespace NightAudit.Controllers
                                     //Trường hợp lấy trong PackageDetail
                                     if (PackageModeCharge == "1")
                                     {
-                                        _tbRPck = pt.Select("SELECT a.ID AS [PackageDetailID], a.PackageID, a.TransCode AS [TransactionCode], a.[Description], a.[Price], a.[PriceAfterTax], a.CurrencyID, " +
+                                        _tbRPck = TextUtils.Select("SELECT a.ID AS [PackageDetailID], a.PackageID, a.TransCode AS [TransactionCode], a.[Description], a.[Price], a.[PriceAfterTax], a.CurrencyID, " +
                                                                 "a.IsTaxInclude, a.CalculationRuleID, 1 as [Quantity], a.RhythmPostingID AS [PostingRhythmID], b.TextInNightAudit, " +
                                                                 "a.PostingDay, a.PostingDate, a.StartDate AS [BeginDate], a.EndDate " +
                                                                 "FROM dbo.PackageDetail a WITH (NOLOCK), dbo.Package b WITH (NOLOCK) " +
@@ -2053,6 +2089,7 @@ namespace NightAudit.Controllers
 
             catch (Exception ex)
             {
+                SaveLog(ex.ToString());
                 _Error = ex.Message;
                 _IsOK = false;
             }
@@ -2064,6 +2101,7 @@ namespace NightAudit.Controllers
                                         decimal _Amount, bool _TaxInclude, int _Quan, string _CurrencyID, string _CurrencyLocal,
                                         ref decimal _AmountReturn, ref decimal _AmountLocalReturn, ref string _TransNoReturn, ref string _Message, int RoomTypeID, string RoomType, int userID, string userName)
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
                 #region Gán giá trị cho ngày hệ thống
@@ -2493,8 +2531,8 @@ namespace NightAudit.Controllers
                 {
                     #region 1.Khai báo biến
                     //Lấy ra ngày BB
-                    DateTime _BusDate = pt.GetBusinessDate();
-                    DateTime _SysDate = pt.GetSystemDate();
+                    DateTime _BusDate = TextUtils.GetBusinessDate();
+                    DateTime _SysDate = TextUtils.GetSystemDate();
                     //Xác định xem fc có được post hay ko?
                     bool _IsPost = false;
                     #endregion
@@ -2506,7 +2544,7 @@ namespace NightAudit.Controllers
                         if (_CheckAdvanceBill(TextUtils.ToInt(_dtRF.Rows[i]["ID"].ToString()), _BusDate) == false)
                         {
                             //Lấy thông tin bảng FixedCharge
-                            DataTable _dtFC = pt.Select("SELECT a.TransactionCode, a.ArticlesCode, a.Description, a.Amount, a.AmountAfterTax, " +
+                            DataTable _dtFC = TextUtils.Select("SELECT a.TransactionCode, a.ArticlesCode, a.Description, a.Amount, a.AmountAfterTax, " +
                                                                "a.IsTaxInclude, a.BeginDate, a.EndDate, a.Quantity,a.CurrencyID, " +
                                                                "a.PostingRhythmID, a.PostingDate, a.PostingDay " +
                                                                "FROM dbo.ReservationFixedCharge a " +
@@ -2629,7 +2667,7 @@ namespace NightAudit.Controllers
                                                                     _Supplement, _Amount, _TaxInclude, _Qty, _CurrencyID, MasterCurrencyID,
                                                                     ref _AmountReturn, ref _AmountMasterReturn, ref _TransNoReturn, ref _err, _RoomTypeID, _RoomType, userID, userName);
 
-                                            IF_XO(_RoomNo, pt.GetBusinessDateTime().ToString(), pt.GetBusinessDateTime().ToString(), "0", _Amount.ToString(), MasterCurrencyID.ToString(), _Reffrence, _Supplement, _RsvID.ToString(), _ProfileID.ToString());
+                                            IF_XO(_RoomNo, TextUtils.GetBusinessDateTime().ToString(), TextUtils.GetBusinessDateTime().ToString(), "0", _Amount.ToString(), MasterCurrencyID.ToString(), _Reffrence, _Supplement, _RsvID.ToString(), _ProfileID.ToString());
 
                                             #endregion
                                         }
@@ -2729,8 +2767,8 @@ namespace NightAudit.Controllers
                 {
                     #region 1.Khai báo biến
                     //Lấy ra ngày BB
-                    DateTime _BusDate = pt.GetBusinessDate();
-                    DateTime _SysDate = pt.GetSystemDate();
+                    DateTime _BusDate = TextUtils.GetBusinessDate();
+                    DateTime _SysDate = TextUtils.GetSystemDate();
                     #endregion
 
                     for (int i = 0; i < _dtRF.Rows.Count; i++)
@@ -2740,7 +2778,7 @@ namespace NightAudit.Controllers
                         if (_CheckAdvanceBill(TextUtils.ToInt(_dtRF.Rows[i]["ID"].ToString()), _BusDate) == false)
                         {
                             //Lấy thông tin bảng ReservationPackage
-                            DataTable _tbRPck = pt.Select("SELECT a.PackageID, a.TransactionCode, a.Description, a.Price, a.PriceAfterTax, a.CurrencyID, " +
+                            DataTable _tbRPck = TextUtils.Select("SELECT a.PackageID, a.TransactionCode, a.Description, a.Price, a.PriceAfterTax, a.CurrencyID, " +
                                                                  "a.PostingRhythmID, a.PostingDate, a.PostingDay, BeginDate, EndDate, " +
                                                                  "a.IsTaxInclude, a.CalculationRuleID, a.Quantity, b.TransCodeAlt, b.Description AS [Pck_Description] " +
                                                                  "FROM ReservationPackage a WITH (NOLOCK), Package b WITH (NOLOCK) " +
@@ -2781,7 +2819,7 @@ namespace NightAudit.Controllers
                                 //Xác định folio default
                                 int _OriginFolioID = _GetFolioDefault(_RsvID);
                                 //Xác định tiền Discount sẽ trừ cho TransactionCode nào
-                                string _PckDis = pt.Select("Select KeyValue From ConfigSystem Where KeyName ='PackageDiscount'").Rows[0]["KeyValue"].ToString();
+                                string _PckDis = TextUtils.Select("Select KeyValue From ConfigSystem Where KeyName ='PackageDiscount'").Rows[0]["KeyValue"].ToString();
                                 //Xác định TransactionCode Của gói Pck
                                 string _PckTransCode = _tbRPck.Rows[0]["TransCodeAlt"].ToString();
                                 _Desc = _tbRPck.Rows[0]["Pck_Description"].ToString();
@@ -2940,7 +2978,7 @@ namespace NightAudit.Controllers
                                                             _Amount, _TaxInclude, _Quantity, _CurrencyID, MasterCurrencyID, _Reffrence, _Supplement,
                                                             ref AmountMasterReturn, ref _err, _Desc, _RoomTypeID, _RoomType, userID, userName);
 
-                                    IF_XO(_RoomNo, pt.GetBusinessDateTime().ToString(), pt.GetBusinessDateTime().ToString(), "0", _Amount.ToString(), MasterCurrencyID.ToString(), _Reffrence[0], _Supplement[0], _RsvID.ToString(), _ProfileID.ToString());
+                                    IF_XO(_RoomNo, TextUtils.GetBusinessDateTime().ToString(), TextUtils.GetBusinessDateTime().ToString(), "0", _Amount.ToString(), MasterCurrencyID.ToString(), _Reffrence[0], _Supplement[0], _RsvID.ToString(), _ProfileID.ToString());
 
                                     #endregion
                                 }
@@ -2963,7 +3001,7 @@ namespace NightAudit.Controllers
 
         public void _PostCommission(ref bool _IsOK, DataTable _dtRF, int userID, string userName)
         {
-            dt_RoomType = pt.Select("Select * From RoomType with (nolock)");
+            dt_RoomType = TextUtils.Select("Select * From RoomType with (nolock)");
             try
             {
                 _IsOK = true;
@@ -2972,14 +3010,14 @@ namespace NightAudit.Controllers
                 {
                     #region 1.Khai báo biến
                     //Lấy ra ngày BB
-                    DateTime _BusDate = pt.GetBusinessDate();
-                    DateTime _SysDate = pt.GetSystemDate();
+                    DateTime _BusDate = TextUtils.GetBusinessDate();
+                    DateTime _SysDate = TextUtils.GetSystemDate();
                     #endregion
 
                     for (int i = 0; i < _dtRF.Rows.Count; i++)
                     {
                         #region 3.Process
-                        DataTable dtRsvCom = pt.Select("select a.*, b.* from ReservationCommission a with (nolock) " +
+                        DataTable dtRsvCom = TextUtils.Select("select a.*, b.* from ReservationCommission a with (nolock) " +
                             "join CommissionDetail b with (nolock) on a.CommissionID = b.CommissionID " +
                             "where a.ReservationID = " + _dtRF.Rows[i]["ID"].ToString() + " and Datediff(day, b.StartDate, '" + _BusDate.ToString("yyyy-MM-dd") + "') >=0 " +
                             "and Datediff(day, b.EndDate, '" + _BusDate.ToString("yyyy-MM-dd") + "') <=0");
@@ -3039,7 +3077,7 @@ namespace NightAudit.Controllers
                             if (_PercentCommission > 0)
                             {
                                 //neu hoa hong la % thi se tinh % tren gia phong voi ngay bussinessdate
-                                DataTable dtRate = pt.Select("select a.RateAfterTax from ReservationRate a with (nolock) " +
+                                DataTable dtRate = TextUtils.Select("select a.RateAfterTax from ReservationRate a with (nolock) " +
                                     "where a.ReservationID = " + _dtRF.Rows[i]["ID"].ToString() + " and datediff(day, a.RateDate, '" + _BusDate.ToString("yyyy-MM-dd") + "') = 0");
                                 if (dtRate.Rows.Count > 0)
                                 {
@@ -3107,21 +3145,28 @@ namespace NightAudit.Controllers
 
                 //Update lại trạng thái OOO 
                 string sql = "UPDATE [room] set [room].[HKStatusID] = (Select top 1 'status' = case  When a.OOOStatus = 1 then 5 when a.OOOStatus = 2 then 6 end  From BusinessBlock as a " +
-                             "WHERE datediff(day, a.FromDateOOO,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "' )>=0 " +
-                             "AND datediff(day, a.ToDateOOO,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "' )<0 " +
+                             "WHERE datediff(day, a.FromDateOOO,'" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "' )>=0 " +
+                             "AND datediff(day, a.ToDateOOO,'" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "' )<0 " +
                              "AND a.RoomID= [room].[ID]  Order by a.ID ), " +
-                             "RoomStatus = HKStatusID where ID in (Select RoomID From BusinessBlock where datediff(day, FromDateOOO, '" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "' )>=0 " +
-                             "AND datediff(day, ToDateOOO,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "') < 0 AND RoomID>0)";
+                             "RoomStatus = HKStatusID where ID in (Select RoomID From BusinessBlock where datediff(day, FromDateOOO, '" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "' )>=0 " +
+                             "AND datediff(day, ToDateOOO,'" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "') < 0 AND RoomID>0)";
                 SqlHelper.ExecuteNonQuery(DBUtils.GetDBConnectionString(), CommandType.Text, sql);
 
                 //Lấy danh sách các phòng đến ngày hết hạn trạng thái OOO, OOS
-                DataTable dtOOO = pt.Select("Select * From BusinessBlock Where datediff(day,FromDateOOO,ToDateOOO)!=0 And OOOStatus in (1,2) AND DateDiff(day,ToDateOOO,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ");
+                DataTable dtOOO = TextUtils.Select("Select * From BusinessBlock Where datediff(day,FromDateOOO,ToDateOOO)!=0 And OOOStatus in (1,2) AND DateDiff(day,ToDateOOO,'" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ");
                 if (dtOOO.Rows.Count > 0)
                 {
                     for (int i = 0; i < dtOOO.Rows.Count; i++)
                     {
                         string RoomNo = dtOOO.Rows[i]["RoomNo"].ToString();
                         RoomModel md = (RoomModel)RoomBO.Instance.FindByPrimaryKey(TextUtils.ToInt(dtOOO.Rows[i]["RoomID"].ToString()));
+                        if (md == null)
+                        {
+                            // (tùy chọn) log lại để kiểm tra dữ liệu
+                            SaveLog($"Room not found. RoomNo = {RoomNo}");
+                            continue;
+                        }
+
                         RoomStatusHistoryBO.InsertHistory(md.RoomNo, md.HKStatusID.ToString(), dtOOO.Rows[i]["ReturnStatus"].ToString(), SystemDate, TextUtils.GetHostName(), "Night Audit", md.ID, "Room", "dad");
 
                         string sqlUpdate = "UPDATE Room SET HKStatusID = " + TextUtils.ToInt(dtOOO.Rows[i]["ReturnStatus"].ToString()) + ", RoomStatus = " + TextUtils.ToInt(dtOOO.Rows[i]["ReturnStatus"].ToString()) + "  WHERE ID = " + TextUtils.ToInt(dtOOO.Rows[i]["RoomID"].ToString()) + " ";
@@ -3130,7 +3175,7 @@ namespace NightAudit.Controllers
                 }
 
                 //Truong Hop Fromdate == Todate
-                DataTable dtO = pt.Select("Select * From BusinessBlock Where datediff(day,FromDateOOO,ToDateOOO)=0 And OOOStatus IN (1,2) AND DateDiff(day,ToDateOOO,'" + pt.GetBusinessDate().ToString("yyyy/MM/dd") + "')=0 ");
+                DataTable dtO = TextUtils.Select("Select * From BusinessBlock Where datediff(day,FromDateOOO,ToDateOOO)=0 And OOOStatus IN (1,2) AND DateDiff(day,ToDateOOO,'" + TextUtils.GetBusinessDate().ToString("yyyy/MM/dd") + "')=0 ");
                 if (dtO.Rows.Count > 0)
                 {
                     //Fromdate == Todate == BussinessDate
@@ -3183,7 +3228,7 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
                 //Cap nhat trang thai cho khach DUEIN trong bang RESERVATION -- Status = 5 
-                string sqlUpdate_DI = "UPDATE Reservation SET Status = 5 WHERE Status = 0 And DateDiff(day,ArrivalDate,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ";
+                string sqlUpdate_DI = "UPDATE Reservation SET Status = 5 WHERE Status = 0 And DateDiff(day,ArrivalDate,'" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ";
                 SqlHelper.ExecuteNonQuery(DBUtils.GetDBConnectionString(), CommandType.Text, sqlUpdate_DI);
             }
             catch (Exception ex)
@@ -3200,7 +3245,7 @@ namespace NightAudit.Controllers
             mAL.ObjectID = _ID;
             mAL.UserID = userID;
             mAL.UserName = userName;
-            mAL.ChangeDate = pt.GetSystemDate();
+            mAL.ChangeDate = TextUtils.GetSystemDate();
             mAL.Change = _change;
             mAL.OldValue = _oldvalue;
             mAL.NewValue = _newvalue;
@@ -3216,13 +3261,13 @@ namespace NightAudit.Controllers
             try
             {
                 _IsOK = true;
-                DataTable _dtRsv = pt.Select("Select ID From Reservation WITH (NOLOCK) Where Status = 1 And DateDiff(day,DepartureDate,'" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ");
+                DataTable _dtRsv = TextUtils.Select("Select ID From Reservation WITH (NOLOCK) Where Status = 1 And DateDiff(day,DepartureDate,'" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ");
                 if (_dtRsv.Rows.Count > 0)
                 {
                     for (int i = 0; i < _dtRsv.Rows.Count; i++)
                     {
                         InsertActivityLog("Reservation", Convert.ToInt32(_dtRsv.Rows[i]["ID"]), "Status", "CHECKED IN", "DUE OUT", "", userID, userName);
-                        pt.ExcuteSQL("Update Reservation SET Status = 6 Where ID ='" + Convert.ToInt32(_dtRsv.Rows[i]["ID"]) + "'");
+                        TextUtils.ExcuteSQL("Update Reservation SET Status = 6 Where ID ='" + Convert.ToInt32(_dtRsv.Rows[i]["ID"]) + "'");
                     }
 
                 }
@@ -3245,7 +3290,7 @@ namespace NightAudit.Controllers
                 //Cap nhat trang thai phong cho khach NoShow -- Status = 7
                 string sqlUpdate_NO = "UPDATE Reservation SET Status = 7, NoShowStatus =1 " +
                                       "WHERE (Status = 0 OR Status = 5) " +
-                                      "AND ArrivalDate = cast('" + pt.GetBusinessDate().ToString("yyyy/MM/dd") + "' as date) ";
+                                      "AND ArrivalDate = cast('" + TextUtils.GetBusinessDate().ToString("yyyy/MM/dd") + "' as date) ";
                 SqlHelper.ExecuteNonQuery(DBUtils.GetDBConnectionString(), CommandType.Text, sqlUpdate_NO);
                 //TextUtils.DailyCutOff();
             }
@@ -3267,36 +3312,36 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
 
-                DataTable dt = pt.Select("Select ID From Room where RoomTypeID Not in (Select ID from RoomType where IsPseudo =1)");
+                DataTable dt = TextUtils.Select("Select ID From Room where RoomTypeID Not in (Select ID from RoomType where IsPseudo =1)");
                 DataTable _dtR = null;
                 if (dt.Rows.Count > 0)
                 {
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        _dtR = pt.Select("SELECT Count(a.ID) AS ID " +
+                        _dtR = TextUtils.Select("SELECT Count(a.ID) AS ID " +
                                                 "FROM ReservationRate a WITH (NOLOCK), Reservation b WITH (NOLOCK)" +
                                                 "WHERE a.ReservationID = b.ID " +
                                                 "AND a.RoomID > 0 " +
                                                 $"AND a.RoomID = {TextUtils.ToInt(dt.Rows[i][0].ToString())}" +
                                                 "AND ReservationNo > 0 " +
-                                                $"AND DATEDIFF(DAY,RateDate,'{pt.GetBusinessDate().ToString("yyyy/MM/dd")}') <= 0 " +
+                                                $"AND DATEDIFF(DAY,RateDate,'{TextUtils.GetBusinessDate().ToString("yyyy/MM/dd")}') <= 0 " +
                                                 "AND (b.Status = 1 OR b.Status = 6) ");
                         if (_dtR.Rows.Count > 0)
                         {
                             if (TextUtils.ToInt(_dtR.Rows[0][0].ToString()) == 0)
                             {
-                                pt.UpdateDataBase("UPDATE Room SET FOStatus = 0, HKFOStatus = 0, UserUpdateID = " + UserID + " WHERE ID = " + TextUtils.ToInt(dt.Rows[i][0].ToString()) + " ");
+                                TextUtils.ExcuteSQL("UPDATE Room SET FOStatus = 0, HKFOStatus = 0, UserUpdateID = " + UserID + " WHERE ID = " + TextUtils.ToInt(dt.Rows[i][0].ToString()) + " ");
                                 //MessageBox.Show("Changed FOStatus Ro.No. " + txtRoomNo.Text + " from occupied to vacant", TextUtils.Caption_Confirm);
 
                             }
                             else
                             {
-                                pt.UpdateDataBase("UPDATE Room SET FOStatus = 1, HKFOStatus = 1, UserUpdateID = " + UserID + " WHERE ID = " + TextUtils.ToInt(dt.Rows[i][0].ToString()) + " ");
+                                TextUtils.ExcuteSQL("UPDATE Room SET FOStatus = 1, HKFOStatus = 1, UserUpdateID = " + UserID + " WHERE ID = " + TextUtils.ToInt(dt.Rows[i][0].ToString()) + " ");
                             }
                         }
                         else
                         {
-                            pt.UpdateDataBase("UPDATE Room SET FOStatus = 0, HKFOStatus = 0, UserUpdateID = " + UserID + " WHERE ID = " + TextUtils.ToInt(dt.Rows[i][0].ToString()) + " ");
+                            TextUtils.ExcuteSQL("UPDATE Room SET FOStatus = 0, HKFOStatus = 0, UserUpdateID = " + UserID + " WHERE ID = " + TextUtils.ToInt(dt.Rows[i][0].ToString()) + " ");
                         }
                     }
                 }
@@ -3320,9 +3365,9 @@ namespace NightAudit.Controllers
         {
             try
             {
-                pt.UpdateCommand("Update Folio set BalanceVND=dbo.getBalanceOfFolio(" + _FolioID + ",'" + _CURRENCY_1 + "')," +
+                TextUtils.ExcuteSQL("Update Folio set BalanceVND=dbo.getBalanceOfFolio(" + _FolioID + ",'" + _CURRENCY_1 + "')," +
                                 "BalanceUSD=dbo.getBalanceOfFolio(" + _FolioID + ",'" + _CURRENCY_2 + "') Where ID=" + _FolioID);
-                pt.UpdateCommand("Update Reservation set BalanceVND=dbo.getBalanceOfGih(" + _ReservationID + ",'" + _CURRENCY_1 + "')," +
+                TextUtils.ExcuteSQL("Update Reservation set BalanceVND=dbo.getBalanceOfGih(" + _ReservationID + ",'" + _CURRENCY_1 + "')," +
                                 "BalanceUSD=dbo.getBalanceOfGih(" + _ReservationID + ",'" + _CURRENCY_2 + "') Where ID=" + _ReservationID);
                 return true;
             }
@@ -3337,12 +3382,12 @@ namespace NightAudit.Controllers
             try
             {
                 _IsOK = true;
-                DataTable dtRsv = pt.Select("SELECT ID FROM Reservation WITH (NOLOCK) WHERE Status = 1");
+                DataTable dtRsv = TextUtils.Select("SELECT ID FROM Reservation WITH (NOLOCK) WHERE Status = 1");
                 if (dtRsv.Rows.Count > 0)
                 {
                     for (int i = 0; i < dtRsv.Rows.Count; i++)
                     {
-                        DataTable dtFolio = pt.Select("SELECT ID FROM Folio WITH (NOLOCK) WHERE Status = 0 AND ReservationID = " + int.Parse(dtRsv.Rows[i]["ID"].ToString()));
+                        DataTable dtFolio = TextUtils.Select("SELECT ID FROM Folio WITH (NOLOCK) WHERE Status = 0 AND ReservationID = " + int.Parse(dtRsv.Rows[i]["ID"].ToString()));
                         string str = "";
                         if (dtFolio.Rows.Count > 0)
                         {
@@ -3372,7 +3417,7 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
                 /* Cập nhật phòng từ Clean(4) --> Clean None Check(1) (HKStatusID: 4 --> 1) */
-                DataTable dtn = pt.Select("Select a.ID, a.RoomNo FROM Room a WITH (NOLOCK), RoomType b WITH (NOLOCK) " +
+                DataTable dtn = TextUtils.Select("Select a.ID, a.RoomNo FROM Room a WITH (NOLOCK), RoomType b WITH (NOLOCK) " +
                                                  "Where a.RoomTypeID = b.ID " +
                                                  "AND a.HKStatusID = 4 " +
                                                  "AND b.IsPseudo =0 ");
@@ -3384,7 +3429,7 @@ namespace NightAudit.Controllers
                         RoomModel md = (RoomModel)RoomBO.Instance.FindByPrimaryKey(TextUtils.ToInt(dtn.Rows[r]["ID"].ToString()));
                         RoomStatusHistoryBO.InsertHistory(md.RoomNo, md.HKStatusID.ToString(), "1", SystemDate, TextUtils.GetHostName(), "Night Audit", md.ID, "Room", userName);
 
-                        pt.ExcuteSQL("Update Room Set HKStatusID = 1 Where RoomNo ='" + md.RoomNo + "' ");// HKStatusID = 4 And RoomTypeCode <>'CONF' and RoomTypeCode <>'XXX' ");
+                        TextUtils.ExcuteSQL("Update Room Set HKStatusID = 1 Where RoomNo ='" + md.RoomNo + "' ");// HKStatusID = 4 And RoomTypeCode <>'CONF' and RoomTypeCode <>'XXX' ");
                     }
                 }
                 SaveLog("Cap nhat xong trang thai cho cac phong VC --> VCN !");
@@ -3408,7 +3453,7 @@ namespace NightAudit.Controllers
                 //                                 "From Reservation WITH (NOLOCK) " +
                 //                                 "Where Status = 6 And MainGuest = 1 And RoomNo > 0 AND PostingMaster = 0");
 
-                DataTable dta = pt.Select("Select MainGuest, RoomID, RoomNo " +
+                DataTable dta = TextUtils.Select("Select MainGuest, RoomID, RoomNo " +
                                                 "From Reservation WITH (NOLOCK) " +
                                                 "Where Status = 6 And MainGuest = 1 And RoomNo <> '' AND PostingMaster = 0");
                 if (dta.Rows.Count > 0)
@@ -3418,7 +3463,7 @@ namespace NightAudit.Controllers
                         string RoomNo = dta.Rows[r]["RoomNo"].ToString();
                         RoomModel md = (RoomModel)RoomBO.Instance.FindByPrimaryKey(TextUtils.ToInt(dta.Rows[r]["RoomID"].ToString()));
                         RoomStatusHistoryBO.InsertHistory(md.RoomNo, md.HKStatusID.ToString(), "7", SystemDate, TextUtils.GetHostName(), "Night Audit", md.ID, "Room", userName);
-                        pt.ExcuteSQL("Update Room Set HKStatusID = 7 Where RoomNo ='" + md.RoomNo + "'");
+                        TextUtils.ExcuteSQL("Update Room Set HKStatusID = 7 Where RoomNo ='" + md.RoomNo + "'");
                     }
                     SaveLog("Cap nhat xong trang thai phong DueOut!");
                 }
@@ -3440,7 +3485,7 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
                 //Lấy ra danh sách phiếu đặt phòng cần cập nhật
-                DataTable _dtRsv = pt.Select("SELECT ID FROM Reservation WITH (NOLOCK)" +
+                DataTable _dtRsv = TextUtils.Select("SELECT ID FROM Reservation WITH (NOLOCK)" +
                                                     "WHERE (Status = 1 OR Status =6) AND ReservationNo > 0 AND PostingMaster = 0 Order By RoomNo");
                 if (_dtRsv.Rows.Count > 0)
                 {
@@ -3448,12 +3493,12 @@ namespace NightAudit.Controllers
                     {
                         //thinh rao doan code nay
                         //Lấy thông tin trong bảng Rate
-                        DataTable _dtRsv_D = pt.Select("SELECT Rate, RateAfterTax, NoOfAdult, NoOfChild, NoOfChild1, NoOfChild2, " +
+                        DataTable _dtRsv_D = TextUtils.Select("SELECT Rate, RateAfterTax, NoOfAdult, NoOfChild, NoOfChild1, NoOfChild2, " +
                                                               "RoomTypeID, RoomType, RoomID, RoomNo, MarketID, SourceID, " +
                                                               "DiscountRate, DiscountAmount " +
                                                               "FROM ReservationRate WITH (NOLOCK) " +
                                                               "WHERE ReservationID = " + int.Parse(_dtRsv.Rows[i]["ID"].ToString()) + " " +
-                                                              "AND datediff(day, RateDate, '" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ");
+                                                              "AND datediff(day, RateDate, '" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "')=0 ");
 
                         //thinh sua: lay MarketID cua bang Reservation
                         //Lấy thông tin trong bảng Rate
@@ -3492,7 +3537,7 @@ namespace NightAudit.Controllers
                                             "DiscountRate = " + Convert.ToDecimal(_dtRsv_D.Rows[0]["DiscountRate"]).ToString().Replace(",", ".") + ", " +
                                             "DiscountAmount = " + Convert.ToDecimal(_dtRsv_D.Rows[0]["DiscountAmount"]).ToString().Replace(",", ".") + " " +
                                             "WHERE ID = " + TextUtils.ToInt(_dtRsv.Rows[i]["ID"].ToString()) + " ";
-                            pt.ExcuteSQL(sql_UD);
+                            TextUtils.ExcuteSQL(sql_UD);
                         }
                     }
                 }
@@ -3514,13 +3559,13 @@ namespace NightAudit.Controllers
             {
                 _IsOK = true;
                 //Lấy ra danh sách phiếu đặt phòng cần cập nhật
-                DataTable _dtRsv = pt.Select("SELECT ProfileIndividualID FROM Reservation WITH (NOLOCK) " +
+                DataTable _dtRsv = TextUtils.Select("SELECT ProfileIndividualID FROM Reservation WITH (NOLOCK) " +
                                                     "WHERE (Status = 1 OR Status = 6) AND ReservationNo > 0 AND PostingMaster = 0 Order By RoomNo ");
                 if (_dtRsv.Rows.Count > 0)
                 {
                     for (int i = 0; i < _dtRsv.Rows.Count; i++)
                     {
-                        DataTable _dtRG = pt.Select("SELECT Count(ID) AS a " +
+                        DataTable _dtRG = TextUtils.Select("SELECT Count(ID) AS a " +
                                                            "FROM Reservation WITH (NOLOCK) " +
                                                            "WHERE ProfileIndividualID = " + TextUtils.ToInt(_dtRsv.Rows[i][0].ToString()) + "  " +
                                                            "AND ReservationNo > 0 AND Status IN (1,2,6) " +
@@ -3531,7 +3576,7 @@ namespace NightAudit.Controllers
                                              "ReturnGuest = " + (TextUtils.ToInt(_dtRG.Rows[0]["a"].ToString()) - 1) + ", " +
                                              "StayNo = " + TextUtils.ToInt(_dtRG.Rows[0]["a"].ToString()) + " " +
                                              "WHERE ID = " + TextUtils.ToInt(_dtRsv.Rows[i][0].ToString()) + " ";
-                            pt.ExcuteSQL(sql_UD);
+                            TextUtils.ExcuteSQL(sql_UD);
                         }
                     }
                 }
@@ -3544,7 +3589,7 @@ namespace NightAudit.Controllers
         }
         private int GetAllBlocked(int _AllID, int _RTID, DateTime _date)
         {
-            DataTable dt = pt.Select("SELECT SUM(a.NoOfRoom) AS Rms " +
+            DataTable dt = TextUtils.Select("SELECT SUM(a.NoOfRoom) AS Rms " +
                                             "FROM dbo.Reservation a WITH (NOLOCK), dbo.ReservationRate b WITH (NOLOCK) " +
                                             "WHERE a.ID = b.ReservationID AND b.AllotmentID = " + _AllID + " AND b.RoomTypeID = " + _RTID + " " +
                                             "AND DATEDIFF(DAY,b.RateDate,'" + _date.ToString("yyyy/MM/dd") + "') = 0 " +
@@ -3563,7 +3608,7 @@ namespace NightAudit.Controllers
             int _FromAllotmentID = 0;
             //int _ToAllotmentID = 0;
             DataTable dtAll = null;
-            DateTime _SysDate = pt.GetSystemDate();
+            DateTime _SysDate = TextUtils.GetSystemDate();
             #endregion
 
             #region B1.Get all default
@@ -3571,7 +3616,7 @@ namespace NightAudit.Controllers
             #endregion
 
             #region B2.Get list allotment to cutoff
-            dtAll = pt.Select("SELECT a.ID, a.AllotmentID, a.RoomTypeID, a.Quantity " +
+            dtAll = TextUtils.Select("SELECT a.ID, a.AllotmentID, a.RoomTypeID, a.Quantity " +
                                      "FROM dbo.AllotmentDetail a WITH (NOLOCK), dbo.Allotment b  WITH (NOLOCK)  " +
                                      "WHERE a.AllotmentID = b.ID AND b.IsDefault = 0 AND a.CutOffDay = -1 " +
                                      "AND DATEDIFF(DAY,a.CutOffDate,'" + date.ToString("yyyy/MM/dd") + "') = 0 ");
@@ -3613,9 +3658,9 @@ namespace NightAudit.Controllers
                         mATF.Quantity = _Qty;
                         mATF.FromDate = date;
                         mATF.ToDate = date;
-                        if (pt != null)
-                            pt.Insert(mATF);
-                        else
+                        //if (pt != null)
+                        //    pt.Insert(mATF);
+                        //else
                             AllotmentTransferBO.Instance.Insert(mATF);
                         #endregion
 
@@ -3624,19 +3669,19 @@ namespace NightAudit.Controllers
                         #endregion
 
                         #region 3.Update AllotmentDetail - From
-                        if (pt != null)
-                            pt.UpdateCommand("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
-                        else
-                            pt.UpdateCommand("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
+                        //if (pt != null)
+                        //    pt.UpdateCommand("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
+                        //else
+                        TextUtils.ExcuteSQL("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
                         #endregion
                     }
                 }
 
                 #region **Delete db
-                if (pt != null)
-                    pt.UpdateCommand("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
-                else
-                    pt.UpdateDataBase("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
+                //if (pt != null)
+                //    pt.UpdateCommand("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
+                //else
+                TextUtils.ExcuteSQL("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
                 #endregion
                 //}
                 //else
@@ -3644,6 +3689,7 @@ namespace NightAudit.Controllers
             }
             #endregion
         }
+        #region
         public void CutOffDays(DateTime date, ref string _mess, string userName)
         {
             #region *.Constructor
@@ -3653,7 +3699,7 @@ namespace NightAudit.Controllers
             int _FromAllotmentID = 0;
             //int _ToAllotmentID = 0;
             DataTable dtAll = null;
-            DateTime _SysDate = pt.GetSystemDate();
+            DateTime _SysDate = TextUtils.GetSystemDate();
             #endregion
 
             #region B1.Get all default
@@ -3661,7 +3707,7 @@ namespace NightAudit.Controllers
             #endregion
 
             #region B2.Get list allotment to cutoff
-            dtAll = pt.Select("SELECT a.ID, a.AllotmentID, a.RoomTypeID, a.Quantity, a.AllotmentDate " +
+            dtAll = TextUtils.Select("SELECT a.ID, a.AllotmentID, a.RoomTypeID, a.Quantity, a.AllotmentDate " +
                                      "FROM dbo.AllotmentDetail a WITH (NOLOCK), dbo.Allotment b  WITH (NOLOCK)  " +
                                      "WHERE a.AllotmentID = b.ID AND b.IsDefault = 0 AND a.CutOffDay <> -1 " +
                                      "AND DATEDIFF(day,'" + date.ToString("yyyy/MM/dd") + "', a.AllotmentDate) = a.CutOffDay ");
@@ -3703,9 +3749,9 @@ namespace NightAudit.Controllers
                         mATF.Quantity = _Qty;
                         mATF.FromDate = date;
                         mATF.ToDate = date;
-                        if (pt != null)
-                            pt.Insert(mATF);
-                        else
+                        //if (pt != null)
+                        //    pt.Insert(mATF);
+                        //else
                             AllotmentTransferBO.Instance.Insert(mATF);
                         #endregion
 
@@ -3714,19 +3760,19 @@ namespace NightAudit.Controllers
                         #endregion
 
                         #region 3.Update AllotmentDetail - From
-                        if (pt != null)
-                            pt.UpdateCommand("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
-                        else
-                            pt.UpdateCommand("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
+                        //if (pt != null)
+                        //    pt.UpdateCommand("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
+                        //else
+                        TextUtils.ExcuteSQL("UPDATE dbo.AllotmentDetail SET Quantity = Quantity - " + _Qty + " WHERE ID = " + _AllDetailID + " ");
                         #endregion
                     }
                 }
 
-                #region **Delete db
-                if (pt != null)
-                    pt.UpdateCommand("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
-                else
-                    pt.UpdateDataBase("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
+                //#region **Delete db
+                //if (pt != null)
+                //    pt.UpdateCommand("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
+                //else
+                TextUtils.ExcuteSQL("DELETE dbo.AllotmentDetail WHERE Quantity = 0 ");
                 #endregion
                 //}
                 //else
@@ -3741,9 +3787,9 @@ namespace NightAudit.Controllers
                 _IsOK = true;
                 string s = "";
                 //Cut off Date
-                CutOffDate(pt.GetBusinessDate(), ref s, userName);
+                CutOffDate(TextUtils.GetBusinessDate(), ref s, userName);
                 //Cut off Day
-                CutOffDays(pt.GetBusinessDate(), ref s, userName);
+                CutOffDays(TextUtils.GetBusinessDate(), ref s, userName);
             }
             catch (Exception ex)
             {
@@ -3760,7 +3806,7 @@ namespace NightAudit.Controllers
 
                 //if (MessageBox.Show("Are you sure to next date?", SQLCommands.Caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                 //{
-                string sqlUpdate = "UPDATE BusinessDate SET BusinessDate = '" + pt.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "'";
+                string sqlUpdate = "UPDATE BusinessDate SET BusinessDate = '" + TextUtils.GetBusinessDate().AddDays(1).ToString("yyyy/MM/dd") + "'";
                 SqlHelper.ExecuteNonQuery(DBUtils.GetDBConnectionString(), CommandType.Text, sqlUpdate);
                 //}
                 SaveLog("Change BusinessDate - OK");
@@ -3776,7 +3822,7 @@ namespace NightAudit.Controllers
             try
             {
                 DataTable dtGetReport = new DataTable();
-                dtGetReport = pt.Select(@"select * from ReportAuto with (nolock) where [Status]=1");
+                dtGetReport = TextUtils.Select(@"select * from ReportAuto with (nolock) where [Status]=1");
                 if (dtGetReport.Rows.Count > 0 && dtGetReport != null)
                 {
 
@@ -3792,7 +3838,7 @@ namespace NightAudit.Controllers
                         {
                             #region GetDataSource
                             DataTable dtGetNumberPar = new DataTable();
-                            dtGetNumberPar = pt.Select(string.Format(@"select  
+                            dtGetNumberPar = TextUtils.Select(string.Format(@"select  
                                                                            'Parameter_name' = name,  
                                                                            'Type'   = type_name(user_type_id),  
                                                                            'Length'   = max_length,  
@@ -3829,7 +3875,7 @@ namespace NightAudit.Controllers
                                     else if (dtGetNumberPar.Rows[j]["Type"].ToString().Trim() == "datetime")
                                     {
                                         paramName[j] = dtGetNumberPar.Rows[j]["Parameter_name"].ToString().Trim();
-                                        paramValue[j] = pt.GetBusinessDate().Subtract(aInterval);
+                                        paramValue[j] = TextUtils.GetBusinessDate().Subtract(aInterval);
                                     }
 
                                     else if (dtGetNumberPar.Rows[j]["Type"].ToString().Trim() == "decimal")
@@ -3869,7 +3915,7 @@ namespace NightAudit.Controllers
 
 
                 DateTime _BusDate = ((BusinessDateModel)BusinessDateBO.Instance.FindAll()[0]).BusinessDate.AddDays(-1);
-                DataTable dtExRate = pt.Select("Select ID From dbo.ExchangeRate with (nolock) WHERE DATEDIFF(DAY,[DateTime],'" + _BusDate.ToString("yyyy/MM/dd") + "')=0 ");
+                DataTable dtExRate = TextUtils.Select("Select ID From dbo.ExchangeRate with (nolock) WHERE DATEDIFF(DAY,[DateTime],'" + _BusDate.ToString("yyyy/MM/dd") + "')=0 ");
                 if (dtExRate != null)
                 {
                     for (int ex_r = 0; ex_r < dtExRate.Rows.Count; ex_r++)
@@ -3879,10 +3925,10 @@ namespace NightAudit.Controllers
                         if (model != null)
                         {
                             model.DateTime = _BusDate.AddDays(1);
-                            model.CreateDate = pt.GetSystemDate();
+                            model.CreateDate = TextUtils.GetSystemDate();
                             model.UpdateDate = model.CreateDate;
                             model.UserInsertID = model.UserUpdateID = userID;
-                            DataTable dt_check = pt.Select("Select ID From dbo.ExchangeRate with (nolock) WHERE DATEDIFF(DAY,[DateTime],'" + _BusDate.AddDays(1).ToString("yyyy/MM/dd") + "')=0 " +
+                            DataTable dt_check = TextUtils.Select("Select ID From dbo.ExchangeRate with (nolock) WHERE DATEDIFF(DAY,[DateTime],'" + _BusDate.AddDays(1).ToString("yyyy/MM/dd") + "')=0 " +
                                                                   "AND FromCurrencyID= '" + model.FromCurrencyID + "' AND ToCurrencyID = '" + model.ToCurrencyID + "' ");
                             if (dt_check != null)
                             {
@@ -3906,6 +3952,7 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult EndNightAudit()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
                 pt = new ProcessTransactions();
@@ -3932,9 +3979,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult RunNightAuditProcess()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+                
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -3946,7 +3994,7 @@ namespace NightAudit.Controllers
                 _Error = "";
                 _IndexRunning = 0;
                 _IsRunning = true;
-                dt_RoomType = pt.Select("Select * From RoomType with (nolock)");
+                dt_RoomType = TextUtils.Select("Select * From RoomType with (nolock)");
                 //Xác định danh sách phòng để post tiền
 
                 #endregion
@@ -3989,9 +4037,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult CheckInNotCI()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+                
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4058,9 +4107,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult CheckOutNotCO()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+               
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4127,11 +4177,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult Preprocess()
         {
+            
+     
             try
             {
-                pt = new ProcessTransactions();
-                pt.OpenConnection();
-                pt.BeginTransaction();
 
                 #region  khai báo các biến chung
                 _Error = "";
@@ -4166,26 +4215,27 @@ namespace NightAudit.Controllers
                 #endregion
 
 
-                pt.CommitTransaction();
+             
                 return Json(new { code = 0, msg = "Check out was successfully" });
             }
             catch (Exception ex)
             {
-                pt.RollBack();
+               
                 return Json(new { code = 1, msg = ex.Message });
             }
             finally
             {
-                pt.CloseConnection();
+                
             }
         }
 
         [HttpPost]
         public ActionResult CloseShift()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+                
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4229,9 +4279,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult PostingRoomCharge()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+               
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4298,7 +4349,7 @@ namespace NightAudit.Controllers
                 ////SetStep_8("", 2, 1000);
 
 
-                DataTable dt = pt.Select("SELECT a.ID, ProfileIndividualID, LastName, a.ConfirmationNo, a.RateCode, " +
+                DataTable dt = TextUtils.Select("SELECT a.ID, ProfileIndividualID, LastName, a.ConfirmationNo, a.RateCode, " +
                                                  "ArrivalDate, DepartureDate, RoomTypeID, RoomType, RoomID, RoomNo, a.DiscountRate, a.DiscountAmount " +
                                                  "FROM Reservation a WITH (NOLOCK), RoomType b WITH (NOLOCK), ReservationCommission c WITH (NOLOCK) " +
                                                  "WHERE a.RoomTypeID = b.ID " +
@@ -4335,9 +4386,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult ChangeRoomStatus()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+               
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4349,7 +4401,7 @@ namespace NightAudit.Controllers
                 _Error = "";
                 _IndexRunning = 0;
                 _IsRunning = true;
-                dt_RoomType = pt.Select("Select * From RoomType with (nolock)");
+                dt_RoomType = TextUtils.Select("Select * From RoomType with (nolock)");
                 //Xác định danh sách phòng để post tiền
                 #endregion
 
@@ -4435,9 +4487,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult UpdateInformationSystem()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+               
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4449,7 +4502,7 @@ namespace NightAudit.Controllers
                 _Error = "";
                 _IndexRunning = 0;
                 _IsRunning = true;
-                dt_RoomType = pt.Select("Select * From RoomType with (nolock)");
+                dt_RoomType = TextUtils.Select("Select * From RoomType with (nolock)");
                 //Xác định danh sách phòng để post tiền
                 #endregion
 
@@ -4526,9 +4579,10 @@ namespace NightAudit.Controllers
 
         public ActionResult ChangeBusinessDate()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+                
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4540,7 +4594,7 @@ namespace NightAudit.Controllers
                 _Error = "";
                 _IndexRunning = 0;
                 _IsRunning = true;
-                dt_RoomType = pt.Select("Select * From RoomType with (nolock)");
+                dt_RoomType = TextUtils.Select("Select * From RoomType with (nolock)");
                 //Xác định danh sách phòng để post tiền
                 #endregion
 
@@ -4590,9 +4644,10 @@ namespace NightAudit.Controllers
         [HttpPost]
         public ActionResult RecheckingSystem()
         {
+            ProcessTransactions pt = new ProcessTransactions();
             try
             {
-                pt = new ProcessTransactions();
+                
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
@@ -4604,7 +4659,7 @@ namespace NightAudit.Controllers
                 _Error = "";
                 _IndexRunning = 0;
                 _IsRunning = true;
-                dt_RoomType = pt.Select("Select * From RoomType with (nolock)");
+                dt_RoomType = TextUtils.Select("Select * From RoomType with (nolock)");
                 //Xác định danh sách phòng để post tiền
                 #endregion
 

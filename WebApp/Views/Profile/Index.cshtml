@@ -1189,7 +1189,7 @@
 
                     // Các field khác (nếu có)
                     if ($('#txtFirstNameIndividual').length)
-                        $('#txtFirstName').val(res.firstName);
+                        $('#txtFirstNameIndividual').val(res.firstName);
 
                     if ($('#txtMiddleNameIndividual').length)
                         $('#txtMiddleNameIndividual').val(res.middleName);
@@ -1202,9 +1202,9 @@
 
                          
                     // Title (nếu có dropdown)
-                    if (res.TitleID) {
+                    if (res.titleID) {
                        let selectTitle= $('#txtTitleIndividual')[0].tomselect;
-                            selectTitle.setValue(result.profile.titleID);
+                            selectTitle.setValue(res.titleID);
                     }
                 }
             },

@@ -137,6 +137,8 @@
                     closeModalPaymentBilling();
                     searchFolioDetail(0);
                     showToast('Success', data.msg, true);
+                    $('#balanceBilling').text(formatNumberBilling(data.balanceVND));
+                    $('#totalBilling').text(formatNumberBilling(data.balanceVND));
                 } else {
                     showToast('Error', data.msg, false);
                 }

@@ -835,9 +835,13 @@ namespace Reservation.Controllers
                     return Json(new { code = 1, msg = "Nationality cannot be blank" });
                 }
                 string itemInventoryString = Request.Form["itemInventory"].ToString();
-                List<int> itemInventory = itemInventoryString.Split(',')
-                                                    .Select(x => int.Parse(x)).Where(x => x != 0)
-                                                    .ToList();
+                List<int> itemInventory = itemInventoryString
+                .Split(',')
+                .Where(x => !string.IsNullOrWhiteSpace(x))   // khác "" và " "
+                .Select(int.Parse)
+                .Where(x => x != 0)
+                .ToList();
+
 
                 string itemInventoryRes = "";
                 if(itemInventory.Count > 0)
@@ -1529,11 +1533,15 @@ namespace Reservation.Controllers
                     reservationModel.IsPasserBy = false;
                     //reservationModel.Color = Request.Form["color"].ToString();
                     string colorres = Request.Form["color"].ToString();
-                    System.Drawing.Color color = ColorTranslator.FromHtml(colorres);
-
-                    // Chuyển sang ARGB int
-                    int argb = color.ToArgb();
-                    reservationModel.Color = argb.ToString();
+                    if (!string.IsNullOrWhiteSpace(colorres) && colorres != "#000000")
+                    {
+                        System.Drawing.Color color = ColorTranslator.FromHtml(colorres);
+                        reservationModel.Color = color.ToArgb().ToString();
+                    }
+                    else
+                    {
+                        reservationModel.Color = ""; // hoặc "" tùy kiểu DB
+                    }
                     reservationModel.ARNo = "";
                     reservationModel.ItemInventory = Request.Form["itemInventory"].ToString();
                     reservationModel.Specials = Request.Form["specials"].ToString();

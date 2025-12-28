@@ -570,7 +570,7 @@ namespace Billing.Controllers
                 }
 
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "New reservation created successfully" });
+                return Json(new { code = 0, msg = "Posting created successfully" });
 
             }
             catch (Exception ex)
@@ -843,16 +843,17 @@ namespace Billing.Controllers
 
                 #region update lại balance của reservation và folio
                 decimal balance = FolioDetailBO.CalculateBalance(reservationID);
-                folio[0].BalanceVND = balance;
+                //decimal  amountold = folio[0].BalanceVND;
+                folio[0].BalanceVND =  balance;
                 FolioBO.Instance.Update(folio[0]);
 
                 // update balance reservation
                 ReservationModel res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
-                res.BalanceVND = balance;
+                res.BalanceVND = folio[0].BalanceVND;
                 ReservationBO.Instance.Update(res);
                 #endregion
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "Payment was posted successfully" });
+                return Json(new { code = 0, msg = "Payment was posted successfully", balanceVND = folio[0].BalanceVND });
 
             }
             catch (Exception ex)

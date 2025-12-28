@@ -585,6 +585,7 @@
                 $('#timeEnd7').text(endTime);
                 $('#timeEnd8').text(endTime);
                 if (data.code == 0) {
+                    console.log(data);
                     setProcess('process6', '<i class="fa-solid fa-circle-check"></i>');
                     setStatus('status6', 'Success');
                     setProcess('process7', '<i class="fa-solid fa-circle-check"></i>');
@@ -593,6 +594,7 @@
                     setStatus('status8', 'Success');
                     ChangeRoomStatus();
                 } else {
+                     console.log(data);
                     setProcess('process6', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status6', 'Fail');
                     setProcess('process7', '<i class="fa-solid fa-circle-xmark"></i>');
@@ -605,6 +607,7 @@
             },
             error: function (xhr, statusText, err) {
                 const endTime = getCurrentTime();
+                 console.log(endTime);
                 $('#timeEnd6').text(endTime);
                 $('#timeEnd7').text(endTime);
                 $('#timeEnd8').text(endTime);
