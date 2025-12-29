@@ -15,8 +15,8 @@ namespace Cashiering.Services.Interfaces
                 /// </summary>
 
 
-                /// <returns>Data table chứa danh sách account receivable</returns>
-                DataTable AccountSearch(string accountName, string accountNo, int accountType, string balance);
+        /// <returns>Data table chứa danh sách account receivable</returns>
+        DataTable AccountSearch(string accountName, string accountNo, int accountType, string balance);
 
 
                 /// <summary>
@@ -24,8 +24,8 @@ namespace Cashiering.Services.Interfaces
                 /// </summary>
 
 
-                /// <returns>Data table chứa danh sáchaccount maintenacnce</returns>
-                DataTable AccountMaintence(string dateCheck, int arID, string folioNo, string isActive, string paymentOnly, string print, DateTime fromDate, DateTime toDate);
+        /// <returns>Data table chứa danh sáchaccount maintenacnce</returns>
+        DataTable AccountMaintence(string dateCheck, int arID, string folioNo, string isActive, string paymentOnly, string print, DateTime fromDate, DateTime toDate);
 
 
                 /// <summary>
@@ -47,11 +47,11 @@ namespace Cashiering.Services.Interfaces
                 /// </summary>
 
 
-                /// <returns>Data table chứa anh sách folio transfer account receivable</returns>
-                DataTable SearchInfoAR(string accountName, string accountNo, string folioNo, string isActive, string folioID);
-                DataTable AccountTypeData();
-                DataTable AROpeningData();
-                DataTable ARTracesData();
-                DataTable ARAccountReceivableSearch();
-        }
+        /// <returns>Data table chứa anh sách folio transfer account receivable</returns>
+        DataTable SearchInfoAR(string accountName, string accountNo, string folioNo, string isActive, string folioID);
+        DataTable AccountTypeData();
+        DataTable AROpeningData();
+        DataTable ARTracesData();
+        DataTable ARAccountReceivableSearch();
+    }
 }
