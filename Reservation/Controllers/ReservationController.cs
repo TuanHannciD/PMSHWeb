@@ -2514,6 +2514,53 @@ namespace Reservation.Controllers
                 reservation.SpecialUpdateBy = Request.Form["userName"].ToString();
                 reservation.SpecialUpdateDate = reservation.UpdateDate = DateTime.Now;
                 ReservationBO.Instance.Update(reservation);
+
+
+                ReservationOptionsModel option = new ReservationOptionsModel
+                {
+                    ReservationID = reservation.ID,
+
+                    Accompany = false,
+                    AddOn = false,
+                    AgentCompany = false,
+                    Alerts = false,
+                    Billing = true,
+                    CallerInfo = false,
+                    Cancel = false,
+                    Changes = false,
+                    Confirmation = false,
+                    CreditCards = false,
+                    Del = false,
+                    DepositCancelation = false,
+                    FacilityScheduler = false,
+                    FixedCharges = false,
+                    History = false,
+                    HouseKeeping = false,
+                    Locator = false,
+                    Messages = false,
+                    PackageOption = false,
+                    Party = false,
+                    Privileges = false,
+                    Queue = false,
+                    RateInfo = false,
+                    RegisterCard = false,
+                    RoomMove = false,
+                    Routing = false,
+                    Shares = false,
+                    Traces = false,
+                    TrackIt = false,
+                    WaitList = false,
+                    WakeUpCall = false,
+
+                    ItemInv = 0,          // field này là int → giữ nguyên
+                    GroupOptions = false,
+                    MoreFields = false
+                };
+
+                ReservationOptionsBO.Instance.Insert(option);
+
+
+
                 pt.CommitTransaction();
                 return Json(new { code = 0, msg = "Check in was successfully" });
 
