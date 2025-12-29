@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Administration.Services.Implements;
-using Administration.Services.Interfaces;
+﻿using Administration.Services.Interfaces;
 using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
-using DevExpress.CodeParser;
+using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Data;
+using System.Text;
+using static BaseBusiness.util.ValidationUtils;
 namespace Administration.Controllers
 {
     public class AdministrationController : Controller
@@ -36,12 +31,9 @@ namespace Administration.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
-        public IActionResult Index()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
-        [HttpGet]
 
+        #region MemberList
+        [HttpGet]
         public IActionResult GetMemberList(string code, string name, int inactive)
         {
             try
@@ -79,6 +71,7 @@ namespace Administration.Controllers
         {
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }
+
         [HttpPost]
         public ActionResult InsertMember()
         {
@@ -224,13 +217,14 @@ namespace Administration.Controllers
             }
 
         }
+        #endregion
+
+        #region MemberCategory
         [HttpGet]
         public IActionResult GetMemberCategory(string code, string name, int inactive)
         {
             try
             {
-
-
                 DataTable dataTable = _iAdministrationService.MemberCategory(code, name, inactive);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
@@ -251,16 +245,10 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
         }
         public IActionResult MemberCategory()
         {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return View();
         }
         [HttpPost]
         public ActionResult InsertMemberCategory()
@@ -389,48 +377,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetCity(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.City(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  Country = !string.IsNullOrEmpty(d["Country"].ToString()) ? d["Country"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult City()
-        {
-            List<CountryModel> listctry = PropertyUtils.ConvertToList<CountryModel>(CountryBO.Instance.FindAll());
-            ViewBag.CountryList = listctry;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertCity()
         {
@@ -562,45 +509,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetCountry(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Country(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Country()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertCountry()
         {
@@ -725,45 +634,8 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetLanguage(string code, string name, int inactive)
-        {
-            try
-            {
 
 
-                DataTable dataTable = _iAdministrationService.Language(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Language()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertLanguage()
         {
@@ -888,45 +760,8 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetNationality(string code, string name, int inactive)
-        {
-            try
-            {
 
 
-                DataTable dataTable = _iAdministrationService.Nationality(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Nationality()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertNationality()
         {
@@ -1051,45 +886,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetTitle(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Title(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Title()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertTitle()
         {
@@ -1214,45 +1011,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetTerritory(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Territory(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Territory()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertTerritory()
         {
@@ -1377,45 +1136,8 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetState(string code, string name, int inactive)
-        {
-            try
-            {
 
 
-                DataTable dataTable = _iAdministrationService.State(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["ZipCode"].ToString()) ? d["ZipCode"] : "",
-                                  Name = !string.IsNullOrEmpty(d["StateName"].ToString()) ? d["StateName"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult State()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertState()
         {
@@ -1540,45 +1262,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetVIP(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.VIP(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult VIP()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertVIP()
         {
@@ -1703,41 +1387,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetMarket(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Market(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",                               
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
         [HttpGet]
         public IActionResult GetById(int id)
         {
@@ -1746,12 +1396,6 @@ namespace Administration.Controllers
                 return NotFound();
 
             return Json(market); // trả JSON ra cho Ajax
-        }
-        public IActionResult Market()
-        {
-            List<MarketTypeModel> listmktype = PropertyUtils.ConvertToList<MarketTypeModel>(MarketTypeBO.Instance.FindAll());
-            ViewBag.MarketTypeList = listmktype;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
         }
 
         [HttpPost]
@@ -1893,46 +1537,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetMarketType(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.MarketType(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-      
-        public IActionResult MarketType()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertMarketType()
@@ -2059,46 +1664,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetPickupDropPlace(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.PickupDropPlace(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult PickupDropPlace()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertPickupDropPlace()
@@ -2225,46 +1791,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetTransportType(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.TransportType(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult TransportType()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertTransportType()
@@ -2390,46 +1917,6 @@ namespace Administration.Controllers
                 return Json(new { code = 1, msg = ex.Message });
             }
 
-        }
-        [HttpGet]
-        public IActionResult GetReason(string code, string name, int inactive)
-        {
-            try
-            {
-
-
-                DataTable dataTable = _iAdministrationService.Reason(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Reason()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
         }
 
         [HttpPost]
@@ -2557,46 +2044,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetOrigin(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Origin(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Origin()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertOrigin()
@@ -2723,46 +2171,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetSource(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Source(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Source()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertSource()
@@ -2890,46 +2299,7 @@ namespace Administration.Controllers
 
 
         }
-        [HttpGet]
-        public IActionResult GetAlertsSetup(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.AlertsSetup(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult AlertsSetup()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertAlertsSetup()
@@ -3055,47 +2425,7 @@ namespace Administration.Controllers
 
 
         }
-        [HttpGet]
-        public IActionResult GetComment(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Comment(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  CommentType = !string.IsNullOrEmpty(d["CommentType"].ToString()) ? d["CommentType"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Comment()
-        {
-            List<CommentTypeModel> listctry = PropertyUtils.ConvertToList<CommentTypeModel>(CommentTypeBO.Instance.FindAll());
-            ViewBag.CommentTypeList = listctry;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertComment()
         {
@@ -3225,46 +2555,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetCommentType(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.CommentType(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult CommentType()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertCommentType()
@@ -3305,7 +2596,7 @@ namespace Administration.Controllers
             {
                 pt.CloseConnection();
             }
-        }     
+        }
         [HttpPost]
         public ActionResult UpdateCommentType()
         {
@@ -3392,46 +2683,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetSeason(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Season(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Season()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertSeason()
@@ -3559,46 +2811,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetZone(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Zone(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Zone()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertZone()
@@ -3728,46 +2941,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetDepartment(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Department(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Department()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertDepartment()
@@ -3905,46 +3079,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetOwner(string code, string name, int inactive)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.Owner(code, name, inactive);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult Owner()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertOwner()
@@ -4082,44 +3217,7 @@ namespace Administration.Controllers
             }
 
         }
-         [HttpGet]
-        public IActionResult GetPropertyType(string code, string description, int sequence)
-        {
-            try
-            {
 
-
-                DataTable dataTable = _iAdministrationService.PropertyType(code, description, sequence);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Sequence = !string.IsNullOrEmpty(d["Sequence"].ToString()) ? d["Sequence"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
-        public IActionResult PropertyType()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertPropertyType()
@@ -4199,7 +3297,7 @@ namespace Administration.Controllers
                 string loginName = HttpContext.Session.GetString("LoginName") ?? "";
                 if (string.IsNullOrWhiteSpace(member.Code))
                     return Json(new { success = false, message = "Code không được để trống." });
-              
+
                 if (member.ID == 0) // Insert mới
                 {
                     member.CreatedBy = loginName;
@@ -4263,44 +3361,6 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetReservationType()
-        {
-            try
-            {
-                DataTable dataTable = _iAdministrationService.ReservationType();
-                var colNames = string.Join(", ", dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
-                Console.WriteLine("Columns in ReservationType: " + colNames);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
-                                  Sequence = !string.IsNullOrEmpty(d["Sequence"].ToString()) ? d["Sequence"] : "",
-                                  ArrivalTimeRequired = !string.IsNullOrEmpty(d["ArrivalTimeRequired"].ToString()) ? d["ArrivalTimeRequired"] : "",
-                                  CreditCardRequired = !string.IsNullOrEmpty(d["CreditCardRequired"].ToString()) ? d["CreditCardRequired"] : "",
-                                  Deduct = !string.IsNullOrEmpty(d["Deduct"].ToString()) ? d["Deduct"] : "",
-                                  DepositRequired = !string.IsNullOrEmpty(d["DepositRequired"].ToString()) ? d["DepositRequired"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult ReservationType()
-        {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
 
         [HttpPost]
         public ActionResult InsertReservationType()
@@ -4312,7 +3372,7 @@ namespace Administration.Controllers
                 pt.BeginTransaction();
 
                 ReservationTypeModel member = new ReservationTypeModel();
-                
+
                 // Lấy dữ liệu từ form
                 member.Code = Request.Form["code"].ToString();
                 member.Name = Request.Form["name"].ToString();
@@ -4463,39 +3523,42 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetCurrency()
-        {
-            try
-            {
-                DataTable dataTable = _iAdministrationService.Currency();
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  IsMaster = !string.IsNullOrEmpty(d["IsMaster"].ToString()) ? d["IsMaster"] : "",
-                                  Trans = !string.IsNullOrEmpty(d["Trans"].ToString()) ? d["Trans"] : "",
-                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
 
-            // Không cần gán parameter
-            // report.RequestParameters = false;
+        #endregion
 
-            // return PartialView("_ReportViewerPartial", report);
-        }
+        #region Currency
+        // [HttpGet]
+        // public IActionResult GetCurrency()
+        // {
+        //     try
+        //     {
+        //         DataTable dataTable = _iAdministrationService.Currency();
+        //         var result = (from d in dataTable.AsEnumerable()
+        //                       select new
+        //                       {
+        //                           IsMaster = !string.IsNullOrEmpty(d["IsMaster"].ToString()) ? d["IsMaster"] : "",
+        //                           Trans = !string.IsNullOrEmpty(d["Trans"].ToString()) ? d["Trans"] : "",
+        //                           Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+        //                           Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+        //                           ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+        //                       }).ToList();
+        //         return Json(result);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Json(ex.Message);
+        //     }
+        //  report.DataSource = dataTable;
+
+        // Không cần gán parameter
+        // report.RequestParameters = false;
+
+        // return PartialView("_ReportViewerPartial", report);
+        //}
         public IActionResult Currency()
         {
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return View();
         }
-
         [HttpPost]
         public ActionResult InsertCurrency()
         {
@@ -4695,6 +3758,9 @@ namespace Administration.Controllers
                 pt.CloseConnection();
             }
         }
+        #endregion
+
+        #region hkpEmployee
         [HttpGet]
         public IActionResult GethkpEmployee(string code, string name, int inactive)
         {
@@ -4743,7 +3809,6 @@ namespace Administration.Controllers
 
                 hkpEmployeeModel member = new hkpEmployeeModel();
 
-  
 
                 member.Name = Request.Form["txtname"].ToString();
                 member.Description = Request.Form["txtdescription"].ToString();
@@ -4891,54 +3956,7 @@ namespace Administration.Controllers
                 pt.CloseConnection();
             }
         }
-        [HttpGet]
-        public IActionResult GetProperty()
-        {
-            try
-            {
-                DataTable dataTable = _iAdministrationService.Property();
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  PropertyTypeID = !string.IsNullOrEmpty(d["PropertyTypeID"].ToString()) ? d["PropertyTypeID"] : "",
-                                  PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
-                                  PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
-                                  Telephone = !string.IsNullOrEmpty(d["Telephone"].ToString()) ? d["Telephone"] : "",
-                                  Fax = !string.IsNullOrEmpty(d["Fax"].ToString()) ? d["Fax"] : "",
-                                  Email = !string.IsNullOrEmpty(d["Email"].ToString()) ? d["Email"] : "",
-                                  Website = !string.IsNullOrEmpty(d["Website"].ToString()) ? d["Website"] : "",
-                                  Address = !string.IsNullOrEmpty(d["Address"].ToString()) ? d["Address"] : "",
-                                  ServerName = !string.IsNullOrEmpty(d["ServerName"].ToString()) ? d["ServerName"] : "",
-                                  DatabaseName = !string.IsNullOrEmpty(d["DatabaseName"].ToString()) ? d["DatabaseName"] : "",
-                                  Login = !string.IsNullOrEmpty(d["Login"].ToString()) ? d["Login"] : "",
-                                  Password = !string.IsNullOrEmpty(d["Password"].ToString()) ? d["Password"] : "",
-                                  PropertyType = !string.IsNullOrEmpty(d["PropertyType"].ToString()) ? d["PropertyType"] : "",
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
 
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult Property()
-        {
-            List<PropertyTypeModel> listctry = PropertyUtils.ConvertToList<PropertyTypeModel>(PropertyTypeBO.Instance.FindAll());
-            ViewBag.PropertyTypeList = listctry;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertProperty()
         {
@@ -5102,47 +4120,7 @@ namespace Administration.Controllers
             }
 
         }
-        [HttpGet]
-        public IActionResult GetPropertyPermission(string userID)
-        {
-            try
-            {
-                DataTable dataTable = _iAdministrationService.PropertyPermission(userID);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  PropertyID = !string.IsNullOrEmpty(d["PropertyID"].ToString()) ? d["PropertyID"] : "",
-                                  PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
-                                  PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
-                                  UserID = !string.IsNullOrEmpty(d["UserID"].ToString()) ? d["UserID"] : "",
-                                  LoginName = !string.IsNullOrEmpty(d["LoginName"].ToString()) ? d["LoginName"] : "",                               
-                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
-                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
 
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult PropertyPermission()
-        {
-            List<PropertyModel> listctry = PropertyUtils.ConvertToList<PropertyModel>(PropertyBO.Instance.FindAll());
-            ViewBag.PropertyList = listctry;
-            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
-            ViewBag.UsersList = listuser;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }
         [HttpPost]
         public ActionResult InsertPropertyPermission()
         {
@@ -5155,17 +4133,17 @@ namespace Administration.Controllers
 
                 PropertyPermissionModel member = new PropertyPermissionModel();
 
-             
+
                 string propertyTypeValue = Request.Form["propertyType"];
                 member.PropertyID = int.TryParse(propertyTypeValue, out int cId) ? cId : 0;
 
                 string userValue = Request.Form["chooseuser"];
                 member.UserID = int.TryParse(userValue, out int uId) ? uId : 0;
-                
+
                 member.CreatedBy = HttpContext.Session.GetString("LoginName") ?? "";
                 member.UpdatedBy = member.CreatedBy;
                 member.CreatedDate = DateTime.Now;
-                member.UpdatedDate = DateTime.Now;               
+                member.UpdatedDate = DateTime.Now;
 
                 long memberId = PropertyPermissionBO.Instance.Insert(member);
 
@@ -5273,6 +4251,9 @@ namespace Administration.Controllers
             }
 
         }
+        #endregion
+
+        #region ConfigStatusColor
         [HttpGet]
         public IActionResult GetStatusList()
         {
@@ -5369,8 +4350,10 @@ namespace Administration.Controllers
             {
                 pt.CloseConnection();
             }
-        }     
+        }
+        #endregion
 
+        #region Message
         public ActionResult CreateMessage()
         {
             var model = new ConfigSystemModel
@@ -5408,6 +4391,9 @@ namespace Administration.Controllers
                 pt.CloseConnection();
             }
         }
+        #endregion
+
+        #region MemberTypeSearch
         [HttpGet]
         public IActionResult GetMemberTypeSearch(DateTime fromDate, DateTime toDate, string status, string memberID, int isSortByCardName)
         {
@@ -5435,12 +4421,6 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
         }
         public ActionResult MemberTypeSearch()
         {
@@ -5450,12 +4430,15 @@ namespace Administration.Controllers
             ViewBag.MemberCategoryList = listmbc;
             return View();
         }
+        #endregion
+
+        #region PostingHistory
         [HttpGet]
         public IActionResult GetPostingHistory(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string actionType, string user)
         {
             try
             {
-                DataTable dataTable = _iAdministrationService.PostingHistory(fromDate, toDate, fromFolioID, toFolioID, actionType , user);
+                DataTable dataTable = _iAdministrationService.PostingHistory(fromDate, toDate, fromFolioID, toFolioID, actionType, user);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
@@ -5496,6 +4479,7 @@ namespace Administration.Controllers
             ViewBag.UsersList = listuser;
             return View();
         }
+        #endregion
 
         #region PersonInCharge
         public ActionResult PersonInCharge()
@@ -5512,7 +4496,7 @@ namespace Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult PersonInChargeData( string code, string description, string group, string zone,string  isActive)
+        public IActionResult PersonInChargeData(string code, string description, string group, string zone, string isActive)
         {
             code = code ?? "";
             description = description ?? "";
@@ -5552,7 +4536,7 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-           
+
         }
         [HttpPost]
         public IActionResult PersonInChargeSave(int id, string codenew, string telephonenew, string handphonenew, string emailnew, string namenew, string descriptionnew, string group, string zone, int isActive, string user)
@@ -5579,9 +4563,9 @@ namespace Administration.Controllers
                         Name = namenew?.Trim(),
                         Description = descriptionnew?.Trim(),
                         Inactive = (isActive == 1),
-                        Telephone= telephonenew,
-                        MobilePhone= handphonenew,
-                        Email= emailnew,
+                        Telephone = telephonenew,
+                        MobilePhone = handphonenew,
+                        Email = emailnew,
                         CreatedBy = user,
                         PersonInChargeGroupID = int.Parse(group),
                         PersonInChargeZoneID = int.Parse(zone),
@@ -5655,7 +4639,7 @@ namespace Administration.Controllers
         public ActionResult PersonInChargeGroup()
         {
 
-         
+
             return View();
         }
 
@@ -5664,7 +4648,7 @@ namespace Administration.Controllers
         {
             code = code ?? "";
             description = description ?? "";
-           
+
 
             try
             {
@@ -5692,8 +4676,49 @@ namespace Administration.Controllers
             }
 
         }
+        #endregion
+        #region Deposit/Cancellation Rules Search 
+        public IActionResult DepositRule()
+        {
+            List<UsersModel> listUser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listUser;
+
+            List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listCurr;
+            return View();
+        }
+        [HttpGet]
+        public IActionResult GetDepositRule(string code, string description)
+        {
+            try
+            {
+                DataTable dt = _iAdministrationService.DepositRule(code, description);
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(r["Code"].ToString()) ? r["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : "",
+                                  Type = !string.IsNullOrEmpty(r["Type"].ToString()) ? r["Type"] : "",
+                                  AmountValue = !string.IsNullOrEmpty(r["AmountValue"].ToString()) ? r["AmountValue"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(r["CurrencyID"].ToString()) ? r["CurrencyID"] : "",
+                                  DaysBeforeArrival = !string.IsNullOrEmpty(r["DaysBeforeArrival"].ToString()) ? r["DaysBeforeArrival"] : "",
+                                  DaysAfterBooking = !string.IsNullOrEmpty(r["DaysAfterBooking"].ToString()) ? r["DaysAfterBooking"] : "",
+                                  UserInsertID = r["UserInsertID"] != DBNull.Value ? Convert.ToInt32(r["UserInsertID"]) : 0,
+                                  CreateDate = !string.IsNullOrEmpty(r["CreateDate"].ToString()) ? r["CreateDate"] : "",
+                                  UserUpdateID = !string.IsNullOrEmpty(r["UserUpdateID"].ToString()) ? r["UserUpdateID"] : "",
+                                  UpdateDate = !string.IsNullOrEmpty(r["UpdateDate"].ToString()) ? r["UpdateDate"] : "",
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+        }
         [HttpPost]
-        public IActionResult PersonInChargeGroupSave(int id, string codenew,  string namenew, string descriptionnew,  int isActive, string user)
+        public IActionResult PersonInChargeGroupSave(int id, string codenew, string namenew, string descriptionnew, int isActive, string user)
         {
             var pt = new ProcessTransactions();
             try
@@ -5737,7 +4762,7 @@ namespace Administration.Controllers
                     model.Name = namenew?.Trim();
                     model.Description = descriptionnew?.Trim();
                     model.Inactive = (isActive == 1);
-                  
+
                     model.UpdatedBy = user;
                     model.UpdatedDate = businessDate;
 
@@ -5811,7 +4836,127 @@ namespace Administration.Controllers
                                   UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
                                   UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
                                   Inactive = d["Inactive"]?.ToString() ?? "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
 
+        }
+        [HttpGet]
+        public IActionResult GetDepositRuleById(int id)
+        {
+            var data = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(id);
+
+            if (data == null)
+            {
+                return Json(new { inactive = false, sequence = 0 });
+            }
+
+            return Json(new
+            {
+                inactive = data.Inactive,
+                sequence = data.Sequence
+            });
+        }
+        [HttpPost]
+        public IActionResult DepositRuleSave([FromBody] DepositRuleModel model)
+        {
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+                Check(model?.AmountValue < 0, "amountValue", "Deposit Amount cannot be negative."),
+                Check(model?.Type == 0 && string.IsNullOrWhiteSpace(model?.CurrencyID), "currencyID", "Currency is required for Flat type."),
+                Check((model?.DaysBeforeArrival ?? 0) < 0, "dayBA", "Days Before Arrival cannot be negative."),
+                Check((model?.DaysAfterBooking ?? 0) < 0, "dayAB", "Days After Booking cannot be negative."),
+                Check((model?.Sequence ?? 0) < 0, "seq", "Sequence cannot be negative."),
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Description, "des", "Description is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            string message = "";
+
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    DepositRuleBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var old = (DepositRuleModel)DepositRuleBO.Instance.FindByPrimaryKey(model.ID);
+                    if (old != null)
+                    {
+                        model.Code = old.Code;
+                        model.CreateDate = old.CreateDate;
+                        model.UserInsertID = old.UserInsertID;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    DepositRuleBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DepositRuleDelete(int id)
+        {
+            try
+            {
+                DepositRuleBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+
+        public IActionResult CancellationRule()
+        {
+            List<UsersModel> listUser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listUser;
+
+            List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
+            ViewBag.CurrencyList = listCurr;
+            return View();
+        }
+        [HttpGet]
+        public IActionResult GetCancellationRule(string code, string description)
+        {
+            try
+            {
+                DataTable dt = _iAdministrationService.CancellationRule(code, description);
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(r["Code"].ToString()) ? r["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : "",
+                                  Type = !string.IsNullOrEmpty(r["Type"].ToString()) ? r["Type"] : "",
+                                  AmountValue = !string.IsNullOrEmpty(r["AmountValue"].ToString()) ? r["AmountValue"] : "",
+                                  CurrencyID = !string.IsNullOrEmpty(r["CurrencyID"].ToString()) ? r["CurrencyID"] : "",
+                                  DaysBeforeArrival = !string.IsNullOrEmpty(r["DaysBeforeArrival"].ToString()) ? r["DaysBeforeArrival"] : "",
+                                  CancelBeforeTime = !string.IsNullOrEmpty(r["CancelBeforeTime"].ToString()) ? r["CancelBeforeTime"] : "",
+                                  UserInsertID = r["UserInsertID"] != DBNull.Value ? Convert.ToInt32(r["UserInsertID"]) : 0,
+                                  CreateDate = !string.IsNullOrEmpty(r["CreateDate"].ToString()) ? r["CreateDate"] : "",
+                                  UserUpdateID = !string.IsNullOrEmpty(r["UserUpdateID"].ToString()) ? r["UserUpdateID"] : "",
+                                  UpdateDate = !string.IsNullOrEmpty(r["UpdateDate"].ToString()) ? r["UpdateDate"] : "",
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
                               }).ToList();
                 return Json(result);
             }
@@ -5941,7 +5086,127 @@ namespace Administration.Controllers
                                   UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
                                   UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
                                   Inactive = d["Inactive"]?.ToString() ?? "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
 
+        }
+
+        [HttpGet]
+        public IActionResult GetCancellationRuleById(int id)
+        {
+            var data = (CancellationRuleModel)CancellationRuleBO.Instance.FindByPrimaryKey(id);
+
+            if (data == null)
+            {
+                return Json(new { inactive = false, sequence = 0 });
+            }
+
+            return Json(new
+            {
+                cancelBeforeTime = data.CancelBeforeTime,
+                inactive = data.Inactive,
+                sequence = data.Sequence
+            });
+        }
+        [HttpPost]
+        public IActionResult CancellationRuleSave([FromBody] CancellationRuleModel model)
+        {
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Description, "des", "Description is not blank."),
+                Check((model?.AmountValue ?? 0) < 0, "amountValue", "Cancellation Amount cannot be negative."),
+                // type =1 Percent
+                Check(model?.Type == 1 && (model?.AmountValue ?? 0) > 100, "amountValue", "Percent cannot exceed 100%."),
+                Check(model?.Type == 0 && string.IsNullOrWhiteSpace(model?.CurrencyID), "currencys", "Currency is required for Flat type."),
+
+                Check((model?.DaysBeforeArrival ?? 0) < 0, "dayBA", "Days Before Arrival cannot be negative."),
+
+                Check((model?.Sequence ?? 0) < 0, "seq", "Sequence cannot be negative.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+
+            string message = "";
+
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    CancellationRuleBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var old = (CancellationRuleModel)CancellationRuleBO.Instance.FindByPrimaryKey(model.ID);
+                    if (old != null)
+                    {
+                        model.Code = old.Code;
+                        model.CreateDate = old.CreateDate;
+                        model.UserInsertID = old.UserInsertID;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    CancellationRuleBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult CancellationRuleDelete(int id)
+        {
+            try
+            {
+                CancellationRuleBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/City
+        [HttpGet]
+        public IActionResult GetCity(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.City(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  Country = !string.IsNullOrEmpty(d["Country"].ToString()) ? d["Country"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
                               }).ToList();
                 return Json(result);
             }
@@ -5965,7 +5230,7 @@ namespace Administration.Controllers
                 var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
                 var businessDate = businessDates[0].BusinessDate;
 
-                 List<UsersModel> tran = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindByAttribute("LoginName", user));
+                List<UsersModel> tran = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindByAttribute("LoginName", user));
                 ApprovedbyModel model;
                 bool isNew = (id == 0);
 
@@ -6038,6 +5303,3189 @@ namespace Administration.Controllers
             {
                 return BadRequest(new { success = false, message = ex.Message });
             }
+        }
+        public IActionResult City()
+        {
+            List<CountryModel> listctry = PropertyUtils.ConvertToList<CountryModel>(CountryBO.Instance.FindAll());
+            ViewBag.CountryList = listctry;
+            return View("ItemCategory/City");
+        }
+        [HttpPost]
+        public IActionResult CitySave([FromBody] CityModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank."),
+                Check(model?.CountryID, "countryID", "Please select a country. ")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CityBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (CityModel)CityBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CityBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteCity(int id)
+        {
+            try
+            {
+                CityBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Country
+        [HttpGet]
+        public IActionResult GetCountry(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Country(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Country()
+        {
+            return View("ItemCategory/Country");
+        }
+        [HttpPost]
+        public IActionResult CountrySave([FromBody] CountryModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CountryBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (CountryModel)CountryBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CountryBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteCountry(int id)
+        {
+            try
+            {
+                CountryBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Language
+        [HttpGet]
+        public IActionResult GetLanguage(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Language(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Language()
+        {
+            return View("ItemCategory/Language");
+        }
+        [HttpPost]
+        public IActionResult LanguageSave([FromBody] LanguageModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    LanguageBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (LanguageModel)LanguageBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    LanguageBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteLanguage(int id)
+        {
+            try
+            {
+                CountryBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Nationality
+        [HttpGet]
+        public IActionResult GetNationality(string code, string name, int inactive)
+        {
+            try
+            {
+
+
+                DataTable dataTable = _iAdministrationService.Nationality(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Nationality()
+        {
+            return View("ItemCategory/Nationality");
+        }
+        [HttpPost]
+        public IActionResult NationalitySave([FromBody] NationalityModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    NationalityBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (NationalityModel)NationalityBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    NationalityBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteNationality(int id)
+        {
+            try
+            {
+                NationalityBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Title
+        [HttpGet]
+        public IActionResult GetTitle(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Title(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Title()
+        {
+            return View("ItemCategory/Title");
+        }
+        [HttpPost]
+        public IActionResult TitleSave([FromBody] TitleModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    TitleBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (TitleModel)TitleBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    TitleBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteTitle(int id)
+        {
+            try
+            {
+                TitleBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Territory
+        [HttpGet]
+        public IActionResult GetTerritory(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Territory(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Territory()
+        {
+            return View("ItemCategory/Territory");
+        }
+        [HttpPost]
+        public IActionResult TerritorySave([FromBody] TerritoryModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    TerritoryBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (TerritoryModel)TerritoryBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    TerritoryBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteTerritory(int id)
+        {
+            try
+            {
+                TerritoryBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/State
+        [HttpGet]
+        public IActionResult GetState(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.State(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["ZipCode"].ToString()) ? d["ZipCode"] : "",
+                                  Name = !string.IsNullOrEmpty(d["StateName"].ToString()) ? d["StateName"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult State()
+        {
+            //List<CountryModel> listctry = PropertyUtils.ConvertToList<CountryModel>(CountryBO.Instance.FindAll());
+            //ViewBag.CountryList = listctry;
+            return View("ItemCategory/State");
+        }
+        [HttpPost]
+        public IActionResult StateSave([FromBody] StateModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.ZipCode, "code", "Code is not blank."),
+                Check(model?.StateName, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    StateBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (StateModel)StateBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    StateBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteState(int id)
+        {
+            try
+            {
+                StateBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/VIP
+        [HttpGet]
+        public IActionResult GetVIP(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.VIP(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult VIP()
+        {
+            return View("ItemCategory/VIP");
+        }
+        [HttpPost]
+        public IActionResult VIPSave([FromBody] VIPModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    VIPBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (VIPModel)VIPBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    VIPBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteVIP(int id)
+        {
+            try
+            {
+                VIPBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Market
+        [HttpGet]
+        public IActionResult GetMarket(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Market(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult GetMarketById(int id)
+        {
+            var data = (MarketModel)MarketBO.Instance.FindByPrimaryKey(id);
+
+            if (data == null)
+            {
+                return Json(new { regional = "", groupType = 0, marketTypeID = 0 });
+            }
+
+            return Json(new { regional = data.Regional, groupType = data.GroupType, marketTypeID = data.MarketTypeID });
+        }
+        public IActionResult Market()
+        {
+            List<MarketTypeModel> listmktype = PropertyUtils.ConvertToList<MarketTypeModel>(MarketTypeBO.Instance.FindAll());
+            ViewBag.MarketTypeList = listmktype;
+            return View("ItemCategory/Market");
+        }
+        [HttpPost]
+        public IActionResult MarketSave([FromBody] MarketModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank."),
+                Check(model?.MarketTypeID, "marketTypeID", "Please choose market type.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    MarketBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (MarketModel)MarketBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    MarketBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteMarket(int id)
+        {
+            try
+            {
+                MarketBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/MarketType
+        [HttpGet]
+        public IActionResult GetMarketType(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.MarketType(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult MarketType()
+        {
+            return View("ItemCategory/MarketType");
+        }
+        [HttpPost]
+        public IActionResult MarketTypeSave([FromBody] MarketTypeModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    MarketTypeBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (MarketTypeModel)MarketTypeBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    MarketTypeBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteMarketType(int id)
+        {
+            try
+            {
+                MarketTypeBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/PickupDropPlace
+        [HttpGet]
+        public IActionResult GetPickupDropPlace(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PickupDropPlace(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        public IActionResult PickupDropPlace()
+        {
+            return View("ItemCategory/PickupDropPlace");
+        }
+        [HttpPost]
+        public IActionResult PickupDropPlaceSave([FromBody] PickupDropPlaceModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PickupDropPlaceBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PickupDropPlaceModel)PickupDropPlaceBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PickupDropPlaceBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePickupDropPlace(int id)
+        {
+            try
+            {
+                PickupDropPlaceBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/TransportType
+        [HttpGet]
+        public IActionResult GetTransportType(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.TransportType(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult TransportType()
+        {
+            return View("ItemCategory/TransportType");
+        }
+        [HttpPost]
+        public IActionResult TransportTypeSave([FromBody] TransportTypeModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    TransportTypeBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (TransportTypeModel)TransportTypeBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    TransportTypeBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteTransportType(int id)
+        {
+            try
+            {
+                TransportTypeBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/ReservationType
+        [HttpGet]
+        public IActionResult GetReservationType()
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.ReservationType();
+                var colNames = string.Join(", ", dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Sequence = !string.IsNullOrEmpty(d["Sequence"].ToString()) ? d["Sequence"] : "",
+                                  ArrivalTimeRequired = !string.IsNullOrEmpty(d["ArrivalTimeRequired"].ToString()) ? d["ArrivalTimeRequired"] : "",
+                                  CreditCardRequired = !string.IsNullOrEmpty(d["CreditCardRequired"].ToString()) ? d["CreditCardRequired"] : "",
+                                  Deduct = !string.IsNullOrEmpty(d["Deduct"].ToString()) ? d["Deduct"] : "",
+                                  DepositRequired = !string.IsNullOrEmpty(d["DepositRequired"].ToString()) ? d["DepositRequired"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult ReservationType()
+        {
+            return View("ItemCategory/ReservationType");
+        }
+        [HttpPost]
+        public IActionResult ReservationTypeSave([FromBody] ReservationTypeModel model)
+        {
+            string message = "";
+
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Description is not blank."),
+                Check(model?.Sequence < 0, "seq", "Sequence cannot be negative.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+
+                    ReservationTypeBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (ReservationTypeModel)ReservationTypeBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreateDate = oldData.CreateDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+
+                    ReservationTypeBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteReservationType(int id)
+        {
+            try
+            {
+                ReservationTypeBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Reason
+        [HttpGet]
+        public IActionResult GetReason(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Reason(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Reason()
+        {
+            return View("ItemCategory/Reason");
+        }
+        [HttpPost]
+        public IActionResult ReasonSave([FromBody] ReasonModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    ReasonBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (ReasonModel)ReasonBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    ReasonBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteReason(int id)
+        {
+            try
+            {
+                ReasonBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Origin
+        [HttpGet]
+        public IActionResult GetOrigin(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Origin(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Origin()
+        {
+            return View("ItemCategory/Origin");
+        }
+        [HttpPost]
+        public IActionResult OriginSave([FromBody] OriginModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    OriginBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (OriginModel)OriginBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    OriginBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteOrigin(int id)
+        {
+            try
+            {
+                OriginBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Source
+        [HttpGet]
+        public IActionResult GetSource(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Source(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        public IActionResult Source()
+        {
+            return View("ItemCategory/Source");
+        }
+
+        [HttpPost]
+        public IActionResult SourceSave([FromBody] SourceModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    SourceBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (SourceModel)SourceBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    SourceBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteSource(int id)
+        {
+            try
+            {
+                SourceBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/AlertsSetup
+        [HttpGet]
+        public IActionResult GetAlertsSetup(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.AlertsSetup(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult AlertsSetup()
+        {
+            return View("ItemCategory/AlertsSetup");
+        }
+        [HttpPost]
+        public IActionResult AlertsSetupSave([FromBody] AlertsSetupModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Description, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    AlertsSetupBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (AlertsSetupModel)AlertsSetupBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    AlertsSetupBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteAlertsSetup(int id)
+        {
+            try
+            {
+                AlertsSetupBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Comment
+        [HttpGet]
+        public IActionResult GetComment(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Comment(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  CommentType = !string.IsNullOrEmpty(d["CommentType"].ToString()) ? d["CommentType"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Comment()
+        {
+            List<CommentTypeModel> listctry = PropertyUtils.ConvertToList<CommentTypeModel>(CommentTypeBO.Instance.FindAll());
+            ViewBag.CommentTypeList = listctry;
+            return View("ItemCategory/Comment");
+        }
+        [HttpPost]
+        public IActionResult CommentSave([FromBody] CommentModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.CommentTypeID ?? 0, "commentTypeID", "Comment type must be choose")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CommentBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (CommentModel)CommentBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CommentBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteComment(int id)
+        {
+            try
+            {
+                CommentBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/CommentType
+        [HttpGet]
+        public IActionResult GetCommentType(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.CommentType(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult CommentType()
+        {
+            return View("ItemCategory/CommentType");
+        }
+
+        [HttpPost]
+        public IActionResult CommentTypeSave([FromBody] CommentTypeModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CommentTypeBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (CommentTypeModel)CommentTypeBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    CommentTypeBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteCommentType(int id)
+        {
+            try
+            {
+                CommentTypeBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Season
+        [HttpGet]
+        public IActionResult GetSeason(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Season(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Season()
+        {
+            return View("ItemCategory/Season");
+        }
+        [HttpPost]
+        public IActionResult SeasonSave([FromBody] SeasonModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    SeasonBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (SeasonModel)SeasonBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    SeasonBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteSeason(int id)
+        {
+            try
+            {
+                SeasonBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Zone
+        [HttpGet]
+        public IActionResult GetZone(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Zone(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Zone()
+        {
+            return View("ItemCategory/Zone");
+        }
+        [HttpPost]
+        public IActionResult ZoneSave([FromBody] ZoneModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    ZoneBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (ZoneModel)ZoneBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    ZoneBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteZone(int id)
+        {
+            try
+            {
+                ZoneBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Department
+        [HttpGet]
+        public IActionResult GetDepartment(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Department(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Department()
+        {
+            return View("ItemCategory/Department");
+        }
+        [HttpPost]
+        public IActionResult DepartmentSave([FromBody] DepartmentModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    DepartmentBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (DepartmentModel)DepartmentBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    DepartmentBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteDepartment(int id)
+        {
+            try
+            {
+                DepartmentBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Occupancy
+
+        public IActionResult Occupancy()
+        {
+            return View("ItemCategory/Occupancy");
+        }
+        [HttpGet]
+        public IActionResult GetOccupancy()
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select(@"SELECT o.ID,  CASE o.[Type] 
+                    WHEN 0 THEN 'Hotel' ELSE 'Room Type' END AS [Type], b.Name AS RoomType,
+                    o.Occupancylevel,o.Title,o.Email, o.[Description],o.Color, 
+                    o.CreateDate, o.CreateBy, o.UpdateDate, o.UpdateBy 
+                    FROM Occupancy o left JOIN RoomType b ON o.RoomTypeID=b.ID");
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
+                                  Type = !string.IsNullOrEmpty(r["Type"].ToString()) ? r["Type"] : "",
+                                  Occupancylevel = !string.IsNullOrEmpty(r["Occupancylevel"].ToString()) ? r["Occupancylevel"] : "",
+                                  Title = !string.IsNullOrEmpty(r["Title"].ToString()) ? r["Title"] : "",
+                                  Email = !string.IsNullOrEmpty(r["Email"].ToString()) ? r["Email"] : "",
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : "",
+                                  Color = !string.IsNullOrEmpty(r["Color"].ToString()) ? r["Color"] : "",
+                                  CreateDate = !string.IsNullOrEmpty(r["CreateDate"].ToString()) ? r["CreateDate"] : "",
+                                  CreateBy = !string.IsNullOrEmpty(r["CreateBy"].ToString()) ? r["CreateBy"] : "",
+                                  UpdateDate = !string.IsNullOrEmpty(r["UpdateDate"].ToString()) ? r["UpdateDate"] : "",
+                                  UpdateBy = !string.IsNullOrEmpty(r["UpdateBy"].ToString()) ? r["UpdateBy"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult OccupancySave([FromBody] OccupancyModel model)
+        {
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+                Check((model?.Occupancylevel ?? 0) < 0 || (model?.Occupancylevel ?? 0) > 100, "occLevel", "Must be between 0 and 100"),
+                Check(model?.Occupancylevel < 0, "occLevel", "Occupancy Level cannot be negative.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            string message;
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    OccupancyBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (OccupancyModel)OccupancyBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.CreateBy = oldData.CreateBy;
+                        model.CreateDate = oldData.CreateDate;
+                    }
+                    model.UpdateDate = DateTime.Now;
+                    OccupancyBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult OccupancyDelete(int id)
+        {
+
+            try
+            {
+                OccupancyBO.Instance.Delete(id);
+                return Json(new { success = true, message = "Delete successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion      
+
+        #region ItemCategory/ConfirmationConfig
+
+        public IActionResult ConfirmationConfig()
+        {
+            return View("ItemCategory/ConfirmationConfig");
+        }
+        [HttpGet]
+        public IActionResult GetConfirmationConfig()
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select("SELECT * FROM ConfirmationConfig");
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
+                                  EmailAddress = !string.IsNullOrEmpty(r["EmailAddress"].ToString()) ? r["EmailAddress"] : "",
+                                  MailUser = !string.IsNullOrEmpty(r["MailUser"].ToString()) ? r["MailUser"] : "",
+                                  MailPassword = !string.IsNullOrEmpty(r["MailPassword"].ToString()) ? r["MailPassword"] : "",
+                                  ServerName = !string.IsNullOrEmpty(r["ServerName"].ToString()) ? r["ServerName"] : "",
+                                  ServerPort = !string.IsNullOrEmpty(r["ServerPort"].ToString()) ? r["ServerPort"] : "",
+                                  MailSubject = !string.IsNullOrEmpty(r["MailSubject"].ToString()) ? r["MailSubject"] : "",
+                                  MailBody = !string.IsNullOrEmpty(r["MailBody"].ToString()) ? r["MailBody"] : "",
+                                  MailSubjectENG = !string.IsNullOrEmpty(r["MailSubjectENG"].ToString()) ? r["MailSubjectENG"] : "",
+                                  MailBodyENG = !string.IsNullOrEmpty(r["MailBodyENG"].ToString()) ? r["MailBodyENG"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(r["CreatedBy"].ToString()) ? r["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(r["CreatedDate"].ToString()) ? r["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(r["UpdatedBy"].ToString()) ? r["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(r["UpdatedDate"].ToString()) ? r["UpdatedDate"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult ConfirmationConfigSave([FromBody] ConfirmationConfigModel model)
+        {
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.EmailAddress, "emailAddress", "Email address is not blank."),
+                Check(model?.MailUser, "userMail", "Mail user is not blank."),
+                Check(model?.MailPassword, "passMail", "Mail password is not blank."),
+                Check(model?.ServerName, "serverName", "Server name is not blank."),
+                Check(model?.ServerPort ?? 0, "serverPort", "Port must be greater than 0."),
+                Check(model?.MailSubject, "subMail", "Mail Subject is not blank."),
+                Check(model?.MailBody, "bodyMail", "Mail body is not blank."),
+                Check(model?.MailSubjectENG, "subEngMail", "Mail Subject english is not blank."),
+                Check(model?.MailBodyENG, "bodyEngMail", "Mail body english is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            string message;
+            try
+            {
+                var oldData = (ConfirmationConfigModel)ConfirmationConfigBO.Instance.FindByPrimaryKey(model.ID);
+                if (oldData != null)
+                {
+                    model.CreatedBy = oldData.CreatedBy;
+                    model.CreatedDate = oldData.CreatedDate;
+                }
+                model.UpdatedDate = DateTime.Now;
+                ConfirmationConfigBO.Instance.Update(model);
+                message = "Update successfully.";
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        #endregion
+
+        #region ItemCategory/ConfirmationTemp
+
+        public IActionResult ConfirmationTemp()
+        {
+            List<RateCodeModel> listRateCode = PropertyUtils.ConvertToList<RateCodeModel>(RateCodeBO.Instance.FindAll());
+            ViewBag.RateCodeList = listRateCode;
+            List<LanguageModel> listLanguage = PropertyUtils.ConvertToList<LanguageModel>(LanguageBO.Instance.FindAll());
+            ViewBag.LanguageList = listLanguage;
+            return View("ItemCategory/ConfirmationTemp");
+        }
+        [HttpGet]
+        public IActionResult GetConfirmationTemp()
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select(@"SELECT  
+                            ct.ID,ct.LetterName,ct.RateCodeID,
+                            rc.RateCode AS RateCode,ct.Nationality,ct.Template
+                            FROM ConfirmationTemp ct
+                            LEFT JOIN RateCode rc ON ct.RateCodeID = rc.ID");
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
+                                  LetterName = !string.IsNullOrEmpty(r["LetterName"].ToString()) ? r["LetterName"] : "",
+                                  RateCodeID = !string.IsNullOrEmpty(r["RateCodeID"].ToString()) ? r["RateCodeID"] : "",
+                                  RateCode = !string.IsNullOrEmpty(r["RateCode"].ToString()) ? r["RateCode"] : "",
+                                  Nationality = !string.IsNullOrEmpty(r["Nationality"].ToString()) ? r["Nationality"] : "",
+                                  Template = !string.IsNullOrEmpty(r["Template"].ToString()) ? r["Template"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult ConfirmationTempSave([FromBody] ConfirmationTempModel model)
+        {
+            var listErrors = GetErrors(
+               Check(model, "general", "Invalid data"),
+
+               Check(model?.LetterName, "letterNameInput", "Letter name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            string message;
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+                    ConfirmationTempBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (ConfirmationTempModel)ConfirmationTempBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+                    model.UpdatedDate = DateTime.Now;
+                    ConfirmationTempBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult ConfirmationTempDelete(int id)
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select($@"SELECT COUNT(1)
+                                            FROM ConfirmationTemp
+                                            WHERE ID = {id}
+                                              AND RateCodeID > 0
+                                            ");
+                if (dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0][0]) > 0)
+                    return Json(new { success = false, message = "Cannot delete. This template is already linked to a Rate Code." });
+                ConfirmationTempBO.Instance.Delete(id);
+                return Json(new { success = true, message = "Delete successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region ItemCategory/Owner
+        [HttpGet]
+        public IActionResult GetOwner(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Owner(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Owner()
+        {
+            return View("ItemCategory/Owner");
+        }
+        [HttpPost]
+        public IActionResult OwnerSave([FromBody] OwnerModel model)
+        {
+            string message = "";
+
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Description is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    OwnerBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (OwnerModel)OwnerBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreateDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    OwnerBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteOwner(int id)
+        {
+            try
+            {
+                OwnerBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/PropertyType
+        [HttpGet]
+        public IActionResult GetPropertyType(string code, string description, int sequence)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PropertyType(code, description, sequence);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Sequence = !string.IsNullOrEmpty(d["Sequence"].ToString()) ? d["Sequence"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult PropertyType()
+        {
+            return View("ItemCategory/PropertyType");
+        }
+        [HttpPost]
+        public IActionResult PropertyTypeSave([FromBody] PropertyTypeModel model)
+        {
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model.Sequence < 0, "seq", "Sequence must be >= 0")
+
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+
+            string message;
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+                    PropertyTypeBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (PropertyTypeModel)PropertyTypeBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+                    model.UpdatedDate = DateTime.Now;
+                    PropertyTypeBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult PropertyTypeDelete(int id)
+        {
+            try
+            {
+                PropertyTypeBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Property
+        [HttpGet]
+        public IActionResult GetProperty()
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Property();
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  PropertyTypeID = !string.IsNullOrEmpty(d["PropertyTypeID"].ToString()) ? d["PropertyTypeID"] : "",
+                                  PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
+                                  PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
+                                  Telephone = !string.IsNullOrEmpty(d["Telephone"].ToString()) ? d["Telephone"] : "",
+                                  Fax = !string.IsNullOrEmpty(d["Fax"].ToString()) ? d["Fax"] : "",
+                                  Email = !string.IsNullOrEmpty(d["Email"].ToString()) ? d["Email"] : "",
+                                  Website = !string.IsNullOrEmpty(d["Website"].ToString()) ? d["Website"] : "",
+                                  Address = !string.IsNullOrEmpty(d["Address"].ToString()) ? d["Address"] : "",
+                                  ServerName = !string.IsNullOrEmpty(d["ServerName"].ToString()) ? d["ServerName"] : "",
+                                  DatabaseName = !string.IsNullOrEmpty(d["DatabaseName"].ToString()) ? d["DatabaseName"] : "",
+                                  Login = !string.IsNullOrEmpty(d["Login"].ToString()) ? d["Login"] : "",
+                                  Password = !string.IsNullOrEmpty(d["Password"].ToString()) ? d["Password"] : "",
+                                  PropertyType = !string.IsNullOrEmpty(d["PropertyType"].ToString()) ? d["PropertyType"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Property()
+        {
+            List<PropertyTypeModel> listPropertyType = PropertyUtils.ConvertToList<PropertyTypeModel>(PropertyTypeBO.Instance.FindAll());
+            ViewBag.PropertyTypeList = listPropertyType;
+            return View("ItemCategory/Property");
+        }
+        [HttpPost]
+        public IActionResult PropertySave([FromBody] PropertyModel model)
+        {
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+                Check(model?.PropertyCode, "code", "Code is not blank."),
+                Check(model?.PropertyName, "propertyName", "Name is not blank."),
+                Check(model?.PropertyTypeID, "propertyType", "Property type is not blank."),
+                Check(model?.ServerName, "serverName", "Server name is not blank."),
+                Check(model?.DatabaseName, "databaseName", "Database name is not blank."),
+                Check(model?.Login, "login", "Login account is not blank."),
+                Check(model?.Password, "password", "Password is not blank."),
+                Check(model?.Password?.Length < 6, "password", "Password must be at least 6 characters.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            string message;
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+                    PropertyBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (PropertyModel)PropertyBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+                    model.UpdatedDate = DateTime.Now;
+                    PropertyBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult PropertyDelete(int id)
+        {
+            try
+            {
+                PropertyBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/PropertyPermission
+        [HttpGet]
+        public IActionResult GetPropertyPermission(string userID)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PropertyPermission(userID);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  PropertyID = !string.IsNullOrEmpty(d["PropertyID"].ToString()) ? d["PropertyID"] : "",
+                                  PropertyCode = !string.IsNullOrEmpty(d["PropertyCode"].ToString()) ? d["PropertyCode"] : "",
+                                  PropertyName = !string.IsNullOrEmpty(d["PropertyName"].ToString()) ? d["PropertyName"] : "",
+                                  UserID = !string.IsNullOrEmpty(d["UserID"].ToString()) ? d["UserID"] : "",
+                                  LoginName = !string.IsNullOrEmpty(d["LoginName"].ToString()) ? d["LoginName"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult PropertyPermission()
+        {
+            List<PropertyModel> listProperty = PropertyUtils.ConvertToList<PropertyModel>(PropertyBO.Instance.FindAll());
+            ViewBag.PropertyList = listProperty;
+            List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.UsersList = listuser;
+            return View("ItemCategory/PropertyPermission");
+        }
+        [HttpPost]
+        public IActionResult PropertyPermissionSave([FromBody] List<PropertyPermissionModel> listModels)
+        {
+            var listErrors = GetErrors(
+                Check(listModels, "general", "No data received."),
+                Check(listModels != null && listModels.Count == 0, "general", "No data received.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+
+            try
+            {
+                int rowIndex = 1;
+                int successCount = 0;
+
+                foreach (var model in listModels)
+                {
+                    var rowErrors = GetErrors(
+                        Check(model.UserID, "chooseUser", $"Row {rowIndex}: User is not blank."),
+                        Check(model.PropertyID, "choosePropertyType", $"Row {rowIndex}: Property is not blank.")
+                    );
+
+                    if (rowErrors.Count > 0)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = rowErrors[0].Message,
+                            errors = rowErrors
+                        });
+                    }
+
+                    if (model.ID == 0)
+                    {
+                        model.CreatedDate = DateTime.Now;
+                        model.UpdatedDate = DateTime.Now;
+                        PropertyPermissionBO.Instance.Insert(model);
+                    }
+                    else
+                    {
+                        var oldData = (PropertyPermissionModel)PropertyPermissionBO.Instance.FindByPrimaryKey(model.ID);
+                        if (oldData != null)
+                        {
+                            model.CreatedBy = oldData.CreatedBy;
+                            model.CreatedDate = oldData.CreatedDate;
+                        }
+                        model.UpdatedDate = DateTime.Now;
+                        PropertyPermissionBO.Instance.Update(model);
+                    }
+
+                    successCount++;
+                    rowIndex++;
+                }
+
+                return Json(new { success = true, message = $"Successfully saved {successCount} permissions!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult DeletePropertyPermission([FromBody] List<int> ids)
+        {
+            string message = "";
+            int successCount = 0;
+
+            try
+            {
+                if (ids == null || ids.Count == 0)
+                {
+                    return Json(new { success = false, message = "No items selected to delete." });
+                }
+
+                foreach (var id in ids)
+                {
+                    if (id > 0)
+                    {
+                        PropertyPermissionBO.Instance.Delete(id);
+                        successCount++;
+                    }
+                }
+
+                message = $"Successfully deleted {successCount} items!";
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        #endregion //
+
+        #region ItemCategory/PackageForecastGroup
+        [HttpGet]
+        public IActionResult GetPackageForecastGroup(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PackageForecastGroup(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult PackageForecastGroup()
+        {
+            return View("ItemCategory/PackageForecastGroup");
+        }
+        [HttpPost]
+        public IActionResult PackageForecastGroupSave([FromBody] PackageForecastGroupModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Description is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PackageForecastGroupBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PackageForecastGroupModel)PackageForecastGroupBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PackageForecastGroupBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePackageForecastGroup(int id)
+        {
+            try
+            {
+                PackageForecastGroupBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion 
+
+        #region ItemCategory/PreferenceGroup
+        [HttpGet]
+        public IActionResult GetPreferenceGroup(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PreferenceGroup(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult PreferenceGroup()
+        {
+            return View("ItemCategory/PreferenceGroup");
+        }
+        [HttpPost]
+        public IActionResult PreferenceGroupSave([FromBody] PreferenceGroupModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Description is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PreferenceGroupBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PreferenceGroupModel)PreferenceGroupBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PreferenceGroupBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePreferenceGroup(int id)
+        {
+            try
+            {
+                PreferenceGroupBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
         }
 
         #endregion

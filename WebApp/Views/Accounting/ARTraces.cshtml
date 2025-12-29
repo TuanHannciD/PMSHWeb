@@ -122,10 +122,7 @@
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnSearchAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Search</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
         <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAutoUpdate" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnSaveAuto" class="mui-button mui-button-new" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
         <button onclick="$('#popupNewArtraces').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
-            <i class="fa-solid fa-xmark me-1"></i> Close
-        </button>
     </div>
     <div class="sticky-header bg-white p-2 shadow-sm z-3">
         <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
@@ -142,7 +139,6 @@
                 <div class="d-flex align-items-start mb-3">
                     <input type="text" id="idselectedRowData" name="idselectedRowData" style="display:none !important" class="form-control form-control-sm w-auto" />
                     <div class="d-flex align-items-center me-4">
-                        <label for="tracetime" class="me-2 mb-0">Created By:</label>
                         <input readonly id="createdBy" name="tracetime"
                                class="form-control form-control-sm w-auto" />
                     </div>
@@ -154,8 +150,6 @@
                 </div>
                 <div class="d-flex align-items-start mb-3">
                     <!-- Trace Time -->
-                    <div class="d-flex align-items-center me-4">
-                        <label for="tracetime" class="me-2 mb-0">Trace Time:</label>
                         <input type="datetime-local" id="tracetime" name="tracetime"
                                class="form-control form-control-sm w-auto" />
                     </div>
@@ -659,7 +653,6 @@
             $('#popupSearchArtraces').fadeOut(200);
             $('#overlay').fadeOut(200);
     });
-
 
     $('#btnClosepSearchArtracesPopup, #overlay').click(function () {
               

@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 <div class="layout-wrapper">
-  
+
 
     <!-- Mục 1: Trên cùng -->
     <div class="section-top">
@@ -10,7 +10,7 @@
             <div class="card-icon"><i class="fa-solid fa-list"></i></div>
             <div class="card-content">
                 <div class="card-title">Room Availability</div>
-                <div class="card-value" ></div>
+                <div class="card-value"></div>
             </div>
         </div>
         <div class="card-box">
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-    
+
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-users"></i></div>
             <div class="card-content">
@@ -44,7 +44,7 @@
             </div>
         </div>
 
-       
+
 
     </div>
 
@@ -82,24 +82,25 @@
             </div>
         </div>
 
-  
-            <div class="section-right mui-card">
-                <div class="form-group" id="checkchart" style="display:flex">
-                    <label style="margin-left: 15px;">
-                        <input type="radio" name="chartType" value="pie" checked> Pie Chart
-                    </label>
-                    <label>
-                        <input type="radio" name="chartType" value="bar" > Bar Chart
-                    </label>
-               
-                </div>
-                <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
-                <div id="highchartPie" class="chart-fixed-sizehigh"></div>
-            </div>   
-     
+
+        <div class="section-right mui-card">
+            <div class="form-group" id="checkchart" style="display:flex">
+                <label style="margin-left: 15px;">
+                    <input type="radio" name="chartType" value="pie" checked> Pie Chart
+                </label>
+                <label>
+                    <input type="radio" name="chartType" value="bar"> Bar Chart
+                </label>
+
+            </div>
+            <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
+            <div id="highchartPie" class="chart-fixed-sizehigh"></div>
+        </div>
+
     </div>
 </div>
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+<div id="loadingSpinner"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 
@@ -136,10 +137,10 @@
         transition: 0.3s ease;
     }
 
-        .card-box:hover {
-            transform: translateY(-6px);
-            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-        }
+    .card-box:hover {
+        transform: translateY(-6px);
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    }
 
     .card-icon {
         font-size: 36px;
@@ -161,7 +162,6 @@
     }
 
     /* --- BOTTOM SECTION --- */
-
 
     /* --- INFO BOX --- */
     .info-box {
@@ -198,58 +198,56 @@
         padding-left: 12px;
     }
 
-        .form-group label {
-            margin-right: 20px;
-            font-weight: 500;
-            font-size: 14px;
-        }
+    .form-group label {
+        margin-right: 20px;
+        font-weight: 500;
+        font-size: 14px;
+    }
 
     .chart-fixed-sizehigh {
         flex: 1;
         width: 100%;
         min-height: 380px;
     }
-
-
 </style>
 
 @* <script src="https://code.highcharts.com/highcharts.js"></script> *@
 <script>
-        function formatDate(date) {
+    function formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-               
+
     $(document).ready(function () {
-         getBusinessDate();
+        getBusinessDate();
 
 
-        });
-        function getBusinessDate() {
-            return $.ajax({
-                url: '/Reservation/GetBusinessDate',
-                type: 'get',
-                dataType: 'json',
-                crossDomain: false,
-                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
+    });
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
 
-                      const businessDate = new Date(result);
-                    const formattedBusinessDate = result.split('T')[0];
-                    loadDashboardData(formattedBusinessDate);
+                const businessDate = new Date(result);
+                const formattedBusinessDate = result.split('T')[0];
+                loadDashboardData(formattedBusinessDate);
 
-                },
-                error: function (xhr, statusText, err) {
-                    if (xhr.status == 401) {
-                        sessionTimeout();
-                    }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
                 }
-            });
-        }
+            }
+        });
+    }
 
-        function loadDashboardData(businessDate) {
+    function loadDashboardData(businessDate) {
         $("#loadingSpinner").show();
 
         $.ajax({
@@ -285,36 +283,36 @@
         });
     }
 
-      function renderHighchartBar(data) {
-    const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
+    function renderHighchartBar(data) {
+        const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
 
-    const categories = filteredData.map(x => x.label);
-    const values = filteredData.map(x => parseInt(x.value));
+        const categories = filteredData.map(x => x.label);
+        const values = filteredData.map(x => parseInt(x.value));
 
-    Highcharts.chart('highchartBar', {
-        chart: {
-            type: 'column'
-        },
-        title: { text: '' },
-        xAxis: {
-            categories: categories,
-            title: { text: 'Room summary' }
-        },
-        yAxis: {
-            min: 0,
-            title: { text: 'Number of room' }
-        },
-        tooltip: {
-            pointFormat: 'Total: <b>{point.y}</b>'
-        },
-        series: [{
-            name: '',
-            data: values,
-            color: '#7cb5ec'
-        }],
-        credits: { enabled: false }
-    });
-}
+        Highcharts.chart('highchartBar', {
+            chart: {
+                type: 'column'
+            },
+            title: { text: '' },
+            xAxis: {
+                categories: categories,
+                title: { text: 'Room summary' }
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Number of room' }
+            },
+            tooltip: {
+                pointFormat: 'Total: <b>{point.y}</b>'
+            },
+            series: [{
+                name: '',
+                data: values,
+                color: '#7cb5ec'
+            }],
+            credits: { enabled: false }
+        });
+    }
 
 
     function renderHighchartPie(data) {
@@ -377,7 +375,7 @@
             title: { text: '' },
             tooltip: {
                 // Hiển thị value và % thực tế (từ roundedPercents)
-                formatter: function() {
+                formatter: function () {
                     // this.point.y là giá trị, this.point.percent có thể chứa auto percent của HC
                     // ta dùng field percent đã chuẩn bị
                     const p = this.point.percent !== undefined ? this.point.percent : this.percentage;

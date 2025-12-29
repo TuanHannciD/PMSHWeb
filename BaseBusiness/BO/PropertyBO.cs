@@ -30,5 +30,5 @@ namespace BaseBusiness.BO
             return conn.QuerySingleOrDefault<PropertyTypeModel>(sql, new { id }, tx);
         }
     }
-   
+
 }

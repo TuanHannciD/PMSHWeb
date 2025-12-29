@@ -9,7 +9,7 @@ namespace Reservation.Services.Interfaces
 {
     public interface IGroupAdminService
     {
-        DataTable SearchGroupCheckInRoom(string ConfirmationNo, string Inspected,string Clean,string AllRooms,string CleanAndInspected);
+        DataTable SearchGroupCheckInRoom(string ConfirmationNo, string Inspected, string Clean, string AllRooms, string CleanAndInspected);
         DataTable SearchGroupAdmin(string ConfirmationNo, string DisplayStattus, string Name, string RoomNo);
 
         DataTable spReservationSearchByConfirmationNo(string ConfirmationNo);

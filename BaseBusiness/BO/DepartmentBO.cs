@@ -30,6 +30,6 @@ namespace BaseBusiness.BO
             const string sql = "SELECT ID, Code, Name, Description, CreatedBy, CreatedDate,  UpdatedBy, UpdatedDate FROM Department WHERE ID = @id";
             return conn.QuerySingleOrDefault<DepartmentModel>(sql, new { id }, tx);
         }
-        
+
     }
 }

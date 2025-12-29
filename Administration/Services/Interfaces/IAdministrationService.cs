@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BaseBusiness.Model;
 using DevExpress.XtraRichEdit.Model;
 
 namespace Administration.Services.Interfaces
@@ -37,7 +38,10 @@ namespace Administration.Services.Interfaces
         public DataTable Owner(string code, string name, int inactive);
         public DataTable PropertyType(string code, string description, int sequence);
         public DataTable ReservationType();
-        public DataTable Currency();
+        public DataTable PackageForecastGroup(string code, string name, int inactive);
+        public DataTable PreferenceGroup(string code, string name, int inactive);
+        public List<CurrencyModel> Currency(string ID, bool IsShow = false, bool Inactive = false, bool IsMaster = false);
+        public List<CurrencyModel> GetAllCurrency();
         public DataTable hkpEmployee(string code, string name, int inactive);
         public DataTable Property();
         public DataTable PropertyPermission(string userID);
@@ -45,9 +49,12 @@ namespace Administration.Services.Interfaces
         public DataTable ConfigSystem();
         public DataTable Member(DateTime fromDate, DateTime toDate, string status, string memberID, int isSortByCardName);
         public DataTable PostingHistory(DateTime fromDate, DateTime toDate, string fromFolioID, string toFolioID, string actionType, string user);
-        public DataTable PersonInChargeData(string code, string description, string group, string zone, string  isActive);
         public DataTable PersonInChargeGroupData(string code, string description, string isActive);
         public DataTable PersonInChargeZoneData(string code, string description, string isActive);
         public DataTable ApproveListData(string code, string description, string isActive);
+        public DataTable PersonInChargeData(string code, string description, string group, string zone, string isActive);
+        public DataTable RateCategory(string code, string name, int inactive);
+        public DataTable DepositRule(string code, string description);
+        public DataTable CancellationRule(string code, string description);
     }
 }

@@ -1,5 +1,6 @@
 ﻿<!-- Modal wait list-->
-<div class="modal fade modal" id="modalWaitList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade modal" id="modalWaitList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -10,12 +11,13 @@
             <div class="modal-body">
                 <div>
                     <button class="submit-button-clear-reservation" onclick="SaveWaitList(0)">OK</button>
-                    <button class="submit-button-new-reservation" onclick="closeModalWaitList()" id="btnClear">Close</button>
+                    <button class="submit-button-new-reservation" onclick="closeModalWaitList()"
+                        id="btnClear">Close</button>
 
                 </div>
                 <div class="row mt-2">
                     <label class="col-md-2">Reason</label>
-                    <select  id="reasonWaitList" class="col-md-10"></select>
+                    <select id="reasonWaitList" class="col-md-10"></select>
                 </div>
                 <div class="row mt-2">
                     <label class="col-md-2">Piority</label>
@@ -23,11 +25,11 @@
                 </div>
                 <div class="row mt-2">
                     <label class="col-md-2">Telephone No.</label>
-                    <input id="telephoneWaitList" class="col-md-10"  />
+                    <input id="telephoneWaitList" class="col-md-10" />
                 </div>
                 <div class="mt-2">
-                    <label >Description</label>
-                    <textarea class="form-control"  rows="3" id="desWaitList"></textarea>
+                    <label>Description</label>
+                    <textarea class="form-control" rows="3" id="desWaitList"></textarea>
 
                 </div>
             </div>
@@ -35,7 +37,7 @@
     </div>
 </div>
 <script>
-    function openModalWaitList(){
+    function openModalWaitList() {
         if (reservationStatus != 0 && reservationStatus != 5) {
             showToast('Error', 'Please choose booking has status Reserevation or Due In', false);
             return;
@@ -44,12 +46,12 @@
         getPriority();
         $('#modalWaitList').modal('show');
     }
-    function closeModalWaitList(){
+    function closeModalWaitList() {
         $('#modalWaitList').modal('hide');
 
     }
 
-    function getReasonWaitList(){
+    function getReasonWaitList() {
         $.ajax({
             url: '/Reservation/GetReasonWaitList',
             type: 'get',
@@ -59,9 +61,9 @@
             success: function (result) {
                 var html = `<option value='0'></option>`;
                 $('#reasonWaitList').empty();
-                if(result.length > 0){
-                    for(var i = 0;i< result.length;i++){
-                        html+= `<option value='${result[i].id}'>${result[i].description}</option>`;
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        html += `<option value='${result[i].id}'>${result[i].description}</option>`;
                     }
                 }
                 $('#reasonWaitList').append(html);
@@ -78,7 +80,7 @@
         });
     }
 
-    function getPriority(){
+    function getPriority() {
         $.ajax({
             url: '/Reservation/GetPriority',
             type: 'get',
@@ -88,9 +90,9 @@
             success: function (result) {
                 var html = `<option value='0'></option>`;
                 $('#priorityWaitList').empty();
-                if(result.length > 0){
-                    for(var i = 0;i< result.length;i++){
-                        html+= `<option value='${result[i].id}'>${result[i].name}</option>`;
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        html += `<option value='${result[i].id}'>${result[i].name}</option>`;
                     }
                 }
                 $('#priorityWaitList').append(html);
@@ -118,7 +120,7 @@
         formData.append('rsvID', idReservation);
 
         formData.append('userName', userName);
-        formData.append('userID',userID);
+        formData.append('userID', userID);
 
         $.ajax({
             url: '/Reservation/SaveWaitList',
@@ -133,7 +135,7 @@
                     searchReservation();
                     showToast('Success', data.msg, true);
                 } else {
-                        showToast('Error', data.msg, false);
+                    showToast('Error', data.msg, false);
                 }
 
             },
