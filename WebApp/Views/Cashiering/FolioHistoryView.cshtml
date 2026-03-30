@@ -1,4 +1,4 @@
-﻿@using DevExpress.XtraReports.UI
+@using DevExpress.XtraReports.UI
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -6,359 +6,516 @@
     ViewBag.Title = ViewBag.ReportHeader;
     var uList = ViewBag.UsersList;
 }
-@* <link href="~/css/pages/reservation.css" rel="stylesheet" /> *@
+
 <style>
-    #sendDate:disabled {
-        background-color: #f5f5f5;
-        color: #999;
-        cursor: not-allowed;
+    #fhv_modalMain .modal-body {
+        padding: 0 12px 0 12px !important;
     }
 
-    .card-type-item label {
-        display: flex;
-        align-items: center; /* Căn giữa theo chiều dọc */
-        gap: 6px; /* Khoảng cách giữa checkbox và text */
-        white-space: nowrap; /* Không xuống dòng */
+    #fhv_modalMain .mui-card {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+        min-height: 50vh;
+        padding: 10px;
     }
-
-    .card-type-list input[type="checkbox"] {
-        width: 10px; /* chiều rộng */
-        height: 10px; /* chiều cao */
-        transform: scale(1.5); /* phóng to checkbox */
-        margin-right: 6px; /* khoảng cách label */
-        margin-top: 6px;
-    }
-
-
-    .card-type-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* 2 cột đều nhau */
-        gap: 6px 12px; /* khoảng cách giữa các ô: 6px hàng, 12px cột */
-        margin-top: 6px;
-    }
-
-    /* Phóng to checkbox "All" */
-    #cardAll {
-        width: 10px;
-        height: 10px;
-        transform: scale(1.5);
-        margin-right: 6px;
-    }
-
-    .tomselect-custom .ts-control {
-        min-height: 28px !important; /* chiều cao tối thiểu */
-        height: 28px !important; /* chiều cao cố định */
-        padding: 2px 6px !important; /* padding trong input */
-        font-size: 0.75rem !important; /* chữ nhỏ hơn */
-        line-height: 1.2 !important;
-    }
-
-    /* Ô nhập khi gõ */
-    .tomselect-custom .ts-input > input {
-        min-height: 20px !important;
-        height: 20px !important;
-        padding: 0 !important;
-        font-size: 0.75rem !important;
-        line-height: 1.2 !important;
-    }
-
-    /* Tag hiển thị khi chọn */
-    .tomselect-custom .item {
-        font-size: 0.75rem !important;
-        padding: 1px 4px !important;
-        line-height: 1.2 !important;
-    }
-
-      
 </style>
-<div class="mt-3">
-    <div class="row">
-        <div class="col-md-2 mb-2">
-            <div class="menu-left">
-                <button class="toggle-btn"><i class="fas fa-bars"></i></button>
-                <a class="menu-item " asp-controller="Cashiering" asp-action="PostingJournal">POSTING JOURNAL </a>
-                <a class="menu-item " asp-controller="Cashiering" asp-action="VATSearch"> VAT TABLE</a>
-                <a class="menu-item " asp-controller="Cashiering" asp-action="FolioVATSearch">SEARCH VAR VOUCHER </a>
-                <a class="menu-item " asp-controller="Cashiering" asp-action="FolioVATSearchByAccounting">SEARCH VAT VOUCHER FOR ACCOUNTING </a>
-                <a class="menu-item active">FOLIO HISTORY</a>
-                <a class="menu-item " asp-controller="Cashiering" asp-action="CashierReport"> CASHIER REPORT </a>
+
+<!-- ========================= -->
+<!-- MAIN VIEW (BS5 MODAL XL) -->
+<!-- ========================= -->
+<div class="modal fade" id="fhv_modalMain" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-16by9 modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header py-2">
+                <h6 class="modal-title" id="fhv_reportTitle" style="font-size: 20px">Folio History</h6>
             </div>
-        </div>
 
-        <!-- Nội dung bên phải -->
-        <div class="col-md-10">
-            <div class="content-right ms-2">
-                <div class="header">
-                    <h3 id="content-title">
-                        Folio History 
+            <div class="modal-body">
 
-                    </h3>
-                </div>
+                <div class="search-filter">
 
-                <div class="row g-3">
-                    <!-- Reservations Status -->
-                    <div class="col-md-2">
-                        <label>Date </label>
-                        <div class="mt-2 mb-2" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
-                            <div class="d-flex align-items-center me-2">
-                                <label class="me-2 mb-0">From Date: </label>
-                                <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto mt-2" />
-                            </div>
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-flex gap-2 mb-2 mt-2">
+                        <button id="fhv_btnView" type="button" class="mui-button mui-button-new">View</button>
+                        <button id="fhv_btnDetail" type="button" class="mui-button mui-button-new">Details</button>
+                        <button id="fhv_btnExportExcel" type="button" class="mui-button mui-button-new">Excel</button>
+                        <button class="mui-button mui-button-new" data-bs-dismiss="modal" aria-label="Close">Close</button>
 
-                            <div class="d-flex align-items-center me-2">
-                                <label class="me-2 mb-0">To Date: </label>
-                                <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto mt-2 ms-3" />
-                            </div>
-                        </div>                      
                     </div>
 
-                    <!-- Card Category -->
-                    <div class="col-md-5">
-                        <label>Card Category</label>
-                        <div class="card-type-list mt-2" id="categoryList" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
-                            <div class="d-flex align-items-center mb-2" style="gap: 12px;">
-                                <div class="d-flex align-items-center">
-                                    <label for="fromFolio" class="me-2 mb-0">From Folio:</label>
-                                    <input type="text" id="fromFolio" class="form-control form-control-sm ms-2" style="width: 210px;" />
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <label for="toFolio" class="me-2 mb-0">To Folio:</label>
-                                    <input type="text" id="toFolio" class="form-control form-control-sm ms-1" style="width: 210px;" />
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center mb-2" style="gap: 12px;">
-                                <div class="d-flex align-items-center">
-                                    <label for="fromRoom" class="me-2 mb-0">From Room:</label>
-                                        <input type="text" id="fromRoom" class="form-control form-control-sm" style="width: 210px;" />
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <label for="toRoom" class="me-2 mb-0">To Room:</label>
-                                        <input type="text" id="toRoom" class="form-control form-control-sm" style="width: 210px;" />
+                    <!-- FILTER CONTENT -->
+                    <div class="row g-2 align-items-start">
+
+                        <!-- DATE FILTER -->
+                        <div class="col-lg-2 col-md-6">
+
+                            <div class="d-flex align-items-center">
+                                <label class="col-md-2 col-form-label me-2 text-end">From:</label>
+                                <div class="col-md-10" data-date-input data-format="DD/MM/YYYY" business-date data-name="fhv_fromDate">
+                                    <input type="text" id="fhv_fromDate" name="fhv_fromDate"
+                                           class="date-ui form-control form-control-sm "
+                                           placeholder="dd/mm/yyyy" autocomplete="off" />
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center mb-2" style="gap: 12px;">
-                            <label class="">Users:</label>
-                            <select id="users" name="users" class="tomselect-custom" style="width: 530px;" multiple>
-                                @foreach (var sg in ViewBag.UsersList)
-                                {
-                                        <option value="@sg.LoginName" data-code="@sg.LoginName">@sg.LoginName - @sg.LastName</option>
-                                }
-                            </select>
+
+                            <div class="d-flex align-items-center">
+                                <label class="col-md-2 col-form-label me-2 text-end">To:</label>
+                                <div class="col-md-10" data-date-input data-format="DD/MM/YYYY" business-date data-name="fhv_toDate">
+                                    <input type="text" id="fhv_toDate" name="fhv_toDate"
+                                           class="date-ui form-control form-control-sm "
+                                           placeholder="dd/mm/yyyy" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD CATEGORY -->
+                        <div class="col-lg-4 col-md-6">
+
+                            <!-- Folio -->
+                            <div class="row g-1">
+                                <div class="col-6 d-flex align-items-center">
+                                    <label class="col-md-4 col-form-label me-2 text-end">From Folio:</label>
+                                    <input type="text" id="fhv_fromFolio" name="fhv_fromFolio"
+                                           class="form-control form-control-sm flex-grow-1">
+                                </div>
+
+                                <div class="col-6 d-flex align-items-center">
+                                    <label class="col-md-4 col-form-label me-2 text-end">To Folio:</label>
+                                    <input type="text" id="fhv_toFolio" name="fhv_toFolio"
+                                           class="form-control form-control-sm flex-grow-1">
+                                </div>
+                            </div>
+
+                            <!-- Room -->
+                            <div class="row g-1 ">
+                                <div class="col-6 d-flex align-items-center">
+                                    <label class="col-md-4 col-form-label me-2 text-end">From Room:</label>
+                                    <input type="text" id="fhv_fromRoom" name="fhv_fromRoom"
+                                           class="form-control form-control-sm flex-grow-1">
+                                </div>
+
+                                <div class="col-6 d-flex align-items-center">
+                                    <label class="col-md-4 col-form-label me-2 text-end">To Room:</label>
+                                    <input type="text" id="fhv_toRoom" name="fhv_toRoom"
+                                           class="form-control form-control-sm flex-grow-1">
+                                </div>
+                            </div>
+
+                            <!-- Users -->
+                            <div class="d-flex align-items-center">
+                                <label class="col-md-2 col-form-label me-3 text-end">Users:</label>
+                                <select id="fhv_users" name="fhv_users" class="tomselect-custom flex-grow-1 me-2" multiple style="width: 280px;">
+                                    @foreach (var sg in ViewBag.UsersList)
+                                    {
+                                        <option value="@sg.LoginName">
+                                            @sg.LoginName - @sg.LastName
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ACTION -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="row g-1 ms-3">
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_allAction" name="fhv_allAction" value="" checked>
+                                        All Action
+                                    </label>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+                            <div class="row g-1 ms-3" id="fhv_action">
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_nightPost" name="fhv_nightPost" value="2" checked>
+                                        NIGHT_POST
+                                    </label>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_earlyCheckout" name="fhv_earlyCheckout" value="3" checked>
+                                        EARLY_CHECKOUT
+                                    </label>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_tranferred" name="fhv_tranferred" value="7" checked>
+                                        TRANSFERRED
+                                    </label>
+                                </div>
+
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_postGen" name="fhv_postGen" value="0" checked>
+                                        POST_GEN
+                                    </label>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_advanceBill" name="fhv_advanceBill" value="4" checked>
+                                        ADVANCE_BILL
+                                    </label>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_correct" name="fhv_correct" value="5" checked>
+                                        CORRECT
+                                    </label>
+                                </div>
+
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_post" name="fhv_post" value="1" checked>
+                                        POST
+                                    </label>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_split" name="fhv_split" value="6" checked>
+                                        SPLIT
+                                    </label>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_deleted" name="fhv_deleted" value="8" checked>
+                                        DELETED
+                                    </label>
+                                </div>
+
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                    <label class="small d-flex align-items-center gap-1">
+                                        <input type="checkbox" id="fhv_pay" name="fhv_pay" value="9" checked>
+                                        PAY
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Card Type -->
-                    <div class="col-md-5">
-                        <label>Action </label>
-                        <div class="card-type-list mt-2" id="typeList" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
-                            <div class="d-flex align-items-center mb-2" style="gap: 12px;">
-                                <div class="ms-3">
-                                    <label><input type="checkbox" id="allAction" value="" checked /> All Action</label>
-                                </div>
-                                <div class="card-type-list mt-2" id="action" style="border: 1px solid #ced4da; border-radius: 6px; padding: 12px;">
-                                    <div class="row g-2">
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="nightPost" value="2" checked /> NIGHT_POST</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="earlyCheckout" value="3" checked /> EARLY_CHECKOUT</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="tranferred" value="7" checked /> TRANSFERRED</label>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="postGen" value="0" checked /> POST_GEN</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="advanceBill" value="4" checked /> ADVANCE_BILL</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="correct" value="5" checked /> CORRECT</label>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="post" value="1" checked /> POST</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="split" value="6" checked /> SPLIT</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="deleted" value="8" checked /> DELETED</label>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label><input type="checkbox" id="pay" value="9" checked /> PAY</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-
-            </div>
-            <div style="display:flex;column-gap:12px">
-                <button style="border-radius: 4px;  margin-right: 6px;background-color: #6c757d;" id="btnView" class="mui-button mui-button-new ms-2"><i class="fa-solid fa-eye"></i>View</button>
-                <button style="border-radius: 4px;  margin-right: 6px;background-color: #6c757d;" id="btnDetail" class="mui-button mui-button-new ms-2"><i class="fa-solid fa-eye"></i>Details</button>
-                <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-            </div>
-            <div id="loadingSpinnerRateCode" style="display: none; text-align: center; padding: 20px;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                <div id="fhv_loadingSpinnerRateCode" 
+                    style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+                        z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+                        height: 100%;display: flex;align-items: center;justify-content: center;">
+                    <div class="spinner-border text-primary"></div>
                 </div>
-            </div>
-            <div class="mui-card">
-                <div id="gridContainerRateCode" class="mt-2 gridContainer"></div>
+
+                <div class="mui-card">
+                    <!-- IMPORTANT: fixed height (not 100%) -->
+                    <div id="fhv_gridContainerRateCode" class="mt-2 gridContainer" style="height: 500px;"></div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<div id="detailPopup"></div>
+<!-- ========================= -->
+<!-- DETAIL MODAL (BS5 XL) -->
+<!-- ========================= -->
+<div class="modal fade" id="fhv_modaldetailGrid" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header py-2">
+                <h6 class="modal-title">Transactions History Detail</h6>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-2 mt-1">
+                    <button type="button" class="mui-button mui-button-new" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <div class="mui-card">
+                    <div id="fhv_detailPopup" class="gridContainer" style="height:420px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
+    // ================================
+    // Folio History View - Module (Option A)
+    // Prefix: fhv_
+    // ================================
+    var fhv_Module = (function () {
 
-    DevExpress.localization.locale("vi");
-    let selectedRowData = null;
+        DevExpress.localization.locale("vi");
 
-      function formatDate(date) {
-            let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            return `${year}-${month}-${day}`;
+        let selectedRowData = null;
+
+        // DevExtreme instances
+        let gridMainInstance = null;
+        let gridDetailInstance = null;
+
+        // Bootstrap modal instances
+        let modalMainInstance = null;
+        let modalDetailInstance = null;
+
+        // TomSelect instance
+        let tomUsers = null;
+
+        // Flags
+        let isMainModalShownOnce = false;
+
+        function init() {
+            initTomSelect(".tomselect-custom");
+            // Cache modal instances
+            const modalMainEl = document.getElementById("fhv_modalMain");
+            const modalDetailEl = document.getElementById("fhv_modaldetailGrid");
+
+            if (modalMainEl) {
+                modalMainInstance = bootstrap.Modal.getOrCreateInstance(modalMainEl, {
+                    backdrop: "static",
+                    keyboard: false
+                });
+
+                // IMPORTANT: Grid init must be in shown.bs.modal
+                $(modalMainEl).off("shown.bs.modal.fhv").on("shown.bs.modal.fhv", async function () {
+
+                    // Prevent re-binding / re-initializing on repeated show
+                    if (!isMainModalShownOnce) {
+                        isMainModalShownOnce = true;
+
+                        // When changing checkbox "All"
+                        $("#fhv_allAction").change(function () {
+                            var isChecked = $(this).is(":checked");
+                            $("#fhv_action input[type='checkbox']").not(this).prop("checked", isChecked);
+                        });
+
+                        // When changing each child checkbox, if all checked then auto-check "All"
+                        $("#fhv_action input[type='checkbox']").not("#fhv_allAction").change(function () {
+                            var allChecked = $("#fhv_action input[type='checkbox']").not("#fhv_allAction").length ===
+                                $("#fhv_action input[type='checkbox']:checked").not("#fhv_allAction").length;
+                            $("#fhv_allAction").prop("checked", allChecked);
+                        });
+
+                        await window.initDateInputs();
+                        await reloadGrid(isInitial = true);
+                        // initializeTomSelects();
+
+                        bindEvents();
+                    } else {
+                        // If modal opened again after hide, grid may need repaint
+                        if (gridMainInstance) {
+                            try { gridMainInstance.repaint(); } catch (e) { }
+                        }
+                    }
+                });
+            }
+
+            if (modalDetailEl) {
+                modalDetailInstance = bootstrap.Modal.getOrCreateInstance(modalDetailEl, {
+                    backdrop: "static",
+                    keyboard: false
+                });
+            }
+
+            // Global cleanup listener: any modal id starting with fhv_
+            //$(document).off("hidden.bs.modal.fhvGlobal").on("hidden.bs.modal.fhvGlobal", ".modal[id^='fhv_']", function () {
+              //  fhv_Module.destroy();
+            //});
         }
 
-      $(document).ready(function () {
-                const today = new Date();
-                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                // Lấy ngày cuối cùng của tháng
-                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-              // Định dạng theo local time
-                const formattedFirstDay = formatDate(firstDayOfMonth);
-                const formattedLastDay = formatDate(lastDayOfMonth);
-                console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-                console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-                // Gán giá trị cho input date
-                document.getElementById('fromDate').value = formattedFirstDay;
-                document.getElementById('toDate').value = formattedLastDay;
-                               // Khi thay đổi checkbox "All"
-                $("#allAction").change(function() {
-                    var isChecked = $(this).is(":checked");
-                    $("#action input[type='checkbox']").not(this).prop("checked", isChecked);
-                });
+        function bindEvents() {
 
-                // Khi thay đổi từng checkbox con, nếu tất cả được check thì tự động check "All"
-                   $("#action input[type='checkbox']").not("#allAction").change(function() {
-                    var allChecked = $("#action input[type='checkbox']").not("#allAction").length ===
-                                     $("#action input[type='checkbox']:checked").not("#allAction").length;
-                    $("#allAction").prop("checked", allChecked);
-                });
-                      
-                 initializeTomSelects();
-                reloadGrid();
-        });
-        function initializeTomSelects() {
-        const selectors = ["#users"];
-
-        for (const id of selectors) {
-            const el = document.querySelector(id);
-            if (!el) continue;
-
-            // Nếu đã khởi tạo rồi thì destroy
-            if (el.tomselect) el.tomselect.destroy();
-
-            const ts = new TomSelect(el, {
-                plugins: ['remove_button'],
-                create: false,
-                maxItems: null,
-                allowEmptyOption: true,
-                placeholder: '',
-                persist: false,
-                render: {
-                    option: function (data, escape) {
-                        return `<div>${escape(data.text)}</div>`;
-                    }
+            $(document).off("click", "#fhv_btnDetail").on("click", "#fhv_btnDetail", function () {
+                if (selectedRowData) {
+                    showDetailPopup(selectedRowData);
+                } else {
+                    showToast("Warning", "Please choose 1 row ", false);
                 }
             });
 
+            $(document).off("click", "#fhv_btnView").on("click", "#fhv_btnView", function () {
+                reloadGrid();
+            });
+
+            $(document).off("click", "#fhv_btnExportExcel").on("click", "#fhv_btnExportExcel", function () {
+                const grid = $("#fhv_gridContainerRateCode").dxDataGrid("instance");   // 🔥 khai báo grid
+
+                const workbook = new ExcelJS.Workbook();
+                const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+                const worksheet = workbook.addWorksheet("Sheet 1");
+
+                // === Dòng 1: Tên công ty (merge theo 4 cột) ===
+                worksheet.addRow([companyName]);
+                worksheet.mergeCells('A1:D1');
+                worksheet.getRow(1).font = { bold: true };
+                worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+                // === Dòng 2: Ngày giờ xuất (bên phải) ===
+                const now = new Date();
+                const exportDate = now.toLocaleString("vi-VN");
+                worksheet.addRow(['', '', '', exportDate]);
+                worksheet.mergeCells('D2:D2');  // cột D thôi
+                worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+                // === Dòng 3–4: trống
+                worksheet.addRow([]);
+                worksheet.addRow([]);
+
+                // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
+                const reportRow = worksheet.addRow([' Folio History']);
+                worksheet.mergeCells('A5:D5');
+                reportRow.font = { bold: true, size: 14 };
+                reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                // === Dòng 6: trống
+                worksheet.addRow([]);
+
+                // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
+                DevExpress.excelExporter.exportDataGrid({
+                    component: grid,
+                    worksheet: worksheet,
+                    autoFilterEnabled: true,
+                    topLeftCell: { row: 7, column: 1 }
+                }).then(function () {
+                    // Footer (sau cùng)
+                    const lastRow = worksheet.lastRow.number + 2;
+                    worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+                    worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+                    worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+                    // Ghi file
+                    let fileName = "Folio History.xlsx";
+                    workbook.xlsx.writeBuffer().then(function (buffer) {
+                        saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+                    });
+                });
+            });
         }
-    }
 
-              function loadGrid(data) {
-        $("#gridContainerRateCode").dxDataGrid({
-            dataSource: data,
-            height: 500,
-            width: "100%",
-            columnAutoWidth: true,
-            allowColumnResizing: true,
-            columnResizingMode: "widget",
-            selection: { mode: "single" },
-            columns: [
-                { dataField: "property", caption: "Property", width: "10%" },
-                { dataField: "actionText", caption: "Action", width: "20%" },
-                { dataField: "moreInformation", caption: "More Information ", width: "10%" },
-                {
-                    caption: "Date",
-                    width: "11%",
-                    calculateCellValue: function (rowData) {
-                        if (!rowData.actionDate) return "";
-                        let d = new Date(rowData.actionDate);
-                        return d.toLocaleDateString("en-GB"); // dd/MM/yyyy
-                    }
-                },
-                {
-                    caption: "Time",
-                    width: "11%",
-                    calculateCellValue: function (rowData) {
-                        if (!rowData.actionDate) return "";
-                        let d = new Date(rowData.actionDate);
-                        return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-                    }
-                },
-                { dataField: "fromRoom", caption: "F_Room", width: "11%" },
-                { dataField: "fromFolioID", caption: "F_Folio ", width: "11%" },
-                { dataField: "fromName", caption: "F_Guest ", width: "11%" },
-                { dataField: "toRoom", caption: "T_Room", width: "11%" },
-                { dataField: "toFolioID", caption: "T_Folio", width: "11%" },
-                { dataField: "toName", caption: "T_Guest", width: "11%" },
-                { dataField: "amountIncTax", caption: "Amount", width: "11%" },
-                { dataField: "actionUser", caption: "User", width: "11%" },
-                { dataField: "machine", caption: "Machine", width: "11%" },
+        function initializeTomSelects() {
+            const selectors = ["#fhv_users"];
 
-            ],
-            filterRow: { visible:true, applyFilter:"auto" },
-            paging: { pageSize:20 },
-            pager: {
-                visible:true,
-                allowedPageSizes:[20,50,'all'],
-                showPageSizeSelector:true,
-                showInfo:true,
-                showNavigationButtons:true
-            },
-            scrolling: { mode:"standard", showScrollbar:"always", scrollByContent:true },
-            onSelectionChanged: function(e){
-                selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
-                console.log("Selected Row:", selectedRowData);
+            for (const id of selectors) {
+                const el = document.querySelector(id);
+                if (!el) continue;
+
+                // Nếu đã khởi tạo rồi thì destroy
+                if (el.tomselect) el.tomselect.destroy();
+
+                const ts = new TomSelect(el, {
+                    plugins: ['remove_button'],
+                    create: false,
+                    maxItems: null,
+                    allowEmptyOption: true,
+                    placeholder: '',
+                    persist: false,
+                    render: {
+                        option: function (data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+
+                if (id === "#fhv_users") {
+                    tomUsers = ts;
+                }
             }
-        });
-    }
-            $("#detailPopup").dxPopup({
-        title: "Detail Information",
-        width: 800,
-        height: 500,
-        visible: false,
-        showCloseButton: true,
-        contentTemplate: function () {
-            return $("<div id='detailGrid'>").dxDataGrid({
-                showBorders: true,
+        }
+
+        function loadGrid(data) {
+
+            // Ensure container exists and has fixed height
+            $("#fhv_gridContainerRateCode").css("height", "500px");
+
+            gridMainInstance = $("#fhv_gridContainerRateCode").dxDataGrid({
+                dataSource: data,
+                height: 500,
+                width: "100%",
+                columnAutoWidth: true,
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
+                selection: { mode: "single" },
+                columns: [
+                    { dataField: "property", caption: "Property", width: "10%" },
+                    { dataField: "actionText", caption: "Action", width: "20%" },
+                    { dataField: "moreInformation", caption: "More Information ", width: "10%" },
+                    {
+                        caption: "Date",
+                        width: "11%",
+                        calculateCellValue: function (rowData) {
+                            if (!rowData.actionDate) return "";
+                            let d = new Date(rowData.actionDate);
+                            return d.toLocaleDateString("en-GB"); // dd/MM/yyyy
+                        }
+                    },
+                    {
+                        caption: "Time",
+                        width: "11%",
+                        calculateCellValue: function (rowData) {
+                            if (!rowData.actionDate) return "";
+                            let d = new Date(rowData.actionDate);
+                            return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+                        }
+                    },
+                    { dataField: "fromRoom", caption: "F_Room", width: "11%" },
+                    { dataField: "fromFolioID", caption: "F_Folio ", width: "11%" },
+                    { dataField: "fromName", caption: "F_Guest ", width: "11%" },
+                    { dataField: "toRoom", caption: "T_Room", width: "11%" },
+                    { dataField: "toFolioID", caption: "T_Folio", width: "11%" },
+                    { dataField: "toName", caption: "T_Guest", width: "11%" },
+                    { dataField: "amountIncTax", caption: "Amount", width: "11%", dataType: "number", format: "#,##0.00" },
+                    { dataField: "actionUser", caption: "User", width: "11%" },
+                    { dataField: "machine", caption: "Machine", width: "11%" },
+                ],
+                filterRow: { visible: true, applyFilter: "auto" },
+                paging: { pageSize: 20 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [20, 50, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                scrolling: { mode: "standard", showScrollbar: "always", scrollByContent: true },
+                onRowClick: function (e) {
+                    selectedRowData = e.data;
+                    console.log("Selected Row:", selectedRowData);
+                }
+            }).dxDataGrid("instance");
+        }
+
+        function showDetailPopup(rowData) {
+            let invoiceNo = rowData.invoiceNo;
+            console.log("InvoiceNo:", invoiceNo);
+
+            $.ajax({
+                url: "/Cashiering/GetSearchPostingHistoryDetail",
+                type: "GET",
+                data: { invoiceNo: invoiceNo },
+                success: function (data) {
+                    loadDetailGrid(data);
+                    modalDetailInstance.show();
+                }
+                ,
+                error: function () {
+                    console.error("Không thể tải dữ liệu chi tiết");
+                }
+            });
+        }
+
+        function loadDetailGrid(data) {
+
+            // Ensure container exists and has fixed height
+            $("#fhv_detailPopup").css("height", "500px");
+
+            gridDetailInstance = $("#fhv_detailPopup").dxDataGrid({
+                dataSource: data,
+                height: 500,
+                allowColumnResizing: true,
+                selection: { mode: "single" },
+
                 columns: [
                     { dataField: "actionText", caption: "Action" },
                     { dataField: "moreInformation", caption: "More Information" },
-                    { dataField: "transactionDate", caption: "Trans. Date" },
+                    { dataField: "transactionDate", caption: "Trans. Date", dataType: "date", format: "dd/MM/yyyy" },
                     {
                         caption: "Date",
                         calculateCellValue: function (rowData) {
@@ -379,169 +536,180 @@
                             });
                         }
                     }
-                ]
-            });
+                ],
+
+                scrolling: {
+                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
+                    showScrollbar: "always",
+                    scrollByContent: true
+                },
+                paging: {
+                    pageSize: 50
+                },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [50, 100, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                showBorders: true,
+                width: "100%",
+
+                onRowPrepared: function (e) {
+                    if (e.data && e.data.isSubtotal) {
+                        e.rowElement.css({ "font-weight": "bold" });
+                    }
+                    if (e.data && e.data.isGrandTotal) {
+                        e.rowElement.css({ "font-weight": "bold" });
+                    }
+                },
+                onRowClick: function (e) {
+                    selectedRowData = e.data;
+                    console.log('onRowClick:', selectedRowData);
+                }
+            }).dxDataGrid("instance");
         }
-    });
-
-
-                function showDetailPopup(rowData) {
-        let invoiceNo = rowData.invoiceNo;
-        console.log("InvoiceNo:", invoiceNo);
-
-        $.ajax({
-            url: "/Cashiering/GetSearchPostingHistoryDetail",
-            type: "GET",
-            data: { invoiceNo: invoiceNo },
-            success: function (data) {
-                let popup = $("#detailPopup").dxPopup("instance");
-                popup.option("contentTemplate", function () {
-                    return $("<div id='detailGrid'>").dxDataGrid({
-                        dataSource: data,
-                        showBorders: true,
-                        columns: [
-                            { dataField: "actionText", caption: "Action" },
-                            { dataField: "moreInformation", caption: "More Information" },
-                            { dataField: "transactionDate", caption: "Trans. Date" },
-                            {
-                                caption: "Date",
-                                calculateCellValue: function (rowData) {
-                                    if (!rowData.actionDate) return "";
-                                    let d = new Date(rowData.actionDate);
-                                    return d.toLocaleDateString("en-GB");
-                                }
-                            },
-                            {
-                                caption: "Time",
-                                calculateCellValue: function (rowData) {
-                                    if (!rowData.actionDate) return "";
-                                    let d = new Date(rowData.actionDate);
-                                    return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-                                }
-                            }
-                        ]
-                    });
-                });
-                popup.show();
-            }
-        });
-    }
-
-
-            $("#btnDetail").on("click", function () {
-        if (selectedRowData) {
-            showDetailPopup(selectedRowData);
-        } else {
-            DevExpress.ui.notify("Vui lòng chọn 1 dòng", "warning", 2000);
-        }
-    });
-
-    $("#btnView").on("click", function() {
-        reloadGrid();
-        });              
 
         // Reload grid với filter từ form
-        function reloadGrid() {
-            $("#loadingSpinnerRateCode").show();
+        async function reloadGrid(isInitial = false) {
+            try {
+                $("#fhv_loadingSpinnerRateCode").show();
 
-                let selectedusers = $("#users").val();
+                let fromDateISO = $("#fhv_fromDate").val() || '';
+                let toDateISO = $("#fhv_toDate").val() || '';
                 let usersParam = "";
+                let selectedusers = $("#fhv_users").val();
 
-                if (!selectedusers || selectedusers.length === 0) {
-                    selectedusers = [];
-                    $("#users option").each(function () {
-                        selectedusers.push($(this).val());
-                    });
+                // Nếu là load lần đầu (initial) và fromDate chưa có → bắt buộc chờ business date
+                if (isInitial && (!fromDateISO || !toDateISO)) {
+                    fromDateISO = await waitForBusinessDate("fhv_fromDate", 10000); // timeout 10s để an toàn
+                    toDateISO = await waitForBusinessDate("fhv_toDate", 10000); // timeout 10s để an toàn
                 }
+
+                // Nếu vẫn rỗng sau khi chờ → báo lỗi hoặc fallback (tùy yêu cầu)
+                if (!fromDateISO || !toDateISO) {
+                    console.log("Không tải được ngày mặc định. Vui lòng chọn From Date thủ công.");
+                    $("#fhv_loadingSpinnerRateCode").hide();
+                    return;
+                }
+
                 usersParam = selectedusers.map(r => r.replace("''")).join("','");
-                var actionType = $("#action input[type='checkbox']:checked")
+                var actionType = $("#fhv_action input[type='checkbox']:checked")
                     .map(function () { return this.value; })
                     .get()
                     .join(",");
-
-                console.log("actionType:", actionType);
-                console.log("usersParam:", usersParam);
 
                 // Gửi ajax
                 $.ajax({
                     url: '/Cashiering/GetFolioHistoryView',
                     type: 'POST',
                     data: {
-                        fromDate: $("#fromDate").val(),
-                        toDate: $("#toDate").val(),
-                        fromFolioID: $("#fromFolio").val(),
-                        toFolioID: $("#toFolio").val(),
-                        fromRoom: $("#fromRoom").val(),
-                        toRoom: $("#toRoom").val(),
+                        fromDate: fromDateISO,   // YYYY-MM-DD an toàn
+                        toDate: toDateISO,
+                        fromFolioID: $("#fhv_fromFolio").val(),
+                        toFolioID: $("#fhv_toFolio").val(),
+                        fromRoom: $("#fhv_fromRoom").val(),
+                        toRoom: $("#fhv_toRoom").val(),
                         actionType: actionType,
-                         user: usersParam
+                        user: usersParam
                     },
-                    success: function(data){
+                    success: function (data) {
+
+                        // IMPORTANT: only render grid when success returns data
                         loadGrid(data);
+
                         console.log("Data trả về:", data);
-                    $("#loadingSpinnerRateCode").hide();
+                        $("#fhv_loadingSpinnerRateCode").hide();
                     },
-                    error: function(xhr, status, error){
+                    error: function (xhr, status, error) {
                         alert("Không thể tải dữ liệu");
-                        $("#loadingSpinnerRateCode").hide();
+                        $("#fhv_loadingSpinnerRateCode").hide();
                     }
                 });
-
+            } catch (error) {
+                console.error(error);
+            }
         }
 
-    $("#btnExportExcel").click(function () {
-           const grid = $("#gridContainerRateCode").dxDataGrid("instance");   // 🔥 khai báo grid
+        function destroy() {
 
-           const workbook = new ExcelJS.Workbook();
-           const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-           const worksheet = workbook.addWorksheet("Sheet 1");
+            // Dispose main grid
+            try {
+                const inst = $("#fhv_gridContainerRateCode").dxDataGrid("instance");
+                if (inst) inst.dispose();
+            } catch (e) { }
+            try { $("#fhv_gridContainerRateCode").empty(); } catch (e) { }
 
-           // === Dòng 1: Tên công ty (merge theo 4 cột) ===
-           worksheet.addRow([companyName]);
-           worksheet.mergeCells('A1:D1');
-           worksheet.getRow(1).font = { bold: true };
-           worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+            // Dispose detail grid
+            try {
+                const inst2 = $("#fhv_detailPopup").dxDataGrid("instance");
+                if (inst2) inst2.dispose();
+            } catch (e) { }
+            try { $("#fhv_detailPopup").empty(); } catch (e) { }
 
-           // === Dòng 2: Ngày giờ xuất (bên phải) ===
-           const now = new Date();
-           const exportDate = now.toLocaleString("vi-VN");
-           worksheet.addRow(['', '', '', exportDate]);
-           worksheet.mergeCells('D2:D2');  // cột D thôi
-           worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+            // Reset internal refs
+            gridMainInstance = null;
+            gridDetailInstance = null;
+            selectedRowData = null;
 
-           // === Dòng 3–4: trống
-           worksheet.addRow([]);
-           worksheet.addRow([]);
+            // Destroy TomSelect
+            try {
+                const el = document.querySelector("#fhv_users");
+                if (el && el.tomselect) el.tomselect.destroy();
+            } catch (e) { }
+            tomUsers = null;
 
-           // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
-           const reportRow = worksheet.addRow([' Folio History']);
-           worksheet.mergeCells('A5:D5');
-           reportRow.font = { bold: true, size: 14 };
-           reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            // Reset flags
+            isMainModalShownOnce = false;
 
-           // === Dòng 6: trống
-           worksheet.addRow([]);
+            // Remove events
+            $(document).off("click", "#fhv_btnDetail");
+            $(document).off("click", "#fhv_btnView");
+            $(document).off("click", "#fhv_btnExportExcel");
 
-           // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
-           DevExpress.excelExporter.exportDataGrid({
-               component: grid,
-               worksheet: worksheet,
-               autoFilterEnabled: true,
-               topLeftCell: { row: 7, column: 1 }
-           }).then(function () {
-               // Footer (sau cùng)
-               const lastRow = worksheet.lastRow.number + 2;
-               worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
-               worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-               worksheet.getCell(`A${lastRow}`).font = { italic: true };
+            $("#fhv_allAction").off("change");
+            $("#fhv_action input[type='checkbox']").off("change");
+        }
 
-               // Ghi file
-               let fileName = "Folio History.xlsx";
-               workbook.xlsx.writeBuffer().then(function (buffer) {
-                   saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
-               });
-           });
-       });
+        // Global entry points (required)
+        function openModal() {
+            if (!modalMainInstance) {
+                init();
+            }
+            modalMainInstance.show();
+        }
+
+        function openModalAuto() {
+            openModal();
+        }
+
+        return {
+            init: init,
+            destroy: destroy,
+            openModal: openModal,
+            openModalAuto: openModalAuto
+        };
+
+    })();
+
+    // Required global handlers
+    window.openModalFhv = function () {
+        fhv_Module.openModal();
+    };
+
+    window.openModalFhvAuto = function () {
+        fhv_Module.openModalAuto();
+    };
+
+    // Auto-init module shell (safe)
+    $(document).ready(function () {
+        fhv_Module.init();
+    });
 
 
 </script>

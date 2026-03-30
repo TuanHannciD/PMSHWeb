@@ -1,0 +1,497 @@
+﻿<div class="modal fade modal-xl" id="modalPackage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Package </h5>
+                @*  <button type="button" class="btn-close" onclick="closeModalPackage()"></button> *@
+            </div>
+            <div class="modal-body">
+                <div>
+                    <button class="mui-button mui-button-search" onclick="openModalNewPackage();">New</button>
+                    <button class="mui-button mui-button-search" onclick="openModalEditPackage();"
+                        id="btnEditPackage">Edit</button>
+                    <button class="mui-button mui-button-search" onclick="openModalDeletePackage();"
+                        id="btnDeletePackage">Delete</button>
+                    <button class="mui-button mui-button-search" onclick="closeModalPackage()">Close</button>
+                </div>
+                <div class="mui-divider"></div>
+                <div class="mui-card mt-2">
+                    <div id="gridContainerPackage" class="mt-2 gridContainer"></div>
+                    <div id="gridContainerPackageDeitail" class="mt-2 gridContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade modal" id="modalNewPackage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border:1px solid #bcbcbc">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">New Package</h5>
+                @*        <button type="button" class="btn-close" onclick="closeModalNewPackage()"></button> *@
+            </div>
+            <div class="modal-body">
+                <div class="search-filter">
+                    <button class="mui-button mui-button-search" onclick="SavePackage();"> OK</button>
+                    <button class="mui-button mui-button-search" onclick="closeModalNewPackage();">Close</button>
+                </div>
+                <div class="row g-2 mt-1 mb-2">
+                    <!-- Code -->
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="row align-items-center">
+                            <label class="col-md-3 col-form-label col-form-label-sm text-md-end">
+                                Code
+                            </label>
+                            <div class="col-md-8">
+                                <div class="input-group input-group-sm">
+                                    <input id="codePackageNew" class="form-control" />
+                                    <button id="btnSearchPackage" class="btn-search-icon"
+                                        onclick="openModalPackageetUp()">
+                                        <i class="fa-solid fa-arrow-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Area -->
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                Area
+                            </label>
+                            <div class="col-md-8">
+                                <select id="areaNewPackage" <option value="Reservation">Reservation</option>
+                                    <option value="Check-In">Check-In</option>
+                                    <option value="Check-Out">Check-Out</option>
+                                    <option value="Billing">Billing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Warning Day -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="row align-items-center">
+                            <label class="col-md-7 col-form-label col-form-label-sm text-md-end">
+                                Warning Day
+                            </label>
+                            <div class="col-md-5">
+                                <input id="warningDayPackage" type="number" class="form-control text-end" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Include Roomsharer -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                Include:
+                            </label>
+                            <div class="col-md-6">
+                                <div class="form-check" style="padding-left: 0px;">
+                                    <input id="includePackage" type="checkbox" />
+                                    <label class="form-check-label" for="includePackage">
+                                        Roomsharer
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Is Active -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                Status:
+                            </label>
+                            <div class="col-md-8" style="padding-left: 0px;">
+                                <div class="form-check">
+                                    <input id="activePackage" type="checkbox" />
+                                    <label class="form-check-label" for="activePackage">
+                                        Is Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description (full row) -->
+                    <div class="col-12">
+                        <div class="row align-items-center">
+                            <label class="col-md-2 col-form-label col-form-label-sm text-md-end">
+                                Description
+                            </label>
+                            <div class="col-md-10">
+                                <input id="descriptionPackage" type="text" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal" id="modalPackageetUp" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border:1px solid #bcbcbc">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Search Package Setup</h5>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <button class="mui-button mui-button-new" onclick="SavePackage();"> Save</button>
+                    <button class="mui-button mui-button-new" onclick="closeModalPackageetUp();">Close</button>
+                </div>
+                <div class="mui-card mt-2">
+                    <div id="gridContainerPackageSetUp" class="mt-2 gridContainer"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openModalPackage() {
+        if (idReservation == 0) {
+            showToast("Error", "Please choose booking", false);
+            return;
+        }
+        @* GetPackageetUp(); *@
+            GetPackageByReservationID();
+    }
+
+    function openModalNewPackage() {
+        clearPackage();
+        $('#modalNewPackage').modal('show');
+    }
+    function closeModalNewPackage() {
+        $('#modalNewPackage').modal('hide');
+    }
+    function closeModalPackage() {
+        $('#modalPackage').modal('hide');
+
+    }
+    function setHideButtonPackage() {
+        $('#btnEditPackage').hide();
+        $('#btnDeletePackage').hide();
+    }
+    function setShowButtonPackage() {
+        $('#btnEditPackage').show();
+        $('#btnDeletePackage').show();
+    }
+
+    function GetPackageByReservationID() {
+
+        $.ajax({
+            url: '/Reservation/GetPackageByReservationID',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                reservationID: idReservation,
+                type: 2,
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                if (result.success == false) {
+                    showToast("Error", result.message, false)
+                    return;
+                }
+                if (result.success === true && (!result.summary || result.summary.length === 0)) {
+                    showToast("Warning", result.message || "No packages found for this reservation.", false);
+                    return;
+                }
+                else {
+                    if (result.summary.length == 0) {
+                        showToast("Warning", "No packages found for this reservation.", false)
+                        return;
+                    }
+                    else {
+                        initializeDataGridPackage(result.details);
+                        setHideButtonPackage();
+                        $('#modalPackage').modal('show');
+                    }
+                }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+
+    function GetPackageByReservationDetail(dataDetail) {
+        $.ajax({
+            url: '/Reservation/GetPackageByReservationID',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                reservationID: idReservation,
+                packageID: dataDetail.packageID,
+                beginDate: dataDetail.beginDate,
+                endDate: dataDetail.endDate,
+            },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                if (result.success == false) {
+                    showToast("Error", result.message, false)
+                    return;
+                }
+                if (result.success === true && (!result.detailsPackage || result.detailsPackage.length === 0)) {
+                    showToast("Warning", result.message || "No packages found for this reservation.", false);
+                    return;
+                }
+                else {
+
+                    initializeDataGridPackageDetail(result.detailsPackage);
+                    setHideButtonPackage();
+                    $('#modalPackage').modal('show');
+
+                }
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+
+    let selecteReservationPackage = null; // Lưu trữ dữ liệu dòng đang chọn
+    function initializeDataGridPackage(details) {
+        $("#gridContainerPackage").dxDataGrid({
+
+            dataSource: details, allowColumnResizing: true,
+            columns: [
+                { dataField: "packageID", caption: "ID", visible: false },
+                { dataField: "rateCode", caption: "Rate Code", width: 100 },
+                { dataField: "package", caption: "Package", width: 120 },
+                { dataField: "description", caption: "Description", width: "auto" }, // Cột này sẽ chiếm diện tích còn lại
+                { dataField: "qty", caption: "Qty", width: 60, },
+                { dataField: "totalPrice", caption: "Price", width: 110, format: "#,##0", dataType: "number" },
+                { dataField: "totalPriceAfterTax", caption: "Price Net", width: 110, format: "#,##0", dataType: "number" },
+                { dataField: "currencyID", caption: "Curr", width: 70, },
+                { dataField: "postingRhythmID", caption: "Rhythm ID", width: 100 },
+                { dataField: "beginDate", visible: false },
+                { dataField: "endDate", visible: false },
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            height: "250px",
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            onRowClick: function (e) {
+                setShowButtonPackage();
+                selecteReservationPackage = e.data;
+
+            },
+            onRowDblClick: function (e) {
+                console.log('selecteReservationPackage', selecteReservationPackage);
+                GetPackageByReservationDetail(selecteReservationPackage);
+            }
+        });
+    }
+
+    function initializeDataGridPackageDetail(details) {
+        $("#gridContainerPackageDeitail").dxDataGrid({
+
+            dataSource: details, allowColumnResizing: true,
+            columns: [
+                { dataField: "ID", visible: false },
+                { dataField: "Package", caption: "Package", width: 120 },
+                { dataField: "Description", caption: "Description", width: "auto" },
+                { dataField: "Qty", caption: "Qty", width: 60, },
+                { dataField: "Price", caption: "Price", width: 110, format: "#,##0", dataType: "number" },
+                { dataField: "Price Net", caption: "Price Net", width: 110, format: "#,##0", dataType: "number" },
+                { dataField: "Currency", caption: "Curr", width: 70, },
+                { dataField: "PostingRhythm", caption: "Rhythm", width: 120 },
+                { dataField: "Begin Date", caption: "Begin", width: 100, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "End Date", caption: "End", width: 100, dataType: "date", format: "dd/MM/yyyy" },
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            height: "250px",
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            onRowClick: function (e) {
+                setShowButtonPackage();
+            }
+        });
+    }
+
+    function SavePackage() {
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var formData = new FormData();
+        formData.append('reservationID', idReservation);
+        formData.append('code', $('#codePackageNew').val());
+        formData.append('area', $('#areaNewPackage').val());
+        formData.append('description', $('#descriptionPackage').val());
+        formData.append('warningDay', $('#warningDayPackage').val());
+        formData.append('actice', $('#activePackage').is(':checked') ? 1 : 0);
+        formData.append('userName', userName);
+        formData.append('userID', userID);
+        showToast("Error", "Chưa có chức năng save hold lại. Mức độ ưu tiên (2)", false);
+        return;
+        $.ajax({
+            url: '/Reservation/SavePackage',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    closeModalNewPackage();
+                    setHideButtonPackage();
+                    GetPackageByReservationID();
+                    clearPackage();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+    function clearPackage() {
+        $('#codePackageNew').val('');
+        $('#areaNewPackage').val('Reservation');
+        $('#descriptionPackage').val('');
+        $('#warningDayPackage').val('0');
+    }
+
+    function openModalPackageetUp() {
+        GetPackageetUp();
+        $('#modalPackageetUp').modal('show');
+    }
+    function closeModalPackageetUp() {
+        $('#modalPackageetUp').modal('hide');
+    }
+    function GetPackageetUp() {
+        $.ajax({
+            url: '/Reservation/GetSetUpPackage',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+                initializeDataGridPackageSetUp(result);
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
+                }
+            }
+        });
+    }
+    function initializeDataGridPackageSetUp(data) {
+
+        $("#gridContainerPackageSetUp").dxDataGrid({
+
+            dataSource: data, allowColumnResizing: true,
+            columns: [
+                { dataField: "ID", caption: "ID", visible: false },
+                { dataField: "Code", caption: "Code" },
+                { dataField: "Description", caption: "Description" },
+
+
+            ],
+            paging: { pageSize: 15 },
+            scrolling: {
+                rowRenderingMode: 'virtual',
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [15, 20, 'all'],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true,
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            selection: {
+                mode: "single"
+            },
+            onRowDblClick: function (e) {
+                $('#codePackageNew').val(e.data.Code);
+                closeModalPackageetUp();
+            }
+        });
+    }
+
+    function openModalEditPackage() {
+        if (!selecteReservationPackage) {
+            showToast("Warning", "Please select a package to edit", false);
+            return;
+        }
+
+        // 1. Đổ dữ liệu vào các Input trong Modal New/Edit
+        $('#codePackageNew').val(selecteReservationPackage.package);
+        $('#descriptionPackage').val(selecteReservationPackage.description);
+        $('#warningDayPackage').val(selecteReservationPackage.qty); // Hoặc trường tương ứng
+
+        // Giả sử area được lấy từ dữ liệu trả về, nếu không có mặc định Reservation
+        $('#areaNewPackage').val(selecteReservationPackage.area || 'Reservation');
+
+        // Xử lý Checkbox Active (Tùy thuộc vào dữ liệu trả về là true/false hay 1/0)
+        if (selecteReservationPackage.active == 1 || selecteReservationPackage.active == true) {
+            $('#activePackage').prop('checked', true);
+        } else {
+            $('#activePackage').prop('checked', false);
+        }
+
+        // 2. Đổi tiêu đề Modal để người dùng biết là đang Edit
+        $('#modalNewPackage .modal-title').text('Edit Package');
+
+        // 3. Hiển thị Modal
+        $('#modalNewPackage').modal('show');
+    }
+
+    function openModalDeletePackage() {
+        showToast("Error", "Chưa có thông tin bảng ràng buộc hold lại. Mức độ ưu tiên (3)")
+    }
+</script>

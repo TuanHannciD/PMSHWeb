@@ -1,0 +1,803 @@
+@{
+    var listusg = ViewBag.UserGroupList;
+    var listjt = ViewBag.JobTitleList;
+    var listdp = ViewBag.DepartmentList;
+}
+
+<div class="modal fade" id="ousm_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content modal-full-height">
+            <div class="modal-header">
+                <h5 class="modal-title">UsersManagement</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="sticky-header bg-white p-2 shadow-sm z-3">
+                    <div class="pb-2">
+                        <button id="ousm_btnPrint" class="mui-button mui-button-view">View</button>
+                        <button id="ousm_btnNewUsermana" class="mui-button mui-button-new" type="button">New</button>
+                        <button id="ousm_btnEditUsermana" class="mui-button mui-button-edit" type="button">Edit</button>
+                        <button id="ousm_btnDeleteUsermana" class="mui-button mui-button-delete" type="button">Delete</button>
+                        <button class="mui-button mui-button-new" id="ousm_btnClose">Close</button>
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 pt-2 filter-panel">
+                        <div class="row g-3 align-items-center filter-panel">
+                            <div class="container-fluid filter-panel pt-2">
+                                <div class="row g-2 align-items-center">
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">Last Name</label>
+                                            <div class="col-md-8">
+                                                <input id="ousm_lastName" type="text" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">User Status</label>
+                                            <div class="col-md-8">
+                                                <select id="ousm_userStatus" class="form-select form-select-sm">
+                                                    <option value="0">Active</option>
+                                                    <option value="1">Inactive</option>
+                                                    <option value="2">Terminated</option>
+                                                    <option value="3">All</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">User Group</label>
+                                            <div class="col-md-8">
+                                                <select id="ousm_usergroup" name="ousm_usergroup" class="form-control form-control-sm">
+                                                    <option value=""></option>
+                                                    @foreach (var item in listusg)
+                                                    {
+                                                        <option value="@item.Code">@item.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">First Name</label>
+                                            <div class="col-md-8">
+                                                <input type="text" id="ousm_firstName" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">Cashier status</label>
+                                            <div class="col-md-8">
+                                                <select id="ousm_cashierStatus" class="form-select form-select-sm">
+                                                    <option value="0">Cashier</option>
+                                                    <option value="1">None Cashier</option>
+                                                    <option value="2">All</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">Job Title</label>
+                                            <div class="col-md-8">
+                                                <select id="ousm_jobtitle" name="ousm_jobtitle" class="form-control form-control-sm">
+                                                    <option value=""></option>
+                                                    @foreach (var item in listjt)
+                                                    {
+                                                        <option value="@item.Code">@item.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row align-items-center">
+                                            <label class="col-md-4 col-form-label text-end">Login name</label>
+                                            <div class="col-md-8">
+                                                <input type="text" id="ousm_loginName" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-card">
+                    <div id="ousm_gridContainerUser" class="gridContainer mt-2"></div>
+                </div>
+
+                <div id="ousm_loadingSpinner"
+                     style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ousm_popupNewGrid" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header py-2">
+                <h5 class="modal-title">New User</h5>
+            </div>
+            <div class="modal-body p-3">
+                <div class="d-flex justify-content-start mb-3 gap-2 pt-2">
+                    <button id="ousm_btnSaveAtt" class="mui-button mui-button-search">Save</button>
+                    <button type="button" id="ousm_btnClosePopup" class="mui-button mui-button-new" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row g-2">
+                        <input type="hidden" id="ousm_txtid" name="ousm_txtid" />
+
+                        <div class="col-md-6">
+                            <div class="border p-2 mb-2">
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Last Name</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_lastNamenew" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">First / Middle</div>
+                                    <div class="col-md-4">
+                                        <input id="ousm_firstNamenew" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="ousm_middleNamenew" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Sex</div>
+                                    <div class="col-md-8">
+                                        <div class="form-check form-check-inline">
+                                            <input id="ousm_sex_male" type="radio" name="ousm_sex" value="1">
+                                            <label class="form-check-label" for="ousm_sex_male">Male</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input id="ousm_sex_female" type="radio" name="ousm_sex" checked value="0">
+                                            <label class="form-check-label" for="ousm_sex_female">Female</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Job Title</div>
+                                    <div class="col-md-8">
+                                        <select id="ousm_jobtitlenew" name="ousm_jobtitlenew" class="form-control form-control-sm">
+                                            <option value=""></option>
+                                            @foreach (var item in listjt)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Department</div>
+                                    <div class="col-md-8">
+                                        <select id="ousm_department" name="ousm_department" class="form-control form-control-sm">
+                                            <option value=""></option>
+                                            @foreach (var item in listdp)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">User Group</div>
+                                    <div class="col-md-8">
+                                        <select id="ousm_usergroupnew" name="ousm_usergroupnew" class="form-control form-control-sm">
+                                            <option value=""></option>
+                                            @foreach (var item in listusg)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-4 text-end text-nowrap">Date of Birth</div>
+                                    <div class="col-md-8">
+                                        <div data-date-input data-format="DD/MM/YYYY" data-name="ousm_dateofbirth">
+                                            <input type="text" class="date-ui form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-4 text-end text-nowrap">Working Date</div>
+                                    <div class="col-md-8">
+                                        <div data-date-input data-format="DD/MM/YYYY" data-name="ousm_workingdate">
+                                            <input type="text" class="date-ui form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border p-2">
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Address</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_address" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Telephone</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_telephone" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Hand phone</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_handPhone" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Communication</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_communication" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Postal Code</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_postalCode" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-4 text-end text-nowrap">Resident</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_resident" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border p-2 mb-2">
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Login Name</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_loginNamenew" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Password</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_passWord" type="password" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Confirm password</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_confirmPass" type="password" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Pws expire date</div>
+                                    <div class="col-md-5">
+                                        <div data-date-input data-format="DD/MM/YYYY" data-name="ousm_expiredate">
+                                            <input type="text" class="date-ui form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-center">
+                                        <button id="ousm_resetpass" type="button" class="btn btn-outline-secondary btn-sm px-2 py-0">
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Email Address</div>
+                                    <div class="col-md-8">
+                                        <input id="ousm_emailAdress" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center mb-1">
+                                    <div class="col-md-4 text-end text-nowrap">Cashier status</div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input id="ousm_ischeckCashier" type="checkbox">
+                                            <label class="form-check-label" for="ousm_ischeckCashier">Is Cashier</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="ousm_cachierNo" class="form-control form-control-sm" placeholder="Cashier No">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-4 text-end text-nowrap">Status</div>
+                                    <div class="col-md-8">
+                                        <select id="ousm_statusNew" class="form-select form-select-sm">
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
+                                            <option value="-1">Terminated</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border p-2">
+                                <strong>Application Access Control:</strong>
+                                <div class="form-check">
+                                    <input id="ousm_access_pms" type="checkbox" checked>
+                                    <label class="form-check-label" for="ousm_access_pms">Property Management System (PMS)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="ousm_access_pos" type="checkbox" checked>
+                                    <label class="form-check-label" for="ousm_access_pos">Point Of Sale (POS)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="ousm_access_inventory" type="checkbox" checked>
+                                    <label class="form-check-label" for="ousm_access_inventory">Inventory</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="ousm_access_pbx" type="checkbox" checked>
+                                    <label class="form-check-label" for="ousm_access_pbx">PBX</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="ousm_access_smartcard" type="checkbox">
+                                    <label class="form-check-label" for="ousm_access_smartcard">Smart Card</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="ousm_access_bookingonline" type="checkbox">
+                                    <label class="form-check-label" for="ousm_access_bookingonline">Booking Online</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ousm_logGridContainer" class="gridContainer mt-2" style="max-height:250px; overflow:auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function (window, $) {
+    "use strict";
+
+    const ousm_Module = {
+        selectedRowData: null,
+
+        init: function () {
+            this.bindEvents();
+            this.usersManagementData();
+        },
+
+        bindEvents: function () {
+            const self = this;
+
+            $(document)
+                .off("click.ousm", "#ousm_btnPrint")
+                .on("click.ousm", "#ousm_btnPrint", function () {
+                    self.usersManagementData();
+                });
+
+            $(document)
+                .off("click.ousm", "#ousm_btnClose")
+                .on("click.ousm", "#ousm_btnClose", function () {
+                    $("#ousm_modal").modal("hide");
+                    self.clearForm();
+                });
+
+            $(document)
+                .off("click.ousm", "#ousm_btnEditUsermana")
+                .on("click.ousm", "#ousm_btnEditUsermana", function () {
+                    self.editSelected();
+                });
+
+            $(document)
+                .off("click.ousm", "#ousm_btnNewUsermana")
+                .on("click.ousm", "#ousm_btnNewUsermana", function () {
+                    self.clearForm();
+                    initDateInputs();
+                    UI.setHiddenDate("ousm_dateofbirth", dateSystem);
+                    UI.setHiddenDate("ousm_workingdate", dateSystem);
+                    UI.setHiddenDate("ousm_expiredate", dateSystem);
+                    $("#ousm_popupNewGrid").modal("show");
+                });
+
+            $(document)
+                .off("click.ousm", "#ousm_btnSaveAtt")
+                .on("click.ousm", "#ousm_btnSaveAtt", function () {
+                    self.saveForm();
+                });
+
+            $(document)
+                .off("click.ousm", "#ousm_resetpass")
+                .on("click.ousm", "#ousm_resetpass", function () {
+                    self.resetPass();
+                });
+        },
+
+        usersManagementData: function () {
+            const self = this;
+
+            $("#ousm_loadingSpinner").show();
+
+            $.ajax({
+                url: "/Security/UsersManagementData",
+                type: "GET",
+                data: {
+                    lastName: $("#ousm_lastName").val(),
+                    firstName: $("#ousm_firstName").val(),
+                    loginName: $("#ousm_loginName").val(),
+                    userStatus: $("#ousm_userStatus").val(),
+                    cashierStatus: $("#ousm_cashierStatus").val(),
+                    jobtitle: $("#ousm_jobtitle").val(),
+                    department: $("#ousm_usergroup").val()
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (result) {
+                    self.initializeDataGridSearch(result);
+                    $("#ousm_loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không thể tải báo cáo.");
+                    $("#ousm_loadingSpinner").hide();
+                }
+            });
+        },
+
+        editSelected: function () {
+            const self = this;
+
+            if (!self.selectedRowData) {
+                showToast("Warning", "Vui lòng chọn một dòng trước khi chỉnh sửa.", false);
+                return;
+            }
+
+            $("#ousm_loadingSpinner").show();
+
+            $.ajax({
+                url: "/Security/UsersManagementDetail",
+                type: "GET",
+                data: {
+                    id: self.selectedRowData.id
+                },
+                traditional: true,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (res) {
+                    self.populateForm(res);
+                    $("#ousm_popupNewGrid").modal("show");
+                    $("#ousm_loadingSpinner").hide();
+                },
+                error: function () {
+                    alert("Không thể tải chi tiết.");
+                    $("#ousm_loadingSpinner").hide();
+                }
+            });
+        },
+
+        saveForm: function () {
+            const self = this;
+
+            const data = {
+                ID: $("#ousm_txtid").val() || 0,
+
+                LoginName: $("#ousm_loginNamenew").val(),
+                PasswordHash: $("#ousm_passWord").val(),
+
+                FirstName: $("#ousm_firstNamenew").val(),
+                LastName: $("#ousm_lastNamenew").val(),
+                MiddleName: $("#ousm_middleNamenew").val(),
+
+                Sex: $("input[name='ousm_sex']:checked").val(),
+
+                BirthOfDate: $("#ousm_dateofbirth").val(),
+
+                Telephone: $("#ousm_telephone").val(),
+                HandPhone: $("#ousm_handPhone").val(),
+                HomeAddress: $("#ousm_address").val(),
+                Resident: $("#ousm_resident").val(),
+                PostalCode: $("#ousm_postalCode").val(),
+
+                DepartmentID: parseInt($("#ousm_department").val()) || 0,
+                Status: parseInt($("#ousm_statusNew").val()) || 1,
+
+                Communication: $("#ousm_communication").val(),
+
+                PassExpireDate: $("#ousm_expiredate").val(),
+
+                IsCashier: $("#ousm_ischeckCashier").is(":checked"),
+                CashierNo: parseInt($("#ousm_cachierNo").val()) || 0,
+
+                Email: $("#ousm_emailAdress").val(),
+
+                StartWorking: $("#ousm_workingdate").val(),
+
+                UserInsertID: JSON.parse(localStorage.getItem("userID")),
+                UserUpdateID: JSON.parse(localStorage.getItem("userID")),
+
+                JobTitleID: parseInt($("#ousm_jobtitlenew").val()) || 0,
+                UserGroupID: parseInt($("#ousm_usergroupnew").val()) || 0,
+                FullName: $("#ousm_loginNamenew").val(),
+
+                IsShow: true
+            };
+
+            $.ajax({
+                url: "/Security/UpdateUsersManagement",
+                type: "POST",
+                data: data,
+                traditional: true,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showToast("Success", response.message, true);
+                        $("#ousm_popupNewGrid").modal("hide");
+                        self.usersManagementData();
+                        self.clearForm();
+                    } else {
+                        showToast("Warning", response.message, false);
+                    }
+                },
+                error: function () {
+                    showToast("Error", "Không thể lưu dữ liệu.", false);
+                }
+            });
+        },
+
+        resetPass: function () {
+            const self = this;
+
+            const data = {
+                ID: $("#ousm_txtid").val() || 0,
+                UserInsertID: JSON.parse(localStorage.getItem("userID")),
+                UserUpdateID: JSON.parse(localStorage.getItem("userID"))
+            };
+
+            $.ajax({
+                url: "/Security/ResetPassUsersManagement",
+                type: "POST",
+                data: data,
+                traditional: true,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showToast("Success", response.message, true);
+                        $("#ousm_popupNewGrid").modal("hide");
+                        self.usersManagementData();
+                        self.clearForm();
+                    } else {
+                        showToast("Warning", response.message, false);
+                    }
+                },
+                error: function () {
+                    showToast("Error", "Không thể reset mật khẩu.", false);
+                }
+            });
+        },
+
+        populateForm: function (data) {
+            initDateInputs();
+            if (!data) return;
+
+            $("#ousm_txtid").val(data.id || "");
+
+            $("#ousm_lastNamenew").val(data.lastName ?? "");
+            $("#ousm_firstNamenew").val(data.firstName ?? "");
+            $("#ousm_middleNamenew").val(data.middleName ?? "");
+
+            $("input[name='ousm_sex']").prop("checked", false);
+            if (Number(data.sex) === 1) {
+                $("#ousm_sex_male").prop("checked", true);
+            } else {
+                $("#ousm_sex_female").prop("checked", true);
+            }
+
+            $("#ousm_jobtitlenew").val(data.jobTitleID ?? "");
+            $("#ousm_department").val(data.departmentID ?? "");
+            $("#ousm_usergroupnew").val(data.userGroupID ?? "");
+
+            UI.setHiddenDate("ousm_dateofbirth", data.birthOfDate);
+            UI.setHiddenDate("ousm_workingdate", data.startWorking);
+
+            $("#ousm_address").val(data.homeAddress ?? "");
+            $("#ousm_telephone").val(data.telephone ?? "");
+            $("#ousm_handPhone").val(data.handPhone ?? "");
+            $("#ousm_communication").val(data.communication ?? "");
+            $("#ousm_postalCode").val(data.postalCode ?? "");
+            $("#ousm_resident").val(data.resident ?? "");
+
+            $("#ousm_loginNamenew").val(data.loginName ?? "");
+            $("#ousm_passWord").val(data.passwordHash ?? "");
+            $("#ousm_confirmPass").val(data.passwordHash ?? "");
+
+            UI.setHiddenDate("ousm_expiredate", data.passExpireDate);
+
+            $("#ousm_emailAdress").val(data.email ?? "");
+            $("#ousm_ischeckCashier").prop("checked", !!data.isCashier);
+            $("#ousm_cachierNo").val(data.cashierNo ?? "");
+            $("#ousm_statusNew").val(data.status ?? 1);
+        },
+
+        clearForm: function () {
+            $("#ousm_txtid").val("");
+
+            $("#ousm_lastNamenew").val("");
+            $("#ousm_firstNamenew").val("");
+            $("#ousm_middleNamenew").val("");
+
+            $("input[name='ousm_sex']").prop("checked", false);
+            $("#ousm_sex_male").prop("checked", true);
+
+            $("#ousm_jobtitlenew").val("");
+            $("#ousm_department").val("");
+            $("#ousm_usergroupnew").val("");
+
+            UI.setHiddenDate("ousm_dateofbirth", "");
+            UI.setHiddenDate("ousm_workingdate", "");
+            UI.setHiddenDate("ousm_expiredate", "");
+
+            $("#ousm_address").val("");
+            $("#ousm_telephone").val("");
+            $("#ousm_handPhone").val("");
+            $("#ousm_communication").val("");
+            $("#ousm_postalCode").val("");
+            $("#ousm_resident").val("");
+
+            $("#ousm_loginNamenew").val("");
+            $("#ousm_passWord").val("");
+            $("#ousm_confirmPass").val("");
+            $("#ousm_emailAdress").val("");
+
+            $("#ousm_ischeckCashier").prop("checked", false);
+            $("#ousm_cachierNo").val("");
+
+            $("#ousm_statusNew").val(1);
+        },
+
+        initializeDataGridSearch: function (data) {
+            const self = this;
+
+            $("#ousm_gridContainerUser").dxDataGrid({
+                dataSource: data,
+                height: 500,
+                allowColumnResizing: true,
+                columnAutoWidth: true,
+
+                grouping: { autoExpandAll: true },
+                groupPanel: { visible: false },
+
+                columns: [
+                    {
+                        dataField: "department",
+                        caption: "Department",
+                        groupIndex: 0,
+                        visible: false,
+                        groupCellTemplate: function (container, options) {
+                            $("<div>")
+                                .text("Department: " + options.value)
+                                .css({ fontWeight: "600", fontSize: "14px" })
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: "statusText", caption: "Status", width: 120 },
+                    { dataField: "loginName", caption: "Login Name", width: 140 },
+                    { dataField: "fullName", caption: "Full Name", width: 160 },
+                    { dataField: "sex", caption: "Sex", width: 80 },
+                    {
+                        dataField: "birthOfDate",
+                        caption: "Birth Date",
+                        dataType: "date",
+                        format: "dd/MM/yyyy",
+                        width: 120
+                    },
+                    { dataField: "telephone", caption: "Tel", width: 120 },
+                    { dataField: "handPhone", caption: "Mobile", width: 120 },
+                    { dataField: "homeAddress", caption: "Home Address", width: 120 },
+                    { dataField: "resident", caption: "Resident", width: 120 },
+                    { dataField: "postalCode", caption: "Postal", width: 90 },
+                    {
+                        dataField: "isCashier",
+                        caption: "Cashier",
+                        width: 100,
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $("<div>")
+                                .dxCheckBox({
+                                    value: options.value,
+                                    readOnly: true
+                                })
+                                .css({
+                                    transform: "scale(0.85)",
+                                    margin: "0 auto"
+                                })
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: "jobTitle", caption: "Job Title", width: 160 },
+                    { dataField: "createBy", caption: "Create By", width: 120 },
+                    {
+                        dataField: "createDate",
+                        caption: "Create Date",
+                        dataType: "date",
+                        format: "dd/MM/yyyy",
+                        width: 120
+                    },
+                    { dataField: "updateBy", caption: "Update By", width: 120 },
+                    {
+                        dataField: "updateDate",
+                        caption: "Update Date",
+                        dataType: "date",
+                        format: "dd/MM/yyyy",
+                        width: 120
+                    }
+                ],
+
+                paging: { pageSize: 25 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [25, 50, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+
+                filterRow: { visible: true, applyFilter: "auto" },
+                headerFilter: { visible: true },
+                selection: { mode: "single" },
+                showBorders: true,
+
+                onRowClick: function (e) {
+                    self.selectedRowData = e.data;
+                }
+            });
+        }
+    };
+
+    window.openModalOusm = function () {
+        $("#ousm_modal").modal("show");
+        ousm_Module.init();
+    };
+
+    window.ousm_Module = ousm_Module;
+
+})(window, jQuery);
+</script>

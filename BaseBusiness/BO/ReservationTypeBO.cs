@@ -24,5 +24,10 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
+        public ReservationTypeModel GetById(int id, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = "SELECT ID, Code, Name, UserInsertID, CreateDate,  UserUpdateID, UpdateDate FROM ReservationType WHERE ID = @id";
+            return conn.QuerySingleOrDefault<ReservationTypeModel>(sql, new { id }, tx);
+        }
     }
 }

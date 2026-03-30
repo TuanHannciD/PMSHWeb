@@ -1,0 +1,627 @@
+@{
+    Layout = null;
+}
+
+<div class="modal fade" id="ngrRes_mainModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ngrRes_mainModalTitle">New Group Reservation</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <div>
+                        <button id="ngrRes_btnView" type="button" class="mui-button mui-button-view">View</button>
+                        <button id="ngrRes_btnSave" type="button" class="mui-button mui-button-new">Save</button>
+                        <button id="ngrRes_btnRefresh" type="button" class="mui-button mui-button-search">Refresh</button>
+                        <button id="ngrRes_btnClose" type="button" class="mui-button mui-button-search">Close</button>
+                    </div>
+
+                    <div class="row g-2 mt-1">
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_bookFrom" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Book from
+                                </label>
+                                <div class="col-md-8">
+                                    <select id="ngrRes_bookFrom" name="ngrRes_bookFrom" class="form-select form-select-sm">
+                                        <option value="0" selected>Availability</option>
+                                        <option value="1">Allotment</option>
+                                        <option value="2">Rate Code</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_resType" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Res. Type
+                                </label>
+                                <div class="col-md-8">
+                                    <select id="ngrRes_resType" name="ngrRes_resType" class="form-select form-select-sm" asp-items="ViewBag.cboReservationType"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_currency" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Currency
+                                </label>
+                                <div class="col-md-8">
+                                    <select id="ngrRes_currency" name="ngrRes_currency" class="form-select form-select-sm">
+                                        <option value="VND" selected>VND</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_arrivalShow" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Arrival
+                                </label>
+                                <div class="col-md-8">
+                                    <div class="clearable" data-date-input data-format="DD/MM/YYYY" business-date data-name="ngrRes_arrival">
+                                        <input id="ngrRes_arrivalShow" name="ngrRes_arrivalShow" type="text" class="date-ui form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_departureShow" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Departure
+                                </label>
+                                <div class="col-md-8">
+                                    <div class="clearable" data-date-input data-format="DD/MM/YYYY" data-name="ngrRes_departure">
+                                        <input id="ngrRes_departureShow" name="ngrRes_departureShow" type="text" class="date-ui form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_nights" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Nights
+                                </label>
+                                <div class="col-md-4">
+                                    <input id="ngrRes_nights" name="ngrRes_nights" type="number" min="1" class="form-control form-control-sm text-end" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_package" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Package
+                                </label>
+                                <div class="col-md-8">
+                                    <select id="ngrRes_package" name="ngrRes_package" class="form-select form-select-sm" asp-items="ViewBag.cboPackage"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_market" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Market
+                                </label>
+                                <div class="col-md-8">
+                                    <select id="ngrRes_market" name="ngrRes_market" class="form-select form-select-sm" asp-items="ViewBag.cboMarket"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label for="ngrRes_nameText" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Name
+                                </label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm">
+                                        <input id="ngrRes_profileGRIndividualID" name="ngrRes_profileGRIndividualID" type="hidden" />
+                                        <input id="ngrRes_nameText" name="ngrRes_nameText" type="text" class="form-control" />
+                                        <button id="ngrRes_btnSearchProfile" type="button" class="btn btn-outline-secondary">
+                                            <i class="fa-solid fa-arrow-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-card mt-1" >
+                    <div id="ngrRes_gridContainerRoom" class="gridContainer" style="min-height: 500px;"></div>
+
+                    <div id="ngrRes_loadingSpinner" style="display:none; position:absolute; inset:0; z-index:999; background:rgba(255,255,255,0.55); backdrop-filter:blur(2px);">
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ngrRes_errorMessage" class="text-danger small mt-2 d-none">
+                    Invalid name format. Use: LastName, FirstName MiddleName
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Reservation/GroupReservation/ModalSearchProfile.cshtml")
+
+<script>
+    var ngrRes_Module = (function () {
+        let ngrRes_gridInstance = null;
+        let ngrRes_modalInstance = null;
+        let ngrRes_isBound = false;
+        let ngrRes_isSyncingDates = false;
+
+        const ngrRes_selectors = {
+            modal: "#ngrRes_mainModal",
+            grid: "#ngrRes_gridContainerRoom",
+            spinner: "#ngrRes_loadingSpinner",
+            btnView: "#ngrRes_btnView",
+            btnSave: "#ngrRes_btnSave",
+            btnRefresh: "#ngrRes_btnRefresh",
+            btnClose: "#ngrRes_btnClose",
+            btnSearchProfile: "#ngrRes_btnSearchProfile",
+            bookFrom: "#ngrRes_bookFrom",
+            resType: "#ngrRes_resType",
+            currency: "#ngrRes_currency",
+            arrivalHidden: "#ngrRes_arrival",
+            departureHidden: "#ngrRes_departure",
+            arrivalShow: "#ngrRes_arrivalShow",
+            departureShow: "#ngrRes_departureShow",
+            nights: "#ngrRes_nights",
+            package: "#ngrRes_package",
+            market: "#ngrRes_market",
+            profileId: "#ngrRes_profileGRIndividualID",
+            nameText: "#ngrRes_nameText",
+            errorMessage: "#ngrRes_errorMessage"
+        };
+
+        function init() {
+            const modalEl = document.querySelector(ngrRes_selectors.modal);
+            if (!modalEl) return;
+
+            ngrRes_modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+            if (!ngrRes_isBound) {
+                bindEvents();
+                ngrRes_isBound = true;
+            }
+        }
+
+        function bindEvents() {
+            $(document)
+                .off("click.ngrRes", ngrRes_selectors.btnView)
+                .on("click.ngrRes", ngrRes_selectors.btnView, function () {
+                    searchRoomAvailable();
+                });
+
+            $(document)
+                .off("click.ngrRes", ngrRes_selectors.btnSave)
+                .on("click.ngrRes", ngrRes_selectors.btnSave, function () {
+                    saveGroupReservation();
+                });
+
+            $(document)
+                .off("click.ngrRes", ngrRes_selectors.btnRefresh)
+                .on("click.ngrRes", ngrRes_selectors.btnRefresh, function () {
+                    refresh();
+                });
+
+            $(document)
+                .off("click.ngrRes", ngrRes_selectors.btnClose)
+                .on("click.ngrRes", ngrRes_selectors.btnClose, function () {
+                    close();
+                });
+
+            $(document)
+                .off("click.ngrRes", ngrRes_selectors.btnSearchProfile)
+                .on("click.ngrRes", ngrRes_selectors.btnSearchProfile, function () {
+                    if (typeof openModalSearchProfile === "function") {
+                        openModalSearchProfile();
+                    }
+                });
+
+            $(document)
+                .off("change.ngrRes", ngrRes_selectors.arrivalShow)
+                .on("change.ngrRes", ngrRes_selectors.arrivalShow, function () {
+                    syncDepartureByArrival();
+                });
+
+            $(document)
+                .off("change.ngrRes", `${ngrRes_selectors.departureShow}, ${ngrRes_selectors.nights}`)
+                .on("change.ngrRes", `${ngrRes_selectors.departureShow}, ${ngrRes_selectors.nights}`, function (e) {
+                    syncDatesByDepartureOrNights(e.target.id);
+                });
+
+            $(document)
+                .off("blur.ngrRes", ngrRes_selectors.nameText)
+                .on("blur.ngrRes", ngrRes_selectors.nameText, function () {
+                    validateAndCreateProfile();
+                });
+
+            $(ngrRes_selectors.modal)
+                .off("shown.bs.modal.ngrRes")
+                .on("shown.bs.modal.ngrRes", function () {
+                    if (!ngrRes_gridInstance) {
+                        searchRoomAvailable();
+                    } else {
+                        ngrRes_gridInstance.updateDimensions();
+                    }
+                });
+
+            $(ngrRes_selectors.modal)
+                .off("hidden.bs.modal.ngrRes")
+                .on("hidden.bs.modal.ngrRes", function () {
+                    destroy();
+                });
+        }
+
+        function open() {
+            init();
+            refresh();
+
+            const departure = new Date(dateSystem);
+            departure.setDate(departure.getDate() + 1);
+            const departureIso = departure.toISOString().split("T")[0];
+
+            UI.setHiddenDate("ngrRes_arrival", dateSystem);
+            UI.setHiddenDate("ngrRes_departure", departureIso);
+            $(ngrRes_selectors.nights).val(1);
+
+            ngrRes_modalInstance.show();
+        }
+
+        function close() {
+            if (ngrRes_modalInstance) {
+                ngrRes_modalInstance.hide();
+            }
+        }
+
+        function refresh() {
+            clearForm();
+        }
+
+        function clearForm() {
+            $("#nameProfileSearch, #firstNameProfileSearch, #keywordProfileSearch, #codeProfileSearch").val("");
+            $("#cityProfileSearch").val(0);
+            $("#sale").prop("checked", false);
+
+            $(ngrRes_selectors.bookFrom).val("0");
+            $(ngrRes_selectors.resType).prop("selectedIndex", 0);
+            $(ngrRes_selectors.currency).val("VND");
+            $(ngrRes_selectors.package).prop("selectedIndex", 0);
+            $(ngrRes_selectors.market).prop("selectedIndex", 0);
+            $(ngrRes_selectors.profileId).val("");
+            $(ngrRes_selectors.nameText).val("").removeClass("is-valid is-invalid");
+            $(ngrRes_selectors.errorMessage).addClass("d-none");
+            $(ngrRes_selectors.nights).val(1);
+
+            UI.setHiddenDate("ngrRes_arrival", dateSystem);
+            const departure = new Date(dateSystem);
+            departure.setDate(departure.getDate() + 1);
+            UI.setHiddenDate("ngrRes_departure", departure.toISOString().split("T")[0]);
+        }
+
+        function destroy() {
+            clearForm();
+            ngrRes_isSyncingDates = false;
+        }
+
+        function showLoading(show) {
+            $(ngrRes_selectors.spinner).toggle(!!show);
+        }
+
+        function generateDateColumns(fromDate, toDate) {
+            const columns = [];
+            const start = new Date(fromDate);
+            const end = new Date(toDate);
+
+            while (start <= end) {
+                const yyyy = start.getFullYear();
+                const mm = String(start.getMonth() + 1).padStart(2, "0");
+                const dd = String(start.getDate()).padStart(2, "0");
+
+                const dateKey = `${yyyy}-${mm}-${dd}`;
+                const month = start.toLocaleString("en-US", { month: "short" });
+                const weekday = start.toLocaleString("en-US", { weekday: "short" });
+                const weekNumber = getWeekNumber(start);
+                const captionHtml = `${dd}-${month}<br>${weekday}<br>CW${weekNumber}`;
+
+                columns.push({
+                    dataField: dateKey,
+                    caption: dateKey,
+                    width: 70,
+                    dataType: "number",
+                    alignment: "right",
+                    headerCellTemplate: function (container) {
+                        container.html(
+                            `<div style="white-space:normal;text-align:center;font-size:11px;">${captionHtml}</div>`
+                        );
+                    }
+                });
+
+                start.setDate(start.getDate() + 1);
+            }
+
+            return columns;
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function searchRoomAvailable() {
+            const fromDate = $(ngrRes_selectors.arrivalHidden).val() || dateSystem;
+            const toDate = $(ngrRes_selectors.departureHidden).val() || dateSystem;
+
+            showLoading(true);
+
+            $.ajax({
+                url: "/Reservation/GetRoomAvailable",
+                type: "GET",
+                data: {
+                    fromDate: fromDate,
+                    toDate: toDate
+                },
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (result) {
+                    initializeRoomAvailableGrid(Array.isArray(result) ? result : [], fromDate, toDate);
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        sessionTimeout();
+                    } else {
+                        showToast("Error", "Đã xảy ra lỗi khi tìm kiếm phòng trống.", false);
+                    }
+                },
+                complete: function () {
+                    showLoading(false);
+                }
+            });
+        }
+
+        function initializeRoomAvailableGrid(data, fromDate, toDate) {
+
+            data.forEach(function (item) {
+                item.Currency = "VND";
+                item.RateCode = "0";
+            });
+
+            const predefinedColumns = [
+                {
+                    dataField: "Currency",
+                    caption: "Currency",
+                    alignment: "left",
+                    width: 90,
+                    allowEditing: false
+                },
+                {
+                    dataField: "RateCode",
+                    caption: "Rate Code",
+                    alignment: "left",
+                    width: 100
+                },
+                {
+                    dataField: "RoomType",
+                    caption: "Room Type",
+                    alignment: "left",
+                    width: 120,
+                    allowEditing: false
+                },
+                {
+                    dataField: "NumofRoom",
+                    caption: "Num of Room",
+                    alignment: "right",
+                    width: 110
+                }
+            ];
+
+            const finalColumns = [...predefinedColumns, ...generateDateColumns(fromDate, toDate)];
+
+            ngrRes_gridInstance = $(ngrRes_selectors.grid).dxDataGrid({
+                dataSource: data,
+                columns: finalColumns,
+                height: 500,
+                showBorders: true,
+                columnAutoWidth: false,
+                allowColumnResizing: true,
+                paging: {
+                    pageSize: 15,
+                    enabled: true
+                },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [15, 20, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                editing: {
+                    mode: "cell",
+                    allowUpdating: true,
+                    allowAdding: false,
+                    allowDeleting: false
+                },
+                selection: {
+                    mode: "single"
+                },
+                scrolling: {
+                    mode: "standard",
+                    showScrollbar: "always",
+                    useNative: false
+                },
+                noDataText: "No records to display"
+            }).dxDataGrid("instance");
+        }
+
+        function validateAndCreateProfile() {
+            const input = $(ngrRes_selectors.nameText).val().trim();
+            const regex = /^[a-zA-ZÀ-ỹ]+(?:\s[a-zA-ZÀ-ỹ]+)*,\s*[a-zA-ZÀ-ỹ]+(?:\s[a-zA-ZÀ-ỹ]+)*$/i;
+
+            if (regex.test(input)) {
+                $(ngrRes_selectors.errorMessage).addClass("d-none");
+                $(ngrRes_selectors.nameText).removeClass("is-invalid").addClass("is-valid");
+
+                const parts = input.split(",");
+                const lastName = parts[0].trim();
+                const firstMiddlePart = parts[1].trim();
+                const nameTokens = firstMiddlePart.split(/\s+/);
+
+                const firstName = nameTokens[0];
+                const middleName = nameTokens.slice(1).join(" ");
+
+                if (typeof CreateProfile === "function") {
+                    CreateProfile(input, lastName, firstName, middleName);
+                }
+            } else {
+                $(ngrRes_selectors.errorMessage).removeClass("d-none");
+                $(ngrRes_selectors.nameText).removeClass("is-valid").addClass("is-invalid");
+            }
+        }
+
+        function calculateNights() {
+            const arrival = new Date($(ngrRes_selectors.arrivalHidden).val());
+            const departure = new Date($(ngrRes_selectors.departureHidden).val());
+
+            if (!isNaN(arrival.getTime()) && !isNaN(departure.getTime())) {
+                const diffTime = departure - arrival;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                $(ngrRes_selectors.nights).val(diffDays >= 0 ? diffDays : 0);
+            }
+        }
+
+        function syncDepartureByArrival() {
+            if (ngrRes_isSyncingDates) return;
+            ngrRes_isSyncingDates = true;
+
+            try {
+                const arrivalIso = $(ngrRes_selectors.arrivalHidden).val() || dateSystem;
+                const nights = parseInt($(ngrRes_selectors.nights).val(), 10) || 1;
+                const departureIso = UI.addDaysIso(arrivalIso, nights);
+                UI.setHiddenDate("ngrRes_departure", departureIso);
+                calculateNights();
+            } finally {
+                ngrRes_isSyncingDates = false;
+            }
+        }
+
+        function syncDatesByDepartureOrNights(targetId) {
+            if (ngrRes_isSyncingDates) return;
+            ngrRes_isSyncingDates = true;
+
+            try {
+                const arrivalIso = $(ngrRes_selectors.arrivalHidden).val() || dateSystem;
+                const departureIso = $(ngrRes_selectors.departureHidden).val();
+                let nights = parseInt($(ngrRes_selectors.nights).val(), 10) || 1;
+
+                if (targetId === "ngrRes_departureShow") {
+                    if (arrivalIso && departureIso) {
+                        if (departureIso <= arrivalIso) {
+                            const currentNights = nights > 0 ? nights : 1;
+                            const newArrival = UI.addDaysIso(departureIso, -currentNights);
+                            UI.setHiddenDate("ngrRes_arrival", newArrival);
+                        } else {
+                            calculateNights();
+                        }
+                    }
+                } else if (targetId === "ngrRes_nights") {
+                    if (nights < 1) {
+                        nights = 1;
+                        $(ngrRes_selectors.nights).val(1);
+                    }
+
+                    const newDeparture = UI.addDaysIso(arrivalIso, nights);
+                    UI.setHiddenDate("ngrRes_departure", newDeparture);
+                }
+
+                calculateNights();
+            } catch (error) {
+                console.error("Lỗi cập nhật ngày tháng:", error);
+            } finally {
+                ngrRes_isSyncingDates = false;
+            }
+        }
+
+        function saveGroupReservation() {
+            const grid = $(ngrRes_selectors.grid).dxDataGrid("instance");
+            if (!grid) {
+                showToast("Error", "No room data available to save.", false);
+                return;
+            }
+
+            const userName = JSON.parse(localStorage.getItem("Loginname"));
+            const userID = JSON.parse(localStorage.getItem("userID"));
+            const gridData = grid.getVisibleRows().map(function (r) { return r.data; });
+
+            const formData = new FormData();
+            formData.append("lastName", $(ngrRes_selectors.nameText).val());
+            formData.append("resType", $(ngrRes_selectors.resType).val());
+            formData.append("gridData", JSON.stringify(gridData));
+            formData.append("arrivalDate", $(ngrRes_selectors.arrivalHidden).val());
+            formData.append("departureDate", $(ngrRes_selectors.departureHidden).val());
+            formData.append("noOfNight", $(ngrRes_selectors.nights).val());
+            formData.append("profileIndividualID", $(ngrRes_selectors.profileId).val() || "0");
+            formData.append("package", $(ngrRes_selectors.package).val());
+            formData.append("packageCode", $(ngrRes_selectors.package).find("option:selected").text());
+            formData.append("market", $(ngrRes_selectors.market).val());
+            formData.append("marketCode", $(ngrRes_selectors.market).find("option:selected").text());
+            formData.append("resTypeCode", $(ngrRes_selectors.resType).find("option:selected").text());
+            formData.append("userName", userName);
+            formData.append("userID", userID);
+
+            $.ajax({
+                url: "/Reservation/SaveGroupReservation",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (data) {
+                    if (data.code === 0) {
+                        showToast("Success", data.msg, true);
+                    } else {
+                        showToast("Error", data.msg, false);
+                    }
+                },
+                error: function () {
+                    showToast("Error", "An error occurred while saving the group booking.", false);
+                }
+            });
+        }
+
+        return {
+            init: init,
+            open: open,
+            close: close,
+            refresh: refresh,
+            destroy: destroy
+        };
+    })();
+
+    window.openModalNewGroupReservation = function () {
+        ngrRes_Module.open();
+    };
+</script>

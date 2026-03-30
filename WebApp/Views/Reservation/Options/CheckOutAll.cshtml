@@ -8,9 +8,9 @@
             </div>
             <div class="modal-body">
                 <div style="display:flex;column-gap:12px">
-                    <button class="submit-button-clear-reservation" onclick="processCheckOutAll()">Process</button>
+                    <button class="mui-button mui-button-save" onclick="processCheckOutAll()">Process</button>
 
-                    <button class="submit-button-new-reservation" onclick="closeModalCheckOutAll()">Close</button>
+                    <button class="mui-button mui-button-close" onclick="closeModalCheckOutAll()">Close</button>
 
                 </div>
                 <div id="gridContainerCheckOutAll" class="gridContainer mt-2"></div>
@@ -21,22 +21,20 @@
 </div>
 <script>
     function openModalCheckOutAll(type) {
-        if (reservationStatus != 1 && reservationStatus != 6) {
-            showToast('Error', "Please just choose booking has status CHECKED IN or DUE OUT", false);
-            return;
-        }
+        // if (reservationStatus != 1 && reservationStatus != 6) {
+        //     showToast('Error', "Please just choose booking has status CHECKED IN or DUE OUT", false);
+        //     return;
+        // }
 
         var grid = $("#gridContainer").dxDataGrid("instance");
         var dataSource = grid.getDataSource();
         var allData = dataSource.items();
 
         // Filter data based on type
-        var filteredData = allData;
-        if (type == 2) {
-            filteredData = allData.filter(function(item) {
-                return item.ReservationStatus == 6;
-            });
-        }
+        filteredData = allData.filter(function(item) {
+            return item.ReservationStatus == 6;
+        });
+        
 
         // Map the filtered data
         filteredData = filteredData.map(function(item) {
@@ -159,7 +157,7 @@
             },
             success: function (data) {
                 if (data.code == 0) {
-                    $('#searchType').val(1);
+                    // $('#searchType').val(1);
                     searchReservation();
                     showToast('Success', data.msg, true);
                 } else {

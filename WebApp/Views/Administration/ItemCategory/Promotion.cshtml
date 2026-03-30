@@ -1,0 +1,546 @@
+﻿<!-- Main Modal -->
+<div class="modal fade" id="prom_mainModal" tabindex="-1" aria-labelledby="prom_mainModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="prom_mainModalLabel">Promotion</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <div>
+                        <button id="prom_btnView" type="button" class="mui-button mui-button-search">View</button>
+                        <button id="prom_btnNew" type="button" class="mui-button mui-button-new">New</button>
+                        <button id="prom_btnEdit" type="button" class="mui-button mui-button-edit">Edit</button>
+                        <button id="prom_btnDelete" type="button" class="mui-button mui-button-delete">Delete</button>
+                        <button id="prom_btnExportExcel" type="button" class="mui-button mui-button-export">Excel</button>
+                        <button type="button" class="mui-button mui-button-new" data-bs-dismiss="modal" aria-label="Close">Close</button>
+                    </div>
+
+                    <div class="row g-2 mt-1">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label for="prom_filterCode" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Code
+                                </label>
+                                <div class="col-md-8">
+                                    <input id="prom_filterCode"
+                                           name="prom_filterCode"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label for="prom_filterName" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Name
+                                </label>
+                                <div class="col-md-8">
+                                    <input id="prom_filterName"
+                                           name="prom_filterName"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Status
+                                </label>
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center h-100">
+                                        <div class="form-check d-flex align-items-center gap-2">
+                                            <span class="status-color-box color-clean-uncheck"></span>
+                                            <input type="checkbox" id="prom_chkShowInactive" name="prom_chkShowInactive">
+                                            <label class="form-check-label" for="prom_chkShowInactive">Show Inactive</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-card mt-1">
+                    <div id="prom_gridContainer" class="gridContainer"></div>
+                </div>
+
+                <div id="prom_loadingSpinner"
+                     style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+                     z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+                     height: 100%;display: flex;align-items: center;justify-content: center;">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="prom_itemModal" tabindex="-1" aria-labelledby="prom_itemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="prom_itemModalLabel">Add Promotion</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <button type="button" id="prom_btnSave" class="mui-button mui-button-new">Save</button>
+                    <button type="button" class="mui-button mui-button-new" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <form id="prom_formContainer">
+                    <div class="row g-2 mt-1 mb-2">
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label for="prom_code" class="col-md-2 col-lg-4 col-form-label col-form-label-sm text-md-end">
+                                    Code
+                                </label>
+                                <div class="col-md-10 col-lg-8">
+                                    <input id="prom_code"
+                                           name="prom_code"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-2 col-lg-4 col-form-label col-form-label-sm text-md-end">
+                                    Status
+                                </label>
+                                <div class="col-md-10 col-lg-8">
+                                    <div class="form-check d-inline-flex align-items-center gap-2">
+                                        <input id="prom_inactive"
+                                               name="prom_inactive"
+                                               type="checkbox" />
+                                        <label for="prom_inactive" class="form-check-label text-danger">
+                                            Inactive
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row g-2">
+                                <label for="prom_name" class="col-md-2 col-form-label col-form-label-sm text-md-end">
+                                    Name
+                                </label>
+                                <div class="col-md-10">
+                                    <input id="prom_name"
+                                           name="prom_name"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row g-2">
+                                <label for="prom_description" class="col-md-2 col-form-label col-form-label-sm text-md-end">
+                                    Description
+                                </label>
+                                <div class="col-md-10">
+                                    <textarea id="prom_description"
+                                              name="prom_description"
+                                              rows="4"
+                                              class="form-control form-control-sm"
+                                              style="height:100px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="prom_id" name="prom_id" value="0" />
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var prom_Module = (() => {
+        let prom_selectedRowData = null;
+
+        const prom_selectors = {
+            mainModal: "#prom_mainModal",
+            itemModal: "#prom_itemModal",
+            form: "#prom_formContainer",
+            grid: "#prom_gridContainer",
+            loading: "#prom_loadingSpinner",
+
+            filterCode: "#prom_filterCode",
+            filterName: "#prom_filterName",
+            chkShowInactive: "#prom_chkShowInactive",
+
+            btnView: "#prom_btnView",
+            btnNew: "#prom_btnNew",
+            btnEdit: "#prom_btnEdit",
+            btnDelete: "#prom_btnDelete",
+            btnExportExcel: "#prom_btnExportExcel",
+            btnSave: "#prom_btnSave",
+
+            modalLabel: "#prom_itemModalLabel",
+
+            id: "#prom_id",
+            code: "#prom_code",
+            name: "#prom_name",
+            description: "#prom_description",
+            inactive: "#prom_inactive"
+        };
+
+        function prom_init() {
+            prom_bindEvents();
+            prom_resetForm();
+            prom_loadGrid([]);
+            prom_loadData();
+        }
+
+        function prom_bindEvents() {
+            $(document)
+                .off("input change", `${prom_selectors.form} input, ${prom_selectors.form} select, ${prom_selectors.form} textarea`)
+                .on("input change", `${prom_selectors.form} input, ${prom_selectors.form} select, ${prom_selectors.form} textarea`, function () {
+                    if ($(this).hasClass("is-invalid")) {
+                        $(this).removeClass("is-invalid");
+                        $(this).next(".invalid-feedback").text("");
+                    }
+                });
+
+            $(prom_selectors.itemModal)
+                .off("hidden.bs.modal")
+                .on("hidden.bs.modal", function () {
+                    prom_resetForm();
+                    applyValidationErrors([], prom_selectors.form);
+                });
+
+            $(document)
+                .off("click", prom_selectors.btnView)
+                .on("click", prom_selectors.btnView, function () {
+                    prom_loadData();
+                });
+
+            $(document)
+                .off("click", prom_selectors.btnNew)
+                .on("click", prom_selectors.btnNew, function () {
+                    prom_openAddModal();
+                });
+
+            $(document)
+                .off("click", prom_selectors.btnEdit)
+                .on("click", prom_selectors.btnEdit, function () {
+                    prom_openEditModal();
+                });
+
+            $(document)
+                .off("click", prom_selectors.btnSave)
+                .on("click", prom_selectors.btnSave, function () {
+                    prom_save();
+                });
+
+            $(document)
+                .off("click", prom_selectors.btnDelete)
+                .on("click", prom_selectors.btnDelete, function () {
+                    prom_delete();
+                });
+
+            $(document)
+                .off("click", prom_selectors.btnExportExcel)
+                .on("click", prom_selectors.btnExportExcel, function () {
+                    prom_exportExcel();
+                });
+        }
+
+        function prom_resetForm() {
+            const prom_form = $(prom_selectors.form)[0];
+            if (prom_form) {
+                prom_form.reset();
+            }
+
+            $(prom_selectors.id).val("0");
+            $(prom_selectors.modalLabel).text("Add Promotion");
+            prom_selectedRowData = null;
+        }
+
+        function prom_openAddModal() {
+            prom_resetForm();
+            $(prom_selectors.modalLabel).text("Add Promotion");
+            $(prom_selectors.itemModal).modal("show");
+        }
+
+        function prom_openEditModal() {
+            if (!prom_selectedRowData) {
+                showToast("Warning", "Please select 1 row to edit.", false);
+                return;
+            }
+
+            prom_fillForm(prom_selectedRowData);
+            $(prom_selectors.modalLabel).text("Update Promotion");
+            $(prom_selectors.itemModal).modal("show");
+        }
+
+        function prom_fillForm(prom_data) {
+            $(prom_selectors.id).val(prom_data.id);
+            $(prom_selectors.code).val(prom_data.code);
+            $(prom_selectors.name).val(prom_data.name);
+            $(prom_selectors.description).val(prom_data.description);
+            $(prom_selectors.inactive).prop("checked", prom_data.inactive);
+        }
+
+        function prom_getSearchModel() {
+            return {
+                code: $(prom_selectors.filterCode).val(),
+                name: $(prom_selectors.filterName).val(),
+                inactive: $(prom_selectors.chkShowInactive).prop("checked") ? 1 : 0
+            };
+        }
+
+        function prom_getSaveModel() {
+            const prom_id = parseInt($(prom_selectors.id).val()) || 0;
+            let prom_loginName = (localStorage.getItem("Loginname") || "")
+                .trim()
+                .replace(/^"(.*)"$/, "$1");
+            const prom_loginUser = parseInt(localStorage.getItem("userID")) || 0;
+
+            return {
+                ID: prom_id,
+                Code: $(prom_selectors.code).val(),
+                Name: $(prom_selectors.name).val(),
+                Description: $(prom_selectors.description).val(),
+                Inactive: $(prom_selectors.inactive).prop("checked"),
+                CreatedBy: prom_loginName,
+                UpdatedBy: prom_loginName,
+                UserInsertID: prom_loginUser,
+                UserUpdateID: prom_loginUser
+            };
+        }
+
+        function prom_showLoading() {
+            $(prom_selectors.loading).show();
+        }
+
+        function prom_hideLoading() {
+            $(prom_selectors.loading).hide();
+        }
+
+        function prom_loadData() {
+            prom_showLoading();
+
+            $.ajax({
+                url: "/Administration/GetPromotion",
+                type: "GET",
+                cache: false,
+                data: prom_getSearchModel(),
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (prom_data) {
+                    prom_loadGrid(prom_data || []);
+                    prom_hideLoading();
+                },
+                error: function () {
+                    showToast("Error", "Unable to load data", false);
+                    prom_hideLoading();
+                }
+            });
+        }
+
+        function prom_loadGrid(prom_data) {
+            $(prom_selectors.grid).dxDataGrid({
+                dataSource: prom_data,
+                width: "100%",
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
+                selection: { mode: "single" },
+                hoverStateEnabled: true,
+                columns: [
+                    { dataField: "id", visible: false },
+                    { dataField: "code", caption: "Code", width: "100" },
+                    { dataField: "name", caption: "Name", width: "150" },
+                    { dataField: "description", caption: "Description", minWidth: 120, cssClass: "col-description" },
+                    { dataField: "inactive", caption: "Inactive", width: "6%",
+                        cellTemplate: function (container, options) {
+                            $("<div>")
+                                .dxCheckBox({
+                                    value: options.value == 1 || options.value === true,
+                                    readOnly: true
+                                })
+                                .css("transform", "scale(0.8)")
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: "createdBy", caption: "Created By", width: "80" },
+                    { dataField: "createdDate", caption: "Cre.Date", dataType: "date", width: "80" },
+                    { dataField: "updatedBy", caption: "Updated By", width: "80" },
+                    { dataField: "updatedDate", caption: "Upd.Date", dataType: "date", width: "80" }
+                ],
+                filterRow: { visible: true, applyFilter: "auto" },
+                paging: { pageSize: 20 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [20, 50, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                scrolling: { mode: "standard", showScrollbar: "always" },
+                onSelectionChanged: function (e) {
+                    prom_selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+                }
+            });
+        }
+
+        function prom_save() {
+            const prom_model = prom_getSaveModel();
+
+            $.ajax({
+                url: "/Administration/PromotionSave",
+                type: "POST",
+                contentType: "application/json",
+                cache: false,
+                data: JSON.stringify(prom_model),
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (prom_res) {
+                    if (prom_res.success) {
+                        showToast("Success", prom_res.message, true);
+                        $(prom_selectors.itemModal).modal("hide");
+                        prom_loadData();
+                        return;
+                    }
+
+                    if (prom_res.errors && prom_res.errors.length > 0) {
+                        applyValidationErrors(prom_res.errors, prom_selectors.form);
+
+                        let prom_generalError = prom_res.errors.find(x => x.field === "general");
+                        let prom_toastMessage = prom_generalError ? prom_generalError.message : "Please check input fields.";
+
+                        showToast("Warning", prom_toastMessage, false);
+                        return;
+                    }
+
+                    showToast("Error", prom_res.message || "Save failed", false);
+                },
+                error: function () {
+                    showToast("Error", "Request error!", false);
+                    $(prom_selectors.itemModal).modal("hide");
+                }
+            });
+        }
+
+        function prom_delete() {
+            if (!prom_selectedRowData || prom_selectedRowData.id === 0) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete this record? This action cannot be undone.")) {
+                return;
+            }
+
+            $.ajax({
+                url: `/Administration/DeletePromotion/` + prom_selectedRowData.id,
+                type: "POST",
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (prom_result) {
+                    if (prom_result.success) {
+                        prom_loadData();
+                        showToast("Success", "Delete Successfully!", true);
+                        return;
+                    }
+
+                    showToast("Error", prom_result.message, false);
+                },
+                error: function () {
+                    console.log("delete " + prom_selectedRowData.id);
+                    showToast("Error", "Delete failed!", false);
+                    $("#loadingSpinner").hide();
+                }
+            });
+        }
+
+        function prom_exportExcel() {
+            const prom_grid = $(prom_selectors.grid).dxDataGrid("instance");
+
+            const prom_workbook = new ExcelJS.Workbook();
+            const prom_companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const prom_worksheet = prom_workbook.addWorksheet("Sheet 1");
+
+            prom_worksheet.addRow([prom_companyName]);
+            prom_worksheet.mergeCells("A1:D1");
+            prom_worksheet.getRow(1).font = { bold: true };
+            prom_worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "left" };
+
+            const prom_now = new Date();
+            const prom_exportDate = prom_now.toLocaleString("vi-VN");
+            prom_worksheet.addRow(["", "", "", prom_exportDate]);
+            prom_worksheet.mergeCells("D2:D2");
+            prom_worksheet.getRow(2).alignment = { vertical: "middle", horizontal: "right" };
+
+            prom_worksheet.addRow([]);
+            prom_worksheet.addRow([]);
+
+            const prom_reportRow = prom_worksheet.addRow(["Promotion"]);
+            prom_worksheet.mergeCells("A5:D5");
+            prom_reportRow.font = { bold: true, size: 14 };
+            prom_reportRow.alignment = { vertical: "middle", horizontal: "center" };
+
+            prom_worksheet.addRow([]);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: prom_grid,
+                worksheet: prom_worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                const prom_lastRow = prom_worksheet.lastRow.number + 2;
+                prom_worksheet.mergeCells(`A${prom_lastRow}:D${prom_lastRow}`);
+                prom_worksheet.getCell(`A${prom_lastRow}`).alignment = { horizontal: "center" };
+                prom_worksheet.getCell(`A${prom_lastRow}`).font = { italic: true };
+
+                let prom_fileName = "Promotion.xlsx";
+                prom_workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), prom_fileName);
+                });
+            });
+        }
+
+        return {
+            init: prom_init,
+            loadData: prom_loadData,
+            openAddModal: prom_openAddModal,
+            openEditModal: prom_openEditModal
+        };
+    })();
+
+    window.openModalPromotion = function () {
+        const modalEl = document.querySelector("#prom_mainModal");
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        $(modalEl).one("shown.bs.modal", function () {
+            prom_Module.init();
+        });
+        modal.show();
+    };
+</script>

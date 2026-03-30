@@ -25,7 +25,7 @@ namespace BaseBusiness.BO
         {
             get { return instance; }
         }
-        public static List<RoomModel> GetRoomZone(string  roomtype, string zone)
+        public static List<RoomModel> GetRoomZone(string roomtype, string zone)
         {
             int roomtypeInt = int.TryParse(roomtype, out var temp) ? temp : 0;
             // Chuyển zone thành chuỗi "1,2,3" => "'1','2','3'" (nếu là chuỗi)
@@ -42,27 +42,26 @@ namespace BaseBusiness.BO
         }
         public static int GetNumberOfRoom(int roomTypeID)
         {
-            string query = $"select count(*) from Room left join RoomType on Room.RoomTypeID = RoomType.ID where Room.RoomTypeID = {roomTypeID} and RoomType.IsPseudo = 0";
+            string query = $"DECLARE @roomType AS INT\r\nSET @roomType = {roomTypeID}\r\n\r\nSELECT COUNT(*) \r\nFROM Room \r\nLEFT JOIN RoomType ON Room.RoomTypeID = RoomType.ID \r\nWHERE \r\n    (@roomType = 0 OR Room.RoomTypeID = @roomType)\r\n    AND (RoomType.IsPseudo = 0 OR RoomType.ID IS NULL) ";
             return instance.GetFirst<int>(query);
         }
         public static List<RoomModel> GetRoomCountPlan()
         {
-          
             string query = $@"Select * from Room WITH (NOLOCK) where RoomTypeCode<>'XXX'";
 
             return instance.GetList<RoomModel>(query);
         }
-        public static List<RoomModel> GetFloorPlan(string block, string suffix, string name,string zone)
+        public static List<RoomModel> GetFloorPlan(string block, string suffix, string name, string zone)
         {
             string condition = "";
             string safeZone = zone?.Replace("'", "''") ?? "";
             if (suffix == "-A")
             {
-                condition = "CONVERT(Int, RoomNo) < 40000";
+                condition = "CONVERT(Int, RoomNo) < 020000";
             }
             else
             {
-                condition = "CONVERT(Int, RoomNo) > 39999";
+                condition = "CONVERT(Int, RoomNo) > 019999";
             }
 
             string query = $@"
@@ -93,7 +92,6 @@ namespace BaseBusiness.BO
         public static List<RoomModel> GetRoom(string query)
         {
 
-         
 
             return instance.GetList<RoomModel>(query);
         }

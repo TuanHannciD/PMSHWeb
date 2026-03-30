@@ -5,16 +5,15 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Cancel</h5>
-                <button type="button" class="btn-close" onclick="closeModalCancel()"></button>
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="CancelReservation();"><i class="fa-solid fa-magnifying-glass"></i> OK</button>
-                    <button class="mui-button mui-button-clear"><i class="fa-solid fa-file"></i>Close</button>
+                    <button class="mui-button mui-button-save" onclick="CancelReservation();"> OK</button>
+                    <button class="mui-button mui-button-close" onclick="closeModalCancel()">Close</button>
                 </div>
                 <div class="row mt-2">
                     <label class="col-md-2">Reason</label>
-                    <select id="reasonCancel" class="col-md-10" asp-items="ViewBag.cboReason"></select>
+                    <select id="reasonCancel" class="col-md-9" asp-items="ViewBag.cboReason"></select>
                 </div>
                 <div class="mt-2">
                     <textarea class="form-control" id="descriptionCancel" rows="3"></textarea>
@@ -24,18 +23,47 @@
         </div>
     </div>
 </div>
+
+<div id="confirmBoxCancel" class="confirm-overlay">
+    <div class="confirm-box">
+        <h2>Confirmation Action</h2>
+        <p id="titleCancelReservation"></p>
+        <div class="confirm-buttons">
+            <button class="mui-button mui-button-search" onclick="onConfirmCancel()">OK</button>
+            <button class="mui-button mui-button-clear" onclick="closeConfirmCancel()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <script>
     function openModalCancel(){
         if(idReservation == 0){
             showToast('Error', 'Please choose booking', false);
             return;
         }
-        if(reservationStatus != 5 && reservationStatus!= 0 ){
+        if(reservationStatus != 5 && reservationStatus!= 0 && reservationStatus != 1){
             showToast('Error', 'Cannot cancel because booking is not in Reservation status', false);
             return;
         }
+        if (reservationStatus == 1) {
+            $('#titleCancelReservation').text('Do you want to change room to dirty?');
+            document.getElementById("confirmBoxCancel").style.display = "flex";
+            return;
+        }
+
         $('#modalCancel').modal('show');
+        reloadGrid();
     }
+
+    function onConfirmCancel() {
+    document.getElementById("confirmBoxCancel").style.display = "none";
+    CancelReservation(true);
+    }
+
+    function closeConfirmCancel() {
+        document.getElementById("confirmBoxCancel").style.display = "none";
+    }
+
     function closeModalCancel(){
         clearCancel();
         $('#modalCancel').modal('hide');
@@ -44,20 +72,67 @@
     $('#reasonCancel').on('change', function() {
         $('#descriptionCancel').text($(this).find('option:selected').text().split('-')[1]);
     });
+
+    function reloadGrid(reservationID) {
+
+            $.ajax({
+                url: '/Reservation/FindCancelReservation',
+                type: 'GET',
+                data: {reservationID:idReservation},
+                success: function (result) {
+                    const rows = result?.data || [];
+                    gridCancel(rows);
+
+                    if (!rows.length) showToast("Warning", "No records.", false);
+                },
+                error: function () {
+                    showToast("Error", "Cannot load data.", false);
+                }
+            });
+        }
+
+    function gridCancel(data) {
+    gridRateCodes = $("#cancel_grid").dxDataGrid({
+        dataSource: data,
+        showBorders: true,
+        width: "100%",
+        height: "100%",
+        selection: { mode: "single" },
+        paging: { pageSize: 20 },
+        pager: {
+            visible: true,
+            showPageSizeSelector: true,
+            allowedPageSizes: [20, 50, 100, "all"],
+            showInfo: true,
+            showNavigationButtons: true
+        },
+        filterRow: { visible: true, applyFilter: "auto" },
+        columns: [
+            { dataField: "ID", visible: false },
+            { dataField: "CancellationNo", caption: "Cancel No", minWidth: 120,cssClass: "col-description" },
+            { dataField: "ReasonCancellation", caption: "Code", width: 140 },
+            { dataField: "Description", caption: "Description", dataType: "date", format: "dd/MM/yyyy", width: 80 },
+            { dataField: "LoginName", caption: "User", dataType: "date", format: "dd/MM/yyyy", width: 80 },
+            { dataField: "CreateDate", caption: "Date", dataType: "date", format: "dd/MM/yyyy", width: 80 }
+        ],
+    }).dxDataGrid("instance");
+}
+
     function clearCancel(){
         $('#reasonCancel').val('');
         $('#descriptionCancel').val('');
     }
-    function CancelReservation() {
+    function CancelReservation(changeRoomToDirty) {
 
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
         var formData = new FormData();
         formData.append('rsvID', idReservation);
-        formData.append('reasonCancellation',$('#reasonCancel').find('option:selected').text().split('-')[0]);
-        formData.append('description', $('#reasonCancel').find('option:selected').text().split('-')[1]);
+        formData.append('reasonCancellation', $('#reasonCancel').val() || '');
+        formData.append('description', $('#descriptionCancel').val() || '');
         formData.append('userID', userID);
-            formData.append('userName', userName);
+        formData.append('userName', userName);
+        formData.append('changeRoomToDirty', changeRoomToDirty);
         $.ajax({
             url: '/Reservation/CancelReservation',
             type: 'POST',

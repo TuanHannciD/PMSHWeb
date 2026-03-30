@@ -1,0 +1,216 @@
+/* ================================
+   Mở rộng thêm blur cho modal
+   ================================ */
+.col-description,
+.col-description .dx-datagrid-text-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.modal-blur {
+  /* Blur nền phía sau */
+  filter: blur(6px);
+  opacity: .75;
+  pointer-events: none; /* không cho click vào modal cha */
+  user-select: none;
+  transition: filter .15s ease, opacity .15s ease;
+}
+
+/* ================================
+   Bootstrap Modal – 4:3 Aspect Ratio
+   Compatible: Bootstrap 4 & 5
+   ================================ */
+
+
+
+.modal-4by3 {
+  /* Giới hạn chiều ngang */
+  max-width: 1140px; /* tương đương modal-xl */
+  min-width: 600px;
+
+  /* Cho phép co giãn theo viewport */
+  width: 90vw;
+}
+
+/* Giữ tỉ lệ 4:3 cho nội dung */
+.modal-4by3 .modal-content {
+  aspect-ratio: 4 / 3;
+
+  /* Giới hạn chiều cao theo màn hình */
+  max-height: 90vh;
+
+  /* Đảm bảo layout flex không bị vỡ */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cho body scroll nếu nội dung dài */
+.modal-4by3 .modal-body {
+  overflow: auto;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.modal-4by3 .mui-card {
+  background: #fff;
+  border-radius: 4px;
+
+  /* Thiết lập Flex để card chiếm hết chiều cao còn lại của body */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Chống tràn */
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Giữ tỉ lệ 16:9 cho nội dung */
+
+.modal-16by9 {
+  /* Giới hạn chiều ngang */
+  max-width: 1140px; /* tương đương modal-xl */
+  min-width: 600px;
+
+  /* Cho phép co giãn theo viewport */
+  width: 90vw;
+}
+
+/* Giữ tỉ lệ 4:3 cho nội dung */
+.modal-16by9 .modal-content {
+  aspect-ratio: 16 / 9;
+
+  /* Giới hạn chiều cao theo màn hình */
+  max-height: 90vh;
+
+  /* Đảm bảo layout flex không bị vỡ */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cho body scroll nếu nội dung dài */
+.modal-16by9 .modal-body {
+  overflow: auto;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-16by9 .mui-card {
+  background: #fff;
+  border-radius: 4px;
+
+  /* Thiết lập Flex để card chiếm hết chiều cao còn lại của body */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Chống tràn */
+  min-height: 0;
+  overflow: hidden;
+}
+
+
+ /* .modal-lg-4by3 -------------------------------------------- */
+
+.modal-lg-4by3 {
+  max-width: 992px; /* tương đương modal-lg */
+  width: 95vw;
+}
+
+.modal-lg-4by3 .modal-content {
+  aspect-ratio: 4 / 3;
+  max-height: 90vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-lg-4by3 .modal-body {
+  overflow: auto;
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: column;
+}
+.modal-lg-4by3 .mui-card {
+  background: #fff;
+  border-radius: 4px;
+
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Chống tràn */
+  min-height: 0;
+  overflow: hidden;
+}
+
+ /* .modal-md-4by3 -------------------------------------------- */
+.modal-md-4by3 {
+  max-width: 768px; /* tương đương modal-md */
+  width: 95vw;      /* responsive */
+}
+
+.modal-md-4by3 .modal-content {
+  aspect-ratio: 4 / 3;
+  max-height: 90vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-md-4by3 .modal-body {
+  overflow: auto;
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: column;
+}
+.modal-md-4by3 .mui-card {
+  background: #fff;
+  border-radius: 4px;
+
+  /* Thiết lập Flex để card chiếm hết chiều cao còn lại của body */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Chống tràn */
+  min-height: 0;
+  overflow: hidden;
+}
+
+
+.modal-fullscreen{
+  margin: 0px !important;
+}
+
+.modal-fullscreen .modal-content {
+
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-fullscreen .modal-body {
+  overflow: auto;
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: column;
+}
+.modal-fullscreen .mui-card {
+  background: #fff;
+  border-radius: 4px;
+
+  /* Thiết lập Flex để card chiếm hết chiều cao còn lại của body */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Chống tràn */
+  min-height: 0;
+  overflow: hidden;
+}

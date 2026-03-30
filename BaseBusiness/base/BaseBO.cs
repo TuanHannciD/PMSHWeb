@@ -1,18 +1,19 @@
-using System;
-using System.Collections;
-using Microsoft.Data.SqlClient;
-using System.Reflection;
 using BaseBusiness.exception;
 using BaseBusiness.util;
+using Dapper;
+using DevExpress.Xpo.DB.Helpers;
+using Microsoft.Data.SqlClient;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace BaseBusiness.bc
 {
 	public class BaseBO
 	{
 		protected BaseFacade baseFacade = null;
-
-		protected BaseBO()
+        protected BaseBO()
 		{
 		}
 
@@ -530,6 +531,50 @@ namespace BaseBusiness.bc
                 throw new BOException("Could not delete from database: " + ex.Message);
             }
         }
+
+        public virtual bool IsDuplicateCode(
+			string table,
+			string codeField,
+			object codeValue,
+			long id = 0)
+			{
+				if (baseFacade == null)
+					throw new BOException("BaseFacade is not initialized.");
+
+				var conditions = new Dictionary<string, object>
+			{
+				{ codeField, codeValue }
+			};
+
+            return baseFacade.Exists(table, conditions, id);
+        }
+
+        public virtual bool IsDuplicateCode(
+			string table,
+			Dictionary<string, object> conditions,
+			long id = 0)
+        {
+            if (baseFacade == null)
+                throw new BOException("BaseFacade is not initialized.");
+
+            return baseFacade.Exists(table, conditions, id);
+        }
+
+        public virtual bool IsDuplicateCode(
+			 string table,
+			 string codeField,
+			 object codeValue,
+			 string id,
+			 string idField)
+		{
+				var conditions = new Dictionary<string, object>
+		{
+			{ codeField, codeValue }
+		};
+
+            return baseFacade.Exists(table, conditions, id, idField);
+        }
+
 
 
     }

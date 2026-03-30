@@ -1,174 +1,636 @@
-﻿<style>
-    .header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 5px 0px;
-        border-bottom: 2px solid #ececec;
-    }
+﻿@using DevExpress.XtraReports.UI
 
-    .header h3 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #000000;
-    }
+@{
+    var transactionsList = ViewBag.TransactionsList;
+    var currList = ViewBag.CurrencyList;
+}
 
-    .header .info-icon {
-        color: #6b7280;
-        cursor: pointer;
-        transition: color 0.3s ease;
-    }
+<!-- =========================
+     MAIN VIEW (Everything is a modal)
+     modal-xl + centered + scrollable
+     ========================= -->
+<div class="modal fade" id="arti_modalMain" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg-4by3">
+        <div class="modal-content">
 
-    .header .info-icon:hover {
-        color: var(--main-color);
-    }
-</style>
-<div>
-    <div class="header mt-2" style="border-bottom:none;justify-content:center">
-        <h3 id="content-title">
-            Article Search
-        </h3>
-    </div>
-    <div class="mb-2">
-        <button class="mui-button mui-button-search" onclick="searchTransactionGroup();"> Search</button>
+            <div class="modal-header">
+                <h5 class="modal-title">Article Search</h5>
+            </div>
 
+            <div class="modal-body">
+                <div class="search-filter">
+                    <!-- Toolbar -->
+                    <div>
+                        <button id="arti_btnView" type="button" class="mui-button button-report-view">View</button>
+                        <button id="arti_btnNew" type="button" class="mui-button mui-button-new">New</button>
+                        <button id="arti_btnEdit" type="button" class="mui-button mui-button-edit">Edit</button>
+                        <button id="arti_btnDelete" type="button" class="mui-button button-report-delete">Delete</button>
+                        <button id="arti_btnExcel" type="button" class="mui-button mui-button-export">Excel</button>
+                        <button id="arti_btnClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                    </div>
 
-    </div>
-    <div class="row">
-        <div class="col-md-2" style="display:flex">
-            <label>Trans Code</label>
-            <select id="tranCodeID"></select>
+                    <!-- ERP Search Filter (dense, nested rows, right aligned labels) -->
+                    <div class="row g-2 mt-1">
 
+                        <!-- Transactions -->
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-5 col-xl-3">
+                            <div class="row g-1 align-items-center">
+                                <label for="arti_transactionsList"
+                                    class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label col-form-label-sm text-md-end mb-0 text-nowrap">
+                                    Trans.
+                                </label>
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                    <select id="arti_transactionsList"
+                                            name="arti_transactionsList"
+                                            class="tomselect-custom w-100">
+                                        <option value=""></option>
+                                        @foreach (var item in transactionsList)
+                                        {
+                                            <option value="@item.Code">@item.Code-@item.Description</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Code -->
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-5 col-xl-3">
+                            <div class="row g-1 align-items-center">
+                                <label for="arti_code"
+                                    class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label col-form-label-sm text-md-end mb-0 text-nowrap">
+                                    Code
+                                </label>
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                    <input id="arti_code"
+                                        name="arti_code"
+                                        type="text"
+                                        class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-5 col-xl-3">
+                            <div class="row g-1 align-items-center">
+                                <label for="arti_description"
+                                    class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label col-form-label-sm text-md-end mb-0 text-nowrap">
+                                    Description
+                                </label>
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                    <input id="arti_description"
+                                        name="arti_description"
+                                        type="text"
+                                        class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Supplement -->
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-5 col-xl-3">
+                            <div class="row g-1 align-items-center">
+                                <label for="arti_supplement"
+                                    class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label col-form-label-sm text-md-end mb-0 text-nowrap">
+                                    Supplement
+                                </label>
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                    <input id="arti_supplement"
+                                        name="arti_supplement"
+                                        type="text"
+                                        class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Grid -->
+                <div class="mui-card mt-1">
+                    <div id="arti_grid" class="gridContainer"></div>
+                </div>
+
+            </div>
         </div>
-        <div class="col-md-2">
-            <label>Code</label>
-            <input type="text" id="code">
-        </div>
-        <div class="col-md-6">
-            <label>Description</label>
-            <input type="text" id="description">
-        </div>
-        <div class="col-md-6">
-            <label>Supplement</label>
-            <input type="text" id="supplement">
-        </div>
-    </div>
-    <div class="mui-card mt-2">
-        <div id="gridContainer" class="gridContainer mt-2"></div>
     </div>
 </div>
 
+<!-- =========================
+     EDIT/CREATE MODAL (modal-xl)
+     Must blur main when opened
+     ========================= -->
+<div class="modal fade" id="arti_modalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="arti_modalEditTitle">Article Screen</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <button id="arti_btnSave" type="button" class="mui-button mui-button-advance">Ok</button>
+                    <button id="arti_btnEditClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <form id="arti_formEdit" novalidate>
+                    <input type="hidden" id="arti_id" name="arti_id" />
+
+                    <div class="row g-2 mt-1 mb-2">
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="arti_codenew">Code</label>
+                                <div class="col-md-8">
+                                    <input id="arti_codenew" name="arti_codenew" type="text" class="form-control form-control-sm" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="arti_descriptionnew">Description</label>
+                                <div class="col-md-8">
+                                    <input id="arti_descriptionnew" name="arti_descriptionnew" type="text" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="arti_transactionsListnew">Transactions</label>
+                                <div class="col-md-8">
+                                    <select id="arti_transactionsListnew" name="arti_transactionsListnew" class="tomselect-custom">
+                                        <option value=""></option>
+                                        @foreach (var item in transactionsList)
+                                        {
+                                            <option value="@item.Code">@item.Code-@item.Description</option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="arti_dfprice">Default Price</label>
+                                <div class="col-md-8">
+                                    <input id="arti_dfprice" name="arti_dfprice" type="text" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="arti_currList">Currency</label>
+                                <div class="col-md-8">
+                                    <select id="arti_currList" name="arti_currList" class="tomselect-custom">
+                                        <option value=""></option>
+                                        @foreach (var item in currList)
+                                        {
+                                            <option value="@item.ID">@item.ID-@item.Description</option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="arti_supplementNew">Supplement</label>
+                                <div class="col-md-8">
+                                    <input id="arti_supplementNew" name="arti_supplementNew" type="text" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="arti_isActivenew">Inactive</label>
+                                 <div  class="col-md-8">
+                                    <input type="checkbox" id="arti_isActivenew" name="arti_isActivenew" value="1">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="arti_loadingSpinner" 
+    style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+    z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+    height: 100%;display: flex;align-items: center;justify-content: center;">
+    <div class="spinner-border text-primary"></div>
+</div>
 
 <script>
+    // ==========================================
+    // Article Module (Option A, prefixed arti_)
+    // ==========================================
+    var arti_Module = (function () {
+        "use strict";
 
-    function getInforServices() {
-        $.ajax({
-            url: '/Billing/GetInforService',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                $('#tranCodeID').empty();
-                var html = `<option value='' selected> Transaction</option>`;
-                if (result.transactions.length > 0) {
-                    for (var i = 0; i < result.transactions.length; i++) {
-                        html += `<option value='${result.transactions[i].code}'>${result.transactions[i].description}</option>`;
+        const SEL = {
+            modalMain: "#arti_modalMain",
+            modalEdit: "#arti_modalEdit",
+            spinner: "#arti_loadingSpinner",
+
+            // main filter
+            tran: "#arti_transactionsList",
+            code: "#arti_code",
+            desc: "#arti_description",
+            supp: "#arti_supplement",
+
+            // buttons
+            btnView: "#arti_btnView",
+            btnNew: "#arti_btnNew",
+            btnEdit: "#arti_btnEdit",
+            btnDelete: "#arti_btnDelete",
+            btnExcel: "#arti_btnExcel",
+
+            // grid
+            grid: "#arti_grid",
+
+            // edit fields
+            formEdit: "#arti_formEdit",
+            id: "#arti_id",
+            codenew: "#arti_codenew",
+            descriptionnew: "#arti_descriptionnew",
+            transactionsListnew: "#arti_transactionsListnew",
+            dfprice: "#arti_dfprice",
+            currList: "#arti_currList",
+            supplementNew: "#arti_supplementNew",
+            isActivenew: "#arti_isActivenew",
+            btnSave: "#arti_btnSave"
+        };
+
+        let _gridInstance = null;
+        let _selectedRowData = null;
+        let _bound = false;
+
+        function showLoading(show) {
+            if (show) $(SEL.spinner).show();
+            else $(SEL.spinner).hide();
+        }
+
+        function csrfHeaders() {
+            return { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() };
+        }
+
+        function addMainBlur() {
+            $(`${SEL.modalMain} .modal-content`).addClass("modal-blur");
+        }
+        function removeMainBlur() {
+            $(`${SEL.modalMain} .modal-content`).removeClass("modal-blur");
+        }
+
+        function getMainSearchPayload() {
+            return {
+                tranCode: $(SEL.tran).val(),
+                articleCode: $(SEL.code).val(),
+                articleDescription: $(SEL.desc).val(),
+                articleSupplement: $(SEL.supp).val()
+            };
+        }
+
+        function clearEditForm() {
+            applyValidationErrors([], "#pak_headerForm");
+            $(SEL.id).val("");
+            $(SEL.codenew).val("");
+            $(SEL.descriptionnew).val("");
+            clearMultipleTomSelect("#arti_transactionsListnew", "#arti_currList");
+            $(SEL.dfprice).val("");
+            $(SEL.supplementNew).val("");
+            $(SEL.isActivenew).prop("checked", false);
+        }
+
+        function fillEditFormFromRow(row) {
+            $(SEL.id).val(row.ID ?? "");
+            $(SEL.codenew).val(row.Code ?? "");
+            $(SEL.dfprice).val(row.Price ?? "");
+            $(SEL.descriptionnew).val(row.Description ?? "");
+            setTomSelectValue(SEL.transactionsListnew,row.TransactionCode ?? "")
+            setTomSelectValue(SEL.currList,row.Currency ?? "")
+            $(SEL.supplementNew).val(row.Supplement ?? "");
+
+            if (row.IsActive === "True" || row.IsActive === true) $(SEL.isActivenew).prop("checked", true);
+            else $(SEL.isActivenew).prop("checked", false);
+        }
+
+        function validateEdit() {
+            const codeNew = ($(SEL.codenew).val() || "").trim();
+            const descriptionNew = ($(SEL.descriptionnew).val() || "").trim();
+            const tranNew = ($(SEL.transactionsListnew).val() || "").trim();
+            const priceStr = ($(SEL.dfprice).val() || "").trim();
+            const curr = ($(SEL.currList).val() || "").trim();
+            const sup = ($(SEL.supplementNew).val() || "").trim();
+
+            if (codeNew === "") { showToast("Error", "Code is not empty.", false); $(SEL.codenew).focus(); return false; }
+            if (descriptionNew === "") { showToast("Error", "Description is not empty.", false); $(SEL.descriptionnew).focus(); return false; }
+            if (tranNew === "") { showToast("Error", "Transaction is not empty.", false); $(SEL.transactionsListnew).focus(); return false; }
+            if (priceStr === "" || isNaN(parseFloat(priceStr))) { showToast("Error", "Price must be a valid number and cannot be empty.", false); $(SEL.dfprice).focus(); return false; }
+            if (curr === "") { showToast("Error", "Please select a currency.", false); $(SEL.currList).focus(); return false; }
+            if (sup === "") { showToast("Error", "Supplement is not empty.", false); $(SEL.supplementNew).focus(); return false; }
+
+            return true;
+        }
+
+        function disposeGrid() {
+            try {
+                const inst = $(SEL.grid).dxDataGrid("instance");
+                if (inst) inst.dispose();
+            } catch (e) { /* ignore */ }
+
+            _gridInstance = null;
+            _selectedRowData = null;
+            $(SEL.grid).empty();
+        }
+
+        function initGrid(data) {
+            disposeGrid();
+
+            _gridInstance = $(SEL.grid).dxDataGrid({
+                dataSource: data || [],
+                showBorders: true,
+                height:"100%",
+                selection: { mode: "single" },
+
+                filterRow: { visible: true, applyFilter: "auto" },
+                scrolling: {
+                    mode: "standard",
+                    showScrollbar: "always",
+                    scrollByContent: true
+                },
+                paging: { pageSize: 50 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [50, 100, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+
+                columns: [
+                    { dataField: "ID", caption: "ID", visible: false },
+                    { dataField: "Code", caption: "Code",width:90 },
+                    { dataField: "Description", caption: "Description",cssClass: "col-description" },
+                    { dataField: "Supplement", caption: "Supplement",width:250 },
+                    { dataField: "TransactionCode", caption: "Trans. Code",width:90 },
+                    { dataField: "Price", caption: "Price", dataType: "number", format: "#,##0" ,width:70},
+                    { dataField: "Currency", caption: "Currency" ,width:70}
+                ],
+
+                onRowClick: function (e) {
+                    _selectedRowData = e.data || null;
+                }
+            }).dxDataGrid("instance");
+        }
+
+        function search() {
+            showLoading(true);
+
+            $.ajax({
+                url: "/Article/SearchArticle",
+                type: "GET",
+                data: getMainSearchPayload(),
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    initGrid(result);
+                    showLoading(false);
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot load report.", false);
+                }
+            });
+        }
+
+        function save() {
+//            if (!validateEdit()) return;
+
+            const isActive = $(SEL.isActivenew).is(":checked") ? 1 : 0;
+
+            showLoading(true);
+
+            $.ajax({
+                url: "/Article/ArticleListSave",
+                type: "POST",
+                data: {
+                    id: $(SEL.id).val(),
+                    codenew: $(SEL.codenew).val(),
+                    dfprice: $(SEL.dfprice).val(),
+                    descriptionnew: $(SEL.descriptionnew).val(),
+                    transactionsListnew: $(SEL.transactionsListnew).val(),
+                    currList: $(SEL.currList).val(),
+                    supplementNew: $(SEL.supplementNew).val(),
+                    user: localStorage.getItem("Loginname"),
+                    userID: localStorage.getItem("userID"),
+                    isActive: isActive
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    showLoading(false);
+
+                    if (result && result.success) {
+                        showToast("Success", result.message, true);
+
+                        bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).hide();
+
+                        search();
+                        clearEditForm() ;
+                    } else {
+                        if (result && result.errors && typeof applyValidationErrors === "function") {
+                            applyValidationErrors(result.errors, "#arti_modalEdit");
+                        } else {
+                            showToast("Error", (result && result.message) ? result.message : "Save failed.", false);
+                        }
                     }
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot save.", false);
                 }
-                $('#tranCodeID').append(html);
-                searchTransactionGroup();
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                }
-                // Optionally handle error case, e.g., decide whether to call searchTransactionGroup
+            });
+        }
+
+        function removeSelected() {
+            if (!_selectedRowData) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
             }
-        });
-    }
+            if (!confirm("Are you sure you want to delete item?")) return;
 
+            showLoading(true);
 
-    function searchTransactionGroup() {
+            $.ajax({
+                url: "/Article/ArticleListDelete",
+                type: "POST",
+                data: { id: _selectedRowData.ID },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    showLoading(false);
 
-        $.ajax({
-            url: '/Article/SearchArticle',
-            type: 'get',
-            dataType: 'json',
-            data: {
-                tranCode: $('#tranCodeID').val(),
-                articleCode: $('#code').val(),
-                articleDescription: $('#description').val(),
-                articleSupplement: $('#supplement').val()
-            },
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-
-                initializeDataGridSearch(result);
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
+                    if (result && result.success) {
+                        showToast("Success", (result && result.message) ? result.message : "Delete true.", true);
+                        search();
+                    } else {
+                        showToast("Error", (result && result.message) ? result.message : "Delete failed.", false);
+                    }
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot delete.", false);
                 }
-            },
+            });
+        }
 
-        });
+        function exportExcel() {
+            const grid = $(SEL.grid).dxDataGrid("instance");
+            if (!grid) {
+                showToast("Error", "No grid data to export.", false);
+                return;
+            }
 
-    }
-    function initializeDataGridSearch(data) {
-        const limitedData = data.slice(0, 100);
+            const workbook = new ExcelJS.Workbook();
+            const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const worksheet = workbook.addWorksheet("Sheet 1");
 
-        $("#gridContainer").dxDataGrid({
-            dataSource: limitedData,
-            allowColumnResizing: true,
-            columnMinWidth: 90,
-            paging: {
-                enabled: true, // Enable paging
-                pageSize: 15 // 15 records per page
-            },
-            pager: {
-                visible: true,
-                allowedPageSizes: [15, 20, 30], // Fixed page sizes
-                showPageSizeSelector: true,
-                showInfo: true, // Show paging info
-                showNavigationButtons: true
-            },
-            scrolling: {
-                mode: 'standard', // Standard scrolling mode
-                showScrollbar: 'always',
-                useNative: false
-            },
-            filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            selection: {
-                mode: "multiple", // Enable multiple row selection
-                showCheckBoxesMode: "always" // Always show checkboxes
-            },
-            columns: [
-                { dataField: "ID", caption: "ID", visible: false },
+            worksheet.addRow([companyName]);
+            worksheet.mergeCells("A1:D1");
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "left" };
 
-                { dataField: "Code", caption: "Code" },
-                { dataField: "Description", caption: "Description" },
-                { dataField: "Supplement", caption: "Supplement" },
-                { dataField: "TransactionCode", caption: "Transaction Code" },
-                { dataField: "Price", caption: "Price" },
-                { dataField: "Currency", caption: "Currency" },
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(["", "", "", exportDate]);
+            worksheet.mergeCells("D2:D2");
+            worksheet.getRow(2).alignment = { vertical: "middle", horizontal: "right" };
 
-            ],
-            onRowClick: function (e) {
-                const grid = $("#gridContainer").dxDataGrid("instance");
-                grid.selectRows([e.key], false);
-            },
-        });
-    }
-    $(document).ready(function () {
-        getInforServices();
-    });
+            worksheet.addRow([]);
+            worksheet.addRow([]);
 
+            const reportRow = worksheet.addRow(["Article"]);
+            worksheet.mergeCells("A5:D5");
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: "middle", horizontal: "center" };
 
+            worksheet.addRow([]);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                const lastRow = worksheet.lastRow.number + 2;
+                worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: "center" };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Article.xlsx");
+                });
+            });
+        }
+
+        function bindEventsOnce() {
+            if (_bound) return;
+            _bound = true;
+
+            initTomSelect(".tomselect-custom");
+            $(document)
+                .off("click.arti", SEL.btnView).on("click.arti", SEL.btnView, search)
+                .off("click.arti", SEL.btnNew).on("click.arti", SEL.btnNew, function () {
+                    _selectedRowData = null;
+                    clearEditForm();
+                    $("#arti_modalEditTitle").text("New Article");
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).show();
+                })
+                .off("click.arti", SEL.btnEdit).on("click.arti", SEL.btnEdit, function () {
+                    if (!_selectedRowData) {
+                        showToast("Warning", "Please select 1 row to update.", false);
+                        return;
+                    }
+                    clearEditForm();
+                    fillEditFormFromRow(_selectedRowData);
+                    $("#arti_modalEditTitle").text("Edit Article");
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).show();
+                })
+                .off("click.arti", SEL.btnDelete).on("click.arti", SEL.btnDelete, removeSelected)
+                .off("click.arti", SEL.btnExcel).on("click.arti", SEL.btnExcel, exportExcel)
+                .off("click.arti", SEL.btnSave).on("click.arti", SEL.btnSave, save);
+
+            // BLUR: when Edit opens, blur main; when closes, remove blur
+            $(SEL.modalEdit)
+                .off("shown.bs.modal.arti")
+                .on("shown.bs.modal.arti", function () { addMainBlur(); })
+                .off("hidden.bs.modal.arti")
+                .on("hidden.bs.modal.arti", function () {
+                    removeMainBlur();
+                    clearEditForm();
+                    showLoading(false);
+                });
+
+            // Main modal cleanup
+            $(SEL.modalMain)
+                .off("hidden.bs.modal.arti")
+                .on("hidden.bs.modal.arti", function () {
+                    _selectedRowData = null;
+
+                    // reset filters (consistent reset-on-close requirement)
+                    $(SEL.tran).val("");
+                    $(SEL.code).val("");
+                    $(SEL.desc).val("");
+                    $(SEL.supp).val("");
+
+                    disposeGrid();
+                    showLoading(false);
+                    removeMainBlur();
+                });
+        }
+
+        function init() {
+            bindEventsOnce();
+        }
+
+        function open() {
+            init();
+
+            const modalEl = document.querySelector(SEL.modalMain);
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+            $(modalEl).one("shown.bs.modal", function () {
+                search();
+            });
+
+            modal.show();
+        }
+
+        return { init, open };
+    })();
+
+    // Required global entry
+    window.openModalArti = function () {
+        arti_Module.open();
+    };
 
 </script>

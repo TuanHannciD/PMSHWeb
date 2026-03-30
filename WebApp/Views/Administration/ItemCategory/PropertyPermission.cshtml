@@ -1,411 +1,565 @@
-﻿@{
-    //
-}
-<style>
-    .ts-control {
-        min-height: 38px;
-        border-radius: 0.375rem; 
-        border: 1px solid #ced4da;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-        /* Xử lý scroll khi chọn nhiều */
-        max-height: 85px; /* Giới hạn khoảng 2 dòng */
-        overflow-y: auto; /* Hiện thanh cuộn dọc */
-    }
+﻿<!-- Main Modal -->
+<div
+    class="modal fade"
+    id="propPer_mainModal"
+    tabindex="-1"
+    aria-labelledby="propPer_mainModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-md-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="propPer_mainModalLabel">Property Permission</h5>
+            </div>
 
-    .ts-wrapper.focus .ts-control {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        outline: 0;
-    }
+            <div class="modal-body">
+                <div class="search-filter">
+                    <div>
+                        <button id="propPer_btnView" type="button" class="mui-button mui-button-search">
+                            View
+                        </button>
+                        <button id="propPer_btnNew" type="button" class="mui-button mui-button-new">
+                            New
+                        </button>
+                        <button id="propPer_btnDelete" type="button" class="mui-button mui-button-delete">
+                            Delete
+                        </button>
+                        <button id="propPer_btnRefresh" type="button" class="mui-button mui-button-search">
+                            Refresh
+                        </button>
+                        <button
+                            type="button"
+                            class="mui-button mui-button-new"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            Close
+                        </button>
+                    </div>
 
-    .ts-wrapper.is-invalid .ts-control {
-        border-color: #dc3545;
-        padding-right: calc(1.5em + 0.75rem);
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right calc(0.375em + 0.1875rem) center;
-        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-    }
+                    <div class="row g-2 mt-1">
+                        <div class="col-12">
+                            <div class="row g-2 align-items-center">
+                                <label
+                                    for="propPer_user"
+                                    class="col-md-2 col-lg-1 col-form-label col-form-label-sm text-md-end"
+                                >
+                                    User
+                                </label>
 
-    .ts-control::-webkit-scrollbar {
-        width: 6px;
-    }
+                                <div class="col-md-4">
+                                    <select
+                                        id="propPer_user"
+                                        name="propPer_user"
+                                        class="tomselect-custom"
+                                        multiple
+                                    >
+                                        @foreach (var propPer_sg in ViewBag.UsersList)
+                                        {
+                                            <option value="@propPer_sg.ID">
+                                                @propPer_sg.LoginName - @propPer_sg.FirstName
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    .ts-control::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
+                <div class="mui-card mt-1">
+                    <div id="propPer_gridContainer" class="gridContainer"></div>
+                </div>
 
-    .ts-control::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 4px;
-    }
-
-        .ts-control::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-
-    .ts-dropdown {
-        border-radius: 0.375rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(0,0,0,.15);
-        z-index: 1056; /* Cao hơn modal Bootstrap một chút */
-    }
-
-    /* Tùy chỉnh nút X xóa nhanh (Clear Button) */
-    .tomselect-custom .ts-control {
-        padding-right: 2.5rem !important;
-    }
-
-    .tomselect-custom .clear-button {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        font-size: 1.2rem;
-        color: #adb5bd; /* Màu xám nhạt */
-        font-weight: bold;
-        z-index: 10;
-        transition: color 0.2s;
-        line-height: 1;
-    }
-
-    .tomselect-custom .clear-button:hover {
-        color: #dc3545;
-    }
-</style>
-
-<div class="text-center" style="font-size: 20px">Property Permission</div>
-<div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex align-items-center gap-3 p-2"
-         style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
-        <div class="d-flex align-items-center" style="min-width: 300px; flex: 1;">
-            <label for="user" class="me-2 mb-0 fw-bold text-nowrap">User:</label>
-            <div class="w-100">
-                <select id="user" name="user" class="tomselect-custom m-2" multiple>
-                    @foreach (var sg in ViewBag.UsersList)
-                    {
-                        <option value="@sg.ID">@sg.LoginName - @sg.FirstName</option>
-                    }
-                </select>
+                <div
+                    id="propPer_loadingSpinner"
+                    style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        z-index: 999;
+                        background: rgba(255, 255, 255, 0.55);
+                        backdrop-filter: blur(2px);
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    "
+                >
+                    <div class="spinner-border text-primary"></div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="mt-2">
-        <button id="btnView" class="mui-button mui-button-search"><i class="fa-solid fa-eye"></i> View</button>
-        <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
-        <button id="btnDelete" class="mui-button mui-button-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
-        <button id="btnRefresh" class="mui-button mui-button-search" style="margin-left: 5px;"> <i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
-    </div>
 </div>
 
-<div class="mui-card">
-    <div id="gridContainerRateCode" class="gridContainer"></div>
-</div>
-<!-- Modal Popup for New Item -->
-<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
+<!-- Add Modal -->
+<div
+    class="modal fade"
+    id="propPer_itemModal"
+    tabindex="-1"
+    data-bs-backdrop="static"
+    aria-labelledby="propPer_itemModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="itemModalLabel">New Item</h5>
+                <h5 class="modal-title" id="propPer_itemModalLabel">New Property Permission</h5>
             </div>
-            <div class="modal-footer justify-content-start">
-                <button type="button" id="btnSaveItem" class="mui-button mui-button-save"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-                <button type="button" data-bs-dismiss="modal" class="mui-button mui-button-close"><i class="fa-solid fa-xmark"></i> Close</button>
-            </div>
+
             <div class="modal-body">
-                <form id="formContainer">
-                    <div class="container-fluid" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;"> 
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <label for="chooseUser" class="form-label fw-bold">User <span class="text-danger">*</span></label>
-                                <select id="chooseUser" name="chooseUser" class="tomselect-custom m-4" multiple>
-                                    @foreach (var sg in ViewBag.UsersList)
-                                    {
-                                        <option value="@sg.ID">@sg.LoginName - @sg.FirstName</option>
-                                    }
-                                </select>
-                                <div class="invalid-feedback">Please select at least one user.</div>
+                <div class="search-filter">
+                    <button type="button" id="propPer_btnSave" class="mui-button mui-button-new">
+                        Save
+                    </button>
+                    <button type="button" class="mui-button mui-button-new" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+
+                <form id="propPer_formContainer">
+                    <div class="row g-2 mt-1 mb-2">
+                        <div class="col-11">
+                            <div class="row g-2">
+                                <label
+                                    for="propPer_chooseUser"
+                                    class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                >
+                                    User <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="col-md-8">
+                                    <select
+                                        id="propPer_chooseUser"
+                                        name="propPer_chooseUser"
+                                        class="tomselect-custom"
+                                        multiple
+                                    >
+                                        @foreach (var propPer_sg in ViewBag.UsersList)
+                                        {
+                                            <option value="@propPer_sg.ID">
+                                                @propPer_sg.LoginName - @propPer_sg.FirstName
+                                            </option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mb-1">
-                            <div class="col-12">
-                                <label for="choosePropertyType" class="form-label fw-bold">Property <span class="text-danger">*</span></label>
-                                <select id="choosePropertyType" name="choosePropertyType" class="tomselect-custom m-4" multiple>
-                                    @foreach (var sg in ViewBag.PropertyList)
-                                    {
-                                        <option value="@sg.ID">@sg.PropertyCode - @sg.PropertyName</option>
-                                    }
-                                </select>
-                                <div class="invalid-feedback" id="propertyError">Please select at least one property.</div>
+
+                        <div class="col-11">
+                            <div class="row g-2">
+                                <label
+                                    for="propPer_choosePropertyType"
+                                    class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                >
+                                    Property <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="col-md-8">
+                                    <select
+                                        id="propPer_choosePropertyType"
+                                        name="propPer_choosePropertyType"
+                                        class="tomselect-custom"
+                                        multiple
+                                    >
+                                        @foreach (var propPer_sg in ViewBag.PropertyList)
+                                        {
+                                            <option value="@propPer_sg.ID">
+                                                @propPer_sg.PropertyCode - @propPer_sg.PropertyName
+                                            </option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
-                        <input type="hidden" id="id" name="id" value="0" />
                     </div>
+
+                    <input type="hidden" id="propPer_id" name="propPer_id" value="0" />
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<div id="loadingSpinnerRateCode" style="display: none; text-align: center; padding: 20px;">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-</div>
-
 <script>
-    DevExpress.localization.locale("vi");
-    var selectedRowData = null;
+    var propPer_Module = (() => {
+        let propPer_selectedRowData = null;
 
-    $(document).ready(function () {
-        $("#btnView").trigger("click");
-        
-        $(".tomselect-custom").on("change", function() {
-        const val = $(this).val();
-        const wrapper = $(this).next(".ts-wrapper");
-            if (val && val.length > 0) {
-                wrapper.removeClass("is-invalid");
-                wrapper.parent().find(".invalid-feedback").hide();
-            }
-        });
+        const propPer_selectors = {
+            mainModal: "#propPer_mainModal",
+            itemModal: "#propPer_itemModal",
+            form: "#propPer_formContainer",
+            grid: "#propPer_gridContainer",
+            loading: "#propPer_loadingSpinner",
+            user: "#propPer_user",
+            chooseUser: "#propPer_chooseUser",
+            choosePropertyType: "#propPer_choosePropertyType",
+            btnView: "#propPer_btnView",
+            btnNew: "#propPer_btnNew",
+            btnDelete: "#propPer_btnDelete",
+            btnRefresh: "#propPer_btnRefresh",
+            btnSave: "#propPer_btnSave",
+            modalLabel: "#propPer_itemModalLabel",
+            id: "#propPer_id"
+        };
 
-        $("#formContainer").on("input change", "input, select, textarea", function () {
-            if ($(this).hasClass("is-invalid")) {
-                $(this).removeClass("is-invalid");
-                $(this).next(".invalid-feedback").text("");
-            }
-        });
+        function propPer_init() {
+            propPer_bindEvents();
+            propPer_initializeTomSelects();
+            propPer_loadGrid([]);
+            propPer_loadData();
+        }
 
-        $('#itemModal').on('hidden.bs.modal', function () {
-             applyValidationErrors([], "#formContainer");
-             $(".ts-wrapper").removeClass("is-invalid");
-             $(".invalid-feedback").hide();
-        });
+        function propPer_bindEvents() {
+            $(".tomselect-custom").on("change", function () {
+                const propPer_val = $(this).val();
+                const propPer_wrapper = $(this).next(".ts-wrapper");
 
-        initializeTomSelects();
+                if (propPer_val && propPer_val.length > 0) {
+                    propPer_wrapper.removeClass("is-invalid");
+                    propPer_wrapper.parent().find(".invalid-feedback").hide();
+                }
+            });
 
-        $("#btnRefresh").click(function() {
-             // Clear the 'user' TomSelect
-             var userSelect = document.getElementById('user').tomselect;
-             if(userSelect) {
-                 userSelect.clear();
-             }
-
-             $("#btnView").trigger("click");
-        });
-    });
-
-    function initializeTomSelects() {
-        const selectors = ["#user", "#choosePropertyType", "#chooseUser"];
-        selectors.forEach(selector => {
-            const el = document.querySelector(selector);
-            if (el) {
-                 if (el.tomselect) el.tomselect.destroy();
-                    new TomSelect(el, {
-                        plugins: {
-                        'remove_button': { title: 'Bỏ chọn mục này' },
-                        'dropdown_input': {},
-                        'clear_button': { title: 'Clear all' },
-                    },
-                    create: false,
-                    maxItems: null,
-                    valueField: 'value',
-                    labelField: 'text',
-                    searchField: ['text'],
-                    placeholder: 'Enter or select options...',
-                    render: {
-                        option: function(data, escape) {
-                            return '<div class="p-2">' + escape(data.text) + '</div>';
-                        },
-                        item: function(data, escape) {
-                            return '<div title="' + escape(data.text) + '">' + escape(data.text) + '</div>';
+            $(document)
+                .off(
+                    "input change",
+                    `${propPer_selectors.form} input, ${propPer_selectors.form} select, ${propPer_selectors.form} textarea`
+                )
+                .on(
+                    "input change",
+                    `${propPer_selectors.form} input, ${propPer_selectors.form} select, ${propPer_selectors.form} textarea`,
+                    function () {
+                        if ($(this).hasClass("is-invalid")) {
+                            $(this).removeClass("is-invalid");
+                            $(this).next(".invalid-feedback").text("");
                         }
                     }
+                );
+
+            $(propPer_selectors.itemModal)
+                .off("hidden.bs.modal")
+                .on("hidden.bs.modal", function () {
+                    applyValidationErrors([], propPer_selectors.form);
+                    $(".ts-wrapper").removeClass("is-invalid");
+                    $(".invalid-feedback").hide();
+                });
+
+            $(document)
+                .off("click", propPer_selectors.btnView)
+                .on("click", propPer_selectors.btnView, function () {
+                    propPer_loadData();
+                });
+
+            $(document)
+                .off("click", propPer_selectors.btnNew)
+                .on("click", propPer_selectors.btnNew, function () {
+                    propPer_openAddModal();
+                });
+
+            $(document)
+                .off("click", propPer_selectors.btnSave)
+                .on("click", propPer_selectors.btnSave, function () {
+                    propPer_save();
+                });
+
+            $(document)
+                .off("click", propPer_selectors.btnDelete)
+                .on("click", propPer_selectors.btnDelete, function () {
+                    propPer_delete();
+                });
+
+            $(document)
+                .off("click", propPer_selectors.btnRefresh)
+                .on("click", propPer_selectors.btnRefresh, function () {
+                    const propPer_userSelect = document.querySelector(propPer_selectors.user)?.tomselect;
+                    if (propPer_userSelect) {
+                        propPer_userSelect.clear();
+                    }
+                    propPer_loadData();
+                });
+        }
+
+        function propPer_initializeTomSelects() {
+            const propPer_commonConfig = {
+                plugins: {
+                    remove_button: { title: "Bỏ chọn" },
+                    dropdown_input: {},
+                    clear_button: { title: "Xóa hết" }
+                },
+                create: false,
+                maxItems: null,
+                valueField: "value",
+                labelField: "text",
+                searchField: ["text"],
+                placeholder: "Select or search...",
+                render: {
+                    option: (data, escape) => `<div class="p-2">${escape(data.text)}</div>`,
+                    item: (data, escape) => `<div title="${escape(data.text)}">${escape(data.text)}</div>`
+                },
+                onDropdownOpen: function () {
+                    this.positionDropdown();
+                }
+            };
+
+            [
+                propPer_selectors.user,
+                propPer_selectors.choosePropertyType,
+                propPer_selectors.chooseUser
+            ].forEach((selector) => {
+                const propPer_el = document.querySelector(selector);
+
+                if (propPer_el) {
+                    if (propPer_el.tomselect) {
+                        propPer_el.tomselect.destroy();
+                    }
+
+                    const propPer_ts = new TomSelect(propPer_el, propPer_commonConfig);
+
+                    propPer_ts.on("change", function () {
+                        const propPer_wrapper = $(propPer_ts.control).closest(".ts-wrapper");
+                        propPer_wrapper.removeClass("is-invalid");
+                        propPer_wrapper.siblings(".invalid-feedback").hide();
+                    });
+
+                    propPer_ts.on("clear", function () {
+                        const propPer_wrapper = $(propPer_ts.control).closest(".ts-wrapper");
+                        propPer_wrapper.removeClass("is-invalid");
+                        propPer_wrapper.siblings(".invalid-feedback").hide();
+                    });
+                }
+            });
+        }
+
+        function propPer_openAddModal() {
+            const propPer_form = $(propPer_selectors.form)[0];
+            if (propPer_form) {
+                propPer_form.reset();
+            }
+
+            $(propPer_selectors.id).val("0");
+
+            const propPer_tsUser = document.querySelector(propPer_selectors.chooseUser)?.tomselect;
+            const propPer_tsProp = document.querySelector(propPer_selectors.choosePropertyType)?.tomselect;
+
+            if (propPer_tsUser) {
+                propPer_tsUser.clear();
+            }
+
+            if (propPer_tsProp) {
+                propPer_tsProp.clear();
+            }
+
+            $(".ts-wrapper").removeClass("is-invalid");
+            $(".invalid-feedback").hide();
+
+            $(propPer_selectors.modalLabel).text("New Property Permission");
+            $(propPer_selectors.itemModal).modal("show");
+        }
+
+        function propPer_getSearchModel() {
+            const propPer_rawVal = $(propPer_selectors.user).val();
+            const propPer_userIDString =
+                propPer_rawVal && propPer_rawVal.length > 0 ? propPer_rawVal.join(",") : "";
+
+            return {
+                userID: propPer_userIDString
+            };
+        }
+
+        function propPer_getSaveModel() {
+            const propPer_id = parseInt($(propPer_selectors.id).val()) || 0;
+            let propPer_loginName = (localStorage.getItem("Loginname") || "").replace(/^"(.*)"$/, "$1");
+
+            const propPer_selectedUsers = $(propPer_selectors.chooseUser).val() || [];
+            const propPer_selectedProperties = $(propPer_selectors.choosePropertyType).val() || [];
+
+            let propPer_listDataToSend = [];
+
+            if (propPer_selectedUsers.length === 0 || propPer_selectedProperties.length === 0) {
+                propPer_listDataToSend.push({
+                    ID: propPer_id,
+                    UserID: 0,
+                    PropertyID: 0,
+                    CreatedBy: propPer_loginName
+                });
+            } else {
+                propPer_selectedUsers.forEach((propPer_uID) => {
+                    propPer_selectedProperties.forEach((propPer_pID) => {
+                        propPer_listDataToSend.push({
+                            ID: propPer_id,
+                            UserID: parseInt(propPer_uID),
+                            PropertyID: parseInt(propPer_pID),
+                            CreatedBy: propPer_loginName,
+                            UpdatedBy: propPer_loginName
+                        });
+                    });
                 });
             }
-        });
-    }
 
-    $("#btnNew").click(function () {
-        $("#formContainer")[0].reset();
-        $("#id").val("0");
-        const tsUser = document.querySelector("#chooseUser").tomselect;
-        const tsProp = document.querySelector("#choosePropertyType").tomselect;
-        if( tsUser){tsUser.clear()};
-        if( tsProp){tsProp.clear()};
-
-        $(".ts-wrapper").removeClass("is-invalid");
-        $(".invalid-feedback").hide();
-
-        $("#itemModalLabel").text("New Property Permission");
-        $("#itemModal").modal("show");
-    });
-
-    $("#btnSaveItem").click(function () {
-        $(".is-invalid").removeClass("is-invalid");
-        
-        const id = parseInt($("#id").val()) || 0;
-        let loginName = (localStorage.getItem("Loginname") || "").replace(/^"(.*)"$/, '$1');
-        const loginUser = parseInt(localStorage.getItem("userID")) || 0;
-
-        // Lấy mảng ID từ TomSelect
-        const selectedUsers = $("#chooseUser").val();      
-        const selectedProperties = $("#choosePropertyType").val();
-
-        let isValid = true;
-        if (!selectedUsers || selectedUsers.length === 0) {
-            $("#chooseUser").next(".ts-wrapper").addClass("is-invalid");
-            $("#chooseUser").parent().find(".invalid-feedback").show();
-            isValid = false;
+            return propPer_listDataToSend;
         }
-        if (!selectedProperties || selectedProperties.length === 0) {
-            $("#choosePropertyType").next(".ts-wrapper").addClass("is-invalid");
-            $("#choosePropertyType").parent().find(".invalid-feedback").show();
-            isValid = false;
+
+        function propPer_showLoading() {
+            $(propPer_selectors.loading).show();
         }
-        if (!isValid) return;
 
-        let listDataToSend = [];
+        function propPer_hideLoading() {
+            $(propPer_selectors.loading).hide();
+        }
 
-        selectedUsers.forEach(function(uID) {
+        function propPer_loadData() {
+            propPer_showLoading();
 
-            selectedProperties.forEach(function(pID) {
-
-                let item = {
-                    ID: id, 
-                    UserID: parseInt(uID),     
-                    PropertyID: parseInt(pID), 
-                    CreatedBy: loginName,
-                    UpdatedBy: loginName,
-                    UserInsertID: loginUser,
-                    UserUpdateID: loginUser
-                };
-
-                listDataToSend.push(item);
+            $.ajax({
+                url: "/Administration/GetPropertyPermission",
+                type: "GET",
+                cache: false,
+                data: propPer_getSearchModel(),
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (propPer_data) {
+                    propPer_loadGrid(propPer_data || []);
+                    propPer_hideLoading();
+                },
+                error: function () {
+                    showToast("Error", "Unable to load data", false);
+                    propPer_hideLoading();
+                }
             });
-        });
+        }
 
-        $.ajax({
-            url: "/Administration/PropertyPermissionSave",
-            type: "POST",
-            contentType: "application/json", 
-            cache: false,
-            data: JSON.stringify(listDataToSend), 
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (res) {
-                if (res.success) {
-                    showToast("Success", res.message, true);
-                    $("#itemModal").modal("hide");
-                    $("#btnView").trigger("click");
-                } else {
-                    if (res.errors && res.errors.length > 0) {
-                        applyValidationErrors(res.errors, "#formContainer");
-                        showToast("Warning", "Please check input fields.", false);
+        function propPer_loadGrid(propPer_data) {
+            $(propPer_selectors.grid).dxDataGrid({
+                dataSource: propPer_data,
+                width: "100%",
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
+                selection: {
+                    mode: "multiple",
+                    showCheckBoxesMode: "always",
+                    selectAllMode: "page"
+                },
+                hoverStateEnabled: true,
+                columns: [
+                    { dataField: "id", visible: false },
+                    { dataField: "loginName", caption: "Login name", groupIndex: 0 },
+                    { dataField: "propertyCode", caption: "Property Code", width: "200" },
+                    { dataField: "propertyName", caption: "Property Name", minWidth: 300, cssClass: "col-description" }
+                ],
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                paging: {
+                    pageSize: 20
+                },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [20, 50, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                scrolling: {
+                    mode: "standard",
+                    showScrollbar: "always"
+                },
+                onSelectionChanged: function (e) {
+                    propPer_selectedRowData =
+                        e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+                }
+            });
+        }
+
+        function propPer_save() {
+            const propPer_model = propPer_getSaveModel();
+
+            $.ajax({
+                url: "/Administration/PropertyPermissionSave",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(propPer_model),
+                success: function (propPer_res) {
+                    if (propPer_res.success) {
+                        showToast("Success", propPer_res.message, true);
+                        $(propPer_selectors.itemModal).modal("hide");
+                        propPer_loadData();
                     } else {
-                        showToast("Error", res.message || "Save failed", false);
+                        if (propPer_res.errors && propPer_res.errors.length > 0) {
+                            applyValidationErrors(propPer_res.errors, propPer_selectors.form);
+                        } else {
+                            showToast("Error", propPer_res.message || "Save failed", false);
+                        }
                     }
+                },
+                error: function () {
+                    showToast("Error", "Request error!", false);
                 }
-            },
-            error: function (xhr) {
-                showToast("Error", "Request error!", false);
-            }
-        });
-    });
-
-    function loadGrid(data) {
-        $("#gridContainerRateCode").dxDataGrid({
-            dataSource: data,
-            height: 450,
-            width: "100%",
-            allowColumnResizing: true,
-            columnResizingMode: "widget",
-            selection: { mode: "multiple" ,showCheckBoxesMode: "always",selectAllMode: "page"},
-            hoverStateEnabled: true,
-            columns: [
-                { dataField: "id", visible: false },
-                { dataField: "loginName", caption: "Login name", groupIndex: 0 },
-                { dataField: "propertyCode", caption: "Property Code", width: "30%" },
-                { dataField: "propertyName", caption: "Property Name", width: "70%" },
-            ],
-            filterRow: { visible: true, applyFilter: "auto" },
-            paging: { pageSize: 20 },
-            pager: {
-                visible: true,
-                allowedPageSizes: [20, 50, 'all'],
-                showPageSizeSelector: true,
-                showInfo: true,
-                showNavigationButtons: true
-            },
-            scrolling: { mode: "standard", showScrollbar: "always" },
-              onSelectionChanged: function(e){
-                  selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
-            }
-        });
-    }
-
-    $(document).off("click", "#btnView").on("click", "#btnView", function () {
-          $("#loadingSpinnerRateCode").show();
-          var rawVal = $("#user").val();
-
-          var userIDString = (rawVal && rawVal.length > 0) ? rawVal.join(",") : "";
-
-          $.ajax({
-              url: "/Administration/GetPropertyPermission",
-              type: "GET",
-              cache: false,
-              data: { userID: userIDString},
-              crossDomain: false,
-              headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-              success: function(data){
-                  loadGrid(data);
-                  $("#loadingSpinnerRateCode").hide();
-              },
-              error: function(xhr, status, error){
-                 showToast("Error", "Unable to load data", false);
-                 $("#loadingSpinnerRateCode").hide();
-              }
-             });
-    });
-
-    $("#btnDelete").click(function () {
-        const grid = $("#gridContainerRateCode").dxDataGrid("instance");
-
-        const selectedRows = grid.getSelectedRowsData();
-
-        if (!selectedRows || selectedRows.length === 0) {
-            showToast('Warning', "Please select at least one row to delete!", true);
-            return;
+            });
         }
 
-        if (!confirm(`Are you sure you want to delete ${selectedRows.length} record(s)?`)) {
-            return;
+        function propPer_delete() {
+            const propPer_grid = $(propPer_selectors.grid).dxDataGrid("instance");
+            const propPer_selectedRows = propPer_grid.getSelectedRowsData();
+
+            if (!propPer_selectedRows || propPer_selectedRows.length === 0) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete ${propPer_selectedRows.length} record(s)?`)) {
+                return;
+            }
+
+            const propPer_listIdsToSend = propPer_selectedRows.map((item) => item.id || item.ID);
+
+            $.ajax({
+                url: "/Administration/DeletePropertyPermission",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(propPer_listIdsToSend),
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (propPer_result) {
+                    if (propPer_result.success) {
+                        propPer_loadData();
+                        showToast("Success", propPer_result.message, true);
+                        propPer_grid.clearSelection();
+                    } else {
+                        showToast("Error", propPer_result.message, false);
+                    }
+                },
+                error: function () {
+                    showToast("Error", "Delete failed!", false);
+                }
+            });
         }
 
-        const listIdsToSend = selectedRows.map(item => item.id || item.ID);
+        return {
+            init: propPer_init,
+            loadData: propPer_loadData,
+            openAddModal: propPer_openAddModal
+        };
+    })();
 
-        $.ajax({
-            url: `/Administration/DeletePropertyPermission`,
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(listIdsToSend),
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function(result){
-                if(result.success){
-                    $("#btnView").trigger("click");
-                    showToast("Success", result.message, true);
-                    grid.clearSelection(); 
-                } else {
-                    showToast("Error", result.message, false);
-                }
-            },
-            error: function(){
-                showToast("Error", "Delete failed!", false);
-            },
+    window.openModalPropertyPermission = function () {
+        const modalEl = document.querySelector("#propPer_mainModal");
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        $(modalEl).one("shown.bs.modal", function () {
+            propPer_Module.init();
         });
-    });
-
+        modal.show();
+        $("#propPer_mainModal").modal("show");
+        propPer_Module.init();
+    };
 </script>

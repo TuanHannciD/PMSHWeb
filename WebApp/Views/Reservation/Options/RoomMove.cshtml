@@ -5,37 +5,37 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Room Move</h5>
-                <button type="button" class="btn-close" onclick="closeRoomMove()"></button>
+              @*   <button type="button" class="btn-close" onclick="closeRoomMove()"></button> *@
             </div>
-            <div class="modal-body">
-                <div>
-                    <button class="mui-button mui-button-search" onclick="CancelReservation();">Save</button>
-                    <button class="mui-button mui-button-clear" onclick="closeRoomMove();">Close</button>
+            <div style="margin: 4px;">
+                <div class="py-2">
+                    <button class="mui-button mui-button-new" onclick="SaveRoomMove();">Save</button>
+                    <button class="mui-button mui-button-new" data-bs-dismiss="modal" onclick="closeRoomMove();">Close</button>
                 </div>
-                <div style="margin: 4px" class="bg-light border rounded row">
+                <div  class="bg-light border rounded row" style="margin:2px">
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Guest Name</label>
-                        <input id="guestNameRoomMove" class="col-md-8 form-control" disabled>
+                        <input id="guestNameRoomMove" class="col-md-8" disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Room Current</label>
-                        <input id="roomCurrentRoomMove" class="col-md-8 form-control" disabled>
+                        <input id="roomCurrentRoomMove" class="col-md-8" disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Move to Room</label>
                         <input id="moveRoomMove" class="col-md-6" disabled>
-                        <button class="col-md-1" onclick="openRoomMoveAdd();" id="btnRoomMove"><i class="fa-solid fa-ellipsis"></i></button>
+                        <button class="col-md-1" onclick="openRoomMoveAdd();" id="btnRoomMove" data-tooltip="Add room move"><i class="fa-solid fa-ellipsis text-dark"></i></button>
 
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Extensions</label>
-                        <input id="extensionRoomMove" class="col-md-8 form-control" value="0" disabled>
+                        <input id="extensionRoomMove" class="col-md-8 " value="0" disabled>
                     </div>
                     <div class="col-md-12 row mt-2">
                         <label class="col-md-4" style="text-align:left">Move date</label>
-                        <input id="moveDateRoomMove" class="col-md-8 form-control" disabled>
+                        <input id="moveDateRoomMove" class="col-md-8 " disabled type="date">
                     </div>
-                    <div class="col-md-12 row mt-2">
+                    <div class="col-md-12 row mt-2 mb-2">
                         <label class="col-md-4" style="text-align:left">Reason</label>
                         <select id="reasonRoomMove" class="col-md-8" asp-items="ViewBag.cboReason"></select>
                     </div>
@@ -53,23 +53,23 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Available Room Search</h5>
-                <button type="button" class="btn-close" onclick="closeRoomMoveAdd();"></button>
+               @*  <button type="button" class="btn-close" onclick="closeRoomMoveAdd();"></button> *@
             </div>
             <div class="modal-body">
-                <div class="mb-2">
-                    <button class="mui-button mui-button-search" onclick="getAllRooms2();"><i class="fas fa-search"></i> Search</button>
-                    <button class="mui-button mui-button-clear" onclick="closeRoomMoveAdd();"><i class="fas fa-eraser"></i> Clear</button>
+                <div class="py-2">
+                    <button class="mui-button mui-button-search" onclick="getAllRooms2();"> Search</button>
+                    <button class="mui-button mui-button-close" data-bs-dismiss="modal" onclick="closeRoomMoveAdd();"> Close</button>
                 </div>
                 <div class="row mui-card mb-2">
                     <div class="row">
                         <div class="col-md-2 mb-2">
                             <label for="input1" class="form-label">RoomType</label>
-                            <select type="text" class="form-control" id="roomTypeSearch2" asp-items="ViewBag.cboRoomType">
+                            <select type="text"  id="roomTypeSearch2" asp-items="ViewBag.cboRoomType">
                             </select>
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input2" class="form-label">Smoking</label>
-                            <select type="text" class="form-control" id="smokingSearch2">
+                            <select type="text"  id="smokingSearch2">
                                 <option value="2">---Select all ---</option>
                                 <option value="1">Smoking</option>
                                 <option value="0">No Smoking</option>
@@ -78,57 +78,57 @@
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input3" class="form-label">RoomNo</label>
-                            <input type="text" class="form-control" id="roomNoSearch2" />
+                            <input type="text" id="roomNoSearch2" />
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input4" class="form-label">Floor</label>
-                            <input type="text" class="form-control" id="floorSearch2">
+                            <input type="text"  id="floorSearch2">
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input5" class="form-label">From</label>
-                            <input type="date" class="form-control" id="fromSearch2">
+                            <input type="date"  id="fromSearch2">
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="input6" class="form-label">To</label>
-                            <input type="date" class="form-control" id="toSearch2">
+                            <input type="date"  id="toSearch2">
                         </div>
                     </div>
-                    <div class="form-group" style="display:flex">
+                    <div  style="display:flex">
                         <label>FO Status</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="foStatus2" checked value="0">
+                            <input  type="radio" name="foStatus2" checked value="0">
                             <label class="form-check-label" for="foActive">Vacant</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="foStatus2" value="1">
+                            <input type="radio" name="foStatus2" value="1">
                             <label class="form-check-label" for="foInactive">Occupied</label>
                         </div>
                     </div>
-                    <div class="form-group" style="display:flex">
+                    <div  style="display:flex">
                         <label>HK Status</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus2" value="1">
+                            <input  type="checkbox" name="hkStatus2" value="1">
                             <label class="form-check-label" for="hkClean">Clean Non-checked Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus2" value="2">
+                            <input  type="checkbox" name="hkStatus2" value="2">
                             <label class="form-check-label" for="hkDirty">Dirty Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus2" value="4">
+                            <input  type="checkbox" name="hkStatus2" value="4">
                             <label class="form-check-label" for="hkInProgress">Clean Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus2" value="5">
+                            <input  type="checkbox" name="hkStatus2" value="5">
                             <label class="form-check-label" for="hkOutOfService">OOC Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkStatus2" value="6">
+                            <input  type="checkbox" name="hkStatus2" value="6">
                             <label class="form-check-label" for="hkInspected">OOS Rooms</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="hkDummy2">
-                            <label class="form-check-label" for="hkOccupied">Pseudo (Dummy) Roóm</label>
+                            <input  type="checkbox" name="hkDummy2">
+                            <label class="form-check-label" for="hkOccupied">Pseudo (Dummy) Rooms</label>
                         </div>
                     </div>
                 </div>
@@ -155,25 +155,37 @@
             showToast('Error', 'Select guest checked in to room move', false);
             return;
         }
-        clearRoomMove();
+
+        formatDateOpen();
         $('#modalRoomMove').modal('show');
     }
-    function clearRoomMove(){
+    function formatDateOpen(){
+        const arrivalFormatted = formatDateForInput(arivalDate);
+        const departureFormatted = formatDateForInput(departureDate);
         var businessDate = '@ViewBag.businesDate';
-        var dateOnly = businessDate.split(' ')[0]; // '8/29/2024'
-        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
-         var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-        document.getElementById('moveDateRoomMove').value = formatDate(parsedBusinessDate);
-        $('#guestNameRoomMove').val(lastname);
+         var parsedBusinessDate = formatDateForInput(businessDate);
+        $('#moveDateRoomMove').val(parsedBusinessDate);
+        $('#fromSearch2').val(arrivalFormatted);
+        $('#toSearch2').val(departureFormatted);
+                $('#guestNameRoomMove').val(lastname);
         $('#roomCurrentRoomMove').val(roomNo);
     }
+    function clearRoomMove(){
+        idReservation = 0;
+        
+
+        $('#moveRoomMove').val('');
+        $('#extensionRoomMove').val('0');
+        $('#reasonRoomMove').val(0);
+    }
     function closeRoomMove(){
+        clearRoomMove();
         $('#modalRoomMove').modal('hide');
     }
     function openRoomMoveAdd(){
-        $('#fromSearch2').val($('#arrival').val());
-        $('#toSearch2').val($('#departure').val());
+        
         getAllRooms2();
+
         $('#modalRoomMoveAdd').modal('show');
     }
     function closeRoomMoveAdd(){
@@ -266,12 +278,11 @@
     function SaveRoomMove() {
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
-        const gridData = $("#gridContainerRoom").dxDataGrid("instance").getVisibleRows().map(r => r.data);
         var formData = new FormData();
-
+        console.log('reason: ' + $('#reasonRoomMove').val());
         formData.append('rsvID', idReservation);
         formData.append('roomCurrent', $('#roomCurrentRoomMove').val());
-        formData.append('roomMove', $('#moveRoomMove').val());
+        formData.append('moveRoomMove', $('#moveRoomMove').val());
         formData.append('moveDate', $('#moveDateRoomMove').val());
         formData.append('reason', $('#reasonRoomMove').val());
         formData.append('hkStatus', hkStatus);
@@ -279,7 +290,7 @@
         formData.append('userID',userID);
 
         $.ajax({
-            url: '/Reservation/SaveGroupReservation',
+            url: '/Reservation/RoomMove',
             type: 'POST',
             processData: false,
             contentType: false,
@@ -287,8 +298,8 @@
             data: formData,
             success: function (data) {
                 if (data.code == 0) {
-                    closeModalNew();
-                    searchGroupReservation();
+                    closeRoomMove();
+                    searchReservation();
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);

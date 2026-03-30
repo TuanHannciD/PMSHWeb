@@ -1,15 +1,15 @@
+﻿using Administration.Services.Interfaces;
+using BaseBusiness.BO;
+using BaseBusiness.Model;
+using BaseBusiness.util;
+using DevExpress.XtraRichEdit.Model;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Administration.Services.Interfaces;
-using BaseBusiness.BO;
-using BaseBusiness.Model;
-using BaseBusiness.util;
-using DevExpress.XtraRichEdit.Model;
-using Microsoft.Data.SqlClient;
 using static DevExpress.DataProcessing.InMemoryDataProcessor.AddSurrogateOperationAlgorithm;
 
 namespace Administration.Services.Implements
@@ -281,6 +281,30 @@ namespace Administration.Services.Implements
             DataTable myTable = DataTableHelper.getTableData("spFrmZoneSearch", param);
             return myTable;
         }
+        public DataTable Priority(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPrioritySearch", param);
+            return myTable;
+        }
+        public DataTable Promotion(string code, string name, int inactive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code ?? ""),
+                new SqlParameter("@Name", name ?? ""),
+                new SqlParameter("@Inactive", inactive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPromotionSearch", param);
+            return myTable;
+        }
         public DataTable Department(string code, string name, int inactive)
         {
             SqlParameter[] param = new SqlParameter[]
@@ -392,9 +416,6 @@ namespace Administration.Services.Implements
                 throw new Exception($"ERROR Currency(): {ex.Message}", ex);
             }
         }
-
-
-
 
         public List<CurrencyModel> GetAllCurrency()
         {
@@ -514,18 +535,54 @@ namespace Administration.Services.Implements
             return myTable;
         }
 
-        public DataTable PersonInChargeData(string code, string description, string group, string zone, string isActive)
+        public DataTable PersonInChargeData(string code, string name, string group, string zone, string isActive)
         {
             SqlParameter[] param = new SqlParameter[]
             {
                 new SqlParameter("@Code", code),
-                new SqlParameter("@Name", description),
+                new SqlParameter("@Name", name),
                 new SqlParameter("@GroupID", group),
                 new SqlParameter("@ZoneID",zone),
                 new SqlParameter("@Inactive", isActive)
             };
 
             DataTable myTable = DataTableHelper.getTableData("spPersonInChargeSearch", param);
+            return myTable;
+        }
+        public DataTable PersonInChargeGroupData(string code, string name, int isActive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@Inactive", isActive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPersonInChargeGroupSearch", param);
+            return myTable;
+        }
+        public DataTable PersonInChargeZoneData(string code, string name, string isActive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@Inactive", isActive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmPersonInChargeZoneSearch", param);
+            return myTable;
+        }
+        public DataTable ApproveListData(string code, string name, string isActive)
+        {
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Code", code),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@Inactive", isActive)
+            };
+
+            DataTable myTable = DataTableHelper.getTableData("spFrmApprovedbySearch", param);
             return myTable;
         }
 
@@ -563,6 +620,5 @@ namespace Administration.Services.Implements
             DataTable dt = DataTableHelper.getTableData("spSearchCancellationRule", parameters);
             return dt;
         }
-
     }
 }

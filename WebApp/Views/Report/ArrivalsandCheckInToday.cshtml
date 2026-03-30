@@ -29,23 +29,26 @@
         margin: 0px 8px;
     }
 
-        .button_wrapper .fa-solid {
-            margin-right: 5px;
-        }
+    .button_wrapper .fa-solid {
+        margin-right: 5px;
+    }
 
     .selected {
-        background-color: #4CAF50; /* Màu xanh */
+        background-color: #4CAF50;
+        /* Màu xanh */
         color: white;
     }
 
     #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #01579b !important; /* màu xanh ngọc */
-        color: white !important; /* chữ trắng */
+        background-color: #01579b !important;
+        /* màu xanh ngọc */
+        color: white !important;
+        /* chữ trắng */
     }
 
-        #gridContainer .dx-datagrid-rowsview .dx-selection * {
-            color: white !important;
-        }
+    #gridContainer .dx-datagrid-rowsview .dx-selection * {
+        color: white !important;
+    }
 
     .sticky-header .form-control-sm {
         padding: .1rem .35rem;
@@ -56,7 +59,7 @@
         margin-right: .5rem !important;
     }
 
-    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+    #gridContainer .dx-datagrid-headers .dx-header-row>td {
         padding: 5px !important;
         height: 24px !important;
         font-size: 12px !important;
@@ -64,8 +67,10 @@
     }
 
     .sticky-header input[type="date"].form-control-sm {
-        font-size: 12px !important; /* đúng 12 px */
-        height: calc(1.1em + .2rem + 2px); /* giữ cùng chiều cao */
+        font-size: 12px !important;
+        /* đúng 12 px */
+        height: calc(1.1em + .2rem + 2px);
+        /* giữ cùng chiều cao */
     }
 
     .sticky-header label {
@@ -75,12 +80,14 @@
 
     .tomselect-custom {
         width: 250px;
-        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        min-height: 30px;
+        /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
     }
 
     .sort-select {
-        max-width: 130px; /* hoặc 100px nếu muốn nhỏ hơn */
+        max-width: 130px;
+        /* hoặc 100px nếu muốn nhỏ hơn */
         font-size: 12px;
         padding: 0.15rem 0.5rem;
     }
@@ -94,14 +101,16 @@
     }
 
     .tomselect-custom .ts-control {
-        padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
+        padding-left: 8px !important;
+        /* hoặc bất kỳ giá trị nào bạn muốn */
     }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1"
+        style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
         <!-- RoomClass -->
         <div class="d-flex align-items-center me-3">
             <label class="me-2 mb-0">Room Class:</label>
@@ -137,7 +146,7 @@
 
         <!-- Include -->
         <div class="d-flex flex-column me-3">
-            
+
             <div class="d-flex align-items-center flex-wrap gap-2">
                 <label class="fw-bold mb-1">Include:</label>
                 <div class="form-check d-flex align-items-center me-3">
@@ -147,10 +156,13 @@
 
                 <div class="d-flex align-items-center me-3" id="vipContainer">
                     <div class="form-check me-2 mb-0">
-                        <input class="form-check-input include-option" type="checkbox" id="viponlycheck" name="viponlycheck">
+                        <input class="form-check-input include-option" type="checkbox" id="viponlycheck"
+                            name="viponlycheck">
                         <label class="form-check-label" for="viponlycheck">Vip Only</label>
                     </div>
-                    <select id="vip" name="vip" class="form-control form-control-sm w-auto" style="width: 100px; display: none;">
+                    <select id="vip" name="vip" class="form-control form-control-sm w-auto"
+                        style="width: 100px; display: none;">
+                        <option value=""></option>
                         @foreach (var item in vipList)
                         {
                             <option value="@item.Code">@item.Description</option>
@@ -169,7 +181,8 @@
                 </div>
 
                 <div class="form-check d-flex align-items-center me-3">
-                    <input class="form-check-input" type="checkbox" id="disRoomSharer" name="includeOptions" value="1">
+                    <input class="form-check-input" type="checkbox" id="disRoomSharer" name="includeOptions" value="1"
+                        checked>
                     <label class="form-check-label ms-2" for="disRoomSharer">Display Room Sharer</label>
                 </div>
             </div>
@@ -177,7 +190,7 @@
 
         <!-- Display -->
         <div class="d-flex flex-column me-3">
-           
+
             <div class="d-flex align-items-center flex-wrap gap-2">
                 <label class="fw-bold mb-1">Display:</label>
                 <div class="form-check d-flex align-items-center me-3">
@@ -186,7 +199,7 @@
                 </div>
 
                 <div class="form-check d-flex align-items-center me-3">
-                    <input class="form-check-input" type="checkbox" id="nopost" name="includeOptions" checked>
+                    <input class="form-check-input" type="checkbox" id="nopost" name="includeOptions">
                     <label class="form-check-label ms-2" for="nopost">No Post</label>
                 </div>
 
@@ -210,11 +223,12 @@
         </div>
     </div>
     <div class="">
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: darkorange;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button>
+        <button id="btnPrint" class="mui-button mui-button-new">View</button>
+        <button id="btnExportExcel" class="mui-button mui-button-new" type="button">   Excel</button>
+        <button id="btnExportPdf" class="mui-button mui-button-new" type="button">
+            PDF</button>
     </div>
-   
+
 </div>
 
 <div class="mui-card">
@@ -223,7 +237,8 @@
         <div class="gridContainer mt-2" id="gridContainer"></div>
     </div>
 </div>
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+<div id="loadingSpinner"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 <script>
@@ -235,8 +250,8 @@
     }
 
     $(document).ready(function () {
-   
-           $('#viponlycheck').on('change', function () {
+
+        $('#viponlycheck').on('change', function () {
             if ($(this).is(':checked')) {
                 $('#vip').show();
             } else {
@@ -244,7 +259,7 @@
                 $('#vip').val('');
             }
         });
-       
+
         document.getElementById("reportTitle").innerText = '@ViewBag.ReportTitle';
         const today = new Date();
 
@@ -265,8 +280,8 @@
 
 
     });
-     function initializeTomSelects() {
-        const selectors = ["#roomClass", "#roomtype","#paymethod"];
+    function initializeTomSelects() {
+        const selectors = ["#roomClass", "#roomtype", "#paymethod"];
 
         for (const id of selectors) {
             const el = document.querySelector(id);
@@ -297,25 +312,25 @@
             url: '/Report/ArrivalsandCheckInTodayData',
             type: 'GET',
             data: {
-                roomClass: $("#roomClass").val().map(r => r.replace( "''")).join("','") + "",
-                roomtype: $("#roomtype").val().map(r => r.replace( "''")).join("','") + "",
-                paymethod: $("#paymethod").val().map(r => r.replace( "''")).join("','") + "",
+                roomClass: $("#roomClass").val().map(r => r.replace("''")).join("','") + "",
+                roomtype: $("#roomtype").val().map(r => r.replace("''")).join("','") + "",
+                paymethod: $("#paymethod").val().map(r => r.replace("''")).join("','") + "",
                 vip: $("#vip").val(),
                 viewBy: $("#viewBy").val(),
                 pseudo: $("#pseudo").is(":checked") ? "1" : "",
                 viponlycheck: $("#viponlycheck").is(":checked") ? "1" : "",
-                disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" :0,
-                nopost:$('#nopost').is(':checked') ? "1" : ""
+                disRoomSharer: $("#disRoomSharer").is(":checked") ? "1" : 0,
+                nopost: $('#nopost').is(':checked') ? "1" : ""
             },
             traditional: true,
-              crossDomain: false,
-                headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
                 // $("#reportViewerContainer").html(result);
                 // $("#loadingSpinner").hide();
-                     console.log(result);
+                console.log(result);
                 initializArrivalsandCheckInTodayGrid(result);
-                    $("#loadingSpinner").hide();
+                $("#loadingSpinner").hide();
             },
             error: function () {
                 alert("Không thể tải báo cáo.");
@@ -323,133 +338,176 @@
             }
         });
     });
-     
 
-   
+
+
     function initializArrivalsandCheckInTodayGrid(data) {
+
         const columnWidth = 180;
+
         $("#gridContainer").dxDataGrid({
-    dataSource: data,         height: 500, allowColumnResizing: true,
+            dataSource: data,
+            height: 500,
+            allowColumnResizing: true,
+
             columns: [
-               { dataField: "roomNo", caption: "Room No", width: columnWidth-70},
-            { dataField: "name", caption: "Name", width: columnWidth},
-             { dataField: "roomClassCode", caption: "Room Class",dataType: "number", format: "#,##0"  },
-              {
-                caption: "Stay On",
-                width: columnWidth + 50,
+                { dataField: "roomNo", caption: "Room No", width: columnWidth - 70 },
+                { dataField: "name", caption: "Name", width: columnWidth },
+                { dataField: "roomClassCode", caption: "Room Class", dataType: "number", format: "#,##0" },
+
+                {
+                    caption: "Stay On",
+                    width: columnWidth + 50,
                     cssClass: "wrap-cell",
-                cellTemplate: function(container, options) {
-                    const itemInventory = options.data.itemInventory;
-                    const specials = options.data.specials;
-                    const roomClassCode = options.data.roomClassCode ?? "";
-                    const comments = options.data.comment;
+                    cellTemplate: function (container, options) {
 
-                    // Kiểm tra trạng thái checkbox
-                    const showComments = $("#commnets").is(":checked");
+                        const itemInventory = options.data.itemInventory;
+                        const specials = options.data.specials;
+                        const roomClassCode = options.data.roomClassCode ?? "";
+                        const comments = options.data.comment;
+                        const showComments = $("#commnets").is(":checked");
 
-                    // Dòng 1: ItemInventory và Specials
-                    let topLineParts = [];
-                    if (itemInventory) {
-                        topLineParts.push(`<b>ItemInventory:</b> ${itemInventory}`);
+                        let topLineParts = [];
+                        if (itemInventory) topLineParts.push(`<b>ItemInventory:</b> ${itemInventory}`);
+                        if (specials) topLineParts.push(`<b>Specials:</b> ${specials}`);
+
+                        const topLine = topLineParts.length
+                            ? `<div>${topLineParts.join(" | ")}</div>`
+                            : "";
+
+                        const roomClassLine = `<div>${roomClassCode}</div>`;
+
+                        let commentsLine = "";
+                        if (showComments && comments) {
+                            commentsLine = `<div><b>Res.Comments:</b> ${comments}</div>`;
+                        }
+
+                        container.html(`${topLine}${roomClassLine}${commentsLine}`);
                     }
-                    if (specials) {
-                        topLineParts.push(`<b>Specials:</b> ${specials}`);
-                    }
-                    const topLine = topLineParts.length > 0 ? `<div>${topLineParts.join(" | ")}</div>` : "";
+                },
 
-                    // Dòng 2: RoomClassCode
-                    const roomClassLine = `<div>${roomClassCode}</div>`;
+                { dataField: "reservationStatus", caption: "Status", width: columnWidth - 70 },
+                { dataField: "vIP", caption: "VIP", width: columnWidth - 80 },
+                { dataField: "agent", caption: "Reservation Holder", width: columnWidth },
+                { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth - 70 },
+                { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth - 60, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "eta", caption: "ETA", width: columnWidth - 70 },
+                { dataField: "departureDate", caption: "Dep.Date", width: columnWidth - 60, dataType: "date", format: "dd/MM/yyyy" },
+                { dataField: "etd", caption: "ETD", width: columnWidth - 70 },
+                { dataField: "roomType", caption: "Ro.Type", width: columnWidth - 70 },
 
-                    // Dòng 3: Comments nếu được chọn
-                    let commentsLine = "";
-                    if (showComments && comments) {
-                        commentsLine = `<div><b>Res.Comments:</b> ${comments}</div>`;
-                    }
+                { dataField: "noOfAdult", caption: "A.", width: columnWidth - 80, dataType: "number", format: "#,##0" },
+                { dataField: "noOfChild", caption: "C.", width: columnWidth - 80, dataType: "number", format: "#,##0" },
+                { dataField: "noOfChild1", caption: "C1.", width: columnWidth - 80, dataType: "number", format: "#,##0" },
+                { dataField: "noOfChild2", caption: "C2.", width: columnWidth - 80, dataType: "number", format: "#,##0" },
+                { dataField: "noOfRoom", caption: "Rms", width: columnWidth - 80, dataType: "number", format: "#,##0" },
 
-                    // Gắn vào container
-                    container.html(`${topLine}${roomClassLine}${commentsLine}`);
-                }
+                { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth - 70 },
+                { dataField: "rateCode", caption: "Rate Code", width: columnWidth - 70 },
+                { dataField: "rate", caption: "Rate Amount", width: columnWidth - 70, dataType: "number", format: "#,##0" },
+                { dataField: "currencyID", caption: "Curr.", width: columnWidth - 70 }
+            ],
+
+            paging: { pageSize: 25 },
+
+            scrolling: {
+                useNative: true,
+                showScrollbar: "always"
             },
 
-            { dataField: "reservationStatus", caption: "Status", width: columnWidth-70},
-            { dataField: "vIP", caption: "VIP", width: columnWidth-80 },
-            { dataField: "agent", caption: "Reservation Holder", width: columnWidth},
-            { dataField: "businessBlockCode", caption: "BlockCode", width: columnWidth-70 },
-            { dataField: "arrivalDate", caption: "Arr.Date", width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-            { dataField: "eta", caption: "ETA", width: columnWidth-70 },
-            { dataField: "departureDate", caption: "Dep.Date",width: columnWidth-60,  dataType: "date", format: "dd/MM/yyyy"},
-            { dataField: "etd", caption: "ETD", width: columnWidth-70 },
-            { dataField: "roomType", caption: "Ro.Type", width:columnWidth-70 },
-            { dataField: "noOfAdult", caption: "A.",width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfChild", caption: "C.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfChild1", caption: "C1.", width: columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfChild2", caption: "C2.", width:columnWidth-80  ,dataType: "number", format: "#,##0" },
-            { dataField: "noOfRoom", caption: "Rms", width:columnWidth-80 ,dataType: "number", format: "#,##0" },
-            { dataField: "paymentMethod", caption: "Pay mth", width: columnWidth-70},
-            { dataField: "rateCode", caption: "Rate Code", width:columnWidth-70 },
-            { dataField: "rate", caption: "Rate Amount",  width:columnWidth-70,dataType: "number", format: "#,##0" },
-            { dataField: "currencyID", caption: "Curr.",  width:columnWidth-70 },
-        
-            ],
-            paging: { pageSize: 25 },
-      scrolling:  {
-         
-        useNative: true,
-       showScrollbar: "always"
-    },
             pager: {
                 visible: true,
                 allowedPageSizes: [25, 50, 'all'],
                 showPageSizeSelector: true,
                 showInfo: true,
-                showNavigationButtons: true,
+                showNavigationButtons: true
             },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
-                summary: {
-        totalItems: [
-                     { column: "name",summaryType: "custom", displayFormat: "Total Arrived Room" },
-            { column: "roomClassCode", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
 
-            { column: "roomType",summaryType: "custom", displayFormat: "Total" },
-            { column: "noOfAdult", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-            { column: "noOfChild", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-            { column: "noOfChild1", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-            { column: "noOfChild2", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-            { column: "noOfRoom", summaryType: "sum", displayFormat: "{0}", valueFormat: "#,##0" },
-        ]
-    },
-                filterRow: {
-         visible: true,
-        applyFilter: "auto"
-    },
-    headerFilter: {
-        visible: true
-    },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+
+            headerFilter: {
+                visible: true
+            },
+
+            selection: {
+                mode: "multiple",
+                showCheckBoxesMode: "none"
+            },
+
+            summary: {
+                totalItems: [
+                    {
+                        column: "roomNo",
+                        summaryType: "custom",
+                        name: "roomNo",
+                        displayFormat: "Total Arrived Room: {0}"
+                    },
+                    { column: "roomClassCode", summaryType: "sum", valueFormat: "#,##0" },
+                    { column: "roomType", summaryType: "custom", displayFormat: "Total" },
+                    { column: "noOfAdult", summaryType: "sum", valueFormat: "#,##0" },
+                    { column: "noOfChild", summaryType: "sum", valueFormat: "#,##0" },
+                    { column: "noOfChild1", summaryType: "sum", valueFormat: "#,##0" },
+                    { column: "noOfChild2", summaryType: "sum", valueFormat: "#,##0" },
+                    { column: "noOfRoom", summaryType: "sum", valueFormat: "#,##0" }
+                ],
+
+                calculateCustomSummary: function (e) {
+
+                    // ✅ chỉ xử lý summary ArrivedRoom
+                    if (e.name !== "roomNo") return;
+
+                    // 🔹 khởi tạo
+                    if (e.summaryProcess === "start") {
+                        e.totalValue = new Set();
+                    }
+
+                    // 🔹 mỗi dòng data
+                    if (e.summaryProcess === "calculate") {
+                        console.log(e.value);
+                        const roomNo = e.value;
+                        if (roomNo !== null && roomNo !== undefined && roomNo !== "") {
+                            e.totalValue.add(String(roomNo).trim());
+                        }
+                    }
+
+                    // 🔹 kết quả cuối
+                    if (e.summaryProcess === "finalize") {
+                        e.totalValue = e.totalValue.size;
+                    }
+                }
+            }
+            ,
+
+
             showBorders: true,
-                            onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data?.cssClass) {
-            e.rowElement.addClass(e.data.cssClass);
-        }
-    }
 
+            onRowPrepared: function (e) {
+                if (e.rowType === "data" && e.data?.cssClass) {
+                    e.rowElement.addClass(e.data.cssClass);
+                }
+            }
         });
     }
 
 
 
-       $("#btnExportExcel").click(function () {
-               const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
         var selectedReport = '@ViewBag.ReportTitle';
         if (!selectedReport) {
             alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
             return;
         }
 
-        const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const workbook = new ExcelJS.Workbook(); const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
         const worksheet = workbook.addWorksheet("Sheet 1");
 
         // === Tạo header công ty (dòng 1) ===
-       worksheet.addRow([companyName]);
+        worksheet.addRow([companyName]);
         worksheet.mergeCells('A1:E1');
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
@@ -497,46 +555,46 @@
 
 
 
-         $("#btnExportPdf").click(function () {
-         const grid = $("#gridContainer").dxDataGrid("instance");
+    $("#btnExportPdf").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance");
 
-         // Lấy đối tượng jsPDF từ window
-         const { jsPDF } = window.jspdf;
-         const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "A4" });
+        // Lấy đối tượng jsPDF từ window
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "A4" });
 
-         const selectedReport = '@ViewBag.ReportTitle';
-         const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const selectedReport = '@ViewBag.ReportTitle';
+        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
 
-         grid.getDataSource().load().then(data => {
-             const columns = grid.getVisibleColumns();
+        grid.getDataSource().load().then(data => {
+            const columns = grid.getVisibleColumns();
 
-             const head = [columns.map(col => col.caption)];
-             const body = data.map(row =>
-                 columns.map(col =>
-                     col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField]
-                 )
-             );
+            const head = [columns.map(col => col.caption)];
+            const body = data.map(row =>
+                columns.map(col =>
+                    col.calculateCellValue ? col.calculateCellValue(row) : row[col.dataField]
+                )
+            );
 
-             doc.setFontSize(14);
-             doc.setFont("Helvetica", "bold");
-             doc.text(companyName, doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+            doc.setFontSize(14);
+            doc.setFont("Helvetica", "bold");
+            doc.text(companyName, doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
 
-             doc.setFontSize(12);
-             doc.setFont("Helvetica", "normal");
-             doc.text(selectedReport, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "normal");
+            doc.text(selectedReport, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
 
-             // AutoTable
-             doc.autoTable({
-                 startY: 80,
-                 head: head,
-                 body: body,
-                  styles: { fontSize: 9, cellPadding: 4 , lineWidth: 0.5, lineColor: [0, 0, 0]    },
-                 headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-                 alternateRowStyles: { fillColor: [240, 240, 240] },
-                 margin: { left: 20, right: 20 }
-             });
+            // AutoTable
+            doc.autoTable({
+                startY: 80,
+                head: head,
+                body: body,
+                styles: { fontSize: 9, cellPadding: 4, lineWidth: 0.5, lineColor: [0, 0, 0] },
+                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: 20, right: 20 }
+            });
 
-             doc.save(selectedReport + ".pdf");
-         });
-     });
+            doc.save(selectedReport + ".pdf");
+        });
+    });
 </script>

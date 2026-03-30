@@ -1,5 +1,4 @@
 using Administration.Controllers;
-using Administration.Services;
 using Administration.Services.Implements;
 using Administration.Services.Interfaces;
 using Billing.Controllers;
@@ -17,6 +16,7 @@ using HouseKeeping.Controllers;
 using HouseKeeping.Services.Implements;
 using HouseKeeping.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.FileProviders;
 using Miscellaneous.Controllers;
@@ -38,11 +38,15 @@ using Reservation.Services.Interfaces;
 using RoomManagement.Controllers;
 using RoomManagement.Services.Implements;
 using RoomManagement.Services.Interfaces;
+using Security.Controllers;
+using Security.Services.Implements;
+using Security.Services.Interfaces;
+using System.Globalization;
 using User.Controllers;
 using User.Services.Implements;
 using User.Services.Interfaces;
-
 using WebApp.Commons.Containts;
+using static BaseBusiness.Global;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,42 +58,86 @@ builder.Services.AddResponseCompression(options =>
     options.MimeTypes = new[] { "text/csv" }; // L?y t? appsettings.json n?u c?n
 });
 
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(HouseKeepingController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ProfileController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ReportController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(UserController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ReservationController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(FrontDeskController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(CashieringController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(BillingController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(NightAuditController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(RoomManagementController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(MiscellaneousController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AdministrationController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(EmailController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TransactionGroupController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TransactionController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(TransactionSubGroupController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ArticleController).Assembly));
-builder.Services.AddControllersWithViews()
-    .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(HouseKeepingAdminController).Assembly));
+var mvcBuilder = builder.Services.AddControllersWithViews();
+
+// HouseKeeping
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(HouseKeepingController).Assembly));
+
+// Profile
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(ProfileController).Assembly));
+
+// Report
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(ReportController).Assembly));
+
+// User
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(UserController).Assembly));
+
+// Reservation
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(ReservationController).Assembly));
+
+// FrontDesk
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(FrontDeskController).Assembly));
+
+// Cashiering
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(CashieringController).Assembly));
+
+// Billing
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(BillingController).Assembly));
+
+// NightAudit
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(NightAuditController).Assembly));
+
+// RoomManagement
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(RoomManagementController).Assembly));
+
+// Miscellaneous
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(MiscellaneousController).Assembly));
+
+// Administration
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(AdministrationController).Assembly));
+
+// Email
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(EmailController).Assembly));
+
+// Transaction Group
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(TransactionGroupController).Assembly));
+
+// Transaction
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(TransactionController).Assembly));
+
+// Transaction Sub Group
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(TransactionSubGroupController).Assembly));
+
+// Article
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(ArticleController).Assembly));
+
+// HouseKeeping Admin
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(HouseKeepingAdminController).Assembly));
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(SecurityController).Assembly));
+
+// Reservation Allotment
+mvcBuilder.PartManager.ApplicationParts.Add(
+    new AssemblyPart(typeof(AllotmentController).Assembly));
+
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
@@ -133,24 +181,22 @@ builder.Services.AddSingleton<IFolioVATSearchService, FolioVATSearchService>();
 builder.Services.AddSingleton<IAccountingService, AccountingService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<ITransactionGroupService, TransactionGroupService>();
+
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IProfileExportService, ProfileExportService>();
 builder.Services.AddSingleton<IMembershipService, MembershipService>();
+builder.Services.AddSingleton<IFutureService, FutureService>();
 builder.Services.AddSingleton<IHouseKeepingAdminService, HouseKeepingAdminService>();
 builder.Services.AddSingleton<ITransactionSubGroupService, TransactionSubGroupService>();
 builder.Services.AddSingleton<IArticleService, ArticleService>();
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+
 builder.Services.AddSingleton<IGroupReservationService, GroupReservationService>();
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddSingleton<IShareService, ShareService>();
 builder.Services.AddSingleton<IGroupAdminService, GroupAdminService>();
+builder.Services.AddSingleton<IGroupCheckInService, GroupCheckInService>();
 
 //Tuan
 builder.Services.AddSingleton<IRateClassService, RateClassService>();
@@ -161,6 +207,14 @@ builder.Services.AddSingleton<IRateCodeUserRightService, RateCodeUserRightServic
 builder.Services.AddSingleton<IPackageDetailService, PackageDetailService>();
 builder.Services.AddSingleton<IPackageService, PackageService>();
 builder.Services.AddSingleton<ITransactionArticleLinkService, TransactionArticleLinkService>();
+builder.Services.AddSingleton<INewProfileService, NewProfileService>();
+builder.Services.AddSingleton<IExtendProfileService, ExtendProfileService>();
+builder.Services.AddSingleton<ISecurityService, SecurityService>();
+
+builder.Services.AddSingleton<IAllotmentService, AllotmentService>();
+
+builder.Services.AddSingleton<ICancelReservationService, CancelReservationService>();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -185,9 +239,17 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
+builder.Services.Configure<ContactInfo>(builder.Configuration.GetSection("ContactInfo"));
 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("vi-VN") };
+    options.DefaultRequestCulture = new RequestCulture("vi-VN");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 var app = builder.Build();
-
+app.UseRequestLocalization();  // Ph?i ??t tr??c UseEndpoints
 app.UseDevExpressControls();
 System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
@@ -200,23 +262,25 @@ if (!app.Environment.IsDevelopment())
 
 var env = builder.Environment;
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions
+if (app.Environment.IsDevelopment())
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "node_modules")),
-    RequestPath = "/node_modules",
-});
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(
+            Path.Combine(env.ContentRootPath, "node_modules")),
+        RequestPath = "/node_modules",
+    });
+}
+
 
 app.MapHub<TagScanHub>("/tagScanHub");
 app.UseHttpsRedirection();
+app.UseResponseCompression(); // ??t sau UseStaticFiles vï¿½ tr??c UseRouting
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseResponseCompression(); // ??t sau UseStaticFiles và tr??c UseRouting
-app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    pattern: "{controller=User}/{action=Index}/{id?}");
 app.Run();

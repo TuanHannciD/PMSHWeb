@@ -1,8 +1,8 @@
-﻿@{
+﻿﻿@{
     ViewData["Title"] = "Home Page";
 }
 <div class="layout-wrapper">
-  
+
 
     <!-- Mục 1: Trên cùng -->
     <div class="section-top">
@@ -10,7 +10,7 @@
             <div class="card-icon"><i class="fa-solid fa-list"></i></div>
             <div class="card-content">
                 <div class="card-title">Room Availability</div>
-                <div class="card-value" ></div>
+                <div class="card-value"></div>
             </div>
         </div>
         <div class="card-box">
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-    
+
         <div class="card-box">
             <div class="card-icon"><i class="fas fa-users"></i></div>
             <div class="card-content">
@@ -44,7 +44,7 @@
             </div>
         </div>
 
-       
+
 
     </div>
 
@@ -82,24 +82,25 @@
             </div>
         </div>
 
-  
-            <div class="section-right mui-card">
-                <div class="form-group" id="checkchart" style="display:flex">
-                    <label style="margin-left: 15px;">
-                        <input type="radio" name="chartType" value="pie" checked> Pie Chart
-                    </label>
-                    <label>
-                        <input type="radio" name="chartType" value="bar" > Bar Chart
-                    </label>
-               
-                </div>
-                <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
-                <div id="highchartPie" class="chart-fixed-sizehigh"></div>
-            </div>   
-     
+
+        <div class="section-right mui-card">
+            <div class="form-group" id="checkchart" style="display:flex">
+                <label style="margin-left: 15px;">
+                    <input type="radio" name="chartType" value="pie" checked> Pie Chart
+                </label>
+                <label>
+                    <input type="radio" name="chartType" value="bar"> Bar Chart
+                </label>
+
+            </div>
+            <div id="highchartBar" class="chart-fixed-sizehigh" style="display:none;"></div>
+            <div id="highchartPie" class="chart-fixed-sizehigh"></div>
+        </div>
+
     </div>
 </div>
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+<div id="loadingSpinner"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
     <i class="fa-solid fa-spinner fa-spin"></i>
 </div>
 
@@ -136,15 +137,15 @@
         transition: 0.3s ease;
     }
 
-        .card-box:hover {
-            transform: translateY(-6px);
-            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-        }
+    .card-box:hover {
+        transform: translateY(-6px);
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    }
 
     .card-icon {
         font-size: 36px;
         margin-right: 18px;
-        color: #4A90E2;
+        color: #009444;
     }
 
     .card-title {
@@ -173,7 +174,6 @@
         border-radius: 16px;
         padding: 24px;
         box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-
     }
 
     .section-left {
@@ -204,7 +204,7 @@
 
     .info-icon {
         font-size: 32px;
-        color: #17a2b8;
+        color: #009444;
         margin-right: 16px;
     }
 
@@ -226,41 +226,39 @@
         padding-left: 12px;
     }
 
-        .form-group label {
-            margin-right: 20px;
-            font-weight: 500;
-            font-size: 14px;
-        }
+    .form-group label {
+        margin-right: 20px;
+        font-weight: 500;
+        font-size: 14px;
+    }
 
     .chart-fixed-sizehigh {
         flex: 1;
         width: 100%;
         min-height: 380px;
     }
-
-
 </style>
 
 @* <script src="https://code.highcharts.com/highcharts.js"></script> *@
 <script>
-        function formatDate(date) {
+    function formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-               
+
     $(document).ready(function () {
         var parsedBusinessDate = JSON.parse(localStorage.getItem("businessDate")); // "29/08/2024 00:00:00"
 
         var dateOnly = parsedBusinessDate.split(' ')[0]; // "29/08/2024"
         var dateParts = dateOnly.split('/'); // ["29", "08", "2024"]
 
-        var businessDate =  new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
-   
-         var parsedBusinessDate =  formatDate(businessDate);
-             $("#loadingSpinner").show();
-         $.ajax({
+        var businessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);// new Date(2024, 7, 29)
+
+        var parsedBusinessDate = formatDate(businessDate);
+        $("#loadingSpinner").show();
+        $.ajax({
             url: '/Report/DashBoard',
             type: 'GET',
             data: {
@@ -270,64 +268,77 @@
                 "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
             },
             success: function (data) {
-              
-               console.log(data);
-                   $("#dueInCheckedInCount").text(data.totalDueinCheckedint);
-                    $("#checkedOutCount").text(data.totaCheckedoutint);
-                    $("#dueoutCount").text(data.totalDueoutint);
-                    $("#guestInHouseCount").text(data.guestInHouseCount);
-                    $("#rsvCount").text(data.rsvCount);
-                    $("#totalA").text(data.totalA);
-                    $("#totalC").text(data.totalC);
-                    $("#occupancyPercent").text(data.occupancyPercent + "%");
 
-                                renderHighchartBar(data.chartStatus);
-                                renderHighchartPie(data.chartStatus);
-                       
+                console.log(data);
+                $("#dueInCheckedInCount").text(data.totalDueinCheckedint);
+                $("#checkedOutCount").text(data.totaCheckedoutint);
+                $("#dueoutCount").text(data.totalDueoutint);
+                $("#guestInHouseCount").text(data.guestInHouseCount);
+                $("#rsvCount").text(data.rsvCount);
+                $("#totalA").text(data.totalA);
+                $("#totalC").text(data.totalC);
+                $("#occupancyPercent").text(data.occupancyPercent + "%");
 
-                $("#loadingSpinner").hide(); 
+                renderHighchartBar(data.chartStatus);
+                renderHighchartPie(data.chartStatus);
+
+
+                $("#loadingSpinner").hide();
             },
             error: function () {
                 alert("Không thể tải dữ liệu.");
-            $("#loadingSpinner").hide();
+                $("#loadingSpinner").hide();
             }
         });
 
-    
+
     });
-      function renderHighchartBar(data) {
-    const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
+    $(".card-box")
+        .css("cursor", "pointer")
+        .on("click", function () {
+            const id = $(this)
+                .find(".card-value")
+                .attr("id")
+                .replace("Count", "");
 
-    const categories = filteredData.map(x => x.label);
-    const values = filteredData.map(x => parseInt(x.value));
+            window.location.href = "/Reservation/SearchReservation?type=" + id;
+        });
 
-    Highcharts.chart('highchartBar', {
-        chart: {
-            type: 'column'
-        },
-        title: { text: '' },
-        xAxis: {
-            categories: categories,
-            title: { text: 'Room summary' }
-        },
-        yAxis: {
-            min: 0,
-            title: { text: 'Number of room' }
-        },
-        tooltip: {
-            pointFormat: 'Total: <b>{point.y}</b>'
-        },
-        series: [{
-            name: '',
-            data: values,
-            color: '#7cb5ec'
-        }],
-        credits: { enabled: false }
-    });
-}
+    function renderHighchartBar(data) {
+        const filteredData = data.filter(x => x.label !== 'Total' && x.label !== 'OOO');
+
+        const categories = filteredData.map(x => x.label);
+        const values = filteredData.map(x => parseInt(x.value));
+
+        Highcharts.chart('highchartBar', {
+            chart: {
+                type: 'column'
+            },
+            title: { text: '' },
+            xAxis: {
+                categories: categories,
+                title: { text: 'Room summary' }
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Number of room' }
+            },
+            tooltip: {
+                pointFormat: 'Total: <b>{point.y}</b>'
+            },
+            series: [{
+                name: '',
+                data: values,
+                color: '#7cb5ec'
+            }],
+            credits: {
+                enabled: false
+            }
+        });
+    }
 
 
-     // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
+    // Hàm hiển thị biểu đồ tròn (Pie Chart) bằng Highcharts
     function renderHighchartPie(data) {
         const totalObj = data.find(x => x.label === 'Total');
         const total = totalObj ? parseInt(totalObj.value) : 0;

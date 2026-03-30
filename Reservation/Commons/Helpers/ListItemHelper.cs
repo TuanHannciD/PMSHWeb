@@ -226,7 +226,7 @@ namespace Reservation.Commons.Helpers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault ;
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
                 List<ProfileModel> list = PropertyUtils.ConvertToList<ProfileModel>(ProfileBO.Instance.FindByAttribute("Type", 2));
@@ -307,6 +307,94 @@ namespace Reservation.Commons.Helpers
         }
 
         /// <summary>
+        /// Lấy tất cả danh sách RoomType cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách RoomType</returns>
+        public static List<SelectListItem> GetRoomTyeCodeProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<RoomTypeModel> list = PropertyUtils.ConvertToList<RoomTypeModel>(RoomTypeBO.Instance.FindByAttribute("InActive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.Code.ToString(), Text = p.Code + "- " + p.Name, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+        /// <summary>
+        /// Lấy tất cả danh sách Room cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Room</returns>
+        public static List<SelectListItem> GetRoomProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<RoomModel> list = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.RoomNo.ToString(), Text = p.RoomNo, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+        /// <summary>
+        /// Lấy tất cả danh sách Room cho dropdown
+        /// </summary>
+        /// <param name="defaultValue">Giá trị mặc định.</param>
+        /// <param name="textDefault">Text thứ hai.</param>
+        /// <returns>Danh sách Room</returns>
+        public static List<SelectListItem> GetRoomClassProvider(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
+
+                var items = new List<SelectListItem>();
+                List<RoomClassModel> list = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindByAttribute("InActive", 0));
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Code, Selected = false }).ToList();
+                }
+                if (defaultValue)
+                    items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>();
+            }
+        }
+
+        /// <summary>
         /// Lấy tất cả danh sách Currency  cho dropdown
         /// </summary>
         /// <param name="defaultValue">Giá trị mặc định.</param>
@@ -352,7 +440,7 @@ namespace Reservation.Commons.Helpers
                 List<PackageModel> list = PropertyUtils.ConvertToList<PackageModel>(PackageBO.Instance.FindByAttribute("Active", 1));
                 if (list.Count > 0)
                 {
-                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text =p.Code + " - " + p.Description, Selected = false }).ToList();
+                    items = list.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Code + " - " + p.Description, Selected = false }).ToList();
                 }
                 if (defaultValue)
                     items.Insert(0, new SelectListItem { Text = textDefault, Value = "0", Selected = true });
@@ -772,7 +860,7 @@ namespace Reservation.Commons.Helpers
                 if (string.IsNullOrWhiteSpace(textDefault)) textDefault = _textDefault;
 
                 var items = new List<SelectListItem>();
-                List<TransactionsModel> list = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindByAttribute("IsActive",1));
+                List<TransactionsModel> list = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindByAttribute("IsActive", 1));
                 if (list.Count > 0)
                 {
                     items = list.Select(p => new SelectListItem { Value = p.Code.ToString(), Text = p.Code + " - " + p.Description, Selected = false }).ToList();
@@ -789,7 +877,47 @@ namespace Reservation.Commons.Helpers
             }
         }
 
+        public static List<SelectListItem> GetTransactionProvider2(bool defaultValue = true, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault)) textDefault = "— Chọn giao dịch —";
+                var items = new List<SelectListItem>();
 
+                var list = PropertyUtils.ConvertToList<TransactionsModel>(
+                    TransactionsBO.Instance.FindByAttribute("IsActive", 1));
+
+                if (list?.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem
+                    {
+                        Value = p.Code.ToString(),
+                        Text = p.Code + " - " + p.Description
+                    }).ToList();
+                }
+
+                // Luôn thêm option mặc định nếu cần
+                if (defaultValue)
+                {
+                    items.Insert(0, new SelectListItem
+                    {
+                        Text = textDefault,
+                        Value = "0",
+                        Selected = true  // Chỉ có tác dụng nếu không bị model binding ghi đè
+                    });
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<SelectListItem>
+        {
+            new SelectListItem { Text = "— Lỗi tải dữ liệu —", Value = "0" }
+        };
+            }
+        }
         /// <summary>
         /// Lấy tất cả danh sách transaction cho dropdown
         /// </summary>
@@ -876,6 +1004,45 @@ namespace Reservation.Commons.Helpers
             {
                 Console.WriteLine(ex);
                 return new List<SelectListItem>();
+            }
+        }
+
+        public static List<SelectListItem> GetReasonAdjustForReservationProvider(bool defaultValue = false, string textDefault = "")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(textDefault))
+                    textDefault = _textDefault; // nếu class bạn đã có biến này
+
+                var items = new List<SelectListItem>();
+                List<CommentModel> list = CommentBO.GetReasonAdjustForReservation();
+
+                if (list.Count > 0)
+                {
+                    items = list.Select(p => new SelectListItem
+                    {
+                        Value = p.Description,
+                        Text = p.Code + " - " + p.Description,
+                        Selected = false
+                    }).ToList();
+                }
+
+                if (defaultValue)
+                {
+                    items.Insert(0, new SelectListItem
+                    {
+                        Text = textDefault,
+                        Value = "0",
+                        Selected = true
+                    });
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return [];
             }
         }
     }

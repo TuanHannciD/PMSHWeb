@@ -31,7 +31,7 @@ namespace Cashiering.Controllers
         private readonly IMemoryCache _cache;
         private readonly IAccountingService _iAccountingService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountingController(ILogger<AccountingController> logger, 
+        public AccountingController(ILogger<AccountingController> logger,
                 IMemoryCache cache, IConfiguration configuration, IAccountingService iAccountingService)
         {
             _cache = cache;
@@ -46,8 +46,9 @@ namespace Cashiering.Controllers
             ViewBag.cboAccountType = ListItemHelper.GetARAccountType();
             ViewBag.cboCountry = ListItemHelper.GetCountry();
             ViewBag.cboCity = ListItemHelper.GetCity();
+            ViewBag.cboCity2 = ListItemHelper.GetCityText();
 
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView(); // View này sẽ chứa DataGrid + script gọi API
         }
 
 
@@ -62,10 +63,44 @@ namespace Cashiering.Controllers
                                       select d.Table.Columns.Cast<DataColumn>()
                                           //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
                                           .ToDictionary(
-                                              col => col.ColumnName,
-                                              col => d[col.ColumnName]?.ToString()
-                                          )).ToList();
+                                                col => col.ColumnName,
+                                                col =>
+                                                {
+                                                    var value = d[col.ColumnName];
+                                                    if (value == DBNull.Value) return null;
+
+                                                    // CreatedDate: KHÔNG ToString
+                                                    if (col.ColumnName == "CreatedDate" || col.ColumnName == "UpdatedDate")
+                                                        return value;
+
+                                                    // Các field khác: ToString
+                                                    return value.ToString();
+                                                }
+                                            )).ToList();
                 return Json(resultExchange);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AccountingOCL()
+        {
+            try
+            {
+
+                DataTable dt = TextUtils.Select("select AccountName, AccountNo from ARAccountReceivable where StatusInactive = 0 and Balances > CreditLimit");
+
+                var result = (from d in dt.AsEnumerable()
+                              select new
+                              {
+                                  AccountName = d["AccountName"]?.ToString(),
+                                  AccountNo = d["AccountNo"]?.ToString(),
+
+                              }).ToList();
+                return Json(result);
             }
             catch (Exception ex)
             {
@@ -76,98 +111,22 @@ namespace Cashiering.Controllers
 
         #region DatVP __ Accounting: Add
         [HttpPost]
-        public ActionResult AccountReceivableAdd()
+        public ActionResult AccountReceivableAdd(SaveARAccountRequestDto dto)
         {
-            ProcessTransactions pt = new ProcessTransactions();
-            try
+            // Gán UserName từ session hoặc context nếu DTO chưa có
+            if (string.IsNullOrEmpty(dto.UserName))
             {
-                pt.OpenConnection();
-                pt.BeginTransaction();
-                ProfileModel profile = (ProfileModel)ProfileBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["profile"].ToString()));
-                if (profile == null || profile.ID == 0)
-                {
-                    return Json(new { code = 1, msg = "Could not find profile" });
-
-                }
-                if (int.Parse(Request.Form["id"].ToString()) == 0)
-                {
-                    ARAccountReceivableModel model = new ARAccountReceivableModel();
-                    model.AccountNo = Request.Form["accountNumber"].ToString();
-                    model.AccountTypeID = int.Parse(Request.Form["accountType"].ToString());
-                    model.CreditLimit = string.IsNullOrEmpty(Request.Form["creditLimit"].ToString()) ? 0 : int.Parse(Request.Form["creditLimit"].ToString());
-                    model.CurrencyID = "VND";
-                    model.ProfileID = profile.ID;
-                    model.AccountName = profile.Account;
-                    model.ContactName = string.IsNullOrEmpty(Request.Form["contact"].ToString()) ? "" : Request.Form["contact"].ToString();
-                    model.TelePhone = string.IsNullOrEmpty(Request.Form["phone"].ToString()) ? "" : Request.Form["phone"].ToString();
-                    model.Fax = string.IsNullOrEmpty(Request.Form["fax"].ToString()) ? "" : Request.Form["fax"].ToString();
-                    model.Email = string.IsNullOrEmpty(Request.Form["email"].ToString()) ? "" : Request.Form["email"].ToString();
-                    model.Address1 = string.IsNullOrEmpty(Request.Form["address1"].ToString()) ? "" : Request.Form["address1"].ToString();
-                    model.Address2 = string.IsNullOrEmpty(Request.Form["address2"].ToString()) ? "" : Request.Form["address2"].ToString();
-                    model.Address3 = string.IsNullOrEmpty(Request.Form["address3"].ToString()) ? "" : Request.Form["address3"].ToString();
-                    model.CityID = int.Parse(Request.Form["city"].ToString());
-                    model.PostalCode = string.IsNullOrEmpty(Request.Form["postalCode"].ToString()) ? "" : Request.Form["postalCode"].ToString();
-                    model.CountryID = int.Parse(Request.Form["country"].ToString());
-                    model.State = "";
-                    model.Description = string.IsNullOrEmpty(Request.Form["description"].ToString()) ? "" : Request.Form["description"].ToString();
-                    model.StatusFlagged = Request.Form["flagged"].ToString() == "1" ? true : false;
-                    model.StatusInactive = Request.Form["inactive"].ToString() == "1" ? true : false;
-                    model.PaymentDueDays = string.IsNullOrEmpty(Request.Form["paymentDue"].ToString()) ? 0 : int.Parse(Request.Form["paymentDue"].ToString());
-                    model.CreatedBy = model.UpdatedBy = Request.Form["userName"].ToString();
-                    model.CreatedDate = DateTime.Now;
-
-                    model.UpdatedDate = DateTime.Now;
-                    ARAccountReceivableBO.Instance.Insert(model);
-                }
-                else
-                {
-                    ARAccountReceivableModel model = (ARAccountReceivableModel)ARAccountReceivableBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
-                    if (model == null || model.ID == 0)
-                    {
-                        return Json(new { code = 1, msg = "Could not find AR Account Receivable" });
-
-                    }
-                    model.AccountNo = Request.Form["accountNumber"].ToString();
-                    model.AccountTypeID = int.Parse(Request.Form["accountType"].ToString());
-                    model.CreditLimit = string.IsNullOrEmpty(Request.Form["creditLimit"].ToString()) ? 0 : int.Parse(Request.Form["creditLimit"].ToString());
-                    model.CurrencyID = "VND";
-                    model.ProfileID = profile.ID;
-                    model.AccountName = profile.Account;
-                    model.ContactName = string.IsNullOrEmpty(Request.Form["contact"].ToString()) ? "" : Request.Form["contact"].ToString();
-                    model.TelePhone = string.IsNullOrEmpty(Request.Form["phone"].ToString()) ? "" : Request.Form["phone"].ToString();
-                    model.Fax = string.IsNullOrEmpty(Request.Form["fax"].ToString()) ? "" : Request.Form["fax"].ToString();
-                    model.Email = string.IsNullOrEmpty(Request.Form["email"].ToString()) ? "" : Request.Form["email"].ToString();
-                    model.Address1 = string.IsNullOrEmpty(Request.Form["address1"].ToString()) ? "" : Request.Form["address1"].ToString();
-                    model.Address2 = string.IsNullOrEmpty(Request.Form["address2"].ToString()) ? "" : Request.Form["address2"].ToString();
-                    model.Address3 = string.IsNullOrEmpty(Request.Form["address3"].ToString()) ? "" : Request.Form["address3"].ToString();
-                    model.CityID = int.Parse(Request.Form["city"].ToString());
-                    model.PostalCode = string.IsNullOrEmpty(Request.Form["postalCode"].ToString()) ? "" : Request.Form["postalCode"].ToString();
-                    model.CountryID = int.Parse(Request.Form["country"].ToString());
-                    model.State = "";
-                    model.Description = string.IsNullOrEmpty(Request.Form["description"].ToString()) ? "" : Request.Form["description"].ToString();
-                    model.StatusFlagged = Request.Form["flagged"].ToString() == "1" ? true : false;
-                    model.StatusInactive = Request.Form["inactive"].ToString() == "1" ? true : false;
-                    model.PaymentDueDays = string.IsNullOrEmpty(Request.Form["paymentDue"].ToString()) ? 0 : int.Parse(Request.Form["paymentDue"].ToString());
-                    model.UpdatedBy = Request.Form["userName"].ToString();
-                    model.UpdatedDate = DateTime.Now;
-                    ARAccountReceivableBO.Instance.Update(model);
-                }
-
-                pt.CommitTransaction();
-                return Json(new { code = 0, msg = "AR Account Available was created successfully" });
-
+                return Json(new { Success = true, Message = "Username not found." });
             }
-            catch (Exception ex)
-            {
-                pt.RollBack();
-                return Json(new { code = 1, msg = ex.Message });
-            }
-            finally
-            {
-                pt.CloseConnection();
 
-            }
+            var result = _iAccountingService.SaveARAccount(dto);
+
+            if (result.Success)
+                return Json(new { Success = true, Message = result.Message });
+            else
+                return Json(new { Success = false, Message = result.Message, errors = result.Errors });
         }
+
         #endregion
 
         #region DatVP __ Accounting: Maintaince
@@ -187,17 +146,29 @@ namespace Cashiering.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchMaintenance(int arID, string folioNo,string isActive,string paymentOnly,string print,DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> SearchMaintenance(string dateCheck, int arID, string folioNo, string isActive, string paymentOnly, string print, DateTime fromDate, DateTime toDate)
         {
             try
             {
 
-                var data = _iAccountingService.AccountMaintence( arID,  folioNo ?? "",  isActive ?? "",  paymentOnly ?? "",  print??"",  fromDate,  toDate);
+                var data = _iAccountingService.AccountMaintence(dateCheck ?? "", arID, folioNo ?? "", isActive ?? "", paymentOnly ?? "", print ?? "", fromDate, toDate);
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()
                                   .ToDictionary(
                                       col => col.ColumnName,
-                                      col => d[col.ColumnName]?.ToString()
+                                      col =>
+                                      {
+                                          var value = d[col.ColumnName];
+
+                                          if (value == DBNull.Value || value == null)
+                                              return null;
+
+                                          // Format ngày dd/MM/yyyy
+                                          if (col.DataType == typeof(DateTime))
+                                              return ((DateTime)value).ToString("dd/MM/yyyy");
+
+                                          return value.ToString();
+                                      }
                                   )).ToList();
                 return Json(result);
             }
@@ -212,7 +183,7 @@ namespace Cashiering.Controllers
 
         #region DatVP __ Inovice: Common infor
         [HttpGet]
-        public async Task<IActionResult> SearchInfoInvoice(int folioID,int arID)
+        public async Task<IActionResult> SearchInfoInvoice(int folioID, int arID)
         {
             try
             {
@@ -227,7 +198,7 @@ namespace Cashiering.Controllers
                                   )).ToList();
 
                 FolioModel folio = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioID);
-                if(folio == null || folio.ID == 0)
+                if (folio == null || folio.ID == 0)
                 {
                     return Json(new
                     {
@@ -238,22 +209,31 @@ namespace Cashiering.Controllers
                 sqlCommand = $"SELECT ConfirmationNo, ArrivalDate, DepartureDate, LastName, RoomID, RoomNo FROM dbo.Reservation WITH (NOLOCK) WHERE ID = {folio.ReservationID}";
                 var data2 = _iAccountingService.SearchByCommmand(sqlCommand);
                 var result2 = (from d in data2.AsEnumerable()
-                              select d.Table.Columns.Cast<DataColumn>()
-                                  .ToDictionary(
-                                      col => col.ColumnName,
-                                      col => d[col.ColumnName]?.ToString()
-                                  )).ToList();
+                               select d.Table.Columns.Cast<DataColumn>()
+                                   .ToDictionary(
+                                        col => col.ColumnName,
+                                        col =>
+                                        {
+                                            var value = d[col.ColumnName];
+                                            if (value == DBNull.Value) return null;
 
+                                            // CreatedDate: KHÔNG ToString
+                                            if (col.ColumnName == "ArrivalDate" || col.ColumnName == "DepartureDate")
+                                                return value;
 
+                                            // Các field khác: ToString
+                                            return value.ToString();
+                                        }
+                                    )).ToList();
 
                 sqlCommand = $"SELECT AccountName,AccountNo FROM dbo.ARAccountReceivable WITH (NOLOCK) WHERE ID = {arID}";
                 var data3 = _iAccountingService.SearchByCommmand(sqlCommand);
                 var result3 = (from d in data3.AsEnumerable()
-                              select d.Table.Columns.Cast<DataColumn>()
-                                  .ToDictionary(
-                                      col => col.ColumnName,
-                                      col => d[col.ColumnName]?.ToString()
-                                  )).ToList();
+                               select d.Table.Columns.Cast<DataColumn>()
+                                   .ToDictionary(
+                                       col => col.ColumnName,
+                                       col => d[col.ColumnName]?.ToString()
+                                   )).ToList();
                 return Json(new
                 {
                     code = 0,
@@ -283,15 +263,25 @@ namespace Cashiering.Controllers
             try
             {
 
-                var data = _iAccountingService.InvoiceSearch(folioID,0);
+                var data = _iAccountingService.InvoiceSearch(folioID, 0);
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()
-                                  .ToDictionary(
-                                      col => col.ColumnName,
-                                      col => d[col.ColumnName]?.ToString()
-                                  )).ToList();
+                              .ToDictionary(
+                                    col => col.ColumnName,
+                                    col =>
+                                    {
+                                        var value = d[col.ColumnName];
+                                        if (value == DBNull.Value) return null;
 
-                
+                                        // CreatedDate: KHÔNG ToString
+                                        if (col.ColumnName == "Date" || col.ColumnName == "Time")
+                                            return value;
+
+                                        // Các field khác: ToString
+                                        return value.ToString();
+                                    }
+                                )).ToList();
+
                 return Json(new
                 {
                     result1 = result,
@@ -314,12 +304,12 @@ namespace Cashiering.Controllers
 
         #region DatVP __ Invoice: Transfer
         [HttpGet]
-        public async Task<IActionResult> SearchARInfo(string accountName,string accountNo,string folioNo,string isActive,string folioID)
+        public async Task<IActionResult> SearchARInfo(string accountName, string accountNo, string folioNo, string isActive, string folioID)
         {
             try
             {
 
-                var data = _iAccountingService.SearchInfoAR(accountName ?? "",accountNo ?? "",folioNo ?? "",isActive ?? "0",folioID );
+                var data = _iAccountingService.SearchInfoAR(accountName ?? "", accountNo ?? "", folioNo ?? "", isActive ?? "0", folioID);
                 var result = (from d in data.AsEnumerable()
                               select d.Table.Columns.Cast<DataColumn>()
                                   .ToDictionary(
@@ -578,7 +568,7 @@ namespace Cashiering.Controllers
                                 folioSub.ShiftID = shiftID;
                                 folioSub.UserName = Request.Form["userID"].ToString();
                                 folioSub.CashierNo = shiftName;
-                                folioSub.ReservationID = folioSub.OriginReservationID =folio.ReservationID;
+                                folioSub.ReservationID = folioSub.OriginReservationID = folio.ReservationID;
                                 folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                                 folioSub.InvoiceNo = invoiceNo;
                                 folioSub.TransactionNo = transactionNo;
@@ -702,7 +692,7 @@ namespace Cashiering.Controllers
                     #endregion
 
                     #region update lại balance VND của folio và reservation
-                    int reservationID =folio.ReservationID;
+                    int reservationID = folio.ReservationID;
                     decimal balance = FolioDetailBO.CalculateBalance(reservationID);
                     folio.BalanceVND = balance;
                     FolioBO.Instance.Update(folio);
@@ -762,7 +752,7 @@ namespace Cashiering.Controllers
 
             List<CurrencyModel> listcurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
             ViewBag.CurrencyList = listcurr;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView();
         }
 
         [HttpGet]
@@ -802,7 +792,7 @@ namespace Cashiering.Controllers
         }
 
         [HttpPost]
-        public IActionResult AccountTypeSave(string typeacc,string descriptionaccty,int creditLimit,string  currencyacc,string statementmode,string remindercycle,int dayofmonth,string check, int dayolderthan  ,int amountorPercentage,string includePayment,string id,string user)
+        public IActionResult AccountTypeSave(string typeacc, string descriptionaccty, int creditLimit, string currencyacc, string statementmode, string remindercycle, int dayofmonth, string check, int dayolderthan, int amountorPercentage, string includePayment, string id, string user)
         {
             try
             {
@@ -816,7 +806,7 @@ namespace Cashiering.Controllers
                 _Model.DayOfMonth = dayofmonth;
                 _Model.DayOrderThan = dayolderthan;
 
-                if (check== "amount")
+                if (check == "amount")
                 {
                     _Model.Amount = amountorPercentage;
                     _Model.Percentage = 0;
@@ -835,7 +825,7 @@ namespace Cashiering.Controllers
                     _Model.UpdatedBy = user;
                     _Model.UpdatedDate = businessDateModel[0].BusinessDate;
                     _Model.ID = int.Parse(id);
-                    ARAccountTypeBO.Instance.Update(_Model);           
+                    ARAccountTypeBO.Instance.Update(_Model);
                 }
                 else
                 {
@@ -855,7 +845,7 @@ namespace Cashiering.Controllers
         }
 
         [HttpPost]
-        public IActionResult AccountTypeDelete( int id)
+        public IActionResult AccountTypeDelete(int id)
         {
             try
             {
@@ -870,17 +860,19 @@ namespace Cashiering.Controllers
         }
         #endregion
 
-        
         #region ARAgingLevels
 
-        public IActionResult ARAgingLevels()
+        [HttpGet]
+        public IActionResult GetARAgingLevelsData()
         {
-            List<ARAgingLevelsModel> ARAgingLevelsList = PropertyUtils.ConvertToList<ARAgingLevelsModel>(ARAgingLevelsBO.Instance.FindAll());
-            ViewBag.ARAgingLevels = ARAgingLevelsList;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            // Lấy dữ liệu từ BO (giống hệt code cũ của bạn)
+            List<ARAgingLevelsModel> list = PropertyUtils.ConvertToList<ARAgingLevelsModel>(ARAgingLevelsBO.Instance.FindAll());
+
+            // Trả về dữ liệu kiểu JSON thay vì View
+            return Json(new { success = true, data = list });
         }
         [HttpPost]
-        public IActionResult ARAgingLevelsSave(string level1, string level2, string level3, string level4, string level5,string user)
+        public IActionResult ARAgingLevelsSave(string level1, string level2, string level3, string level4, string level5, string user)
         {
             try
             {
@@ -953,7 +945,7 @@ namespace Cashiering.Controllers
             List<CurrencyModel> listcurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
             ViewBag.CurrencyList = listcurr;
 
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView(); // View này sẽ chứa DataGrid + script gọi API
         }
 
         [HttpGet]
@@ -964,22 +956,23 @@ namespace Cashiering.Controllers
                 DataTable dataTable = _iAccountingService.AROpeningData();
 
                 var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  ID = d["ID"]?.ToString() ?? "",
-                                  ARID = d["ARID"]?.ToString() ?? "",
-                                  AccountName = d["AccountName"]?.ToString() ?? "",
-                                  Type = d["Type"]?.ToString() ?? "",
-                                  AccountNo = d["AccountNo"]?.ToString() ?? "",
-                                  City = d["City"]?.ToString() ?? "",
-                                  Balance = d["Balance"]?.ToString() ?? "",
-                                  ContactName = d["ContactName"]?.ToString() ?? "",
-                                  CurrencyID = d["CurrencyID"]?.ToString() ?? "",
-                                  CreatedDate = d["CreatedDate"]?.ToString() ?? "",
-                                  UpdatedDate = d["UpdatedDate"]?.ToString() ?? "",
-                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
-                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? ""
-                              }).ToList();
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col =>
+                                      {
+                                          var value = d[col.ColumnName];
+                                          if (value == DBNull.Value) return null;
+
+                                          // CreatedDate: KHÔNG ToString
+                                          if (col.ColumnName == "CreatedDate" || col.ColumnName == "UpdatedDate")
+                                              return value;
+
+                                          // Các field khác: ToString
+                                          return value.ToString();
+                                      }
+                                  )).ToList();
                 return Json(result);
             }
             catch (Exception ex)
@@ -990,44 +983,41 @@ namespace Cashiering.Controllers
 
 
         [HttpPost]
-        public IActionResult AROpeningSave(string accountName, string accountNo, string arid, string balance, string city, string contactName, string createdBy, string createdDate, string currencyID, string   id, string type, string updatedBy, string updatedDate, string user)
+        public IActionResult AROpeningSave(string accountName, string accountNo, string arid, decimal balance, string city, string contactName, string createdBy, string createdDate, string currencyID, int id, string type, string updatedBy, string updatedDate, string user)
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             try
             {
                 ARAccountReceivableOldBalancesModel model;
-                if (!string.IsNullOrEmpty(id))
+                if (id > 0)
                 {
                     if (currencyID == "")
                     {
                         throw new Exception("Currency");
                     }
-                    model = (ARAccountReceivableOldBalancesModel)ARAccountReceivableOldBalancesBO.Instance.FindByPrimaryKey(int.Parse(id));
-                    model.Amount = Convert.ToDecimal(balance);
+                    model = (ARAccountReceivableOldBalancesModel)ARAccountReceivableOldBalancesBO.Instance.FindByPrimaryKey(id);
+                    model.Amount = balance;
 
                     model.CurrencyID = currencyID;
                     model.UpdatedBy = user;
                     model.UpdatedDate = businessDateModel[0].BusinessDate;
                     ARAccountReceivableOldBalancesBO.Instance.Update(model);
                 }
-                else
+                else if (id == 0)
                 {
-                    if (!string.IsNullOrEmpty(balance))
+                    if (currencyID == "")
                     {
-                        if (currencyID == "")
-                        {
-                            throw new Exception("Currency");
-                        }
-                        model = new ARAccountReceivableOldBalancesModel();
-                        model.AccountReceivableID = Convert.ToInt32(arid);
-                        model.Amount = Convert.ToDecimal(balance);
-                        model.CurrencyID = currencyID;
-                        model.UpdatedBy = user;
-                        model.UpdatedDate = businessDateModel[0].BusinessDate;
-                        model.CreatedBy = user;
-                        model.CreatedDate = businessDateModel[0].BusinessDate;
-                        ARAccountReceivableOldBalancesBO.Instance.Insert(model);
+                        throw new Exception("Currency");
                     }
+                    model = new ARAccountReceivableOldBalancesModel();
+                    model.AccountReceivableID = Convert.ToInt32(arid);
+                    model.Amount = balance;
+                    model.CurrencyID = currencyID;
+                    model.UpdatedBy = user;
+                    model.UpdatedDate = businessDateModel[0].BusinessDate;
+                    model.CreatedBy = user;
+                    model.CreatedDate = businessDateModel[0].BusinessDate;
+                    ARAccountReceivableOldBalancesBO.Instance.Insert(model);
                 }
                 return Json(new { success = true, message = "Data updated!" });
             }
@@ -1044,7 +1034,7 @@ namespace Cashiering.Controllers
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             ViewBag.BusinessDate = businessDateModel[0].BusinessDate;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView();
         }
         [HttpGet]
         public IActionResult ARTracesData()
@@ -1118,7 +1108,29 @@ namespace Cashiering.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public IActionResult ARTraceUpdate(int idselectedRowData, DateTime tracetime, string traceText, string user)
+        {
+            try
+            {
+                user = user?.Replace("\"", "").Trim();
+                ARTraceModel model = (ARTraceModel)ARTraceBO.Instance.FindByPrimaryKey(idselectedRowData);
+                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
+                model.TraceText = traceText;
+                model.TraceAt = tracetime;
+                model.UpdatedBy = user;
+                model.UpdatedDate = businessDateModel[0].BusinessDate;
+                // Gọi Business Object để lưu
+                ARTraceBO.Instance.Update(model);
 
+
+                return Json(new { success = true, message = "Update success!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         public IActionResult ARTraceSave([FromBody] ARTraceSaveModel model)
@@ -1136,9 +1148,9 @@ namespace Cashiering.Controllers
                         TraceText = model.tracetext,
                         ResolvedAt = new DateTime(1900, 1, 1),
                         ResolvedBy = "Unresolved",
-                        CreatedBy = model.user ,
+                        CreatedBy = model.user,
                         CreatedDate = businessDateModel[0].BusinessDate,
-                        UpdatedBy = model.user ,
+                        UpdatedBy = model.user,
                         UpdatedDate = businessDateModel[0].BusinessDate
                     };
 
@@ -1188,7 +1200,7 @@ namespace Cashiering.Controllers
         }
 
         [HttpPost]
-        public IActionResult ARTraceResolve(int id,string user)
+        public IActionResult ARTraceResolve(int id, string user)
         {
             List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
             DateTime businessDate = businessDateModel[0].BusinessDate;
@@ -1207,7 +1219,6 @@ namespace Cashiering.Controllers
             user = user?.Replace("\"", "").Trim();
             try
             {
-        
                 ARTraceModel model = (ARTraceModel)ARTraceBO.Instance.FindByPrimaryKey(id);
                 model.ResolvedAt = resolvedAt;
                 model.ResolvedBy = user;
@@ -1238,6 +1249,48 @@ namespace Cashiering.Controllers
                 ARTraceBO.Instance.Update(model);
 
                 return Json(new { success = true, message = "Success !" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region ARPaymentReport
+        public IActionResult ARPaymentReport()
+        {
+            List<UsersModel> listUsers = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
+            ViewBag.ListUsers = listUsers;
+            return PartialView();
+        }
+
+        [HttpGet]
+        public IActionResult GETARPaymentReport(DateTime fromDate, DateTime toDate, string accountNo, string cashier, int viewBy = 0)
+        {
+            try
+            {
+
+                DataTable resultExchangeData = _iAccountingService.ARPaymentReport(fromDate, toDate, accountNo, cashier, viewBy);
+                var resultExchange = (from d in resultExchangeData.AsEnumerable()
+                                      select d.Table.Columns.Cast<DataColumn>()
+                                          //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                          .ToDictionary(
+                                            col => col.ColumnName,
+                                            col =>
+                                            {
+                                                var value = d[col.ColumnName];
+                                                if (value == DBNull.Value) return null;
+
+                                                // CreatedDate: KHÔNG ToString
+                                                if (col.ColumnName == "CreatedDate" || col.ColumnName == "UpdatedDate")
+                                                    return value;
+
+                                                // Các field khác: ToString
+                                                return value.ToString();
+                                            }
+                                        )).ToList();
+                return Json(resultExchange);
             }
             catch (Exception ex)
             {

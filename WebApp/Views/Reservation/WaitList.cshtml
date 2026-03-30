@@ -8,10 +8,10 @@
 </div>
 <div>
     <div style="display:flex;column-gap:12px">
-        <button class="submit-button-clear-reservation" onclick="searchReservation()">Search</button>
+        <button class="mui-button mui-button-new" onclick="searchReservation()">Search</button>
 
-        <button class="submit-button-clear-reservation" onclick="openModalWaitList()">Details</button>
-        <button class="submit-button-clear-reservation" onclick="AcceptRes()">Accept.Res</button>
+        <button class="mui-button mui-button-new" onclick="openModalWaitList()">Details</button>
+        <button class="mui-button mui-button-new" onclick="AcceptRes()">Accept.Res</button>
 
     </div>
 </div>
@@ -38,7 +38,7 @@
                 Room Type
             </label>
             <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
-                <select type="text" id="rateCodeWaitList" class="col-md-12"></select>
+            <select type="text" id="rateCodeWaitList" class="col-md-12" asp-items="ViewBag.cboRoomType"></select>
             </div>
         </div>
         <div class="form-group-new-reservation col-md-2">

@@ -4,8 +4,15 @@
 
 <div class="text-center" style="font-size: 20px">Owner</div>
 <div class="sticky-header bg-white p-2 shadow-sm z-3">
+    <div class="mb-2">
+        <button id="btnView" class="mui-button mui-button-search"> View</button>
+        <button id="btnNew" class="mui-button mui-button-new"> New</button>
+        <button id="btnEdit" class="mui-button mui-button-edit">  Edit</button>
+        <button id="btnDelete" class="mui-button mui-button-delete">  Delete</button>
+        <button id="btnExportExcel" class="mui-button mui-button-export">  Excel</button>
+    </div>
     <div class="d-flex align-items-center gap-3 p-2"
-         style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+         >
         <div class="d-flex flex-column ">
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center me-4">
@@ -28,17 +35,10 @@
             </div>
         </div>
     </div>
-    <div class="mt-2">
-        <button id="btnView" class="mui-button mui-button-search"><i class="fa-solid fa-eye"></i> View</button>
-        <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
-        <button id="btnEdit" class="mui-button mui-button-edit"> <i class="fa-solid fa-pen"></i> Edit</button>
-        <button id="btnDelete" class="mui-button mui-button-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
-        <button id="btnExportExcel" class="mui-button mui-button-export"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-    </div>
 </div>
 
 <div class="mui-card">
-    <div id="gridContainerRateCode" class="mt-2 gridContainer"></div>
+    <div id="gridContainerRateCode" class="gridContainer"></div>
 </div>
 <!-- Modal Popup for New Item -->
 <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
@@ -48,16 +48,17 @@
                 <h5 class="modal-title" id="itemModalLabel">New Item</h5>
             </div>
             <div class="modal-footer justify-content-start">
-                <button type="button" id="btnSaveItem" class="mui-button mui-button-save"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-                <button type="button" data-bs-dismiss="modal" class="mui-button mui-button-close"><i class="fa-solid fa-xmark"></i> Close</button>
+                <button type="button" id="btnSaveItem" class="mui-button mui-button-save"> Save</button>
+                <button type="button" data-bs-dismiss="modal" class="mui-button mui-button-close"> Close</button>
             </div>
             <div class="modal-body">
                 <form id="formContainer">
-                    <div class="container-fluid" style="border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+                    <div class="container-fluid" >
                         <div class="row mb-1 align-items-center">
                             <div class="col-auto">
                                 <label for="code" class="form-label mb-0">Code</label>
                                 <input type="text" id="txtcode" name="code" class="form-control form-control-sm" />
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-auto d-flex align-items-center">
                                 <input type="checkbox" id="inactive" name="inactive" class="form-check-input me-2" />
@@ -68,13 +69,14 @@
                             <div class="col">
                                 <label for="name" class="form-label">Name</label>
                                 <input type="text" id="txtname" name="name" class="form-control" />
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="row mb-1">
                             <div class="col">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea id="txtdescription" name="description" class="form-control" rows="4"
-                                          style="background-color:#ffffe6"></textarea>
+                                          style="height:100px"></textarea>
                             </div>
                         </div>
                         <input type="hidden" id="id" name="id" value="0" />
@@ -190,7 +192,7 @@
     function loadGrid(data) {
         $("#gridContainerRateCode").dxDataGrid({
             dataSource: data,
-            height: 500,
+            height: 550,
             width: "100%",
             allowColumnResizing: true,
             columnResizingMode: "widget",
@@ -217,7 +219,7 @@
                 showNavigationButtons: true
             },
             scrolling: { mode: "standard", showScrollbar: "always" },
-              onSelectionChanged: function(e){
+            onSelectionChanged: function(e){
                   selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
             }
         });

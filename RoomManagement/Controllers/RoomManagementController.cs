@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BaseBusiness.BO;
+﻿using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
 using Dapper;
-using DevExpress.XtraPrinting.Native;
+using DevExpress.CodeParser;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using RoomManagement.Dto;
-using RoomManagement.Services.Implements;
+using Org.BouncyCastle.Crypto;
 using RoomManagement.Services.Interfaces;
+using System.Data;
+using static BaseBusiness.util.ValidationUtils;
 
 namespace RoomManagement.Controllers
 {
@@ -38,6 +33,8 @@ namespace RoomManagement.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
         // Define your actions here
+        #region Discrepancy
+
         public IActionResult Discrepancy()
         {
             List<ZoneModel> listzo = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
@@ -48,7 +45,7 @@ namespace RoomManagement.Controllers
             ViewBag.RoomList = listroom;
             List<FloorModel> listfloor = PropertyUtils.ConvertToList<FloorModel>(FloorBO.Instance.FindAll());
             ViewBag.FloorList = listfloor;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public IActionResult GetDiscrepancy(int sleep, int skip, int person, string floor, string room, string zone, string roomClass)
@@ -84,45 +81,68 @@ namespace RoomManagement.Controllers
             // return PartialView("_ReportViewerPartial", report);
         }
 
+        #endregion
+
+
         [HttpPost("UpdateHKFOStatus")]
-        public IActionResult UpdateHKFOStatus([FromBody] RoomUpdateDTO dto)
+        public IActionResult UpdateHKFOStatus([FromBody] List<RoomUpdateDTO> dto)
         {
-            if (dto == null || string.IsNullOrEmpty(dto.RoomNo))
-                return BadRequest(new { success = false, message = "Không có phòng nào được chọn" });
+            if (dto == null || dto.Count == 0)
+                return Json(new { success = false, message = "Không có phòng nào được chọn" });
+
+            // Validate status
+            if (dto.Any(d => d.NewHKFOStatus < 0 || d.NewHKFOStatus > 1))
+                return Json(new { success = false, message = "HKFO Status không hợp lệ" });
+
 
             try
             {
-                string connString = new AppConfiguration()?.ConnectionString;
-                if (string.IsNullOrEmpty(connString))
-                    return BadRequest(new { success = false, message = "Chuỗi kết nối không hợp lệ" });
+                var roomIds = dto
+                    .Select(d => d.RoomIds)
+                    .Where(id => id > 0)
+                    .Distinct()
+                    .ToList();
 
-                using (SqlConnection conn = new SqlConnection(connString))
+
+                //  Load rooms (1 query)
+                var rooms = roomIds.Any()
+                    ? RoomBO.Instance.GetList<RoomModel>(
+                        "SELECT * FROM Room WHERE ID IN @Ids",
+                        new { Ids = roomIds })
+                    : new List<RoomModel>();
+
+
+
+                var foundIDs = rooms.Select(r => r.ID).ToList();
+                var notFoundIDs = roomIds
+                    .Where(id => id <= 0 || !foundIDs.Contains(id))
+                    .ToList();
+
+                foreach (var room in rooms)
                 {
-                    conn.Open();
+                    var req = dto.First(d => d.RoomIds == room.ID);
 
-                    string sql = @"
-                        UPDATE Room
-                        SET HKFOStatus = @NewHKFOStatus
-                        WHERE RoomNo = @RoomNo
-                  ";
-
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    if (room.HKFOStatus != req.NewHKFOStatus)
                     {
-                        cmd.Parameters.Add("@NewHKFOStatus", SqlDbType.Int).Value = dto.NewHKFOStatus;
-                        cmd.Parameters.Add("@RoomNo", SqlDbType.VarChar, 10).Value = dto.RoomNo;
+                        room.HKFOStatus = req.NewHKFOStatus;
+                        room.UserUpdateID = req.UpdateByID;
+                        room.UpdateDate = DateTime.Now;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected == 0)
-                            return BadRequest(new { success = false, message = "Phòng không thỏa điều kiện hoặc không tồn tại" });
+                        RoomBO.Instance.Update(room);
                     }
                 }
 
-                return Ok(new { success = true, message = "Cập nhật thành công" });
+
+                return Ok(new
+                {
+                    success = true,
+                    updated = rooms.Count,
+                    skipped = notFoundIDs
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { success = false, message = ex.ToString() });
+                return Json(new { success = false, message = ex.Message });
             }
         }
 
@@ -206,29 +226,47 @@ namespace RoomManagement.Controllers
             return View();
         }
 
-        [HttpPost("UpdateItemInventory")]
-        public IActionResult UpdateItemInventory([FromBody] InventoryUpdateRequest model)
+        [HttpPost]
+        public IActionResult UpdateItemInventory(int ItemID, DateTime Date, DateTime MatchDate, int Quantity, int UserID)
         {
-            if (model == null)
+            if (ItemID == null)
                 return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
 
             try
             {
-                var userId = HttpContext.Session.GetInt32("UserID") ?? 0;
-                if (userId == 0)
+
+
+                _logger.LogInformation($"UpdateItemInventory called with ItemID={ItemID}, Date={Date}, Quantity={Quantity}, UserID={UserID}");
+                List<ItemInventoryModel> listzo = PropertyUtils.ConvertToList<ItemInventoryModel>(ItemInventoryBO.Instance.FindAll()).Where(x => x.ItemID == ItemID && x.Date.Date == MatchDate.Date).ToList();
+
+                var listitem = listzo[0];
+                listitem.ItemID = ItemID;
+
+                // Thông tin người dùng
+                listitem.Date = Date;
+                listitem.Quantity = Quantity;
+                listitem.UserUpdateID = UserID;
+                listitem.UpdateDate = DateTime.Now;
+                try
                 {
-                    return Unauthorized(new { success = false, message = "User chưa đăng nhập" });
+                    ItemInventoryBO.Instance.Update(listitem);
+
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Inventory updated successfully"
+                    });
                 }
-                model.UserID = userId;
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error updating inventory");
 
-                _logger.LogInformation($"UpdateItemInventory called with ItemID={model.ItemID}, Date={model.Date}, Quantity={model.Quantity}, UserID={model.UserID}");
-
-                bool success = _iRoomManagementService.UpdateItemInventory(model);
-
-                if (success)
-                    return Ok(new { success = true, message = "Cập nhật thành công" });
-                else
-                    return NotFound(new { success = false, message = "Không tìm thấy dữ liệu phù hợp" });
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Failed to update inventory"
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -400,7 +438,6 @@ namespace RoomManagement.Controllers
             return View();
         }
         [HttpPost]
-        [HttpPost]
         public int InsertItem([FromBody] ItemDto model)
         {
             using (SqlConnection conn = new SqlConnection(DBUtils.GetDBConnectionString()))
@@ -543,7 +580,6 @@ namespace RoomManagement.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public IActionResult DeleteItem(int id)
         {
             try
@@ -563,61 +599,9 @@ namespace RoomManagement.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-        [HttpGet]
-        public IActionResult GetOOOSload(int status, string roomNo, int roomClassID, DateTime fromDate, DateTime toDate, string zone)
-        {
-            try
-            {
-                DataTable dataTable = _iRoomManagementService.OOOSload(status, roomNo, roomClassID, fromDate, toDate, zone);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
-                                  RoomNo = !string.IsNullOrEmpty(d["Room No"].ToString()) ? d["Room No"] : "",
-                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
-                                  Floor = !string.IsNullOrEmpty(d["Floor"].ToString()) ? d["Floor"] : "",
-                                  Zone = !string.IsNullOrEmpty(d["Zone"].ToString()) ? d["Zone"] : "",
-                                  FromDate = !string.IsNullOrEmpty(d["From Date"].ToString()) ? d["From Date"] : "",
-                                  ToDate = !string.IsNullOrEmpty(d["To Date"].ToString()) ? d["To Date"] : "",
-                                  NoOfNights = !string.IsNullOrEmpty(d["No Of Nights"].ToString()) ? d["No Of Nights"] : "",
-                                  ReasonCode = !string.IsNullOrEmpty(d["Reason Code"].ToString()) ? d["Reason Code"] : "",
-                                  Reason = !string.IsNullOrEmpty(d["Reason"].ToString()) ? d["Reason"] : "",
-                                  ReturnStatus = !string.IsNullOrEmpty(d["Return Status"].ToString()) ? d["Return Status"] : "",
-                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
-                                  UserCreate = !string.IsNullOrEmpty(d["User Create"].ToString()) ? d["User Create"] : "",
-                                  CreatedDate = !string.IsNullOrEmpty(d["Created Date"].ToString()) ? d["Created Date"] : "",
-                                  UserUpdate = !string.IsNullOrEmpty(d["User Update"].ToString()) ? d["User Update"] : "",
-                                  UpdatedDate = !string.IsNullOrEmpty(d["Updated Date"].ToString()) ? d["Updated Date"] : "",
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-        public IActionResult OOOSload()
-        {
-            List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
-            ViewBag.RoomList = listroom;
-            List<ZoneModel> listzone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
-            ViewBag.ZoneList = listzone;
-            List<RoomClassModel> listrclass = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
-            ViewBag.RoomClassList = listrclass;
-            List<CommentModel> listcmt = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
-            ViewBag.CommentList = listcmt;
-            return View();
-        }
 
 
-        #region out of order/service management
+        #region avaiable room search
         [HttpGet]
         public IActionResult GetAvailableRoomsSearchOOO(string isDummy, string smoking, string floor, string roomTypeCode, string foStatus, string hkStatusID, string roomNo, DateTime fromDate, DateTime toDate, string zoneCode)
         {
@@ -650,39 +634,6 @@ namespace RoomManagement.Controllers
 
             // return PartialView("_ReportViewerPartial", report);
         }
-        [HttpGet]
-        public IActionResult GetRoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName)
-        {
-            try
-            {
-                DataTable dataTable = _iRoomManagementService.RoomStatusHistoryOOO(roomNo, fromDate, toDate, userName);
-                var result = (from d in dataTable.AsEnumerable()
-                              select new
-                              {
-
-                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
-                                  OldValue = !string.IsNullOrEmpty(d["OldValue"].ToString()) ? d["OldValue"] : "",
-                                  NewValue = !string.IsNullOrEmpty(d["NewValue"].ToString()) ? d["NewValue"] : "",
-                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
-                                  Action = !string.IsNullOrEmpty(d["Action"].ToString()) ? d["Action"] : "",
-                                  ComputerName = !string.IsNullOrEmpty(d["ComputerName"].ToString()) ? d["ComputerName"] : "",
-                                  ChangeDate = !string.IsNullOrEmpty(d["ChangeDate"].ToString()) ? d["ChangeDate"] : "",
-
-                              }).ToList();
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
-        }
-
 
         //[HttpPost]
         //public ActionResult SaveOOOS()
@@ -730,27 +681,7 @@ namespace RoomManagement.Controllers
         //    }
         //}
         #endregion
-        [HttpPost]
-        [HttpPost]
-        public IActionResult DeleteBusinessBlock(int id)
-        {
-            try
-            {
-                string sql = "DELETE FROM BusinessBlock WHERE ID = @ID";
 
-                SqlParameter[] parameters = {
-                new SqlParameter("@ID", id)
-        };
-
-                int rows = DataTableHelper.ExecuteNonQueryText(sql, parameters);
-
-                return Json(new { deleted = rows });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-        }
         [HttpGet]
         public IActionResult GetCards()
         {
@@ -793,7 +724,6 @@ namespace RoomManagement.Controllers
 
                 foreach (var roomId in roomIds)
                 {
-
                     string name = $"OutOfOrder/Service";
                     string roomNo = RoomBO.Instance.GetRoomNoById(roomId, pt.Connection, pt.Transaction);
                     BusinessBlockModel bb = new BusinessBlockModel()
@@ -836,85 +766,197 @@ namespace RoomManagement.Controllers
                 pt.CloseConnection();
             }
         }
-        [HttpPost]
-        public IActionResult UpdateBusinessBlock()
-        {
-            ProcessTransactions pt = new ProcessTransactions();
-            DBUtils dbUtils = new DBUtils();
 
+
+        #region Out of Order/Service (OOOS)
+        [HttpGet]
+        public IActionResult GetOOOSload(int status, string roomNo, int roomClassID, DateTime fromDate, DateTime toDate, string zone)
+        {
             try
             {
-                pt.OpenConnection();
-                pt.BeginTransaction();
-
-                long id = !string.IsNullOrEmpty(Request.Form["id"])
-                            ? long.Parse(Request.Form["id"])
-                            : 0;
-                if (id == 0)
-                    return Json(new { success = false, message = "ID không hợp lệ!" });
-
-                // Ép StringValues về string và check null
-                string roomNo = Request.Form["roomNo"].FirstOrDefault();
-                if (string.IsNullOrEmpty(roomNo))
-                    return Json(new { success = false, message = "RoomNo không hợp lệ!" });
-
-                // Lookup RoomID
-                string roomIdStr = dbUtils.returnTable("Room", "RoomNo", "ID", roomNo);
-                if (string.IsNullOrEmpty(roomIdStr))
-                    return Json(new { success = false, message = $"Không tìm thấy RoomID với RoomNo {roomNo}" });
-
-                int roomID = int.Parse(roomIdStr);
-
-                // Tạo model
-                BusinessBlockModel bbModel = new BusinessBlockModel
-                {
-                    ID = (int)id,
-                    Code = $"OOOS{id}",
-                    RoomID = roomID,
-                    RoomNo = roomNo,
-                    Name = "OutOfOrder/Service",
-                    FromDateOOO = !string.IsNullOrEmpty(Request.Form["itemFromDate"])
-                        ? DateTime.Parse(Request.Form["itemFromDate"])
-                        : DateTime.Now,
-                    ToDateOOO = !string.IsNullOrEmpty(Request.Form["itemToDate"])
-                        ? DateTime.Parse(Request.Form["itemToDate"])
-                        : DateTime.Now,
-                    OOOStatus = !string.IsNullOrEmpty(Request.Form["oooOrS"])
-                        ? byte.Parse(Request.Form["oooOrS"])
-                        : (byte)0,
-                    ReturnStatus = !string.IsNullOrEmpty(Request.Form["rtStatus"])
-                        ? int.Parse(Request.Form["rtStatus"])
-                        : 0,
-                    ReasonID = !string.IsNullOrEmpty(Request.Form["comment"])
-                        ? int.Parse(Request.Form["comment"])
-                        : 0,
-                    ReasonNote = Request.Form["txtReasonDesc"].ToString(),
-                    UserUpdateID = HttpContext.Session.GetInt32("UserID") ?? 0,
-                    UpdateDate = DateTime.Now
-                };
-
-                BusinessBlockBO.Instance.Update(bbModel);
-                pt.CommitTransaction();
-                return Json(new { success = true });
+                DataTable dataTable = _iRoomManagementService.OOOSload(status, roomNo, roomClassID, fromDate, toDate, zone);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(d["Room No"].ToString()) ? d["Room No"] : "",
+                                  RoomID = !string.IsNullOrEmpty(d["RoomID"].ToString()) ? d["RoomID"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["Room Type"].ToString()) ? d["Room Type"] : "",
+                                  Floor = !string.IsNullOrEmpty(d["Floor"].ToString()) ? d["Floor"] : "",
+                                  Zone = !string.IsNullOrEmpty(d["Zone"].ToString()) ? d["Zone"] : "",
+                                  FromDate = !string.IsNullOrEmpty(d["From Date"].ToString()) ? d["From Date"] : "",
+                                  ToDate = !string.IsNullOrEmpty(d["To Date"].ToString()) ? d["To Date"] : "",
+                                  NoOfNights = !string.IsNullOrEmpty(d["No Of Nights"].ToString()) ? d["No Of Nights"] : "",
+                                  ReasonCode = !string.IsNullOrEmpty(d["Reason Code"].ToString()) ? d["Reason Code"] : "",
+                                  Reason = !string.IsNullOrEmpty(d["Reason"].ToString()) ? d["Reason"] : "",
+                                  ReasonID = !string.IsNullOrEmpty(d["ReasonID"].ToString()) ? d["ReasonID"] : "",
+                                  ReturnStatusID = !string.IsNullOrEmpty(d["ReturnStatusID"].ToString()) ? d["ReturnStatusID"] : "",
+                                  ReturnStatus = !string.IsNullOrEmpty(d["Return Status"].ToString()) ? d["Return Status"] : "",
+                                  Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
+                                  UserCreate = !string.IsNullOrEmpty(d["User Create"].ToString()) ? d["User Create"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["Created Date"].ToString()) ? d["Created Date"] : "",
+                                  UserUpdate = !string.IsNullOrEmpty(d["User Update"].ToString()) ? d["User Update"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["Updated Date"].ToString()) ? d["Updated Date"] : "",
+                              }).ToList();
+                return Json(result);
             }
             catch (Exception ex)
             {
-                pt.RollBack();
-                return Json(new { success = false, message = ex.Message });
+                return Json(ex.Message);
             }
-            finally
+        }
+        public IActionResult OOOSload()
+        {
+            List<RoomModel> listroom = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+            ViewBag.RoomList = listroom;
+            List<ZoneModel> listzone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listzone;
+            List<RoomClassModel> listrclass = PropertyUtils.ConvertToList<RoomClassModel>(RoomClassBO.Instance.FindAll());
+            ViewBag.RoomClassList = listrclass;
+            List<CommentModel> listcmt = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindAll());
+            ViewBag.CommentList = listcmt;
+            return PartialView();
+        }
+        [HttpPost]
+        public IActionResult DeleteBusinessBlock(int id)
+        {
+            try
             {
-                pt.CloseConnection();
+                string sql = "DELETE FROM BusinessBlock WHERE ID = @ID";
+
+                SqlParameter[] parameters = {
+                new SqlParameter("@ID", id)
+        };
+
+                int rows = DataTableHelper.ExecuteNonQueryText(sql, parameters);
+
+                return Json(new { deleted = rows });
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetRoomStatusHistoryOOO(string roomNo, DateTime fromDate, DateTime toDate, string userName)
+        {
+            try
+            {
+                DataTable dataTable = _iRoomManagementService.RoomStatusHistoryOOO(roomNo, fromDate, toDate, userName);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+
+                                  RoomNo = !string.IsNullOrEmpty(d["RoomNo"].ToString()) ? d["RoomNo"] : "",
+                                  OldValue = !string.IsNullOrEmpty(d["OldValue"].ToString()) ? d["OldValue"] : "",
+                                  NewValue = !string.IsNullOrEmpty(d["NewValue"].ToString()) ? d["NewValue"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  Action = !string.IsNullOrEmpty(d["Action"].ToString()) ? d["Action"] : "",
+                                  ComputerName = !string.IsNullOrEmpty(d["ComputerName"].ToString()) ? d["ComputerName"] : "",
+                                  ChangeDate = !string.IsNullOrEmpty(d["ChangeDate"].ToString()) ? d["ChangeDate"] : "",
+
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            //  report.DataSource = dataTable;
+
+            // Không cần gán parameter
+            // report.RequestParameters = false;
+
+            // return PartialView("_ReportViewerPartial", report);
+        }
+
+        [HttpPost]
+        public IActionResult SaveBusinessBlock([FromBody] List<BusinessBlockModel> models)
+        {
+            try
+            {
+                var listErrors = GetErrors(
+                    Check(models, "general", "No data received."),
+                    Check(models != null && models.Count == 0, "general", "No data received.")
+                );
+
+                if (listErrors.Count > 0)
+                {
+                    return Json(new { success = false, errors = listErrors });
+                }
+
+                foreach (var model in models)
+                {
+                    var itemErrors = GetErrors(
+                            Check(model, "general", "Invalid data"),
+                            Check(model.FromDateOOO == default, "itemFromDate", "From Date is required."),
+                            Check(model.ToDateOOO == default, "itemToDate", "To Date is required."),
+                            Check(model.FromDateOOO >= model.ToDateOOO, "itemToDate", "To Date must be >= From Date"),
+                            Check(model.ReasonID, "comment", "Please select a reason!"),
+                            Check(model.RoomID, "roomSelect", "Haven't selected a room yet!")
+                    );
+
+                    if (itemErrors.Count > 0)
+                    {
+                        return Json(new { success = false, errors = itemErrors });
+                    }
+                }
+
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(
+                    BusinessDateBO.Instance.FindAll()
+                );
+
+                DateTime businessDate = businessDates[0].BusinessDate;
+
+                foreach (var model in models)
+                {
+                    if (model.ID > 0)
+                    {
+                        var oldData = (BusinessBlockModel)BusinessBlockBO.Instance.FindByPrimaryKey(model.ID);
+                        model.CreateDate = oldData.CreateDate;
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.Name = oldData.Name;
+                        model.Code = oldData.Code;
+                        model.UpdateDate = DateTime.Now;
+                        BusinessBlockBO.Instance.Update(model);
+                    } else {
+                        string newCode;
+                        int maxTry = 20; // tránh loop vô hạn
+                        int tryCount = 0;
+
+                        do
+                        {
+                            newCode = GenerateOOOSCode();
+                            tryCount++;
+
+                            if (tryCount > maxTry)
+                                throw new Exception("Unable to generate unique code.");
+                        }
+                        while (BusinessBlockBO.Instance.IsDuplicateCode(newCode, 0));
+                        model.Code = newCode;
+                        model.Name = "OutOfOrder/Service";
+                        model.CreateDate = businessDate;
+                        model.UpdateDate = DateTime.Now;
+                        BusinessBlockBO.Instance.Insert(model);
+                    }
+                }
+
+                return Json(new { success = true, message = "Save successfully" });
+            
+            } catch (Exception ex) {
+                 return Json(new { success = false, message = "Error: " + ex.Message });   
+            }
+
+        }
+        private string GenerateOOOSCode()
+        {
+            var random = new Random();
+            return $"OOOS{random.Next(0, 999999):D6}";
         }
 
 
-
-
-
+        #endregion
 
     }
-
-
 }
-

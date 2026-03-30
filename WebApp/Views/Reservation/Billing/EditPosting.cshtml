@@ -1,122 +1,216 @@
-﻿<link href="~/css/pages/edit-posting.css" rel="stylesheet" />
 
 <div class="modal fade" id="modalEditPosting" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="border: 1px solid #bcbcbc">
-            <div class="modal-header">
-                <h5 class="modal-title" id="transactionModalLabel">Edit Posting</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="button-group">
-                <button type="button" class="submit-button-clear-reservation" onclick="EditPosting();">Save</button>
-                <button type="button" class="submit-button-clear-reservation" data-bs-dismiss="modal">Close</button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="room" class="form-label">Room</label>
-                            <input type="text" id="roomEditPosting" readonly>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text"  id="nameEditPosting" readonly>
-                        </div>
-                    </div>
-                </div>
-                <hr class="hr">
-                <div class="form-group">
-                    <label for="code" class="form-label">Code</label>
-                    <input type="text"  id="codeEditPosting" readonly>
-                    <span class="input-span" id="nameTransactionEditPosting"></span>
-                </div>
-                <hr class="hr">
-                <div class="row mb-2">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="text" id="priceEditPosting" style="text-align:right">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label >Quantity</label>
-                            <input type="number" id="quantityEditPosting" style="text-align:right">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label >Amount</label>
-                            <input type="text"  id="amountEditPosing" readonly style="text-align:right">
-                        </div>
-                    </div>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid black; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), 0 8px 10px rgba(0, 0, 0, 0.1);">
 
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label >Currency</label>
-                            <input type="text" id="currency" value="VND">
+            <div class="modal-header py-2 bg-light">
+                <h6 class="modal-title fw-bold" id="transactionModalLabel">Edit Posting</h6>
+            </div>
+
+            <div class="modal-footer justify-content-start p-2 border-bottom">
+                <div class="button-group">
+                    <button type="button" class="mui-button mui-button-save" onclick="EditPosting();">Save</button>
+                    <button type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+            <div class="modal-body p-3">
+                <div class="row g-2 mb-2 align-items-center">
+                    <div class="col-md-4 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm" for="roomEditPosting">Room</label>
+                            <div class="col-8">
+                                <input type="text" id="roomEditPosting" class="form-control form-control-sm fw-bold" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-lg-9">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-2 text-md-end pe-2 col-form-label col-form-label-sm" for="nameEditPosting">Name</label>
+                            <div class="col-10">
+                                <input type="text" id="nameEditPosting" class="form-control form-control-sm" readonly>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <hr class="hr">
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="crashier" class="form-label">Crashier</label>
-                            <input type="text"  id="crashierEditPosting" readonly>
+
+                <div class="row g-2 mb-3 align-items-center">
+                    <div class="col-md-4 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm" for="codeEditPosting">Code</label>
+                            <div class="col-8">
+                                <input type="text" id="codeEditPosting" class="form-control form-control-sm fw-bold" readonly>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="winNo" class="form-label">Win.No</label>
-                            <input type="text"  id="winNoEditPosting" value="1" readonly>
-                        </div>
-                    </div>
-                </div>
-                <hr class="hr">
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="postingDate" class="form-label">Posting Date</label>
-                            <input type="date"  id="postingDate" value="2023-08-01" readonly>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-@*                             <label for="additionalDate" class="form-label">Add. Date</label>
-                            <input type="date" class="form-control medium-input" id="additionalDate" readonly> *@
+                    <div class="col-md-8 col-lg-9">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-2 text-md-end pe-2 col-form-label col-form-label-sm">Desc</label>
+                            <div class="col-10">
+                                <div id="nameTransactionEditPosting" class="form-control form-control-sm bg-light text-truncate" style="min-height: 31px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <hr class="hr">
-                <div class="form-group">
-                    <label for="articleCode" class="form-label">Article Code</label>
-                    <input type="text"  id="articleCodeEditPosting" readonly>
+
+                <div class="p-2 border rounded mb-3 shadow-sm bg-white">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="row g-0 align-items-center">
+                                <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Price</label>
+                                <div class="col-8">
+                                    <input type="text" id="priceEditPosting" class="form-control form-control-sm text-end">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <div class="row g-0 align-items-center">
+                                <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Qty</label>
+                                <div class="col-8">
+                                    <input type="number" id="quantityEditPosting" class="form-control form-control-sm text-center">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="row g-0 align-items-center">
+                                <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Amount</label>
+                                <div class="col-8">
+                                    <input type="text" id="amountEditPosing" class="form-control form-control-sm text-end fw-bold" style="background-color: #e9ecef" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="row g-0 align-items-center">
+                                <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Ccy</label>
+                                <div class="col-8">
+                                    <input type="text" id="currency" class="form-control form-control-sm" value="VND" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="supplement" class="form-label">Supplement</label>
-                    <input type="text"  id="supplementEditPosting">
+
+                <div class="row g-2 mb-2 align-items-center">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Cashier</label>
+                            <div class="col-8">
+                                <input type="text" id="crashierEditPosting" class="form-control form-control-sm" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Win.No</label>
+                            <div class="col-8">
+                                <input type="text" id="winNoEditPosting" class="form-control form-control-sm" value="1" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm text-nowrap">Post Date</label>
+                            <div class="col-8">
+                                <div data-date-input data-format="DD/MM/YYYY" business-date data-name="postingDate" disabled>
+                                    <input type="text" class="date-ui form-control form-control-sm" placeholder="Post date" disabled>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm text-nowrap">Add. Date</label>
+                            <div class="col-8">
+                                <div data-date-input data-format="DD/MM/YYYY" business-date data-name="additionalDate">
+                                    <input type="text" class="date-ui form-control form-control-sm" placeholder="Add date">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="reference" class="form-label">Reference</label>
-                    <input type="text"  id="referenceEditPosting">
+
+                <hr class="my-2" style="opacity: 0.1;">
+
+                <div class="row g-2 mb-2 align-items-center">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Check No</label>
+                            <div class="col-8">
+                                <input type="text" id="checkNoEditPosting" class="form-control form-control-sm" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-4 text-md-end pe-2 col-form-label col-form-label-sm">Article</label>
+                            <div class="col-8">
+                                <input type="text" id="articleCodeEditPosting" class="form-control form-control-sm" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-6">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-2 text-md-end col-form-label col-form-label-sm">Supplement</label>
+                            <div class="col-10 ps-4">
+                                <input type="text" id="supplementEditPosting" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="checkNo" class="form-label">Check No</label>
-                    <input type="text"  id="checkNoEditPosting" readonly>
+
+                <div class="row g-2 align-items-center mb-3">
+                    <div class="col-12">
+                        <div class="row g-0 align-items-center">
+                            <label class="col-md-1 text-md-end pe-2 col-form-label col-form-label-sm" style="min-width: 8.33%;">Ref</label>
+                            <div class="col-md-11" style="flex: 1;">
+                                <input type="text" id="referenceEditPosting" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+
 <script>
+    var checkEditOpen = false;
     function openModalEditPosting(){
-        
-        getFolioDetailMaster();
-            $('#modalEditPosting').modal('show');
+        localStorage.setItem("currentFromID", "modalEditPosting");
+        const crashierLogin = localStorage.getItem("crashierLogin");
+         getFolioDetailMaster();
+        if(crashierLogin == "NotYet"){
+            openModalShilftLogin();
+        }
+        else{
+
+            if(checkEditOpen == true){
+                initDateInputs();
+                $('#modalEditPosting').modal('show');
+
+            }
+        }
     }
+
+     // --- UTILS ---
+    function formatNumberWithComma(num) {
+        if (num === null || num === undefined || isNaN(num) || num === '') return '0,00';
+        return parseFloat(num).toLocaleString('vi-VN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function parseNumberWithComma(str) {
+        if (str === null || str === undefined || str === '') return 0;
+        if (typeof str === 'number') return str;
+        let cleanStr = str.toString().replace(/\./g, '').replace(/,/g, '.');
+        let result = parseFloat(cleanStr);
+        return isNaN(result) ? 0 : result;
+    }
+
     function closeModalEditPosting(){
         $('#modalEditPosting').modal('hide');
     }
@@ -125,37 +219,42 @@
         var grid = $("#gridContainerBilling").dxDataGrid("instance");
         var selectedRows = grid.getSelectedRowsData();
         var selectedIds = selectedRows.map(row => row.transactionNo);
-        transactionNoPost = selectedIds[0];
-        if(transactionNoPost == 0){
+        if(selectedIds.length == 0){
+            checkEditOpen = false;
             showToast('Error', 'Please choose service', false);
             return;
         }
+        transactionNoPost = selectedIds[0];
+            console.log(selectedRows);
+        checkEditOpen = true;
         $.ajax({
-            url: '/Billing/GetFolioDetailMaster',
+            url: '/Billing/GetFolioDetailMasterEdit',
             type: 'get',
             dataType: 'json',
             data: {
-                transactionNo: transactionNoPost,
+                invoiceNoPosting: selectedRows[0].invoiceNo,
             },
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                $("#roomEditPosting").val(roomNo);
-                $("#nameEditPosting").val(lastname);
-                $("#codeEditPosting").val(result.transactionCode);
-                $("#nameTransactionEditPosting").text(result.description);
-                $("#priceEditPosting").val(result.price.toLocaleString('en-US'));
-                $("#quantityEditPosting").val(result.quantity);
-                $("#amountEditPosing").val(result.amountMasterGross.toLocaleString('en-US'));
-                $("#currency").val("VND");
-                $("#crashierEditPosting").val(result.crashierNo);
-                // $("#winNo").val("30,000.00");
-                $("#postingDate").val(result.transactionDate.split('T')[0]);
-                $("#additionalDate").val(result.transactionDate.split('T')[0]);
-                $("#articleCodeEditPosting").val(result.articleCode);
-                $("#supplementEditPosting").val("");
-                $("#referenceEditPosting").val(result.reference);
-                $("#checkNoEditPosting").val(result.checkNo);
+                console.log(result);
+                 $("#roomEditPosting").val(roomNo);
+                 $("#nameEditPosting").val(lastname);
+                 $("#codeEditPosting").val(result.transactionCode);
+                 $("#nameTransactionEditPosting").text(result.description);
+                 $("#priceEditPosting").val(result.price.toLocaleString('vi-VN'));
+                 $("#quantityEditPosting").val(result.quantity);
+                const amount = Number(result.price) * Number(result.quantity);
+                $("#amountEditPosing").val(amount.toLocaleString('vi-VN'));
+                 $("#currency").val("VND");
+                 $("#crashierEditPosting").val(result.crashierNo);
+                 // $("#winNo").val("30,000.00");
+                 UI.setHiddenDate("postingDate",result.transactionDate.split('T')[0]),
+                 UI.setHiddenDate("additionalDate",result.transactionDate.split('T')[0]),
+                 $("#articleCodeEditPosting").val(result.articleCode);
+                 $("#supplementEditPosting").val(result.supplement);
+                 $("#referenceEditPosting").val(result.reference);
+                 $("#checkNoEditPosting").val(result.checkNo);
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -164,6 +263,75 @@
             }
         });
     }
+
+    $("#priceEditPosting").blur(function () {
+        var price = parseNumberWithComma($('#priceEditPosting').val());
+        var quantity = parseNumberWithComma($('#quantityEditPosting').val()) || 1;
+
+        $('#priceEditPosting').val(formatNumberWithComma(price));
+        $('#amountEditPosing').val(formatNumberWithComma(price * quantity));
+    });
+
+    $("#amountEditPosing").blur(function () {
+        var amount = parseNumberWithComma($('#amountEditPosing').val());
+        var quantity = parseNumberWithComma($('#quantityEditPosting').val()) || 1;
+
+        var price = 0;
+        if(quantity !== 0) {
+            price = amount / quantity;
+        }
+
+        $('#priceEditPosting').val(formatNumberWithComma(price));
+        $('#amountEditPosing').val(formatNumberWithComma(amount));
+    });
+
+    $("#quantityEditPosting").blur(function () {
+        var price = parseNumberWithComma($('#priceEditPosting').val()) || 0;
+        var quantity = parseNumberWithComma($("#quantityEditPosting").val()) || 1;
+
+        var newAmount = price * quantity;
+        $('#amountEditPosing').val(formatNumberWithComma(newAmount));
+    });
+
+    $("#priceEditPosting, #quantityEditPosting").on('keypress', function (e) {
+        var charCode = (e.which) ? e.which : e.keyCode;
+
+        if (charCode === 13) {
+            e.preventDefault();
+            $(this).blur();
+            return false;
+        }
+
+        if ((charCode >= 48 && charCode <= 57) || charCode === 46 || charCode === 44) {
+            return true;
+        }
+
+        return false;
+    });
+
+    $("#priceEditPosting, #quantityEditPosting").on('paste', function (e) {
+        e.preventDefault();
+        var pastedData = (e.originalEvent || e).clipboardData.getData('text/plain');
+
+        var cleanData = pastedData.replace(/[^0-9.,]/g, '');
+
+        document.execCommand("insertText", false, cleanData);
+    });
+
+    $("#priceEditPosting, #quantityEditPosting").on('blur', function () {
+        var valStr = $(this).val();
+        var cleanStr = valStr.replace(/\./g, '').replace(/,/g, '.');
+        var valNum = parseFloat(cleanStr);
+
+        if (valNum < 0) {
+            alert("Negative numbers are not allowed!");
+            $(this).val(0);
+            if($(this).attr('id') === 'quantityEditPosting') {
+                $(this).val(1); 
+            }
+        }
+    });
+
     function calculateNetPostEdit(transactionCode, price) {
         $.ajax({
             url: '/Billing/CalculateNet',
@@ -176,8 +344,10 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                $('#priceEditPosting').val(price.toLocaleString('en-US'));
-                $('#amountEditPosing').val((price * $('#quantityPostBilling').val()).toLocaleString('en-US'));
+                var quantity = parseLocaleNumber($('#quantityEditPosting').val()) || 1;
+
+                $('#priceEditPosting').val(price.toLocaleString('vi-VN'));
+                $('#amountEditPosing').val((price * quantity).toLocaleString('vi-VN'));
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -199,8 +369,10 @@
             crossDomain: false,
             headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
             success: function (result) {
-                $('#priceEditPosting').val(result.toLocaleString('en-US'));
-                $('#amountEditPosing').val((result * $('#quantityPostBilling').val()).toLocaleString('en-US'));
+                var quantity = parseLocaleNumber($('#quantityEditPosting').val()) || 1;
+
+                $('#priceEditPosting').val(result.toLocaleString('vi-VN'));
+                $('#amountEditPosing').val((result * quantity).toLocaleString('vi-VN'));
             },
             error: function (xhr, statusText, err) {
                 if (xhr.status == 401) {
@@ -209,31 +381,26 @@
             }
         });
     }
-    $("#priceEditPosting").blur(function() {
-        var price = parseFloat($('#priceEditPosting').val().replace(/,/g, ''));
-        calculateNetPostEdit($('#codeEditPosting').val(), price);
-    });
-
-    $("#amountEditPosing").blur(function() {
-        var price = parseFloat($('#amountEditPosing').val().replace(/,/g, ''));
-        calculateNetPostEdit($('#codeEditPosting').val(), price / $('#quantityEditPosting').val());
-    });
-
-    $("#quantityPostBilling").blur(function() {
-        var price = parseFloat($('#amountEditPosing').val().replace(/,/g, ''));
-        $('#amountEditPosing').val((price * $("#quantityEditPosting").val()).toLocaleString('en-US'));
-    });
 
     function EditPosting() {
         const userName = JSON.parse(localStorage.getItem("Loginname"));
         const userID = JSON.parse(localStorage.getItem("userID"));
         var formData = new FormData();
+
+        var rawPrice = parseNumberWithComma($('#priceEditPosting').val());
+        var rawAmount = parseNumberWithComma($('#amountEditPosing').val());
+        var rawQuantity = parseNumberWithComma($('#quantityEditPosting').val());
+
         formData.append('userName', userName);
         formData.append('transactionNo', transactionNoPost);
         formData.append('userID', userID);
-        formData.append('quantity', $('#quantityEditPosting').val());
-        formData.append('price',  $('#priceEditPosting').val());
-        formData.append('amount',  $('#amountEditPosing').val());
+        formData.append('quantity', rawQuantity); 
+        formData.append('price', rawPrice);       
+        formData.append('amount', rawAmount);     
+        formData.append('transactionDate', $('#additionalDate').val());
+        formData.append('supplement', $('#supplementEditPosting').val());
+        formData.append('reference', $('#referenceEditPosting').val());
+
         $.ajax({
             url: '/Billing/EditPosting',
             type: 'POST',
@@ -244,6 +411,7 @@
                 if (data.code == 0) {
                     closeModalEditPosting();
                     searchFolioDetail(0);
+                    // GetBalanceVND(idReservation); // Hàm này chưa thấy khai báo trong snippet, cẩn thận lỗi
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);

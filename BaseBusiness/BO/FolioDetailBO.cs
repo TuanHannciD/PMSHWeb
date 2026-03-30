@@ -26,7 +26,8 @@ namespace BaseBusiness.BO
         }
         public static int GetTopInvoiceNo()
         {
-            string query = "select max(cast(InvoiceNo as int)) as InvoiceNo from FolioDetail";
+            string query = @"SELECT ISNULL(MAX(CAST(InvoiceNo AS INT)), 0)FROM FolioDetail";
+
             return instance.GetFirst<int>(query);
         }
         public static int GetTopTransactioNo()
@@ -39,9 +40,14 @@ namespace BaseBusiness.BO
             string query = $"select top 1 * from FolioDetail where TransactionNo = '{transactionNo}' and (RowState in (2,1) and IsSplit = 1)";
             return instance.GetFirst<FolioDetailModel>(query);
         }
+        public static FolioDetailModel GetFolioDetailMasterEdit(string invoiceNoPosting)
+        {
+            string query = $"select  * from FolioDetail WITH (NOLOCK) where InvoiceNo  = '{invoiceNoPosting}'";
+            return instance.GetFirst<FolioDetailModel>(query);
+        }
         public static decimal CalculateBalance(int reservationID)
         {
-            string query = $"select sum(AmountMaster) as Amount from FolioDetail where ReservationID = {reservationID} and RowState = 1 AND Status = 0";
+            string query = $"select isnull(sum(AmountMaster),0) as Amount from FolioDetail where ReservationID = {reservationID} and RowState = 1 AND Status = 0";
             return instance.GetFirst<decimal>(query);
         }
 

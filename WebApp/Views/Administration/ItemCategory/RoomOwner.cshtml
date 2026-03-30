@@ -1,0 +1,271 @@
+@{
+    var roomList = ViewBag.RoomList;
+    var ownerList = ViewBag.OwnerList;
+}
+
+<div class="text-center" style="font-size: 20px">Room Owner</div>
+<div class="sticky-header bg-white p-2 shadow-sm z-3">
+
+    <div class="mt-2">
+        <button id="btnNew" class="mui-button mui-button-new"> New</button>
+        <button id="btnUpdate" class="mui-button mui-button-edit"> Edit</button>
+        <button id="btnDelete" class="mui-button mui-button-delete"> Delete</button>
+    </div>
+
+</div>
+
+<div class="mui-card">
+    <div id="gridContainerRateCode" class="mt-2 gridContainer"></div>
+</div>
+
+<!-- Modal Popup for New Item -->
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header py-2">
+                <h5 class="modal-title fs-6" id="itemModalLabel">Room Owner</h5>
+            </div>
+
+            <div class="modal-footer justify-content-start">
+                <button type="button" id="btnSaveItem" class="mui-button mui-button-save px-3">Save</button>
+                <button type="button" data-bs-dismiss="modal" class="mui-button mui-button-close">Close</button>
+            </div>
+
+            <div class="modal-body py-3">
+                <form id="formContainer">
+                    <div class="container-fluid p-0">
+                        
+                        <div class="row mb-3 align-items-center">
+                            <label for="roomID" class="col-3 col-form-label text-end pe-3">Room No:</label>
+                            <div class="col-9">
+                                <select id="roomID" name="roomID" class="tomselect-custom">
+                                    @foreach (var r in roomList)
+                                    {
+                                        <option value="@r.ID"
+                                                data-roomno="@r.RoomNo">
+                                            @r.RoomNo
+                                        </option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 align-items-center">
+                            <label for="ownerCode" class="col-3 col-form-label text-end pe-3">Owner:</label>
+                            <div class="col-9">
+                                <select id="ownerCode" name="ownerCode" class="tomselect-custom">
+                                    @foreach (var o in ownerList)
+                                    {
+                                        <option value="@o.Code"
+                                                data-name="@o.Name">
+                                            @o.Code - @o.Name
+                                        </option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="id" name="id" value="0" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="loadingSpinnerRateCode" style="display: none; text-align: center; padding: 20px;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<script>
+    var selectedRowData = null;
+
+    $(document).ready(function () {
+        reloadGrid();
+
+        $("#formContainer").on("input change", "input, select, textarea", function () {
+            if ($(this).hasClass("is-invalid")) {
+                $(this).removeClass("is-invalid");
+                $(this).next(".invalid-feedback").text("");
+            }
+        });
+     
+        $('#itemModal').on('hidden.bs.modal', function () {
+             applyValidationErrors([], "#formContainer");
+             $(".ts-wrapper").removeClass("is-invalid");
+             $(".invalid-feedback").hide();
+        });
+
+        initTomSelect(".tomselect-custom");
+    });
+
+    function loadGrid(data) {
+        const dataSource = data || [];
+        $("#gridContainerRateCode").dxDataGrid({
+            dataSource: dataSource,
+            height: 550,
+            width: "100%",
+            columnAutoWidth: true,
+            allowColumnResizing: true,  
+            selection: { mode: "single" },
+            hoverStateEnabled: true,
+            columns: [
+                { dataField: "id", visible: false },
+                { dataField: "ownerCode", caption: "Owner Code", width: "14%" },
+                { dataField: "ownerName", caption: "Owner Name", width: "23%" },
+                { dataField: "roomNo", caption: "Room No", width: "14%" },
+                { dataField: "roomID", visible: false },
+                { dataField: "createdBy", caption: "Create By", width: "9%" },
+                {
+                    dataField: "createdDate",
+                    caption: "Create Date",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    width: "12%"
+                },
+                { dataField: "updatedBy", caption: "Update By", width: "9%" },
+                {
+                    dataField: "updatedDate",
+                    caption: "Update Date",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    width: "12%"
+                }
+            ],
+            scrolling: { mode: "standard", showScrollbar: "always" },
+            filterRow: { visible: true, applyFilter: "auto" },
+            paging: { pageSize: 20 },
+            pager: { showPageSizeSelector: true, visible:true, allowedPageSizes: [20, 50, 'all'], showInfo: true,showNavigationButtons: true },
+            onSelectionChanged: function (e) {
+                selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+            }
+        });
+    }
+
+    function reloadGrid() {
+        $("#loadingSpinnerRateCode").show();
+
+        $.ajax({
+            url: "/Administration/GetRoomOwnerProfile",
+            type: 'GET',
+            cache: false,
+            success: function(data){
+                loadGrid(data);
+                $("#loadingSpinnerRateCode").hide();
+            },
+            error: function(xhr, status, error){
+                alert("Unable to load data");
+                $("#loadingSpinnerRateCode").hide();
+            }
+        });
+    }
+
+    $("#btnNew").click(function (){
+        $("#formContainer")[0].reset();
+        $("#id").val("0");
+        clearMultipleTomSelect( ['#roomID', '#ownerCode']);
+
+        $("#itemModalLabel").text("Add Room Owner");
+        $("#itemModal").modal("show");
+    });
+
+    $("#btnUpdate").click(function () {
+        if (!selectedRowData) {
+            showToast("Warning", "Please select a data row to edit.!", false);
+            return;
+        }
+
+        $("#formContainer")[0].reset();
+
+        $("#id").val(selectedRowData.id);
+
+        setTomSelectValue("#roomID", selectedRowData.roomID);
+        setTomSelectValue("#ownerCode", selectedRowData.ownerCode);
+        $("#itemModalLabel").text("Update Room Owner");
+        $("#itemModal").modal("show");
+    });
+   
+    $("#btnSaveItem").click(function (){
+
+        const id = parseInt($("#id").val()) || 0;
+        const loginName = (localStorage.getItem("Loginname") || "")
+                .trim().replace(/^"(.*)"$/,'$1') ?? "";
+        const loginUser = parseInt(localStorage.getItem("userID")) || 0;
+
+        const room = getTomSelectData("#roomID");
+        const owner = getTomSelectData("#ownerCode");
+
+        const model = {
+            ID: id,
+
+            RoomID: toBackendValue(room, "value"),
+            RoomNo: toBackendValue(room, "roomno"),
+
+            OwnerCode: toBackendValue(owner, "value"),
+            OwnerName: toBackendValue(owner, "name"),
+
+            CreatedBy: loginName,
+            UpdatedBy: loginName
+        };
+
+        $.ajax({
+            url: "/Administration/RoomOwnerProfileSave",
+            type: "POST",
+            contentType: "application/json",
+            cache: false,
+            data: JSON.stringify(model),
+            traditional: true,
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (res) {
+                if (res.success) {
+                    showToast("Success", res.message, true);
+                    $("#itemModal").modal("hide");
+                    reloadGrid();
+                } else {
+                    if (res.errors && res.errors.length > 0) {
+                        applyValidationErrors(res.errors, "#formContainer");
+                    let genErr = res.errors.find(x => x.field === "general");
+                    if (genErr) showToast("Warning", genErr.message, false)
+                    } else {
+                        showToast("Error", res.message || "Save failed", false);
+                    }
+                }
+            },
+            error: function (xhr) {
+                showToast("Error", "Request error!", false);
+                $("#itemModal").modal("hide");
+            }
+
+        });
+    });
+
+    $("#btnDelete").click(function () {
+        if (!selectedRowData) {
+            showToast("Warning", "Please select the line you want to delete!", false);
+            return;
+        }
+
+        if (confirm("Are you sure you want to remove the owner of this room?")) {
+            $.ajax({
+                url: "/Administration/RoomOwnerProfileDelete",
+                type: "POST",
+                data: { id: selectedRowData.id },
+                success: function (res) {
+                    if (res.success) {
+                        showToast("Success", "Deleted successfully!", true);
+                        reloadGrid();
+                    } else {
+                        showToast("Error", res.message || "Error while deleting", false);
+                    }
+                }
+            });
+        }
+    });
+
+</script>

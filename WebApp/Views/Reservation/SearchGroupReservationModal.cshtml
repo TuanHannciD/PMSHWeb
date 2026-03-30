@@ -1,0 +1,396 @@
+@{
+    Layout = null;
+}
+
+<style>
+
+</style>
+<div class="modal fade" id="modalSearchGroupReservation" tabindex="-1" aria-labelledby="modalGroupReservationLabel"
+     aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable modal-4by3">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalGroupReservationLabel">
+                    Group Reservation
+                </h5>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+                <!-- Action buttons -->
+                <div class="search-filter">
+                    <div class="py-2">
+                        <button class="mui-button mui-button-new" onclick="searchGroupReservation()">View</button>
+                        <button class="mui-button mui-button-new" id="btnExportExcel">Excel</button>
+                        <button class="mui-button mui-button-new"
+                                onclick="clearModalSearchGroupReservation()">Refesh</button>
+                        <button class="mui-button mui-button-new"
+                                onclick="closeModalSearchGroupReservation()">Close</button>
+                    </div>
+                    <!-- Filters -->
+                    <div id="partial-content">
+                        <div class="row">
+
+                            <!-- From Date -->
+                            <div class="col-12 col-md-3 mt-1">
+                                <div class="row g-2">
+                                    <label class="col-12 col-md-4 col-form-label text-md-end">
+                                        From Date
+                                    </label>
+                                    <div class="col-12 col-md-8">
+                                        <div class="clearable" data-date-input data-format="DD/MM/YYYY" business-date
+                                             data-name="fromDateSearch">
+                                            <input type="text" class="date-ui form-control clearable"
+                                                   placeholder="dd/mm/yyyy" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- To Date -->
+                            <div class="col-12 col-md-3 mt-1">
+                                <div class="row g-2">
+                                    <label class="col-12 col-md-4 col-form-label text-md-end">
+                                        To Date
+                                    </label>
+                                    <div class="col-12 col-md-8">
+                                        <div class="clearable" data-date-input data-format="DD/MM/YYYY" business-date
+                                             data-name="toDateSearch">
+                                            <input type="text" class="date-ui form-control clearable"
+                                                   placeholder="dd/mm/yyyy" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Num. Room (min) -->
+                            <div class="col-12 col-md-3 mt-1">
+                                <div class="row g-2">
+                                    <label class="col-12 col-md-6 col-form-label text-md-end">
+                                        Num. Room (min)
+                                    </label>
+                                    <div class="col-12 col-md-6">
+                                        <input type="number" class="form-control text-end" id="numRoomSearch"
+                                               value="1" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Grid -->
+                <div class="searchGRRES gridContainer mt-2">
+                    <div id="gridGroupVerContainer"></div>
+                    <div id="loadingSpinnerRateCode" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+                        z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+                        height: 100%;display: flex;align-items: center;justify-content: center;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function CreateProfile(account, lastName, firstName, middleName) {
+        var formData = new FormData();
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        formData.append('AccountIndividual', account);
+        formData.append('LastNameIndivdual', lastName);
+        formData.append('FirstNameIndividual', firstName);
+        formData.append('MiddleNameIndividual', middleName);
+        formData.append('userID', userID);
+
+        $.ajax({
+            url: '/Profile/SaveProfileInReservation',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                if (data.code == 0) {
+                    showToast('Success', data.msg, true);
+                    $('#name').val(data.id);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
+
+    }
+
+    // async function openModalSearchGroupReservation() {
+    //     await searchGroupReservation();
+    //     clearModalSearchGroupReservation();
+    //     $('#modalSearchGroupReservation').modal('show');
+    // }
+
+    async function openModalSearchGroupReservation() {
+        $('#fromDateSearch').val($('#fromDateSearch').val() || dateSystem);
+        $('#toDateSearch').val($('#toDateSearch').val() || dateSystem);
+
+        // 2. Hiển thị Modal trước
+        $('#modalSearchGroupReservation').modal('show');
+
+        // 3. Khởi tạo grid (Dữ liệu sẽ tự load qua CustomStore)
+        setTimeout(function () {
+            initializeDataGridSearch();
+        }, 200);
+    }
+
+    function closeModalSearchGroupReservation() {
+        $('#modalSearchGroupReservation').modal('hide');
+        clearModalSearchGroupReservation();
+    }
+
+    function clearModalSearchGroupReservation() {
+        reloadBusinessDate();
+    }
+
+    function searchGroupReservation() {
+        // Hiện loading
+        $('#gridGroupVerContainer').hide();
+
+        // Khởi tạo Grid lần đầu hoặc refresh nếu đã có
+        var gridInstance = $("#gridGroupVerContainer").dxDataGrid("instance");
+        if (gridInstance) {
+            gridInstance.refresh(); // Tự động gọi lại load() của CustomStore
+        } else {
+            initializeDataGridSearch();
+        }
+    }
+
+    function initializeDataGridSearch() {
+        $("#gridGroupVerContainer").dxDataGrid({
+            dataSource: new DevExpress.data.CustomStore({
+                key: "uniqueID",
+                load: function (loadOptions) {
+                    let d = $.Deferred();
+
+                    // Lấy các giá trị lọc từ giao diện
+                    // Lưu ý: Cần đảm bảo format ngày tháng gửi lên là YYYY-MM-DD
+                    let params = {
+                        fromDate: $('#fromDateSearch').val() || dateSystem,
+                        toDate: $('#toDateSearch').val() || dateSystem,
+                        noOfRoom: $('#numRoomSearch').val() || 1,
+                        skip: loadOptions.skip || 0,
+                        take: loadOptions.take || 20
+                    };
+                    $("#loadingSpinnerRateCode").show();
+                    $.ajax({
+                        url: '/Reservation/SearchGroupReservationTest',
+                        type: 'GET',
+                        data: params,
+                        dataType: 'json',
+                        success: function (result) {
+                            const mappedData = result.data.map((item, index) => ({
+                                ...item,
+                                uniqueID: item.confirmationNo + "_" + (loadOptions.skip + index)
+                            }));
+
+                            d.resolve({
+                                data: mappedData,
+                                totalCount: result.totalCount
+                            });
+
+                            $('#gridGroupVerContainer').show();
+                            $("#loadingSpinnerRateCode").hide();
+
+                        },
+                        error: function (xhr) {
+                            $("#loadingSpinnerRateCode").hide();
+                            d.reject("Data Loading Error");
+                            showToast('Error', 'Cannot load group reservations', false);
+                        }
+                    });
+
+                    return d.promise();
+                }
+            }),
+            // onSelectionChanged: function(e) {
+            //     const selectedRow = e.selectedRowsData[0];
+            //     if (selectedRow) {
+            //         console.log("Số xác nhận thực tế là:", selectedRow.confirmationNo);
+            //     }
+            // },
+            loadPanel: {
+                enabled: false
+            },
+            height: "100%",
+            showBorders: true,
+            hoverStateEnabled: true,
+            wordWrapEnabled: true,
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            selection: { mode: "single" },
+            scrolling: {
+                mode: "standard",
+                showScrollbar: "always",
+                useNative: true
+            },
+            remoteOperations: {
+                paging: true //Cho Grid biết Server sẽ xử lý phân trang
+            },
+            paging: {
+                pageSize: 20,
+                enabled: true
+            },
+            pager: {
+                visible: true,
+                allowedPageSizes: [20, 50, 100],
+                showPageSizeSelector: true,
+                showInfo: true,
+                showNavigationButtons: true
+            },
+            filterRow: { visible: true, applyFilter: "auto" },
+            columns: [
+                // ===== IDENTIFICATION =====
+                { dataField: "confirmationNo", caption: "Conf. No", width: 60 },
+                { dataField: "crsNo", caption: "CRS No", width: 80 },
+                { dataField: "reservationTypeCode", caption: "Res Type", width: 150 },
+
+                // ===== ROOM / PERSON =====
+                { dataField: "totalRoom", caption: "Nbr", width: 60 },
+                { dataField: "roomNight", caption: "Rm. Nights", width: 75, },
+                { dataField: "persons", caption: "Pers", width: 60, },
+                { dataField: "roomOccupancy", caption: "Rm. Occup", width: 70, format: { type: "fixedPoint", precision: 2 } },
+                { dataField: "personRoom", caption: "Pers/Ro.", width: 60, format: { type: "fixedPoint", precision: 2 } },
+
+                // ===== DATE =====
+                {
+                    dataField: "arrivalDate",
+                    caption: "Arr. Date",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    width: 80
+                },
+                {
+                    dataField: "departureDate",
+                    caption: "Dep. Date",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    width: 80
+                },
+                { dataField: "nights", caption: "Nights", width: 60, },
+                {
+                    dataField: "reservationDate",
+                    caption: "Res. Date",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    width: 80
+                },
+
+                // ===== PARTY =====
+                { dataField: "reservationHolder", caption: "Reservation Holder", width: 250 },
+                { dataField: "saleInCharge", caption: "Sale In Charge", width: 100 },
+                { dataField: "groupCode", caption: "Group Code", width: 100 },
+
+                // ===== MARKET =====
+                { dataField: "marketCode", caption: "Market", width: 150 },
+                { dataField: "sourceCode", caption: "Source", width: 90 },
+
+                // ===== FINANCIAL =====
+                {
+                    dataField: "price",
+                    caption: "Price",
+                    width: 80, format: { type: "fixedPoint", precision: 2 }
+                },
+                {
+                    dataField: "amountBeforTax",
+                    caption: "A. Before Tax",
+                    width: 80, format: { type: "fixedPoint", precision: 2 }
+                },
+                {
+                    dataField: "amountAfterTax",
+                    caption: "A. After Tax",
+                    width: 80, format: { type: "fixedPoint", precision: 2 }
+                },
+                { dataField: "currencyID", caption: "Curr", width: 50 },
+
+                // ===== OPTION =====
+                {
+                    dataField: "optionDate",
+                    caption: "Option Date",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    width: 80
+                },
+                { dataField: "optionDateDesc", caption: "Option Desc", width: 100 }
+
+            ]
+        });
+    }
+
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridGroupVerContainer").dxDataGrid("instance"); var selectedReport2 = 'Group Reservation';
+        var selectedReport = 'Group Reservation';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook(); const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const worksheet = workbook.addWorksheet("Sheet 1");
+
+        // === Tạo header công ty (dòng 1) ===
+        worksheet.addRow([companyName]);
+        worksheet.mergeCells('A1:E1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+
+        // === Dòng 2: Thời gian xuất (phải) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+        worksheet.mergeCells('E2:H2');
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+
+        // === Dòng 3–4: Trống
+        worksheet.addRow([]);
+        worksheet.addRow([]);
+
+        // === Dòng 5: Tên báo cáo ở giữa ===
+        const reportRow = worksheet.addRow(['', '', selectedReport]);
+        worksheet.mergeCells('C5:F5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // === Dòng 6: Trống trước khi xuất dữ liệu
+        worksheet.addRow([]);
+
+        // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+        }).then(function () {
+            // Footer
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+            // Ghi file
+            let fileName = selectedReport + ".xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            });
+        });
+    });
+</script>

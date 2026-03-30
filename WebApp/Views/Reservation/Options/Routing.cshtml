@@ -3,14 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Routing Instructions</h5>
-                <button type="button" class="btn-close" onclick="closeModalRouting()"></button>
+    @*             <button type="button" class="btn-close" onclick="closeModalRouting()"></button> *@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="openModalNewRouting();"><i class="fa-solid fa-code-pull-request"></i> New</button>
-                    <button class="mui-button mui-button-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                    <button class="mui-button mui-button-delete"><i class="fa-solid fa-trash"></i> Delete</button>
-                    <button class="mui-button mui-button-close" onclick="closeModalRouting();"><i class="fas fa-times"></i> Close</button>
+
+                    <button class="mui-button mui-button-new" onclick="openModalNewRouting();"> New</button>
+
+                    <button class="mui-button mui-button-new" onclick="closeModalRouting();"> Close</button>
                 </div>
                 <div class="mui-divider"></div>
 
@@ -30,12 +30,13 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Routing</h5>
-                <button type="button" class="btn-close" onclick="closeModalNewRouting()"></button>
+            @*     <button type="button" class="btn-close" onclick="closeModalNewRouting()"></button> *@
             </div>
             <div class="modal-body">
                 <div>
                     <button class="mui-button mui-button-search" onclick="SaveRouting();"><i class="fa-solid fa-file-circle-check"></i> OK</button>
-                    <button class="mui-button mui-button-clear" onclick="closeModalNewRouting();"><i class="fa-solid fa-file"></i>Close</button>
+                    <button class="mui-button mui-button-clear" onclick="closeModalNewRouting();">Close</button>
+
                 </div>
 
                 <div class="mt-2 row bg-light border rounded" style="margin:0 1px">
@@ -68,11 +69,11 @@
                         <div class="col-md-6 row">
                             <div class="mb-2">
                                 <label class="col-md-2" style="text-align:left;min-width:0">BeginDate</label>
-                                <input type="date" class="form-control col-md-10" id="beginDateRouting">
+                                <input type="date" class="col-md-10" id="beginDateRouting">
                             </div>
                             <div class="mb-2">
                                 <label  class="col-md-2" style="text-align:left;min-width:0">EndDate</label>
-                                <input type="date" class="form-control col-md-10" id="endDateRouting">
+                                <input type="date" class="col-md-10" id="endDateRouting">
                             </div>
                         </div>
                     </div>
@@ -80,27 +81,27 @@
                     <div class="row">
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Room</label>
-                            <select type="text" class="form-control col-md-10" id="roomRouting" disabled></select>
+                            <select type="text" class="col-md-10" id="roomRouting" disabled></select>
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Transaction</label>
-                            <select type="text" class="form-control col-md-10" id="transactionRouting" asp-items="ViewBag.cboTransaction" ></select>
+                            <select type="text" class="col-md-10" id="transactionRouting" asp-items="ViewBag.cboTransaction" ></select>
                         </div>
                         <div class="col-md-6 mb-2 row">
                             <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Limit</label>
-                            <input type="text" class="form-control col-md-8" id="limitRouting" value="0">
+                            <input type="text" class="col-md-8" id="limitRouting" value="0">
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Name</label>
-                            <input type="text" class="form-control col-md-10" id="nameRouting" disabled>
+                            <input type="text" class="col-md-10" id="nameRouting" disabled>
                         </div>
                         <div class="col-md-12 mb-2 row">
                             <label for="input1" class="form-label col-md-2" style="min-width:0;text-align:left">Address</label>
-                            <input type="text" class="form-control col-md-10" id="addressRouting" disabled>
+                            <input type="text" class="col-md-10" id="addressRouting" disabled>
                         </div>
-                        <div class="col-md-6 mb-2 row">
-                            <label for="input1" class="form-label col-md-4" style="min-width:0;text-align:left">Window</label>
-                            <select type="text" class="form-control col-md-8" id="windowRouting">
+                        <div class="col-md-12 mb-2 row">
+                            <label for="input1" style="min-width:0;text-align:left">Window</label>
+                            <select type="text" id="windowRouting">
                                 <option value="1" selected>--Master Folio--</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -128,6 +129,8 @@
           let formattedDate2 = arivalDate.split(" ")[0].split("/").reverse().join("-"); // Chuyển thành 2024-08-30
         $('#endDateRouting').val(formattedDate2);
         GetRoutingByReservationID(idReservation,confirmationNo);
+                    searchRoomRouting();
+
         $('#modalRouting').modal('show');
     }
     function closeModalRouting(){
@@ -191,7 +194,7 @@
                 { dataField: "fromDate", caption: "Begin Date"},
                 { dataField: "toDate", caption: "End Date"},
                 { dataField: "roomNo", caption: "RoomNo"},
-                { dataField: "toFolioNo", caption: "Windown"},
+                { dataField: "toFolioNo", caption: "Window"},
                 { dataField: "limit", caption: "Limit"},
  
             ],
@@ -243,6 +246,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     GetRoutingByReservationID(idReservation,confirmationNo);
+                    showToast("Success",data.msg,true);
                     closeModalNewRouting();
                 } else {
                     showToast('Error', data.msg, false);
@@ -256,10 +260,12 @@
 
     }
     function clearFormAddRouting(){
+        $('#roomRouting').val(0);
         $('#nameRouting').val(lastname);
         $('#windowRouting').val(1);
-        $('#transactionRouting').val(0);
-         $('#limit').val('0');
+        const tomselectInstance = $('#transactionRouting')[0].tomselect;
+        tomselectInstance.setValue('0');
+        $('#limitRouting').val('0');
         const parsedDate = moment(arivalDate, ['DD/MM/YYYY', 'MM/DD/YYYY']); // Hỗ trợ cả hai định dạng
         const formattedDate = parsedDate.format('YYYY-MM-DD'); // Chuyển thành yyyy-mm-d        
         $('#beginDateRouting').val(formattedDate);
@@ -278,7 +284,7 @@
             success: function (result) {
                 console.log(result);
                 $('#roomRouting').empty();
-                var html = `<option value="0"></option>`;
+                var html = `<option value="0" selected>Select room </option>`;
                 if(result.length > 0){
                     for(var i = 0;i<result.length;i++){
                         html += `<option value="${result[i].id}">${result[i].lastName}</option>`
@@ -299,7 +305,10 @@
             $('#roomRouting').prop('disabled', false);
             $('#amountDepositRequest').prop('disabled', false);
             $('#amountDepositRequest').prop('disabled', false);
-            searchRoomRouting();
+        }
+        else{
+            $('#roomRouting').prop('disabled', true);
+
         }
     });
     var reservationMaster = 0;

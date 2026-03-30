@@ -6,22 +6,25 @@
         align-items: center;
         min-height: 100vh;
         width: 100%;
-        background: #f5f5f5; /* Dark neon gradient */
+        background: #f5f5f5;
+        /* Dark neon gradient */
         padding: 10px 20px;
         overflow-x: auto;
-        position: relative; /* For overlay positioning */
+        position: relative;
+        /* For overlay positioning */
     }
 
-        /* Header styling */
-        .nightaudit-container h1 {
-            font-size: 3.2rem;
-            font-weight: 700;
-            color: #0055b8; /* Neon cyan */
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
-            animation: neonGlow 1.5s ease-in-out infinite alternate;
-        }
+    /* Header styling */
+    .nightaudit-container h1 {
+        font-size: 3.2rem;
+        font-weight: 700;
+        color: #009444;
+        /* Neon cyan */
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        margin-bottom: 10px;
+        animation: neonGlow 1.5s ease-in-out infinite alternate;
+    }
 
     /* Business date styling */
     .nightaudit-business-date2 {
@@ -43,92 +46,97 @@
         margin-bottom: 30px;
     }
 
-        /* Table header */
-        .nightaudit-table_nightaudit th {
-            background: #0055b8;
-            color: #ffffff;
-            padding: 8px 20px;
-            text-align: left;
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.95rem;
-        }
+    /* Table header */
+    .nightaudit-table_nightaudit th {
+        background: #009444;
+        color: #ffffff;
+        padding: 8px 20px;
+        text-align: left;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+    }
 
-        /* Table rows */
-        .nightaudit-table_nightaudit tr {
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
+    /* Table rows */
+    .nightaudit-table_nightaudit tr {
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
 
-        /* Table cells */
-        .nightaudit-table_nightaudit td {
-            padding: 8px 20px;
-            font-size: 14px;
-            color: #000000;
-            border: none;
-        }
+    /* Table cells */
+    .nightaudit-table_nightaudit td {
+        padding: 8px 20px;
+        font-size: 14px;
+        color: #000000;
+        border: none;
+    }
 
-        /* Status text styling */
-        .nightaudit-table_nightaudit .status-success {
-            color: #6aa84f;
-            font-weight: bold;
-        }
+    /* Status text styling */
+    .nightaudit-table_nightaudit .status-success {
+        color: #6aa84f;
+        font-weight: bold;
+    }
 
-        .nightaudit-table_nightaudit .status-fail {
-            color: #990000;
-            font-weight: bold;
-        }
+    .nightaudit-table_nightaudit .status-fail {
+        color: #990000;
+        font-weight: bold;
+    }
 
-        /* Process icon styling */
-        .nightaudit-table_nightaudit .fa-spinner {
-            color: #0055b8; /* Blue for in-progress */
-        }
+    /* Process icon styling */
+    .nightaudit-table_nightaudit .fa-spinner {
+        color: #009444;
+        /* Blue for in-progress */
+    }
 
-        .nightaudit-table_nightaudit .fa-circle-check {
-            color: #6aa84f; /* Green for success */
-        }
+    .nightaudit-table_nightaudit .fa-circle-check {
+        color: #6aa84f;
+        /* Green for success */
+    }
 
-        .nightaudit-table_nightaudit .fa-circle-xmark {
-            color: #990000; /* Red for fail */
-        }
+    .nightaudit-table_nightaudit .fa-circle-xmark {
+        color: #990000;
+        /* Red for fail */
+    }
 
     /* Buttons container */
     .nightaudit-buttons {
         display: flex;
         gap: 20px;
+        width: 100%;
+        max-width: 500px;
     }
 
-        /* Button styling */
-        .nightaudit-buttons button {
-            padding: 8px;
+    /* Button styling */
+    .nightaudit-buttons button {
+            flex: 1;
+            padding: 10px 0;
             font-size: 14px;
             font-weight: 500;
             border-radius: 4px;
-            color: #0055b8;
             cursor: pointer;
             border: none;
         }
 
-        /* Start button */
-        .nightaudit-buttons #start {
-            background: #0055b8;
-            color: #FFFFFF;
-        }
+    /* Start button */
+    .nightaudit-buttons #start {
+        background: #009444;
+        color: #FFFFFF;
+    }
 
-        /* Close button */
-        .nightaudit-buttons #close {
-            background: #ECECEC;
-            color: #000000;
-        }
+    /* Close button */
+    .nightaudit-buttons #close {
+        background: #ECECEC;
+        color: #000000;
+    }
 
-        /* Disabled button state */
-        .nightaudit-buttons button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+    /* Disabled button state */
+    .nightaudit-buttons button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
 
     /* Progress bar container */
     .progress-bar-container {
@@ -144,7 +152,7 @@
     .progress-bar {
         width: 0%;
         height: 30px;
-        background: #0055b8;
+        background: #009444;
         transition: width 0.3s ease;
         text-align: center;
         line-height: 30px;
@@ -157,12 +165,17 @@
         color: #000000;
         font-size: 1.5rem;
     }
+
+    .nightaudit-table_nightaudit th,
+    .nightaudit-table_nightaudit td {
+        border-right: 1px solid rgba(0, 0, 0, 0.2);
+    }
 </style>
 <div class="nightaudit-container">
     <h1>END OF DAY</h1>
     <div class="nightaudit-business-date2">Business Date: <span id="value"></span></div>
     <div class="nightaudit-buttons">
-        <button id="start" onclick="RunNightAudit();">Start Night Audit</button>
+        <button id="start" onclick="RunNightAudit();">Start</button>
         <button id="close" onclick="window.location.href='/Home/Index'">Close</button>
     </div>
     <table class="nightaudit-table_nightaudit">
@@ -273,7 +286,8 @@
     </table>
 
     <!-- Bootstrap Modal for Progress -->
-    <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true"
+        data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
@@ -286,6 +300,9 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("FormNotice/NotCheckIn")
+@await Html.PartialAsync("FormNotice/NotCheckOut")
+
 <script>
     $(document).ready(function () {
         getBusinessDate();
@@ -353,7 +370,19 @@
         const now = new Date();
         return now.toLocaleTimeString('en-US', { hour12: false });
     }
+    function EndNightAudit() {
+        $.ajax({
+            url: '/NightAudit/EndNightAudit',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
 
+            },
+            error: function (xhr, statusText, err) {
+            }
+        });
+    }
     function RunNightAudit() {
         showProgressOverlay();
         updateProgress(1, 'System Checking');
@@ -385,6 +414,7 @@
                     setProcess('process1', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status1', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -393,6 +423,7 @@
                 setProcess('process1', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status1', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -416,9 +447,9 @@
                     setStatus('status2', 'Success');
                     CheckOutNotCO();
                 } else {
-                    setProcess('process2', '<i class="fa-solid fa-circle-xmark"></i>');
-                    setStatus('status2', 'Fail');
                     hideProgressOverlay();
+                    openModalNotCheckIn(data.data);
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -427,6 +458,7 @@
                 setProcess('process2', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status2', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -450,9 +482,10 @@
                     setStatus('status3', 'Success');
                     Preprocess();
                 } else {
-                    setProcess('process3', '<i class="fa-solid fa-circle-xmark"></i>');
-                    setStatus('status3', 'Fail');
                     hideProgressOverlay();
+                    openModalNotCheckOut(data.data);
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -461,6 +494,7 @@
                 setProcess('process3', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status3', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -487,6 +521,7 @@
                     setProcess('process4', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status4', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
@@ -495,6 +530,7 @@
                 setProcess('process4', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status4', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -529,6 +565,7 @@
                 setProcess('process5', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status5', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
             }
         });
     }
@@ -562,6 +599,7 @@
                 $('#timeEnd7').text(endTime);
                 $('#timeEnd8').text(endTime);
                 if (data.code == 0) {
+                    console.log(data);
                     setProcess('process6', '<i class="fa-solid fa-circle-check"></i>');
                     setStatus('status6', 'Success');
                     setProcess('process7', '<i class="fa-solid fa-circle-check"></i>');
@@ -570,6 +608,7 @@
                     setStatus('status8', 'Success');
                     ChangeRoomStatus();
                 } else {
+                    console.log(data);
                     setProcess('process6', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status6', 'Fail');
                     setProcess('process7', '<i class="fa-solid fa-circle-xmark"></i>');
@@ -577,10 +616,12 @@
                     setProcess('process8', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status8', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
                 }
             },
             error: function (xhr, statusText, err) {
                 const endTime = getCurrentTime();
+                console.log(endTime);
                 $('#timeEnd6').text(endTime);
                 $('#timeEnd7').text(endTime);
                 $('#timeEnd8').text(endTime);
@@ -591,6 +632,8 @@
                 setProcess('process8', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status8', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -625,6 +668,8 @@
                     setProcess('process9', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status9', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -633,6 +678,8 @@
                 setProcess('process9', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status9', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -667,6 +714,8 @@
                     setProcess('process10', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status10', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -675,6 +724,8 @@
                 setProcess('process10', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status10', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -709,6 +760,8 @@
                     setProcess('process11', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status11', 'Fail');
                     hideProgressOverlay();
+                    EndNightAudit();
+
                 }
             },
             error: function (xhr, statusText, err) {
@@ -717,6 +770,8 @@
                 setProcess('process11', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status11', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }
@@ -748,10 +803,11 @@
                     setStatus('status12', 'Success');
                     localStorage.setItem("businessDate", JSON.stringify(formattedNextDate));
                     const businessDateF = JSON.parse(localStorage.getItem("businessDate"));
-                            $("#businessDate").text(`Business Date : ${businessDateF}`);
+                    $("#businessDate").text(`Business Date : ${businessDateF}`);
                 } else {
                     setProcess('process12', '<i class="fa-solid fa-circle-xmark"></i>');
                     setStatus('status12', 'Fail');
+                    EndNightAudit();
                 }
                 hideProgressOverlay();
             },
@@ -761,6 +817,8 @@
                 setProcess('process12', '<i class="fa-solid fa-circle-xmark"></i>');
                 setStatus('status12', 'Fail');
                 hideProgressOverlay();
+                EndNightAudit();
+
             }
         });
     }

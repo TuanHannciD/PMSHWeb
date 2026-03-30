@@ -1,0 +1,1734 @@
+﻿@using DevExpress.XtraReports.UI
+
+@{
+    var transactionsList = ViewBag.TransactionsList;
+    var currList = ViewBag.CurrencyList;
+    var transactionGroupList = ViewBag.TransactionGroupList;
+    var transactionSubGroupList = ViewBag.TransactionSubGroupList;
+    var vatTypeList = ViewBag.VatTypeList;
+    var transactionTypeList = ViewBag.TransactionTypeList;
+    var listARAccountList = ViewBag.listARAccountList;
+}
+
+<!-- =========================================================
+     MAIN VIEW (Everything is a Bootstrap modal) - modal-xl
+     ========================================================= -->
+<div class="modal fade" id="trans_modalMain" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-4by3 modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Transaction Code Search</h5>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="search-filter">
+                    <!-- Toolbar -->
+                    <div>
+                        <button id="trans_btnView" type="button" class="mui-button button-report-view">View</button>
+                        <button id="trans_btnNew" type="button" class="mui-button mui-button-new">New</button>
+                        <button id="trans_btnEdit" type="button" class="mui-button mui-button-edit">Edit</button>
+                        <button id="trans_btnDelete" type="button" class="mui-button button-report-delete">Delete</button>
+                        <button id="trans_btnExcel" type="button" class="mui-button mui-button-export">Excel</button>
+                        <button id="trans_btnClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                    <!-- ERP Search Filter (dense, nested rows, right aligned labels) -->
+                    <div class="row g-2 mt-1">
+
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_transactionGroupList">Group.Code</label>
+                                <div class="col-md-8">
+                                    <select id="trans_transactionGroupList" name="trans_transactionGroupList" class="tomselect-custom">
+                                        <option value="">-- Group --</option>
+                                        @foreach (var item in transactionGroupList)
+                                        {
+                                            <option value="@item.ID">@item.Code</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-5 col-form-label col-form-label-sm text-md-end" for="trans_transactionSubGroupList">Subgroup.Code</label>
+                                <div class="col-md-7">
+                                    <select id="trans_transactionSubGroupList" name="trans_transactionSubGroupList" class="tomselect-custom">
+                                        <option value="">-- Subgroup --</option>
+                                        @foreach (var item in transactionSubGroupList)
+                                        {
+                                            <option value="@item.ID" data-groupid="@item.TransactionGroupID">@item.Code</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_transCode">Trans.Code</label>
+                                <div class="col-md-8">
+                                    <input id="trans_transCode" name="trans_transCode" type="text" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_adjCode">Adj.Code</label>
+                                <div class="col-md-8">
+                                    <input id="trans_adjCode" name="trans_adjCode" type="text" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-lg-2 col-form-label col-form-label-sm text-md-end" for="trans_description">Description</label>
+                                <div class="col-md-8">
+                                    <input id="trans_description" name="trans_description" type="text" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Grid -->
+                <div class="mui-card">
+                    <div id="trans_grid" class="gridContainer"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     EDIT/CREATE MODAL (modal-xl) - replaces #popupNewTransaction
+     Includes Generate actions
+     ========================================================= -->
+<div class="modal fade" id="trans_modalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="trans_modalEditTitle">Transaction Screen</h5>
+            </div>
+
+            <div class="modal-body pt-2">
+
+                <div class="search-filter">
+                    <button id="trans_btnOk" type="button" class="mui-button mui-button-advance">Ok</button>
+                    <button id="trans_btnSave" type="button" class="mui-button mui-button-advance">Save</button>
+                    <button id="trans_btnDeleteAuto" type="button" class="mui-button button-report-delete">Delete</button>
+                    <button id="trans_btnGenerate" type="button" class="mui-button mui-button-resolve">Generate</button>
+                    <button id="trans_btnEditClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <div class="mt-1 mb-2">
+                    <form id="trans_formEdit" novalidate>
+                        <input type="hidden" id="trans_id" name="trans_id" />
+                        <input type="hidden" id="trans_generateID" name="trans_generateID" />
+                        <input type="hidden" id="trans_transactionGroupID" name="trans_transactionGroupID" />
+                        <input type="hidden" id="trans_groupType" name="trans_groupType" />
+                        <input type="hidden" id="trans_groupCode" name="trans_groupCode" />
+
+                        <div class="row g-2">
+
+                            <!-- SubGroup -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_transactionNewSubGroupList">SubGroup</label>
+                                    <div class="col-md-8">
+                                        <select id="trans_transactionNewSubGroupList" name="trans_transactionNewSubGroupList" class="tomselect-custom">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Group (readonly code) -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_groupnew">Group</label>
+                                    <div class="col-md-8">
+                                        <input id="trans_groupnew" name="trans_groupnew" type="text" class="form-control form-control-sm" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- VAT -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_vatinfor">VAT.Infor</label>
+                                    <div class="col-md-8">
+                                        <select id="trans_vatinfor" name="trans_vatinfor" class="tomselect-custom">
+                                            <option value="">-- Select a Item --</option>
+                                            @foreach (var item in vatTypeList)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trans.Type -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_transactionTypeList">Trans.Type</label>
+                                    <div class="col-md-8">
+                                        <select id="trans_transactionTypeList" name="trans_transactionTypeList" class="tomselect-custom">
+                                            <option value=""></option>
+                                            @foreach (var item in transactionTypeList)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Code -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_codenew">Code</label>
+                                    <div class="col-md-8">
+                                        <input id="trans_codenew" name="trans_codenew" type="text" class="form-control form-control-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_descriptionnew">Description</label>
+                                    <div class="col-md-8">
+                                        <input id="trans_descriptionnew" name="trans_descriptionnew" type="text" class="form-control form-control-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Adj.Code -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_transactionsListnew">Adj.Code</label>
+                                    <div class="col-md-8">
+                                        <select id="trans_transactionsListnew" name="trans_transactionsListnew" class="tomselect-custom">
+                                            @foreach (var item in transactionsList)
+                                            {
+                                                <option value="@item.Code">@item.Code-@item.Description</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_dfprice">Price</label>
+                                    <div class="col-md-8">
+                                        <input id="trans_dfprice" name="trans_dfprice" type="text" class="form-control form-control-sm text-md-end" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Currency -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_currList">Currency</label>
+                                    <div class="col-md-8">
+                                        <select id="trans_currList" name="trans_currList" class="tomselect-custom">
+                                            <option value="">-ALL--</option>
+                                            @foreach (var item in currList)
+                                            {
+                                                <option value="@item.ID">@item.ID-@item.Description</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tax include -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8">
+                                        <div class="form-check">
+                                            <input type="checkbox" id="trans_isTaxInclude" name="trans_isTaxInclude" value="1">
+                                            <label class="form-check-label" for="trans_isTaxInclude">Tax Include</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Inactive -->
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8">
+                                        <div class="form-check">
+                                            <input type="checkbox" id="trans_inactive" name="trans_inactive" value="1">
+                                            <label class="form-check-label" for="trans_inactive">Inactive</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AR Account (enabled/disabled by group type logic) -->
+                            <div class="col-12 col-lg-6" data-trans-role="arAccount">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_listARAccountList">AR. Account</label>
+                                    <div class="col-md-8">
+                                        <select id="trans_listARAccountList" name="trans_listARAccountList" class="tomselect-custom">
+                                            <option value=""></option>
+                                            @foreach (var item in listARAccountList)
+                                            {
+                                                <option value="@item.AccountNo">@item.AccountNo-@item.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Checkbox blocks (kept but compact) -->
+                        <div class="mt-2 border rounded-2 p-2">
+                            <div class="row g-2">
+
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check" data-trans-scope="pnlRevenue">
+                                            <input type="checkbox" id="trans_revenueGroup" name="trans_revenueGroup">
+                                            <label class="form-check-label" for="trans_revenueGroup">Revenue group</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlRevenuememberShip">
+                                            <input type="checkbox" id="trans_memberShip" name="trans_memberShip">
+                                            <label class="form-check-label" for="trans_memberShip">Member ship</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlRevenue">
+                                            <input type="checkbox" id="trans_manualPosting" name="trans_manualPosting">
+                                            <label class="form-check-label" for="trans_manualPosting">Manual posting</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlRevenue">
+                                            <input type="checkbox" id="trans_paidOut" name="trans_paidOut">
+                                            <label class="form-check-label" for="trans_paidOut">Paid out</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlRevenuedis">
+                                            <input type="checkbox" id="trans_generateInclusive" name="trans_generateInclusive" disabled>
+                                            <label class="form-check-label" for="trans_generateInclusive">Generates inclusive</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlRevenuedis">
+                                            <input type="checkbox" id="trans_trackNights" name="trans_trackNights" disabled>
+                                            <label class="form-check-label" for="trans_trackNights">Track nights</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="interHotelSales">
+                                            <input type="checkbox" id="trans_interHotelSales" name="trans_interHotelSales" disabled>
+                                            <label class="form-check-label" for="trans_interHotelSales">Inter Hotel Sales</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check" data-trans-scope="pnlPayment">
+                                            <input type="checkbox" id="trans_frontOfficePayments" name="trans_frontOfficePayments">
+                                            <label class="form-check-label" for="trans_frontOfficePayments">Front Office Payments</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPayment">
+                                            <input type="checkbox" id="trans_arPayments" name="trans_arPayments">
+                                            <label class="form-check-label" for="trans_arPayments">AR Payments</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPayment">
+                                            <input type="checkbox" id="trans_depositPayments" name="trans_depositPayments">
+                                            <label class="form-check-label" for="trans_depositPayments">Deposit Payments</label>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-2" />
+
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check" data-trans-scope="pnlPaymentType">
+                                            <input type="checkbox" id="trans_creditCard" name="trans_paymentType" value="CreditCard">
+                                            <label class="form-check-label" for="trans_creditCard">Credit Card</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPaymentType">
+                                            <input type="checkbox" id="trans_cash" name="trans_paymentType" value="Cash">
+                                            <label class="form-check-label" for="trans_cash">Cash</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPaymentType">
+                                            <input type="checkbox" id="trans_check" name="trans_paymentType" value="Check">
+                                            <label class="form-check-label" for="trans_check">Check</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPaymentType">
+                                            <input type="checkbox" id="trans_others" name="trans_paymentType" value="Others">
+                                            <label class="form-check-label" for="trans_others">Others</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPaymentTypedis">
+                                            <input type="checkbox" id="trans_eft" name="trans_paymentTypeDis" value="EFT" disabled>
+                                            <label class="form-check-label" for="trans_eft">EFT</label>
+                                        </div>
+
+                                        <div class="form-check" data-trans-scope="pnlPaymentTypedis">
+                                            <input type="checkbox" id="trans_manual" name="trans_paymentTypeDis" value="Manual" disabled>
+                                            <label class="form-check-label" for="trans_manual">Manual</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     GENERATE LIST MODAL (modal-xl) - replaces #popupGenerate
+     ========================================================= -->
+<div class="modal fade" id="trans_modalGenerateList" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="trans_titleGenerateList"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <button id="trans_btnNewGenerate" type="button" class="mui-button mui-button-new">New</button>
+                    <button id="trans_btnEditGenerate" type="button" class="mui-button mui-button-edit">Edit</button>
+                    <button id="trans_btnDeleteGenerate" type="button" class="mui-button button-report-delete">Delete</button>
+                    <button id="trans_btnGenerateClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <div id="trans_gridGenerate" class="gridContainer"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     GENERATE EDIT MODAL (modal-xl) - replaces #popupGenerateNewEdit
+     ========================================================= -->
+<div class="modal fade" id="trans_modalGenerateEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="trans_titleGenerateEdit"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <button id="trans_btnOkGenerate" type="button" class="mui-button mui-button-new">OK</button>
+                    <button id="trans_btnGenerateEditClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <form id="trans_formGenerate" novalidate>
+                    <input type="hidden" id="trans_generateDetailId" name="trans_generateDetailId" />
+
+                    <div class="row g-2 mb-2">
+
+                        <div class="col-11">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end" for="trans_transactionsGernew">Transactions Code</label>
+                                <div class="col-md-8">
+                                    <select id="trans_transactionsGernew" name="trans_transactionsGernew" class="tomselect-custom">
+                                        @* <option value="">--ALL--</option>
+                                        @foreach (var item in transactionsList)
+                                        {
+                                            <option value="@item.Code">@item.Code-@item.Description</option>
+                                        } *@
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Percentage -->
+                        <div class="col-11">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-4 text-md-end">
+                                    <div class="form-check d-inline-flex align-items-center">
+                                        <input type="radio" id="trans_percentageRadio" name="trans_percenOption" class=" me-2" />
+                                        <label class="form-check-label" for="trans_percentageRadio">Percentage</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                        <input type="number" id="trans_percentagetext" name="trans_percentagetext" class="form-control form-control-sm text-md-end" style="max-width:160px;" step="1" min="0" value="0"/>
+                                        <span>%</span>
+                                        <select id="trans_percengegre" name="trans_percengegre" class="tomselect-custom" style="min-width:120px;">
+                                            <option value=""></option>
+                                            <option value="0">Base</option>
+                                            <option value="1">Sub_total1</option>
+                                            <option value="2">Sub_total2</option>
+                                            <option value="3">Sub_total3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col-11">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-4 text-md-end">
+                                    <div class="form-check d-inline-flex align-items-center">
+                                        <input type="radio" id="trans_amountRadio" name="trans_percenOption" class=" me-2" />
+                                        <label class="form-check-label" for="trans_amountRadio">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="number" id="trans_amountPer" name="trans_amountPer" class="form-control form-control-sm text-md-end" style="max-width:220px;" step="1000" min="0" value="0" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subtotals -->
+                        <div class="col-11">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" id="trans_subTotal1" name="trans_subTotal" value="1">
+                                            <label class="form-check-label" for="trans_subTotal1">Sub total 1</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" id="trans_subTotal2" name="trans_subTotal" value="2">
+                                            <label class="form-check-label" for="trans_subTotal2">Sub total 2</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" id="trans_subTotal3" name="trans_subTotal" value="3">
+                                            <label class="form-check-label" for="trans_subTotal3">Sub total 3</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formular -->
+                        <!-- Winform không hoạt đọng tạm thời ẩn -->
+                        
+                        @* <div class="col-11">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-4 text-md-end">
+                                    <div class="form-check d-inline-flex align-items-center">
+                                        <input type="radio" id="trans_formularRadio" name="trans_percenOption" class=" me-2" />
+                                        <label class="form-check-label" for="trans_formularRadio">Formular</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="trans_formular" name="trans_formular" class="form-control form-control-sm text-md-end" />
+                                </div>
+                            </div>
+                        </div> *@
+
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="trans_loadingSpinner"
+    style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+    z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+    height: 100%;display: flex;align-items: center;justify-content: center;">
+    <div class="spinner-border text-primary"></div>
+</div>
+
+<script>
+    // =========================================================
+    // Transaction Module (Option A, prefixed trans_)
+    // Fix: TomSelect timing + async flow for Edit/New
+    // =========================================================
+    var trans_Module = (function () {
+        "use strict";
+
+        const SEL = {
+            // modals
+            modalMain: "#trans_modalMain",
+            modalEdit: "#trans_modalEdit",
+            modalGenerateList: "#trans_modalGenerateList",
+            modalGenerateEdit: "#trans_modalGenerateEdit",
+
+            // spinner
+            spinner: "#trans_loadingSpinner",
+
+            // main search fields
+            group: "#trans_transactionGroupList",
+            subgroup: "#trans_transactionSubGroupList",
+            code: "#trans_transCode",
+            adj: "#trans_adjCode",
+            desc: "#trans_description",
+
+            // toolbar buttons
+            btnView: "#trans_btnView",
+            btnNew: "#trans_btnNew",
+            btnEdit: "#trans_btnEdit",
+            btnDelete: "#trans_btnDelete",
+            btnExcel: "#trans_btnExcel",
+
+            // main grid
+            grid: "#trans_grid",
+
+            // edit buttons
+            btnOk: "#trans_btnOk",
+            btnSave: "#trans_btnSave",
+            btnDeleteAuto: "#trans_btnDeleteAuto",
+            btnGenerate: "#trans_btnGenerate",
+
+            // edit fields
+            formEdit: "#trans_formEdit",
+            id: "#trans_id",
+            generateID: "#trans_generateID",
+            transactionGroupID: "#trans_transactionGroupID",
+            groupType: "#trans_groupType",
+            groupCode: "#trans_groupCode",
+
+            newSubGroup: "#trans_transactionNewSubGroupList",
+            groupnew: "#trans_groupnew",
+            vatinfor: "#trans_vatinfor",
+            transType: "#trans_transactionTypeList",
+            codenew: "#trans_codenew",
+            descriptionnew: "#trans_descriptionnew",
+            adjNew: "#trans_transactionsListnew",
+            price: "#trans_dfprice",
+            currency: "#trans_currList",
+            arAccount: "#trans_listARAccountList",
+
+            isTaxInclude: "#trans_isTaxInclude",
+            inactive: "#trans_inactive",
+
+            // revenue/payment checkboxes
+            revenueGroup: "#trans_revenueGroup",
+            memberShip: "#trans_memberShip",
+            manualPosting: "#trans_manualPosting",
+            paidOut: "#trans_paidOut",
+            generateInclusive: "#trans_generateInclusive",
+            trackNights: "#trans_trackNights",
+
+            frontOfficePayments: "#trans_frontOfficePayments",
+            arPayments: "#trans_arPayments",
+            depositPayments: "#trans_depositPayments",
+            interHotelSales: "#trans_interHotelSales",
+
+            // payment type (exclusive)
+            creditCard: "#trans_creditCard",
+            cash: "#trans_cash",
+            check: "#trans_check",
+            others: "#trans_others",
+            eft: "#trans_eft",
+            manual: "#trans_manual",
+
+            // generate list
+            titleGenerateList: "#trans_titleGenerateList",
+            btnNewGenerate: "#trans_btnNewGenerate",
+            btnEditGenerate: "#trans_btnEditGenerate",
+            btnDeleteGenerate: "#trans_btnDeleteGenerate",
+            gridGenerate: "#trans_gridGenerate",
+
+            // generate edit
+            titleGenerateEdit: "#trans_titleGenerateEdit",
+            btnOkGenerate: "#trans_btnOkGenerate",
+            formGenerate: "#trans_formGenerate",
+            generateDetailId: "#trans_generateDetailId",
+            transactionsGernew: "#trans_transactionsGernew",
+            percentageRadio: "#trans_percentageRadio",
+            percentagetext: "#trans_percentagetext",
+            percengegre: "#trans_percengegre",
+            amountRadio: "#trans_amountRadio",
+            amountPer: "#trans_amountPer",
+            formularRadio: "#trans_formularRadio",
+            formular: "#trans_formular",
+            subTotal1: "#trans_subTotal1",
+            subTotal2: "#trans_subTotal2",
+            subTotal3: "#trans_subTotal3"
+        };
+
+        // state
+        let _bound = false;
+        let _gridMain = null;
+        let _gridGenerate = null;
+
+        let _selectedMain = null;
+        let _selectedGenerate = null;
+
+        // client cache from razor (kept)
+        const _transactionGroupList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TransactionGroupList ?? new List<object>()));
+
+        // ---------------------------
+        // utilities
+        // ---------------------------
+        function showLoading(show) {
+            if (show) $(SEL.spinner).show();
+            else $(SEL.spinner).hide();
+        }
+
+        function csrfHeaders() {
+            return { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() };
+        }
+
+        function disposeGrid(selector) {
+            try {
+                const inst = $(selector).dxDataGrid("instance");
+                if (inst) inst.dispose();
+            } catch (e) { /* ignore */ }
+            $(selector).empty();
+        }
+
+        // Safe setter for TomSelect
+        function setTomSelectValue(selector, value) {
+            const el = document.querySelector(selector);
+            const ts = el?.tomselect;
+            if (!ts) return;
+            ts.setValue(value ? String(value) : '');
+        }
+
+        // ---------------------------
+        // main search: subgroup filter by group
+        // ---------------------------
+        function filterSubGroupOptions() {
+            const groupId = $(SEL.group).val();
+
+            $(`${SEL.subgroup} option`).each(function () {
+                const subgroupGroupId = $(this).data("groupid");
+                if (!groupId || subgroupGroupId == groupId || $(this).val() === "") $(this).show();
+                else $(this).hide();
+            });
+
+            $(SEL.subgroup).val("");
+        }
+
+        // ---------------------------
+        // edit: enable/disable checkbox panels depending on group type
+        // ---------------------------
+        function applyGroupTypeUI(groupType) {
+            console.log('groupType',groupType);
+            
+            // default
+            $(SEL.memberShip).prop("disabled", true);
+            $(SEL.generateInclusive).prop("disabled", true);
+            $(SEL.trackNights).prop("disabled", true);
+            $(SEL.interHotelSales).prop("disabled", true);
+            $(SEL.eft).prop("disabled", true);
+            $(SEL.manual).prop("disabled", true);
+
+            if (groupType === 0) {
+                $(SEL.frontOfficePayments).prop("disabled", true);
+                $(SEL.arPayments).prop("disabled", true);
+                $(SEL.depositPayments).prop("disabled", true);
+
+                $(SEL.creditCard).prop("disabled", true);
+                $(SEL.cash).prop("disabled", true);
+                $(SEL.check).prop("disabled", true);
+                $(SEL.others).prop("disabled", true);
+
+                $(SEL.revenueGroup).prop("disabled", false);
+                $(SEL.manualPosting).prop("disabled", false);
+                $(SEL.paidOut).prop("disabled", false);
+
+                $(SEL.transType).prop("disabled", false).prop("selectedIndex", 0);
+                $(SEL.arAccount).prop("disabled", true).val("");
+            }
+            else if (groupType === 1) {
+                $(SEL.frontOfficePayments).prop("disabled", false);
+                $(SEL.arPayments).prop("disabled", false);
+                $(SEL.depositPayments).prop("disabled", false);
+
+                $(SEL.creditCard).prop("disabled", false);
+                $(SEL.cash).prop("disabled", false);
+                $(SEL.check).prop("disabled", false);
+                $(SEL.others).prop("disabled", false);
+
+                $(SEL.revenueGroup).prop("disabled", true).prop("checked", false);
+                $(SEL.manualPosting).prop("disabled", true).prop("checked", false);
+                $(SEL.paidOut).prop("disabled", true).prop("checked", false);
+
+                $(SEL.transType).prop("disabled", true);
+                $(SEL.transType).prop("selectedIndex", $(SEL.transType + " option").length - 1);
+
+                $(SEL.arAccount).prop("disabled", false);
+            }
+            else if (groupType === 2) {
+                $(SEL.frontOfficePayments).prop("disabled", false);
+                $(SEL.arPayments).prop("disabled", false);
+                $(SEL.depositPayments).prop("disabled", false);
+
+                $(SEL.creditCard).prop("disabled", false);
+                $(SEL.cash).prop("disabled", false);
+                $(SEL.check).prop("disabled", false);
+                $(SEL.others).prop("disabled", false);
+
+                $(SEL.transType).prop("disabled", true);
+                $(SEL.transType).prop("selectedIndex", $(SEL.transType + " option").length - 1);
+
+                $(SEL.arAccount).prop("disabled", true).val("");
+            }
+        }
+
+        // ---------------------------
+        // TomSelect: init + bind change ONCE (do not re-init on change)
+        // ---------------------------
+        function ensureSubGroupTomSelectReady() {
+            initTomSelect('#trans_transactionNewSubGroupList', {
+                placeholder: 'Please choose Group',
+                render: {
+                    option(data, escape) { return `<div>${escape(data.text)}</div>`; },
+                    item(data, escape) { return `<div>${escape(data.value)}</div>`; }
+                }
+            });
+
+            const ts = document.querySelector('#trans_transactionNewSubGroupList')?.tomselect;
+            if (!ts) return;
+
+            if (!ts._boundChange) {
+                ts._boundChange = true;
+
+                ts.on('change', function (value) {
+                    syncSubGroupToInputs(ts, value);
+                });
+            }
+        }
+
+        function syncSubGroupToInputs(ts, value) {            
+            const input = document.querySelector('#trans_groupnew');
+            if (!input) return;
+
+            if (!value) {
+                console.log('value',value);
+                
+                input.value = '';
+                $(SEL.groupnew).val("").removeData("groupid");
+                $(SEL.generateID).val("");
+                $(SEL.groupType).val("");
+                $(SEL.groupCode).val("");
+                $(SEL.transactionGroupID).val("");
+                applyGroupTypeUI(null);
+                return;
+            }
+
+            const opt = ts.options[value];
+            input.value = opt?.text || '';
+
+            $(SEL.groupnew).val(opt?.Description ?? "").data("groupid", opt?.TransactionGroupID ?? "");
+            $(SEL.generateID).val(opt?.GenerateID ?? "");
+            $(SEL.groupType).val(opt?.GroupType ?? opt?.Type ?? "");
+            $(SEL.groupCode).val(opt?.Code ?? "");
+            $(SEL.transactionGroupID).val(opt?.TransactionGroupID ?? "");
+
+            applyGroupTypeUI(opt?.GroupType ?? opt?.Type ?? null);
+        }
+
+        // ---------------------------
+        // validation
+        // ---------------------------
+        function validateEdit() {
+            const codeNew = ($(SEL.codenew).val() || "").trim();
+            const descNew = ($(SEL.descriptionnew).val() || "").trim();
+            const subgroup = $(SEL.newSubGroup).val() || "";
+            const dfprice = ($(SEL.price).val() || "").trim();
+            const currency = $(SEL.currency).val() || "";
+            const transType = $(SEL.transType).val() || "";
+            const adjustCode = ($(SEL.adjNew).val() || "").trim();
+
+            if (codeNew === "") { showToast("Error", "Code is not empty.", false); $(SEL.codenew).focus(); return false; }
+            if (descNew === "") { showToast("Error", "Description is not empty.", false); $(SEL.descriptionnew).focus(); return false; }
+            if (subgroup === "") { showToast("Error", "Subgroup is not empty.", false); $(SEL.newSubGroup).focus(); return false; }
+            if (dfprice === "" || isNaN(parseFloat(dfprice))) { showToast("Error", "Price must be a valid number and cannot be empty.", false); $(SEL.price).focus(); return false; }
+            if (currency === "" || currency === "0") { showToast("Error", "Please select a currency.", false); $(SEL.currency).focus(); return false; }
+            if (transType === "" || transType === "-1") { showToast("Error", "Please select a transaction type.", false); $(SEL.transType).focus(); return false; }
+            if (adjustCode !== "" && adjustCode === codeNew) {
+                showToast("Error", "Adjust code not equal Trans. Code. Please choose another Adjust code.", false);
+                $(SEL.adjNew).focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        // ---------------------------
+        // main grid
+        // ---------------------------
+        function initMainGrid(data) {
+            disposeGrid(SEL.grid);
+            _selectedMain = null;
+
+            _gridMain = $(SEL.grid).dxDataGrid({
+                dataSource: data || [],
+                showBorders: true,
+                selection: { mode: "single" },
+                columnAutoWidth: true,
+                filterRow: { visible: true, applyFilter: "auto" },
+                scrolling: { mode: "standard", showScrollbar: "always", scrollByContent: true, useNative: true },
+                paging: { pageSize: 50 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [50, 100, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+
+                columns: [
+                    { dataField: "ID", caption: "ID", visible: false },
+                    {
+                        dataField: "IsActive",
+                        caption: "Active",
+                        dataType: "boolean",
+                        cellTemplate: function (container, options) {
+                            const isChecked = options.value === "True" || options.value === true;
+                            $("<input>")
+                                .attr("type", "checkbox")
+                                .prop("checked", isChecked)
+                                .prop("disabled", true)
+                                .css({ width: "15px", height: "15px" })
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: "GroupCode", caption: "Group Code", width: "90" },
+                    { dataField: "SubgroupCode", caption: "Sub Group Code", width: "100" },
+                    { dataField: "Code", caption: "Code", width: "100" },
+                    { dataField: "Description", caption: "Description", minWidth: 120,cssClass: "col-description" },
+                    { dataField: "DefaultPrice", caption: "Default Price", format: "#,##0.00", dataType: "number", width: "100" },
+                    { dataField: "CurrencyID", caption: "Cur", width: "50" },
+                    { dataField: "AdjustmentCode", caption: "Adj.Code", width: "80" },
+                    { dataField: "TransactionTypeName", caption: "Trans. Type", width: "100" },
+
+                    booleanCol("RevenueGroup", "Rev.Grp"),
+                    booleanCol("ManualPosting", "Man.Post"),
+                    booleanCol("TaxInclude", "Tax Inc."),
+                    booleanCol("FOPayments", "FO Pay"),
+                    booleanCol("ARPayments", "AR Pay"),
+                    booleanCol("DepositPayments", "Dep.Pay"),
+                    booleanCol("Paidout", "Paid Out"),
+
+                    { dataField: "PaymentTypeName", caption: "Payment Type", width: 100 }
+                ],
+
+                onRowClick: function (e) {
+                    _selectedMain = e.data || null;
+                }
+            }).dxDataGrid("instance");
+
+            function booleanCol(field, caption) {
+                return {
+                    dataField: field,
+                    caption: caption,
+                    dataType: "boolean",
+                    width: 65,
+                    cellTemplate: function (container, options) {
+                        const isChecked = options.value === "True" || options.value === true;
+                        $("<input>")
+                            .attr("type", "checkbox")
+                            .prop("checked", isChecked)
+                            .prop("disabled", true)
+                            .css({ width: "30px", height: "15px" })
+                            .appendTo(container);
+                    }
+                };
+            }
+        }
+
+        // ---------------------------
+        // generate grid
+        // ---------------------------
+        function initGenerateGrid(data) {
+            disposeGrid(SEL.gridGenerate);
+            _selectedGenerate = null;
+
+            _gridGenerate = $(SEL.gridGenerate).dxDataGrid({
+                dataSource: data || [],
+                showBorders: true,
+                selection: { mode: "single" },
+                height: 350,
+                filterRow: { visible: true, applyFilter: "auto" },
+                scrolling: { mode: "standard", showScrollbar: "always", scrollByContent: true },
+                paging: { pageSize: 50 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [50, 100, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                columns: [
+                    { dataField: "id", caption: "ID", visible: false },
+                    { dataField: "transactionCode", caption: "TransactionCode" },
+                    { dataField: "description", caption: "Description" },
+                    { dataField: "percentage", caption: "Percentage" }
+                ],
+                onRowClick: function (e) {
+                    _selectedGenerate = e.data || null;
+                }
+            }).dxDataGrid("instance");
+        }
+
+        // ---------------------------
+        // actions: search
+        // ---------------------------
+        function search() {
+            showLoading(true);
+
+            $.ajax({
+                url: "/Transaction/SearchTransaction",
+                type: "GET",
+                data: {
+                    code: $(SEL.code).val(),
+                    description: $(SEL.desc).val(),
+                    groupID: $(SEL.group).val(),
+                    subGroupID: $(SEL.subgroup).val()
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    initMainGrid(result);
+                    showLoading(false);
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot load report.", false);
+                }
+            });
+        }
+
+        // ---------------------------
+        // load subgroup options (RETURN jqXHR)
+        // ---------------------------
+        function getTransactionSubGroup() {
+            return $.ajax({
+                url: "/Transaction/GetTransactionSubGroup",
+                type: "GET",
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders()
+                }).
+                done(function (result) {
+                    ensureSubGroupTomSelectReady();
+
+                    const ts = document.querySelector('#trans_transactionNewSubGroupList')?.tomselect;
+                    if (!ts) return;
+
+                    ts.clearOptions();
+
+                    const rows = Array.isArray(result) ? result : (result ? [result] : []);
+                    const formatted = rows.map(i => ({
+                        ...i,
+                        value: String(i.ID),
+                        text: `${i.Code}`
+                }));
+
+                ts.addOptions(formatted);
+                ts.refreshOptions(false);
+                ts.setValue('');
+            }).fail(function () {
+                showToast("Error", "Cannot load report.", false);
+            });
+        }
+
+        function getTransactionsList() {
+            return $.ajax({
+                url: "/Transaction/GetTransactionsList",
+                type: "GET",
+                dataType: "json",
+                headers: csrfHeaders()
+            })
+            .done(function (result) {
+                let el = getTomSelect('#trans_transactionsGernew');
+                // Nếu đã init rồi thì destroy trước
+                if (el) {
+                el.destroy();
+                }
+                initTomSelect('#trans_transactionsGernew', {
+                placeholder: 'Please choose Group',
+                // giữ mặc định value/text cho hợp wrapper
+                searchField: ['text', 'description'],
+                render: {
+                    option(data, escape) {
+                    return `<div><b>${escape(data.value ?? '')}</b> - ${escape(data.description)}</div>`;
+                    },
+                    item(data, escape) {
+                    return `<div>${escape(data.value ?? '')}</div>`;
+                    }
+                }
+                });
+
+                el = document.querySelector('#trans_transactionsGernew');
+                const ts = el?.tomselect;
+                if (!ts) return;
+
+                const rows = Array.isArray(result) ? result : [];
+                const formatted = rows.map(x => {
+                    const code = x.code ;
+                    const des  = x.description ;
+                    return {
+                        value: code,
+                        text: des ? `${code} - ${des}` : code,  // ✅ text hiển thị trong dropdown
+                        code: code,
+                        description: des
+                    };
+                }).filter(x => x.value);
+
+                ts.clear(true);
+                ts.clearOptions();
+                ts.addOptions(formatted);
+                ts.setTextboxValue('');
+                ts.refreshOptions(false);
+            })
+            .fail(function () {
+                showToast("Error", "Cannot load report.", false);
+            });
+        }
+        // ---------------------------
+        // open New/Edit with correct ordering
+        // ---------------------------
+        function openNew() {
+            clearEdit();
+            $("#trans_modalEditTitle").text("New Transaction");
+
+            const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit));
+            modal.show();
+
+            // after modal shown -> tomselect ready -> load options
+            $(SEL.modalEdit).one("shown.bs.modal", function () {
+                ensureSubGroupTomSelectReady();
+                getTransactionSubGroup();
+            });
+        }
+
+        function openEdit() {
+            if (!_selectedMain) {
+                showToast("Warning", "Please select 1 row to edit.", false);
+                return;
+            }
+
+            clearEdit();
+            $("#trans_modalEditTitle").text("Edit Transaction");
+
+            const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit));
+            modal.show();
+
+            // after modal shown -> load options -> fill
+            $(SEL.modalEdit).one("shown.bs.modal", function () {
+                ensureSubGroupTomSelectReady();
+
+                getTransactionSubGroup().done(function () {
+                    fillEditFromRow(_selectedMain);
+                });
+            });
+        }
+
+        // ---------------------------
+        // fill edit
+        // ---------------------------
+        function fillEditFromRow(row) {
+            $(SEL.id).val(row.ID ?? "");
+            $(SEL.codenew).val(row.Code ?? "");
+            $(SEL.descriptionnew).val(row.Description ?? "");
+            $(SEL.price).val(row.DefaultPrice ?? "");
+            $(SEL.groupnew).val(row.GroupCode ?? "");
+            $(SEL.generateID).val(row.GenerateID ?? "");
+
+            setTomSelectValue("#trans_transactionNewSubGroupList", row.TransactionSubGroupID ?? "");
+            // gọi sync trực tiếp 
+            const ts = document.querySelector('#trans_transactionNewSubGroupList')?.tomselect;
+            setTomSelectValue("#trans_vatinfor", row.VatTypeID ?? "");
+
+            setTomSelectValue("#trans_transactionsListnew",row.AdjustmentCode ?? "");
+            setTomSelectValue("#trans_currList", row.CurrencyID ?? "");
+            setTomSelectValue("#trans_listARAccountList",row.ARNo ?? "");
+
+
+            $(SEL.isTaxInclude).prop("checked", row.TaxInclude === "True" || row.TaxInclude === true);
+            $(SEL.revenueGroup).prop("checked", row.RevenueGroup === "True" || row.RevenueGroup === true);
+            $(SEL.memberShip).prop("checked", row.MemberShip === "True" || row.MemberShip === true);
+            $(SEL.manualPosting).prop("checked", row.ManualPosting === "True" || row.ManualPosting === true);
+            $(SEL.paidOut).prop("checked", row.Paidout === "True" || row.Paidout === true);
+            $(SEL.generateInclusive).prop("checked", row.GenerateInclusive === "True" || row.GenerateInclusive === true);
+            $(SEL.trackNights).prop("checked", row.TrackNights === "True" || row.TrackNights === true);
+            $(SEL.frontOfficePayments).prop("checked", row.FOPayments === "True" || row.FOPayments === true);
+            $(SEL.arPayments).prop("checked", row.ARPayments === "True" || row.ARPayments === true);
+            $(SEL.depositPayments).prop("checked", row.DepositPayments === "True" || row.DepositPayments === true);
+            $(SEL.interHotelSales).prop("checked", row.InterHotelSales === "True" || row.InterHotelSales === true);
+
+            setPaymentTypeByValue(row.PaymentType);
+
+            $(SEL.inactive).prop("checked", row.IsActive === "False" || row.IsActive === false);
+            setTomSelectValue("#trans_transactionTypeList", row.TransactionType ?? "");
+        }
+
+        function setPaymentTypeByValue(paymentType) {
+            $(SEL.creditCard + "," + SEL.cash + "," + SEL.check + "," + SEL.others).prop("checked", false);
+
+            if (paymentType == "1" || paymentType == 1) $(SEL.creditCard).prop("checked", true);
+            else if (paymentType == "2" || paymentType == 2) $(SEL.cash).prop("checked", true);
+            else if (paymentType == "3" || paymentType == 3) $(SEL.check).prop("checked", true);
+            else if (paymentType == "4" || paymentType == 4) $(SEL.others).prop("checked", true);
+        }
+
+        function getPaymentTypeValue() {
+            if ($(SEL.creditCard).is(":checked")) return 1;
+            if ($(SEL.cash).is(":checked")) return 2;
+            if ($(SEL.check).is(":checked")) return 3;
+            if ($(SEL.others).is(":checked")) return 4;
+            return 0;
+        }
+
+        function clearEdit() {
+            $(SEL.formEdit).find(".is-invalid").removeClass("is-invalid");
+            $(SEL.formEdit).find(".invalid-feedback").remove();
+
+            $(SEL.id).val("");
+            $(SEL.generateID).val("");
+            $(SEL.transactionGroupID).val("");
+            $(SEL.groupType).val("");
+            $(SEL.groupCode).val("");
+
+            // TomSelect: clear after it exists (safe)
+            clearTomSelect("#trans_transactionNewSubGroupList");
+            $(SEL.newSubGroup).val("");
+
+            $(SEL.groupnew).val("").removeData("groupid");
+            clearTomSelect("#trans_vatinfor");
+            $(SEL.vatinfor).val("");
+            clearTomSelect("#trans_transactionTypeList");
+            $(SEL.codenew).val("");
+            $(SEL.descriptionnew).val("");
+            clearTomSelect("#trans_transactionsListnew");
+            $(SEL.adjNew).val("");
+            $(SEL.price).val("");
+            clearTomSelect("#trans_currList");
+            clearTomSelect("#trans_listARAccountList");
+
+            $(SEL.isTaxInclude).prop("checked", false);
+            $(SEL.inactive).prop("checked", false);
+
+            $(SEL.revenueGroup).prop("checked", false);
+            $(SEL.memberShip).prop("checked", false);
+            $(SEL.manualPosting).prop("checked", false);
+            $(SEL.paidOut).prop("checked", false);
+            $(SEL.generateInclusive).prop("checked", false);
+            $(SEL.trackNights).prop("checked", false);
+
+            $(SEL.frontOfficePayments).prop("checked", false);
+            $(SEL.arPayments).prop("checked", false);
+            $(SEL.depositPayments).prop("checked", false);
+            $(SEL.interHotelSales).prop("checked", false);
+
+            $(SEL.creditCard + "," + SEL.cash + "," + SEL.check + "," + SEL.others + "," + SEL.eft + "," + SEL.manual).prop("checked", false);
+
+            applyGroupTypeUI(null);
+            $(SEL.arAccount).prop("disabled", true);
+        }
+
+        // ---------------------------
+        // save / delete (kept)
+        // ---------------------------
+        function save(closeAfter) {
+            if (!validateEdit()) return;
+
+            const inactive = $(SEL.inactive).is(":checked") ? 0 : 1;
+            const paymentType = getPaymentTypeValue();
+
+            showLoading(true);
+
+            $.ajax({
+                url: "/Transaction/TransactionListSave",
+                type: "POST",
+                data: {
+                    ID: $(SEL.id).val(),
+                    Code: $(SEL.codenew).val(),
+                    Description: $(SEL.descriptionnew).val(),
+                    DefaultPrice: $(SEL.price).val(),
+                    CurrencyID: $(SEL.currency).val(),
+                    GroupID: $(SEL.groupnew).val(),
+                    TransactionSubGroupID: $(SEL.newSubGroup).val(),
+                    AdjustmentCode: $(SEL.adjNew).val(),
+                    SubgroupCode: $(SEL.newSubGroup + " option:selected").text(),
+                    GroupCode: $(SEL.groupCode).val(),
+                    GroupType: $(SEL.groupType).val(),
+                    TransactionGroupID: $(SEL.transactionGroupID).val(),
+                    TransactionType: $(SEL.transType).val(),
+                    GenerateID: $(SEL.generateID).val(),
+                    DepositPayments: $(SEL.depositPayments).is(":checked"),
+                    FOPayments: $(SEL.frontOfficePayments).is(":checked"),
+                    ARPayments: $(SEL.arPayments).is(":checked"),
+                    PaymentType: paymentType,
+                    RevenueGroup: $(SEL.revenueGroup).is(":checked"),
+                    ManualPosting: $(SEL.manualPosting).is(":checked"),
+                    Paidout: $(SEL.paidOut).is(":checked"),
+                    TaxInclude: $(SEL.isTaxInclude).is(":checked"),
+                    IsActive: inactive,
+                    VatTypeID: $(SEL.vatinfor).val(),
+                    ARNo: $(SEL.arAccount).val(),
+                    CreatedBy: localStorage.getItem("Loginname"),
+                    UserInsertID: localStorage.getItem("userID")
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    showLoading(false);
+
+                    if (result && result.success) {
+                        showToast("Success", result.message, true);
+                        search();
+                        clearEdit();
+
+                        if (closeAfter) {
+                            bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).hide();
+                        }
+                    } else {
+                        showToast("Error", (result && result.message) ? result.message : "Please select before saving.", false);
+                    }
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot save.", false);
+                }
+            });
+        }
+
+        function deleteSelected() {
+            if (!_selectedMain) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
+            }
+            if (!confirm("Are you sure you want to delete item?")) return;
+
+            showLoading(true);
+
+            $.ajax({
+                url: "/Transaction/TransactionDelete",
+                type: "POST",
+                data: { id: _selectedMain.ID },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    showLoading(false);
+                    if (result && result.success) {
+                        showToast("Success", (result && result.message) ? result.message : "Delete complete.",true);
+                        search();
+                        clearEdit();
+                    } else {
+                        showToast("Error", (result && result.message) ? result.message : "Delete failed.", false);
+                    }
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot delete.", false);
+                }
+            });
+        }
+
+        // ---------------------------
+        // Generate flow (kept)
+        // ---------------------------
+        function openGenerateList() {
+            if (!_selectedMain) {
+                showToast("Warning", "Please select 1 row.", false);
+                return;
+            }
+            $(SEL.titleGenerateList).text("Generate For " + (_selectedMain.Code || ""));
+            bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalGenerateList)).show();
+
+            loadGenerateData(_selectedMain.Code);
+        }
+
+        function loadGenerateData(code) {
+            showLoading(true);
+
+            $.ajax({
+                url: "/Transaction/SearchGenerate",
+                type: "GET",
+                data: { code: code },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    initGenerateGrid(result);
+                    showLoading(false);
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Không thể tải báo cáo.", false);
+                }
+            });
+        }
+
+        function openGenerateNew() {
+            getTransactionsList();
+            clearGenerateEdit();
+            $(SEL.titleGenerateEdit).text("Generate - New");
+            bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalGenerateEdit)).show();
+        }
+
+        function openGenerateEdit() {
+            if (!_selectedGenerate) {
+                showToast("Warning", "Please select 1 row to edit.", false);
+                return;
+            }
+            getTransactionsList();
+            clearGenerateEdit();
+            $(SEL.titleGenerateEdit).text("Generate - Edit");
+            bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalGenerateEdit)).show();
+            const pList = getTransactionsList();
+
+            showLoading(true);
+            const pDetail = $.ajax({
+                url: "/Transaction/SearchGenerateDetail",
+                type: "GET",
+                data: { id: _selectedGenerate.id },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders()
+            });
+            $.when(pList, pDetail).done(function (_listRes, detailRes) {
+                showLoading(false);
+
+                const result = detailRes[0]; // jQuery: [data, status, xhr]
+                if (!result || !result.length) return;
+                const item = result[0];
+
+                $(SEL.generateDetailId).val(item.id ?? _selectedGenerate.id);
+
+                if (item.percentage && item.percentage !== "0") {
+                    $(SEL.percentageRadio).prop("checked", true);
+                    $(SEL.percentagetext).val(item.percentage);
+                    setTomSelectValue("#trans_percengegre",item.baseAmount)
+                    console.log('percentage');
+                    
+                }
+
+                if (item.amount && item.amount !== "0,000") {
+                    $(SEL.amountRadio).prop("checked", true);
+                    $(SEL.amountPer).val(item.amount);
+                                        console.log('amountRadio');
+
+                }
+
+                if (item.udfFunction || item.UDFFunction) {
+                    $(SEL.formularRadio).prop("checked", true);
+                    $(SEL.formular).val(item.udfFunction || item.UDFFunction);
+                                        console.log('formularRadio');
+
+                }
+
+                $(SEL.subTotal1).prop("checked", item.subtotal1 == "True" || item.subtotal1 === true);
+                $(SEL.subTotal2).prop("checked", item.subtotal2 == "True" || item.subtotal2 === true);
+                $(SEL.subTotal3).prop("checked", item.subtotal3 == "True" || item.subtotal3 === true);
+
+                setTomSelectValue("#trans_transactionsGernew",item.transactionCodeDetail)
+                
+            }).fail(function () {
+                showLoading(false);
+                showToast("Error", "Cannot load generate detail.", false);
+            });
+        }
+
+        function clearGenerateEdit() {
+            $(SEL.generateDetailId).val("");
+            clearMultipleTomSelect("#trans_transactionsGernew")
+
+            $(SEL.percentageRadio).prop("checked", true);
+            $(SEL.percentagetext).val("");
+            clearMultipleTomSelect("#trans_percengegre");
+
+            $(SEL.amountRadio).prop("checked", false);
+            $(SEL.amountPer).val("");
+
+            $(SEL.formularRadio).prop("checked", false);
+            $(SEL.formular).val("");
+
+            $(SEL.subTotal1).prop("checked", false);
+            $(SEL.subTotal2).prop("checked", false);
+            $(SEL.subTotal3).prop("checked", false);
+        }
+
+        function getPercenOptionValue() {
+            if ($(SEL.percentageRadio).is(":checked")) return 1;
+            if ($(SEL.amountRadio).is(":checked")) return 2;
+            if ($(SEL.formularRadio).is(":checked")) return 3;
+            return 0;
+        }
+
+        function saveGenerate() {
+            const transactionsGernew = $(SEL.transactionsGernew).val();
+            console.log('transactionsGernew',transactionsGernew);
+            
+            showLoading(true);
+
+            $.ajax({
+                url: "/Transaction/GenerateSave",
+                type: "POST",
+                data: {
+                    ID: $(SEL.generateDetailId).val(),
+                    transactionsGernew: _selectedMain.Code || "",
+                    transactionsDetailGernew: $(SEL.transactionsGernew).val(),
+                    percentagetext: $(SEL.percentagetext).val(),
+                    percengegre: $(SEL.percengegre).val(),
+                    amountPer: $(SEL.amountPer).val(),
+                    formular: $(SEL.formular).val(),
+                    percenOption: getPercenOptionValue(),
+                    CreatedBy: localStorage.getItem("Loginname"),
+                    UserInsertID: localStorage.getItem("userID"),
+                    subTotal1: $(SEL.subTotal1).is(":checked") ? 1 : 0,
+                    subTotal2: $(SEL.subTotal2).is(":checked") ? 1 : 0,
+                    subTotal3: $(SEL.subTotal3).is(":checked") ? 1 : 0
+                },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    showLoading(false);
+
+                    if (result && result.success) {
+                        showToast("Success", result.message, true);
+                        bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalGenerateEdit)).hide();
+
+                        if (_selectedMain && _selectedMain.Code) loadGenerateData(_selectedMain.Code);
+                    } else {
+                        showToast("Error", (result && result.message) ? result.message : "Save failed.", false);
+                    }
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot save generate.", false);
+                }
+            });
+        }
+
+        function deleteGenerate() {
+            if (!_selectedGenerate) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
+            }
+            if (!confirm("Are you sure you want to delete item?")) return;
+
+            showLoading(true);
+
+            $.ajax({
+                url: "/Transaction/TransactionGenerateDelete",
+                type: "POST",
+                data: { id: _selectedGenerate.id },
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    showLoading(false);
+
+                    if (result && result.success) {
+                        if (_selectedMain && _selectedMain.Code) loadGenerateData(_selectedMain.Code);
+                    } else {
+                        showToast("Error", (result && result.message) ? result.message : "Delete failed.", false);
+                    }
+                },
+                error: function () {
+                    showLoading(false);
+                    showToast("Error", "Cannot delete generate.", false);
+                }
+            });
+        }
+
+        // ---------------------------
+        // Excel export (kept)
+        // ---------------------------
+        function exportExcel() {
+            const grid = $(SEL.grid).dxDataGrid("instance");
+            if (!grid) { showToast("Error", "No grid data to export.", false); return; }
+
+            const workbook = new ExcelJS.Workbook();
+            const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const worksheet = workbook.addWorksheet("Sheet 1");
+
+            worksheet.addRow([companyName]);
+            worksheet.mergeCells("A1:D1");
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "left" };
+
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(["", "", "", exportDate]);
+            worksheet.mergeCells("D2:D2");
+            worksheet.getRow(2).alignment = { vertical: "middle", horizontal: "right" };
+
+            worksheet.addRow([]);
+            worksheet.addRow([]);
+
+            const reportRow = worksheet.addRow(["Transaction"]);
+            worksheet.mergeCells("A5:D5");
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: "middle", horizontal: "center" };
+
+            worksheet.addRow([]);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                const lastRow = worksheet.lastRow.number + 2;
+                worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: "center" };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Transaction.xlsx");
+                });
+            });
+        }
+
+        // ---------------------------
+        // event binding (namespaced, bind once)
+        // ---------------------------
+        function bindEventsOnce() {
+            if (_bound) return;
+            _bound = true;
+
+            $(document)
+                .off("change.trans", SEL.group).on("change.trans", SEL.group, filterSubGroupOptions);
+
+            $(document)
+                .off("change.trans", '[name="trans_paymentType"]')
+                .on("change.trans", '[name="trans_paymentType"]', function () {
+                    $('[name="trans_paymentType"]').not(this).prop("checked", false);
+                });
+
+            $(document)
+                .off("change.trans", '[name="trans_percenOption"]')
+                .on("change.trans", '[name="trans_percenOption"]', function () {
+                    $('[name="trans_percenOption"]').not(this).prop("checked", false);
+                });
+
+            // toolbar
+            $(document)
+                .off("click.trans", SEL.btnView).on("click.trans", SEL.btnView, search)
+                .off("click.trans", SEL.btnNew).on("click.trans", SEL.btnNew, openNew)
+                .off("click.trans", SEL.btnEdit).on("click.trans", SEL.btnEdit, openEdit)
+                .off("click.trans", SEL.btnDelete).on("click.trans", SEL.btnDelete, deleteSelected)
+                .off("click.trans", SEL.btnExcel).on("click.trans", SEL.btnExcel, exportExcel);
+
+            // edit actions
+            $(document)
+                .off("click.trans", SEL.btnOk).on("click.trans", SEL.btnOk, function () { save(true); })
+                .off("click.trans", SEL.btnSave).on("click.trans", SEL.btnSave, function () { save(false); })
+                .off("click.trans", SEL.btnDeleteAuto).on("click.trans", SEL.btnDeleteAuto, deleteSelected)
+                .off("click.trans", SEL.btnGenerate).on("click.trans", SEL.btnGenerate, openGenerateList);
+
+            // generate list actions
+            $(document)
+                .off("click.trans", SEL.btnNewGenerate).on("click.trans", SEL.btnNewGenerate, openGenerateNew)
+                .off("click.trans", SEL.btnEditGenerate).on("click.trans", SEL.btnEditGenerate, openGenerateEdit)
+                .off("click.trans", SEL.btnDeleteGenerate).on("click.trans", SEL.btnDeleteGenerate, deleteGenerate);
+
+            // generate edit save
+            $(document)
+                .off("click.trans", SEL.btnOkGenerate).on("click.trans", SEL.btnOkGenerate, saveGenerate);
+
+            // blur handling (kept)
+            $(SEL.modalEdit)
+                .off("shown.bs.modal.trans").on("shown.bs.modal.trans", function () {
+                    $('#trans_modalMain .modal-content').addClass('modal-blur');
+                })
+                .off("hidden.bs.modal.trans").on("hidden.bs.modal.trans", function () {
+                    $('#trans_modalMain .modal-content').removeClass('modal-blur');
+                    showLoading(false);
+                });
+
+            $(SEL.modalGenerateList)
+                .off("shown.bs.modal.trans").on("shown.bs.modal.trans", function () {
+                    $('#trans_modalEdit .modal-content').addClass('modal-blur');
+                })
+                .off("hidden.bs.modal.trans").on("hidden.bs.modal.trans", function () {
+                    $('#trans_modalEdit .modal-content').removeClass('modal-blur');
+                    showLoading(false);
+                    _selectedGenerate = null;
+                    disposeGrid(SEL.gridGenerate);
+                });
+
+            $(SEL.modalGenerateEdit)
+                .off("shown.bs.modal.trans").on("shown.bs.modal.trans", function () {
+                    $('#trans_modalGenerateList .modal-content').addClass('modal-blur');
+                })
+                .off("hidden.bs.modal.trans").on("hidden.bs.modal.trans", function () {
+                    $('#trans_modalGenerateList .modal-content').removeClass('modal-blur');
+                    showLoading(false);
+                    clearGenerateEdit();
+                });
+
+            // main modal cleanup
+            $(SEL.modalMain)
+                .off("hidden.bs.modal.trans")
+                .on("hidden.bs.modal.trans", function () {
+                    _selectedMain = null;
+
+                    $(SEL.group).val("");
+                    $(SEL.subgroup).val("");
+                    $(SEL.code).val("");
+                    $(SEL.adj).val("");
+                    $(SEL.desc).val("");
+
+                    disposeGrid(SEL.grid);
+                    disposeGrid(SEL.gridGenerate);
+                    showLoading(false);
+                });
+        }
+
+        function init() {
+            bindEventsOnce();
+        }
+
+        function open() {
+            initTomSelect(".tomselect-custom");
+            init();
+
+            const modalEl = document.querySelector(SEL.modalMain);
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+            $(modalEl).one("shown.bs.modal", function () {
+                search();
+            });
+
+            modal.show();
+        }
+
+        return { init, open };
+    })();
+
+    // required global entry
+    window.openModalTrans = function () {
+        trans_Module.open();
+    };
+
+</script>

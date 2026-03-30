@@ -4,13 +4,16 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Search Trace </h5>
-                <button type="button" class="btn-close" onclick="closeModalTraces()"></button>
+  @*               <button type="button" class="btn-close" onclick="closeModalTraces()"></button> *@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="submit-button-clear-reservation" onclick="searchTrace();">Search</button>
+                    <button class="mui-button mui-button-new" onclick="searchTrace();">Search</button>
 
-                    <button class="submit-button-clear-reservation" onclick="openModalNewTrace();">New</button>
+                    <button class="mui-button mui-button-new" onclick="openModalNewTrace();">New</button>
+                    <button class="mui-button mui-button-new" onclick="ResolveTrace();">Resolve</button>
+                    <button class="mui-button mui-button-new" onclick="closeModalTraces()">Close</button>
+
                 </div>
                 <div class="row mt-2">
                     <div class="form-group-new-reservation col-md-3">
@@ -36,8 +39,8 @@
                         <div class="row" style="margin-left:1px;margin-right:2px;justify-content:space-between">
                             <select id="resolveTraces" type="text">
                                 <option value="" selected>All</option>
-                                <option value="0">Resolved</option>
-                                <option value="1">UnResolved</option>
+                                <option value="1">Resolved</option>
+                                <option value="0">UnResolved</option>
                             </select>
                         </div>
                     </div>
@@ -54,7 +57,7 @@
         <div class="modal-content" style="border:1px solid #bcbcbc">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">New Alert</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">New Trace</h5>
                 <button type="button" class="btn-close" onclick="closeModalNewTrace()"></button>
             </div>
             <div class="modal-body">
@@ -101,6 +104,10 @@
 </div>
 <script>
     function openModalTraces(){
+        if(!idReservation || idReservation <=0){
+            showToast('Error', 'Please select a reservation to manage traces.', false);
+            return;
+        }
         $('#modalTraces').modal('show');
         getDepartmentTrace();
     }
@@ -164,11 +171,18 @@
             }
         });
     }
-     function initializeDataGridTraces(data) {
+    function initializeDataGridTraces(data) {
         $("#gridContainerTraces").dxDataGrid({
 
         dataSource: data, allowColumnResizing: true,
             columns: [
+                {
+                    type: "selection",
+                    width: 50,
+                    allowFiltering: false,
+                    allowSorting: false,
+                    headerCellTemplate: function() { return $("<div>"); }
+                },
                 { dataField: "ID", caption: "ID",  visible: false},
                 { dataField: "Account", caption: "Name"},
                 { dataField: "RoomNo", caption: "Room No"},
@@ -202,7 +216,8 @@
                     applyFilter: "auto"
             },
             selection: {
-                mode: "single"
+                mode: "multiple",
+                showCheckBoxesMode: "always"
             },
             onRowClick: function(e) {
                 setShowButtonAlerts();
@@ -257,5 +272,38 @@
             }
         });
 
+    }
+
+    function ResolveTrace(){
+        const userName = JSON.parse(localStorage.getItem("Loginname"));
+        const userID = JSON.parse(localStorage.getItem("userID"));
+        var grid = $("#gridContainerTraces").dxDataGrid("instance");
+
+        var selectedRows = grid.getSelectedRowsData();
+
+        var selectedIds = selectedRows.map(row => row.ID);
+        $.ajax({
+            url: '/Reservation/ResolveTraces',
+            type: 'POST',
+
+            data: {
+               userID: userID,
+               userName: userName,
+               selectedIds: selectedIds
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    closeModalNewTrace();
+                    searchTrace();
+                    showToast('Success', data.msg, true);
+                } else {
+                    showToast('Error', data.msg, false);
+                }
+
+            },
+            error: function (xhr, statusText, err) {
+
+            }
+        });
     }
 </script>

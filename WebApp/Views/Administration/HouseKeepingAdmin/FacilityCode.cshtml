@@ -1,700 +1,599 @@
-﻿@using DevExpress.XtraReports.UI
-
-
-@{
-    var selectedReport = @ViewBag.ReportHeader;
-    var listFacilityCode = ViewBag.hkpFacilityCode;
-
+﻿@{
+    var facCategory = ViewBag.FacilityCategory;
 }
-<style>
 
 
-    .dx-datagrid-headers .dx-header-row td {
-        white-space: pre-line !important;
-        text-align: center;
-        font-size: 11px;
-    }
+<!-- =========================
+     MAIN MODAL (modal-xl)
+     ========================= -->
+<div class="modal fade" id="faCo_modalMain" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
 
-
-    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
-        display: none;
-    }
-
-
-    .filter_wrapper {
-        /*     background-color: #ececec; */
-        /*   margin: 0px 8px 14px 8px; */
-        padding: 18px 0px 0px 14px;
-        border-radius: 8px;
-    }
-
-    .gridContainer {
-        margin: 0px 8px;
-    }
-
-    .button_wrapper {
-        display: flex;
-        column-gap: 12px;
-        margin: 0px 8px;
-    }
-
-        .button_wrapper .fa-solid {
-            margin-right: 5px;
-        }
-
-    .selected {
-        background-color: #4CAF50; /* Màu xanh */
-        color: white;
-    }
-
-
-
-    .sticky-header .form-control-sm {
-        padding: .1rem .35rem;
-        height: calc(1.1em + .2rem + 2px);
-    }
-
-    .sticky-header label[class*="me-"] {
-        margin-right: .5rem !important;
-    }
-
-
-    .sticky-header input[type="date"].form-control-sm {
-        font-size: 12px !important; /* dúng 12?px */
-        height: calc(1.1em + .2rem + 2px); /* gi? cùng chi?u cao */
-    }
-
-    .sticky-header label {
-        font-size: 12px !important;
-        line-height: 1.2;
-    }
-
-    .tomselect-custom {
-        width: 250px;
-        min-height: 30px; /* ho?c tùy theo chi?u cao b?n mu?n */
-        font-size: 0.65rem;
-    }
-
-    .sort-select {
-        max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
-        font-size: 12px;
-        padding: 0.15rem 0.5rem;
-    }
-
-    .sort-select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: none !important;
-        padding-right: 10px !important;
-    }
-
-</style>
-
-<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-<div class="text-center" id="reportTitle" style="font-size: 20px">Facility Code</div>
-<div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
-        <!-- From Date -->
-
-        <div class="d-flex flex-column ">
-
-            <div class="d-flex align-items-center">
-                <input type="text" id="idattendant" name="idattendant" style="display:none !important" class="form-control form-control-sm w-auto" />
-                <div class="d-flex align-items-center me-4">
-                    <label for="tracetime" class="me-2 mb-0">Code:</label>
-                    <input type="text" id="code" name="code"
-                           class="form-control form-control-sm w-auto" />
-                </div>
-                <div class="d-flex align-items-center me-4">
-                    <label for="tracetime" class="me-2 mb-0">Description:</label>
-                    <input type="text" id="description" name="description" class="form-control form-control-sm w-auto" />
-                </div>
-
-                <div class="d-flex align-items-center me-3">
-
-
-                    <!-- Clean Uncheck -->
-                    <div class="form-check me-3">
-                        <span class="status-color-box color-clean-uncheck"></span>
-                        <input class="form-check-input" type="checkbox" id="isActive" name="includeOptions" value="1" checked>
-                        <label class="form-check-label" for="cleanUncheck">Show Inactive</label>
-                    </div>
-
-                </div>
-
-              
-            </div>
-        </div>
-      
-
-
-
-    </div>
-    <div class="">
-        <button id="btnPrint" class="mui-button button-report-view"><i class="fa-solid fa-eye"></i> View</button>
-        <button id="btnNew" class="mui-button mui-button-new"><i class="fa-solid fa-plus"></i> New</button>
-        <button id="btnUpdate" class="mui-button mui-button-edit"> <i class="fa-solid fa-pen"></i> Edit</button>
-        <button id="btnDelete" class="mui-button button-report-delete"> <i class="fa-solid fa-trash-can"></i> Delete</button>
-        <button id="btnExportExcel" class="mui-button mui-button-export" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-
-    </div>
- 
-</div>
-<div class="mui-card">
-    @*     <div style="font-size: 20px;" class="mt-1" id="reportTitle"></div> *@
-    <div id="gridContainer" class="gridContainer mt-2"></div>
-</div>
-<div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;"></div>
-<div id="popupNewFacilityCode" style="display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; max-height: 600px; overflow-y: auto;">
-
-    <div class="d-flex justify-content-between mb-2">
-        <h5 class="mb-0">Facility Code Screen</h5>
-
-    </div>
-    <div class="d-flex justify-content-start mb-3 gap-2">
-
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkAuto" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-       
-        <button onclick="$('#popupNewFacilityCode').hide()" id="btnClosePopup" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
-            <i class="fa-solid fa-xmark me-1"></i> Close
-        </button>
-    </div>
-    <div class="sticky-header bg-white p-2 shadow-sm z-3">
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
-            <div class="d-flex align-items-center flex-wrap mb-2">
-                <div class="d-flex align-items-start mb-3">
-                    <!-- Trace Time -->
-                    <input type="text" id="idhkpFacilityCode" name="hkpFacilityCode" style="display:none !important" class="form-control form-control-sm w-auto" />
-                    <div class="d-flex align-items-center me-4">
-                        <label for="tracetime" class="me-2 mb-0">Code:</label>
-                        <input type="text" id="codenew" name="codenew"
-                               class="form-control form-control-sm w-auto" />
-                    </div>
-                  
-                    <div class="d-flex align-items-start">
-                        <label for="tracetext" class="me-2 mt-1">Facility Category:</label>
-                        <input type="text" id="facilityCategory" name="facilityCategory"
-                               class="form-control form-control-sm w-auto" />
-                        <i id="listfacCategory" class="fas fa-ellipsis-h ellipsis-icon" style="cursor:pointer;margin-right:20px;margin-left:10px"></i>
-                    </div>
-                    <div class="form-check me-3">
-                        <span class="status-color-box color-clean-uncheck"></span>
-                        <input class="form-check-input" type="checkbox" id="isActivenew" name="includeOptions" value="1" checked>
-                        <label class="form-check-label" for="cleanUncheck"> Inactive</label>
-                    </div>
-                </div>
-                <div class="d-flex align-items-start mb-3">
-                    <div class="d-flex align-items-center me-3">
-
-
-                        <!-- Clean Uncheck -->
-                      
-
-                    </div>
-                    <div class="d-flex align-items-center me-4">
-                        <label for="tracetime" class="me-2 mb-0">Sequence:</label>
-                        <input type="number" id="sequence" name="sequence"
-                               class="form-control form-control-sm w-auto" />
-                    </div>
-                    <div class="d-flex align-items-start">
-                        <label for="tracetext" class="me-2 mt-1">Description:</label>
-                        <textarea id="descriptionnew" name="descriptionnew"
-                                  class="form-control form-control-sm"
-                                  rows="3" style="width:250px; height:150px;"></textarea>
-                    </div>
-                    
-                </div>
-        
+            <div class="modal-header">
+                <h5 class="modal-title">Facility Code</h5>
             </div>
 
+            <div class="modal-body">
 
-
-
-        </div>
-    </div>
-
-</div>
-
-<div id="popupfacCategory" style="display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;
-    z-index: 1050; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-width: 400px; height: 688px; overflow-y: auto;">
-
-    <div class="d-flex justify-content-between mb-2">
-        <h5 class="mb-0"> Facility Category</h5>
-
-    </div>
-    <div class="d-flex justify-content-start mb-3 gap-2">
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnPrintfacCategory" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;" id="btnOkSelect" class="mui-button mui-button-advance" type="button"><i class="fa-solid fa-floppy-disk"></i> Ok</button>
-        <button onclick="$('#popupfacCategory').hide()" id="btnCloseppopupfacCategory" class="btn btn-sm mui-button-close" style=" border-radius: 4px;">
-            <i class="fa-solid fa-xmark me-1"></i> Close
-        </button>
-    </div>
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
-        <!-- From Date -->
-
-        <div class="d-flex flex-column ">
-
-            <div class="d-flex align-items-center">
-                <input type="text" id="idattendant" name="idattendant" style="display:none !important" class="form-control form-control-sm w-auto" />
-                <div class="d-flex align-items-center me-4">
-                    <label for="tracetime" class="me-2 mb-0">Code:</label>
-                    <input type="text" id="codefacCategory" name="codefacCategory"
-                           class="form-control form-control-sm w-auto" />
-                </div>
-                <div class="d-flex align-items-center me-3">
-
-
-                    <!-- Clean Uncheck -->
-                    <div class="form-check me-3">
-                        <span class="status-color-box color-clean-uncheck"></span>
-                        <input class="form-check-input" type="checkbox" id="isActivefacCategory" name="includeOptions" value="1" checked>
-                        <label class="form-check-label" for="cleanUncheck">Show Inactive</label>
+                <!-- ERP Search Filter -->
+                <div class="search-filter">
+                    <!-- Toolbar -->
+                    <div>
+                        <button id="faCo_btnView" type="button" class="mui-button mui-button-search">View</button>
+                        <button id="faCo_btnNew" type="button" class="mui-button mui-button-new">New</button>
+                        <button id="faCo_btnEdit" type="button" class="mui-button mui-button-edit">Edit</button>
+                        <button id="faCo_btnDelete" type="button" class="mui-button mui-button-delete">Delete</button>
+                        <button id="faCo_btnExportExcel" type="button" class="mui-button mui-button-export">Excel</button>
+                        <button id="faCo_btnClose" type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
                     </div>
 
-                </div>
-                <div class="d-flex align-items-center me-4">
-                    <label for="tracetime" class="me-2 mb-0">Description:</label>
-                    <input type="text" id="descriptionfacCategory" name="descriptionfacCategory" class="form-control form-control-sm w-auto" />
+                    <div class="row g-2 mt-1">
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="faCo_codeInput">Code</label>
+                                <div class="col-md-8">
+                                    <input type="text"
+                                           id="faCo_codeInput"
+                                           name="faCo_codeInput"
+                                           class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end"
+                                       for="faCo_nameInput">Description</label>
+                                <div class="col-md-8">
+                                    <input type="text"
+                                           id="faCo_nameInput"
+                                           name="faCo_nameInput"
+                                           class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-5 col-form-label col-form-label-sm text-md-end" for="faCo_chkshowInactive">Show Inactive</label>
+                                <div class="col-md-7">
+                                    <div class="form-check d-flex align-items-center gap-2">
+                                        <input 
+                                            type="checkbox"
+                                            id="faCo_chkshowInactive"
+                                            name="faCo_chkshowInactive">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
-             
-
+                <!-- Grid -->
+                <div class="mui-card">
+                    <div id="faCo_gridContainer" class="gridContainer"></div>
+                </div>
 
             </div>
         </div>
-
-
-
-
-    </div>
-    <div class="mui-card">
-
-        <div id="gridContainerfacCategory" class="gridContainer mt-2"></div>
-
-
     </div>
 </div>
 
+<!-- =========================
+     EDIT / NEW MODAL (modal-xl)
+     ========================= -->
+<div class="modal fade" id="faCo_modalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-    <i class="fa-solid fa-spinner fa-spin"></i>
+            <div class="modal-header">
+                <h5 class="modal-title" id="faCo_itemModalLabel">Facility Code</h5>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="search-filter">
+                    <button type="button" id="faCo_btnSaveItem" class="mui-button mui-button-save">Save</button>
+                    <button type="button" data-bs-dismiss="modal" class="mui-button mui-button-close">Close</button>
+                </div>
+
+                <form id="faCo_formContainer" novalidate>
+                    <div class="p-2">
+
+                        <div class="row g-2">
+
+                            <div class="col-12 col-lg-8">
+                                <div class="row g-2 align-items-center">
+                                    <label for="faCo_code" class="col-md-3 col-lg-4 me-3 col-form-label col-form-label-sm text-md-end">Code</label>
+                                    <div class="col-md-9 col-lg-7">
+                                        <input type="text"
+                                               id="faCo_code"
+                                               name="code"
+                                               class="form-control form-control-sm" />
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-4">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-12 d-flex align-items-center">
+                                        <input type="checkbox"
+                                               id="faCo_inactive"
+                                               name="faCo_inactive"
+                                               class="me-2" />
+                                        <label for="faCo_inactive" class="form-check-label text-danger">Inactive</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row g-2 mt-1">
+                            <div class="col-12">
+                                <div class="row g-2 align-items-center">
+                                    <label class="col-md-3 col-lg-3 col-form-label col-form-label-sm text-md-end"
+                                           for="faCo_facilityCategoryID">Facility Category</label>
+                                    <div class="col-lg-9">
+                                        <select id="faCo_facilityCategoryID"
+                                                name="facilityCategoryID"
+                                                class="tomselect-custom">
+                                            <option value="">--Select Facility Category--</option>
+                                            @foreach (var sg in facCategory)
+                                            {
+                                                <option value="@sg.ID">@sg.Name</option>
+                                            }
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mt-1">
+                            <div class="col-12 col-lg-6">
+                                <div class="row g-2 align-items-center">
+                                    <label for="faCo_sequence" class="col-lg-6 col-form-label col-form-label-sm text-md-end">Sequence</label>
+                                    <div class="col-lg-6">
+                                        <input type="number"
+                                               id="faCo_sequence"
+                                               name="faCo_sequence"
+                                               class="form-control form-control-sm text-end"
+                                               placeholder="0" />
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mt-1">
+                            <div class="col-12">
+                                <div class="row g-2 align-items-start">
+                                    <label for="faCo_description" class="col-md-3 col-form-label col-form-label-sm text-md-end">Description</label>
+                                    <div class="col-md-9">
+                                        <textarea id="faCo_description"
+                                                  name="faCo_description"
+                                                  class="form-control form-control-sm"
+                                                  rows="4"
+                                                  style="height: 100px;"></textarea>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="faCo_id" name="faCo_id" value="0" />
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="faCo_loadingSpinner"
+    style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+    z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+    height: 100%;display: flex;align-items: center;justify-content: center;">
+    <div class="spinner-border text-primary"></div>
 </div>
 
 <script>
+    var faCo_Module = (function () {
+        "use strict";
 
-       $(document).ready(function () {
+        const SEL = {
+            modalMain: "#faCo_modalMain",
+            modalEdit: "#faCo_modalEdit",
+            spinner: "#faCo_loadingSpinner",
 
-        $("#btnPrint").trigger("click");
-              $("#btnPrintfacCategory").trigger("click");
-    });
+            btnView: "#faCo_btnView",
+            btnNew: "#faCo_btnNew",
+            btnEdit: "#faCo_btnEdit",
+            btnDelete: "#faCo_btnDelete",
+            btnExportExcel: "#faCo_btnExportExcel",
 
+            codeInput: "#faCo_codeInput",
+            nameInput: "#faCo_nameInput",
+            chkshowInactive: "#faCo_chkshowInactive",
 
+            grid: "#faCo_gridContainer",
 
-     $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
-              let isActive  = $("#isActive").is(":checked") ? 1 : 0;
-            $("#loadingSpinner").show();
-            $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCodeData',
-                type: 'GET',
-                data: {
-                          code: $("#code").val(),
-                           description: $("#description").val(),
-                           isActive: isActive
-                },
-                traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
+            form: "#faCo_formContainer",
+            modalLabel: "#faCo_itemModalLabel",
+            btnSaveItem: "#faCo_btnSaveItem",
 
-                console.log(result);
-            initializeFacilityCodeGrid(result);
-                        $("#loadingSpinner").hide();
-                },
-                error: function () {
-                    alert("Không th? t?i báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
-        });
-        var selectedRowData=null;
-     function initializeFacilityCodeGrid(data) {
-        $("#gridContainer").dxDataGrid({
-            dataSource: data,
-            showBorders: true,
-            selection: { mode: "single" },
-            paging: { pageSize: 20 },
-            pager: {
-                showPageSizeSelector: true,
-                allowedPageSizes: [20, 50, 100],
-                showInfo: true
-            },
-            filterRow: { visible: true },
-            columns: [
-                { dataField: "id", caption: "ID", width: 80, visible: false },
-                { dataField: "code", caption: "Code", width: 200 },
-                { dataField: "description", caption: "Description", width: 120 },
-               
-               
-                  { dataField: "inactive", caption: "Inactive", width: 80,
-                    cellTemplate: function(container, options) {
-                         let checked = (options.value === true || options.value === "True");
-                        $("<div>")
-                            .dxCheckBox({
-                                value: checked,
-                                readOnly: true
-                            })
-                            .css("transform", "scale(0.8)")
-                            .appendTo(container);
-                    }
-                },
-                { dataField: "updatedBy", caption: "Updated By", width: 120 },
-                { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
-                { dataField: "createdBy", caption: "Updated By", width: 120 },
-                { dataField: "createdDate", caption: "Created Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
-            ],
-            scrolling: {
-                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
-                    showScrollbar: "always",
-                    scrollByContent: true
-                },
-                paging: {
-                    pageSize: 50
-                },
-                pager: {
-                    visible: true,
-                    allowedPageSizes: [50, 100, 'all'],
-                    showPageSizeSelector: true,
-                    showInfo: true,
-                    showNavigationButtons: true
-                },
-                    filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            // 🔥 Quan trọng: gán selectedRowData khi click chọn
-             onRowClick: function (e) {
-                selectedRowData = e.data; // 🔥 lấy data của row vừa click
-                console.log("Selected Row (RowClick):", selectedRowData);
+            id: "#faCo_id",
+            code: "#faCo_code",
+            facilityCategoryID: "#faCo_facilityCategoryID",
+            sequence: "#faCo_sequence",
+            description: "#faCo_description",
+            inactive: "#faCo_inactive"
+        };
 
-            }
-        });
-     }
-    $("#btnNew").on("click", function () {
+        let _gridInstance = null;
+        let _selectedRowData = null;
+        let _bound = false;
 
-       clearFacilityCode();
-            $('#overlay').fadeIn(200);
-            $('#popupNewFacilityCode').fadeIn(200);
-
-    });
-    $("#listfacCategory").on("click", function () {
-          
-            $('#popupfacCategory').fadeIn(200);
-    });
-       $(document).off("click", "#btnPrintfacCategory").on("click", "#btnPrintfacCategory", function () {
-              let isActive  = $("#isActivefacCategory").is(":checked") ? 1 : 0;
-            $("#loadingSpinner").show();
-            $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCategoryData',
-                type: 'GET',
-                data: {
-                          code: $("#codefacCategory").val(),
-                           description: $("#descriptionfacCategory").val(),
-                           isActive: isActive
-                },
-                traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-
-                console.log(result);
-            initializeFacilityCategoryGrid(result);
-                        $("#loadingSpinner").hide();
-                },
-                error: function () {
-                    alert("Không th? t?i báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
-        });
-        var selectedRowDatafc=null;
-     function initializeFacilityCategoryGrid(data) {
-        $("#gridContainerfacCategory").dxDataGrid({
-            dataSource: data,
-            showBorders: true,
-            selection: { mode: "single" },
-            paging: { pageSize: 20 },
-            pager: {
-                showPageSizeSelector: true,
-                allowedPageSizes: [20, 50, 100],
-                showInfo: true
-            },
-            filterRow: { visible: true },
-            columns: [
-                { dataField: "id", caption: "ID", width: 80, visible: false },
-                { dataField: "code", caption: "Code", width: 200 },
-                { dataField: "description", caption: "Description", width: 120 },
-
-
-                  { dataField: "inactive", caption: "Inactive", width: 80,
-                    cellTemplate: function(container, options) {
-                         let checked = (options.value === true || options.value === "True");
-                        $("<div>")
-                            .dxCheckBox({
-                                value: checked,
-                                readOnly: true
-                            })
-                            .css("transform", "scale(0.8)")
-                            .appendTo(container);
-                    }
-                },
-                { dataField: "updatedBy", caption: "Updated By", width: 120 },
-                { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
-                { dataField: "createdBy", caption: "Updated By", width: 120 },
-                { dataField: "createdDate", caption: "Created Date", dataType: "date", format: "dd/MM/yyyy HH:mm", width: 160 },
-            ],
-            scrolling: {
-                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
-                    showScrollbar: "always",
-                    scrollByContent: true
-                },
-                paging: {
-                    pageSize: 50
-                },
-                pager: {
-                    visible: true,
-                    allowedPageSizes: [50, 100, 'all'],
-                    showPageSizeSelector: true,
-                    showInfo: true,
-                    showNavigationButtons: true
-                },
-                    filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            // 🔥 Quan trọng: gán selectedRowData khi click chọn
-             onRowClick: function (e) {
-                selectedRowDatafc = e.data; // 🔥 lấy data của row vừa click
-                console.log("Selected Row (RowClick):", selectedRowDatafc);
-
-            }
-        });
-     }
-         $("#btnOkAuto").on("click", function () {
-
-            let isActive  = $("#isActivenew").is(":checked") ? 1 : 0;
-                if (selectedRowDatasa.length === 0) {
-                showToast('Error', "Please select at least one account!", false);
-                return;
-            }
-
-            // Lấy giá trị các input
-            let codeNew = $("#codenew").val().trim();
-            let facilityCategory = $("#facilityCategory").val().trim();
-            let descriptionNew = $("#descriptionnew").val().trim();
-
-            // ✅ Kiểm tra rỗng
-            if (codeNew === "") {
-                showToast('Error', "Code cannot be blank.", false);
-                $("#codenew").focus();
-                return;
-            }
-            if (facilityCategory === "") {
-                showToast('Error', "Facility Category cannot be blank.", false);
-                $("#facilityCategory").focus();
-                return;
-            }
-            if (descriptionNew === "") {
-                showToast('Error', "Description cannot be blank.", false);
-                $("#descriptionnew").focus();
-                return;
-            }
-          $("#loadingSpinner").show();
-            $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCodeSave',
-                type: 'POST',
-                 contentType: "application/json; charset=utf-8", // ✅ gửi JSON chuẩn
-                 data: {
-                      id: $("#idhkpFacilityCode").val(),
-                    codenew: $("#codenew").val(),
-                    facilityCategory: $("#facilityCategory").val(),
-                    descriptionnew: $("#descriptionnew").val(),
-                    sequence: $("#sequence").val(),
-                    user: localStorage.getItem("Loginname"),
-                    isActive: isActive
-                },
-                traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                        if (result.success) {
-                                showToast('Success', result.message, true);
-                                $('#popupNewFacilityCode').fadeOut(200);
-                                 $('#overlay').fadeOut(200);
-                                   $("#btnPrint").trigger("click");
-                                    clearFacilityCode();
-                       } else {
-                                showToast('Error', 'Please select before saving.', false);
-                       }
-                console.log(result);
-
-                        $("#loadingSpinner").hide();
-                },
-                error: function () {
-                    alert("Không th? t?i báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
-     });
-
-
-    $("#btnUpdate").on("click", function () {
-            var listFacilityCode = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.hkpFacilityCode ?? new List<object>()));
-            if (selectedRowData.length === 0) {
-                    showToast('Error', "Please select !", false);
-                return;
-            }
-            // Tìm trong listFacilityCode theo ID
-           let selectedId = parseInt(selectedRowData.id);
-            let selectedItem = listFacilityCode.find(x => x.ID === selectedId);
-            console.log(selectedItem);
-            if (!selectedItem) {
-                showToast('Error', "No matching data found!", false);
-                return;
-            }
-
-            $("#idhkpFacilityCode").val(selectedItem.ID);
-              $("#codenew").val(selectedItem.Code || "");
-              $("#facilityCategory").val(selectedItem.FacilityCategory || "");
-              $("#sequence").val(selectedItem.Sequence || "");
-              $("#descriptionnew").val(selectedItem.Description || "");
-
-              // Checkbox Inactive
-              if (selectedItem.Inactive === 1) {
-                  $("#isActivenew").prop("checked", true);
-              } else {
-                  $("#isActivenew").prop("checked", false);
-              }
-                  $("#popupNewFacilityCode").fadeIn(200);
-                     $('#overlay').fadeIn(200);
-    });
-
-
-
-    $('#btnClosePopup, #overlay').click(function () {
-            $('#popupNewFacilityCode').fadeOut(200);
-                         $("#btnOkAuto").show();
-            $('#overlay').fadeOut(200);
-    });
-        function clearFacilityCode() {
-              $("#codenew").val("");
-            $("#facilityCategory").val("");
-            $("#sequence").val("");
-            $("#descriptionnew").val("");
-            $("#idhkpFacilityCode").val("");
-
-            // Bỏ check checkbox Inactive (hoặc thiết lập lại trạng thái mặc định nếu cần)
-            $("#isActivenew").prop("checked", false);
-
+        function showLoading(show) {
+            if (show) $(SEL.spinner).show();
+            else $(SEL.spinner).hide();
         }
 
+        function csrfHeaders() {
+            return {
+                "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+            };
+        }
 
-
-
-         $(document).off("click", "#btnDelete").on("click", "#btnDelete", function () {
-            if (!selectedRowData) {
-                    showToast('Error', 'Please select 1 row to delete.', false);
-                return;
+        function resetValidation() {
+            if (typeof applyValidationErrors === "function") {
+                applyValidationErrors([], SEL.form);
             }
-            if (!confirm("Are you sure you want to delete item?")) {
-                return; // Nếu chọn Cancel thì dừng
-            }
+            $(`${SEL.form} .form-control, ${SEL.form} .form-select`).removeClass("is-invalid");
+            $(`${SEL.form} .invalid-feedback`).text("");
+        }
+
+        function clearForm() {
+            $(SEL.form)[0].reset();
+            resetValidation();
+            $(SEL.id).val("0");
+            clearTomSelect(SEL.facilityCategoryID)
+        }
+
+        function disposeGrid() {
+            try {
+                const inst = $(SEL.grid).dxDataGrid("instance");
+                if (inst) inst.dispose();
+            } catch (e) { }
+
+            _gridInstance = null;
+            _selectedRowData = null;
+            $(SEL.grid).empty();
+        }
+
+        function fillForm(data) {
+            $(SEL.id).val(data.id || 0);
+            $(SEL.code).val(data.code || "");
+            $(SEL.description).val(data.description || "");
+            $(SEL.inactive).prop("checked", !!data.inactive);
+
+            $.get("/HouseKeepingAdmin/GetFacilityCodeById", { id: data.id }, function (res) {
+                $(SEL.sequence).val(res.sequence ?? "");
+                $(SEL.inactive).prop("checked", res.inactive === 1 || res.inactive === true);
+                setTomSelectValue(SEL.facilityCategoryID,res.facilityCategoryID ?? "")
+            });
+        }
+
+        function getSaveModel() {
+            const id = parseInt($(SEL.id).val(), 10) || 0;
+            const loginName = (localStorage.getItem("Loginname") || "").trim().replace(/^"(.*)"$/, "$1");
+
+            return {
+                ID: id,
+                Code: $(SEL.code).val(),
+                Sequence: parseInt($(SEL.sequence).val(), 10) || 0,
+                Description: $(SEL.description).val(),
+                Inactive: $(SEL.inactive).prop("checked"),
+                FacilityCategoryID: parseInt($(SEL.facilityCategoryID).val(), 10) || 0,
+                CreatedBy: loginName,
+                UpdatedBy: loginName
+            };
+        }
+
+        function initGrid(data) {
+            disposeGrid();
+
+            _gridInstance = $(SEL.grid).dxDataGrid({
+                dataSource: data || [],
+                width: "100%",
+                showBorders: true,
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
+                selection: { mode: "single" },
+                hoverStateEnabled: true,
+
+                columns: [
+                    { dataField: "id", visible: false },
+                    { dataField: "code", caption: "Code", width: "100px" },
+                    { dataField: "description", caption: "Description", minWidth: 120, cssClass: "col-description"},
+                    {
+                        dataField: "inactive",
+                        caption: "Inactive",
+                        width: "60px",
+                        cellTemplate: function (container, options) {
+                            $("<div>")
+                                .dxCheckBox({
+                                    value: !!options.value,
+                                    readOnly: true
+                                })
+                                .css("transform", "scale(0.8)")
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: "createdBy", caption: "Created By", width: "80px" },
+                    {
+                        dataField: "createdDate",
+                        caption: "Crea.Date",
+                        dataType: "date",
+                        format: "dd/MM/yyyy",
+                        width: "80"
+                    },
+                    { dataField: "updatedBy", caption: "Updated By", width: "80px" },
+                    {
+                        dataField: "updatedDate",
+                        caption: "Upd.Date",
+                        dataType: "date",
+                        format: "dd/MM/yyyy",
+                        width: "80"
+                    }
+                ],
+
+                filterRow: { visible: true, applyFilter: "auto" },
+                paging: { pageSize: 20 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [20, 50, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                scrolling: {
+                    mode: "standard",
+                    showScrollbar: "always"
+                },
+
+                onSelectionChanged: function (e) {
+                    _selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+                }
+            }).dxDataGrid("instance");
+        }
+
+        function loadGridData() {
+            showLoading(true);
+
             $.ajax({
-                url: '/HouseKeepingAdmin/FacilityCodeDelete',
-                type: 'POST',
+                url: "/HouseKeepingAdmin/FacilityCodeData",
+                type: "GET",
+                cache: false,
                 data: {
-                       id:selectedRowData.id
-
-
+                    code: $(SEL.codeInput).val(),
+                    description: $(SEL.nameInput).val(),
+                    inactive: $(SEL.chkshowInactive).prop("checked") ? 1 : 0
                 },
                 traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                     if (result.success) {
-
-                              $("#btnPrint").trigger("click");
-                     } else {
-                              showToast('Error', result.message, false);
-                     }
-
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (data) {
+                    initGrid(data);
+                    showLoading(false);
                 },
                 error: function () {
-                    alert("Không th? t?i báo cáo.");
-                    $("#loadingSpinner").hide();
+                    showLoading(false);
+                    showToast("Error", "Unable to load data", false);
                 }
             });
+        }
 
+        function openNew() {
+            clearForm();
+            $(SEL.modalLabel).text("Add Facility Code");
+            bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).show();
+        }
 
-        });
+        function openEdit() {
+            if (!_selectedRowData) {
+                showToast("Warning", "Please select 1 row to edit.", false);
+                return;
+            }
 
+            clearForm();
+            fillForm(_selectedRowData);
+            $(SEL.modalLabel).text("Update Facility Code");
+            bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).show();
+        }
 
+        function save() {
+            const model = getSaveModel();
 
-       $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");   // 🔥 khai báo grid
-
-        const workbook = new ExcelJS.Workbook();
-        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-        const worksheet = workbook.addWorksheet("Sheet 1");
-
-        // === Dòng 1: Tên công ty (merge theo 4 cột) ===
-        worksheet.addRow([companyName]);
-        worksheet.mergeCells('A1:D1');
-        worksheet.getRow(1).font = { bold: true };
-        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
-
-        // === Dòng 2: Ngày giờ xuất (bên phải) ===
-        const now = new Date();
-        const exportDate = now.toLocaleString("vi-VN");
-        worksheet.addRow(['', '', '', exportDate]);
-        worksheet.mergeCells('D2:D2');  // cột D thôi
-        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
-
-        // === Dòng 3–4: trống
-        worksheet.addRow([]);
-        worksheet.addRow([]);
-
-        // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
-        const reportRow = worksheet.addRow(['FacilityCode']);
-        worksheet.mergeCells('A5:D5');
-        reportRow.font = { bold: true, size: 14 };
-        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
-
-        // === Dòng 6: trống
-        worksheet.addRow([]);
-
-        // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
-        DevExpress.excelExporter.exportDataGrid({
-            component: grid,
-            worksheet: worksheet,
-            autoFilterEnabled: true,
-            topLeftCell: { row: 7, column: 1 }
-        }).then(function () {
-            // Footer (sau cùng)
-            const lastRow = worksheet.lastRow.number + 2;
-            worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
-            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-            worksheet.getCell(`A${lastRow}`).font = { italic: true };
-
-            // Ghi file
-            let fileName = "FacilityCode.xlsx";
-            workbook.xlsx.writeBuffer().then(function (buffer) {
-                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+            $.ajax({
+                url: "/HouseKeepingAdmin/FacilityCodeSave",
+                type: "POST",
+                contentType: "application/json",
+                cache: false,
+                data: JSON.stringify(model),
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (res) {
+                    if (res.success) {
+                        showToast("Success", res.message, true);
+                        bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).hide();
+                        loadGridData();
+                    } else {
+                        if (res.errors && res.errors.length > 0) {
+                            applyValidationErrors(res.errors, SEL.form);
+                            const genErr = res.errors.find(x => x.field === "general");
+                            if (genErr) showToast("Warning", genErr.message, false);
+                        } else {
+                            showToast("Error", res.message || "Save failed", false);
+                        }
+                    }
+                },
+                error: function () {
+                    showToast("Error", "Request error!", false);
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector(SEL.modalEdit)).hide();
+                }
             });
-        });
-    });
+        }
+
+        function removeSelected() {
+            if (!_selectedRowData || _selectedRowData.id === 0) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete this record? This action cannot be undone.")) {
+                return;
+            }
+
+            $.ajax({
+                url: "/HouseKeepingAdmin/FacilityCodeDelete/" + _selectedRowData.id,
+                type: "POST",
+                traditional: true,
+                crossDomain: false,
+                headers: csrfHeaders(),
+                success: function (result) {
+                    if (result.success) {
+                        loadGridData();
+                        showToast("Success", "Delete Successfully!", true);
+                    } else {
+                        showToast("Error", result.message, false);
+                    }
+                },
+                error: function () {
+                    showToast("Error", "Delete failed!", false);
+                }
+            });
+        }
+
+        function exportExcel() {
+            const grid = $(SEL.grid).dxDataGrid("instance");
+            if (!grid) {
+                showToast("Error", "No grid data to export.", false);
+                return;
+            }
+
+            const workbook = new ExcelJS.Workbook();
+            const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const worksheet = workbook.addWorksheet("Sheet 1");
+
+            worksheet.addRow([companyName]);
+            worksheet.mergeCells("A1:D1");
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "left" };
+
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(["", "", "", exportDate]);
+            worksheet.mergeCells("D2:D2");
+            worksheet.getRow(2).alignment = { vertical: "middle", horizontal: "right" };
+
+            worksheet.addRow([]);
+            worksheet.addRow([]);
+
+            const reportRow = worksheet.addRow(["Facility Code"]);
+            worksheet.mergeCells("A5:D5");
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: "middle", horizontal: "center" };
+
+            worksheet.addRow([]);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                const lastRow = worksheet.lastRow.number + 2;
+                worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: "center" };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
+
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "FacilityCode.xlsx");
+                });
+            });
+        }
+
+        function bindEventsOnce() {
+            if (_bound) return;
+            _bound = true;
+            initTomSelect(".tomselect-custom");
+            $(document)
+                .off("click.faCo", SEL.btnView).on("click.faCo", SEL.btnView, loadGridData)
+                .off("click.faCo", SEL.btnNew).on("click.faCo", SEL.btnNew, openNew)
+                .off("click.faCo", SEL.btnEdit).on("click.faCo", SEL.btnEdit, openEdit)
+                .off("click.faCo", SEL.btnDelete).on("click.faCo", SEL.btnDelete, removeSelected)
+                .off("click.faCo", SEL.btnExportExcel).on("click.faCo", SEL.btnExportExcel, exportExcel)
+                .off("click.faCo", SEL.btnSaveItem).on("click.faCo", SEL.btnSaveItem, save);
+
+            $(document)
+                .off("input.faCo change.faCo", `${SEL.form} input, ${SEL.form} select, ${SEL.form} textarea`)
+                .on("input.faCo change.faCo", `${SEL.form} input, ${SEL.form} select, ${SEL.form} textarea`, function () {
+                    if ($(this).hasClass("is-invalid")) {
+                        $(this).removeClass("is-invalid");
+                        $(this).next(".invalid-feedback").text("");
+                    }
+                });
+
+            $(SEL.modalEdit)
+                .off("shown.bs.modal.faCo")
+                .on("shown.bs.modal.faCo", function () {
+                })
+                .off("hidden.bs.modal.faCo")
+                .on("hidden.bs.modal.faCo", function () {
+                    clearForm();
+                });
+
+            $(SEL.modalMain)
+                .off("hidden.bs.modal.faCo")
+                .on("hidden.bs.modal.faCo", function () {
+                    $(SEL.codeInput).val("");
+                    $(SEL.nameInput).val("");
+                    $(SEL.chkshowInactive).prop("checked", false);
+
+                    disposeGrid();
+                    showLoading(false);
+                });
+        }
+
+        function init() {
+            DevExpress.localization.locale("vi");
+            bindEventsOnce();
+        }
+
+        function open() {
+            init();
+
+            const modalEl = document.querySelector(SEL.modalMain);
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+            $(modalEl).one("shown.bs.modal", function () {
+                loadGridData();
+            });
+
+            modal.show();
+        }
+
+        return { init, open };
+    })();
+
+    window.openModalFaCo = function () {
+        faCo_Module.open();
+    };
 </script>

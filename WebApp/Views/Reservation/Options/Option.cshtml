@@ -6,7 +6,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Option</h5>
-                <button type="button" class="btn-close" onclick="closeModalOption()"></button>
+               @*  <button type="button" class="btn-close" onclick="closeModalOption()"></button> *@
             </div>
             <div class="modal-body">
                 <!-- Tab Navigation -->
@@ -51,9 +51,9 @@
                     <div class="tab-pane fade show active" id="accompanying" role="tabpanel" aria-labelledby="tab1-tab">
                         <div class="p-3">
                             <div class="mb-1 mt-2">
-                                <button class="mui-button mui-button-search" id="attach" onclick="AttachAccompanying();"><i class="fa-solid fa-paperclip"></i> Attach</button>
-                                <button class="mui-button mui-button-delete" id="detach" onclick="detach()"><i class="fa-solid fa-xmark"></i>Detach</button>
-                                <button class="mui-button mui-button-clear" onclick="closeModalOption();"><i class="fa-solid fa-circle-xmark"></i> Close</button>
+                                <button class="mui-button mui-button-search" id="attach" onclick="AttachAccompanying();"> Attach</button>
+                                <button class="mui-button mui-button-delete" id="detach" onclick="detach()">Detach</button>
+                                <button class="mui-button mui-button-clear" onclick="closeModalOption();"> Close</button>
                             </div>
                             <div>
                                 <select id="txtNameAccompanying"></select>
@@ -66,8 +66,8 @@
                     <div class="tab-pane fade" id="addOn" role="tabpanel" aria-labelledby="tab2-tab">
                         <div class="p-3">
                             <div class="mb-1 mt-1">
-                                <button class="mui-button mui-button-search"><i class="fa-solid fa-magnifying-glass"></i> OK</button>
-                                <button class="mui-button mui-button-clear"><i class="fa-solid fa-circle-xmark"></i> Close</button>
+                                <button class="mui-button mui-button-search"> OK</button>
+                                <button class="mui-button mui-button-clear"> Close</button>
                             </div>
                             <div class="bg-light border rounded col-md-6 row">
                                 <p class="mt-2">Which of these reservation attributes do you want to coppy?</p>
@@ -99,7 +99,7 @@
                             <div class="mb-1 mt-2">
                                 <button class="mui-button mui-button-new" id="attach"><i class="fa-solid fa-paperclip"></i> Save</button>
                                 <button class="mui-button mui-button-edit" id="detach"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
-                                <button class="mui-button mui-button-delete" id="detach"><i class="fa-solid fa-xmark"></i>Delete</button>
+                                <button class="mui-button mui-button-delete" id="detach">Delete</button>
                                 <button class="mui-button mui-button-clear"><i class="fa-solid fa-circle-xmark"></i> Close</button>
                             </div>
                             <div class="bg-light rounded-top shadow-sm row">
@@ -140,14 +140,14 @@
                     <div class="tab-pane fade" id="fixedCharges" role="tabpanel" aria-labelledby="tab4-tab">
                         <div class="mui-divider"></div>
                         <div >
-                            <button class="mui-button mui-button-search" onclick="openNewFixedCharges();"><i class="fa-solid fa-plus"></i> New</button>
+                            <button class="mui-button mui-button-search" onclick="openNewFixedCharges();"> New</button>
                             <button class="mui-button mui-button-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                            <button class="mui-button mui-button-delete"><i class="fa-solid fa-trash"></i> Delete</button>
+                            <button class="mui-button mui-button-delete"> Delete</button>
                             <button class="mui-button mui-button-clear"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
-                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc1');"><i class="fa-solid fa-file"></i> EB-TA</button>
-                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc2');"><i class="fa-solid fa-file"></i> EB-IND</button>
-                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc3');"><i class="fa-solid fa-file"></i> CS-TA</button>
-                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc4');"><i class="fa-solid fa-file"></i> CS-IND</button>
+                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc1');"> EB-TA</button>
+                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc2');"> EB-IND</button>
+                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc3');"> CS-TA</button>
+                            <button class="mui-button mui-button-export" onclick="AddReservationFixedChargeDefault('fc4');"> CS-IND</button>
                             <button class="mui-button mui-button-close"><i class="fas fa-times"></i> Close</button>
                         </div>
                         <div class="mui-divider"></div>
@@ -258,8 +258,8 @@
                                 </div>
                             </div>
                             <div>
-                                <button class="mui-button mui-button-new" onclick="SaveReservationFixedCharge();"><i class="fa-solid fa-plus"></i> Save</button>
-                                <button class="mui-button mui-button-cancel" onclick="cancelFixedCharges();"><i class="fa-solid fa-pen-to-square"></i> Cancel</button>
+                                <button class="mui-button mui-button-new" onclick="SaveReservationFixedCharge();"> Save</button>
+                                <button class="mui-button mui-button-cancel" onclick="cancelFixedCharges();"> Cancel</button>
                             </div>
                         </div>
                         <div class="mui-card mt-2">
@@ -605,7 +605,7 @@
             }
         });
     }
-    const $radioButtons = $('input[name="optionFixedCharge"]');
+     $radioButtons = $('input[name="optionFixedCharge"]');
     const $dateInput = $('#dateInput');
     const $dayInput = $('#dayInput');
     const $beginDateFixedCharge = $('#beginDateFixedCharge');

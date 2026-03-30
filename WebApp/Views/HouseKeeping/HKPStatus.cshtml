@@ -1,0 +1,321 @@
+@using DevExpress.XtraReports.UI
+
+@{
+    ViewBag.Title = ViewBag.ReportHeader;
+    var zoneList = ViewBag.ZoneList;
+    var roomtypeList = ViewBag.RoomTypeList;
+    var roomList = ViewBag.RoomList;
+}
+
+<style>
+    .hkp_status_color_box {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
+        vertical-align: middle;
+        border: 1px solid #ccc;
+    }
+
+    .hkp_status_bg_dirty {
+        background-color: red;
+    }
+
+    .hkp_status_bg_pickup {
+        background-color: #f740f4;
+    }
+
+    .hkp_status_bg_clean_nonchecked {
+        background-color: #1bdff5;
+    }
+
+    .hkp_status_bg_clean {
+        background-color: green;
+    }
+
+    .hkp_status_bg_outoforder {
+        background-color: #cf159a;
+    }
+</style>
+
+<div class="modal fade" id="hkp_status_modal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content modal-full-height">
+            <div class="modal-header bg-light py-2">
+                <h5 class="modal-title">HKP Status</h5>
+            </div>
+
+            <div class="modal-body d-flex flex-column" style="height: calc(100vh - 120px);">
+                <div class="hkp-status-actions py-2">
+                    <button id="hkp_status_btnView" class="mui-button mui-button-new">View</button>
+                    <button id="hkp_status_btnExportExcel" class="mui-button mui-button-new" type="button">Excel</button>
+                    <button id="hkp_status_btnExportPdf" class="mui-button mui-button-new" type="button">PDF</button>
+                    <button id="hkp_status_btnUpdateStatus" class="mui-button mui-button-new" type="button">Update</button>
+                    <button class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <div class="search-filter bg-light p-2 rounded mb-2">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <label class="fw-bold mb-0">Change Status:</label>
+
+                        <div class="form-check d-flex align-items-center">
+                            <span class="hkp_status_color_box hkp_status_bg_clean_nonchecked"></span>
+                            <input class="ms-1" type="checkbox" name="hkp_status_master" id="hkp_status_opt_cleannon" value="1">
+                            <label class="form-check-label ms-1" for="hkp_status_opt_cleannon">Clean Non-Checked</label>
+                        </div>
+
+                        <div class="form-check d-flex align-items-center">
+                            <span class="hkp_status_color_box hkp_status_bg_dirty"></span>
+                            <input class="ms-1" type="checkbox" name="hkp_status_master" id="hkp_status_opt_dirty" value="2">
+                            <label class="form-check-label ms-1" for="hkp_status_opt_dirty">Dirty</label>
+                        </div>
+
+                        <div class="form-check d-flex align-items-center">
+                            <span class="hkp_status_color_box hkp_status_bg_clean"></span>
+                            <input class="ms-1" type="checkbox" name="hkp_status_master" id="hkp_status_opt_clean" value="4">
+                            <label class="form-check-label ms-1" for="hkp_status_opt_clean">Clean</label>
+                        </div>
+
+                        <div class="form-check d-flex align-items-center">
+                            <span class="hkp_status_color_box hkp_status_bg_pickup"></span>
+                            <input class="ms-1" type="checkbox" name="hkp_status_master" id="hkp_status_opt_pickup" value="3">
+                            <label class="form-check-label ms-1" for="hkp_status_opt_pickup">Pickup</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-card mb-2 d-flex flex-column flex-grow-1 overflow-hidden border-0">
+                    <div id="hkp_status_gridContainer" class="gridContainer flex-grow-1" style="min-height: 0;"></div>
+
+                    <div id="hkp_status_loadingSpinner" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+                        z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+                        height: 100%;display: flex;align-items: center;justify-content: center;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var hkp_status_Module = {
+        selectedRoomIds: [],
+
+        init: function () {
+            this.initEvents();
+            this.initDOMEvents();
+        },
+
+        initEvents: function () {
+            // Cho phép các trang khác mở modal thông qua window
+            window.openModalHKPStatus = () => {
+                $('#hkp_status_modal').modal('show');
+                this.reloadData();
+            };
+        },
+
+        initDOMEvents: function () {
+            $("#hkp_status_btnView").on("click", () => this.reloadData());
+            $("#hkp_status_btnUpdateStatus").on("click", () => this.handleUpdateStatus());
+            $("#hkp_status_btnExportExcel").on("click", () => this.exportExcel());
+            $("#hkp_status_btnExportPdf").on("click", () => this.exportPdf());
+
+            // Reset khi đóng modal
+            $('#hkp_status_modal').on('hidden.bs.modal', () => {
+                this.selectedRoomIds = [];
+                $("input[name='hkp_status_master']").prop("checked", false);
+            });
+        },
+
+        reloadData: function () {
+            $("#hkp_status_loadingSpinner").show();
+            $.ajax({
+                url: '/HouseKeeping/HKPStatusData',
+                type: 'GET',
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                },
+                success: (result) => {
+                    this.initializeGrid(result);
+                    $("#hkp_status_loadingSpinner").hide();
+                },
+                error: () => {
+                    showToast('Error', "Không thể tải báo cáo.", false);
+                    $("#hkp_status_loadingSpinner").hide();
+                }
+            });
+        },
+
+        initializeGrid: function (data) {
+            $("#hkp_status_gridContainer").dxDataGrid({
+                dataSource: data,
+                keyExpr: "id",
+                height: "100%",
+                width: "100%",
+                showBorders: true,
+                hoverStateEnabled: true,
+                wordWrapEnabled: true,
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
+                columnAutoWidth: true,
+                scrolling: {
+                    mode: "standard",
+                    showScrollbar: "always",
+                    useNative: true
+                },
+                paging: { pageSize: 24 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [24, 50, 100],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                filterRow: { visible: true, applyFilter: "auto" },
+                selection: {
+                    mode: "multiple",
+                    showCheckBoxesMode: "always"
+                },
+                columns: [
+                    { dataField: "id", visible: false },
+                    { dataField: "roomNo", caption: "Room No", width: "10%" },
+                    { dataField: "roomTypeCode", caption: "Room Type", width: "10%" },
+                    { dataField: "roomName", caption: "Room Name", width: "20%" },
+                    { dataField: "roomStatus", caption: "Room Status", width: "15%" },
+                    { dataField: "floor", caption: "Floor", width: "8%", dataType: "number", format: "#,##0" },
+                    { dataField: "createdDate", caption: "Create Date", width: "12%", dataType: "date", format: "dd/MM/yyyy" },
+                    { dataField: "updatedDate", caption: "Update Date", width: "12%", dataType: "date", format: "dd/MM/yyyy" }
+                ],
+                headerFilter: { visible: true },
+                onRowPrepared: (e) => {
+                    if (e.rowType === "data" && e.data?.isTotal) {
+                        e.rowElement.css({ "font-weight": "bold", "background-color": "#f6f6f6" });
+                    }
+                },
+                onCellPrepared: (e) => {
+                    if (e.rowType === "data" && e.column.dataField === "roomStatus") {
+                        const status = (e.value || "").toLowerCase();
+                        if (status.includes("dirty")) {
+                            e.cellElement.css({ "background-color": "Red", "color": "white" });
+                        } else if (status.includes("pickup")) {
+                            e.cellElement.css("background-color", "#f740f4");
+                        } else if (status.includes("clean non-checked")) {
+                            e.cellElement.css("background-color", "#1bdff5");
+                        } else if (status.includes("out of order")) {
+                            e.cellElement.css({ "background-color": "#cf159a", "color": "white" });
+                        } else if (status.includes("clean")) {
+                            e.cellElement.css({ "background-color": "green", "color": "white" });
+                        }
+                    }
+                },
+                onSelectionChanged: (e) => {
+                    this.selectedRoomIds = e.selectedRowKeys;
+                },
+            });
+        },
+
+        handleUpdateStatus: function () {
+            if (this.selectedRoomIds.length === 0) {
+                showToast('Warning', 'You must choose at least one room.', false);
+                return;
+            }
+
+            const selectedStatus = $("input[name='hkp_status_master']:checked").val();
+            if (!selectedStatus) {
+                showToast('Warning', 'Please select a status to update.', false);
+                return;
+            }
+
+            if (!confirm("Are you sure you want to change room status?")) return;
+
+            const loginName = localStorage.getItem("Loginname") ? JSON.parse(localStorage.getItem("Loginname")) : "System";
+
+            $("#hkp_status_loadingSpinner").show();
+            $.ajax({
+                url: '/HouseKeeping/UpdateRoomStatus',
+                type: 'POST',
+                data: {
+                    ids: this.selectedRoomIds,
+                    status: selectedStatus,
+                    loginName: loginName
+                },
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val()
+                },
+                success: (response) => {
+                    if (response.success) {
+                        showToast('Success', response.message, true);
+                        $("input[name='hkp_status_master']").prop("checked", false);
+                        this.reloadData();
+                    } else {
+                        showToast('Error', response.message, false);
+                    }
+                    $("#hkp_status_loadingSpinner").hide();
+                },
+                error: () => {
+                    alert("Đã xảy ra lỗi khi cập nhật trạng thái.");
+                    $("#hkp_status_loadingSpinner").hide();
+                }
+            });
+        },
+
+        exportExcel: function () {
+            const gridInstance = $("#hkp_status_gridContainer").dxDataGrid("instance");
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("HKPStatus");
+            const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const reportTitle = '@ViewBag.ReportTitle' || "HKP Status Report";
+
+            worksheet.addRow([companyName]);
+            worksheet.mergeCells('A1:E1');
+            worksheet.getRow(1).font = { bold: true };
+
+            const exportDate = "Export Date: " + new Date().toLocaleString("vi-VN");
+            worksheet.addRow(['', '', '', '', exportDate]);
+            worksheet.mergeCells('E2:H2');
+            worksheet.getRow(2).alignment = { horizontal: 'right' };
+
+            worksheet.addRow([]);
+            const titleRow = worksheet.addRow(['', '', reportTitle]);
+            worksheet.mergeCells('C4:F4');
+            titleRow.font = { bold: true, size: 14 };
+            titleRow.alignment = { horizontal: 'center' };
+            worksheet.addRow([]);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: gridInstance,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 6, column: 1 }
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), reportTitle + ".xlsx");
+                });
+            });
+        },
+
+        exportPdf: function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const gridInstance = $("#hkp_status_gridContainer").dxDataGrid("instance");
+
+            DevExpress.pdfExporter.exportDataGrid({
+                jsPDFDocument: doc,
+                component: gridInstance,
+                autoTableOptions: {
+                    styles: { cellPadding: 2, fontSize: 8 },
+                    margin: { top: 20 }
+                }
+            }).then(() => {
+                doc.save("HKPStatus.pdf");
+            });
+        }
+    };
+
+    $(document).ready(function () {
+        hkp_status_Module.init();
+        // Tự động load dữ liệu nếu cần thiết ngay khi module init
+        hkp_status_Module.reloadData();
+    });
+</script>

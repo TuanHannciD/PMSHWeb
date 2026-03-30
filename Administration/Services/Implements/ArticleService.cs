@@ -12,7 +12,7 @@ namespace Administration.Services.Implements
 {
     public class ArticleService : IArticleService
     {
-        public DataTable SearchArticle(string articleCode, string articleDescription, string articleSupplement, string transactionCode)
+        public DataTable SearchArticle(string tranCode, string articleCode, string articleDescription, string articleSupplement)
         {
             try
             {
@@ -21,7 +21,7 @@ namespace Administration.Services.Implements
                     new SqlParameter("@ArticleCode", articleCode),
                     new SqlParameter("@ArticleDescription", articleDescription),
                     new SqlParameter("@ArticleSupplement", articleSupplement),
-                    new SqlParameter("@TransactionCode", transactionCode),
+                    new SqlParameter("@TransactionCode", tranCode),
                 };
                 DataTable myTable = DataTableHelper.getTableData("spSearchArticle", param);
                 return myTable;

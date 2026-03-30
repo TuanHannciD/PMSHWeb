@@ -1,450 +1,485 @@
-﻿@using DevExpress.XtraReports.UI
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@using DevExpress.XtraReports.UI
+
 @{
     var selectedReport = @ViewBag.ReportHeader;
-
 }
 
+<div class="modal fade" id="exCu_modalMain" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
 
-<style>
-  
-    .dx-datagrid-headers .dx-header-row td {
-        white-space: pre-line !important;
-        text-align: center;
-        font-size: 11px;
-    }
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-primary" id="exCu_modalTitle">Exchange Currency</h5>
+            </div>
 
+            <div class="modal-body">
 
-    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
-        display: none;
-    }
+                <div class="search-filter">
+                    <!-- ACTIONS -->
+                    <div>
+                        <button id="exCu_btnView" type="button" class="mui-button mui-button-new">View</button>
+                        <button id="exCu_btnExportExcel" type="button" class="mui-button mui-button-new">Excel</button>
+                        <button id="exCu_btnPrintGrid" type="button" class="mui-button mui-button-new">Print</button>
+                        <button id="exCu_btnClose" type="button" class="mui-button mui-button-new">Close</button>
+                    </div>
 
+                    <!-- FILTER -->
+                    <div class="mt-1">
+                        <div class="row g-2 align-items-center">
 
-    .filter_wrapper {
-        /*     background-color: #ececec; */
-        /*   margin: 0px 8px 14px 8px; */
-        padding: 18px 0px 0px 14px;
-        border-radius: 8px;
-    }
+                            <!-- From -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2 col-xl-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="exCu_fromDateUi"
+                                        class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 fw-bold mb-0 text-nowrap text-md-end">
+                                        From:
+                                    </label>
 
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                        <div data-date-input data-format="DD/MM/YYYY" business-date data-name="exCu_fromDate">
+                                            <input id="exCu_fromDateUi"
+                                                name="exCu_fromDateUi"
+                                                type="text"
+                                                class="date-ui form-control form-control-sm"
+                                                placeholder="dd/mm/yyyy"
+                                                autocomplete="off" />
+                                        </div>
+                                        <input type="hidden" id="exCu_fromDate" name="exCu_fromDate" />
+                                    </div>
+                                </div>
+                            </div>
 
-    .button_wrapper {
-        display: flex;
-        column-gap: 12px;
-        margin: 0px 8px;
-    }
+                            <!-- To -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2 col-xl-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="exCu_toDateUi"
+                                        class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 fw-bold mb-0 text-nowrap text-md-end">
+                                        To:
+                                    </label>
 
-        .button_wrapper .fa-solid {
-            margin-right: 5px;
-        }
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                        <div data-date-input data-format="DD/MM/YYYY" business-date data-name="exCu_toDate">
+                                            <input id="exCu_toDateUi"
+                                                name="exCu_toDateUi"
+                                                type="text"
+                                                class="date-ui form-control form-control-sm"
+                                                placeholder="dd/mm/yyyy"
+                                                autocomplete="off" />
+                                        </div>
+                                        <input type="hidden" id="exCu_toDate" name="exCu_toDate" />
+                                    </div>
+                                </div>
+                            </div>
 
-    .selected {
-        background-color: #4CAF50; /* Màu xanh */
-        color: white;
-    }
+                            <!-- Account -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2 col-xl-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="exCu_account"
+                                        class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 fw-bold mb-0 text-nowrap text-md-end">
+                                        Account:
+                                    </label>
 
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                        <input type="text"
+                                            id="exCu_account"
+                                            name="exCu_account"
+                                            class="form-control form-control-sm" />
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- Room -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2 col-xl-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="exCu_roomNo"
+                                        class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 fw-bold mb-0 text-nowrap text-md-end">
+                                        Room:
+                                    </label>
 
-    .sticky-header .form-control-sm {
-        padding: .1rem .35rem;
-        height: calc(1.1em + .2rem + 2px);
-    }
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                        <input type="text"
+                                            id="exCu_roomNo"
+                                            name="exCu_roomNo"
+                                            class="form-control form-control-sm" />
+                                    </div>
+                                </div>
+                            </div>
 
-    .sticky-header label[class*="me-"] {
-        margin-right: .5rem !important;
-    }
+                            <!-- ID/Passport -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="exCu_passPort"
+                                        class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 fw-bold mb-0 text-nowrap text-md-end">
+                                        ID/Passport:
+                                    </label>
 
-  
-    .sticky-header input[type="date"].form-control-sm {
-        font-size: 12px !important; /* dúng 12?px */
-        height: calc(1.1em + .2rem + 2px); /* gi? cùng chi?u cao */
-    }
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                        <input type="text"
+                                            id="exCu_passPort"
+                                            name="exCu_passPort"
+                                            class="form-control form-control-sm" />
+                                    </div>
+                                </div>
+                            </div>
 
-    .sticky-header label {
-        font-size: 12px !important;
-        line-height: 1.2;
-    }
+                            <!-- Include Delete -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="col-4 col-sm-4 col-md-3 col-lg-3 col-xl-3 fw-bold mb-0 text-nowrap text-md-end">
+                                        Include:
+                                    </label>
 
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                        <div class="form-check d-flex align-items-center gap-1 mb-0">
+                                            <input
+                                                type="checkbox"
+                                                id="exCu_isDelete"
+                                                name="exCu_isDelete">
+                                            <label class="form-check-label fw-bold text-danger mb-0"
+                                                for="exCu_isDelete"
+                                                style="cursor:pointer;">
+                                                Include Delete
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-    .sort-select {
-        max-width: 130px; /* ho?c 100px n?u mu?n nh? hon */
-        font-size: 12px;
-        padding: 0.15rem 0.5rem;
-    }
-
-    .sort-select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: none !important;
-        padding-right: 10px !important;
-    }
-
-    button:disabled {
-        pointer-events: none; /* Không cho hover/click */
-        opacity: 0.6; /* Cho nó mờ đi */
-        cursor: not-allowed; /* Hiện con trỏ cấm */
-        background-color: #ccc !important; /* tuỳ chỉnh màu khi disable */
-    }
-
-    .tomselect-custom {
-        width: 100px;
-        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
-        font-size: 12px !important;
-    }
-
-        .tomselect-custom .ts-control {
-            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
-        }
-
-    #groupCode.form-control-sm,
-    #subGroupCode.form-control-sm {
-        height: 26px !important; /* chiều cao nhỏ */
-        font-size: 12px !important; /* chữ nhỏ */
-        padding: 2px 6px !important; /* padding nhỏ */
-        line-height: 1.2 !important; /* căn giữa chữ */
-        max-width: 180px; /* chiều rộng vừa phải */
-    }
-
-    .hide-band .dx-datagrid-bands > tr:first-child {
-        display: none !important;
-    }
-
-    .shift-header {
-        background: #f2f2f2;
-        padding: 8px 12px;
-        border-bottom: 1px solid #ccc;
-        font-size: 13px;
-    }
-
-        .shift-header .row {
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 4px;
-        }
-
-            .shift-header .row div {
-                flex: 1; /* chia đều các cột */
-                min-width: 150px; /* giữ cho không quá hẹp */
-            }
-
-        .shift-header i {
-            font-style: italic;
-            color: #333;
-        }
-
-        .shift-header b {
-            font-weight: bold;
-            margin-left: 4px;
-        }
-
-    .dx-popup-title {
-        text-align: center !important;
-        width: 100%;
-    }
-
-    /* Áp dụng cho tất cả text trong grid popup */
-    #popupShiftDetail .dx-datagrid {
-        font-size: 12px !important;
-    }
-
-        /* Nếu vẫn không ăn, target chi tiết hơn */
-        #popupShiftDetail .dx-datagrid .dx-row > td,
-        #popupShiftDetail .dx-datagrid .dx-header-row > td {
-            font-size: 12px !important;
-        }
-
-    #fromCurrency {
-        font-size: 12px; /* nhỏ chữ */
-        padding: 2px 6px; /* thu gọn khoảng cách */
-        height: auto; /* tránh Bootstrap ép chiều cao */
-    }
-
-    #toCurrency {
-        font-size: 12px; /* nhỏ chữ */
-        padding: 2px 6px; /* thu gọn khoảng cách */
-        height: auto; /* tránh Bootstrap ép chiều cao */
-    }
-
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    /* Ẩn mũi tên trong Firefox */
-    input[type=number] {
-        -moz-appearance: textfield;
-        text-align: right;
-    }
-
-    #gridExchangeRate .dx-datagrid-headers td,
-    #gridExchangeRate .dx-datagrid-rowsview td,
-    #gridExchangeRate .dx-datagrid-filter-row td {
-        font-size: 12px !important;
-        padding: 2px 4px !important;
-        line-height: 1.2 !important;
-    }
-</style>
-<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-<div class="text-center" id="reportTitle" style="font-size: 20px">Exchange Currency</div>
-<div class="sticky-header bg-white p-2 shadow-sm z-3">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-1" style="border: 1px solid #ced4da; border-radius: 6px; padding: 8px;">
-
-        <div class="d-flex flex-column ">
-            <div class="d-flex align-items-center">
-                <div class="d-flex align-items-center me-2">
-                    <label class="me-2 mb-0">From Date:</label>
-                    <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                        </div>
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center me-2">
-                    <label class="me-2 mb-0">To Date:</label>
-                    <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                <!-- GRID -->
+                <div class="gridContainer flex-grow-1 bg-white position-relative" id="exCu_gridWrapper">
+                    <div id="exCu_gridContainer" style="height: 100%; width: 100%;"></div>
+                </div>
+
+                <!-- LOADING -->
+                <div id="exCu_loadingSpinner"
+                        style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+                            z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+                            height: 100%;display: flex;align-items: center;justify-content: center;">
+                    <div class="spinner-border text-primary"></div>
                 </div>
             </div>
-        </div>      
-        <div class="d-flex align-items-center me-2">
-            <label class="me-2 mb-0">Account:</label>
-            <input style="width: 80px;" type="text" id="account" name="account" class="form-control form-control-sm " />
         </div>
-        <div class="d-flex align-items-center me-2">
-            <label class="me-2 mb-0">Room No:</label>
-            <input style="width: 80px;" type="text" id="roomNo" name="roomNo" class="form-control form-control-sm " />
-        </div>
-        <div class="d-flex align-items-center me-2">
-            <label class="me-2 mb-0">ID or Passport No:</label>
-            <input style="width: 80px;" type="text" id="passPort" name="passPort" class="form-control form-control-sm" />
-        </div>
-
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="isDelete">
-            <label class="form-check-label text-primary" for="isDelete" style="cursor:pointer;">
-                Include Delete
-            </label>
-        </div>
-
-     
-    </div>
-    <div class="">
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnView" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-        <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrintGrid" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>Print</button>
     </div>
 </div>
 
-<div class="mui-card">
-
-    <div id="gridWrapper" class="mt-2" style="max-height: 500px;">
-        <div class="gridContainer" id="gridContainer"></div>
-    </div>
-</div>
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-</div>
 <script>
-    let selectedRowData = null;
-    DevExpress.localization.locale("vi");
-      function formatDate(date) {
-            let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            return `${year}-${month}-${day}`;
+    var exCu_Module = (function () {
+
+        let mainModal = null;
+
+        let selectedRow = null;
+        let gridInstance = null;
+
+        const sel = {
+            modalMain: "#exCu_modalMain",
+
+            btnView: "#exCu_btnView",
+            btnExcel: "#exCu_btnExportExcel",
+            btnPrint: "#exCu_btnPrintGrid",
+            btnClose: "#exCu_btnClose",
+
+            loading: "#exCu_loadingSpinner",
+
+            fromHidden: "#exCu_fromDate",
+            toHidden: "#exCu_toDate",
+
+            account: "#exCu_account",
+            roomNo: "#exCu_roomNo",
+            passPort: "#exCu_passPort",
+            isDelete: "#exCu_isDelete",
+
+            grid: "#exCu_gridContainer"
+        };
+
+        function init() {
+            DevExpress.localization.locale("vi");
+            mainModal = bootstrap.Modal.getOrCreateInstance(document.querySelector(sel.modalMain), { backdrop: "static" });
+
+            $(sel.modalMain).off("shown.bs.modal.exCu").on("shown.bs.modal.exCu", async function () {
+                bindEvents();
+                initPickers();
+                await ensureBusinessDate();
+                await view(true);
+            });
+
+            $(sel.modalMain).off("hidden.bs.modal.exCu").on("hidden.bs.modal.exCu", function () {
+                cleanup();
+            });
         }
-      $(document).ready(function () {
 
-                const today = new Date();
+        function open() {
+            mainModal.show();
+        }
 
-                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                // Lấy ngày cuối cùng của tháng
-                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        function bindEvents() {
+            $(document).off("click.exCu", sel.btnView).on("click.exCu", sel.btnView, async function () {
+                await view(false);
+            });
 
-                // Định dạng theo local time
-                const formattedFirstDay = formatDate(firstDayOfMonth);
-                const formattedLastDay = formatDate(lastDayOfMonth);
+            $(document).off("click.exCu", sel.btnPrint).on("click.exCu", sel.btnPrint, function () {
+                printSelected();
+            });
 
-                console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-                console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-                // Gán giá trị cho input date
-                document.getElementById('fromDate').value = formattedFirstDay;
-                document.getElementById('toDate').value = formattedLastDay;
-                loadTelephoneGrid([]);
-        });
+            $(document).off("click.exCu", sel.btnExcel).on("click.exCu", sel.btnExcel, function () {
+                exportExcel();
+            });
 
-    $(document).off("click", "#btnView").on("click", "#btnView", function () {
-         $("#loadingSpinner").show();
+            $(document).off("click.exCu", sel.btnClose).on("click.exCu", sel.btnClose, function () {
+                mainModal.hide();
+            });
+        }
 
-            $.ajax({
-                url: '/Accounting/GetExchangeCurrency',
-                type: 'GET',
-                data: {
-                    account: $("#account").val(),
-                    passPort: $("#passPort").val(),
-                    roomNo: $("#roomNo").val(),
-                    fromDate: $("#fromDate").val(),
-                    toDate: $("#toDate").val(),
-                    isDelete: $("#isDelete").is(":checked") ? 1 : 0
+        function initPickers() {
+            if (typeof window.initDateInputs === "function") window.initDateInputs();
+        }
+
+        async function ensureBusinessDate() {
+            // Preferred business-date pipeline
+            try {
+                if (typeof window.waitForBusinessDate === "function") {
+                    const fromIso = await window.waitForBusinessDate("exCu_fromDate", 10000);
+                    const toIso = await window.waitForBusinessDate("exCu_toDate", 10000);
+                    if (fromIso) $(sel.fromHidden).val(fromIso);
+                    if (toIso) $(sel.toHidden).val(toIso);
+                    if (fromIso && toIso) return;
+                }
+            } catch { }
+
+            // Fallback endpoint
+            return $.ajax({
+                url: '/Reservation/GetBusinessDate',
+                type: 'get',
+                dataType: 'json',
+                crossDomain: false,
+                headers: { "X-CSRF-TOKEN-HEADERNAME": $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    const iso = (result || "").split('T')[0];
+                    $(sel.fromHidden).val(iso);
+                    $(sel.toHidden).val(iso);
                 },
-                success: function (data) {
-                    loadTelephoneGrid(data);
-                    console.log(data);
-                    $("#loadingSpinner").hide();
-                },
-                    error: function (xhr, status, error) {
-                    console.error("AJAX Error", status, error);
-                    console.error("Response Text:", xhr.responseText);
-                    alert("Không thể tải dữ liệu");
-                    $("#loadingSpinner").hide();
+                error: function (xhr) {
+                    if (xhr.status === 401) sessionTimeout();
                 }
             });
-    });
+        }
 
-          function loadTelephoneGrid(data) {
-            $("#gridContainer").dxDataGrid({
-            dataSource: data,        
-            showBorders: true,
-            selection: { mode: "single" },
-            paging: { pageSize: 20 },
-            pager: {
-                showPageSizeSelector: true,
-                allowedPageSizes: [20, 50, 100],
-                showInfo: true
-            },
-            filterRow: { visible: true },
-            columns: [
-                { dataField: "invoiceNo", caption: "Invoice No",width: 90},
-                { dataField: "transactionDate", caption: "Trans. Date", dataType: "datetime", format: "dd/MM/yyyy",width: 100},
-                { dataField: "account", caption: "Guest Name",width: 150 },
-                { dataField: "passPort", caption: "PassPort", width: 100 },
-                { dataField: "roomNo", caption: "Room No", width: 80 },
-                { dataField: "totalAmount", caption: "Total Amount", dataType: "number",format: "#,##0.00"  ,width: 120 },
-                { dataField: "address", caption: "Address", width: 150},
-                { dataField: "description", caption: "Description",width: 200 },
-                { dataField: "statusText", caption: "Status", width: 90},
-                { dataField: "cashierName", caption: "Cashier Name",width: 100 },
-                { dataField: "createdBy", caption: "Created By",width: 90 },
-                { dataField: "createddate", caption: "Created Date", dataType: "date", format: "dd/MM/yyyy HH:mm",width: 130 },
-                { dataField: "updatedBy", caption: "Updated By",width: 90  },
-                { dataField: "updatedDate", caption: "Updated Date", dataType: "date", format: "dd/MM/yyyy HH:mm",width: 130 }
-            ],
-            scrolling: {
-                    mode: "standard", // Không dùng virtual để footer hiển thị đúng
+        function getPayload() {
+            const fromDate = $(sel.fromHidden).val() || "";
+            const toDate = $(sel.toHidden).val() || "";
+
+            return {
+                account: $(sel.account).val() || "",
+                passPort: $(sel.passPort).val() || "",
+                roomNo: $(sel.roomNo).val() || "",
+                fromDate: fromDate,
+                toDate: toDate,
+                isDelete: $(sel.isDelete).is(":checked") ? 1 : 0
+            };
+        }
+
+        async function view(isInitial) {
+            $(sel.loading).show();
+
+            const payload = getPayload();
+
+            if (!payload.fromDate || !payload.toDate) {
+                $(sel.loading).hide();
+                showToast("Warning", "Please select From/To date.", false);
+                return;
+            }
+
+            $.ajax({
+                url: '/Cashiering/GetExchangeCurrency',
+                type: 'GET',
+                data: payload,
+                success: function (data) {
+                    renderGrid(Array.isArray(data) ? data : []);
+                    $(sel.loading).hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error", status, error);
+                    console.error("Response Text:", xhr.responseText);
+                    $(sel.loading).hide();
+                    showToast("Error", "Failed to load data.", false);
+                    destroyGrid();
+                }
+            });
+        }
+
+        function destroyGrid() {
+            try {
+                if (gridInstance) {
+                    gridInstance.dispose();
+                    gridInstance = null;
+                }
+            } catch { }
+            $(sel.grid).empty();
+            selectedRow = null;
+        }
+
+        function renderGrid(data) {
+            destroyGrid();
+
+            gridInstance = $(sel.grid).dxDataGrid({
+                dataSource: data,
+                showBorders: true,
+                height: "100%",
+                width: "100%",
+
+                columnAutoWidth: true,
+                allowColumnResizing: true,
+
+                selection: { mode: "single" },
+
+                scrolling: {
+                    mode: "standard",
                     showScrollbar: "always",
                     scrollByContent: true
                 },
-                paging: {
-                    pageSize: 50
-                },
+
+                paging: { pageSize: 50 },
+
                 pager: {
                     visible: true,
-                    allowedPageSizes: [50, 100, 'all'],
+                    allowedPageSizes: [50, 100, "all"],
                     showPageSizeSelector: true,
                     showInfo: true,
                     showNavigationButtons: true
                 },
-                    filterRow: {
-                visible: true,
-                applyFilter: "auto"
-            },
-            // 🔥 Quan trọng: gán selectedRowData khi click chọn
-             onRowClick: function (e) {
-                selectedRowData = e.data; // 🔥 lấy data của row vừa click
-                console.log("Selected Row (RowClick):", selectedRowData);
-            }
-        });
-        }
-            
 
-          $(document).off("click", "#btnPrintGrid").on("click", "#btnPrintGrid", function () {
-         $("#loadingSpinner").show();
+                filterRow: { visible: true, applyFilter: "auto" },
+
+                columns: [
+                    { dataField: "invoiceNo", caption: "Invoice No", width: 90 },
+                    { dataField: "transactionDate", caption: "Trans. Date", dataType: "datetime", format: "dd/MM/yyyy", width: 110 },
+
+                    { dataField: "account", caption: "Guest Name", width: 160 },
+                    { dataField: "passPort", caption: "PassPort", width: 120 },
+                    { dataField: "roomNo", caption: "Room No", width: 80 },
+
+                    { dataField: "totalAmount", caption: "Total Amount", dataType: "number", format: "#,##0.00", width: 120, alignment: "right" },
+
+                    { dataField: "address", caption: "Address", width: 200 },
+                    { dataField: "description", caption: "Description", width: 240 },
+
+                    { dataField: "statusText", caption: "Status", width: 90 },
+                    { dataField: "cashierName", caption: "Cashier Name", width: 130 },
+
+                    { dataField: "createdBy", caption: "Created By", width: 100 },
+                    { dataField: "createddate", caption: "Created Date", dataType: "datetime", format: "dd/MM/yyyy HH:mm", width: 150 },
+
+                    { dataField: "updatedBy", caption: "Updated By", width: 100 },
+                    { dataField: "updatedDate", caption: "Updated Date", dataType: "datetime", format: "dd/MM/yyyy HH:mm", width: 150 }
+                ],
+
+                onRowClick: function (e) {
+                    selectedRow = e.data || null;
+                }
+            }).dxDataGrid("instance");
+        }
+
+        function printSelected() {
+            if (!selectedRow || !selectedRow.id) {
+                showToast("Warning", "Please select 1 row before printing.", false);
+                return;
+            }
+
+            $(sel.loading).show();
 
             $.ajax({
                 url: '/Cashiering/ExchangeCurrencyPrint',
                 type: 'GET',
-                data: {
-                    id: selectedRowData.id,
-                 
-                },
+                data: { id: selectedRow.id },
                 success: function (data) {
-               
-                     if (data && data.pdfBase64) {
-                    // Mở cửa sổ mới để hiển thị PDF
-                        var pdfWindow = window.open("");
+                    if (data && data.pdfBase64) {
+                        const pdfWindow = window.open("");
                         pdfWindow.document.write(
                             "<iframe width='100%' height='100%' style='border:none' src='" + data.pdfBase64 + "'></iframe>"
                         );
                     } else {
-                        alert("Không có dữ liệu PDF để hiển thị");
+                        showToast("Warning", "No PDF data returned.", false);
                     }
-                    $("#loadingSpinner").hide();
+                    $(sel.loading).hide();
                 },
-                    error: function (xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("AJAX Error", status, error);
                     console.error("Response Text:", xhr.responseText);
-                    alert("Không thể tải dữ liệu");
-                    $("#loadingSpinner").hide();
+                    $(sel.loading).hide();
+                    showToast("Error", "Failed to print.", false);
                 }
             });
-    });
+        }
 
-         $("#btnExportExcel").click(function () {
-        const grid = $("#gridContainer").dxDataGrid("instance");   // 🔥 khai báo grid
+        function exportExcel() {
+            const grid = $(sel.grid).dxDataGrid("instance");
+            if (!grid) {
+                showToast("Warning", "No data to export.", false);
+                return;
+            }
 
-        const workbook = new ExcelJS.Workbook();
-        const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-        const worksheet = workbook.addWorksheet("Sheet 1");
+            const workbook = new ExcelJS.Workbook();
+            const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const worksheet = workbook.addWorksheet("Sheet 1");
 
-        // === Dòng 1: Tên công ty (merge theo 4 cột) ===
-        worksheet.addRow([companyName]);
-        worksheet.mergeCells('A1:D1');
-        worksheet.getRow(1).font = { bold: true };
-        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
+            worksheet.addRow([companyName]);
+            worksheet.mergeCells('A1:D1');
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
 
-        // === Dòng 2: Ngày giờ xuất (bên phải) ===
-        const now = new Date();
-        const exportDate = now.toLocaleString("vi-VN");
-        worksheet.addRow(['', '', '', exportDate]);
-        worksheet.mergeCells('D2:D2');  // cột D thôi
-        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
+            const now = new Date();
+            const exportDate = now.toLocaleString("vi-VN");
+            worksheet.addRow(['', '', '', exportDate]);
+            worksheet.mergeCells('D2:D2');
+            worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
 
-        // === Dòng 3–4: trống
-        worksheet.addRow([]);
-        worksheet.addRow([]);
+            worksheet.addRow([]);
+            worksheet.addRow([]);
 
-        // === Dòng 5: Tiêu đề báo cáo (ở giữa) ===
-        const reportRow = worksheet.addRow(['ExchangeCurrency']);
-        worksheet.mergeCells('A5:D5');
-        reportRow.font = { bold: true, size: 14 };
-        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            const reportRow = worksheet.addRow(['Exchange Currency']);
+            worksheet.mergeCells('A5:D5');
+            reportRow.font = { bold: true, size: 14 };
+            reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-        // === Dòng 6: trống
-        worksheet.addRow([]);
+            worksheet.addRow([]);
 
-        // === Xuất dữ liệu grid bắt đầu từ dòng 7 ===
-        DevExpress.excelExporter.exportDataGrid({
-            component: grid,
-            worksheet: worksheet,
-            autoFilterEnabled: true,
-            topLeftCell: { row: 7, column: 1 }
-        }).then(function () {
-            // Footer (sau cùng)
-            const lastRow = worksheet.lastRow.number + 2;
-            worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
-            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-            worksheet.getCell(`A${lastRow}`).font = { italic: true };
+            DevExpress.excelExporter.exportDataGrid({
+                component: grid,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                const lastRow = worksheet.lastRow.number + 2;
+                worksheet.mergeCells(`A${lastRow}:D${lastRow}`);
+                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+                worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
-            // Ghi file
-            let fileName = "Exchange Currency.xlsx";
-            workbook.xlsx.writeBuffer().then(function (buffer) {
-                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Exchange Currency.xlsx");
+                });
             });
-        });
+        }
+
+        function cleanup() {
+            $(document).off(".exCu");
+            destroyGrid();
+        }
+
+        return { init, open };
+
+    })();
+
+    // Option A global entry
+    window.openModalExCu = function () {
+        exCu_Module.open();
+    };
+
+    $(document).ready(function () {
+        exCu_Module.init();
+        // Auto-open if needed:
+        // window.openModalExCu();
     });
-
-
-
-
 </script>

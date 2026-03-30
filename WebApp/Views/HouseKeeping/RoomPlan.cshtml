@@ -1,4 +1,4 @@
-﻿@using DevExpress.XtraReports.UI
+@using DevExpress.XtraReports.UI
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -14,14 +14,7 @@
 <link asp-append-version="true" href="~/css/reservation.css" rel="stylesheet" /> *@
 
 <style>
-    #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #005f87 !important; /* màu xanh ngọc */
-        color: white !important; /* chữ trắng */
-    }
 
-        #gridContainer .dx-datagrid-rowsview .dx-selection * {
-            color: white !important;
-        }
 
     .dx-datagrid-headers .dx-header-row td {
         white-space: pre-line !important;
@@ -30,7 +23,8 @@
     }
 
 
-    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default, .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
+    .dx-datagrid .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default,
+    .dx-datagrid-container .dx-editor-with-menu .dx-menu-item-content .dx-icon.dx-icon-filter-operation-default {
         display: none;
     }
 
@@ -39,80 +33,6 @@
         font-size: 14px;
     }
 
-    #gridContainer .dx-datagrid-rowsview .dx-row > td {
-        padding-top: 2px !important;
-        padding-bottom: 2px !important;
-        font-size: 12px !important;
-        height: 27px !important;
-    }
-
-    #gridContainer .dx-datagrid-headers {
-        background-color: #3b9ac6 !important; /* Màu xanh dương */
-        color: white !important; /* Chữ trắng cho dễ đọc */
-    }
-
-        #gridContainer .dx-datagrid-headers .dx-header-row > td {
-            padding-top: 12px !important;
-            padding-bottom: 12px !important;
-            font-size: 12px !important;
-        }
-
-        #gridContainer .dx-datagrid-headers .dx-header-row > td {
-            background-color: #3b9ac6 !important;
-            color: white !important;
-            font-weight: bold;
-            border-right: 1px solid #ddd !important;
-            text-align: center !important;
-        }
-
-        #gridContainer .dx-datagrid-rowsview td,
-        #gridContainer .dx-datagrid-headers td {
-            border-right: 1px solid #ddd !important;
-        }
-
-        /* Loại bỏ viền phải ở cột cuối cùng (tùy chọn) */
-        #gridContainer .dx-datagrid-rowsview tr td:last-child,
-        #gridContainer .dx-datagrid-headers tr td:last-child {
-            border-right: none !important;
-        }
-
-
-    #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #01579b !important;
-        color: white !important;
-    }
-
-        #gridContainer .dx-datagrid-rowsview .dx-selection * {
-            color: white !important;
-        }
-
-    #gridContainer .dx-datagrid-filter-row td .dx-datebox {
-        height: 24px !important;
-        min-height: 24px !important;
-    }
-
-        #gridContainer .dx-datagrid-filter-row td .dx-datebox input {
-            font-size: 12px !important;
-            height: 24px !important;
-        }
-
-    #gridContainer .dx-datagrid-filter-row td .dx-editor-with-menu,
-    #gridContainer .dx-datagrid-filter-row td .dx-texteditor input {
-        height: 24px !important;
-        line-height: 24px !important;
-        padding: 2px 6px !important;
-        font-size: 12px !important;
-        box-sizing: border-box;
-    }
-
-    #gridContainer .dx-datagrid-filter-row td .dx-datebox,
-    #gridContainer .dx-datagrid-filter-row td .dx-dropdowneditor {
-        height: 26px !important;
-        min-height: 26px !important;
-        font-size: 12px !important;
-    }
-
-
     .filter_wrapper {
         /*     background-color: #ececec; */
         /*   margin: 0px 8px 14px 8px; */
@@ -120,9 +40,9 @@
         border-radius: 8px;
     }
 
-    .gridContainer {
+ /*    .gridContainer {
         margin: 0px 8px;
-    }
+    } */
 
     .button_wrapper {
         display: flex;
@@ -130,48 +50,40 @@
         margin: 0px 8px;
     }
 
-        .button_wrapper .fa-solid {
-            margin-right: 5px;
-        }
+    .button_wrapper .fa-solid {
+        margin-right: 5px;
+    }
 
     .selected {
-        background-color: #4CAF50; /* Màu xanh */
+        background-color: #4CAF50;
+        /* Màu xanh */
         color: white;
     }
-
-    #gridContainer .dx-datagrid-rowsview .dx-selection {
-        background-color: #01579b !important; /* màu xanh ngọc */
-        color: white !important; /* chữ trắng */
-    }
-
-        #gridContainer .dx-datagrid-rowsview .dx-selection * {
-            color: white !important;
-        }
-
     .filter-panel {
         font-size: 12px;
     }
 
-        .filter-panel .form-control-sm,
-        .filter-panel .form-select-sm,
-        .filter-panel .ts-control {
-            font-size: 12px;
-            padding: .1rem .35rem;
-            height: calc(1.1em + .2rem + 2px);
-        }
-
-    .dx-scheduler-header{
-        height: 60px;
+    .filter-panel .form-control-sm,
+    .filter-panel .form-select-sm,
+    .filter-panel .ts-control {
+        font-size: 12px;
+        padding: .1rem .35rem;
+        height: calc(1.1em + .2rem + 2px);
     }
 
-    .dx-scheduler-header-panel-empty-cell{
+    .dx-scheduler-header {
+        height: 33px;
+    }
+
+    .dx-scheduler-header-panel-empty-cell {
         display: none;
     }
 
+    .dx-scheduler-header-row th[title="0:00"] {
+        display: none !important;
+    }
 
-/*     .dx-scheduler-header-panel-cell .dx-scheduler-cell-sizes-horizontal{
-        display: none;
-        } */
+
 
     .dx-scheduler-group-table {
         display: none !important;
@@ -196,7 +108,8 @@
 
     #scrollWrapper {
         display: flex;
-        flex-direction: row; /* Chia theo chiều ngang */
+        flex-direction: row;
+        /* Chia theo chiều ngang */
         height: 100vh;
         width: 100%;
         margin-top: 54px;
@@ -207,11 +120,15 @@
 
     #gridWrapper {
         width: 30%;
-        min-width: 250px; /* Tránh quá nhỏ nếu màn hình nhỏ */
+        min-width: 250px;
+        /* Tránh quá nhỏ nếu màn hình nhỏ */
+        padding-top: 65px;
+        position: relative;
+        left: 10px;
     }
 
     #schedulerWrapper {
-        width: 70%;
+        width: 100%;
 
         min-width: 600px;
         margin-top: -50px;
@@ -219,11 +136,14 @@
 
     #gridContainer,
     #schedulerContainer {
-        height: 600px; /* Hoặc giá trị phù hợp */
+        height: 600px;
+        /* Hoặc giá trị phù hợp */
         overflow-y: auto;
         width: 100%;
-        transform-origin: left center; /* co giãn từ mép trái, giữ chiều cao */
-        transition: transform 0.2s ease; /* mượt mà khi zoom */
+        transform-origin: left center;
+        /* co giãn từ mép trái, giữ chiều cao */
+        transition: transform 0.2s ease;
+        /* mượt mà khi zoom */
     }
 
     .custom-room-label {
@@ -235,53 +155,103 @@
         text-overflow: ellipsis;
         display: flex;
         align-items: center;
-        height: 100%; /* Giữ label luôn nằm đúng hàng */
+        height: 100%;
+        /* Giữ label luôn nằm đúng hàng */
     }
 
     .dx-scheduler-group-header-content {
         padding: 0 !important;
         margin: 0 !important;
         display: flex;
-        align-items: center; /* Canh giữa theo chiều dọc */
+        align-items: center;
+        /* Canh giữa theo chiều dọc */
         height: 100%;
     }
 
-    .dx-scheduler-appointment-empty.dx-scheduler-appointment-horizontal {
-        position: absolute !important; /* override để định vị chuẩn */
+    .room-label {
+        position: relative;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        top: -9px;
+        left:2px;
+    }
+    /*     .dx-scheduler-appointment-empty.dx-scheduler-appointment-horizontal {
+        position: absolute !important; 
         left:100px;
         margin-top: 4px;
-    }
+    } */
 
     .dx-scheduler-header-panel-cell.dx-scheduler-cell-sizes-horizontal.dx-scheduler-header-panel-week-cell {
-        position: relative; /* để phần tử con tuyệt đối bám theo */
+        position: relative;
+        /* để phần tử con tuyệt đối bám theo */
     }
 
-        .dx-scheduler-header-panel-cell.dx-scheduler-cell-sizes-horizontal.dx-scheduler-header-panel-week-cell::after {
-            content: "";
-            position: absolute;
-            bottom: 4px; /* cách mép dưới 4px, bạn có thể chỉnh */
-            left: 50%; /* nằm giữa theo chiều ngang */
-            transform: translateX(-50%);
-            width: 1px; /* độ dày gạch */
-            height: 10px; /* chiều dài gạch */
-            background-color: black; /* màu gạch */
-        }
+    .dx-scheduler-header-panel-cell.dx-scheduler-cell-sizes-horizontal.dx-scheduler-header-panel-week-cell::after {
+        content: "";
+        position: absolute;
+        bottom: 4px;
+        /* cách mép dưới 4px, bạn có thể chỉnh */
+        left: 50%;
+        /* nằm giữa theo chiều ngang */
+        transform: translateX(-50%);
+        width: 1px;
+        /* độ dày gạch */
+        height: 10px;
+        /* chiều dài gạch */
+        background-color: black;
+        /* màu gạch */
+    }
 
     .filter-popup {
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         transition: all 0.2s ease-in-out;
     }
 
     .tomselect-custom {
         width: 300px;
-        min-height: 30px; /* hoặc tùy theo chiều cao bạn muốn */
+        min-height: 30px;
+        /* hoặc tùy theo chiều cao bạn muốn */
         font-size: 0.65rem;
         margin-left: 5px;
     }
 
-        .tomselect-custom .ts-control {
-            padding-left: 8px !important; /* hoặc bất kỳ giá trị nào bạn muốn */
-        }
+    .tomselect-custom .ts-control {
+        padding-left: 8px !important;
+        /* hoặc bất kỳ giá trị nào bạn muốn */
+    }
+    /* ===== RESERVATION ===== */
+    .resv-pending {
+        background-color: gold !important;
+    }
+
+    .resv-checkin {
+        background-color: #4CAF50 !important;
+    }
+
+    .resv-checkout {
+        background-color: #ffffff !important;
+        color: #000 !important;
+    }
+
+    .resv-dueout {
+        background-color: violet !important;
+    }
+
+    /* ===== OOOS ===== */
+    .ooo-order {
+        background-color: indianred !important;
+    }
+
+    .ooo-service {
+        background-color: orangered !important;
+    }
+
+    .ooo-default {
+        background-color: #a82f19 !important;
+    }
+
+
 
 </style>
 <div class="text-center" id="reportTitle" style="font-size: 20px"></div>
@@ -290,17 +260,19 @@
     <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
      background-color: rgba(0, 0, 0, 0.3); z-index: 1040;"></div>
 
-  
+
     <div>
         <div class="">
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnPrint" class="mui-button mui-button-new"><i class="fa-solid fa-eye"></i>View</button>
-            <button style="border-radius: 4px;  margin-right: 6px;background-color: green;" id="btnExportExcel" class="mui-button mui-button-new" type="button"> <i class="fa-solid fa-file-excel"></i> Excel</button>
-           @*  <button style="border-radius: 4px;  margin-right: 6px;background-color: #3b9ac6;" id="btnExportPdf" class="mui-button mui-button-new" type="button"><i class="fas fa-eraser"></i> PDF</button> *@
-            <button style="border-radius: 4px;  margin-right: 6px;" id="toggleFilterBtn" class="mui-button mui-button-search">
-                <i class="fa fa-filter"></i> Filter
+            <button id="btnPrint" class="mui-button mui-button-new">View</button>
+            <button id="btnExportExcel" class="mui-button mui-button-new" type="button">   Excel</button>
+            @*  <button  id="btnExportPdf" class="mui-button mui-button-new" type="button"> PDF</button> *@
+            <button style="border-radius: 4px;  margin-right: 6px;" id="toggleFilterBtn"
+                class="mui-button mui-button-search">
+                 Filter
             </button>
         </div>
-        <div id="filterPopup" class="filter-popup shadow p-3 bg-white rounded border mt-2" style="display: none; width: 100%;">
+        <div id="filterPopup" class="filter-popup shadow p-3 bg-white rounded border mt-2"
+            style="display: none; width: 100%;">
 
             <div class="d-flex flex-wrap align-items-center gap-2 mb-1 filter-panel">
                 <!-- From Date -->
@@ -310,64 +282,76 @@
                         <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
                             <!-- Checkbox Group -->
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="cleannonupop" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="cleannonupop" name="masterllioup"
+                                    value="1" checked>
                                 <label class="form-check-label" for="cleannonupop">Clean Non-Checked</label>
                             </div>
 
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="dirtyupop" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="dirtyupop" name="masterllioup"
+                                    value="1" checked>
                                 <label class="form-check-label" for="dirtyupop">Dirty</label>
                             </div>
 
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="cleanupop" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="cleanupop" name="masterllioup"
+                                    value="1" checked>
                                 <label class="form-check-label" for="cleanupop">Clean</label>
                             </div>
 
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="ooos" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="ooos" name="masterllioup" value="1"
+                                    checked>
                                 <label class="form-check-label" for="ooos">OOO/S</label>
                             </div>
 
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="dueout" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="dueout" name="masterllioup"
+                                    value="1" checked>
                                 <label class="form-check-label" for="dueout">Due Out</label>
                             </div>
 
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="occupied" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="occupied" name="masterllioup"
+                                    value="1" checked>
                                 <label class="form-check-label" for="occupied">Occupied</label>
                             </div>
 
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" id="vacant" name="masterllioup" value="1" checked>
+                                <input class="form-check-input" type="checkbox" id="vacant" name="masterllioup"
+                                    value="1" checked>
                                 <label class="form-check-label" for="vacant">Vacant</label>
                             </div>
                         </div>
                         <div class="d-flex flex-wrap align-items-center gap-3">
 
                             <div class="d-flex align-items-center me-3">
-                                <div style="width: 20px; height: 12px; background-color: #A82F19;" class="me-2 rounded"></div>
+                                <div style="width: 20px; height: 12px; background-color: #A82F19;" class="me-2 rounded">
+                                </div>
                                 <span>OOO</span>
                             </div>
 
                             <div class="d-flex align-items-center me-3">
-                                <div style="width: 20px; height: 12px; background-color: red;" class="me-2 rounded"></div>
+                                <div style="width: 20px; height: 12px; background-color: red;" class="me-2 rounded">
+                                </div>
                                 <span>OOS</span>
                             </div>
 
                             <div class="d-flex align-items-center me-3">
-                                <div style="width: 20px; height: 12px; background-color: purple;" class="me-2 rounded"></div>
+                                <div style="width: 20px; height: 12px; background-color: purple;" class="me-2 rounded">
+                                </div>
                                 <span>Due Out</span>
                             </div>
 
                             <div class="d-flex align-items-center me-3">
-                                <div style="width: 20px; height: 12px; background-color: yellow;" class="me-2 rounded border"></div>
+                                <div style="width: 20px; height: 12px; background-color: yellow;"
+                                    class="me-2 rounded border"></div>
                                 <span>Expected</span>
                             </div>
 
                             <div class="d-flex align-items-center me-3">
-                                <div style="width: 20px; height: 12px; background-color: #4CAF50;" class="me-2 rounded"></div>
+                                <div style="width: 20px; height: 12px; background-color: #4CAF50;" class="me-2 rounded">
+                                </div>
                                 <span>Check In</span>
                             </div>
 
@@ -379,7 +363,7 @@
                             <!-- Hàng 1 -->
                             <div class="d-flex align-items-center me-3">
                                 <label class="me-2 mb-0">Zone:</label>
-                                <select id="zone" name="zone" class="tomselect-custom" style="width: 200px" multiple>
+                                <select id="zone" name="zone" class="tomselect-custom"  multiple>
                                     <option value=""></option>
                                     @foreach (var item in zoneList)
                                     {
@@ -390,7 +374,7 @@
 
                             <div class="d-flex align-items-center me-3">
                                 <label class="me-2 mb-0">Room:</label>
-                                <select id="room" name="room" class="tomselect-custom" style="width: 200px" multiple>
+                                <select id="room" name="room" class="tomselect-custom"  multiple>
                                     <option value=""></option>
                                     @foreach (var item in roomList)
                                     {
@@ -401,7 +385,8 @@
 
                             <div class="d-flex align-items-center me-3">
                                 <label class="me-2 mb-0">Room Type:</label>
-                                <select id="roomType" name="roomType" class="tomselect-custom" style="width: 200px" multiple>
+                                <select id="roomType" name="roomType" class="tomselect-custom" 
+                                    multiple>
                                     <option value=""></option>
                                     @foreach (var item in roomtypeList)
                                     {
@@ -431,7 +416,8 @@
 
                             <div class="d-flex align-items-center me-3">
                                 <label class="me-2 mb-0">Floor:</label>
-                                <select id="floor" name="floor" class="form-control form-control-sm" style="width: 100px">
+                                <select id="floor" name="floor" class="form-control form-control-sm"
+                                    style="width: 100px">
                                     <option value="">--ALL--</option>
                                     @foreach (var item in roomFloor)
                                     {
@@ -454,12 +440,14 @@
                                 <div class="d-flex align-items-center">
                                     <div class="d-flex align-items-center me-3">
                                         <label class="me-2 mb-0">Min Date :</label>
-                                        <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm w-auto" />
+                                        <input type="date" id="fromDate" name="fromDate"
+                                            class="form-control form-control-sm w-auto" />
                                     </div>
 
                                     <div class="d-flex align-items-center me-3">
                                         <label class="me-2 mb-0">Max Date :</label>
-                                        <input type="date" id="toDate" name="toDate" class="form-control form-control-sm w-auto" />
+                                        <input type="date" id="toDate" name="toDate"
+                                            class="form-control form-control-sm w-auto" />
                                     </div>
                                 </div>
                             </div>
@@ -471,12 +459,14 @@
                                 <div class="d-flex flex-wrap align-items-center gap-2">
                                     <label class="fw-bold mb-2">Order By:</label>
                                     <div class="form-check me-3">
-                                        <input class="form-check-input" type="checkbox" id="roomno" name="masterlliouppop" value="1">
+                                        <input class="form-check-input" type="checkbox" id="roomno"
+                                            name="masterlliouppop" value="1" checked>
                                         <label class="form-check-label" for="cleannonup">Room No</label>
                                     </div>
 
                                     <div class="form-check me-3">
-                                        <input class="form-check-input" type="checkbox" id="roomtype" name="masterlliouppop" value="0" checked>
+                                        <input class="form-check-input" type="checkbox" id="roomtype"
+                                            name="masterlliouppop" value="0">
                                         <label class="form-check-label" for="dirtyup">Room Type</label>
                                     </div>
 
@@ -485,7 +475,8 @@
                             </div>
                             <div class="d-flex align-items-center ms-3">
                                 <label class="fw-bold mb-0 me-2">Zoom:</label>
-                                <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="zoom-out">−</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm me-1"
+                                    id="zoom-out">−</button>
                                 <button type="button" class="btn btn-outline-secondary btn-sm" id="zoom-in">+</button>
                             </div>
                         </div>
@@ -502,40 +493,47 @@
 <div style="display:flex">
 
     <div id="scrollWrapper">
-        <div class="mui-card" id="gridWrapper">
-            <div id="gridContainer"></div>
-        </div>
-        <div class="mui-card" id="schedulerWrapper">
+    @*     <div class="mui-card" id="gridWrapper">
+            <div class="gridContainer" id="gridContainer"></div>
+        </div> *@
+        <div id="schedulerWrapper">
             <div id="schedulerContainer"></div>
         </div>
     </div>
 
 </div>
 
-<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-    <i class="fa-solid fa-spinner fa-spin"></i>
+<div id="loadingSpinner"
+     style="display:none;
+            position:fixed;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            z-index:150;
+            text-align:center;">
+    
+    <i class="fa-solid fa-spinner fa-spin" style="font-size:36px;"></i>
+    <div style="margin-top:8px; font-size:14px; font-weight:500;">
+        Please wait...
+    </div>
 </div>
+
 <script>
-        function formatDate(date) {
-            let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            let day = date.getDate().toString().padStart(2, '0'); // Đảm bảo có 2 chữ số
-            return `${year}-${month}-${day}`;
-        }
 
 
-          $(document).ready(function () {
-              setTomSelect();
+    $(document).ready(function () {
+        getBusinessDate();
+        initTomSelect(".tomselect-custom");
         // Khi nhấn nút Filter
-          $('#toggleFilterBtn').on('click', function (e) {
-        e.stopPropagation();
+        $('#toggleFilterBtn').on('click', function (e) {
+            e.stopPropagation();
 
-        // Gắn filterPopup ngay sau nút
-        $(this).after($('#filterPopup'));
+            // Gắn filterPopup ngay sau nút
+            $(this).after($('#filterPopup'));
 
-        // Toggle hiển thị
-        $('#filterPopup').toggle();
-    });
+            // Toggle hiển thị
+            $('#filterPopup').toggle();
+        });
 
         // Click ra ngoài sẽ đóng popup và overlay
         $(document).on('click', function (e) {
@@ -551,7 +549,7 @@
                 $('#overlay').hide();
             }
         });
-      let currentScaleX = 1.0;      // Zoom ngang mặc định 100%
+        let currentScaleX = 1.0;      // Zoom ngang mặc định 100%
         const step = 0.1;             // Mỗi lần zoom ±10%
         const minScaleX = 0.5;        // Tối thiểu 50%
         const maxScaleX = 2.0;        // Tối đa 200%
@@ -574,529 +572,531 @@
             }
         });
 
-         $('input[name="masterlliouppop"]').on('change', function () {
+        $('input[name="masterlliouppop"]').on('change', function () {
             if ($(this).is(':checked')) {
                 $("#btnPrint").trigger("click");
             }
         });
-             document.getElementById("reportTitle").innerText = 'Room Plan';
-            var businessDateStr = '@ViewBag.BusinessDate'; // Ví dụ: '8/29/2024 12:00:00 AM'
-        console.log(businessDateStr);
-        // Lấy phần ngày tháng năm
-        var dateOnly = businessDateStr.split(' ')[0]; // '8/29/2024'
-        var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
+        document.getElementById("reportTitle").innerText = 'Room Plan';
+         initTomSelect(".tomselect-custom");
+         const DAY_RANGE = 30;
 
-        // Parse đúng thứ tự: new Date(year, monthIndex, day)
-            parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
+        const parseDate = (val) => {
+            if (!val) return null;
+            return new Date(val + 'T00:00:00');
+        };
 
-               const lastDayOfMonth = new Date(parsedBusinessDate.getFullYear(), parsedBusinessDate.getMonth() + 2, 0);
+        const formatDate = (d) => d.toISOString().split('T')[0];
 
-            // Định dạng theo local time
-            const formattedFirstDay = formatDate(parsedBusinessDate);
-            const formattedLastDay = formatDate(lastDayOfMonth);
+        $('#fromDate').on('change', function () {
+            const fromDate = parseDate(this.value);
+            if (!fromDate) return;
 
-            console.log(formattedFirstDay); // Kiểm tra giá trị đúng chưa
-            console.log(formattedLastDay); // Kiểm tra giá trị đúng chưa
-            // Gán giá trị cho input date
-               $('#fromDate').val(formattedFirstDay);
-             $('#toDate').val(formattedLastDay);
+            const toDate = new Date(fromDate);
+            toDate.setDate(toDate.getDate() + DAY_RANGE);
 
-               $("#btnPrint").trigger("click");
-           initializeRoomListTomSelect();
-                    initializeZoneListTomSelect();
-           initializeRoomTypeListTomSelect();
+            $('#toDate').val(formatDate(toDate));
         });
-             function initializeZoneListTomSelect() {
-            const el = document.querySelector("#zone");
-            if (!el) return;
 
-            // Nếu đã được khởi tạo thì huỷ trước
-            if (el.tomselect) el.tomselect.destroy();
+        $('#toDate').on('change', function () {
+            const toDate = parseDate(this.value);  
+            if (!toDate) return;
 
-           const ts = new TomSelect(el, {
-                plugins: ['remove_button'],
-                create: false,
-                maxItems: null,
-                allowEmptyOption: true,
-                placeholder: '',
-                persist: false,
-                render: {
-                    option: function (data, escape) {
-                        return `<div>${escape(data.text)}</div>`;
-                    }
-                }
-            });
-        }
-         function setTomSelect(){
-            const ids = [
-                   "#txtItemInventory","#txtNameAccompanying"
-                //,
-                //"#txtStateGroup",
-                // "#txtCountryGroup", "#txtCityGroup", "#txtLanguageGroup", "#txtCurrencyGroup",
-                // "#txtVIPGroup", "#txtLanguageContact", "#txtTitleContact", "#txtCityContact",
-                // "#txtStateContact", "#txtCountryContact", "#txtOwnerContact", "#txtTerritoryContact"
-            ];
+            const fromDate = new Date(toDate);
+            fromDate.setDate(fromDate.getDate() - DAY_RANGE);
 
-            for (const id of ids) {
-                if ($(id).length) {
-                    new TomSelect(id, {
-                        allowEmptyOption: true,
-                        create: true
-                    });
+            $('#fromDate').val(formatDate(fromDate));
+        });
+    });
+
+    function getBusinessDate() {
+        return $.ajax({
+            url: '/Reservation/GetBusinessDate',
+            type: 'get',
+            dataType: 'json',
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (result) {
+
+                const baseDateStr = result.split('T')[0]; // YYYY-MM-DD
+
+                const baseDate = new Date(baseDateStr);
+                const toDate = new Date(baseDate);
+                toDate.setDate(toDate.getDate() + 30);
+
+                // format YYYY-MM-DD
+                const formatDate = (d) => d.toISOString().split('T')[0];
+
+                $('#fromDate').val(formatDate(baseDate));
+                $('#toDate').val(formatDate(toDate));
+                $("#btnPrint").trigger("click");
+            },
+            error: function (xhr, statusText, err) {
+                if (xhr.status == 401) {
+                    sessionTimeout();
                 }
             }
-         }
-    //       function extractLastName(name) {
-    //     const parts = name.trim().split(/,\s*/);
-    //     return parts[1] || '';
-    // }
-
-    // function validateName(name) {
-    //     // Regex for "FirstName MiddleName, LastName" or "FirstName MiddleName,LastName"
-    //     const namePattern = /^[A-Z][a-z]*\s[A-Z][a-z]*,\s*[A-Z][a-z]*$/;
-    //     return namePattern.test(name.trim());
-    // }
-    // $('#txtName').on('blur', function() {
-    //     const name = $(this).val();
-    //     if (name) {
-    //         if (validateName(name)) {
-    //             const lastName = extractLastName(name);
-    //             $('#txtFirstName').val(lastName);
-    //             $('#nameProfileSearch').val(name);
-    //         } else {
-    //             showToast('Error', 'Invalid name format! Use FirstName MiddleName LastName or FirstName MiddleName,LastName', false);
-    //             $('#txtName').val('');
-    //             $('#txtFirstName').val('');
-    //         }
-    //     } else {
-    //         $('#txtItemInventory').prop('disabled', true); // Keep disabled if name is empty
-    //     }
-    // });
-        function openModalMoreFields(){
-        $('#modalMoreFields').modal('show');
-
-    }
-      function closeModalSearchProfle(){
-        $('#nameProfileSearch').val('');
-        $('#firstNameProfileSearch').val('');
-        $('#cityProfileSearch').val(0);
-        $('#txtName').val('');
-        $('#txtFirstName').val('');
-        $('#txtTitle').val(0);
-        $('#txtPhone').val('');
-        $('#txtEmail').val('');
-        $('#txtIdentityCard').val('');
-        $('#txtPassport').val('');
-        $('#txtAddress').val('');
-        $('#txtDob').val('');
-        $('#txtNationality').val(0);
-        $('#txtCity').val(0);
-        $('#txtVIP').val(0);
-        $('#txtMemberType').val(0);
-        $('#txtCardNo').val('');
-        $('#txtPrefRoom').val('');
-        $('#modalProfile').modal('hide');
-
-    }   
-        function closeModalEdit(){
-           $('#modalEdit').modal('hide');
-        }
-         function initializeRoomTypeListTomSelect() {
-            const el = document.querySelector("#roomType");
-            if (!el) return;
-
-            // Nếu đã được khởi tạo thì huỷ trước
-            if (el.tomselect) el.tomselect.destroy();
-
-           const ts = new TomSelect(el, {
-                plugins: ['remove_button'],
-                create: false,
-                maxItems: null,
-                allowEmptyOption: true,
-                placeholder: '',
-                persist: false,
-                render: {
-                    option: function (data, escape) {
-                        return `<div>${escape(data.text)}</div>`;
-                    }
-                }
-            });
-        }
-
-         function initializeRoomListTomSelect() {
-            const el = document.querySelector("#room");
-            if (!el) return;
-
-            // Nếu đã được khởi tạo thì huỷ trước
-            if (el.tomselect) el.tomselect.destroy();
-
-           const ts = new TomSelect(el, {
-                plugins: ['remove_button'],
-                create: false,
-                maxItems: null,
-                allowEmptyOption: true,
-                placeholder: '',
-                persist: false,
-                render: {
-                    option: function (data, escape) {
-                        return `<div>${escape(data.text)}</div>`;
-                    }
-                }
-            });
-        }
-
-
-        $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
-            $("#loadingSpinner").show();
-                const owner = $("#viewBy").val();
-            let orderbyroom = $("input[name='masterlliouppop']:checked").val() || "";
-            $.ajax({
-                url: '/HouseKeeping/RoomPlanData',
-                type: 'GET',
-                data: {
-                    fromDate: $("#fromDate").val(),
-                    toDate: $("#toDate").val(),
-                    orderbyroom: orderbyroom, // sẽ là "1" hoặc "0"
-                    owner: owner
-                },
-                traditional: true,
-                  crossDomain: false,
-                    headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (data) {
-        // Lấy filter từ các dropdown (multiple hoặc đơn)
-        // const selectedZones = $("#zone").val();              // array
-        // const selectedRooms = $("#room").val();              // array
-        // const selectedRoomTypes = $("#roomType").val();      // array
-        // const selectedSmoking = $("#smoking").val();         // string ("1", "2", hoặc "")
-        // const selectedFloor = $("#floor").val();             // string
-
-        // // Lấy các checkbox đang được tích
-        // const checkedStatuses = [];
-        // $("input[name='masterllioup']:checked").each(function () {
-        //     const labelText = $("label[for='" + $(this).attr("id") + "']").text().trim();
-        //     checkedStatuses.push(labelText);
-        // });
-
-        // // Lọc dữ liệu
-        // const filteredData = data.filter(item => {
-        //     const matchZone = !selectedZones || selectedZones.length === 0 || selectedZones.includes(item.zoneCode);
-        //     const matchRoom = !selectedRooms || selectedRooms.length === 0 || selectedRooms.includes(item.roomNumber);
-        //     const matchRoomType = !selectedRoomTypes || selectedRoomTypes.length === 0 || selectedRoomTypes.includes(item.roomTypeCode);
-        //     const matchSmoking = !selectedSmoking || selectedSmoking === "" || item.smoking === selectedSmoking;
-        //     const matchFloor = !selectedFloor || selectedFloor === "" || item.floor === selectedFloor;
-
-        //     const matchFoStatus = checkedStatuses.length === 0 || checkedStatuses.includes(item.foStatus);
-
-        //     return matchZone && matchRoom && matchRoomType && matchSmoking && matchFloor && matchFoStatus;
-        // });
-
-        // Gọi các hàm khởi tạo với dữ liệu đã lọc
-        console.log(data);
-        initializeRoomPlanGrid(data);
-
-        const fromDate = $("#fromDate").val();
-        const toDate = $("#toDate").val();
-        initializeRoomScheduler(data, fromDate, toDate);
-
-        $("#loadingSpinner").hide();
-    }
-
-    ,
-
-
-                error: function () {
-                    alert("Không thể tải báo cáo.");
-                    $("#loadingSpinner").hide();
-                }
-            });
         });
-       let roomNo, roomtypeid,idReservation,roomID;
-       let originalAppointmentData = null;
-      function initializeRoomScheduler(schedulerData, fromDate, toDate) {
-        if (!schedulerData || !schedulerData.length) return;
+    }
 
-        const startDate = new Date(fromDate);
-        const endDate = new Date(toDate);
-        const daysToShow = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    function parseVNDateOnly(str) {
+        if (!str) return null;
 
-        const roomGroups = [
-            ...new Map(
-                schedulerData
-                    .filter(d => d.roomID && d.roomNo && d.roomNo.trim() !== "")
-                    .map(d => [d.roomID.toString(), {
-                        id: d.roomID.toString(),
-                        text: d.roomNo.trim()
-                    }])
-            ).values()
-        ];
+        // format: "dd/MM/yyyy HH:mm:ss"
+        // lấy trực tiếp ký tự
+        const dd = (str.charCodeAt(0) - 48) * 10 + (str.charCodeAt(1) - 48);
+        const MM = (str.charCodeAt(3) - 48) * 10 + (str.charCodeAt(4) - 48);
+        const yyyy =
+            (str.charCodeAt(6) - 48) * 1000 +
+            (str.charCodeAt(7) - 48) * 100 +
+            (str.charCodeAt(8) - 48) * 10 +
+            (str.charCodeAt(9) - 48);
 
-        const validRoomIDs = new Set(roomGroups.map(g => g.id));
+        if (!dd || !MM || !yyyy) return null;
 
-     const appointments = schedulerData
-        .filter(d =>
-            d.lastName &&
-            d.roomID &&
-            validRoomIDs.has(d.roomID.toString()) &&
-            (!d.roomNo || d.roomNo.trim() === "") &&
-            d.arrivalDate && d.departureDate && // Thêm điều kiện kiểm tra không rỗng
-            d.arrivalDate.trim() !== '' && d.departureDate.trim() !== '' && // Kiểm tra chuỗi không rỗng
-            !isNaN(Date.parse(d.arrivalDate)) && !isNaN(Date.parse(d.departureDate)) // Kiểm tra ngày hợp lệ
-        )
-            .map(d => {
-                return {
-                    text: d.lastName,
-                    startDate: new Date(d.arrivalDate),
-                    endDate: new Date(d.departureDate),
-                    roomID: d.roomID.toString(),
-                    type: d.type || "", // 👈 Thêm type vào
-                    reservationStatus: d.reservationStatus || "",
-                    reservationID: d.reservationID || "",
-                    roomTypeCode: d.roomTypeCode || "",
-                    oooStatus:d.oooStatus || "",
-                      roomNumber:d.roomNumber || "",
-                    tooltipData: {
-                        company: d.company,
-                        agent: d.agent,
-                        paymentMethod: d.paymentMethod,
-                        comment: d.comment,
-                        confirmationNo: d.confirmationNo,
-                         code: d.code,
-                    }
+        return new Date(yyyy, MM - 1, dd);
+    }
+
+
+
+
+    $(document).off("click", "#btnPrint").on("click", "#btnPrint", function () {
+        $("#loadingSpinner").show();
+        const owner = $("#viewBy").val();
+        let orderbyroom = $("input[name='masterlliouppop']:checked").val() || "";
+        $.ajax({
+            url: '/HouseKeeping/RoomPlanData',
+            type: 'GET',
+            data: {
+                fromDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                orderbyroom: orderbyroom, // sẽ là "1" hoặc "0"
+                owner: owner
+            },
+            traditional: true,
+            crossDomain: false,
+            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
+            success: function (data) {
+
+                // console.log(data);
+                // initializeRoomPlanGrid(data);
+
+                const fromDate = $("#fromDate").val();
+                const toDate = $("#toDate").val();
+                initializeRoomScheduler(data, fromDate, toDate);
+
+                $("#loadingSpinner").hide();
+            }
+
+            ,
+
+
+            error: function () {
+                alert("Không thể tải báo cáo.");
+                $("#loadingSpinner").hide();
+            }
+        });
+    });
+    let roomNorl, roomtypeid, idReservationrl, roomIDrl;
+    let originalAppointmentData = null;
+
+       function initializeRoomScheduler(schedulerData, fromDate, toDate) {
+
+        if (!schedulerData || schedulerData.length === 0) return;
+
+        /* =======================
+         * DATE RANGE (cache time)
+         * ======================= */
+        const MS_PER_DAY = 86400000;
+
+        const from = new Date(fromDate);
+        from.setHours(0, 0, 0, 0);
+        const fromTime = from.getTime();
+
+        const to = new Date(toDate);
+        to.setHours(0, 0, 0, 0);
+        const toTime = to.getTime();
+
+        const daysToShow = Math.ceil((toTime - fromTime) / MS_PER_DAY) + 1;
+
+        /* =======================
+         * PREPROCESS (ONE LOOP ONLY)
+         * ======================= */
+        const roomMap = Object.create(null);
+        const roomGroups = [];
+        const validRoomIDs = Object.create(null);
+        const roomInfoMap = Object.create(null);
+        const appointments = [];
+
+        for (let i = 0, l = schedulerData.length; i < l; i++) {
+
+            const d = schedulerData[i];
+            const roomID = d.roomID;
+
+            if (!roomID) continue;
+
+            const roomIDStr = String(roomID);
+
+            /* ===== ROOM GROUP BUILD (only once per room) ===== */
+            if (!validRoomIDs[roomIDStr] && d.roomNo && d.roomNo.trim() !== "") {
+
+                validRoomIDs[roomIDStr] = true;
+
+                roomGroups.push({
+                    id: roomIDStr,
+                    text: d.roomNo.trim()
+                });
+
+                roomInfoMap[roomIDStr] = {
+                    roomNo: d.roomNo,
+                    roomNumber: d.roomNumber,
+                    roomTypeCode: d.roomTypeCode
                 };
-            });
+            }
 
+            /* ===== APPOINTMENT BUILD ===== */
+
+            const a = parseVNDateOnly(d.arrivalDate);
+            const dep = parseVNDateOnly(d.departureDate);
+            if (!a || !dep) continue;
+
+            const aTime = a.getTime();
+            const depTime = dep.getTime();
+
+            if (aTime > toTime || depTime < fromTime) continue;
+
+            appointments.push({
+                text: d.lastName || "",
+                startDate: aTime < fromTime ? from : a,
+                endDate: depTime > toTime ? to : dep,
+                roomID: roomIDStr,
+
+                type: d.type || "",
+                reservationStatus: d.reservationStatus,
+                reservationID:
+                    !d.reservationID || String(d.reservationID) === "0"
+                        ? d.oooid
+                        : d.reservationID,
+
+                roomTypeCode: d.roomTypeCode || "",
+                oooStatus: d.oooStatus || "",
+                roomNumber: d.roomNumber || "",
+
+                tooltipData: {
+                    company: d.company,
+                    agent: d.agent,
+                    paymentMethod: d.paymentMethod,
+                    comment: d.comment,
+                    confirmationNo: d.confirmationNo,
+                    code: d.code
+                }
+            });
+        }
+
+        /* =======================
+         * INIT SCHEDULER
+         * ======================= */
         $("#schedulerContainer").dxScheduler({
+
             dataSource: appointments,
+
             views: [{
-                type: 'timelineDay',
-                name: '',
+                type: "timelineDay",
                 intervalCount: daysToShow,
-                startDate: startDate
+                startDate: from
             }],
-            currentView: '',
-            currentDate: startDate,
+
+            currentView: "timelineDay",
+            currentDate: from,
+
             startDayHour: 0,
             endDayHour: 24,
             cellDuration: 1440,
+
             groups: ["roomID"],
             crossScrollingEnabled: true,
+
             resources: [{
                 fieldExpr: "roomID",
                 dataSource: roomGroups,
-                label: "Phòng",
                 allowMultiple: false
             }],
+
+            /* =======================
+             * ROOM LABEL
+             * ======================= */
+            dataCellTemplate(cellData, _, cellElement) {
+
+                const cellDate = cellData.startDate;
+                if (cellDate.getTime() !== fromTime) return;
+
+                const roomInfo = roomInfoMap[cellData.groups.roomID];
+                if (!roomInfo) return;
+
+                cellElement.append(`
+                    <div class="room-label">
+                        <div class="room-no">${roomInfo.roomNumber}</div>
+                        <div class="room-type">-${roomInfo.roomTypeCode || ""}</div>
+                    </div>
+                `);
+            },
+            /* =======================
+             * APPOINTMENT RENDER
+             * ======================= */
             onAppointmentRendered: function (e) {
+
                 const el = $(e.appointmentElement);
                 const data = e.appointmentData;
-
                 const tooltipData = data.tooltipData || {};
-                const lastName = data.text;
 
-                // 👉 Nếu là OOOS thì title hiển thị code + (out of order), ngược lại dùng lastName
-                let titleText = lastName;
-                if (data.type === "OOOS") {
-                    titleText = `${tooltipData.code || "Code"} (Out of Order)`;
-                }
+                /* ===== TITLE ===== */
+                // let titleText = data.text || "";
+                // if (data.type === "OOOS") {
+                //     titleText = `${tooltipData.code || "Code"} (Out of Order)`;
+                // }
 
-                const tooltipContent = [
-                    `Company:        ${tooltipData.company || ""}`,
-                    `Agent:          ${tooltipData.agent || ""}`,
-                    `PaymentMethod:  ${tooltipData.paymentMethod || ""}`,
-                    `Comment:        ${tooltipData.comment || ""}`,
+                // let titleEl = el.find(".dx-scheduler-appointment-title");
+                // if (titleEl.length === 0) {
+                //     titleEl = $('<div class="dx-scheduler-appointment-title"></div>');
+                //     el.append(titleEl);
+                // }
+                // titleEl.text(titleText).css("display", "block");
+
+                /* ===== TOOLTIP ===== */
+                el.attr("title",
+                    `Company: ${tooltipData.company || ""}\n` +
+                    `Agent: ${tooltipData.agent || ""}\n` +
+                    `PaymentMethod: ${tooltipData.paymentMethod || ""}\n` +
+                    `Comment: ${tooltipData.comment || ""}\n` +
                     `ConfirmationNo: ${tooltipData.confirmationNo || ""}`
-                ].join('\n');
+                );
 
-                const titleEl = el.find(".dx-scheduler-appointment-title");
-                if (titleEl.length) {
-                    titleEl.text(titleText).css("display", "block").attr("title", tooltipContent);
-                } else {
-                    el.append(`<div class="dx-scheduler-appointment-title" title="${tooltipContent}">${titleText}</div>`);
-                }
+                /* ===== COLOR LOGIC ===== */
+                if (data.type === "Reservation") {
 
-                // 🎯 Màu theo type
-               if (data.type === "Reservation") {
-                    const resvStatus = data.reservationStatus;
+                    switch (String(data.reservationStatus)) {
+                        case "0":
+                        case "5":
+                        case "8":
+                            el.addClass("resv-pending"); break;
+                        case "1":
+                            el.addClass("resv-checkin"); break;
+                        case "2":
+                            el.addClass("resv-checkout"); break;
+                        case "6":
+                            el.addClass("resv-dueout"); break;
+                        default:
+                            el.addClass("resv-checkin");
+                    }
 
-                    if (resvStatus === "0" || resvStatus === "5" || resvStatus === "8") {
-                        el.css("background-color", "gold"); // Chưa check in
-                    } else if (resvStatus === "1") {
-                        el.css("background-color", "#4CAF50"); // Đã check in
-                    } else if (resvStatus === "2") {
-                        el.css("background-color", "white"); // Đã check out
-                    } else if (resvStatus === "6") {
-                        el.css("background-color", "violet"); // Due out
-                    } else {
-                        el.css("background-color", "#4CAF50"); // Mặc định nếu không trúng mã nào
-                    }   
                 } else if (data.type === "OOOS") {
-                     const oooStatus = data.oooStatus;
+
+                    const oooStatus = String(data.oooStatus || "");
 
                     if (oooStatus === "1") {
-                        el.css("background-color", "indianred"); // Out Of Order
-                        // el.text(el.text() + " (Out Of Order)");
-                        el.attr("title", el.attr("title") + " (Out Of Order)");
+                        el.addClass("ooo-order");
                     } else if (oooStatus === "2") {
-                        el.css("background-color", "orangered"); // Out Of Service
-                        // el.text(el.text() + " (Out Of Service)");
-                        el.attr("title", el.attr("title") + " (Out Of Service)");
+                        el.addClass("ooo-service");
                     } else {
-                        el.css("background-color", "#a82f19"); // Mặc định đỏ nâu
+                        el.addClass("ooo-default");
                     }
                 }
 
-                // Dịch translateY lên
-                const style = el.attr("style");
-                const match = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/.exec(style);
-                if (match) {
-                    const x = parseFloat(match[1]);
-                    const y = parseFloat(match[2]);
-                    const newY = y - 30;
-                    const newTransform = `translate(${x}px, ${newY}px)`;
-                    el.attr("style", style.replace(/translate\([^)]+\)/, newTransform));
+                /* ===== POSITION LOGIC ===== */
+                const startTime = new Date(data.startDate).setHours(0,0,0,0);
+                const endTime = new Date(data.endDate).setHours(0,0,0,0);
+
+                if (fromTime >= startTime && fromTime <= endTime) {
+                    el.css({
+                        position: "absolute",
+                        left: "100px",
+                        marginTop: "4px"
+                    });
                 }
-            }
-                ,onAppointmentUpdating: async function (e) {
+
+                /* ===== TRANSLATE Y ===== */
+                const style = el[0].style.transform;
+
+                if (style && style.indexOf("translate") !== -1) {
+                    const m = style.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+                    if (m) {
+                        const y = parseFloat(m[2]) - 30;
+                        el[0].style.transform = `translate(${m[1]}px, ${y}px)`;
+                    }
+                }
+            },
+            onAppointmentUpdating: async function (e) {
                 const oldData = e.oldData;
                 const newData = e.newData;
-                 idReservation = oldData.reservationID;
-                 console.log(oldData);
-                console.log(newData);
-                const oldStart = oldData.startDate.getTime();
-                const oldEnd = oldData.endDate.getTime();
-                const newStart = newData.startDate.getTime();
-                const newEnd = newData.endDate.getTime();
+                idReservationrl = oldData.reservationID;
 
                 const isMoved =
-                    oldStart !== newStart ||
-                    oldEnd !== newEnd ||
+                    oldData.startDate.getTime() !== newData.startDate.getTime() ||
+                    oldData.endDate.getTime() !== newData.endDate.getTime() ||
                     oldData.roomID !== newData.roomID;
-
-                // getInfoByProfileIndividualID(idReservation);
 
                 try {
                     const result = await getRoomID(newData.roomID);
-                    roomID = result.id;
-                       roomNo = result.roomNo;
+                    roomIDrl = result.id;
+                    roomNorl = result.roomNo;
                     roomtypeid = result.roomTypeID;
-                    const roomtypecode = result.roomTypeCode;
-                ;
-                    const isSameRoomType = roomtypecode === oldData.roomTypeCode;
-                     
-                    if (isMoved) {
-                        if (isSameRoomType) {
-                            const action = await askUpdateOrReview();
-                                
-                            if (action === "cancel") {
-                                 e.cancel = true;
-                                e.newData.startDate = oldData.startDate;
-                                e.newData.endDate = oldData.endDate;
-                                e.newData.roomID = oldData.roomID;;
-                                      return;
-                            } else if (action === "review") { 
-                                              originalAppointmentData = oldData;
-                                $('#modalEdit').modal('show');
-                               // getReservationByIDReview(idReservation);
-                               
-                                      e.cancel = true;
-                                e.newData.startDate = oldData.startDate;
-                                e.newData.endDate = oldData.endDate;
-                                e.newData.roomID = oldData.roomID;
-                                goReview(idReservation);
-                         
-                              
-                            } else if (action === "update") {
-                            
-                                // getReservationByID(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid,roomID);
-                                 goUpdate(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid,roomID);
-                            }
+
+                    const isSameRoomType =
+                        result.roomTypeCode === oldData.roomTypeCode;
+
+                    if (!isMoved) return;
+
+                    if (isSameRoomType) {
+                        const action = await askUpdateOrReview();
+
+                        if (action === "cancel") {
+                            e.cancel = true;
+                            return;
+                        }
+
+                        if (action === "review") {
+                            e.cancel = true;
+                            $('#modalEdit').modal('show');
+                            goReview(idReservationrl);
+                            return;
+                        }
+
+                        if (action === "update") {
+                            goUpdate(
+                                idReservationrl,
+                                newData.startDate,
+                                newData.endDate,
+                                roomNorl,
+                                roomtypeid,
+                                roomIDrl
+                            );
+                        }
+                    } else {
+                        if (!confirm("Are you sure to edit?")) {
+                            e.cancel = true;
+                            return;
+                        }
+
+                        if (oldData.type === "OOOS") {
+                            goReview(idReservationrl);
                         } else {
-                            const confirmed = confirm("Are you sure to edit?");
-                            if (!confirmed) {
-                          
-                                e.cancel = true;
-                                e.newData.startDate = oldData.startDate;
-                                e.newData.endDate = oldData.endDate;
-                                e.newData.roomID = oldData.roomID;
-                                      return;
-                            } else {
-                               
-                                  goUpdate(idReservation, newData.startDate, newData.endDate, roomNo, roomtypeid,roomID);
-                            }
+                            goUpdate(
+                                idReservationrl,
+                                newData.startDate,
+                                newData.endDate,
+                                roomNorl,
+                                roomtypeid,
+                                roomIDrl
+                            );
                         }
                     }
-                } catch (error) {
-                    console.error("Lỗi khi lấy room info:", error);
+                } catch (err) {
+                    console.error("Room info error:", err);
                     e.cancel = true;
                 }
-            },
-
+            }
 
         });
-
-        // Đồng bộ cuộn grid với scheduler
-        setTimeout(() => {
-            const gridScrollable = $("#gridContainer .dx-scrollable-container");
-            const schedulerScrollable = $("#schedulerContainer .dx-scrollable-container");
-
-            if (gridScrollable.length && schedulerScrollable.length) {
-                let isSyncing = false;
-
-                gridScrollable.on("scroll", function () {
-                    if (!isSyncing) {
-                        isSyncing = true;
-                        schedulerScrollable.scrollTop($(this).scrollTop());
-                        isSyncing = false;
-                    }
-                });
-
-                schedulerScrollable.on("scroll", function () {
-                    if (!isSyncing) {
-                        isSyncing = true;
-                        gridScrollable.scrollTop($(this).scrollTop());
-                        isSyncing = false;
-                    }
-                });
-            }
-        }, 200);
     }
-    function goUpdate(idReservation, startDate, endDate, roomNo, roomtypeid, roomID) {
+
+
+    function goUpdate(idReservationrl, startDate, endDate, roomNorl, roomtypeid, roomIDrl) {
+         var modal = $('#newReservationModal');
+
+        // Luôn hiển thị loading
+        modal.find('.modal-body').html(`
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Loading reservation...</p>
+            </div>
+        `);
+
+        modal.modal('show');
         $.ajax({
             url: '/Reservation/EncryptId',
             type: 'POST',
-            data: { id: idReservation },
+            data: { id: idReservationrl },
             success: function (response) {
                 if (response.success) {
-                      var start = formatDate(startDate);
-                var end = formatDate(endDate);
-                 var data = start + "|" + end + "|" + roomNo + "|" + roomtypeid + "|" + idReservation;
+                    var start = formatDate(startDate);
+                    var end = formatDate(endDate);
+                    var data = start + "|" + end + "|" + roomNorl + "|" + roomtypeid + "|" + idReservationrl;
 
-               
-                localStorage.setItem("ReservationRoomPlan", data);
+
+                    localStorage.setItem("ReservationRoomPlan", data);
                     // chỉ encode cái encryptedId
-                  window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
+                    // window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
+                     $.ajax({
+                        url: '/Reservation/NewReservation',
+                        type: 'GET',
+                        data: { key: response.encryptedId },
+                        cache: false,
+                        success: function (html) {
+                            modal.find('.modal-body').html(html);
+                           
+                        },
+                        error: function () {
+                            modal.find('.modal-body').html(`
+                                <div class="alert alert-danger m-4">
+                                    <strong>Lỗi!</strong> Không thể tải thông tin đặt chỗ.
+                                </div>
+                            `);
+                        }
+                    });
                 }
             }
         });
     }
 
 
-    function goReview(idReservation) {
+    function goReview(idReservationrl) {
+        var modal = $('#newReservationModal');
+
+        // Luôn hiển thị loading
+        modal.find('.modal-body').html(`
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Loading reservation...</p>
+            </div>
+        `);
+
+        modal.modal('show');
         $.ajax({
             url: '/Reservation/EncryptId',
             type: 'POST',
-            data: { id: idReservation },
-            success: function(response) {
+            data: { id: idReservationrl },
+            success: function (response) {
                 if (response.success) {
                     // Chuyển hướng đến trang chỉnh sửa
-                    window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
+                   // window.location.href = '/Reservation/NewReservation?key=' + encodeURIComponent(response.encryptedId);
+                    $.ajax({
+                        url: '/Reservation/NewReservation',
+                        type: 'GET',
+                        data: { key: response.encryptedId },
+                        cache: false,
+                        success: function (html) {
+                            modal.find('.modal-body').html(html);
+
+                        },
+                        error: function () {
+                            modal.find('.modal-body').html(`
+                                <div class="alert alert-danger m-4">
+                                    <strong>Lỗi!</strong> Không thể tải thông tin đặt chỗ.
+                                </div>
+                            `);
+                        }
+                    });
                 } else {
                     // Nếu mã hóa thất bại, hiển thị thông báo và xóa lớp phủ
                     alert('Lỗi khi mã hóa ID');
-                    
+
                 }
             },
-            error: function() {
+            error: function () {
                 // Nếu API thất bại, hiển thị thông báo và xóa lớp phủ
                 alert('Lỗi khi gọi API mã hóa');
                 $('#overlay').hide();
@@ -1105,7 +1105,7 @@
         });
     }
 
-        function getRoomID(roomID) {
+    function getRoomID(roomID) {
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: '/HouseKeeping/GetRoomID',
@@ -1127,7 +1127,7 @@
             });
         });
     }
-     function askUpdateOrReview() {
+    function askUpdateOrReview() {
         return Swal.fire({
             title: 'Update date only or review rate?',
             icon: 'question',
@@ -1145,967 +1145,83 @@
             return "cancel";
         });
     }
-      function getReservationByIDReview(ID){
-        $.ajax({
-            url: '/Reservation/GetReservationByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{
-                ID: ID
-            },
-            success: function (result) {
 
-                $('#txtAgent').val(result.profileAgentId);
-                $('#txtCompany').val(result.profileCompanyId);
-                $("#txtGroupCode").val('');
-                $('#txtContact').val(result.profileContactId);
-                $("#txtContactPhone").val(result.contactPhone);
-                $("#txtID").val(result.id);
-                // var tomSelectInstance = $('#txtName')[0].tomselect;
-                // tomSelectInstance.setValue(result.profileIndividualId);
-                 console.log(accountname);
-               $("#txtName").html(`<option value="${accountname}">${accountname}</option>`).val(accountname);
-                $("#txtFirstName").val(result.firstName);
-                $("#txtTitle").val(result.title)
-                $("#txtPhone").val('');
-                $("#txtEmail").val(result.email);
-                $("#txtMemberType").val(result.memberType);
-                $("#txtCardNo").val(result.memberNo);
-                $("#txtAddress").val(result.address);
-                $("#txtCity").val(result.city);
-                $("#txtNationality").val(result.country);
-                $("#arrival").val(result.arrivalDate.split("T")[0]);
-                $("#departure").val(result.departureDate.split("T")[0]);
-                $("#adults").val(result.noOfAdult);
-                $("#c").val(result.noOfChild);
-                $("#c1").val(result.noOfChild1);
-                $("#c2").val(result.noOfChild2);
-                $("#nights").val(result.noOfNight);
-                $("#numRooms").val(result.noOfRoom);
-                $("#txtRoomType").val(result.roomTypeId);
-                $("#txtVIP").val(result.vipId);
-                $("#txtRTC").val(result.rtcId);
-                $("#roomID").val(result.roomId);
-                $("#roomSelect").val(result.roomNo);
-                $("#txtETA").val(result.eta);
-                $("#txtETD").val(result.etd);
-                $("#txtResType").val(result.reservationTypeId);
-                $("#txtMarketID").val(result.marketId);
-                $("#txtMarket").val(result.marketCode);
-                $("#txtSource").val(result.sourceId);
-                $("#txtBookerID").val(result.bookerId);
-                $("#txtBooker").val(result.bookerName);
-                $("#txtComment").val(result.comment);
-                $("#pickedID").val(result.pickupReqdId);
-                $("#pickUpTransportType").val(result.pickupTransportType);
-                $("#pickUpStationCode").val(result.pickupStationCode);
-                $("#pickUpCarrierCode").val(result.pickupCarrierCode);
-                $("#pickUpTime").val(result.pickupTime);
-                $("#pickUpDate").val(result.pickupArrivalDate.split("T")[0]);
-                $("#pickUpTransportNo").val(result.pickupTransportNo);
-                $("#pickUpDescription").val(result.pickupDescription);
-                $("#dropOffId").val(result.dropOffReqdId);
-                $("#dropOffTransportType").val(result.dropOffTransportType);
-                $("#dropOffStationCode").val(result.dropOffStationCode);
-                $("#dropOffCarrierCode").val(result.dropOffCarrierCode);
-                $("#dropOffTime").val(result.dropOffTime);
-                $("#dropOffTransportNo").val(result.dropOffTransportNo);
-                $("#dropOffDate").val(result.dropOffDepartureDate.split("T")[0]);
-                $("#dropOffDescription").val(result.dropOffDescription);
-                $("#txtPackage").val(result.packageId);
-                $("#txtRateCodeID").val(result.rateCodeId);
-                $("#txtRateCode").val(result.rateCode);
-                let amount = result.rate; // Giả sử result.rate là 4409171
-                let formattedAmount = amount.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
-                let amountNet = result.rateAfterTax; // Giả sử result.rate là 4409171
-                let formattedNet = amountNet.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
-                $("#txtRateAmount").val(formattedAmount); // Kết quả: 4,409,171
-                $("#txtNetAmount").val(formattedNet);
-                $('#txtRateAfterDiscount').val(formattedAmount);
-                $('#txtNetAfterDiscount').val(formattedNet);
-                $("#txtColor").val(result.color);
-                // $("#txtItemInventory").val('');
-                // $("#txtPreference").val();
-                $("#txtAllotmentID").val(result.allotmentId);
-                $("#txtAllotment").val(result.allotmentCode);
-                $("#txtPersonInCharge").val(result.personInChargeId);
-                $("#saveClick").hide();
-               $("#clearClick").hide();
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                } else {
-                }
-            }
-        });
-    }
-       function resetForm(){
-            $('#txtAgent').val('');
-            $('#txtCompany').val('')
-            $("#txtGroupCode").val('');
-            $('#txtContact').val('');
-            $("#txtContactPhone").val('');
-            $("#txtID").val('');
-            $("#txtName").val('');
-            $("#txtFirstName").val('');
-            $("#txtTitleID").val('')
-            $("#txtPhone").val('');
-            $("#txtEmail").val('');
-            $("#txtMemberType").val('');
-            $("#txtCardNo").val('');
-            $("#txtAddress").val('');
-            $("#txtCity").val('');
-                $("#txtNationality").val('');
-            $("#arrival").val('');
-                $("#departure").val('');
-                $("#adults").val('');
-            $("#c").val('');
-            $("#c1").val('');
-            $("#c2").val('');
-            $("#nights").val('');
-            $("#numRooms").val('');
-            $("#txtRoomType").val('');
-            $("#txtVIP").val('');
-            $("#txtRTC").val('');
-            $("#roomSelect").val('');
-            $("#txtETA").val('');
-            $("#txtETD").val('');
-            $("#txtResType").val('');
-            $("#txtMarketID").val('');
-            $("#txtMarket").val('');
-            $("#txtSource").val('');
-            $("#txtBookerID").val('');
-            $("#txtBooker").val('');
-            $("#txtComment").val('');
-            $("#pickedID").val('');
-            $("#pickUpTransportType").val('');
-            $("#pickUpStationCode").val('');
-            $("#pickUpCarrierCode").val('');
-            $("#pickUpTime").val('');
-            $("#pickUpDate").val('');
-            $("#pickUpTransportNo").val('');
-            $("#pickUpDescription").val('');
-            $("#dropOffId").val('');
-            $("#txtContactNameCOM").val('');
-            $("#txtEmailCOM").val('');
-            $("#txtWebsiteCOM").val('');
-            $("#dropOffTime").val('');
-            $("#dropOffTransportNo").val('');
-            $("#dropOffDate").val('');
-            $("#dropOffDescription").val('');
-            $("#txtPackage").val('');
-            $("#txtRateCodeID").val('');
-            $("#txtRateCode").val('');
-            $("#txtRateAmount").val('');
-            $("#txtNetAmount").val('');
-            $("#txtColor").val('');
-            $("#txtItemInventory").val('');
-            $("#txtPreference").val('');
-            $("#txtAllotmentID").val('');
-            $("#txtAllotment").val('');
-            $("#txtPersonInCharge").val('');
-            $("#nights").val('');
-                var businessDate = '@ViewBag.BusinessDate';
-                              var dateOnly = businessDate.split(' ')[0]; // '8/29/2024'
-            var dateParts = dateOnly.split('/'); // ['8', '29', '2024']
-
-            // Parse đúng thứ tự: new Date(year, monthIndex, day)
-            var parsedBusinessDate = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-
-
-            var departureDate = new Date(parsedBusinessDate);
-            departureDate.setDate(parsedBusinessDate.getDate() + 1);
-
-
-            // Set arrival and departure input values
-            document.getElementById('arrival').value = formatDate(parsedBusinessDate);
-            document.getElementById('pickUpDate').value = formatDate(parsedBusinessDate);
-
-            document.getElementById('departure').value = formatDate(departureDate);
-            document.getElementById('dropOffDate').value = formatDate(departureDate);
-
-            updateDates();
-    }
-        function getDayName(date) {
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        return days[date.getDay()];
-    }
-     function updateDates() {
-        const arrivalInput = document.getElementById('arrival');
-        const departureInput = document.getElementById('departure');
-        const arrivalDay = document.getElementById('arrival-day');
-        const departureDay = document.getElementById('departure-day');
-
-        const arrivalDate = new Date(arrivalInput.value);
-        const departureDate = new Date(departureInput.value); 
-
-        if (arrivalDate) {
-            arrivalDay.textContent = getDayName(arrivalDate);
-        }
-        if (departureDate) {
-            departureDay.textContent = getDayName(departureDate);
-        }
-        calculateNights();
-    }
-        function calculateNights() {
-        const arrival = new Date(document.getElementById('arrival').value);
-        const departure = new Date(document.getElementById('departure').value);
-        if (arrival && departure) {
-            const diffTime = departure - arrival;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            document.getElementById('nights').value = diffDays >= 0 ? diffDays : 0;
-        }
-    }
-
-      function changeDate(field, delta) {
-            const input = document.getElementById(field);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
-            const currentDate = new Date(input.value || today);
-            const arrivalDate = new Date(document.getElementById('arrival').value);
-
-            // Kiểm tra nếu giảm ngày và ngày hiện tại nhỏ hơn ngày hôm nay
-            if (delta < 0) {
-                const newDate = new Date(currentDate);
-                newDate.setDate(currentDate.getDate() + delta);
-                if (newDate < today) {
-                    return; // Không cho phép giảm ngày nếu nhỏ hơn hôm nay
-                }
-                // Nếu giảm departure, đảm bảo không nhỏ hơn hoặc bằng arrival
-                if (field === 'departure' && newDate <= arrivalDate) {
-                    return; // Không cho phép giảm departure nếu nhỏ hơn hoặc bằng arrival
-                }
-            }
-
-            // Cập nhật ngày
-            currentDate.setDate(currentDate.getDate() + delta);
-            input.value = formatDate(currentDate);
-
-            // Nếu thay đổi arrival, cập nhật departure để giữ số đêm cố định
-            if (field === 'arrival') {
-                const nights = parseInt(document.getElementById('nights').value) || 1;
-                const departureDate = new Date(currentDate);
-                departureDate.setDate(currentDate.getDate() + nights);
-                // Đảm bảo departure lớn hơn arrival
-                if (departureDate <= currentDate) {
-                    departureDate.setDate(currentDate.getDate() + 1);
-                }
-                document.getElementById('departure').value = formatDate(departureDate);
-            }
-
-            // Nếu thay đổi departure, đảm bảo departure lớn hơn arrival
-            if (field === 'departure') {
-                if (currentDate <= arrivalDate) {
-                    const newDeparture = new Date(arrivalDate);
-                    newDeparture.setDate(arrivalDate.getDate() + 1);
-                    document.getElementById('departure').value = formatDate(newDeparture);
-                }
-            }
-
-            updateDates();
-        }
-        function changeDateRateCode(field, delta) {
-            const input = document.getElementById(field);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
-            const currentDate = new Date(input.value || today);
-            const arrivalDate = new Date(document.getElementById('arrivalRateCode').value);
-
-            // Kiểm tra nếu giảm ngày và ngày hiện tại nhỏ hơn ngày hôm nay
-            if (delta < 0) {
-                const newDate = new Date(currentDate);
-                newDate.setDate(currentDate.getDate() + delta);
-                if (newDate < today) {
-                    return; // Không cho phép giảm ngày nếu nhỏ hơn hôm nay
-                }
-                // Nếu giảm departure, đảm bảo không nhỏ hơn hoặc bằng arrival
-                if (field === 'departureRateCode' && newDate <= arrivalDate) {
-                    return; // Không cho phép giảm departure nếu nhỏ hơn hoặc bằng arrival
-                }
-            }
-
-            // Cập nhật ngày
-            currentDate.setDate(currentDate.getDate() + delta);
-            input.value = formatDate(currentDate);
-
-            // Nếu thay đổi arrival, cập nhật departure để giữ số đêm cố định
-            if (field === 'arrivalRateCode') {
-                const nights = parseInt(document.getElementById('nightsRateCode').value) || 1;
-                const departureDate = new Date(currentDate);
-                departureDate.setDate(currentDate.getDate() + nights);
-                // Đảm bảo departure lớn hơn arrival
-                if (departureDate <= currentDate) {
-                    departureDate.setDate(currentDate.getDate() + 1);
-                }
-                document.getElementById('departureRateCode').value = formatDate(departureDate);
-            }
-
-            // Nếu thay đổi departure, đảm bảo departure lớn hơn arrival
-            if (field === 'departureRateCode') {
-                if (currentDate <= arrivalDate) {
-                    const newDeparture = new Date(arrivalDate);
-                    newDeparture.setDate(arrivalDate.getDate() + 1);
-                    document.getElementById('departureRateCode').value = formatDate(newDeparture);
-                }
-            }
-
-            updateDatesRateCode();
+    $("#btnExportExcel").click(function () {
+        const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
+        var selectedReport = '@ViewBag.ReportTitle';
+        if (!selectedReport) {
+            alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
+            return;
         }
 
-         function updateDatesRateCode() {
-            const arrivalInput = document.getElementById('arrivalRateCode');
-            const departureInput = document.getElementById('departureRateCode');
-            const arrivalDay = document.getElementById('arrival-day-ratecode');
-            const departureDay = document.getElementById('departure-day-ratecode');
+        const workbook = new ExcelJS.Workbook(); const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+        const worksheet = workbook.addWorksheet("Sheet 1");
 
-            const arrivalDate = new Date(arrivalInput.value);
-            const departureDate = new Date(departureInput.value);
+        // === Tạo header công ty (dòng 1) ===
+        worksheet.addRow([companyName]);
+        worksheet.mergeCells('A1:E1');
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
 
-            if (arrivalDate) {
-                arrivalDay.textContent = getDayName(arrivalDate);
-            }
-            if (departureDate) {
-                departureDay.textContent = getDayName(departureDate);
-            }
-            calculateNightsRateCode();
-        }
-          function calculateNightsRateCode() {
-            const arrival = new Date(document.getElementById('arrivalRateCode').value);
-            const departure = new Date(document.getElementById('departureRateCode').value);
-            if (arrival && departure) {
-                const diffTime = departure - arrival;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                document.getElementById('nightsRateCode').value = diffDays >= 0 ? diffDays : 0;
-            }
-        }
-    let accountname=null;
-     function getInfoByProfileIndividualID(id){
-        $.ajax({
-            url: '/Reservation/GetInfoProfileIndividual',
-            type: 'get',
-            dataType: 'json',
-            data:{
-                id: id
-            },
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            success: function (result) {
-                    console.log(result);
-  
-                $('#txtID').val(result.id);
-                $('#nameProfileSearch').val(result.account);
-                $('#firstNameProfileSearch').val(result.firstname);
-                $('#cityProfileSearch').val(result.city);
-                accountname=result.account;
-               $("#txtName").html(`<option value="${accountname}">${accountname}</option>`).val(accountname);
-                $('#txtItemInventory').prop('disabled', false); // Enable the select element
-                $('#txtFirstName').val(result.firstname);
-                $('#txtTitle').val(result.titleID);
-                $('#txtPhone').val(result.handPhone);
-                $('#txtEmail').val(result.email);
-                $('#txtIdentityCard').val(result.identityCard);
-                $('#txtPassport').val(result.passPort);
-                $('#txtAddress').val(result.address);
-                const formattedDate = result.dateOfBirth.split("T")[0];
-                $('#txtDob').val(formattedDate);
-                $('#txtNationality').val(result.nationalityID);
-                $('#txtCity').val(result.city);
-                $('#txtVIP').val(result.vipID);
-                $('#txtCardNo').val(result.memberNo);
-                $('#txtMemberType').val(result.memberType);
-                $('#txtPrefRoom').val(result.prefRoom);
+        // === Dòng 2: Thời gian xuất (phải) ===
+        const now = new Date();
+        const exportDate = now.toLocaleString("vi-VN");
+        worksheet.addRow(['', '', '', '', ' ' + exportDate]);
+        worksheet.mergeCells('E2:H2');
+        worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
 
+        // === Dòng 3–4: Trống
+        worksheet.addRow([]);
+        worksheet.addRow([]);
 
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                } else {
-                }
-            }
-        });
-    }
-     function updateDates() {
-            const arrivalInput = document.getElementById('arrival');
-            const departureInput = document.getElementById('departure');
-            const arrivalDay = document.getElementById('arrival-day');
-            const departureDay = document.getElementById('departure-day');
+        // === Dòng 5: Tên báo cáo ở giữa ===
+        const reportRow = worksheet.addRow(['', '', selectedReport]);
+        worksheet.mergeCells('C5:F5');
+        reportRow.font = { bold: true, size: 14 };
+        reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            const arrivalDate = new Date(arrivalInput.value);
-            const departureDate = new Date(departureInput.value);
+        // === Dòng 6: Trống trước khi xuất dữ liệu
+        worksheet.addRow([]);
 
-            if (arrivalDate) {
-                arrivalDay.textContent = getDayName(arrivalDate);
-            }
-            if (departureDate) {
-                departureDay.textContent = getDayName(departureDate);
-            }
-            calculateNights();
-        }
-    function calculateNet(fromDate,toDate,rateCodeID,roomTypeID,currencyID,packageID,day,value,transactionCode,discountPercent,discountAmount) {
-        return $.ajax({
-            url: '/Reservation/CaculateNet',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{
-                fromDate: fromDate,
-                toDate: toDate,
-                rateCodeID: rateCodeID,
-                roomTypeID: roomTypeID,
-                currencyID: currencyID,
-                packageID: packageID,
-                day: day,
-                price:value,
-                transactionCode: transactionCode,
-                discountPercent: discountPercent,
-                discountAmount: discountAmount
-            },
-            success: function (result) {
-                var value = parseFloat(result.priceAfter);
-                    valueFloat =  Math.round(value).toLocaleString('en-US', {
-                                minimumFractionDigits: 0,
-                                maximumFractionDigits: 0
-                            });
-                $('#txtNetAmount').val(valueFloat);
+        // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
+        DevExpress.excelExporter.exportDataGrid({
+            component: grid,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
+        }).then(function () {
+            // Footer
+            const lastRow = worksheet.lastRow.number + 2;
+            worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
+            worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
+            worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${lastRow}`).font = { italic: true };
 
-                var valueRateAfter = parseFloat(result.priceDiscount);
-                valueRateAfterFloat =  Math.round(valueRateAfter).toLocaleString('en-US', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
-                        });
-                $('#txtRateAfterDiscount').val(valueRateAfterFloat);
-                var valueNetAfter = parseFloat(result.priceAfterDiscount);
-                valueNetAfterFloat =  Math.round(valueNetAfter).toLocaleString('en-US', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
-                        });
-                $('#txtNetAfterDiscount').val(valueNetAfterFloat);
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-    }
-    $('#txtRateAmount').on('input', function() {
-        let value = $(this).val();
-
-        // Loại bỏ tất cả ký tự không phải số
-        value = value.replace(/[^0-9]/g, '');
-
-        // Định dạng thành tiền với dấu phẩy
-        if (value) {
-            // Sử dụng toLocaleString để định dạng số
-            let formattedValue = parseInt(value).toLocaleString('vi-VN');
-            // Thay dấu chấm thành dấu phẩy
-            formattedValue = formattedValue.replace(/\./g, ',');
-            $(this).val(formattedValue);
-        } else {
-            // Nếu không có giá trị, đặt lại input thành rỗng
-            $(this).val('');
-        }
-    }).on('keypress', function(event) {
-        // Chỉ cho phép nhập các ký tự số (0-9)
-        let charCode = event.which || event.keyCode;
-        if (charCode < 48 || charCode > 57) {
-            event.preventDefault();
-        }
-    });
-
-    $('#txtRateAmount').blur(function() {
-        let value = $(this).val();
-        let cleanValue = value.replace(/[^0-9]/g, '');
-        let valueDiscountPercent = $('#txtDiscountPercent').val();
-        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
-        let valueDiscountAmount = $('#txtDiscountAmount').val();
-        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
-        calculateNet($('#arrival').val(),$('#departure').val(),0,
-        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
-    });
-    $('#txtDiscountAmount').on('input', function() {
-        let value = $(this).val();
-
-        // Loại bỏ tất cả ký tự không phải số
-        value = value.replace(/[^0-9]/g, '');
-
-        // Định dạng thành tiền với dấu phẩy
-        if (value) {
-            // Sử dụng toLocaleString để định dạng số
-            let formattedValue = parseInt(value).toLocaleString('vi-VN');
-            // Thay dấu chấm thành dấu phẩy
-            formattedValue = formattedValue.replace(/\./g, ',');
-            $(this).val(formattedValue);
-        } else {
-            // Nếu không có giá trị, đặt lại input thành rỗng
-            $(this).val('');
-        }
-    }).on('keypress', function(event) {
-        // Chỉ cho phép nhập các ký tự số (0-9)
-        let charCode = event.which || event.keyCode;
-        if (charCode < 48 || charCode > 57) {
-            event.preventDefault();
-        }
-    });
-    $('#txtDiscountPercent').on('input', function() {
-        let value = $(this).val();
-
-        // Loại bỏ tất cả ký tự không phải số
-        value = value.replace(/[^0-9]/g, '');
-
-        // Định dạng thành tiền với dấu phẩy
-        if (value) {
-            // Sử dụng toLocaleString để định dạng số
-            let formattedValue = parseInt(value).toLocaleString('vi-VN');
-            // Thay dấu chấm thành dấu phẩy
-            formattedValue = formattedValue.replace(/\./g, ',');
-            $(this).val(formattedValue);
-        } else {
-            // Nếu không có giá trị, đặt lại input thành rỗng
-            $(this).val('');
-        }
-    }).on('keypress', function(event) {
-        // Chỉ cho phép nhập các ký tự số (0-9)
-        let charCode = event.which || event.keyCode;
-        if (charCode < 48 || charCode > 57) {
-            event.preventDefault();
-        }
-    });
-    $('#txtDiscountAmount').blur(function() {
-        let value = $('#txtRateAmount').val();
-        let cleanValue = value.replace(/[^0-9]/g, '');
-        let valueDiscountPercent = $('#txtDiscountPercent').val();
-        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
-        let valueDiscountAmount = $(this).val();
-        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
-        calculateNet($('#arrival').val(),$('#departure').val(),0,
-        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
-    });
-    $('#txtDiscountPercent').blur(function() {
-        let value = $('#txtRateAmount').val();
-        let cleanValue = value.replace(/[^0-9]/g, '');
-        let valueDiscountPercent = $(this).val();
-        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
-        let valueDiscountAmount = $('#txtDiscountAmount').val();
-        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
-        calculateNet($('#arrival').val(),$('#departure').val(),0,
-        $('#txtRoomType').val(),'VND',0,0,cleanValue,'',cleanValueDiscountPercent,cleanValueDiscountAmount);
-    });
-
-
-
-        function getReservationByID(ID, startDate, endDate, roomNo,roomtypeid,roomID) {
-        $.ajax({
-            url: '/Reservation/GetReservationByID',
-            type: 'get',
-            dataType: 'json',
-            crossDomain: false,
-            headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data:{
-                ID: ID
-            },
-            success: function (result) {
-
-                $('#txtAgent').val(result.profileAgentId);
-                $('#txtCompany').val(result.profileCompanyId);
-                $("#txtGroupCode").val('');
-                $('#txtContact').val(result.profileContactId);
-                $("#txtContactPhone").val(result.contactPhone);
-                $("#txtID").val(result.id);
-                // var tomSelectInstance = $('#txtName')[0].tomselect;
-                // tomSelectInstance.setValue(result.profileIndividualId);
-                console.log(accountname);
-                   $("#txtName").html(`<option value="${accountname}">${accountname}</option>`).val(accountname);
-                   $("#txtFirstName").val(result.firstName);
-                $("#txtTitle").val(result.title)
-                $("#txtPhone").val('');
-                $("#txtEmail").val(result.email);
-                $("#txtMemberType").val(result.memberType);
-                $("#txtCardNo").val(result.memberNo);
-                $("#txtAddress").val(result.address);
-                $("#txtCity").val(result.city);    
-                $("#txtNationality").val(result.country);
-                  $("#arrival").val(formatDate(startDate));
-              $("#departure").val(formatDate(endDate));
-                $("#adults").val(result.noOfAdult);
-                $("#c").val(result.noOfChild);
-                $("#c1").val(result.noOfChild1);
-                $("#c2").val(result.noOfChild2);
-                $("#nights").val(result.noOfNight);
-                $("#numRooms").val(result.noOfRoom);
-                $("#txtRoomType").val(roomtypeid);
-                $("#txtVIP").val(result.vipId);
-                $("#txtRTC").val(result.rtcId);
-                $("#roomID").val(roomID);
-                $("#roomSelect").val(roomNo);
-                $("#txtETA").val(result.eta);
-                $("#txtETD").val(result.etd);
-                $("#txtResType").val(result.reservationTypeId);
-                $("#txtMarketID").val(result.marketId);
-                $("#txtMarket").val(result.marketCode);
-                $("#txtSource").val(result.sourceId);
-                $("#txtBookerID").val(result.bookerId);
-                $("#txtBooker").val(result.bookerName);
-                $("#txtComment").val(result.comment);
-                $("#pickedID").val(result.pickupReqdId);
-                $("#pickUpTransportType").val(result.pickupTransportType);
-                $("#pickUpStationCode").val(result.pickupStationCode);
-                $("#pickUpCarrierCode").val(result.pickupCarrierCode);
-                $("#pickUpTime").val(result.pickupTime);
-                $("#pickUpDate").val(result.pickupArrivalDate.split("T")[0]);
-                $("#pickUpTransportNo").val(result.pickupTransportNo);
-                $("#pickUpDescription").val(result.pickupDescription);
-                $("#dropOffId").val(result.dropOffReqdId);
-                $("#dropOffTransportType").val(result.dropOffTransportType);
-                $("#dropOffStationCode").val(result.dropOffStationCode);
-                $("#dropOffCarrierCode").val(result.dropOffCarrierCode);
-                $("#dropOffTime").val(result.dropOffTime);
-                $("#dropOffTransportNo").val(result.dropOffTransportNo);
-                $("#dropOffDate").val(result.dropOffDepartureDate.split("T")[0]);
-                $("#dropOffDescription").val(result.dropOffDescription);
-                $("#txtPackage").val(result.packageId);
-                $("#txtRateCodeID").val(result.rateCodeId);
-                $("#txtRateCode").val(result.rateCode);
-                let amount = result.rate; // Giả sử result.rate là 4409171
-                let formattedAmount = amount.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
-                let amountNet = result.rateAfterTax; // Giả sử result.rate là 4409171
-                let formattedNet = amountNet.toLocaleString('en-US').replace(/,/g, ','); // Đảm bảo dấu phẩy
-                $("#txtRateAmount").val(formattedAmount); // Kết quả: 4,409,171
-                $("#txtNetAmount").val(formattedNet);
-                $('#txtRateAfterDiscount').val(formattedAmount);
-                $('#txtNetAfterDiscount').val(formattedNet);
-                $("#txtColor").val(result.color);
-                // $("#txtItemInventory").val('');
-                // $("#txtPreference").val();
-                $("#txtAllotmentID").val(result.allotmentId);
-                $("#txtAllotment").val(result.allotmentCode);
-                $("#txtPersonInCharge").val(result.personInChargeId);
-            },
-            error: function (xhr, statusText, err) {
-                if (xhr.status == 401) {
-                    sessionTimeout();
-                } else {
-                }
-            }
-        });
-    }
-    //  function getProfileIndividual(){
-    //     $.ajax({
-    //             url: '/Reservation/GetProfileIndividual',
-    //         type: 'get',
-    //         dataType: 'json',
-    //             crossDomain: false,
-    //         headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-    //         success: function (result) {
-    //             if (result.length > 0) {
-    //                 let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
-    //                 select.clear(); // Xóa giá trị hiện tại
-    //                 select.clearOptions(); // Xóa tất cả option cũ
-
-    //                 select.addOption({ value: '0', text: '' });
-    //                 result.forEach(item => {
-    //                     select.addOption({ value: item.id, text: `${item.account}` });
-    //                 });
-
-    //                 select.setValue('0'); // Chọn giá trị mặc định
-
-    //                 let select2 = $('#txtNameAccompanying')[0].tomselect; // Lấy instance của TomSelect
-    //                 select2.clear(); // Xóa giá trị hiện tại
-    //                 select2.clearOptions(); // Xóa tất cả option cũ
-
-    //                 select2.addOption({ value: '0', text: '' });
-    //                 result.forEach(item => {
-    //                     select2.addOption({ value: item.id, text: `${item.account}` });
-    //                 });
-
-    //                 select2.setValue('0'); // Chọn giá trị mặc định
-    //             }
-    //             else{
-    //                 let select = $('#txtName')[0].tomselect; // Lấy instance của TomSelect
-    //                 select.clear(); // Xóa giá trị hiện tại
-    //                 select.clearOptions(); // Xóa tất cả option cũ
-    //                 select.addOption({ value: '0', text: '' });
-    //                 select.setValue('0');
-
-    //                     let select2 = $('#txtNameAccompanying')[0].tomselect; // Lấy instance của TomSelect
-    //                 select2.clear(); // Xóa giá trị hiện tại
-    //                 select2.clearOptions(); // Xóa tất cả option cũ
-    //                 select2.addOption({ value: '0', text: '' });
-    //                 select2.setValue('0');
-    //             }
-    //         },
-    //         error: function (xhr, statusText, err) {
-    //             if (xhr.status == 401) {
-    //                 sessionTimeout();
-    //             } else {
-    //             }
-    //         }
-    //     });
-    // }
-  
-    // $('#txtName').on('change', function() {
-    //     var value = $(this).val();
-    //     getInfoByProfileIndividualID(value);
-
-    //     // Lấy instance của TomSelect cho #txtItemInventory
-    //     var tomSelectInstance = $('#txtItemInventory')[0].tomselect; // Lấy đối tượng TomSelect
-
-    //     if (value && value !== '0') {
-    //         if (tomSelectInstance) {
-    //             tomSelectInstance.enable(); // Sử dụng API của TomSelect để enable
-    //         } else {
-    //             // Fallback: Thử enable bằng jQuery nếu không tìm thấy TomSelect
-    //             $('#txtItemInventory').prop('disabled', false);
-    //         }
-    //     } else {
-    //         if (tomSelectInstance) {
-    //             tomSelectInstance.disable(); // Sử dụng API của TomSelect để disable
-    //         } else {
-    //             $('#txtItemInventory').prop('disabled', true);
-    //         }
-    //     }
-    // });
-
-     
-
-         function initializeRoomPlanGrid(data) {
-        const columnWidth = 120;
-
-        const filteredData = data.filter(d => d.roomNo && d.roomNo.trim() !== "");
-
-        $("#gridContainer").dxDataGrid({
-            dataSource: filteredData,
-            allowColumnResizing: true,
-            columnAutoWidth: false, // để tạo scroll ngang nếu cần
-            columns: [
-                { dataField: "roomNo", caption: "Room", width: columnWidth },
-                { dataField: "roomTypeCode", caption: "Ro.Type", width: columnWidth },
-                { dataField: "status", caption: "Status", width: columnWidth },
-                { dataField: "foStatus", caption: "FOStatus", width: columnWidth },
-            ],
-            paging: {
-                enabled: false
-            },
-            scrolling: {
-                mode: "standard",
-                useNative: true
-
-            },
-            filterRow: { visible: true, applyFilter: "auto" },
-            headerFilter: { visible: true },
-            selection: { mode: "multiple", showCheckBoxesMode: "none" },
-            showBorders: true,
-            onRowPrepared: function (e) {
-                if (e.rowType === "data" && e.data?.isTotal) {
-                    e.rowElement.css({
-                        "font-weight": "bold",
-                        "background-color": "#f6f6f6"
-                    });
-                }
-            }
-        });
-    }
-
-      function EditReservation() {
-        const userName = JSON.parse(localStorage.getItem("Loginname"));
-        const userID = JSON.parse(localStorage.getItem("userID"));
-        var formData = new FormData();
-        let valueDiscountPercent = $('#txtDiscountPercent').val();
-        let cleanValueDiscountPercent = valueDiscountPercent.replace(/[^0-9]/g, '');
-        let valueDiscountAmount = $('#txtDiscountAmount').val();
-        let cleanValueDiscountAmount = valueDiscountAmount.replace(/[^0-9]/g, '');
-        formData.append('rsvID', idReservation);
-
-        formData.append('profileAgentID', $('#txtAgent').val());
-        formData.append('agentName', $('#txtAgent').find('option:selected').text());
-        formData.append('profileCompanyID', $('#txtCompany').val());
-        formData.append('companyName', $('#txtCompany').find('option:selected').text());
-        formData.append('groupCode', $("#txtGroupCode").val());
-        formData.append('profileContactID', $('#txtContact').val());
-        formData.append('contactName', $('#txtContact').find('option:selected').text());
-        formData.append('contactPhone', $("#txtContactPhone").val());
-        formData.append('profileIndividualID', $("#txtID").val());
-        // const tomSelect = $('#txtName')[0].tomselect;
-        // const selectedText = tomSelect.getValue() ? tomSelect.options[tomSelect.getValue()].text : '';
-        formData.append('firstName', $("#txtFirstName").val());
-        formData.append('lastName', $('#txtName').val());
-        formData.append('title', $("#txtTitle").val() ?? '');
-        formData.append('phone', $("#txtPhone").val());
-        formData.append('email', $("#txtEmail").val());
-        formData.append('memberType', $("#txtMemberType").val());
-        formData.append('memberNo', $("#txtCardNo").val());
-        formData.append('address', $("#txtAddress").val());
-        formData.append('city', $("#txtCity").val());
-        formData.append('nationality', $("#txtNationality").val());
-        formData.append('arrival', $("#arrival").val());
-        formData.append('departure', $("#departure").val());
-        formData.append('noOfAdult', $("#adults").val());
-        formData.append('noOfChild', $("#c").val());
-        formData.append('noOfChild1', $("#c1").val());
-        formData.append('noOfChild2', $("#c2").val());
-        formData.append('noOfNight', $("#nights").val());
-        formData.append('noOfRoom', $("#numRooms").val());
-        formData.append('roomTypeID', $("#txtRoomType").val());
-        formData.append('vipID', $("#txtVIP").val());
-        formData.append('rtcID', $("#txtRTC").val());
-            formData.append('roomID', $("#roomID").val());  
-        formData.append('roomNo',$('#roomSelect').val());
-        formData.append('eta', $("#txtETA").val());
-        formData.append('etd', $("#txtETD").val());
-        formData.append('reservationType', $("#txtResType").val());
-        formData.append('reservationTypeCode', $('#txtResType').find('option:selected').text());
-        formData.append('marketID', $("#txtMarketID").val());
-        formData.append('marketCode', $("#txtMarket").val());
-        formData.append('sourceID', $("#txtSource").val());
-        formData.append('sourceCode',  $('#txtSource').find('option:selected').text());
-        formData.append('bookerID', $("#txtBookerID").val());
-        formData.append('bookerName', $("#txtBooker").val());
-        formData.append('discountAmount',cleanValueDiscountAmount);
-        formData.append('discountRate', cleanValueDiscountPercent);
-        formData.append('comment', $("#txtComment").val());
-        formData.append('pickedId', $("#pickedID").val());
-        formData.append('pickUpTransportType', $("#pickUpTransportType").val());
-        formData.append('pickUpStationCode', $("#pickUpStationCode").val());
-        formData.append('pickUpCarrierCode', $("#pickUpCarrierCode").val());
-        formData.append('pickUpTime', $("#pickUpTime").val());
-        formData.append('pickUpDate', $("#pickUpDate").val());
-        formData.append('pickUpTransportNo', $("#pickUpTransportNo").val());
-        formData.append('pickUpDescription', $("#pickUpDescription").val());
-        formData.append('dropOffId', $("#dropOffId").val());
-        formData.append('dropOffCarrierCode', $("#dropOffCarrierCode").val());
-        formData.append('dropOffTransportType', $("#dropOffTransportType").val());
-        formData.append('dropOffStationCode', $("#dropOffStationCode").val());
-        formData.append('dropOffTime', $("#dropOffTime").val());
-        formData.append('dropOffTransportNo', $("#dropOffTransportNo").val());
-        formData.append('dropOffDate', $("#dropOffDate").val());
-        formData.append('dropOffDescription', $("#dropOffDescription").val());
-        formData.append('packageID', $("#txtPackage").val());
-        formData.append('packages', $('#txtPackage').find('option:selected').text());
-        formData.append('rateCodeID', $("#txtRateCodeID").val());
-        formData.append('rateCode', $("#txtRateCode").val());
-        formData.append('rateAmount', $("#txtRateAmount").val());
-        formData.append('rateAfter', $("#txtNetAmount").val());
-        formData.append('color', $("#txtColor").val());
-        const selectedValues = $("#txtItemInventory").val();
-        selectedValues.forEach(value => {
-            formData.append('itemInventory', value);
-        });
-        formData.append('specials', $("#txtPreference").val());
-        formData.append('allotmentID', $("#txtAllotmentID").val());
-        formData.append('allotmentCode', $("#txtAllotment").val());
-        formData.append('perrsonInCharge', $("#txtPersonInCharge").val());
-        formData.append('roomNight', $("#nights").val());
-        formData.append('userName', userName);
-        formData.append('userID',userID);
-
-        $.ajax({
-            url: '/Reservation/EditReservationRoomPlan',
-            type: 'POST',
-            processData: false,
-            contentType: false,
-            // headers: { "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val() },
-            data: formData,
-            success: function (data) {
-                if (data.code == 0) {
-                    resetForm();
-                        showToast('Success', data.msg, true);
-                             $("#btnPrint").trigger("click");
-
-                } else {
-                        showToast('Error', data.msg, false);
-                }
-
-            },
-            error: function (xhr, statusText, err) {
-
-            }
-        });
-
-    }
-
-
-
-
-        $("#btnExportExcel").click(function () {
-                   const grid = $("#gridContainer").dxDataGrid("instance"); var selectedReport2 = '@ViewBag.ReportTitle';
-            var selectedReport = '@ViewBag.ReportTitle';
-            if (!selectedReport) {
-                alert("Vui lòng chọn báo cáo trước khi xuất Excel.");
-                return;
-            }
-
-                         const workbook = new ExcelJS.Workbook();const companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
-            const worksheet = workbook.addWorksheet("Sheet 1");
-
-            // === Tạo header công ty (dòng 1) ===
-           worksheet.addRow([companyName]);
-            worksheet.mergeCells('A1:E1');
-            worksheet.getRow(1).font = { bold: true };
-            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'left' };
-
-            // === Dòng 2: Thời gian xuất (phải) ===
-            const now = new Date();
-            const exportDate = now.toLocaleString("vi-VN");
-            worksheet.addRow(['', '', '', '', ' ' + exportDate]);
-            worksheet.mergeCells('E2:H2');
-            worksheet.getRow(2).alignment = { vertical: 'middle', horizontal: 'right' };
-
-            // === Dòng 3–4: Trống
-            worksheet.addRow([]);
-            worksheet.addRow([]);
-
-            // === Dòng 5: Tên báo cáo ở giữa ===
-            const reportRow = worksheet.addRow(['', '', selectedReport]);
-            worksheet.mergeCells('C5:F5');
-            reportRow.font = { bold: true, size: 14 };
-            reportRow.alignment = { vertical: 'middle', horizontal: 'center' };
-
-            // === Dòng 6: Trống trước khi xuất dữ liệu
-            worksheet.addRow([]);
-
-            // === Export dữ liệu từ DevExtreme (bắt đầu từ dòng 7)
-            DevExpress.excelExporter.exportDataGrid({
-                component: grid,
-                worksheet: worksheet,
-                autoFilterEnabled: true,
-                topLeftCell: { row: 7, column: 1 } // dữ liệu bắt đầu từ dòng 7
-            }).then(function () {
-                // Footer
-                const lastRow = worksheet.lastRow.number + 2;
-                worksheet.getCell(`A${lastRow}`).value = "--- END  ---";
-                worksheet.mergeCells(`A${lastRow}:F${lastRow}`);
-                worksheet.getCell(`A${lastRow}`).alignment = { horizontal: 'center' };
-                worksheet.getCell(`A${lastRow}`).font = { italic: true };
-
-                // Ghi file
-                let fileName = selectedReport + ".xlsx";
-                workbook.xlsx.writeBuffer().then(function (buffer) {
-                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
-                });
+            // Ghi file
+            let fileName = selectedReport + ".xlsx";
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName);
             });
         });
+    });
 
 
 
-        // Nút xuất PDF
-           $("#btnExportPdf").click(function () {
-            const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
+    // Nút xuất PDF
+    $("#btnExportPdf").click(function () {
+        const { jsPDF } = window.jspdf; // 👈 Bổ sung dòng này
 
-            const doc = new jsPDF();
+        const doc = new jsPDF();
 
-            DevExpress.pdfExporter.exportDataGrid({
-                jsPDFDocument: doc,
-                component: $("#gridContainer").dxDataGrid("instance"),
-                autoTableOptions: {
-                    styles: { cellPadding: 2, fontSize: 8 },
-                    margin: { top: 20 }
-                }
-            }).then(() => {
-                doc.save("BaoCao.pdf");
-            });
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: $("#gridContainer").dxDataGrid("instance"),
+            autoTableOptions: {
+                styles: { cellPadding: 2, fontSize: 8 },
+                margin: { top: 20 }
+            }
+        }).then(() => {
+            doc.save("BaoCao.pdf");
         });
+    });
 </script>

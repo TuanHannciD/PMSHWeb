@@ -2,10 +2,9 @@
 using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -31,6 +30,7 @@ namespace Administration.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
+        DateTime businessDate = TextUtils.GetBusinessDate();
 
         #region MemberList
         [HttpGet]
@@ -38,8 +38,6 @@ namespace Administration.Controllers
         {
             try
             {
-
-
                 DataTable dataTable = _iAdministrationService.MemberList(code, name, inactive);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
@@ -373,38 +371,78 @@ namespace Administration.Controllers
         #endregion
 
         #region Currency
-        // [HttpGet]
-        // public IActionResult GetCurrency()
-        // {
-        //     try
-        //     {
-        //         DataTable dataTable = _iAdministrationService.Currency();
-        //         var result = (from d in dataTable.AsEnumerable()
-        //                       select new
-        //                       {
-        //                           IsMaster = !string.IsNullOrEmpty(d["IsMaster"].ToString()) ? d["IsMaster"] : "",
-        //                           Trans = !string.IsNullOrEmpty(d["Trans"].ToString()) ? d["Trans"] : "",
-        //                           Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
-        //                           Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
-        //                           ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-        //                       }).ToList();
-        //         return Json(result);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return Json(ex.Message);
-        //     }
-        //  report.DataSource = dataTable;
-
-        // Không cần gán parameter
-        // report.RequestParameters = false;
-
-        // return PartialView("_ReportViewerPartial", report);
+        //[HttpGet]
+        //public IActionResult GetCurrency()
+        //{
+        //    try
+        //    {
+        //        var result = _iAdministrationService.GetAllCurrency().ToList();
+        //        return Json(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(ex.Message);
+        //    }
         //}
+
         public IActionResult Currency()
         {
-            return View();
+            return PartialView();
         }
+
+        [HttpGet]
+        public IActionResult SearchCurrency(string code, int isActive)
+        {
+            try
+            {
+                SqlParameter[] param =
+                [
+                    new SqlParameter("@sqlCommand",
+                    $@"  select   a.ID,
+                            a.Description,
+                            a.MasterStatus,
+                            a.UserInsertID,
+                            a.CreateDate,
+                            a.UpdateDate,
+                            a.UserUpdateID,
+                            a.TransactionCode,
+                            a.IsShow,
+                            a.Inactive,
+                            a.Decimals,
+                            a.IsSynchronous,
+                            (case MasterStatus when 0 then '' when 1 then 'X' end)as [IsMaster],
+                    (case Inactive when 0 then '' when 1 then 'X' end)as [Inactive], (b.Code+' - '+b.Description)
+                    as [Trans],a.Description from Currency a left join Transactions b on a.TransactionCode=b.Code
+                    where 1=1 and a.ID like N'%{code}%' and a.Inactive = {isActive} order by a.ID desc")
+                        ];
+                DataTable dataTable = DataTableHelper.getTableData("spSearchAllForTrans", param);
+
+                var result = (from d in dataTable.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>()
+                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                  .ToDictionary(
+                                      col => col.ColumnName,
+                                      col =>
+                                      {
+                                          var value = d[col.ColumnName];
+                                          if (value == DBNull.Value) return null;
+
+                                          // CreatedDate: KHÔNG ToString
+                                          if (col.ColumnName == "CreatedDate" || col.ColumnName == "UpdatedDate" || col.ColumnName == "IsShow" || col.ColumnName == "Inactive")
+                                              return value;
+
+                                          // Các field khác: ToString
+                                          return value.ToString();
+                                      }
+                                  )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public ActionResult InsertCurrency()
         {
@@ -439,7 +477,7 @@ namespace Administration.Controllers
                 member.CreateDate = DateTime.Now;
                 member.UpdateDate = DateTime.Now;
                 if (string.IsNullOrWhiteSpace(member.ID))
-                    return Json(new { success = false, message = "Code không được để trống." });
+                    return Json(new { success = false, message = "The code cannot be left blank." });
 
                 string memberId = CurrencyBO.Instance.InsertStringId(member);
 
@@ -490,7 +528,7 @@ namespace Administration.Controllers
 
                 int loginName = HttpContext.Session.GetInt32("UserID") ?? 0;
                 if (string.IsNullOrWhiteSpace(member.ID))
-                    return Json(new { success = false, message = "Code không được để trống." });
+                    return Json(new { success = false, message = "The code cannot be left blank." });
 
                 if (member.ID == "") // Insert mới
                 {
@@ -532,6 +570,8 @@ namespace Administration.Controllers
                 pt.CloseConnection();
             }
         }
+
+
         [HttpPost]
         public ActionResult DeleteCurrency()
         {
@@ -563,6 +603,8 @@ namespace Administration.Controllers
                 return Json(new { code = 1, msg = ex.Message });
             }
         }
+
+
         [HttpGet]
         public IActionResult GetCurrencyById(string id)
         {
@@ -608,8 +650,6 @@ namespace Administration.Controllers
         {
             try
             {
-
-
                 DataTable dataTable = _iAdministrationService.hkpEmployee(code, name, inactive);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
@@ -629,12 +669,6 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
         }
         public IActionResult hkpEmployee()
         {
@@ -746,7 +780,6 @@ namespace Administration.Controllers
         {
             try
             {
-
                 hkpEmployeeModel memberModel = (hkpEmployeeModel)hkpEmployeeBO.Instance.FindByPrimaryKey(int.Parse(Request.Form["id"].ToString()));
                 if (memberModel == null || memberModel.ID == 0)
                 {
@@ -823,16 +856,10 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
         }
         public IActionResult ConfigStatusColor()
         {
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public ActionResult UpdateConfigStatusColor()
@@ -851,19 +878,17 @@ namespace Administration.Controllers
                              : 0;
                 member.ColorName = Request.Form["bgColor"].ToString();
                 member.FontColorName = Request.Form["fontColor"].ToString();
+                member.StatusName = Request.Form["name"].ToString();
 
                 int loginName = HttpContext.Session.GetInt32("UserID") ?? 0;
-                member.UserUpdateID = member.UserInsertID;
-                member.CreateDate = DateTime.Now;
-                member.UpdateDate = DateTime.Now;
 
                 if (member.ID == 0) // Insert mới
                 {
 
                     member.UserInsertID = loginName;
-                    member.CreateDate = DateTime.Now;
+                    member.CreateDate = businessDate;
                     member.UserUpdateID = loginName;
-                    member.UpdateDate = DateTime.Now;
+                    member.UpdateDate = businessDate;
 
                     HKPStatusColorBO.Instance.Insert(member);
                 }
@@ -874,14 +899,13 @@ namespace Administration.Controllers
 
                     if (oldData != null)
                     {
-                        member.StatusName = oldData.StatusName;
                         member.Description = oldData.Description;
                         member.UserInsertID = oldData.UserInsertID;
                         member.CreateDate = oldData.CreateDate;
                     }
 
                     member.UserUpdateID = loginName;
-                    member.UpdateDate = DateTime.Now;
+                    member.UpdateDate = businessDate;
 
                     HKPStatusColorBO.Instance.Update(member);
                 }
@@ -1012,12 +1036,6 @@ namespace Administration.Controllers
             {
                 return Json(ex.Message);
             }
-            //  report.DataSource = dataTable;
-
-            // Không cần gán parameter
-            // report.RequestParameters = false;
-
-            // return PartialView("_ReportViewerPartial", report);
         }
         public ActionResult PostingHistory()
         {
@@ -1038,42 +1056,207 @@ namespace Administration.Controllers
             List<PersonInChargeZoneModel> listzone = PropertyUtils.ConvertToList<PersonInChargeZoneModel>(PersonInChargeZoneBO.Instance.FindAll());
 
             ViewBag.PersonInChargeZoneList = listzone;
-            return View();
+            return PartialView();
         }
-
         [HttpGet]
-        public IActionResult PersonInChargeData(string code, string description, string group, string zone, string isActive)
+        public IActionResult GetPersonInCharge(string code, string name, string group, string zone, string isActive)
         {
-            code = code ?? "";
-            description = description ?? "";
-            group = group ?? "";
-            zone = zone ?? "";
-            if (isActive == "1")
-            {
-                isActive = "";
-            }
+            code = code?.Trim() ?? "";
+            name = name?.Trim() ?? "";
+            //group = SanitizeCsv(group);
+            //zone = SanitizeCsv(zone);
+
+            var groupIds = !string.IsNullOrEmpty(group)
+             ? group.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).ToList()
+             : new List<string> { "" };
+
+            var zoneIds = !string.IsNullOrEmpty(zone)
+                ? zone.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).ToList()
+                : new List<string> { "" };
+
+            DataTable combinedTable = null;
 
             try
             {
-                DataTable dataTable = _iAdministrationService.PersonInChargeData(code, description, group, zone, isActive);
+                foreach (var gId in groupIds)
+                {
+                    foreach (var zId in zoneIds)
+                    {
+                        DataTable dt = _iAdministrationService.PersonInChargeData(code, name, gId, zId, isActive);
+
+                        if (combinedTable == null)
+                        {
+                            combinedTable = dt.Clone();
+                        }
+
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                combinedTable.ImportRow(row);
+                            }
+                        }
+                    }
+                }
+
+                if (combinedTable == null || combinedTable.Rows.Count == 0)
+                {
+                    return Json(new List<object>());
+                }
+                var result = combinedTable.AsEnumerable()
+                    .GroupBy(r => r["ID"].ToString())
+                    .Select(g => g.First())
+                    .Select(d => new
+                    {
+
+                        Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                        Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                        Telephone = !string.IsNullOrEmpty(d["Telephone"].ToString()) ? d["Telephone"] : "",
+                        Mobile = !string.IsNullOrEmpty(d["Mobile"].ToString()) ? d["Mobile"] : "",
+                        Email = !string.IsNullOrEmpty(d["Email"].ToString()) ? d["Email"] : "",
+                        Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                        ZoneID = !string.IsNullOrEmpty(d["ZoneID"].ToString()) ? d["ZoneID"] : "",
+                        GroupID = !string.IsNullOrEmpty(d["GroupID"].ToString()) ? d["GroupID"] : "",
+                        CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                        CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                        UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                        UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                        ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                        Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                    }).ToList();
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+
+        }
+        [HttpPost]
+        public IActionResult PersonInChargeSave([FromBody] PersonInChargeModel model)
+        {
+            string message = "";
+
+            var listErrors = GetErrors(
+                Check(model == null, "general", "Invalid data"),
+
+                Check(model?.Name, "txtname", "Name cannot be blank."),
+                Check(model?.PersonInChargeZoneID <= 0, "personInChargeZoneId", "Zone cannot be blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    string sql = @"
+                        SELECT 
+                            RIGHT('000000' + CAST(ISNULL(MAX(CAST(Code AS INT)), 0) + 1 AS VARCHAR(6)), 6)
+                        FROM PersonInCharge WITH (UPDLOCK, HOLDLOCK)
+                    ";
+                    DataTable dt = TextUtils.Select(sql);
+                    if (dt == null || dt.Rows.Count == 0)
+                        throw new Exception("Cannot generate Person In Charge code.");
+
+                    model.Code = dt.Rows[0][0].ToString();
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PersonInChargeBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PersonInChargeModel)PersonInChargeBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.Code = oldData.Code;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdatedDate = DateTime.Now;
+
+                    PersonInChargeBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePersonInCharge(int id)
+        {
+            try
+            {
+                if (PersonInChargeBO.Instance.FindByPrimaryKey(id) is not PersonInChargeModel existing || existing.ID == 0)
+                {
+                    return Ok(new { success = false, message = $"Person In Charge not found." });
+                }
+
+                var reservation = PropertyUtils.ConvertToList<ReservationModel>(
+                    ReservationBO.Instance.FindByAttribute("PersonInChargeID", id)
+                );
+
+                if (reservation != null && reservation.Count > 0)
+
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Cannot delete this Person In Charge because it is used in Reservation."
+                    });
+                }
+                PersonInChargeBO.Instance.Delete(id);
+                return Json(new { success = true, message = $"Record was removed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion 
+
+        #region PersonInChargeGroup
+        public ActionResult PersonInChargeGroup()
+        {
+            return PartialView();
+        }
+        [HttpGet]
+        public IActionResult GetPersonInChargeGroup(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PersonInChargeGroupData(code, name, inactive);
                 var result = (from d in dataTable.AsEnumerable()
                               select new
                               {
-                                  ID = d["ID"] != DBNull.Value ? Convert.ToInt32(d["ID"]) : 0,
-                                  Code = d["Code"]?.ToString() ?? "",
-                                  Name = d["Name"]?.ToString() ?? "",
-                                  TelePhone = d["TelePhone"]?.ToString() ?? "",
-                                  Mobile = d["Mobile"]?.ToString() ?? "",
-                                  Email = d["Email"]?.ToString() ?? "",
-                                  Description = d["Description"]?.ToString() ?? "",
-                                  ZoneID = d["ZoneID"] != DBNull.Value ? Convert.ToInt32(d["ZoneID"]) : 0,
-                                  GroupID = d["GroupID"] != DBNull.Value ? Convert.ToInt32(d["GroupID"]) : 0,
-                                  CreatedBy = d["CreatedBy"]?.ToString() ?? "",
-                                  CreatedDate = d["CreatedDate"] != DBNull.Value ? Convert.ToDateTime(d["CreatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
-                                  UpdatedBy = d["UpdatedBy"]?.ToString() ?? "",
-                                  UpdatedDate = d["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(d["UpdatedDate"]).ToString("yyyy-MM-dd HH:mm:ss") : "",
-                                  Inactive = d["Inactive"]?.ToString() ?? "",
-
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
                               }).ToList();
                 return Json(result);
             }
@@ -1084,102 +1267,290 @@ namespace Administration.Controllers
 
         }
         [HttpPost]
-        public IActionResult PersonInChargeSave(int id, string codenew, string telephonenew, string handphonenew, string emailnew, string namenew, string descriptionnew, string group, string zone, int isActive, string user)
+        public IActionResult PersonInChargeGroupSave([FromBody] PersonInChargeGroupModel model)
         {
-            var pt = new ProcessTransactions();
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "picg_code", "Code is not blank."),
+                //Check(PersonInChargeGroupBO.Instance.IsDuplicate("Code", model.Code, model.ID),
+                //    "code", "This code already exists."),
+                Check(model?.Name, "picg_name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
             try
             {
-                pt.OpenConnection();
-                pt.BeginTransaction();
-
-                user = (user ?? string.Empty).Replace("\"", "").Trim();
-
-                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-                var businessDate = businessDates[0].BusinessDate;
-
-                PersonInChargeModel model;
-                bool isNew = (id == 0);
-
-                if (isNew)
+                if (model.ID == 0)
                 {
-                    model = new PersonInChargeModel
-                    {
-                        Code = codenew?.Trim(),
-                        Name = namenew?.Trim(),
-                        Description = descriptionnew?.Trim(),
-                        Inactive = (isActive == 1),
-                        Telephone = telephonenew,
-                        MobilePhone = handphonenew,
-                        Email = emailnew,
-                        CreatedBy = user,
-                        PersonInChargeGroupID = int.Parse(group),
-                        PersonInChargeZoneID = int.Parse(zone),
-                        CreatedDate = businessDate,
-                        UpdatedBy = user,
-                        UpdatedDate = businessDate
-                    };
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
-                    PersonInChargeBO.Instance.Insert(model);
+                    PersonInChargeGroupBO.Instance.Insert(model);
+                    message = "Insert successfully!";
                 }
                 else
                 {
-                    model = (PersonInChargeModel)PersonInChargeBO.Instance.FindByPrimaryKey(id);
-                    if (model == null)
+                    var oldData = (PersonInChargeGroupModel)PersonInChargeGroupBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
                     {
-                        throw new Exception($"Không tìm thấy lafZone có ID = {id}");
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.Code = codenew?.Trim();
-                    model.Name = namenew?.Trim();
-                    model.Description = descriptionnew?.Trim();
-                    model.Inactive = (isActive == 1);
-                    model.Telephone = telephonenew;
-                    model.MobilePhone = handphonenew;
-                    model.Email = emailnew;
-
-                    model.PersonInChargeGroupID = int.Parse(group);
-                    model.PersonInChargeZoneID = int.Parse(zone);
-                    model.UpdatedBy = user;
+                    model.UpdateDate = businessDate;
                     model.UpdatedDate = businessDate;
 
-                    PersonInChargeBO.Instance.Update(model);
+                    PersonInChargeGroupBO.Instance.Update(model);
+                    message = "Update successfully!";
                 }
 
-                pt.CommitTransaction();
-
-                return Json(new
-                {
-                    success = true,
-                    message = isNew ? "Insert success!" : "Update success!"
-                });
             }
             catch (Exception ex)
             {
-                pt.RollBack();
-                return BadRequest(new { success = false, message = ex.Message });
+                message = ex.Message;
+                return Json(new { success = false, message });
             }
-            finally
-            {
-                pt.CloseConnection();
-            }
+
+            return Json(new { success = true, message });
         }
         [HttpPost]
-        public IActionResult PersonInChargelete(int id)
+        public IActionResult DeletePersonInChargeGroup(int id)
         {
             try
             {
-
-                PersonInChargeBO.Instance.Delete(id);
-
-                return Json(new { success = true, message = "Success Delete!" });
+                PersonInChargeGroupBO.Instance.Delete(id);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { success = false, message = ex.Message });
+                return Json(new { success = false, ex.Message });
             }
+
+            return Json(new { success = true });
         }
         #endregion
-        
+
+        #region PersonInChargeZone
+        public ActionResult PersonInChargeZone()
+        {
+            return PartialView();
+        }
+        [HttpGet]
+        public IActionResult GetPersonInChargeZone(string code, string name, string inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.PersonInChargeZoneData(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+        }
+        [HttpPost]
+        public IActionResult PersonInChargeZoneSave([FromBody] PersonInChargeZoneModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "picz_code", "Code is not blank."),
+                //Check(PersonInChargeZoneBO.Instance.IsDuplicate("Code", model.Code, model.ID),
+                //       "code", "This code already exists."),
+                Check(model?.Name, "picz_name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PersonInChargeZoneBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PersonInChargeZoneModel)PersonInChargeZoneBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    PersonInChargeZoneBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePersonInChargeZone(int id)
+        {
+            try
+            {
+                PersonInChargeZoneBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ApprovedBy
+        public ActionResult ApproveBy()
+        {
+            return PartialView();
+        }
+        [HttpGet]
+        public IActionResult GetApprovedBy(string code, string name, string isActive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.ApproveListData(code, name, isActive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+        }
+        [HttpPost]
+        public IActionResult ApprovedBySave([FromBody] ApprovedbyModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "appB_code", "Code is not blank."),
+                //Check(ApprovedbyBO.Instance.IsDuplicate("Code", model.Code, model.ID),
+                //        "code", "This code already exists."),
+                Check(model?.Name, "appB_name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = DateTime.Now;
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    ApprovedbyBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (ApprovedbyModel)ApprovedbyBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    ApprovedbyBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteApprovedby(int id)
+        {
+            try
+            {
+                ApprovedbyBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
         #region Deposit/Cancellation Rules Search 
         public IActionResult DepositRule()
         {
@@ -1188,7 +1559,7 @@ namespace Administration.Controllers
 
             List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
             ViewBag.CurrencyList = listCurr;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public IActionResult GetDepositRule(string code, string description)
@@ -1262,7 +1633,7 @@ namespace Administration.Controllers
                     model.CreateDate = DateTime.Now;
                     model.UpdateDate = DateTime.Now;
                     DepositRuleBO.Instance.Insert(model);
-                    message = "Insert successfully!";
+                    message = $"Successfully Insert Deposit Rule: {model.Code}";
                 }
                 else
                 {
@@ -1276,7 +1647,7 @@ namespace Administration.Controllers
 
                     model.UpdateDate = DateTime.Now;
                     DepositRuleBO.Instance.Update(model);
-                    message = "Update successfully!";
+                    message = $"Successfully Updated Deposit Rule: {model.Code}.";
                 }
             }
             catch (Exception ex)
@@ -1308,7 +1679,7 @@ namespace Administration.Controllers
 
             List<CurrencyModel> listCurr = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
             ViewBag.CurrencyList = listCurr;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public IActionResult GetCancellationRule(string code, string description)
@@ -1368,7 +1739,7 @@ namespace Administration.Controllers
                 // type =1 Percent
                 Check(model?.Type == 1 && (model?.AmountValue ?? 0) > 100, "amountValue", "Percent cannot exceed 100%."),
                 Check(model?.Type == 0 && string.IsNullOrWhiteSpace(model?.CurrencyID), "currencys", "Currency is required for Flat type."),
-                
+
                 Check((model?.DaysBeforeArrival ?? 0) < 0, "dayBA", "Days Before Arrival cannot be negative."),
 
                 Check((model?.Sequence ?? 0) < 0, "seq", "Sequence cannot be negative.")
@@ -1379,7 +1750,7 @@ namespace Administration.Controllers
                 return Json(new { success = false, errors = listErrors });
             }
 
-            string message="";
+            string message = "";
 
             try
             {
@@ -1388,7 +1759,7 @@ namespace Administration.Controllers
                     model.CreateDate = DateTime.Now;
                     model.UpdateDate = DateTime.Now;
                     CancellationRuleBO.Instance.Insert(model);
-                    message = "Insert successfully!";
+                    message = $"Successfully Insert Deposit Rule: {model.Code}";
                 }
                 else
                 {
@@ -1402,10 +1773,10 @@ namespace Administration.Controllers
 
                     model.UpdateDate = DateTime.Now;
                     CancellationRuleBO.Instance.Update(model);
-                    message = "Update successfully!";
+                    message = $"Successfully Updated Deposit Rule: {model.Code}.";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 message = ex.Message;
                 return Json(new { success = false, message });
@@ -1462,7 +1833,7 @@ namespace Administration.Controllers
         {
             List<CountryModel> listctry = PropertyUtils.ConvertToList<CountryModel>(CountryBO.Instance.FindAll());
             ViewBag.CountryList = listctry;
-            return View("ItemCategory/City");
+            return PartialView("ItemCategory/City");
         }
         [HttpPost]
         public IActionResult CitySave([FromBody] CityModel model)
@@ -1471,9 +1842,9 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank."),
-                Check(model?.CountryID, "countryID", "Please select a country. ")
+                Check(model?.Code, "city_code", "Code is not blank."),
+                Check(model?.Name, "city_name", "Name is not blank."),
+                Check(model?.CountryID, "city_countryID", "Please select a country. ")
             );
 
             if (listErrors.Count > 0)
@@ -1485,10 +1856,10 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CityBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -1505,8 +1876,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CityBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -1567,7 +1938,7 @@ namespace Administration.Controllers
         }
         public IActionResult Country()
         {
-            return View("ItemCategory/Country");
+            return PartialView("ItemCategory/Country");
         }
         [HttpPost]
         public IActionResult CountrySave([FromBody] CountryModel model)
@@ -1576,8 +1947,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "couT_code", "Code is not blank."),
+                Check(model?.Name, "couT_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -1588,10 +1959,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CountryBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -1608,8 +1979,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CountryBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -1670,7 +2041,7 @@ namespace Administration.Controllers
         }
         public IActionResult Language()
         {
-            return View("ItemCategory/Language");
+            return PartialView("ItemCategory/Language");
         }
         [HttpPost]
         public IActionResult LanguageSave([FromBody] LanguageModel model)
@@ -1679,8 +2050,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "lanG_code", "Code is not blank."),
+                Check(model?.Name, "lanG_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -1691,10 +2062,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     LanguageBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -1711,8 +2082,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     LanguageBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -1775,7 +2146,7 @@ namespace Administration.Controllers
         }
         public IActionResult Nationality()
         {
-            return View("ItemCategory/Nationality");
+            return PartialView("ItemCategory/Nationality");
         }
         [HttpPost]
         public IActionResult NationalitySave([FromBody] NationalityModel model)
@@ -1784,8 +2155,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "ntl_code", "Code is not blank."),
+                Check(model?.Name, "ntl_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -1796,10 +2167,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     NationalityBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -1816,8 +2187,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     NationalityBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -1878,7 +2249,7 @@ namespace Administration.Controllers
         }
         public IActionResult Title()
         {
-            return View("ItemCategory/Title");
+            return PartialView("ItemCategory/Title");
         }
         [HttpPost]
         public IActionResult TitleSave([FromBody] TitleModel model)
@@ -1887,8 +2258,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "titL_code", "Code is not blank."),
+                Check(model?.Name, "titL_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -1899,10 +2270,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     TitleBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -1919,8 +2290,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     TitleBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -1981,7 +2352,7 @@ namespace Administration.Controllers
         }
         public IActionResult Territory()
         {
-            return View("ItemCategory/Territory");
+            return PartialView("ItemCategory/Territory");
         }
         [HttpPost]
         public IActionResult TerritorySave([FromBody] TerritoryModel model)
@@ -1990,8 +2361,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "terr_code", "Code is not blank."),
+                Check(model?.Name, "terr_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2002,10 +2373,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     TerritoryBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2022,8 +2393,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     TerritoryBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2086,7 +2457,7 @@ namespace Administration.Controllers
         {
             //List<CountryModel> listctry = PropertyUtils.ConvertToList<CountryModel>(CountryBO.Instance.FindAll());
             //ViewBag.CountryList = listctry;
-            return View("ItemCategory/State");
+            return PartialView("ItemCategory/State");
         }
         [HttpPost]
         public IActionResult StateSave([FromBody] StateModel model)
@@ -2095,8 +2466,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.ZipCode, "code", "Code is not blank."),
-                Check(model?.StateName, "name", "Name is not blank.")
+                Check(model?.ZipCode, "stt_zipCode", "Code is not blank."),
+                Check(model?.StateName, "stt_stateName", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2108,10 +2479,10 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     StateBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2128,8 +2499,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     StateBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2190,7 +2561,7 @@ namespace Administration.Controllers
         }
         public IActionResult VIP()
         {
-            return View("ItemCategory/VIP");
+            return PartialView("ItemCategory/VIP");
         }
         [HttpPost]
         public IActionResult VIPSave([FromBody] VIPModel model)
@@ -2199,8 +2570,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "vip_code", "Code is not blank."),
+                Check(model?.Name, "vip_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2211,10 +2582,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     VIPBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2231,8 +2602,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     VIPBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2307,7 +2678,7 @@ namespace Administration.Controllers
         {
             List<MarketTypeModel> listmktype = PropertyUtils.ConvertToList<MarketTypeModel>(MarketTypeBO.Instance.FindAll());
             ViewBag.MarketTypeList = listmktype;
-            return View("ItemCategory/Market");
+            return PartialView("ItemCategory/Market");
         }
         [HttpPost]
         public IActionResult MarketSave([FromBody] MarketModel model)
@@ -2316,9 +2687,9 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank."),
-                Check(model?.MarketTypeID, "marketTypeID", "Please choose market type.")
+                Check(model?.Code, "marK_code", "Code is not blank."),
+                Check(model?.Name, "marK_name", "Name is not blank."),
+                Check(model?.MarketTypeID, "marK_marketTypeID", "Please choose market type.")
             );
 
             if (listErrors.Count > 0)
@@ -2329,10 +2700,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     MarketBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2349,8 +2720,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     MarketBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2411,7 +2782,7 @@ namespace Administration.Controllers
         }
         public IActionResult MarketType()
         {
-            return View("ItemCategory/MarketType");
+            return PartialView("ItemCategory/MarketType");
         }
         [HttpPost]
         public IActionResult MarketTypeSave([FromBody] MarketTypeModel model)
@@ -2420,8 +2791,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "marketType_code", "Code is not blank."),
+                Check(model?.Name, "marketType_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2432,10 +2803,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     MarketTypeBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2452,8 +2823,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     MarketTypeBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2515,7 +2886,7 @@ namespace Administration.Controllers
 
         public IActionResult PickupDropPlace()
         {
-            return View("ItemCategory/PickupDropPlace");
+            return PartialView("ItemCategory/PickupDropPlace");
         }
         [HttpPost]
         public IActionResult PickupDropPlaceSave([FromBody] PickupDropPlaceModel model)
@@ -2524,8 +2895,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "pickupDropPlace_code", "Code is not blank."),
+                Check(model?.Name, "pickupDropPlace_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2536,10 +2907,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     PickupDropPlaceBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2556,8 +2927,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     PickupDropPlaceBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2618,7 +2989,7 @@ namespace Administration.Controllers
         }
         public IActionResult TransportType()
         {
-            return View("ItemCategory/TransportType");
+            return PartialView("ItemCategory/TransportType");
         }
         [HttpPost]
         public IActionResult TransportTypeSave([FromBody] TransportTypeModel model)
@@ -2627,8 +2998,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "transT_code", "Code is not blank."),
+                Check(model?.Name, "transT_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2639,10 +3010,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     TransportTypeBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2659,8 +3030,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     TransportTypeBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2721,7 +3092,7 @@ namespace Administration.Controllers
         }
         public IActionResult ReservationType()
         {
-            return View("ItemCategory/ReservationType");
+            return PartialView("ItemCategory/ReservationType");
         }
         [HttpPost]
         public IActionResult ReservationTypeSave([FromBody] ReservationTypeModel model)
@@ -2731,9 +3102,9 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Description is not blank."),
-                Check(model?.Sequence < 0, "seq", "Sequence cannot be negative.")
+                Check(model?.Code, "resT_code", "Code is not blank."),
+                Check(model?.Name, "resT_name", "Description is not blank."),
+                Check(model?.Sequence < 0, "resT_seq", "Sequence cannot be negative.")
             );
 
             if (listErrors.Count > 0)
@@ -2744,8 +3115,8 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.UpdateDate = businessDate;
 
                     ReservationTypeBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2760,7 +3131,7 @@ namespace Administration.Controllers
                         model.CreateDate = oldData.CreateDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
 
                     ReservationTypeBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2821,7 +3192,7 @@ namespace Administration.Controllers
         }
         public IActionResult Reason()
         {
-            return View("ItemCategory/Reason");
+            return PartialView("ItemCategory/Reason");
         }
         [HttpPost]
         public IActionResult ReasonSave([FromBody] ReasonModel model)
@@ -2830,8 +3201,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "reaS_code", "Code is not blank."),
+                Check(model?.Name, "reaS_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2842,10 +3213,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     ReasonBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2862,8 +3233,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     ReasonBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -2924,7 +3295,7 @@ namespace Administration.Controllers
         }
         public IActionResult Origin()
         {
-            return View("ItemCategory/Origin");
+            return PartialView("ItemCategory/Origin");
         }
         [HttpPost]
         public IActionResult OriginSave([FromBody] OriginModel model)
@@ -2933,8 +3304,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "orig_code", "Code is not blank."),
+                Check(model?.Name, "orig_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -2945,10 +3316,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     OriginBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -2965,8 +3336,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     OriginBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3028,7 +3399,7 @@ namespace Administration.Controllers
 
         public IActionResult Source()
         {
-            return View("ItemCategory/Source");
+            return PartialView("ItemCategory/Source");
         }
 
         [HttpPost]
@@ -3038,8 +3409,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "sour_code", "Code is not blank."),
+                Check(model?.Name, "sour_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -3051,10 +3422,10 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     SourceBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3071,8 +3442,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     SourceBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3133,7 +3504,7 @@ namespace Administration.Controllers
         }
         public IActionResult AlertsSetup()
         {
-            return View("ItemCategory/AlertsSetup");
+            return PartialView("ItemCategory/AlertsSetup");
         }
         [HttpPost]
         public IActionResult AlertsSetupSave([FromBody] AlertsSetupModel model)
@@ -3155,10 +3526,10 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     AlertsSetupBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3175,8 +3546,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     AlertsSetupBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3239,7 +3610,7 @@ namespace Administration.Controllers
         {
             List<CommentTypeModel> listctry = PropertyUtils.ConvertToList<CommentTypeModel>(CommentTypeBO.Instance.FindAll());
             ViewBag.CommentTypeList = listctry;
-            return View("ItemCategory/Comment");
+            return PartialView("ItemCategory/Comment");
         }
         [HttpPost]
         public IActionResult CommentSave([FromBody] CommentModel model)
@@ -3248,8 +3619,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.CommentTypeID ?? 0, "commentTypeID", "Comment type must be choose")
+                Check(model?.Code, "comT_code", "Code is not blank."),
+                Check(model?.CommentTypeID ?? 0, "comT_commentTypeID", "Comment type must be choose")
             );
 
             if (listErrors.Count > 0)
@@ -3261,10 +3632,10 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CommentBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3281,8 +3652,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CommentBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3343,7 +3714,7 @@ namespace Administration.Controllers
         }
         public IActionResult CommentType()
         {
-            return View("ItemCategory/CommentType");
+            return PartialView("ItemCategory/CommentType");
         }
 
         [HttpPost]
@@ -3353,8 +3724,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "comTy_code", "Code is not blank."),
+                Check(model?.Name, "comTy_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -3365,10 +3736,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CommentTypeBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3385,8 +3756,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     CommentTypeBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3447,7 +3818,7 @@ namespace Administration.Controllers
         }
         public IActionResult Season()
         {
-            return View("ItemCategory/Season");
+            return PartialView("ItemCategory/Season");
         }
         [HttpPost]
         public IActionResult SeasonSave([FromBody] SeasonModel model)
@@ -3456,8 +3827,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "seas_code", "Code is not blank."),
+                Check(model?.Name, "seas_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -3468,10 +3839,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     SeasonBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3488,8 +3859,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     SeasonBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3550,7 +3921,7 @@ namespace Administration.Controllers
         }
         public IActionResult Zone()
         {
-            return View("ItemCategory/Zone");
+            return PartialView("ItemCategory/Zone");
         }
         [HttpPost]
         public IActionResult ZoneSave([FromBody] ZoneModel model)
@@ -3559,8 +3930,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "zone_code", "Code is not blank."),
+                Check(model?.Name, "zone_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -3572,10 +3943,10 @@ namespace Administration.Controllers
 
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     ZoneBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3592,8 +3963,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     ZoneBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3654,7 +4025,7 @@ namespace Administration.Controllers
         }
         public IActionResult Department()
         {
-            return View("ItemCategory/Department");
+            return PartialView("ItemCategory/Department");
         }
         [HttpPost]
         public IActionResult DepartmentSave([FromBody] DepartmentModel model)
@@ -3663,8 +4034,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Name is not blank.")
+                Check(model?.Code, "depa_code", "Code is not blank."),
+                Check(model?.Name, "depa_name", "Name is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -3675,10 +4046,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     DepartmentBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -3695,8 +4066,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     DepartmentBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -3731,7 +4102,7 @@ namespace Administration.Controllers
 
         public IActionResult Occupancy()
         {
-            return View("ItemCategory/Occupancy");
+            return PartialView("ItemCategory/Occupancy");
         }
         [HttpGet]
         public IActionResult GetOccupancy()
@@ -3783,8 +4154,8 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.UpdateDate = businessDate;
                     OccupancyBO.Instance.Insert(model);
                     message = "Insert successfully.";
                 }
@@ -3796,7 +4167,7 @@ namespace Administration.Controllers
                         model.CreateBy = oldData.CreateBy;
                         model.CreateDate = oldData.CreateDate;
                     }
-                    model.UpdateDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
                     OccupancyBO.Instance.Update(model);
                     message = "Update successfully.";
                 }
@@ -3827,7 +4198,7 @@ namespace Administration.Controllers
 
         public IActionResult ConfirmationConfig()
         {
-            return View("ItemCategory/ConfirmationConfig");
+            return PartialView("ItemCategory/ConfirmationConfig");
         }
         [HttpGet]
         public IActionResult GetConfirmationConfig()
@@ -3866,15 +4237,15 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.EmailAddress, "emailAddress", "Email address is not blank."),
-                Check(model?.MailUser, "userMail", "Mail user is not blank."),
-                Check(model?.MailPassword, "passMail", "Mail password is not blank."),
-                Check(model?.ServerName, "serverName", "Server name is not blank."),
-                Check(model?.ServerPort ?? 0, "serverPort", "Port must be greater than 0."),
-                Check(model?.MailSubject, "subMail", "Mail Subject is not blank."),
-                Check(model?.MailBody, "bodyMail", "Mail body is not blank."),
-                Check(model?.MailSubjectENG, "subEngMail", "Mail Subject english is not blank."),
-                Check(model?.MailBodyENG, "bodyEngMail", "Mail body english is not blank.")
+                Check(model?.EmailAddress, "cfC_emailAddress", "Email address is not blank."),
+                Check(model?.MailUser, "cfC_mailUser", "Mail user is not blank."),
+                Check(model?.MailPassword, "cfC_mailPassword", "Mail password is not blank."),
+                Check(model?.ServerName, "cfC_serverName", "Server name is not blank."),
+                Check(model?.ServerPort ?? 0, "cfC_serverPort", "Port must be greater than 0."),
+                Check(model?.MailSubject, "cfC_mailSubject", "Mail Subject is not blank."),
+                Check(model?.MailBody, "cfC_mailBody", "Mail body is not blank."),
+                Check(model?.MailSubjectENG, "cfC_mailSubjectENG", "Mail Subject english is not blank."),
+                Check(model?.MailBodyENG, "cfC_mailBodyENG", "Mail body english is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -3911,7 +4282,7 @@ namespace Administration.Controllers
             ViewBag.RateCodeList = listRateCode;
             List<LanguageModel> listLanguage = PropertyUtils.ConvertToList<LanguageModel>(LanguageBO.Instance.FindAll());
             ViewBag.LanguageList = listLanguage;
-            return View("ItemCategory/ConfirmationTemp");
+            return PartialView("ItemCategory/ConfirmationTemp");
         }
         [HttpGet]
         public IActionResult GetConfirmationTemp()
@@ -3946,7 +4317,9 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                Check(model, "general", "Invalid data"),
 
-               Check(model?.LetterName, "letterNameInput", "Letter name is not blank.")
+               Check(model?.LetterName, "letterNameInput", "Letter name is not blank."),
+               Check(model?.RateCodeID, "cfT_rateCodeID", "Please select Rate Code."),
+               Check(model?.Nationality, "cfT_nationality", "Please select Nationality.")
             );
 
             if (listErrors.Count > 0)
@@ -3992,8 +4365,8 @@ namespace Administration.Controllers
                                             WHERE ID = {id}
                                               AND RateCodeID > 0
                                             ");
-                if (dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0][0]) > 0)
-                    return Json(new { success = false, message = "Cannot delete. This template is already linked to a Rate Code." });
+                // if (dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0][0]) > 0)
+                //     return Json(new { success = false, message = "Cannot delete. This template is already linked to a Rate Code." });
                 ConfirmationTempBO.Instance.Delete(id);
                 return Json(new { success = true, message = "Delete successfully." });
             }
@@ -4136,16 +4509,16 @@ namespace Administration.Controllers
         }
         public IActionResult PropertyType()
         {
-            return View("ItemCategory/PropertyType");
+            return PartialView("ItemCategory/PropertyType");
         }
         [HttpPost]
         public IActionResult PropertyTypeSave([FromBody] PropertyTypeModel model)
         {
             var listErrors = GetErrors(
-                Check(model, "general", "Invalid data"),
+                Check(model == null, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model.Sequence < 0, "seq", "Sequence must be >= 0")
+                Check(model?.Code, "proTp_code", "Code is not blank."),
+                Check(model.Sequence < 0, "proTp_sequence", "Sequence must be >= 0")
 
             );
 
@@ -4159,8 +4532,8 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreatedDate = businessDate;
+                    model.UpdatedDate = businessDate;
                     PropertyTypeBO.Instance.Insert(model);
                     message = "Insert successfully.";
                 }
@@ -4172,7 +4545,7 @@ namespace Administration.Controllers
                         model.CreatedBy = oldData.CreatedBy;
                         model.CreatedDate = oldData.CreatedDate;
                     }
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdatedDate = businessDate;
                     PropertyTypeBO.Instance.Update(model);
                     message = "Update successfully.";
                 }
@@ -4197,7 +4570,7 @@ namespace Administration.Controllers
             return Json(new { success = true });
         }
         #endregion
-        
+
         #region ItemCategory/Property
         [HttpGet]
         public IActionResult GetProperty()
@@ -4239,21 +4612,21 @@ namespace Administration.Controllers
         {
             List<PropertyTypeModel> listPropertyType = PropertyUtils.ConvertToList<PropertyTypeModel>(PropertyTypeBO.Instance.FindAll());
             ViewBag.PropertyTypeList = listPropertyType;
-            return View("ItemCategory/Property");
+            return PartialView("ItemCategory/Property");
         }
         [HttpPost]
         public IActionResult PropertySave([FromBody] PropertyModel model)
         {
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
-                Check(model?.PropertyCode, "code", "Code is not blank."),
-                Check(model?.PropertyName, "propertyName", "Name is not blank."),
-                Check(model?.PropertyTypeID, "propertyType", "Property type is not blank."),
-                Check(model?.ServerName, "serverName", "Server name is not blank."),
-                Check(model?.DatabaseName, "databaseName", "Database name is not blank."),
-                Check(model?.Login, "login", "Login account is not blank."),
-                Check(model?.Password, "password", "Password is not blank."),
-                Check(model?.Password?.Length < 6, "password", "Password must be at least 6 characters.")
+                Check(model?.PropertyCode, "prop_code", "Code is not blank."),
+                Check(model?.PropertyName, "prop_propertyName", "Name is not blank."),
+                Check(model?.PropertyTypeID, "prop_propertyType", "Property type is not blank."),
+                Check(model?.ServerName, "prop_serverName", "Server name is not blank."),
+                Check(model?.DatabaseName, "prop_databaseName", "Database name is not blank."),
+                Check(model?.Login, "prop_login", "Login account is not blank."),
+                Check(model?.Password, "prop_password", "Password is not blank."),
+                Check(model?.Password?.Length < 6, "prop_password", "Password must be at least 6 characters.")
             );
 
             if (listErrors.Count > 0)
@@ -4303,7 +4676,7 @@ namespace Administration.Controllers
             return Json(new { success = true });
         }
         #endregion
-        
+
         #region ItemCategory/PropertyPermission
         [HttpGet]
         public IActionResult GetPropertyPermission(string userID)
@@ -4338,8 +4711,9 @@ namespace Administration.Controllers
             ViewBag.PropertyList = listProperty;
             List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
             ViewBag.UsersList = listuser;
-            return View("ItemCategory/PropertyPermission");
+            return PartialView("ItemCategory/PropertyPermission");
         }
+
         [HttpPost]
         public IActionResult PropertyPermissionSave([FromBody] List<PropertyPermissionModel> listModels)
         {
@@ -4349,32 +4723,57 @@ namespace Administration.Controllers
             );
 
             if (listErrors.Count > 0)
-            {
                 return Json(new { success = false, errors = listErrors });
-            }
 
             try
             {
                 int rowIndex = 1;
-                int successCount = 0;
 
                 foreach (var model in listModels)
                 {
+                    // VALIDATE REQUIRED TRƯỚC
                     var rowErrors = GetErrors(
-                        Check(model.UserID, "chooseUser", $"Row {rowIndex}: User is not blank."),
-                        Check(model.PropertyID, "choosePropertyType", $"Row {rowIndex}: Property is not blank.")
+                        Check(model.UserID == 0, "propPer_chooseUser    ", "User is required."),
+                        Check(model.PropertyID == 0, "propPer_choosePropertyType", "Property is required.")
                     );
 
                     if (rowErrors.Count > 0)
                     {
+                        return Json(new { success = false, errors = rowErrors });
+                    }
+
+                    // CHỈ KHI DỮ LIỆU HỢP LỆ MỚI CHECK DUPLICATE
+                    bool isDuplicate = PropertyPermissionBO.Instance
+                        .IsDuplicatePermission(model.UserID, model.PropertyID, model.ID);
+
+                    if (isDuplicate)
+                    {
+                        UsersModel userLogin =
+                            (UsersModel)UsersBO.Instance.FindByPrimaryKey(model.UserID);
+
+                        string userName = !string.IsNullOrEmpty(userLogin?.LoginName)
+                            ? $"User '{userLogin.LoginName}'"
+                            : "This user";
+
                         return Json(new
                         {
                             success = false,
-                            message = rowErrors[0].Message,
-                            errors = rowErrors
+                            errors = new[]
+                            {
+                        new {
+                            field = "choosePropertyType",
+                            message = $"{userName} already has this property."
+                        }
+                    }
                         });
                     }
 
+                    rowIndex++;
+                }
+
+                // ================= SAVE =================
+                foreach (var model in listModels)
+                {
                     if (model.ID == 0)
                     {
                         model.CreatedDate = DateTime.Now;
@@ -4383,27 +4782,28 @@ namespace Administration.Controllers
                     }
                     else
                     {
-                        var oldData = (PropertyPermissionModel)PropertyPermissionBO.Instance.FindByPrimaryKey(model.ID);
+                        var oldData = (PropertyPermissionModel)
+                            PropertyPermissionBO.Instance.FindByPrimaryKey(model.ID);
+
                         if (oldData != null)
                         {
                             model.CreatedBy = oldData.CreatedBy;
                             model.CreatedDate = oldData.CreatedDate;
                         }
+
                         model.UpdatedDate = DateTime.Now;
                         PropertyPermissionBO.Instance.Update(model);
                     }
-
-                    successCount++;
-                    rowIndex++;
                 }
 
-                return Json(new { success = true, message = $"Successfully saved {successCount} permissions!" });
+                return Json(new { success = true, message = "Successfully saved permissions!" });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
+
         [HttpPost]
         public IActionResult DeletePropertyPermission([FromBody] List<int> ids)
         {
@@ -4436,7 +4836,7 @@ namespace Administration.Controllers
             return Json(new { success = true, message });
         }
         #endregion //
-        
+
         #region ItemCategory/PackageForecastGroup
         [HttpGet]
         public IActionResult GetPackageForecastGroup(string code, string name, int inactive)
@@ -4467,7 +4867,7 @@ namespace Administration.Controllers
         }
         public IActionResult PackageForecastGroup()
         {
-            return View("ItemCategory/PackageForecastGroup");
+            return PartialView("ItemCategory/PackageForecastGroup");
         }
         [HttpPost]
         public IActionResult PackageForecastGroupSave([FromBody] PackageForecastGroupModel model)
@@ -4476,8 +4876,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Description is not blank.")
+                Check(model?.Code, "pfg_code", "Code is not blank."),
+                Check(model?.Name, "pfg_name", "Description is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -4488,10 +4888,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     PackageForecastGroupBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -4508,8 +4908,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     PackageForecastGroupBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -4570,7 +4970,7 @@ namespace Administration.Controllers
         }
         public IActionResult PreferenceGroup()
         {
-            return View("ItemCategory/PreferenceGroup");
+            return PartialView("ItemCategory/PreferenceGroup");
         }
         [HttpPost]
         public IActionResult PreferenceGroupSave([FromBody] PreferenceGroupModel model)
@@ -4579,8 +4979,8 @@ namespace Administration.Controllers
             var listErrors = GetErrors(
                 Check(model, "general", "Invalid data"),
 
-                Check(model?.Code, "code", "Code is not blank."),
-                Check(model?.Name, "name", "Description is not blank.")
+                Check(model?.Code, "preG_code", "Code is not blank."),
+                Check(model?.Name, "preG_name", "Description is not blank.")
             );
 
             if (listErrors.Count > 0)
@@ -4591,10 +4991,10 @@ namespace Administration.Controllers
             {
                 if (model.ID == 0)
                 {
-                    model.CreateDate = DateTime.Now;
-                    model.CreatedDate = DateTime.Now;
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     PreferenceGroupBO.Instance.Insert(model);
                     message = "Insert successfully!";
@@ -4611,8 +5011,8 @@ namespace Administration.Controllers
                         model.CreatedDate = oldData.CreatedDate;
                     }
 
-                    model.UpdateDate = DateTime.Now;
-                    model.UpdatedDate = DateTime.Now;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
 
                     PreferenceGroupBO.Instance.Update(model);
                     message = "Update successfully!";
@@ -4633,6 +5033,595 @@ namespace Administration.Controllers
             try
             {
                 PreferenceGroupBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/GroupOwner
+
+        public IActionResult GroupOwner()
+        {
+            return View("ItemCategory/GroupOwner");
+        }
+        [HttpGet]
+        public IActionResult GetGroupOwner()
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select(@"SELECT * From GroupOwner with (nolock) Order by ID");
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
+                                  GroupOwnerName = !string.IsNullOrEmpty(r["GroupOwnerName"].ToString()) ? r["GroupOwnerName"] : "",
+                                  GroupOwnerCode = !string.IsNullOrEmpty(r["GroupOwnerCode"].ToString()) ? r["GroupOwnerCode"] : "",
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : "",
+                                  Contact = !string.IsNullOrEmpty(r["Contact"].ToString()) ? r["Contact"] : "",
+                                  Address = !string.IsNullOrEmpty(r["Address"].ToString()) ? r["Address"] : "",
+                                  Email = !string.IsNullOrEmpty(r["Email"].ToString()) ? r["Email"] : "",
+                                  Telephone = !string.IsNullOrEmpty(r["Telephone"].ToString()) ? r["Telephone"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(r["CreatedDate"].ToString()) ? r["CreatedDate"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(r["CreatedBy"].ToString()) ? r["CreatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(r["UpdatedDate"].ToString()) ? r["UpdatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(r["UpdatedBy"].ToString()) ? r["UpdatedBy"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult GroupOwnerSave([FromBody] GroupOwnerModel model)
+        {
+            string message = "";
+
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+                Check(model?.GroupOwnerCode, "code", "Code is not blank."),
+                Check(model?.GroupOwnerName, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count == 0 && model != null)
+            {
+                bool isDuplicate = GroupOwnerBO.Instance
+                    .IsDuplicateCode(model.GroupOwnerCode, model.ID);
+
+                var duplicateError = CheckDuplicate(
+                    isDuplicate,
+                    "code",
+                    $"This code already exists: [{model.GroupOwnerCode}]"
+                );
+
+                if (duplicateError != null)
+                {
+                    listErrors.Add(duplicateError);
+                }
+            }
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+                    GroupOwnerBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (GroupOwnerModel)GroupOwnerBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.GroupOwnerCode = oldData.GroupOwnerCode;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+                    model.UpdatedDate = DateTime.Now;
+                    GroupOwnerBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult GroupOwnerDelete(int id)
+        {
+            try
+            {
+                GroupOwnerBO.Instance.Delete(id);
+                return Json(new { success = true, message = "Delete successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region ItemCategory/GroupAndOwner
+
+        public IActionResult GroupAndRoom()
+        {
+            List<RoomOwnerProfileModel> rooms = PropertyUtils.ConvertToList<RoomOwnerProfileModel>(RoomOwnerProfileBO.Instance.FindAll());
+            ViewBag.RoomOwnerList = rooms;
+
+            List<GroupOwnerModel> groups = PropertyUtils.ConvertToList<GroupOwnerModel>(GroupOwnerBO.Instance.FindAll());
+            ViewBag.GroupOwnerList = groups;
+            return View("ItemCategory/GroupAndRoom");
+        }
+        [HttpGet]
+        public IActionResult GetGroupAndOwner()
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select(@"
+                    SELECT 
+                        gao.ID,
+                        gao.GroupOwnerID,
+                        go.GroupOwnerName AS GroupOwnerName,
+                        gao.RoomOwnerID,
+                        r.RoomNo AS RoomNo,
+                        gao.CreatedDate,
+                        gao.CreatedBy,
+                        gao.UpdatedDate,
+                        gao.UpdatedBy
+                    FROM GroupAndOwner gao WITH (NOLOCK)
+                    LEFT JOIN GroupOwner go WITH (NOLOCK) ON gao.GroupOwnerID = go.ID
+                    LEFT JOIN RoomOwnerProfile r WITH (NOLOCK) ON gao.RoomOwnerID = r.ID
+                    ORDER BY gao.ID
+                ");
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  id = r["ID"]?.ToString(),
+                                  groupOwnerID = r["GroupOwnerID"]?.ToString(),
+                                  groupOwnerName = r["GroupOwnerName"]?.ToString(),
+                                  roomOwnerID = r["RoomOwnerID"]?.ToString(),
+                                  roomNo = r["RoomNo"]?.ToString(),
+                                  createdDate = r["CreatedDate"],
+                                  createdBy = r["CreatedBy"]?.ToString(),
+                                  updatedDate = r["UpdatedDate"],
+                                  updatedBy = r["UpdatedBy"]?.ToString()
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult GroupAndOwnerSave([FromBody] GroupAndOwnerModel model)
+        {
+            string message = "";
+
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+                Check(model?.GroupOwnerID, "groupOwnerID", "Please select group owner."),
+                Check(model?.RoomOwnerID, "roomOwnerID", "Please select room owner.")
+            );
+
+            if (listErrors.Count == 0 && model != null)
+            {
+                bool isDuplicate = GroupAndOwnerBO.Instance.IsDuplicatGroupAndOwner(model.RoomOwnerID, model.ID);
+                if (isDuplicate)
+                {
+                    var groupAndOwner = GroupAndOwnerBO.Instance
+                       .FindByAttribute("RoomOwnerID", model.RoomOwnerID)
+                       .Cast<GroupAndOwnerModel>()
+                       .FirstOrDefault(x => x.ID != model.ID);
+
+                    string groupOwnerName = "another group";
+
+                    if (groupAndOwner != null)
+                    {
+                        groupOwnerName = GroupOwnerBO.Instance
+                            .FindByPrimaryKey(groupAndOwner.GroupOwnerID)
+                            is GroupOwnerModel gr
+                                ? gr.GroupOwnerName
+                                : groupOwnerName;
+                    }
+                    var duplicateError = CheckDuplicate(isDuplicate, "roomOwnerID", $"This room already was GroupOwner: [" + groupOwnerName + "].");
+                    if (duplicateError != null) { listErrors.Add(duplicateError); }
+                }
+            }
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+                    GroupAndOwnerBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (GroupAndOwnerModel)GroupAndOwnerBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.RoomOwnerID = oldData.RoomOwnerID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+                    model.UpdatedDate = DateTime.Now;
+                    GroupAndOwnerBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult GroupAndOwnerDelete(int id)
+        {
+            try
+            {
+                GroupAndOwnerBO.Instance.Delete(id);
+                return Json(new { success = true, message = "Delete successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region ItemCategory/RoomOwner
+
+        public IActionResult RoomOwner()
+        {
+            List<RoomModel> rooms = PropertyUtils.ConvertToList<RoomModel>(RoomBO.Instance.FindAll());
+            ViewBag.RoomList = rooms;
+
+            List<OwnerModel> owners = PropertyUtils.ConvertToList<OwnerModel>(OwnerBO.Instance.FindAll());
+            ViewBag.OwnerList = owners;
+
+            return View("ItemCategory/RoomOwner");
+        }
+        [HttpGet]
+        public IActionResult GetRoomOwnerProfile()
+        {
+            try
+            {
+                DataTable dt = TextUtils.Select(@"
+                    SELECT 
+                        ro.ID,
+                        ro.OwnerName,
+                        ro.OwnerCode,
+                        r.ID AS RoomID,
+                        r.RoomNo,
+                        ro.CreatedDate,
+                        ro.CreatedBy,
+                        ro.UpdatedDate,
+                        ro.UpdatedBy
+                    FROM RoomOwnerProfile ro WITH (NOLOCK)
+                    LEFT JOIN Room r WITH (NOLOCK) ON ro.RoomID = r.ID
+                    ORDER BY ro.ID 
+                ");
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(r["ID"].ToString()) ? r["ID"] : "",
+                                  OwnerName = !string.IsNullOrEmpty(r["OwnerName"].ToString()) ? r["OwnerName"] : "",
+                                  OwnerCode = !string.IsNullOrEmpty(r["OwnerCode"].ToString()) ? r["OwnerCode"] : "",
+                                  RoomNo = !string.IsNullOrEmpty(r["RoomNo"].ToString()) ? r["RoomNo"] : "",
+                                  RoomID = !string.IsNullOrEmpty(r["RoomID"].ToString()) ? r["RoomID"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(r["CreatedDate"].ToString()) ? r["CreatedDate"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(r["CreatedBy"].ToString()) ? r["CreatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(r["UpdatedDate"].ToString()) ? r["UpdatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(r["UpdatedBy"].ToString()) ? r["UpdatedBy"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult RoomOwnerProfileSave([FromBody] RoomOwnerProfileModel model)
+        {
+            string message = "";
+
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+                Check(model?.RoomID, "roomID", "Please select Room."),
+                Check(model?.OwnerCode, "ownerCode", "Please select Owner.")
+            );
+
+            if (listErrors.Count == 0 && model != null)
+            {
+                bool isDuplicate = RoomOwnerProfileBO.Instance
+                    .IsDuplicateRoomOwner(model.RoomID, model.ID);
+
+                if (isDuplicate)
+                {
+                    var owners = RoomOwnerProfileBO.Instance
+                        .FindByAttribute("RoomID", model.RoomID)
+                        .Cast<RoomOwnerProfileModel>()
+                        .Where(x => x.ID != model.ID)
+                        .ToList();
+
+                    string ownerName = owners.FirstOrDefault()?.OwnerName ?? "another owner";
+
+                    var duplicateError = CheckDuplicate(isDuplicate, "roomID", $"This room already was Owner: [" + ownerName + "].");
+                    if (duplicateError != null) { listErrors.Add(duplicateError); }
+                }
+            }
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+                    RoomOwnerProfileBO.Instance.Insert(model);
+                    message = "Insert successfully.";
+                }
+                else
+                {
+                    var oldData = (RoomOwnerProfileModel)RoomOwnerProfileBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData != null)
+                    {
+                        model.RoomNo = oldData.RoomNo;
+                        model.RoomID = oldData.RoomID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+                    model.UpdatedDate = DateTime.Now;
+                    RoomOwnerProfileBO.Instance.Update(model);
+                    message = "Update successfully.";
+                }
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult RoomOwnerProfileDelete(int id)
+        {
+            try
+            {
+                RoomOwnerProfileBO.Instance.Delete(id);
+                return Json(new { success = true, message = "Delete successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+
+        #region ItemCategory/Priority
+        [HttpGet]
+        public IActionResult GetPriority(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Priority(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Priority()
+        {
+            return PartialView("ItemCategory/Priority");
+        }
+        [HttpPost]
+        public IActionResult PrioritySave([FromBody] PriorityModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "proT_code", "Code is not blank."),
+                Check(model?.Name, "proT_name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
+
+                    PriorityBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PriorityModel)PriorityBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
+
+                    PriorityBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePriority(int id)
+        {
+            try
+            {
+                PriorityBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region ItemCategory/Promotion
+        [HttpGet]
+        public IActionResult GetPromotion(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAdministrationService.Promotion(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult Promotion()
+        {
+            return PartialView("ItemCategory/Promotion");
+        }
+        [HttpPost]
+        public IActionResult PromotionSave([FromBody] PromotionModel model)
+        {
+            string message = "";
+            var listErrors = GetErrors(
+                Check(model, "general", "Invalid data"),
+
+                Check(model?.Code, "prom_code", "Code is not blank."),
+                Check(model?.Name, "prom_name", "Name is not blank.")
+            );
+
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                if (model.ID == 0)
+                {
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
+
+                    PromotionBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (PromotionModel)PromotionBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        model.UserInsertID = oldData.UserInsertID;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = businessDate;
+                    model.UpdatedDate = businessDate;
+
+                    PromotionBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeletePromotion(int id)
+        {
+            try
+            {
+                PromotionBO.Instance.Delete(id);
             }
             catch (Exception ex)
             {

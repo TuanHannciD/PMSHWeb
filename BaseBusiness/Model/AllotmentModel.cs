@@ -15,12 +15,12 @@ namespace BaseBusiness.Model
         public int ProfileID { get; set; }
         public string AccountName { get; set; }
         public int MarketID { get;set; }
-        public int CutOfDay { get; set; }
-        public DateTime CutOfDate { get; set; }
+        public int CuttOfDay { get; set; }
+        public DateTime CuttOfDate { get; set; }
         public int AllotmentTypeID { get; set; }
         public bool IsDefault { get; set; }
         public string CreateBy { get; set;}
-        public DateTime CreatDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public string UpdateBy { get; set; }
         public DateTime UpdateDate { get; set; }
     }

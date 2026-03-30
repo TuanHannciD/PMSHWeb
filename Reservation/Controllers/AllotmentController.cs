@@ -1,0 +1,1528 @@
+﻿using BaseBusiness.BO;
+using BaseBusiness.Model;
+using BaseBusiness.util;
+using DevExpress.DataProcessing.InMemoryDataProcessor;
+using DevExpress.XtraGauges.Core.Model;
+using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Reservation.Dto;
+using Reservation.Services.Implements;
+using Reservation.Services.Interfaces;
+using System.Data;
+using System.Linq;
+using System.ServiceModel.Channels;
+using static BaseBusiness.util.ValidationUtils;
+using static log4net.Appender.FileAppender;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+
+namespace Reservation.Controllers
+{
+    public class AllotmentController : Controller
+    {
+
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<AllotmentController> _logger;
+        private readonly IMemoryCache _cache;
+        private readonly IAllotmentService _iAllotmentService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AllotmentController(ILogger<AllotmentController> logger,
+                IMemoryCache cache, IConfiguration configuration, IAllotmentService iAllotmentService, IHttpContextAccessor httpContextAccessor)
+        {
+            _cache = cache;
+            _logger = logger;
+            _configuration = configuration;
+            _iAllotmentService = iAllotmentService;
+            _httpContextAccessor = httpContextAccessor;
+
+        }
+
+        #region Allotment Type
+        [HttpGet]
+        public IActionResult GetAllotmentType(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAllotmentService.AllotmentType(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult AllotmentType()
+        {
+            return PartialView("~/Views/Reservation/Allotment/AllotmentType.cshtml");
+        }
+        [HttpPost]
+        public IActionResult AllotmentTypeSave([FromBody] AllotmentTypeModel model)
+        {
+            string message = "";
+            if (model == null)
+            {
+                return Json(new { success = false, message = "Invalid data (model null)" });
+            }
+            var listErrors = GetErrors(
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count == 0 && model != null)
+            {
+                bool isDuplicate = AllotmentTypeBO.Instance
+                    .IsDuplicateCode(model.Code, model.ID);
+
+                var duplicateError = CheckDuplicate(
+                    isDuplicate,
+                    "code",
+                    $"This code already exists: [{model.Code}]"
+                );
+
+                if (duplicateError != null)
+                {
+                    listErrors.Add(duplicateError);
+                }
+            }
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(
+                    BusinessDateBO.Instance.FindAll()
+                );
+
+                DateTime businessDate = businessDates[0].BusinessDate;
+                if (model.ID == 0)
+                {
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    AllotmentTypeBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (AllotmentTypeModel)AllotmentTypeBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        //model.Code = oldData.Code;
+                        model.CreateBy = oldData.CreateBy;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    AllotmentTypeBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+        }
+        [HttpPost]
+        public IActionResult DeleteAllotmentType(int id)
+        {
+            try
+            {
+                AllotmentTypeBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region Allotment Stage
+        [HttpGet]
+        public IActionResult GetAllotmentStage(string code, string name, int inactive)
+        {
+            try
+            {
+                DataTable dataTable = _iAllotmentService.AllotmentStage(code, name, inactive);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Name = !string.IsNullOrEmpty(d["Name"].ToString()) ? d["Name"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  InactiveText = !string.IsNullOrEmpty(d["InactiveText"].ToString()) ? d["InactiveText"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  Inactive = !string.IsNullOrEmpty(d["Inactive"].ToString()) ? d["Inactive"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult AllotmentStage()
+        {
+            return PartialView("~/Views/Reservation/Allotment/AllotmentStage.cshtml");
+        }
+        [HttpPost]
+        public IActionResult AllotmentStageSave([FromBody] AllotmentStageModel model)
+        {
+            string message = "";
+            if (model == null)
+            {
+                return Json(new { success = false, message = "Invalid data (model null)" });
+            }
+            var listErrors = GetErrors(
+                Check(model?.Code, "code", "Code is not blank."),
+                Check(model?.Name, "name", "Name is not blank.")
+            );
+
+            if (listErrors.Count == 0 && model != null)
+            {
+                bool isDuplicate = AllotmentStageBO.Instance
+                    .IsDuplicateCode(model.Code, model.ID);
+
+                var duplicateError = CheckDuplicate(
+                    isDuplicate,
+                    "code",
+                    $"This code already exists: [{model.Code}]"
+                );
+
+                if (duplicateError != null)
+                {
+                    listErrors.Add(duplicateError);
+                }
+            }
+            if (listErrors.Count > 0)
+            {
+                return Json(new { success = false, errors = listErrors });
+            }
+            try
+            {
+                var businessDates = PropertyUtils.ConvertToList<BusinessDateModel>(
+                    BusinessDateBO.Instance.FindAll()
+                );
+
+                DateTime businessDate = businessDates[0].BusinessDate;
+                if (model.ID == 0)
+                {
+                    model.CreateDate = businessDate;
+                    model.CreatedDate = businessDate;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    AllotmentStageBO.Instance.Insert(model);
+                    message = "Insert successfully!";
+                }
+                else
+                {
+                    var oldData = (AllotmentStageModel)AllotmentStageBO.Instance.FindByPrimaryKey(model.ID);
+
+                    if (oldData != null)
+                    {
+                        //model.Code = oldData.Code;
+                        model.CreateBy = oldData.CreateBy;
+                        model.CreatedBy = oldData.CreatedBy;
+                        model.CreateDate = oldData.CreatedDate;
+                        model.CreatedDate = oldData.CreatedDate;
+                    }
+
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdatedDate = DateTime.Now;
+
+                    AllotmentStageBO.Instance.Update(model);
+                    message = "Update successfully!";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Json(new { success = false, message });
+            }
+
+            return Json(new { success = true, message });
+
+        }
+        [HttpPost]
+        public IActionResult DeleteAllotmentStage(int id)
+        {
+            try
+            {
+                AllotmentStageBO.Instance.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, ex.Message });
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+        #region Allotment Search
+        [HttpGet]
+        public IActionResult GetAllotmentSearch(string code, string marketId, string allotmentTypeId, string profileId, string isDefault, string zone)
+        {
+            try
+            {
+                DataTable dataTable = _iAllotmentService.AllotmentSearch(code, marketId, allotmentTypeId, profileId, isDefault, zone);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  AllotmentName = !string.IsNullOrEmpty(d["AllotmentName"].ToString()) ? d["AllotmentName"] : "",
+                                  AccountName = !string.IsNullOrEmpty(d["AccountName"].ToString()) ? d["AccountName"] : "",
+                                  MarketID = !string.IsNullOrEmpty(d["MarketID"].ToString()) ? d["MarketID"] : "",
+                                  CuttOfDay = !string.IsNullOrEmpty(d["CuttOfDay"].ToString()) ? d["CuttOfDay"] : "",
+                                  CuttOfDate = !string.IsNullOrEmpty(d["CuttOfDate"].ToString()) ? d["CuttOfDate"] : "",
+                                  AllotmentTypeID = !string.IsNullOrEmpty(d["AllotmentTypeID"].ToString()) ? d["AllotmentTypeID"] : "",
+                                  CreateBy = !string.IsNullOrEmpty(d["CreateBy"].ToString()) ? d["CreateBy"] : "",
+                                  CreateDate = !string.IsNullOrEmpty(d["CreateDate"].ToString()) ? d["CreateDate"] : "",
+                                  UpdateBy = !string.IsNullOrEmpty(d["UpdateBy"].ToString()) ? d["UpdateBy"] : "",
+                                  UpdateDate = !string.IsNullOrEmpty(d["UpdateDate"].ToString()) ? d["UpdateDate"] : "",
+                                  ProfileID = !string.IsNullOrEmpty(d["ProfileID"].ToString()) ? d["ProfileID"] : "",
+                                  ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
+                                  IsDefault = !string.IsNullOrEmpty(d["IsDefault"].ToString()) ? d["IsDefault"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult AllotmentSearch()
+        {
+            List<MarketModel> listMarket = PropertyUtils.ConvertToList<MarketModel>(MarketBO.Instance.FindAll());
+            ViewBag.MarketList = listMarket;
+
+            List<AllotmentTypeModel> listAllotType = PropertyUtils.ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll());
+            ViewBag.AllotTypeList = listAllotType;
+
+            List<ZoneModel> listZone = PropertyUtils.ConvertToList<ZoneModel>(ZoneBO.Instance.FindAll());
+            ViewBag.ZoneList = listZone;
+
+            return PartialView("~/Views/Reservation/Allotment/AllotmentSearch.cshtml");
+        }
+
+        #region Xử lý Allotment Detail
+        [HttpGet]
+        public IActionResult GetAllotmentDetail(int allotmentId, bool isHistoryChecked)
+        {
+            try
+            {
+                // Nếu không check History thì lấy ngày Business hiện tại, ngược lại lấy 01/01/1900
+                DateTime showHistoryDate = isHistoryChecked ? new DateTime(1900, 1, 1) : TextUtils.GetBusinessDate();
+
+                string roomTypeCodes = GetRoomTypeCodes(allotmentId);
+
+                // Chuẩn bị danh sách các mã để gửi xuống Client (xóa bỏ ngoặc vuông [ ])
+                var columnList = roomTypeCodes.Split(',')
+                                    .Select(x => x.Trim('[', ']'))
+                                    .Where(x => !string.IsNullOrEmpty(x))
+                                    .ToList();
+
+                // Gọi Service lấy dữ liệu thô
+                DataTable dtRaw = _iAllotmentService.GetAllotmentDetail(allotmentId, roomTypeCodes, showHistoryDate);
+
+                //  Thực hiện logic gộp ngày và TÍNH TOÁN TOTAL
+                var processedData = ProcessAllotmentGrouping(dtRaw);
+
+                // TRẢ VỀ CẢ DỮ LIỆU VÀ DANH SÁCH CỘT
+                return Json(new
+                {
+                    data = processedData,
+                    roomTypeColumns = columnList
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private List<Dictionary<string, object>> ProcessAllotmentGrouping(DataTable dt)
+        {
+            var result = new List<Dictionary<string, object>>();
+            if (dt.Rows.Count == 0) return result;
+
+            // Chuyển DataTable thành List để dễ duyệt
+            var rows = dt.AsEnumerable().ToList();
+            var flags = new int[rows.Count]; // 0: chưa xử lý, 1: hiển thị, 2: bị gộp (ẩn)
+
+            for (int i = 0; i < rows.Count; i++)
+            {
+                if (flags[i] == 2) continue;
+
+                var currentRow = rows[i];
+                flags[i] = 1;
+
+                // Tạo object kết quả cho dòng này
+                var item = currentRow.Table.Columns.Cast<DataColumn>()
+                .ToDictionary(col => col.ColumnName, col => {
+                    var val = currentRow[col];
+                    if (val == DBNull.Value) return 0;
+                    return val;
+                });
+                // TÍNH TOTAL
+                int totalQuantity = 0;
+                foreach (DataColumn col in currentRow.Table.Columns)
+                {
+                    string name = col.ColumnName.ToLower();
+                    // cộng dồn các cột 
+                    if (!new[] { "date", "stage", "cutoff", "total", "flag", "allotmentstageid", "from date", "to date" }.Contains(name))
+                    {
+                        totalQuantity += Convert.ToInt32(item[col.ColumnName]);
+                    }
+                }
+                item["Total"] = totalQuantity; // Gán giá trị tổng vừa tính vào cột Total
+                                               
+                DateTime startDate = Convert.ToDateTime(currentRow["date"]);
+                DateTime endDate = startDate;
+
+                item["From Date"] = startDate.ToString("dd/MM/yyyy");
+                item["To Date"] = endDate.ToString("dd/MM/yyyy");
+
+                // Vòng lặp tìm các dòng kế tiếp để gộp
+                for (int j = i + 1; j < rows.Count; j++)
+                {
+                    DateTime nextDate = Convert.ToDateTime(rows[j]["date"]);
+
+                    // Điều kiện gộp: Ngày liên tiếp (+1) VÀ Dữ liệu các cột giống hệt nhau
+                    if ((nextDate - endDate).Days == 1 && IsSameData(rows[i], rows[j]))
+                    {
+                        endDate = nextDate;
+                        item["To Date"] = endDate.ToString("dd/MM/yyyy");
+                        flags[j] = 2; // Đánh dấu dòng này bị gộp
+                    }
+                    else break;
+                }
+                result.Add(item);
+            }
+            return result;
+        }
+
+        // Hàm so sánh dữ liệu các cột (Stage, CutOff và các loại RoomType)
+        private bool IsSameData(DataRow row1, DataRow row2)
+        {
+            // So sánh Stage và CutOff
+            if (row1["Stage"].ToString() != row2["Stage"].ToString() ||
+                row1["CutOff"].ToString() != row2["CutOff"].ToString()) return false;
+
+            foreach (DataColumn col in row1.Table.Columns)
+            {
+                string name = col.ColumnName.ToLower();
+                if (new[] { "date", "stage", "cutoff", "total", "flag", "allotmentstageid" }.Contains(name)) continue;
+
+                // Chuyển về string và xử lý null thành "0" để so sánh chính xác
+                string val1 = row1[col] == DBNull.Value ? "0" : row1[col].ToString();
+                string val2 = row2[col] == DBNull.Value ? "0" : row2[col].ToString();
+
+                if (val1 != val2) return false;
+            }
+            return true;
+        }
+
+        // Hàm lấy danh sách RoomType hiện có của Allotment này để tạo chuỗi [POK],[POT]...
+        private string GetRoomTypeCodes(int allotmentId)
+        {
+            string command = $@"SELECT b.Code 
+                       FROM AllotmentDetail a WITH (NOLOCK)
+                       JOIN RoomType b WITH (NOLOCK) ON a.RoomTypeID = b.ID 
+                       WHERE a.AllotmentID = {allotmentId} 
+                       GROUP BY b.Code 
+                       ORDER BY b.Code";
+
+            DataTable dtRoomType = TextUtils.Select(command);
+
+            if (dtRoomType == null || dtRoomType.Rows.Count == 0) return "";
+
+            // Nối chuỗi thành định dạng [POK],[POT]... để truyền vào PIVOT trong Store
+            string roomTypeCodes = "";
+            for (int i = 0; i < dtRoomType.Rows.Count; i++)
+            {
+                roomTypeCodes += "[" + dtRoomType.Rows[i][0].ToString() + "],";
+            }
+
+            return roomTypeCodes.TrimEnd(',');
+        }
+        #endregion
+
+        #region Xử lý gridReservation
+
+        [HttpGet]
+        public IActionResult GetAllotmentResvSearch(int allotmentId, string roomTypeCode)
+        {
+            try
+            {
+                // Lấy RoomTypeID từ Code để phục vụ logic lọc 
+                int roomTypeId = 0;
+                if (!string.IsNullOrEmpty(roomTypeCode))
+                {
+                    string sqlRoom = $"SELECT ID FROM RoomType WITH (NOLOCK) WHERE Code = '{roomTypeCode}'";
+                    DataTable dtRoom = TextUtils.Select(sqlRoom);
+                    if (dtRoom.Rows.Count > 0)
+                    {
+                        roomTypeId = Convert.ToInt32(dtRoom.Rows[0]["ID"]);
+                    }
+                }
+
+                // Lấy chuỗi danh sách ReservationID liên quan đến Allotment hiẹn tại
+                string sqlResvIds = $@"SELECT DISTINCT a.ReservationID 
+                               FROM dbo.ReservationRate a WITH (NOLOCK)
+                               JOIN dbo.Reservation b WITH (NOLOCK) ON a.ReservationID = b.ID 
+                               WHERE b.Status IN (0,5,1,6,2) 
+                               AND a.AllotmentID = {allotmentId}";
+
+                DataTable dtResvIds = TextUtils.Select(sqlResvIds);
+                if (dtResvIds.Rows.Count == 0) return Json(new List<object>());
+
+                string arrResvID = string.Join(",", dtResvIds.AsEnumerable().Select(r => r["ReservationID"].ToString()));
+
+                DataTable dtResult = _iAllotmentService.GetAllotmentResvSearch(arrResvID, roomTypeId);
+
+                // Map dữ liệu
+                var result = (from d in dtResult.AsEnumerable()
+                              select new
+                              {
+                                  ConfNo = d["ConfirmationNo"],
+                                  MG = d["MG"],
+                                  Nat = d["Nationality"],
+                                  GuestName = d["GuestName"],
+                                  Rms = d["NoOfRoom"],
+                                  RoNo = d["RoomNo"],
+                                  RoType = d["R_RoomType"],
+                                  Arr = d["Arrival"] != DBNull.Value ? Convert.ToDateTime(d["Arrival"]).ToString("dd/MM/yyyy") : "",
+                                  N = d["R_NoOfNight"],
+                                  Dep = d["Departure"] != DBNull.Value ? Convert.ToDateTime(d["Departure"]).ToString("dd/MM/yyyy") : "",
+                                  Adults = d["Adults"],
+                                  Child = d["Child"],
+                                  Child1 = d["Child1"],
+                                  Child2 = d["Child2"],
+                                  Status = d["Status"],
+                                  Price = d["Price"],
+                                  PriceNet = d["PriceNet"],
+                                  Curr = d["Currency"],
+                                  Packages = d["Packages"],
+                                  MarketCode = d["MarketCode"],
+                                  CreateBy = d["R_CreateBy"],
+                                  CreateDate = d["R_CreateDate"] != DBNull.Value ? Convert.ToDateTime(d["R_CreateDate"]).ToString("dd/MM/yyyy HH:mm") : "",
+                                  UpdateBy = d["R_UpdateBy"],
+                                  UpdateDate = d["R_UpdateDate"] != DBNull.Value ? Convert.ToDateTime(d["R_UpdateDate"]).ToString("dd/MM/yyyy HH:mm") : "",
+                                  ReservationID = d["ReservationID"]
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region new/edit
+        [HttpPost]
+        public IActionResult SaveAllotment([FromBody] AllotmentModel model)
+        {
+            try
+            {
+                var listErrors = GetErrors(
+                    Check(model == null, "general", "No data received."),
+                    Check(model?.Code, "allot_setup_code", "Code is not blank."),
+                    Check(model?.ProfileID, "allot_setup_profileID", "Profile is not blank."),
+                    Check(model?.AllotmentTypeID, "allot_setup_type", "Allotment Type is not blank.")
+                );
+
+                if (listErrors.Count == 0 && model != null)
+                {
+                    bool isDuplicate = AllotmentBO.Instance.IsDuplicateCode(model.Code, model.ID);
+                    var duplicateError = CheckDuplicate(isDuplicate, "allot_setup_code", $"This code already exists: [{model.Code}]");
+                    if (duplicateError != null) listErrors.Add(duplicateError);
+                }
+
+                if (listErrors.Count > 0)
+                {
+                    return Json(new { success = false, errors = listErrors });
+                }
+
+                DateTime businessDate = TextUtils.GetBusinessDate();
+
+                if (model.ID == 0) // Thêm mới (New)
+                {
+                    model.CreateDate = businessDate;
+                    model.UpdateDate = DateTime.Now;
+                    model.CuttOfDate = businessDate;
+
+                    AllotmentBO.Instance.Insert(model);
+                    return Json(new { success = true, message = "Insert successfully!" });
+                }
+                else // Chỉnh sửa (Edit)
+                {
+                    var oldData = (AllotmentModel)AllotmentBO.Instance.FindByPrimaryKey(model.ID);
+                    if (oldData == null) return Json(new { success = false, message = "Data not found." });
+
+                    model.Code = oldData.Code;
+                    model.CreateDate = oldData.CreateDate;
+                    model.CreateBy = oldData.CreateBy;
+
+                    model.UpdateDate = DateTime.Now;
+
+                    AllotmentBO.Instance.Update(model);
+                    return Json(new { success = true, message = "Update successfully!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+        #endregion
+
+        #region detail
+
+        [HttpGet]
+        public IActionResult GetAllotmentDetailFull(int allotmentId, string fromDate, int noOfDays)
+        {
+            try
+            {
+                DateTime startDate = DateTime.Parse(fromDate);
+                DateTime endDate = startDate.AddDays(noOfDays - 1);
+
+                string paraDate = "";
+                string paraDateConvert = "";
+                List<DateTime> dateRange = new List<DateTime>();
+
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    string dayStr = date.Day.ToString("00");
+                    string colAlias = date.ToString("dd/MM");
+
+                    paraDate += $"[{dayStr}],";
+                    paraDateConvert += $"'{colAlias}'=[{dayStr}],";
+                    dateRange.Add(date);
+                }
+                paraDate = paraDate.TrimEnd(',');
+                paraDateConvert = paraDateConvert.TrimEnd(',');
+
+                DataTable dtAllot = _iAllotmentService.GetAllotmentDefaultByStage(startDate, endDate, 0, allotmentId.ToString(), paraDate, paraDateConvert);
+                DataTable dtPickup = _iAllotmentService.GetAllotmentDefaultByStage(startDate, endDate, 1, allotmentId.ToString(), paraDate, paraDateConvert);
+
+                var dayDetails = MapAllotmentAndPickup(dtAllot, dtPickup, dateRange);
+
+                return Json(new Dictionary<string, object> {
+            { "success", true },
+            { "data", dayDetails }
+            });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new Dictionary<string, object> {
+                { "success", false },
+                { "message", ex.Message }
+            });
+            }
+        }
+
+        // Hàm map dữ liệu Allotment và Pickup theo từng loại phòng và từng ngày
+        private List<Dictionary<string, object>> MapAllotmentAndPickup(DataTable dtAllot, DataTable dtPickup, List<DateTime> dateRange)
+        {
+            var dayDetailList = new List<Dictionary<string, object>>();
+
+            foreach (DataRow rowAllot in dtAllot.Rows)
+            {
+                var rowDetail = new Dictionary<string, object>();
+                string roomType = rowAllot["RoomType"].ToString();
+                rowDetail["RoomType"] = roomType;
+
+                DataRow rowPickup = dtPickup.AsEnumerable().FirstOrDefault(r => r["RoomType"].ToString() == roomType);
+
+                foreach (var date in dateRange)
+                {
+                    string colName = date.ToString("dd/MM");
+                    int allotVal = dtAllot.Columns.Contains(colName) ? Convert.ToInt32(rowAllot[colName] == DBNull.Value ? 0 : rowAllot[colName]) : 0;
+                    int pickupVal = (rowPickup != null && dtPickup.Columns.Contains(colName)) ? Convert.ToInt32(rowPickup[colName] == DBNull.Value ? 0 : rowPickup[colName]) : 0;
+
+                    rowDetail[colName] = $"{pickupVal}/{allotVal}";
+                }
+                dayDetailList.Add(rowDetail);
+            }
+
+            // Logic tính dòng "Total Picked Up" 
+            var totalRow = new Dictionary<string, object>();
+            totalRow["RoomType"] = "Total Picked Up";
+            foreach (var date in dateRange)
+            {
+                string colName = date.ToString("dd/MM");
+                int totalPickupForDay = 0;
+                foreach (var row in dayDetailList)
+                {
+                    var parts = row[colName].ToString().Split('/');
+                    totalPickupForDay += int.Parse(parts[0]);
+                }
+                totalRow[colName] = totalPickupForDay.ToString();
+            }
+            dayDetailList.Add(totalRow);
+
+            return dayDetailList;
+        }
+
+        #endregion
+
+        #region Delete
+        public async Task<IActionResult> DeleteAllot(int id)
+        {
+            try
+            {
+                if (id <= 0) return BadRequest(new { message = "Invalid Allotment ID" });
+
+                var (canDelete, message) = await _iAllotmentService.CanDeleteAllotment(id);
+                if (!canDelete)
+                {
+                    return Conflict(new { message = message });
+                }
+
+                var isDeleted = await _iAllotmentService.DeleteAllotment(id);
+                if (isDeleted)
+                {
+                    return Json(new { success = true, message = "Delete allotment successfully!" });
+                }
+
+                return Json(new { success = false, message = "Could not delete data from database." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+        }
+        #endregion
+
+        #region transfer to Allotment/Inventory
+        [HttpGet]
+        public JsonResult GetAllotmentLookup(int? excludeID)
+        {
+            DataTable dt = _iAllotmentService.GetAllotmentLookupData();
+            var list = new List<object>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                int id = Convert.ToInt32(row["ID"]);
+
+                // Không thêm vào danh sách nếu trùng với Allotment "From"
+                if (excludeID.HasValue && id == excludeID.Value) continue;
+
+                list.Add(new
+                {
+                    id = id,
+                    code = row["Code"],
+                    name = row["AllotmentName"],
+                    marketId = row["MarketID"]
+                });
+            }
+
+            return Json(list);
+        }
+
+        [HttpGet]
+        public JsonResult GetRoomTypesLookup(int allotmentId)
+        {
+            string sql = allotmentId > 0
+                ? $@"SELECT DISTINCT b.ID, b.Code, b.Name 
+             FROM AllotmentDetail a WITH (NOLOCK)
+             INNER JOIN RoomType b WITH (NOLOCK) ON a.RoomTypeID = b.ID 
+             WHERE a.AllotmentID = {allotmentId} AND b.Inactive = 0
+             ORDER BY b.Code"
+                : "SELECT ID, Code, Name FROM RoomType WITH (NOLOCK) WHERE Inactive = 0 ORDER BY Code";
+
+            DataTable dt = TextUtils.Select(sql);
+
+            var list = dt.AsEnumerable().Select(row => new {
+                id = row["ID"],
+                code = row["Code"],
+                name = row["Name"]
+            }).ToList();
+
+            return Json(list);
+        }
+
+        [HttpGet]
+        public JsonResult GetStagesLookup()
+        {
+            try
+            {
+                // Code='', Name='', Inactive=0
+                DataTable dt = _iAllotmentService.AllotmentStage("", "", 0);
+
+                var list = new List<object>();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(new
+                    {
+                        id = row["ID"],
+                        code = row["Code"],
+                        name = row["Name"]
+                    });
+                }
+
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ExecuteTransfer([FromBody] AllotmentTransferRequest data)
+        {
+            try
+            {
+                var listErrors = GetErrors(
+                    Check(data.ToAllotmentID == 0, "allot_trans_toID", "To allotment can not be blank."),
+                    Check(data.AllotmentStageID == 0, "allot_trans_stageID", "Allotment stage can not be blank."),
+                    Check(data.FromAllotmentID > 0 && data.FromAllotmentID == data.ToAllotmentID,
+                          "allot_trans_toID", "From Allotment not equal To Allotment.")
+                );
+
+                int fromAllotID = (int)data.FromAllotmentID;
+                int qty = (int)data.Quantity;
+                DateTime fromDate = (DateTime)data.FromDate;
+                DateTime toDate = (DateTime)data.ToDate;
+                int rtID = (int)data.RoomTypeID;
+
+                for (var d = fromDate; d < toDate; d = d.AddDays(1))
+                {
+                    // Gọi hàm check tồn kho thực tế
+                    int currentAvail = _iAllotmentService.GetAvailability(fromAllotID, rtID, d);
+
+                    if (fromAllotID > 0 && currentAvail < qty)
+                    {
+                        listErrors.Add(new ValidationError
+                        {
+                            Field = "allot_trans_qty",
+                            Message = $"Overbooking on {d:dd/MM/yyyy}. Available: {currentAvail}"
+                        });
+                        break;
+                    }
+                }
+
+                if (listErrors.Count > 0) return Json(new { success = false, errors = listErrors });
+
+                var model = new AllotmentTransferModel
+                {
+                    FromAllotmentID = data.FromAllotmentID,
+                    ToAllotmentID = data.ToAllotmentID,
+                    RoomTypeID = data.RoomTypeID,
+                    Quantity = data.Quantity,
+                    FromDate = data.FromDate,
+                    ToDate = data.ToDate,
+                    CreateBy = data.CreateBy,
+                    Description = data.Description
+                };
+
+                int stageId = data.AllotmentStageID;
+                int cutoffDay = data.CutOffDay;
+                DateTime? cutoffDate = data.CutOffDate != null ? data.CutOffDate : null;
+
+                bool result = await _iAllotmentService.ProcessTransfer(model, stageId, cutoffDay, cutoffDate);
+                return Json(new { success = result, message = result ? "Transfer success!" : "Transfer failed" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult CheckTransferAvailability(int fromAllotmentId, int roomTypeId, string fromDate, int night, int quantity)
+        {
+            try
+            {
+                bool isRoomTypeMissing = false;
+                if (fromAllotmentId > 0 && roomTypeId > 0)
+                {
+                    string sql = $"SELECT COUNT(1) FROM AllotmentDetail WHERE AllotmentID = {fromAllotmentId} AND RoomTypeID = {roomTypeId}";
+                    isRoomTypeMissing = TextUtils.ExecuteScalarInt(sql) == 0;
+                }
+
+                var listErrors = GetErrors(
+                    Check(isRoomTypeMissing, "allot_trans_roomTypeID", "This Allotment has no configuration for the selected Room Type."),
+                    Check(roomTypeId == 0, "allot_trans_roomTypeID", "Please select a Room Type."),
+                    Check(quantity, "allot_trans_qty", "Quantity must be greater than 0.")
+                );
+
+                if (listErrors.Count > 0) return Json(new { success = false, errors = listErrors });
+
+                DateTime dFrom = DateTime.Parse(fromDate);
+                string detailMessage = "";
+                bool isOverbook = false;
+
+                for (int i = 0; i < night; i++)
+                {
+                    DateTime checkDate = dFrom.AddDays(i);
+                    int avail = _iAllotmentService.GetActualAvailability(fromAllotmentId, roomTypeId, checkDate);
+
+                    if (avail < quantity)
+                    {
+                        isOverbook = true;
+                        detailMessage += $"<br/>• {checkDate:dd/MM/yyyy}: (Qty: {quantity})  Please change quantity to continue";
+                    }
+                }
+
+                if (isOverbook)
+                {
+                    listErrors.Add(new ValidationError
+                    {
+                        Field = "allot_trans_qty",
+                        Message = "Overbooking on Date:" + detailMessage
+                    });
+                    return Json(new { success = false, errors = listErrors });
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region transfer history
+        [HttpGet]
+        public IActionResult GetAllotmentTransferSearch (string fromDate, string toDate, int allotmentFrom, int allotmentTo, string roomType)
+        {
+            try
+            {
+                DataTable dataTable = _iAllotmentService.AllotmentSearchTransfer( fromDate, toDate, allotmentFrom, allotmentTo, roomType);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  FromAllotment = !string.IsNullOrEmpty(d["FromAllotment"].ToString()) ? d["FromAllotment"] : "",
+                                  ToAllotment = !string.IsNullOrEmpty(d["ToAllotment"].ToString()) ? d["ToAllotment"] : "",
+                                  RoomType = !string.IsNullOrEmpty(d["RoomType"].ToString()) ? d["RoomType"] : "",
+                                  Quantity = !string.IsNullOrEmpty(d["Quantity"].ToString()) ? d["Quantity"] : "",
+                                  FromDate = !string.IsNullOrEmpty(d["FromDate"].ToString()) ? d["FromDate"] : "",
+                                  ToDate = !string.IsNullOrEmpty(d["ToDate"].ToString()) ? d["ToDate"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  CreatedBy = !string.IsNullOrEmpty(d["CreatedBy"].ToString()) ? d["CreatedBy"] : "",
+                                  CreatedDate = !string.IsNullOrEmpty(d["CreatedDate"].ToString()) ? d["CreatedDate"] : "",
+                                  UpdatedBy = !string.IsNullOrEmpty(d["UpdatedBy"].ToString()) ? d["UpdatedBy"] : "",
+                                  UpdatedDate = !string.IsNullOrEmpty(d["UpdatedDate"].ToString()) ? d["UpdatedDate"] : "",
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        #endregion
+
+        #endregion
+        #region Allotment Report 
+        [HttpGet]
+        public IActionResult AllotmentReport()
+        {
+            List<AllotmentTypeModel> listAllottype =
+        PropertyUtils.ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll());
+
+            // Thêm dòng "All" vào đầu
+            listAllottype.Insert(0, new AllotmentTypeModel
+            {
+                ID = 0,
+                Name = "All"
+            });
+
+            ViewBag.AllottypeList = listAllottype;
+            return PartialView("~/Views/Reservation/Allotment/AllotmentReport.cshtml");
+
+        }
+        [HttpGet]
+        public IActionResult GetAllotmentReport(DateTime fromDate,  int displayofday,int byAllotmentType,int byAllotmentDetail,string allotmentType,int byAllotmentandRoomType,int byAllotmentandRoomTypeGroupbyAll,int byAllotmentandRoomTypeGroupbyRT,int byProfile,int byRoomtypedetail)
+        {
+            try
+            {
+
+                int totalDays;
+                DateTime toDate;
+                if (displayofday == 0)
+                {
+                    totalDays = displayofday;
+                    toDate = fromDate.AddDays(20);
+                }
+                else
+                {
+                    totalDays = displayofday + 1; // cộng thêm 1 để chạy đủ
+                    toDate = fromDate.AddDays(displayofday);
+                }
+
+                List<string> columnNames = new List<string>();
+                List<string> isnullExpressions = new List<string>();
+                string expressionString = getParaDate(fromDate, toDate)[1];
+
+                // Dạng từng ngày [dM]
+                for (int i = 0; i <= displayofday; i++)
+                {
+                    DateTime currentDate = fromDate.AddDays(i);
+                    string day = currentDate.Day.ToString();       // Không format "00" để tránh lỗi 017
+                   
+                    string column = $"[{day}]";
+                    columnNames.Add(column);
+                }
+ 
+
+                string columnsString = string.Join(",", columnNames);
+
+
+                DataTable dataTable;
+
+                if (byAllotmentandRoomType == 1)
+                {
+                    if (allotmentType == "0")
+                    {
+                        List<int> idAlltype = PropertyUtils
+                    .ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll())
+                    .Select(x => x.ID)      // chỉ lấy ID
+                    .ToList();
+
+                        // Nối các ID thành chuỗi cách nhau dấu ,
+                        string idList = string.Join(",", idAlltype);
+                        allotmentType = TextUtils.GetSplitString(idList);
+                    }
+                  
+                    // Trường hợp Allotment + RoomType
+                    dataTable = _iAllotmentService.GetAllotmentandRoomTypeReport(
+                        fromDate,
+                        toDate,
+                        columnsString,
+                        expressionString,
+                        allotmentType
+                  
+                    );
+                }
+                else if (byAllotmentandRoomTypeGroupbyAll==1)
+                {
+                    if (allotmentType == "0")
+                    {
+                        List<int> idAlltype = PropertyUtils
+                    .ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll())
+                    .Select(x => x.ID)      // chỉ lấy ID
+                    .ToList();
+
+                        // Nối các ID thành chuỗi cách nhau dấu ,
+                        string idList = string.Join(",", idAlltype);
+                        allotmentType = TextUtils.GetSplitString(idList);
+                    }
+
+                    // Trường hợp Allotment + RoomType
+                    dataTable = _iAllotmentService.GetAllotmentandRoomTypeGroupByAllReport(
+                        fromDate,
+                        toDate,
+                        columnsString,
+                        expressionString,
+                        allotmentType
+
+                    );
+                   
+                }
+                else if (byAllotmentandRoomTypeGroupbyRT == 1)
+                {
+                    if (allotmentType == "0")
+                    {
+                        List<int> idAlltype = PropertyUtils
+                    .ConvertToList<AllotmentTypeModel>(AllotmentTypeBO.Instance.FindAll())
+                    .Select(x => x.ID)      // chỉ lấy ID
+                    .ToList();
+
+                        // Nối các ID thành chuỗi cách nhau dấu ,
+                        string idList = string.Join(",", idAlltype);
+                        allotmentType = TextUtils.GetSplitString(idList);
+                    }
+
+                    // Trường hợp Allotment + RoomType
+                    dataTable = _iAllotmentService.GetAllotmentandRoomTypeGroupByRTReport(
+                        fromDate,
+                        toDate,
+                        columnsString,
+                        expressionString,
+                        allotmentType
+
+                    );
+
+                }
+                else if (byProfile == 1)
+                {
+ 
+
+                    // Trường hợp Allotment + RoomType
+                    dataTable = _iAllotmentService.GetAllotmentProfileReport(
+                        fromDate,
+                        toDate,
+                        columnsString,
+                        expressionString
+
+                    );
+
+                }
+                else if (byRoomtypedetail == 1)
+                {
+
+
+                    // Trường hợp Allotment + RoomType
+                    dataTable = _iAllotmentService.GetAllotmentRoomtypedetailReport(
+                        fromDate,
+                        toDate,
+                        columnsString,
+                        expressionString
+
+                    );
+
+                }
+                else
+                {
+                    // Trường hợp bình thường
+                    dataTable = _iAllotmentService.GetAllotmentReport(
+                        fromDate,
+                        toDate,
+                        columnsString,
+                        expressionString,
+                        byAllotmentType,
+                        byAllotmentDetail
+                    );
+                }
+
+                var dateRange = Enumerable.Range(0, (toDate - fromDate).Days + 1)
+                                          .Select(offset => fromDate.AddDays(offset))
+                                          .ToList();
+
+                List<Dictionary<string, object>> result;
+
+                if (byAllotmentType == 0 && byAllotmentDetail==0 && byAllotmentandRoomType == 0 && byAllotmentandRoomTypeGroupbyAll==0 && byAllotmentandRoomTypeGroupbyRT == 0 && byProfile == 0 && byRoomtypedetail == 0)
+                {
+                    // Trường hợp hiển thị theo AllotmentType
+                    result = dataTable.AsEnumerable().Select(d =>
+                    {
+                        var rowData = new Dictionary<string, object>
+                        {
+                            ["AllotmentType"] = d["AllotmentType"]?.ToString() ?? ""
+                        };
+
+                        for (int i = 0; i < dateRange.Count; i++)
+                        {
+                            var date = dateRange[i];
+                            string columnName = date.ToString("yyyy-MM-dd");
+                            int columnIndex = i + 1;
+
+                            if (columnIndex < dataTable.Columns.Count)
+                            {
+                                var cellValue = d[columnIndex];
+                                rowData[columnName] = cellValue == DBNull.Value ? "" : cellValue;
+                            }
+                            else
+                            {
+                                rowData[columnName] = "";
+                            }
+                        }
+
+                        return rowData;
+                    }).ToList();
+                }
+                else if (byAllotmentType == 1 && byAllotmentDetail == 0 && byAllotmentandRoomType == 0 && byAllotmentandRoomTypeGroupbyAll == 0 && byAllotmentandRoomTypeGroupbyRT == 0 && byProfile == 0 && byRoomtypedetail == 0)
+                {
+                    // Tạo list dữ liệu gốc
+                    result = dataTable.AsEnumerable().Select(d =>
+                    {
+                        var rowData = new Dictionary<string, object>
+                        {
+                            ["RoomType"] = d["RoomType"]?.ToString() ?? ""
+                        };
+
+                        for (int i = 0; i < dateRange.Count; i++)
+                        {
+                            var date = dateRange[i];
+                            string columnName = date.ToString("yyyy-MM-dd");
+                            int columnIndex = i + 1;
+
+                            if (columnIndex < dataTable.Columns.Count)
+                            {
+                                var cellValue = d[columnIndex];
+                                rowData[columnName] = cellValue == DBNull.Value ? 0 : Convert.ToDecimal(cellValue);
+                            }
+                            else
+                            {
+                                rowData[columnName] = 0;
+                            }
+                        }
+
+                        return rowData;
+                    }).ToList();
+
+                    // ==========================
+                    // TÍNH TOTAL
+                    // ==========================
+                    var totalRow = new Dictionary<string, object>
+                    {
+                        ["RoomType"] = "Total Picked up:"
+                    };
+
+                    foreach (var date in dateRange)
+                    {
+                        string columnName = date.ToString("yyyy-MM-dd");
+
+                        decimal sum = result.Sum(r =>
+                            r.ContainsKey(columnName) && r[columnName] != null
+                                ? Convert.ToDecimal(r[columnName])
+                                : 0);
+
+                        totalRow[columnName] = sum;
+                    }
+
+                    // Thêm dòng Total vào cuối
+                    result.Add(totalRow);
+                }
+                else if (byAllotmentDetail == 1 && byAllotmentandRoomType == 0 && byAllotmentandRoomTypeGroupbyAll == 0 && byAllotmentandRoomTypeGroupbyRT == 0 && byProfile == 0 && byRoomtypedetail == 0)
+                {
+
+                    // Trường hợp hiển thị theo AllotmentType
+                    result = dataTable.AsEnumerable()
+                      .Select(d =>
+                      {
+                          var rowData = new Dictionary<string, object>
+                          {
+                              ["AllotmentType"] = d["AllotmentType"]?.ToString() ?? "",
+                              ["AllotmentCode"] = d["AllotmentCode"]?.ToString() ?? "",
+                              ["AccountName"] = d["AccountName"]?.ToString() ?? ""
+                          };
+
+                          foreach (var date in dateRange)
+                          {
+                              // Tên cột trong DataTable là số ngày (1,2,3,...31)
+                              string dayColumnName = date.Day.ToString();
+
+                              // Key trả về cho grid là yyyy-MM-dd
+                              string columnName = date.ToString("yyyy-MM-dd");
+
+                              if (dataTable.Columns.Contains(dayColumnName))
+                              {
+                                  var value = d[dayColumnName];
+                                  rowData[columnName] = value == DBNull.Value ? "" : value;
+                              }
+                              else
+                              {
+                                  rowData[columnName] = "";
+                              }
+                          }
+
+                          return rowData;
+                      })
+                      .ToList();
+                }
+                else if ( byAllotmentandRoomType ==1 && byAllotmentandRoomTypeGroupbyAll == 0 && byAllotmentandRoomTypeGroupbyRT == 0 && byProfile == 0 && byRoomtypedetail == 0)
+                {
+                    // Tạo list dữ liệu gốc
+                    result = dataTable.AsEnumerable().Select(d =>
+                    {
+                        var rowData = new Dictionary<string, object>
+                        {
+                            ["RoomType"] = d["RoomType"]?.ToString() ?? ""
+                        };
+
+                        for (int i = 0; i < dateRange.Count; i++)
+                        {
+                            var date = dateRange[i];
+                            string columnName = date.ToString("yyyy-MM-dd");
+                            int columnIndex = i + 1;
+
+                            if (columnIndex < dataTable.Columns.Count)
+                            {
+                                var cellValue = d[columnIndex];
+                                rowData[columnName] = cellValue == DBNull.Value ? 0 : Convert.ToDecimal(cellValue);
+                            }
+                            else
+                            {
+                                rowData[columnName] = 0;
+                            }
+                        }
+
+                        return rowData;
+                    }).ToList();
+
+                    // ==========================
+                    // TÍNH TOTAL
+                    // ==========================
+                    var totalRow = new Dictionary<string, object>
+                    {
+                        ["RoomType"] = "Total Picked up:"
+                    };
+
+                    foreach (var date in dateRange)
+                    {
+                        string columnName = date.ToString("yyyy-MM-dd");
+
+                        decimal sum = result.Sum(r =>
+                            r.ContainsKey(columnName) && r[columnName] != null
+                                ? Convert.ToDecimal(r[columnName])
+                                : 0);
+
+                        totalRow[columnName] = sum;
+                    }
+
+                    // Thêm dòng Total vào cuối
+                    result.Add(totalRow);
+                }
+                else if (byAllotmentandRoomTypeGroupbyAll ==1 && byAllotmentandRoomTypeGroupbyRT == 0 && byProfile == 0 && byRoomtypedetail == 0)
+                {
+                    // Tạo list dữ liệu gốc
+                    result = dataTable.AsEnumerable()
+                       .Select(d =>
+                       {
+                           var rowData = new Dictionary<string, object>
+                           {
+                               ["RoomType"] = d["RoomType"]?.ToString() ?? "",
+                               ["AllotmentCode"] = d["AllotmentCode"]?.ToString() ?? "",
+                               ["AccountName"] = d["AccountName"]?.ToString() ?? ""
+                           };
+
+                           foreach (var date in dateRange)
+                           {
+                               // Tên cột trong DataTable là số ngày (1,2,3,...31)
+                               string dayColumnName = date.Day.ToString();
+
+                               // Key trả về cho grid là yyyy-MM-dd
+                               string columnName = date.ToString("yyyy-MM-dd");
+
+                               if (dataTable.Columns.Contains(dayColumnName))
+                               {
+                                   var value = d[dayColumnName];
+                                   rowData[columnName] = value == DBNull.Value ? "" : value;
+                               }
+                               else
+                               {
+                                   rowData[columnName] = "";
+                               }
+                           }
+
+                           return rowData;
+                       })
+                       .ToList();
+                }
+                else if (  byAllotmentandRoomTypeGroupbyRT ==1 && byProfile == 0 && byRoomtypedetail == 0)
+                {
+                    // Tạo list dữ liệu gốc
+                    result = dataTable.AsEnumerable()
+                       .Select(d =>
+                       {
+                           var rowData = new Dictionary<string, object>
+                           {
+                               ["RoomType"] = d["RoomType"]?.ToString() ?? "",
+                               ["AllotmentCode"] = d["AllotmentCode"]?.ToString() ?? "",
+                               ["AccountName"] = d["AccountName"]?.ToString() ?? ""
+                           };
+
+                           foreach (var date in dateRange)
+                           {
+                               // Tên cột trong DataTable là số ngày (1,2,3,...31)
+                               string dayColumnName = date.Day.ToString();
+
+                               // Key trả về cho grid là yyyy-MM-dd
+                               string columnName = date.ToString("yyyy-MM-dd");
+
+                               if (dataTable.Columns.Contains(dayColumnName))
+                               {
+                                   var value = d[dayColumnName];
+                                   rowData[columnName] = value == DBNull.Value ? "" : value;
+                               }
+                               else
+                               {
+                                   rowData[columnName] = "";
+                               }
+                           }
+
+                           return rowData;
+                       })
+                       .ToList();
+                }
+                else if (byProfile == 1 && byRoomtypedetail == 0)
+                {
+                    result = dataTable.AsEnumerable().Select(d =>
+                    {
+                        var rowData = new Dictionary<string, object>
+                        {
+                            ["ProfileCode"] = d["ProfileCode"]?.ToString() ?? "",
+                            ["Account"] = d["Account"]?.ToString() ?? "",
+                            ["Code"] = d["Code"]?.ToString() ?? ""
+                        };
+
+                        foreach (var date in dateRange)
+                        {
+                            // Tên cột thực tế trong DataTable (1,2,3,...)
+                            string dayColumn = date.Day.ToString();
+
+                            // Tên cột muốn trả ra JSON
+                            string outputColumn = date.ToString("yyyy-MM-dd");
+
+                            if (dataTable.Columns.Contains(dayColumn))
+                            {
+                                var value = d[dayColumn];
+
+                                rowData[outputColumn] =
+                                    value == DBNull.Value
+                                        ? 0m
+                                        : Convert.ToDecimal(value);
+                            }
+                            else
+                            {
+                                rowData[outputColumn] = 0m;
+                            }
+                        }
+
+                        return rowData;
+                    }).ToList();
+
+
+                    // ================= TOTAL =================
+                    var totalRow = new Dictionary<string, object>
+                    {
+                        ["ProfileCode"] = "",
+                        ["Account"] = "",
+                        ["Code"] = "Total Picked up:"
+                    };
+
+                    foreach (var date in dateRange)
+                    {
+                        string outputColumn = date.ToString("yyyy-MM-dd");
+
+                        decimal sum = result.Sum(r =>
+                            r.TryGetValue(outputColumn, out var val)
+                                ? Convert.ToDecimal(val)
+                                : 0m);
+
+                        totalRow[outputColumn] = sum;
+                    }
+
+                    result.Add(totalRow);
+                }
+                else if (  byRoomtypedetail == 1)
+                {
+                    // Tạo list dữ liệu gốc
+                    result = dataTable.AsEnumerable()
+                       .Select(d =>
+                       {
+                           var rowData = new Dictionary<string, object>
+                           {
+                               ["RoomType"] = d["RoomType"]?.ToString() ?? "",
+                               ["AllotmentCode"] = d["AllotmentCode"]?.ToString() ?? "",
+                               ["AccountName"] = d["AccountName"]?.ToString() ?? ""
+                           };
+
+                           foreach (var date in dateRange)
+                           {
+                               // Tên cột trong DataTable là số ngày (1,2,3,...31)
+                               string dayColumnName = date.Day.ToString();
+
+                               // Key trả về cho grid là yyyy-MM-dd
+                               string columnName = date.ToString("yyyy-MM-dd");
+
+                               if (dataTable.Columns.Contains(dayColumnName))
+                               {
+                                   var value = d[dayColumnName];
+                                   rowData[columnName] = value == DBNull.Value ? "" : value;
+                               }
+                               else
+                               {
+                                   rowData[columnName] = "";
+                               }
+                           }
+
+                           return rowData;
+                       })
+                       .ToList();
+                }
+                else
+                {
+                    return BadRequest("Invalid byAllotmentType value.");
+                }
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                
+                return Json(new { success = false, ex.Message });
+            }
+
+        }
+
+        private string[] getParaDate(DateTime fromDate, DateTime toDate)
+        {
+            string paraDate = "";
+            string paraDateConvert = "";
+
+            for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                string day = date.Day.ToString(); // 👈 dùng ngày thay cho strIndex
+                paraDateConvert += "'" + day + "' = Convert(nvarchar, [" + date.Day.ToString() + "]),";
+
+                paraDate += "[" + date.Day.ToString() + "],";
+            }
+
+            if (paraDate.Length > 0)
+                paraDate = paraDate.Remove(paraDate.Length - 1);
+
+            if (paraDateConvert.Length > 0)
+                paraDateConvert = paraDateConvert.Remove(paraDateConvert.Length - 1);
+
+            string[] result = new string[2];
+            result[0] = paraDate;
+            result[1] = paraDateConvert;
+
+            return result;
+        }
+
+        #endregion
+    }
+}       

@@ -1,74 +1,190 @@
-﻿<div class="modal fade modal" id="modalNewWindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Create Folio</h5>
-                <button type="button" class="btn-close" onclick="closeModalNewWindow()"></button>
+<div class="modal fade managed-modal" id="modalNewWindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content billing-module">
+            <div class="modal-header py-2 bg-light">
+                <h5 class="modal-title fs-6 fw-bold">Create Folio</h5>
             </div>
+
             <div class="modal-body">
-                <div>
-                    <button class="mui-button mui-button-search" onclick="CreateFolio();"> Create</button>
-                    <button class="mui-button mui-button-clear" onclick="closeModalNewWindow();">Close</button>
+                <div class="d-flex gap-2 mb-3 border-bottom py-2">
+                    <button class="mui-button mui-button-search" onclick="CreateFolio();">
+                        Create
+                    </button>
+                    <button class="mui-button mui-button-clear" onclick="closeModalNewWindow();">
+                        Close
+                    </button>
                 </div>
-                <div class="row mt-2">
-                    <label class="col-md-2">Window</label>
-                    <select id="folioNoCreate" class="col-md-10">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
 
-                    </select>
-                </div>
-                <div class=" row mt-2">
-                    <label class="col-md-2">Accunt</label>
+                <div class="container-fluid px-0">
+                    <div class="form-check mb-2">
+                        <input class="me-1" type="radio" name="folioType" id="radioGuestFolio" value="guest" checked onchange="toggleFolioType();">
+                        <label class="form-check-label fw-bold" for="radioGuestFolio">Guest Folio</label>
+                    </div>
 
-                    <input class="col-md-10" id="nameFolioNo" />
+                    <div id="guestFolioSection" class="p-3 border rounded mb-3 bg-light">
+                        <div class="row align-items-center mb-2">
+                            <label class="col-3 small">Win.No</label>
+                            <div class="col-9">
+                                <select id="folioNoCreate" class="form-select form-select-sm">
+                                    @for (int i = 1; i <= 8; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <label class="col-3 small">Account</label>
+                            <div class="col-9">
+                                <div class="input-group input-group-sm">
+                                    <input id="new_folio_profileID" type="hidden" />
+                                    <input id="new_folio_profileName" class="form-control" readonly />
+                                    <button class="btn btn-outline-secondary" type="button" onclick="openProFolioModal();">
+                                        <i class="fa-solid fa-arrow-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="form-check mb-2">
+                        <input class="me-1" type="radio" name="folioType" id="radioMasterFolio" value="master" onchange="toggleFolioType();">
+                        <label class="form-check-label fw-bold" for="radioMasterFolio">Master Folio</label>
+                    </div>
+
+                    <div id="masterFolioSection" class="p-3 border rounded opacity-50 bg-light" style="pointer-events: none;">
+                        <div class="row align-items-center mb-2">
+                            <label class="col-3 small">Win.No</label>
+                            <div class="col-9">
+                                <select id="masterFolioNo" class="form-select form-select-sm">
+                                    <option value="-1">M1</option>
+                                    <option value="-2">M2</option>
+                                    <option value="-3">M3</option>
+                                    <option value="-4">M4</option>
+                                    <option value="-5">M5</option>
+                                    <option value="-6">M6</option>
+                                    <option value="-7">M7</option>
+                                    <option value="-8">M8</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mb-2">
+                            <label class="col-3 small">Account</label>
+                            <div class="col-9">
+                                <input id="masterAccountName" class="form-control form-control-sm" readonly />
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <label class="col-3 small">Conf.No</label>
+                            <div class="col-9">
+                                <input id="folioConfNo" class="form-control form-control-sm bg-white" readonly />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-    function openModalNewWindow(){
-        $('#folioNoCreate').val(listFolioNoID.length + 1);
-        $('#nameFolioNo').val(lastname);
+
+    async function openModalNewWindow(){
+        // Set mặc định
+        $('#radioGuestFolio').prop('checked', true);
+
+        let canCreateMaster = false;
+        try {
+            const resData = await $.ajax({
+                url: '/Reservation/GetReservationByID',
+                type: 'GET',
+                data: { ID: typeof idReservation !== "undefined" ? idReservation : 0 }
+            });
+            if (resData && (resData.profileCompanyId > 0 || resData.profileAgentId > 0 || resData.profileGroupId > 0)) {
+                canCreateMaster = true;
+            }
+        } catch (e) {
+            console.error("Failed to check master folio eligibility:", e);
+        }
+
+        if(!canCreateMaster){
+            $('#radioMasterFolio').prop('disabled', true);
+            $('#radioMasterFolio').closest('.form-check').addClass('text-muted').attr('data-tooltip', 'No Company/Agent/Group found for this booking');
+            $('#radioGuestFolio').prop('checked', true);
+        } else {
+            $('#radioMasterFolio').prop('disabled', false);
+            $('#radioMasterFolio').closest('.form-check').removeClass('text-muted').removeAttr('data-tooltip');
+        }
+
+        toggleFolioType();
+
+        $('#folioNoCreate').val(typeof listFolioNoID !== "undefined" ? listFolioNoID.length + 1 : 1);
+        $('#new_folio_profileName').val(typeof lastname !== "undefined" ? lastname : "");
+        $('#new_folio_profileID').val(typeof profileID !== "undefined" ? profileID : ""); 
+
+        // Master info
+        $('#folioConfNo').val(typeof confirmationNo !== "undefined" ? confirmationNo : "");
+        $('#masterAccountName').val(typeof lastname !== "undefined" ? lastname : ""); // Backend creates actual name
+
         $('#modalNewWindow').modal('show');
     }
-    function closeModalNewWindow(){
-        $('#modalNewWindow').modal('hide');
+
+    function toggleFolioType() {
+        const isMaster = $('#radioMasterFolio').is(':checked');
+        if(isMaster) {
+            $('#masterFolioSection').removeClass('opacity-50').css('pointer-events', 'auto');
+            $('#guestFolioSection').addClass('opacity-50').css('pointer-events', 'none');
+        } else {
+            $('#guestFolioSection').removeClass('opacity-50').css('pointer-events', 'auto');
+            $('#masterFolioSection').addClass('opacity-50').css('pointer-events', 'none');
+            $('#new_folio_profileName').val(typeof lastname !== "undefined" ? lastname : "");
+        }
     }
 
     function CreateFolio() {
-        const userID = JSON.parse(localStorage.getItem("userID"));
-        var formData = new FormData();
-        formData.append('rsvID', idReservation);
-        formData.append('folioNo',  $('#folioNoCreate').val());
-        formData.append('userID', userID);
+        const isMaster = $('#radioMasterFolio').is(':checked');
+
+        const folioModel = {
+            ReservationID: idReservation,
+            FolioNo: isMaster ? $('#masterFolioNo').val() : $('#folioNoCreate').val(),
+            ProfileID: isMaster ? profileID : ($('#new_folio_profileID').val() || profileID),
+            AccountName: isMaster ? $('#masterAccountName').val() : $('#new_folio_profileName').val(),
+            IsMasterFolio: isMaster,
+            ConfirmationNo: confirmationNo,
+            UserInsertID: JSON.parse(localStorage.getItem("userID")),
+            UserUpdateID: JSON.parse(localStorage.getItem("userID")),
+            Status: false,
+            BalanceVND: 0,
+            BalanceUSD: 0,
+            IsMasterFolio: isMaster
+        };
 
         $.ajax({
             url: '/Billing/CreateFolio',
             type: 'POST',
-            processData: false,
-            contentType: false,
-            data: formData,
+            contentType: 'application/json', 
+            data: JSON.stringify(folioModel), 
             success: function (data) {
                 if (data.code == 0) {
                     closeModalNewWindow();
-                    getFolioNo();
-                    searchFolioDetail(0);
+                    getFolioNo(); // Hàm này sẽ load lại danh sách window và cập nhật infoBillingName
                     showToast('Success', data.msg, true);
                 } else {
                     showToast('Error', data.msg, false);
                 }
             },
-            error: function (xhr, statusText, err) { }
+            error: function (xhr) { alert("Error connecting to server"); }
         });
+    }
+
+    function openProFolioModal() {
+        openProSearch((selectedData) => {
+            $("#new_folio_profileName").val(selectedData.account);
+            $("#new_folio_profileID").val(selectedData.id);
+        });
+    }
+
+    function closeModalNewWindow(){
+        $('#modalNewWindow').modal('hide');
     }
 </script>

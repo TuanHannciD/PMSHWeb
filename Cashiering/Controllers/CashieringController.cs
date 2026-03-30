@@ -1,17 +1,17 @@
-﻿using System.Data;
-using BaseBusiness.BO;
+﻿using BaseBusiness.BO;
 using BaseBusiness.Model;
 using BaseBusiness.util;
+using Cashiering.Commons.Helpers;
 using Cashiering.Services.Interfaces;
+using DevExpress.ClipboardSource.SpreadsheetML;
+using DevExpress.XtraReports.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Data.SqlClient;
-using DevExpress.ClipboardSource.SpreadsheetML;
-using Cashiering.Commons.Helpers;
-using DevExpress.XtraReports.UI;
+using System.Data;
 
 namespace Cashiering.Controllers
 {
@@ -25,8 +25,8 @@ namespace Cashiering.Controllers
         private readonly ICashieringManagerService _iCashieringManagerService;
         private readonly IFolioVATSearchService _iFolioVATSearchService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public CashieringController(ILogger<CashieringController> logger,IFolioVATSearchService iFolioVATService,
-                IMemoryCache cache, IConfiguration configuration, ICashieringService iCashieringService, IHttpContextAccessor httpContextAccessor,ICloseShiftService iCloseShiftService,ICashieringManagerService iCashieringManagerService)
+        public CashieringController(ILogger<CashieringController> logger, IFolioVATSearchService iFolioVATService,
+                IMemoryCache cache, IConfiguration configuration, ICashieringService iCashieringService, IHttpContextAccessor httpContextAccessor, ICloseShiftService iCloseShiftService, ICashieringManagerService iCashieringManagerService)
         {
             _cache = cache;
             _logger = logger;
@@ -52,7 +52,7 @@ namespace Cashiering.Controllers
             ViewBag.UsersList = user;
             List<TransactionsModel> trans = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
             ViewBag.TransactionsList = trans;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView(); // View này sẽ chứa DataGrid + script gọi API
         }
 
         [HttpGet]
@@ -122,7 +122,7 @@ namespace Cashiering.Controllers
 
                               }).ToList();
 
-                return Ok(result); 
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -291,7 +291,6 @@ namespace Cashiering.Controllers
                                   AmountUSD = !string.IsNullOrEmpty(d["AmountUSD"].ToString()) ? d["AmountUSD"] : "",
                                   CountTransaction = !string.IsNullOrEmpty(d["CountTransaction"].ToString()) ? d["CountTransaction"] : "",
                                   Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
-                                  
                               }).ToList();
                 return Ok(result);
             }
@@ -310,52 +309,52 @@ namespace Cashiering.Controllers
             ViewBag.UsersList = user;
             List<TransactionsModel> trans = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindAll());
             ViewBag.TransactionsList = trans;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
-        }      
-       [HttpGet]
+            return PartialView(); // View này sẽ chứa DataGrid + script gọi API
+        }
+        [HttpGet]
         public IActionResult GetShiftDetail(int shiftID)
-{
-    try
-    {
-        // type=1: header
-        DataTable headerTable = _iCashieringService.ShiftDetail(shiftID, 1);
-        var header = (from d in headerTable.AsEnumerable()
-                      select new
-                      {
-                          CashierNo = d["CashierNo"]?.ToString() ?? "",
-                          ShiftNo = d["ShiftNo"]?.ToString() ?? "",
-                          ShiftDate = d["ShiftDate"]?.ToString() ?? "",
-                          UserName = d["UserName"]?.ToString() ?? "",
-                          FullName = d["FullName"]?.ToString() ?? "",
-                          LoginTime = d["LoginTime"]?.ToString() ?? "",
-                          LogoutTime = d["LogoutTime"]?.ToString() ?? ""
-                      }).FirstOrDefault();
+        {
+            try
+            {
+                // type=1: header
+                DataTable headerTable = _iCashieringService.ShiftDetail(shiftID, 1);
+                var header = (from d in headerTable.AsEnumerable()
+                              select new
+                              {
+                                  CashierNo = d["CashierNo"]?.ToString() ?? "",
+                                  ShiftNo = d["ShiftNo"]?.ToString() ?? "",
+                                  ShiftDate = d["ShiftDate"]?.ToString() ?? "",
+                                  UserName = d["UserName"]?.ToString() ?? "",
+                                  FullName = d["FullName"]?.ToString() ?? "",
+                                  LoginTime = d["LoginTime"]?.ToString() ?? "",
+                                  LogoutTime = d["LogoutTime"]?.ToString() ?? ""
+                              }).FirstOrDefault();
 
-        // type=0: detail grid
-        DataTable detailTable = _iCashieringService.ShiftDetail(shiftID, 0);
-        var details = (from d in detailTable.AsEnumerable()
-                       select new
-                       {
-                           TransactionCode = d["TransactionCode"]?.ToString() ?? "",
-                           Description = d["Description"]?.ToString() ?? "",
-                           Amount = d["Amount"]?.ToString() ?? "",
-                           TransactionDate = d["TransactionDate"]?.ToString() ?? "",
-                           Reference = d["Reference"]?.ToString() ?? "",
-                           Supplement = d["Supplement"]?.ToString() ?? "",
-                           FolioID = d["FolioID"]?.ToString() ?? "",
-                           RoomNo = d["RoomNo"]?.ToString() ?? "",
-                           Account = d["Account"]?.ToString() ?? "",
-                           PaymentType = d["*"]?.ToString() ?? "",
-                           CurrencyID = d["CurrencyID"]?.ToString() ?? "",
-                       }).ToList();
+                // type=0: detail grid
+                DataTable detailTable = _iCashieringService.ShiftDetail(shiftID, 0);
+                var details = (from d in detailTable.AsEnumerable()
+                               select new
+                               {
+                                   TransactionCode = d["TransactionCode"]?.ToString() ?? "",
+                                   Description = d["Description"]?.ToString() ?? "",
+                                   Amount = d["Amount"]?.ToString() ?? "",
+                                   TransactionDate = d.Field<DateTime?>("TransactionDate"),
+                                   Reference = d["Reference"]?.ToString() ?? "",
+                                   Supplement = d["Supplement"]?.ToString() ?? "",
+                                   FolioID = d["FolioID"]?.ToString() ?? "",
+                                   RoomNo = d["RoomNo"]?.ToString() ?? "",
+                                   Account = d["Account"]?.ToString() ?? "",
+                                   PaymentType = d["*"]?.ToString() ?? "",
+                                   CurrencyID = d["CurrencyID"]?.ToString() ?? "",
+                               }).ToList();
 
-        return Ok(new { header, details });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { success = false, message = ex.Message });
-    }
-}
+                return Ok(new { header, details });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         public IActionResult GetExchangeRate()
 
@@ -383,7 +382,7 @@ namespace Cashiering.Controllers
                                   CreateBy = !string.IsNullOrEmpty(d["CreateBy"].ToString()) ? d["CreateBy"] : "",
                                   UpdateBy = !string.IsNullOrEmpty(d["UpdateBy"].ToString()) ? d["UpdateBy"] : "",
                                   CreateDate = !string.IsNullOrEmpty(d["CreateDate"].ToString()) ? d["CreateDate"] : "",
-                                  UpdateDate = !string.IsNullOrEmpty(d["UpdateDate"].ToString()) ? d["UpdateDate"] : "",                          
+                                  UpdateDate = !string.IsNullOrEmpty(d["UpdateDate"].ToString()) ? d["UpdateDate"] : "",
                               }).ToList();
                 return Ok(result);
             }
@@ -396,7 +395,7 @@ namespace Cashiering.Controllers
         public IActionResult ExchangeRate()
         {
             List<CurrencyModel> crrlist = PropertyUtils.ConvertToList<CurrencyModel>(CurrencyBO.Instance.FindAll());
-            ViewBag.CurrencyList = crrlist;        
+            ViewBag.CurrencyList = crrlist;
             return View(); // View này sẽ chứa DataGrid + script gọi API
         }
         [HttpPost]
@@ -580,7 +579,7 @@ namespace Cashiering.Controllers
                                   ExchangeCurrencyID = !string.IsNullOrEmpty(d["ExchangeCurrencyID"].ToString()) ? d["ExchangeCurrencyID"] : "",
                                   StatusText = !string.IsNullOrEmpty(d["StatusText"].ToString()) ? d["StatusText"] : "",
                                   Status = !string.IsNullOrEmpty(d["Status"].ToString()) ? d["Status"] : "",
-                                  InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",                                
+                                  InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",
                               }).ToList();
                 return Ok(result);
             }
@@ -592,14 +591,14 @@ namespace Cashiering.Controllers
         public IActionResult ExchangeCurrency()
         {
 
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView(); // View này sẽ chứa DataGrid + script gọi API
         }
 
 
         #region DatVP __ Close Shift
         public IActionResult CloseShift()
         {
-            return View(); 
+            return View();
         }
         [HttpGet]
         public IActionResult GetTransactionByShift(int shiftID)
@@ -610,22 +609,22 @@ namespace Cashiering.Controllers
                 DataTable resultPaymentData = _iCloseShiftService.GetCloseShift(shiftID, 0);
 
                 var resultPayment = (from d in resultPaymentData.AsEnumerable()
-                              select d.Table.Columns.Cast<DataColumn>()
-                                  //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
-                                  .ToDictionary(
-                                      col => col.ColumnName,
-                                      col => d[col.ColumnName]?.ToString()
-                                  )).ToList();
-
-                // type = 1: Exchange
-                DataTable resultExchangeData = _iCloseShiftService.GetCloseShift(shiftID, 1);
-                var resultExchange = (from d in resultExchangeData.AsEnumerable()
                                      select d.Table.Columns.Cast<DataColumn>()
                                          //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
                                          .ToDictionary(
                                              col => col.ColumnName,
                                              col => d[col.ColumnName]?.ToString()
                                          )).ToList();
+
+                // type = 1: Exchange
+                DataTable resultExchangeData = _iCloseShiftService.GetCloseShift(shiftID, 1);
+                var resultExchange = (from d in resultExchangeData.AsEnumerable()
+                                      select d.Table.Columns.Cast<DataColumn>()
+                                          //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
+                                          .ToDictionary(
+                                              col => col.ColumnName,
+                                              col => d[col.ColumnName]?.ToString()
+                                          )).ToList();
                 return Json(new
                 {
                     resultPayment = resultPayment,
@@ -645,7 +644,7 @@ namespace Cashiering.Controllers
             {
                 int shiftID = int.Parse(Request.Form["shiftID"].ToString());
                 ShiftModel shift = (ShiftModel)ShiftBO.Instance.FindByPrimaryKey(shiftID);
-                if(shift == null || shift.ID == 0)
+                if (shift == null || shift.ID == 0)
                 {
                     return Json(new
                     {
@@ -655,8 +654,9 @@ namespace Cashiering.Controllers
                 }
                 shift.Status = true;
                 ShiftBO.Instance.Update(shift);
-                return Json(new {
-                    code = 1,
+                return Json(new
+                {
+                    code = 0,
                     msg = "Close shift was successfully"
                 });
 
@@ -675,23 +675,48 @@ namespace Cashiering.Controllers
         {
             ViewBag.cboZone = ListItemHelper.GetZoneProvider();
 
-            return View();
+            return PartialView();
         }
 
         [HttpGet]
-        public IActionResult GuestInHouse(string room, string name, string block, string group, string company, string confirmationNo, DateTime arrivalDate, DateTime arrivalTo, DateTime departure, string crsNo, string package, string guestName, int zone, int typeSearch)
+        public IActionResult GuestInHouse(string room, string name, string block, string group, string company, string confirmationNo, DateTime arrivalDate, DateTime arrivalTo, DateTime departure, string crsNo, string package, string guestName, int zone, int typeSearch, int chooseArrivalFrom, int chooseArrivalTo, int chooseDeparture)
         {
             try
             {
+                string formattedArrivalFrom = arrivalDate.ToString("yyyy-MM-dd");
+                string formattedArrivalTo = arrivalTo.ToString("yyyy-MM-dd");
+                string formattedDeparture = departure.ToString("yyyy-MM-dd");
 
-                DataTable resultExchangeData = _iCashieringManagerService.GetGUestInHouse(room, name, block, group, "", company, confirmationNo, arrivalDate, arrivalTo, departure,  crsNo,  package,  guestName,  zone,  typeSearch);
-                var resultExchange = (from d in resultExchangeData.AsEnumerable()
-                                      select d.Table.Columns.Cast<DataColumn>()
-                                          //.Where(col => col.ColumnName != "AllotmentStageID" && col.ColumnName != "flag" && col.ColumnName != "Total")
-                                          .ToDictionary(
-                                              col => col.ColumnName,
-                                              col => d[col.ColumnName]?.ToString()
-                                          )).ToList();
+                if (chooseArrivalFrom == 0)
+                {
+                    formattedArrivalFrom = "";
+                }
+                if (chooseArrivalTo == 0)
+                {
+                    formattedArrivalTo = "";
+                }
+                if (chooseDeparture == 0)
+                {
+                    formattedDeparture = "";
+                }
+                DataTable resultExchangeData = _iCashieringManagerService.GetGUestInHouse(room, name, block, group, "", company, confirmationNo, formattedArrivalFrom, formattedArrivalTo, formattedDeparture, crsNo, package, guestName, zone, typeSearch);
+                var resultExchange = resultExchangeData.AsEnumerable()
+                   .Select(d =>
+                       d.Table.Columns.Cast<DataColumn>()
+                       .ToDictionary(
+                           col => col.ColumnName,
+                           col =>
+                           {
+                               if ((col.ColumnName == "Arrival" || col.ColumnName == "Departure")
+                                   && DateTime.TryParse(d[col.ColumnName]?.ToString(), out DateTime dt))
+                               {
+                                   return dt.ToString("dd/MM/yyyy");
+                               }
+
+                               return d[col.ColumnName]?.ToString();
+                           }
+                       )
+                   ).ToList();
                 return Json(resultExchange);
             }
             catch (Exception ex)
@@ -795,7 +820,7 @@ namespace Cashiering.Controllers
         {
             List<UsersModel> listuser = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
             ViewBag.UsersList = listuser;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public IActionResult GetSearchPostingHistoryDetail(string invoiceNo)
@@ -818,7 +843,7 @@ namespace Cashiering.Controllers
                                   InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",
                                   ActionType = !string.IsNullOrEmpty(d["ActionType"].ToString()) ? d["ActionType"] : "",
                                   ID = !string.IsNullOrEmpty(d["ID"].ToString()) ? d["ID"] : "",
-                                
+
                               }).ToList();
                 return Json(result);
             }
@@ -985,15 +1010,15 @@ namespace Cashiering.Controllers
             ViewBag.ZoneList = listzo;
             List<UsersModel> listus = PropertyUtils.ConvertToList<UsersModel>(UsersBO.Instance.FindAll());
             ViewBag.UsersList = listus;
-            return View(); // View này sẽ chứa DataGrid + script gọi API
+            return PartialView(); // View này sẽ chứa DataGrid + script gọi API
         }
 
         [HttpGet]
-        public IActionResult ExchangeCurrencyReportData(DateTime fromDate,string cachier,string zonecode)
+        public IActionResult ExchangeCurrencyReportData(DateTime fromDate, string cachier, string zonecode)
         {
             try
             {
-                
+
 
                 DataTable dataTable = _iCashieringService.ExchangeCurrencyReportData(fromDate, cachier, zonecode);
                 // Nếu có dữ liệu, tạo report
@@ -1068,6 +1093,80 @@ namespace Cashiering.Controllers
                     return Json(new { pdfBase64 = $"data:application/pdf;base64,{base64String}" });
                 }
 
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
+        #region Tuan_Invoice 6/2/2026
+        public IActionResult EInvoiceManager()
+        {
+            return PartialView();
+        }
+
+        [HttpGet]
+        public IActionResult SetUpInvoiceSerial()
+        {
+            try
+            {
+                DataTable table = _iCashieringManagerService.SetUpInvoiceSerial();
+                var result = (from d in table.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>().ToDictionary(
+                                  col => col.ColumnName,
+                                  col =>
+                                  {
+                                      {
+                                          var value = d[col.ColumnName];
+                                          if (value == DBNull.Value) return null;
+
+                                          // CreatedDate: KHÔNG ToString
+                                          if (col.ColumnName == "CreatedDate" || col.ColumnName == "UpdatedDate")
+                                              return value;
+
+                                          // Các field khác: ToString
+                                          return value.ToString();
+                                      }
+                                  }
+                              )).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult SearchInvoiceOrInvoiceDetail(DateTime fromDate, DateTime toDate, string searchName, string confNo,
+         string folioNo, string invoiceNo, string invoiceSerial, int print, int resType, int viewBy, int id)
+        {
+            searchName ??= "";
+            invoiceSerial ??= "";
+            confNo ??= "";
+            folioNo ??= "";
+            invoiceNo ??= "";
+            try
+            {
+                DataTable dataTable = _iCashieringManagerService.SearchInvoiceOrInvoiceDetail(fromDate, toDate, searchName, confNo,
+                    folioNo, invoiceNo, invoiceSerial, print, resType, viewBy, id);
+                var result = (from d in dataTable.AsEnumerable()
+                              select d.Table.Columns.Cast<DataColumn>().ToDictionary(
+                              col => col.ColumnName,
+                              col =>
+                              {
+                                  var value = d[col.ColumnName];
+                                  if (value == DBNull.Value) return null;
+                                  if (col.ColumnName == "verificationCode") return null;
+
+                                  // CreatedDate: KHÔNG ToString
+                                  if (col.ColumnName == "CreatedDate" || col.ColumnName == "UpdatedDate")
+                                      return value;
+
+                                  // Các field khác: ToString
+                                  return value.ToString();
+                              }
+                          )).ToList();
+                return Json(result);
             }
             catch (Exception ex)
             {

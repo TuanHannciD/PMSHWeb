@@ -1,4 +1,5 @@
-﻿using BaseBusiness.util;
+using BaseBusiness.Model;
+using BaseBusiness.util;
 using Billing.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using System;
@@ -21,7 +22,7 @@ namespace Billing.Services.Implements
                     new SqlParameter("@GuestStatus", guestStatus),
 
                      new SqlParameter("@FolioStatus", folioStatus),
-                    new SqlParameter("@FolioType", folioType),
+                     new SqlParameter("@FolioType", folioType),
                      new SqlParameter("@Name", name ?? ""),
                      new SqlParameter("@Room", room ?? ""),
                      new SqlParameter("@FolioNo", folioNo ?? ""),
@@ -39,6 +40,18 @@ namespace Billing.Services.Implements
 
                 throw new Exception($"ERROR: {ex.Message}", ex);
             }
+        }
+
+        public DataTable GetPreviewBillingAmount(int confirmationNo, int folioID)
+        {
+            SqlParameter[] param = new SqlParameter[]
+                {
+                    new SqlParameter("@ConfirmationNo",confirmationNo),
+                    new SqlParameter("@FolioNo",folioID),
+                };
+
+            DataTable myTable = DataTableHelper.getTableData("Get_PreviewBilling_Amount", param);
+            return myTable;
         }
     }
 }

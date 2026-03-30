@@ -24,7 +24,7 @@ namespace BaseBusiness.BO
         }
         public static int CheckOverBooking(int roomTypeID, DateTime date)
         {
-            string query = $"select count(*) from Overbooking where RoomTypeID = {roomTypeID} and cast(Date as date) = cast('{date}' as date)";
+            string query = $"select count(*) from Overbooking where RoomTypeID = {roomTypeID} and cast(Date as date) = cast('{date.ToString("yyyy-MM-dd")}' as date)";
             return instance.GetFirst<int>(query);
         }
     }

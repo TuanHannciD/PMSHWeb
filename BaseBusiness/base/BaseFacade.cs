@@ -1,11 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Transactions;
-using System.Xml;
 using BaseBusiness.exception;
 using BaseBusiness.util;
 using BaseBusiness.Utils;
@@ -13,6 +5,15 @@ using Dapper;
 using log4net;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Transactions;
+using System.Xml;
 
 namespace BaseBusiness.bc
 {
@@ -1267,6 +1268,60 @@ namespace BaseBusiness.bc
             }
         }
 
+        public bool Exists(string table, Dictionary<string, object> conditions, long id = 0)
+        {
+            var sql = new StringBuilder($"SELECT TOP 1 1 FROM {table} WHERE 1=1 ");
+            var param = new DynamicParameters();
+
+            foreach (var item in conditions)
+            {
+                if (item.Value == null) continue;
+
+                sql.Append($" AND {item.Key} = @{item.Key}");
+                param.Add("@" + item.Key, item.Value);
+            }
+
+            if (id > 0)
+            {
+                sql.Append(" AND ID <> @ID");
+                param.Add("@ID", id);
+            }
+
+            using (var conn = new SqlConnection(strcon))
+            {
+                conn.Open();
+                return conn.ExecuteScalar<int?>(sql.ToString(), param) != null;
+            }
+        }
+        public bool Exists(
+            string table,
+            Dictionary<string, object> conditions,
+            string id,
+            string idField = "ID")
+        {
+            var sql = new StringBuilder($"SELECT TOP 1 1 FROM {table} WHERE 1=1 ");
+            var param = new DynamicParameters();
+
+            foreach (var item in conditions)
+            {
+                if (item.Value == null) continue;
+
+                sql.Append($" AND {item.Key} = @{item.Key}");
+                param.Add("@" + item.Key, item.Value);
+            }
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                sql.Append($" AND {idField} <> @ID");
+                param.Add("@ID", id);
+            }
+
+            using (var conn = new SqlConnection(strcon))
+            {
+                conn.Open();
+                return conn.ExecuteScalar<int?>(sql.ToString(), param) != null;
+            }
+        }
 
 
     }

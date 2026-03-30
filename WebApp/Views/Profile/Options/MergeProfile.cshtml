@@ -1,0 +1,283 @@
+
+
+<div class="modal fade" id="modalMergeProfile" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content modal-full-height">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"> Profile Merge</h5>
+            </div>
+            <div class="modal-body d-flex flex-column" style="height: calc(100vh - 120px);">
+                <div class="flex-shrink-0 py-2">
+                    <button type="button" class="mui-button mui-button-save" id="pro_merge_btnMerge">Merge</button>
+                    <button type="button" class="mui-button mui-button-close" id="pro_merge_btnSwap">Swap</button>
+                    <button type="button" class="mui-button mui-button-close" data-bs-dismiss="modal">Close</button>
+
+                </div>
+
+                <div class="row flex-grow-1" style="min-height: 0;">
+                    <div class="col-md-6 border-end d-flex flex-column h-100">
+                        <div class="alert alert-warning p-1 mb-2 text-center small flex-shrink-0"><b>Profile to Merge (Delete)</b></div>
+                        <div class="gridContainer">
+                            <div id="gridMergeSource"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column h-100">
+                        <div class="alert alert-success p-1 mb-2 text-center small flex-shrink-0"><b>Original Profile (Keep)</b></div>
+                        <div class="gridContainer mt-2 d-flex flex-column flex-grow-1 overflow-auto">
+                            <div id="gridMergeDest"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var pro_merge_Module = {
+        sourceID: 0,
+        destID: 0,
+        profileType: 0,
+
+        lookups: {
+            titles: [],
+            languages: [],
+            nationalities: [],
+            countries: [],
+            vips: []
+        },
+
+        init: function(sourceId, destId, type) {
+            this.sourceID = sourceId;
+            this.destID = destId;
+            this.profileType = type;
+
+            this.loadAllLookups().then(() => {
+                this.loadData();
+                this.initDOMEvents();
+            });
+        },
+
+        loadAllLookups: function() {
+            return Promise.all([
+                $.get('/Profile/GetAllTitle'),
+                $.get('/Profile/GetAllLanguage'),
+                $.get('/Profile/GetAllNationality'),
+                $.get('/Profile/GetAllCountry'),
+                $.get('/Profile/GetAllVIP')
+            ]).then(([titles, languages, nats, countries, vips]) => {
+                this.lookups.titles = titles;
+                this.lookups.languages = languages;
+                this.lookups.nationalities = nats;
+                this.lookups.countries = countries;
+                this.lookups.vips = vips;
+            });
+        },
+
+        initDOMEvents: function () {
+            const self = this;
+            $("#pro_merge_btnMerge").off("click").on("click", () => self.executeMerge());
+            $("#pro_merge_btnSwap").off("click").on("click", () => self.swapProfiles());
+        },
+
+        // Hàm hoán đổi vị trí Original và Delete
+        swapProfiles: function() {
+            let temp = this.sourceID;
+            this.sourceID = this.destID;
+            this.destID = temp;
+            this.loadData();
+            showToast("Success","Swap success !",true);
+        },
+
+        loadData: function() {
+            $.get(`/Profile/GetMergeData?sourceId=${this.sourceID}&destId=${this.destID}`, (res) => {
+                this.renderGrids(res.source, res.dest);
+            });
+        },
+
+        renderGrids: function(sourceData, destData) {
+            const self = this;
+            // Danh sách các field cần so sánh tương đương Winform
+            const fields = [
+                { key: 'Account', label: 'Name' },
+                { key: 'TitleID', label: 'Title', lookupSource: self.lookups.titles },
+                { key: 'Address', label: 'Address' },
+                { key: 'LanguageID', label: 'Language', lookupSource: self.lookups.languages },
+                { key: 'NationalityID', label: 'Nationality', lookupSource: self.lookups.nationalities },
+                { key: 'City', label: 'City' }, 
+                { key: 'CountryID', label: 'Country', lookupSource: self.lookups.countries },
+                { key: 'MemberType', label: 'Member Type' },
+                { key: 'Passport', label: 'Passport' },
+                { key: 'IdentityCard', label: 'Identity Card' },
+                { key: 'DateOfBirth', label: 'Date of Birth', isDate: true }, 
+                { key: 'Telephone', label: 'Telephone' },
+                { key: 'Fax', label: 'Fax' },
+                { key: 'Email', label: 'Email' },
+                { key: 'Website', label: 'Website' },
+                { key: 'VIPID', label: 'VIP', lookupSource: self.lookups.vips },
+                { key: 'LastRoom', label: 'LastRoom' },
+                { key: 'ReturnGuestOld', label: 'Return' },
+                { key: 'Company', label: 'Company' },
+                { key: 'TaxCode', label: 'Tax Code' },
+                { key: 'BusinessTitle', label: 'Business Address' }
+            ];
+
+            const calculateDisplay = function(rowData) {
+                if (!rowData.value || rowData.value === "0" || rowData.value === 0) {
+                    return "";
+                }
+
+                if (rowData.isDate) {
+                    try {
+                        const date = new Date(rowData.value);
+                        if (!isNaN(date.getTime())) {
+                            return date.toLocaleDateString('vi-VN'); // Trả về dd/MM/yyyy
+                        }
+                    } catch (e) { return rowData.value; }
+                }
+
+                if (rowData.lookupSource) {
+                    const val = rowData.value.toString();
+                    const item = rowData.lookupSource.find(x => 
+                        (x.id?.toString() === val || x.ID?.toString() === val)
+                    );
+                    return item ? (item.code || item.Code || item.name || item.Name) : "";
+                }
+
+                return rowData.value || "";
+            };
+
+            const columnsConfig = (isSource) => [
+                {
+                    dataField: "label",
+                    caption: "Field",
+                    width: 130,
+                    allowEditing: false
+                },
+                {
+                    dataField: "value",
+                    caption: isSource ? "Data" : "Original Data",
+
+                    calculateDisplayValue: calculateDisplay,
+                    customizeText: function(cellInfo) {
+                        if (!cellInfo || !cellInfo.row || !cellInfo.row.data) {
+                            return cellInfo.valueText;
+                        }
+
+                        const currentLabel = cellInfo.row.data.label;
+                       
+                        return cellInfo.valueText;
+                    }
+                }
+            ];
+
+            $("#gridMergeSource").dxDataGrid({
+                dataSource: new DevExpress.data.ArrayStore({
+                    key: "key",
+                    data: fields.map(f => ({
+                        ...f,
+                        value: sourceData[f.key.toLowerCase()] 
+                    }))
+                }),
+                columns: columnsConfig(true),
+                selection: { 
+                    mode: "multiple", 
+                    showCheckBoxesMode: "always" 
+                },
+                height: "100%",
+                showBorders: true,
+                paging: { enabled: false }, 
+                scrolling: { mode: "standard" }
+            });
+
+            $("#gridMergeDest").dxDataGrid({
+                dataSource: fields.map(f => ({
+                    ...f,
+                    value: destData[f.key.toLowerCase()] 
+                })),
+                columns: columnsConfig(false),
+                height: "100%",
+                showBorders: true,
+                paging: { enabled: false }, 
+                scrolling: { mode: "standard" }
+            });
+        },
+
+        executeMerge: function() {
+            const self = this;
+
+            const loginUser = parseInt(localStorage.getItem("userID")) || 0;
+
+            // Lấy danh sách field được tích chọn bằng selectedRowKeys của DevExtreme
+            const gridInstance = $("#gridMergeSource").dxDataGrid("instance");
+            const selectedFields = gridInstance.getSelectedRowKeys();
+
+
+            if (selectedFields.includes('Account')) {
+                selectedFields.push('Firstname', 'LastName', 'MiddleName');
+            }
+
+            if (!confirm("Are you sure you want to merge profile to original profile?")) return;
+            const items = gridInstance.getDataSource().items();
+            const sourceData = {};
+            items.forEach(i => {
+                sourceData[i.key] = i.value;
+            });
+
+            const payload = {
+                SourceID: self.sourceID,
+                DestID: self.destID,
+                Type: self.profileType,
+                UserUpdateID: loginUser,
+                OverrideFields: selectedFields,
+
+                // dữ liệu source profile
+                    Account: sourceData.Account,
+                    TitleID: sourceData.TitleID,
+                    Address: sourceData.Address,
+                    LanguageID: sourceData.LanguageID,
+                    NationalityID: sourceData.NationalityID,
+                    City: sourceData.City,
+                    CountryID: sourceData.CountryID,
+                    MemberType: sourceData.MemberType,
+                    Passport: sourceData.Passport,
+                    IdentityCard: sourceData.IdentityCard,
+                    DateOfBirth: sourceData.DateOfBirth,
+                    Telephone: sourceData.Telephone,
+                    Fax: sourceData.Fax,
+                    Email: sourceData.Email,
+                    Website: sourceData.Website,
+                    VIPID: sourceData.VIPID,
+                    LastRoom: sourceData.LastRoom,
+                    ReturnGuestOld: sourceData.ReturnGuestOld,
+                    Company: sourceData.Company,
+                    TaxCode: sourceData.TaxCode,
+                    BusinessTitle: sourceData.BusinessTitle
+            };
+            
+            $.ajax({
+                url: '/Profile/ExecuteMerge',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: (res) => {
+                    if(res.success) {
+                        showToast("Success", "Profiles merged successfully", true);
+                        $('#modalMergeProfile').modal('hide');
+                        $('#pro_search_modalOption').modal('hide');
+                        
+                        if(pro_search_Module) pro_search_Module.getAllProfiles();
+                    } else {
+                        showToast("Error", res.message, false);
+                    }
+                }
+            });
+        }
+    };
+
+    window.openModalMerge = function(sourceId, destId, type) {
+        if (pro_merge_Module) {
+            pro_merge_Module.init(sourceId, destId, type);
+        }
+    };
+</script>

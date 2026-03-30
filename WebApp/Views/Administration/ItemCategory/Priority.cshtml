@@ -1,0 +1,546 @@
+﻿<!-- Main Modal -->
+<div class="modal fade" id="proT_mainModal" tabindex="-1" aria-labelledby="proT_mainModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg-4by3 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="proT_mainModalLabel">Priority</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <div>
+                        <button id="proT_btnView" type="button" class="mui-button mui-button-search">View</button>
+                        <button id="proT_btnNew" type="button" class="mui-button mui-button-new">New</button>
+                        <button id="proT_btnEdit" type="button" class="mui-button mui-button-edit">Edit</button>
+                        <button id="proT_btnDelete" type="button" class="mui-button mui-button-delete">Delete</button>
+                        <button id="proT_btnExportExcel" type="button" class="mui-button mui-button-export">Excel</button>
+                        <button type="button" class="mui-button mui-button-new" data-bs-dismiss="modal" aria-label="Close">Close</button>
+                    </div>
+
+                    <div class="row g-2 mt-1">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label for="proT_filterCode" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Code
+                                </label>
+                                <div class="col-md-8">
+                                    <input id="proT_filterCode"
+                                           name="proT_filterCode"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label for="proT_filterName" class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Name
+                                </label>
+                                <div class="col-md-8">
+                                    <input id="proT_filterName"
+                                           name="proT_filterName"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-4 col-form-label col-form-label-sm text-md-end">
+                                    Status
+                                </label>
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center h-100">
+                                        <div class="form-check d-flex align-items-center gap-2">
+                                            <span class="status-color-box color-clean-uncheck"></span>
+                                            <input type="checkbox" id="proT_chkShowInactive" name="proT_chkShowInactive">
+                                            <label class="form-check-label" for="proT_chkShowInactive">Show Inactive</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-card mt-1">
+                    <div id="proT_gridContainer" class="gridContainer"></div>
+                </div>
+
+                <div id="proT_loadingSpinner"
+                     style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+                     z-index: 999;background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(2px);width: 100%;
+                     height: 100%;display: flex;align-items: center;justify-content: center;">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="proT_itemModal" tabindex="-1" aria-labelledby="proT_itemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="proT_itemModalLabel">Add Priority</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="search-filter">
+                    <button type="button" id="proT_btnSave" class="mui-button mui-button-new">Save</button>
+                    <button type="button" class="mui-button mui-button-new" data-bs-dismiss="modal">Close</button>
+                </div>
+
+                <form id="proT_formContainer">
+                    <div class="row g-2 mt-1 mb-2">
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label for="proT_code" class="col-md-2 col-lg-4 col-form-label col-form-label-sm text-md-end">
+                                    Code
+                                </label>
+                                <div class="col-md-10 col-lg-8">
+                                    <input id="proT_code"
+                                           name="proT_code"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row g-2 align-items-center">
+                                <label class="col-md-2 col-lg-4 col-form-label col-form-label-sm text-md-end">
+                                    Status
+                                </label>
+                                <div class="col-md-10 col-lg-8">
+                                    <div class="form-check d-inline-flex align-items-center gap-2">
+                                        <input id="proT_inactive"
+                                               name="proT_inactive"
+                                               type="checkbox" />
+                                        <label for="proT_inactive" class="form-check-label text-danger">
+                                            Inactive
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row g-2">
+                                <label for="proT_name" class="col-md-2 col-form-label col-form-label-sm text-md-end">
+                                    Name
+                                </label>
+                                <div class="col-md-10">
+                                    <input id="proT_name"
+                                           name="proT_name"
+                                           type="text"
+                                           class="form-control form-control-sm" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row g-2">
+                                <label for="proT_description" class="col-md-2 col-form-label col-form-label-sm text-md-end">
+                                    Description
+                                </label>
+                                <div class="col-md-10">
+                                    <textarea id="proT_description"
+                                              name="proT_description"
+                                              rows="4"
+                                              class="form-control form-control-sm"
+                                              style="height:100px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="proT_id" name="proT_id" value="0" />
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var proT_Module = (() => {
+        let proT_selectedRowData = null;
+
+        const proT_selectors = {
+            mainModal: "#proT_mainModal",
+            itemModal: "#proT_itemModal",
+            form: "#proT_formContainer",
+            grid: "#proT_gridContainer",
+            loading: "#proT_loadingSpinner",
+
+            filterCode: "#proT_filterCode",
+            filterName: "#proT_filterName",
+            chkShowInactive: "#proT_chkShowInactive",
+
+            btnView: "#proT_btnView",
+            btnNew: "#proT_btnNew",
+            btnEdit: "#proT_btnEdit",
+            btnDelete: "#proT_btnDelete",
+            btnExportExcel: "#proT_btnExportExcel",
+            btnSave: "#proT_btnSave",
+
+            modalLabel: "#proT_itemModalLabel",
+
+            id: "#proT_id",
+            code: "#proT_code",
+            name: "#proT_name",
+            description: "#proT_description",
+            inactive: "#proT_inactive"
+        };
+
+        function proT_init() {
+            proT_bindEvents();
+            proT_resetForm();
+            proT_loadGrid([]);
+            proT_loadData();
+        }
+
+        function proT_bindEvents() {
+            $(document)
+                .off("input change", `${proT_selectors.form} input, ${proT_selectors.form} select, ${proT_selectors.form} textarea`)
+                .on("input change", `${proT_selectors.form} input, ${proT_selectors.form} select, ${proT_selectors.form} textarea`, function () {
+                    if ($(this).hasClass("is-invalid")) {
+                        $(this).removeClass("is-invalid");
+                        $(this).next(".invalid-feedback").text("");
+                    }
+                });
+
+            $(proT_selectors.itemModal)
+                .off("hidden.bs.modal")
+                .on("hidden.bs.modal", function () {
+                    proT_resetForm();
+                    applyValidationErrors([], proT_selectors.form);
+                });
+
+            $(document)
+                .off("click", proT_selectors.btnView)
+                .on("click", proT_selectors.btnView, function () {
+                    proT_loadData();
+                });
+
+            $(document)
+                .off("click", proT_selectors.btnNew)
+                .on("click", proT_selectors.btnNew, function () {
+                    proT_openAddModal();
+                });
+
+            $(document)
+                .off("click", proT_selectors.btnEdit)
+                .on("click", proT_selectors.btnEdit, function () {
+                    proT_openEditModal();
+                });
+
+            $(document)
+                .off("click", proT_selectors.btnSave)
+                .on("click", proT_selectors.btnSave, function () {
+                    proT_save();
+                });
+
+            $(document)
+                .off("click", proT_selectors.btnDelete)
+                .on("click", proT_selectors.btnDelete, function () {
+                    proT_delete();
+                });
+
+            $(document)
+                .off("click", proT_selectors.btnExportExcel)
+                .on("click", proT_selectors.btnExportExcel, function () {
+                    proT_exportExcel();
+                });
+        }
+
+        function proT_resetForm() {
+            const proT_form = $(proT_selectors.form)[0];
+            if (proT_form) {
+                proT_form.reset();
+            }
+
+            $(proT_selectors.id).val("0");
+            $(proT_selectors.modalLabel).text("Add Priority");
+            proT_selectedRowData = null;
+        }
+
+        function proT_openAddModal() {
+            proT_resetForm();
+            $(proT_selectors.modalLabel).text("Add Priority");
+            $(proT_selectors.itemModal).modal("show");
+        }
+
+        function proT_openEditModal() {
+            if (!proT_selectedRowData) {
+                showToast("Warning", "Please select 1 row to edit.", false);
+                return;
+            }
+
+            proT_fillForm(proT_selectedRowData);
+            $(proT_selectors.modalLabel).text("Update Priority");
+            $(proT_selectors.itemModal).modal("show");
+        }
+
+        function proT_fillForm(proT_data) {
+            $(proT_selectors.id).val(proT_data.id);
+            $(proT_selectors.code).val(proT_data.code);
+            $(proT_selectors.name).val(proT_data.name);
+            $(proT_selectors.description).val(proT_data.description);
+            $(proT_selectors.inactive).prop("checked", proT_data.inactive);
+        }
+
+        function proT_getSearchModel() {
+            return {
+                code: $(proT_selectors.filterCode).val(),
+                name: $(proT_selectors.filterName).val(),
+                inactive: $(proT_selectors.chkShowInactive).prop("checked") ? 1 : 0
+            };
+        }
+
+        function proT_getSaveModel() {
+            const proT_id = parseInt($(proT_selectors.id).val()) || 0;
+            let proT_loginName = (localStorage.getItem("Loginname") || "")
+                .trim()
+                .replace(/^"(.*)"$/, "$1");
+            const proT_loginUser = parseInt(localStorage.getItem("userID")) || 0;
+
+            return {
+                ID: proT_id,
+                Code: $(proT_selectors.code).val(),
+                Name: $(proT_selectors.name).val(),
+                Description: $(proT_selectors.description).val(),
+                Inactive: $(proT_selectors.inactive).prop("checked"),
+                CreatedBy: proT_loginName,
+                UpdatedBy: proT_loginName,
+                UserInsertID: proT_loginUser,
+                UserUpdateID: proT_loginUser
+            };
+        }
+
+        function proT_showLoading() {
+            $(proT_selectors.loading).show();
+        }
+
+        function proT_hideLoading() {
+            $(proT_selectors.loading).hide();
+        }
+
+        function proT_loadData() {
+            proT_showLoading();
+
+            $.ajax({
+                url: "/Administration/GetPriority",
+                type: "GET",
+                cache: false,
+                data: proT_getSearchModel(),
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (proT_data) {
+                    proT_loadGrid(proT_data || []);
+                    proT_hideLoading();
+                },
+                error: function () {
+                    showToast("Error", "Unable to load data", false);
+                    proT_hideLoading();
+                }
+            });
+        }
+
+        function proT_loadGrid(proT_data) {
+            $(proT_selectors.grid).dxDataGrid({
+                dataSource: proT_data,
+                width: "100%",
+                allowColumnResizing: true,
+                columnResizingMode: "widget",
+                selection: { mode: "single" },
+                hoverStateEnabled: true,
+                columns: [
+                    { dataField: "id", visible: false },
+                    { dataField: "code", caption: "Code", width: "10" },
+                    { dataField: "name", caption: "Name", width: "150" },
+                    { dataField: "description", caption: "Description", minWidth: 120, cssClass: "col-description"},
+                    { dataField: "inactive", caption: "Inactive", width: "6%",
+                        cellTemplate: function (container, options) {
+                            $("<div>")
+                                .dxCheckBox({
+                                    value: options.value == 1 || options.value === true,
+                                    readOnly: true
+                                })
+                                .css("transform", "scale(0.8)")
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: "createdBy", caption: "Created By", width: "80" },
+                    { dataField: "createdDate", caption: "Cre.Date", dataType: "date", width: "80" },
+                    { dataField: "updatedBy", caption: "Updated By", width: "80" },
+                    { dataField: "updatedDate", caption: "Upd.Date", dataType: "date", width: "80" }
+                ],
+                filterRow: { visible: true, applyFilter: "auto" },
+                paging: { pageSize: 20 },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [20, 50, "all"],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true
+                },
+                scrolling: { mode: "standard", showScrollbar: "always" },
+                onSelectionChanged: function (e) {
+                    proT_selectedRowData = e.selectedRowsData.length > 0 ? e.selectedRowsData[0] : null;
+                }
+            });
+        }
+
+        function proT_save() {
+            const proT_model = proT_getSaveModel();
+
+            $.ajax({
+                url: "/Administration/PrioritySave",
+                type: "POST",
+                contentType: "application/json",
+                cache: false,
+                data: JSON.stringify(proT_model),
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (proT_res) {
+                    if (proT_res.success) {
+                        showToast("Success", proT_res.message, true);
+                        $(proT_selectors.itemModal).modal("hide");
+                        proT_loadData();
+                        return;
+                    }
+
+                    if (proT_res.errors && proT_res.errors.length > 0) {
+                        applyValidationErrors(proT_res.errors, proT_selectors.form);
+
+                        let proT_generalError = proT_res.errors.find(x => x.field === "general");
+                        let proT_toastMessage = proT_generalError ? proT_generalError.message : "Please check input fields.";
+
+                        showToast("Warning", proT_toastMessage, false);
+                        return;
+                    }
+
+                    showToast("Error", proT_res.message || "Save failed", false);
+                },
+                error: function () {
+                    showToast("Error", "Request error!", false);
+                    $(proT_selectors.itemModal).modal("hide");
+                }
+            });
+        }
+
+        function proT_delete() {
+            if (!proT_selectedRowData || proT_selectedRowData.id === 0) {
+                showToast("Warning", "Please select 1 row to delete.", false);
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete this record? This action cannot be undone.")) {
+                return;
+            }
+
+            $.ajax({
+                url: `/Administration/DeletePriority/` + proT_selectedRowData.id,
+                type: "POST",
+                traditional: true,
+                crossDomain: false,
+                headers: {
+                    "X-CSRF-TOKEN-HEADERNAME": jQuery("input[name='__RequestVerificationToken']").val()
+                },
+                success: function (proT_result) {
+                    if (proT_result.success) {
+                        proT_loadData();
+                        showToast("Success", "Delete Successfully!", true);
+                        return;
+                    }
+
+                    showToast("Error", proT_result.message, false);
+                },
+                error: function () {
+                    console.log("delete " + proT_selectedRowData.id);
+                    showToast("Error", "Delete failed!", false);
+                    $("#loadingSpinner").hide();
+                }
+            });
+        }
+
+        function proT_exportExcel() {
+            const proT_grid = $(proT_selectors.grid).dxDataGrid("instance");
+
+            const proT_workbook = new ExcelJS.Workbook();
+            const proT_companyName = localStorage.getItem("CompanyName") || "Tên công ty chưa xác định";
+            const proT_worksheet = proT_workbook.addWorksheet("Sheet 1");
+
+            proT_worksheet.addRow([proT_companyName]);
+            proT_worksheet.mergeCells("A1:D1");
+            proT_worksheet.getRow(1).font = { bold: true };
+            proT_worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "left" };
+
+            const proT_now = new Date();
+            const proT_exportDate = proT_now.toLocaleString("vi-VN");
+            proT_worksheet.addRow(["", "", "", proT_exportDate]);
+            proT_worksheet.mergeCells("D2:D2");
+            proT_worksheet.getRow(2).alignment = { vertical: "middle", horizontal: "right" };
+
+            proT_worksheet.addRow([]);
+            proT_worksheet.addRow([]);
+
+            const proT_reportRow = proT_worksheet.addRow(["Priority"]);
+            proT_worksheet.mergeCells("A5:D5");
+            proT_reportRow.font = { bold: true, size: 14 };
+            proT_reportRow.alignment = { vertical: "middle", horizontal: "center" };
+
+            proT_worksheet.addRow([]);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: proT_grid,
+                worksheet: proT_worksheet,
+                autoFilterEnabled: true,
+                topLeftCell: { row: 7, column: 1 }
+            }).then(function () {
+                const proT_lastRow = proT_worksheet.lastRow.number + 2;
+                proT_worksheet.mergeCells(`A${proT_lastRow}:D${proT_lastRow}`);
+                proT_worksheet.getCell(`A${proT_lastRow}`).alignment = { horizontal: "center" };
+                proT_worksheet.getCell(`A${proT_lastRow}`).font = { italic: true };
+
+                let proT_fileName = "Priority.xlsx";
+                proT_workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), proT_fileName);
+                });
+            });
+        }
+
+        return {
+            init: proT_init,
+            loadData: proT_loadData,
+            openAddModal: proT_openAddModal,
+            openEditModal: proT_openEditModal
+        };
+    })();
+
+    window.openModalPriority = function () {
+        const modalEl = document.querySelector("#proT_mainModal");
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        $(modalEl).one("shown.bs.modal", function () {
+            proT_Module.init();
+        });
+        modal.show();
+    };
+</script>

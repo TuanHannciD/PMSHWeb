@@ -5,12 +5,13 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">WaitList</h5>
-                <button type="button" class="btn-close" onclick="closeModalWaitList()"></button>
+              @*   <button type="button" class="btn-close" onclick="closeModalWaitList()"></button> *@
             </div>
             <div class="modal-body">
                 <div>
-                    <button class="mui-button mui-button-search" onclick="SaveWaitList();"><i class="fa-solid fa-magnifying-glass"></i> OK</button>
-                    <button class="mui-button mui-button-clear"><i class="fa-solid fa-file"></i>Close</button>
+                    <button class="mui-button mui-button-new" onclick="SaveWaitList(0)">OK</button>
+                    <button class="mui-button mui-button-new" onclick="closeModalWaitList()">Close</button>
+
                 </div>
                 <div class="row mt-2">
                     <label class="col-md-2">Reason</label>

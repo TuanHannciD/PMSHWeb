@@ -8,6 +8,7 @@ using DevExpress.Web.Internal;
 using DevExpress.XtraReports.Design;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraRichEdit.Fields;
+using DevExpress.XtraRichEdit.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
@@ -38,7 +41,7 @@ namespace Billing.Controllers
         private readonly IInvoicingService _invoicingService;
         private readonly IAdjustTransactionService _iAdjustTransactionService;
         public BillingController(ILogger<BillingController> logger,
-                IMemoryCache cache, IConfiguration configuration, IPostService iPostService, ITransferTransactionService transferTransactionService, ICrashierService iCrashierService, IInvoicingService invoicingService,IAdjustTransactionService adjustTransaction)
+                IMemoryCache cache, IConfiguration configuration, IPostService iPostService, ITransferTransactionService transferTransactionService, ICrashierService iCrashierService, IInvoicingService invoicingService, IAdjustTransactionService adjustTransaction)
         {
             _cache = cache;
             _logger = logger;
@@ -47,13 +50,13 @@ namespace Billing.Controllers
             _iTransferTransactionService = transferTransactionService;
             _iCrashierService = iCrashierService;
             _invoicingService = invoicingService;
-            _iAdjustTransactionService = adjustTransaction; 
+            _iAdjustTransactionService = adjustTransaction;
         }
 
 
         #region DatVP __ Billing: Print
-        [HttpPost] 
-        public ActionResult PrintBilling(string arrivalDate,string departureDate,string folioNo,string confirmationNo,string roomNo,List<DataBillingRecord> dataBilling,string customerName)
+        [HttpPost]
+        public ActionResult PrintBilling(string arrivalDate, string departureDate, string folioNo, string confirmationNo, string roomNo, List<DataBillingRecord> dataBilling, string customerName)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -61,13 +64,26 @@ namespace Billing.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
                 string url = "";
+                DataTable myData = _invoicingService.GetPreviewBillingAmount(int.Parse(confirmationNo), int.Parse(folioNo));
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("vi-VN");
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("vi-VN");
                 XtraReport report = new Billing.Templates.Preview.PreviewBilling();
+                decimal total = Convert.ToDecimal(myData.Rows[0]["Total"] ?? 0);
+                decimal net = Convert.ToDecimal(myData.Rows[0]["Net"] ?? 0);
+                decimal svc = Convert.ToDecimal(myData.Rows[0]["Svc"] ?? 0);
+                decimal vat = Convert.ToDecimal(myData.Rows[0]["Tax"] ?? 0);
                 report.Parameters["arrival_date"].Value = arrivalDate;
                 report.Parameters["departure_date"].Value = departureDate;
                 report.Parameters["folio_no"].Value = folioNo;
                 report.Parameters["confirmation_no"].Value = confirmationNo;
                 report.Parameters["room_no"].Value = roomNo;
                 report.Parameters["name_customer"].Value = customerName;
+                report.Parameters["company_name"].Value = "";
+                report.Parameters["total_amount"].Value = total.ToString();
+                report.Parameters["net_amount"].Value = net.ToString();
+                report.Parameters["svc_amount"].Value = svc.ToString();
+                report.Parameters["vat_amount"].Value = vat.ToString();
+                report.Parameters["balance_amount"].Value = "";
 
                 report.DataSource = dataBilling;
                 report.CreateDocument();
@@ -235,7 +251,7 @@ namespace Billing.Controllers
                     FolioDetailModel folioArticle = new FolioDetailModel();
                     folioArticle.UserID = int.Parse(Request.Form["userID"].ToString());
                     folioArticle.ShiftID = shiftID;
-                    folioArticle.UserName =  Request.Form["userID"].ToString();
+                    folioArticle.UserName = Request.Form["userName"].ToString();
                     folioArticle.CashierNo = shiftName;
                     folioArticle.ReservationID = folioArticle.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                     folioArticle.FolioID = folioArticle.OriginFolioID = folio[0].ID;
@@ -333,7 +349,7 @@ namespace Billing.Controllers
                                 FolioDetailModel folioSub = new FolioDetailModel();
                                 folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
                                 folioSub.ShiftID = shiftID;
-                                folioSub.UserName =  Request.Form["userID"].ToString();
+                                folioSub.UserName = Request.Form["userName"].ToString();
                                 folioSub.CashierNo = shiftName;
                                 folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                                 folioSub.FolioID = folioSub.OriginFolioID = folio[0].ID;
@@ -395,7 +411,7 @@ namespace Billing.Controllers
                                 FolioDetailModel folioSub = new FolioDetailModel();
                                 folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
                                 folioSub.ShiftID = shiftID;
-                                folioSub.UserName =  Request.Form["userID"].ToString();
+                                folioSub.UserName = Request.Form["userName"].ToString();
                                 folioSub.CashierNo = shiftName;
                                 folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                                 folioSub.FolioID = folioSub.OriginFolioID = folio[0].ID;
@@ -460,9 +476,9 @@ namespace Billing.Controllers
                                     priceSvc = (decimal.Parse(!string.IsNullOrEmpty(itemTrans.priceNet) ? itemTrans.priceNet : "0") - priceVat) * (percent / 100) / (1 + (percent / 100));
                                 }
                                 FolioDetailModel folioSub = new FolioDetailModel();
-                                folioSub.UserID =  int.Parse(Request.Form["userID"].ToString());
+                                folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
                                 folioSub.ShiftID = shiftID;
-                                folioSub.UserName = Request.Form["userID"].ToString();
+                                folioSub.UserName = Request.Form["userName"].ToString();
                                 folioSub.CashierNo = shiftName;
                                 folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                                 folioSub.FolioID = folioSub.OriginFolioID = folio[0].ID;
@@ -556,7 +572,7 @@ namespace Billing.Controllers
                 }
 
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "New reservation created successfully" });
+                return Json(new { code = 0, msg = "Posting created successfully" });
 
             }
             catch (Exception ex)
@@ -624,7 +640,19 @@ namespace Billing.Controllers
                 return Json(ex.Message);
             }
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetFolioDetailMasterEdit(string invoiceNoPosting)
+        {
+            try
+            {
+                var result = FolioDetailBO.GetFolioDetailMasterEdit(invoiceNoPosting);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
 
         [HttpPost]
         public ActionResult EditPosting()
@@ -678,13 +706,22 @@ namespace Billing.Controllers
                 foreach (var item in trans)
                 {
                     FolioDetailModel folio = (FolioDetailModel)FolioDetailBO.Instance.FindByPrimaryKey(item.ID);
+
+                    folio.TransactionDate = DateTime.Parse(Request.Form["transactionDate"]);
                     if (folio.IsSplit == true)
                     {
                         folio.Price = decimal.Parse(Request.Form["price"].ToString());
                         folio.Quantity = int.Parse(Request.Form["quantity"].ToString());
                         folio.Amount = folio.AmountMaster = folio.AmountGross = folio.AmountMasterGross = folio.Price * folio.Quantity;
                         folio.AmountBeforeTax = folio.AmountMasterBeforeTax = folio.Amount - priceVat - priceSvc;
+                        if (folio.RowState == 1)
+                        {
+                            folio.Supplement = Request.Form["supplement"].ToString();
+
+                            folio.Reference = Request.Form["reference"].ToString();
+                        }
                     }
+                   
                     else
                     {
                         if (folio.SubgroupCode == "Tax")
@@ -710,7 +747,8 @@ namespace Billing.Controllers
                             folio.Amount = folio.AmountMaster = folio.AmountGross = folio.AmountMasterGross = folio.AmountBeforeTax = folio.AmountMasterBeforeTax = priceMain;
                         }
                     }
-                    FolioDetailBO.Instance.Update(folio);
+                   
+                        FolioDetailBO.Instance.Update(folio);
                 }
 
                 pt.CommitTransaction();
@@ -778,9 +816,9 @@ namespace Billing.Controllers
 
                 #region insert vào folio detail
                 FolioDetailModel folioDetail = new FolioDetailModel();
-                folioDetail.UserID =  int.Parse(Request.Form["userID"].ToString());
+                folioDetail.UserID = int.Parse(Request.Form["userID"].ToString());
                 folioDetail.ShiftID = shiftID;
-                folioDetail.UserName = Request.Form["userID"].ToString();
+                folioDetail.UserName = Request.Form["userName"].ToString();
                 folioDetail.CashierNo = shiftName;
                 folioDetail.ReservationID = folioDetail.OriginReservationID = reservationID;
                 folioDetail.FolioID = folioDetail.OriginFolioID = folio[0].ID;
@@ -829,16 +867,17 @@ namespace Billing.Controllers
 
                 #region update lại balance của reservation và folio
                 decimal balance = FolioDetailBO.CalculateBalance(reservationID);
+                //decimal  amountold = folio[0].BalanceVND;
                 folio[0].BalanceVND = balance;
                 FolioBO.Instance.Update(folio[0]);
 
                 // update balance reservation
                 ReservationModel res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
-                res.BalanceVND = balance;
+                res.BalanceVND = folio[0].BalanceVND;
                 ReservationBO.Instance.Update(res);
                 #endregion
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "Payment was posted successfully" });
+                return Json(new { code = 0, msg = "Payment was posted successfully", balanceVND = folio[0].BalanceVND });
 
             }
             catch (Exception ex)
@@ -852,12 +891,25 @@ namespace Billing.Controllers
 
             }
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetBalanceVND(int rsvID)
+        {
+            try
+            {
+                List<ReservationModel> posting = new List<ReservationModel>();
+                   posting = ReservationBO.GetBalanceVND(rsvID);
+                return Json(posting);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         #endregion
 
-        #region DatVP __ Billing: Create Folio
+        #region Billing: Create Folio
         [HttpPost]
-        public ActionResult CreateFolio()
+        public ActionResult CreateFolio([FromBody] FolioModel model)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -865,45 +917,41 @@ namespace Billing.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
 
-                int reservationID = int.Parse(Request.Form["rsvID"].ToString());
-                int folioNo = int.Parse(Request.Form["folioNo"].ToString());
-                var folio = FolioBO.GetFolioNoByReservationID(reservationID, folioNo);
-                if (folio.Count > 0)
+                var res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(model.ReservationID);
+
+                var existingFolios = FolioBO.Instance.FindByAttribute("ReservationID", model.ReservationID);
+                var usedFolioNos = existingFolios.Cast<FolioModel>().Select(x => x.FolioNo).ToList();
+
+                // Validate if user's requested window is already in use
+                if (usedFolioNos.Contains(model.FolioNo))
                 {
-                    return Json(new { code = 1, msg = $"Can not create folio. Invalid folio no {folioNo} for this reservation" });
-
+                    return Json(new { code = 1, msg = $"Window {model.FolioNo} is already in use. Please select another window!" });
                 }
-                List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-                var folioMain = FolioBO.GetFolioNo(reservationID);
-                FolioModel createFolio = new FolioModel();
-                createFolio.ARNo = "";
-                createFolio.FolioDate = businessDateModel[0].BusinessDate;
-                createFolio.FolioNo = folioNo;
-                createFolio.ReservationID = reservationID;
-                createFolio.ProfileID = folioMain[0].ProfileID;
-                createFolio.AccountName = folioMain[0].AccountName;
 
-                createFolio.Status = false;
-                createFolio.IsMasterFolio = false;
-                createFolio.ConfirmationNo = folioMain[0].ConfirmationNo;
-                createFolio.BalanceUSD = createFolio.BalanceVND = 0;
-                createFolio.CreateDate = createFolio.UpdateDate = DateTime.Now;
-                createFolio.UserInsertID = createFolio.UserUpdateID = int.Parse(Request.Form["userID"].ToString());
-                FolioBO.Instance.Insert(createFolio);
+                if (model.IsMasterFolio)
+                {
+                    // If UI lacks profile, mapping Company/Agent correctly
+                    if (model.ProfileID <= 0 || model.ProfileID == res.ProfileIndividualId)
+                    {
+                        model.ProfileID = res.ProfileCompanyId > 0 ? res.ProfileCompanyId : (res.ProfileAgentId > 0 ? res.ProfileAgentId : res.ProfileGroupId);
+                        DataTable dtProfile = TextUtils.Select($"SELECT Account FROM Profile WHERE ID = {model.ProfileID}");
+                        if (dtProfile.Rows.Count > 0) model.AccountName = dtProfile.Rows[0]["Account"].ToString();
+                    }
+                }
+
+                model.FolioDate = TextUtils.GetBusinessDate();
+                model.CreateDate = model.UpdateDate = DateTime.Now;
+                FolioBO.Instance.Insert(model);
+
                 pt.CommitTransaction();
-                return Json(new { code = 0, msg = "New Folio was created successfully" });
-
+                return Json(new { code = 0, msg = "Folio created successfully", folioNo = model.FolioNo, profileName = model.AccountName });
             }
             catch (Exception ex)
             {
                 pt.RollBack();
                 return Json(new { code = 1, msg = ex.Message });
             }
-            finally
-            {
-                pt.CloseConnection();
-
-            }
+            finally { pt.CloseConnection(); }
         }
         #endregion
 
@@ -1161,7 +1209,7 @@ namespace Billing.Controllers
 
         #region DatVP __ Billing: Delete Transaction
         [HttpPost]
-        public ActionResult DeleteTransaction(List<int> folioDetailID)
+        public ActionResult DeleteTransaction(List<int> folioDetailID, string reasonCode, string reasonText)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -1195,8 +1243,8 @@ namespace Billing.Controllers
                                 postingHistory.Code = folioItem.TransactionCode;
                                 postingHistory.Description = folioItem.Description;
                                 postingHistory.TransactionDate = businessDateModel[0].BusinessDate;
-                                postingHistory.ReasonCode = "";
-                                postingHistory.ReasonCode = "";
+                                postingHistory.ReasonCode = reasonCode;
+                                postingHistory.ReasonCode = reasonText;
                                 postingHistory.Terminal = "";
                                 postingHistory.Machine = Environment.MachineName;
                                 postingHistory.Action_FolioID = postingHistory.AfterAction_FolioID = folioItem.FolioID;
@@ -1235,11 +1283,40 @@ namespace Billing.Controllers
 
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDeletionReason()
+        {
+            try
+            {
+                List<CommentModel> users = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindByAttribute("CommentTypeID", 8));
+
+                return Json(users);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetDeletionReasonByCode(string code)
+        {
+            try
+            {
+                CommentModel users = PropertyUtils.ConvertToList<CommentModel>(CommentBO.Instance.FindByAttribute("Code", code)).FirstOrDefault();
+
+                return Json(users);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
         #endregion
 
         #region DatVP __ Billing: Split Transaction
         [HttpPost]
-        public ActionResult SplitTransaction(int folioDetailID,decimal discountAmount, decimal discountPercent,decimal amount,string userName,string userID)
+        public ActionResult SplitTransaction(int folioDetailID, decimal discountAmount, decimal discountPercent, decimal amount, string userName, string userID, int shiftID, string shiftName)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
@@ -1247,7 +1324,7 @@ namespace Billing.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
                 FolioDetailModel folioDetail = (FolioDetailModel)FolioDetailBO.Instance.FindByPrimaryKey(folioDetailID);
-                if (folioDetail == null  || folioDetail.ID == 0)
+                if (folioDetail == null || folioDetail.ID == 0)
                 {
                     return Json(new { code = 0, msg = "Could not find transaction to spliy " });
 
@@ -1255,9 +1332,9 @@ namespace Billing.Controllers
 
                 List<FolioDetailModel> listFolioDetail = PropertyUtils.ConvertToList<FolioDetailModel>(FolioDetailBO.Instance.FindByAttribute("TransactionNo", folioDetail.TransactionNo));
                 // precentMain là tỉ lệ của transaction sẽ được thêm, percentSub là tỉ lệ của transaction sẽ được update
-                decimal percentMain = discountPercent/100;
-                decimal percentSub = 100-(discountPercent / 100);
-                if(discountAmount > 0)
+                decimal percentMain = discountPercent / 100;
+                decimal percentSub = (100 - discountPercent) / 100;
+                if (discountAmount > 0)
                 {
                     percentMain = discountAmount / amount;
                     percentSub = (amount - discountAmount) / amount;
@@ -1275,13 +1352,14 @@ namespace Billing.Controllers
                         folioDetailMain.AmountMasterBeforeTax = Math.Round(item.AmountMasterBeforeTax * percentMain);
                         folioDetailMain.AmountGross = Math.Round(item.AmountGross * percentMain);
                         folioDetailMain.AmountMasterGross = Math.Round(item.AmountMasterGross * percentMain);
-
+                        folioDetailMain.ShiftID = shiftID;
+                        folioDetailMain.CashierNo = shiftName.ToString();
                         folioDetailMain.UserID = int.Parse(userID);
                         folioDetailMain.UserName = userName;
                         folioDetailMain.ReservationID = folioDetailMain.OriginReservationID = item.ReservationID;
                         folioDetailMain.FolioID = folioDetailMain.OriginFolioID = item.FolioID;
-                        folioDetailMain.InvoiceNo = item.InvoiceNo;
-                        folioDetailMain.TransactionNo = item.TransactionNo;
+                        folioDetailMain.InvoiceNo = (FolioDetailBO.GetTopInvoiceNo() + 1).ToString();
+                        folioDetailMain.TransactionNo = (FolioDetailBO.GetTopTransactioNo() + 1).ToString();
                         folioDetailMain.ReceiptNo = item.ReceiptNo;
                         folioDetailMain.TransactionDate = item.TransactionDate;
                         folioDetailMain.ProfitCenterID = item.ProfitCenterID;
@@ -1416,14 +1494,14 @@ namespace Billing.Controllers
 
         #region DatVP __ Billing: Transfer To Window
         [HttpPost]
-        public ActionResult TransferToWindow(string userName,int userID, List<int> folioDetailID,int folioMasterID,int folioID)
+        public ActionResult TransferToWindow(string userName, int userID, List<int> folioDetailID, int folioMasterID, int folioID)
         {
             ProcessTransactions pt = new ProcessTransactions();
             try
             {
                 pt.OpenConnection();
                 pt.BeginTransaction();
-                foreach(var item in folioDetailID)
+                foreach (var item in folioDetailID)
                 {
                     #region transfer transaction
                     List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
@@ -1435,7 +1513,7 @@ namespace Billing.Controllers
 
                     if (folioDetail.Count > 0)
                     {
-                        foreach(var itemFolioDetail in folioDetail)
+                        foreach (var itemFolioDetail in folioDetail)
                         {
                             itemFolioDetail.FolioID = folioID;
                             itemFolioDetail.UserUpdateID = userID;
@@ -1443,7 +1521,7 @@ namespace Billing.Controllers
                             itemFolioDetail.Supplement = $"<<< {res.LastName}-F[{folioMasterID}]";
                             FolioDetailBO.Instance.Update(itemFolioDetail);
 
-                            if(itemFolioDetail.RowState == 1)
+                            if (itemFolioDetail.RowState == 1)
                             {
                                 #region lưu posting history
 
@@ -1475,12 +1553,12 @@ namespace Billing.Controllers
                         decimal balance = FolioDetailBO.CalculateBalance(folioDetailModel.ReservationID);
 
                         FolioModel folioMaster = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioMasterID);
-                        folioMaster.BalanceVND = balance;
+                        folioMaster.BalanceVND = folioMaster.BalanceVND- balance;
                         FolioBO.Instance.Update(folioMaster);
 
 
                         FolioModel folio = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioID);
-                        folio.BalanceVND = balance;
+                        folio.BalanceVND = folio.BalanceVND + balance;
                         FolioBO.Instance.Update(folio);
                         // update balance reservation
                         res.BalanceVND = balance;
@@ -1514,7 +1592,7 @@ namespace Billing.Controllers
         #region DatVP __ Billing: Transfer Transaction
 
         [HttpGet]
-        public async Task<IActionResult> SearchGuestInRoom(string room,string name)
+        public async Task<IActionResult> SearchGuestInRoom(string room, string name)
         {
             try
             {
@@ -1538,7 +1616,6 @@ namespace Billing.Controllers
                                   Name = d["Name"].ToString(),
                                   Balance = d["Balance"].ToString(),
                                   MainGuest = d["MainGuest"].ToString(),
-  
 
 
                               }).ToList();
@@ -1560,12 +1637,12 @@ namespace Billing.Controllers
                 pt.OpenConnection();
                 pt.BeginTransaction();
                 FolioModel folioMasterCheck = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioMasterID);
-                if(folioMasterCheck == null || folioMasterCheck.ID == 0)
+                if (folioMasterCheck == null || folioMasterCheck.ID == 0)
                 {
                     return Json(new { code = 1, msg = "Could not find folio transfer " });
 
                 }
-                if(folioMasterCheck.Status == true)
+                if (folioMasterCheck.Status == true)
                 {
                     return Json(new { code = 1, msg = "Folio transfer was locked " });
 
@@ -1599,7 +1676,7 @@ namespace Billing.Controllers
                             itemFolioDetail.FolioID = folioID;
                             itemFolioDetail.UserUpdateID = userID;
                             itemFolioDetail.UpdateDate = DateTime.Now;
-                            if(itemFolioDetail.RowState == 1)
+                            if (itemFolioDetail.RowState == 1)
                             {
                                 itemFolioDetail.Supplement = $"<<< #{res.RoomNo},{res.LastName}-F{folioMasterID}";
 
@@ -1681,7 +1758,7 @@ namespace Billing.Controllers
             try
             {
                 List<TransactionsModel> trans = PropertyUtils.ConvertToList<TransactionsModel>(TransactionsBO.Instance.FindByAttribute("Code", transactionCode));
-                if(trans.Count < 1)
+                if (trans.Count < 1)
                 {
                     return Json(new
                     {
@@ -1730,14 +1807,13 @@ namespace Billing.Controllers
 
                 if (postType == 1)
                 {
-                
                     price = decimal.Parse(Request.Form["adjustAmount"].ToString());
                     priceNet = decimal.Parse(Request.Form["adjustNet"].ToString());
                 }
                 else
                 {
-                    price = folioAdjust.AmountBeforeTax * decimal.Parse(Request.Form["percentage"].ToString()); 
-                    priceNet = folioAdjust.AmountGross * decimal.Parse(Request.Form["percentage"].ToString());
+                    price = folioAdjust.AmountBeforeTax * (decimal.Parse(Request.Form["percentage"].ToString()) / 100);
+                    priceNet = folioAdjust.AmountGross * (decimal.Parse(Request.Form["percentage"].ToString()) / 100);
                 }
                 // tìm invoice lớn nhất 
                 string invoiceNo = (FolioDetailBO.GetTopInvoiceNo() + 1).ToString();
@@ -1773,12 +1849,15 @@ namespace Billing.Controllers
                     return Json(new { code = 1, msg = $"Can not post. Folio has been being locked" });
 
                 }
-
+                int shiftID = int.Parse(Request.Form["shiftID"].ToString());
+                string shiftName = Request.Form["shiftName"].ToString();
                 #region lưu transaction chính vào folio detail
                 // kiểm tra xem transaction chọn để post có article không
                 FolioDetailModel folioArticle = new FolioDetailModel();
-                folioArticle.UserID = folioArticle.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                folioArticle.UserName = folioArticle.CashierNo = Request.Form["userID"].ToString();
+                folioArticle.UserID = int.Parse(Request.Form["userID"].ToString());
+                folioArticle.ShiftID = shiftID;
+                folioArticle.CashierNo = shiftName;
+                folioArticle.UserName = Request.Form["userName"].ToString();
                 folioArticle.ReservationID = folioArticle.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                 folioArticle.FolioID = folioArticle.OriginFolioID = folio.ID;
                 folioArticle.InvoiceNo = invoiceNo;
@@ -1800,7 +1879,7 @@ namespace Billing.Controllers
                 folioArticle.RowState = 1;
                 folioArticle.PostType = 2;
 
-                folioArticle.IsSplit = true; 
+                folioArticle.IsSplit = true;
                 folioArticle.Quantity = 1;
                 folioArticle.Price = priceNet;
                 folioArticle.Amount = priceNet;
@@ -1854,11 +1933,13 @@ namespace Billing.Controllers
                         if (item.GroupCode == "Tax" && item.SubgroupCode == "Tax")
                         {
                             FolioDetailModel folioSub = new FolioDetailModel();
-                            folioSub.UserID = folioSub.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName = folioSub.CashierNo = Request.Form["userID"].ToString();
+                            folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
+                            folioSub.UserName = Request.Form["userName"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
+                            folioSub.ShiftID = shiftID;
+                            folioSub.CashierNo = shiftName;
                             folioSub.TransactionNo = transactionNo;
                             folioSub.ReceiptNo = "";
                             folioSub.TransactionDate = businessDateModel[0].BusinessDate;
@@ -1907,11 +1988,13 @@ namespace Billing.Controllers
 
                             }
                             FolioDetailModel folioSub = new FolioDetailModel();
-                            folioSub.UserID = folioSub.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName = folioSub.CashierNo = Request.Form["userID"].ToString();
+                            folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
+                            folioSub.UserName = Request.Form["userName"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
+                            folioSub.ShiftID = shiftID;
+                            folioSub.CashierNo = shiftName;
                             folioSub.TransactionNo = transactionNo;
                             folioSub.ReceiptNo = "";
                             folioSub.TransactionDate = businessDateModel[0].BusinessDate;
@@ -1928,7 +2011,6 @@ namespace Billing.Controllers
 
                             folioSub.RowState = 2;
                             folioSub.PostType = 2;
-         
                             folioSub.IsSplit = false;
                             folioSub.Quantity = 1;
                             if (item.GroupCode == "Tax" && item.GroupCode == "Tax")
@@ -1966,11 +2048,13 @@ namespace Billing.Controllers
                                 priceSvc = (priceNet - priceVat) * (percent / 100) / (1 + (percent / 100));
                             }
                             FolioDetailModel folioSub = new FolioDetailModel();
-                            folioSub.UserID = folioSub.ShiftID = int.Parse(Request.Form["userID"].ToString());
-                            folioSub.UserName = folioSub.CashierNo = Request.Form["userID"].ToString();
+                            folioSub.UserID = int.Parse(Request.Form["userID"].ToString());
+                            folioSub.UserName = Request.Form["userName"].ToString();
                             folioSub.ReservationID = folioSub.OriginReservationID = int.Parse(Request.Form["rsvID"].ToString());
                             folioSub.FolioID = folioSub.OriginFolioID = folio.ID;
                             folioSub.InvoiceNo = invoiceNo;
+                            folioSub.ShiftID = shiftID;
+                            folioSub.CashierNo = shiftName;
                             folioSub.TransactionNo = transactionNo;
                             folioSub.ReceiptNo = "";
                             folioSub.TransactionDate = businessDateModel[0].BusinessDate;
@@ -1991,7 +2075,7 @@ namespace Billing.Controllers
                             folioSub.Quantity = 1;
                             if (isVat == false && isSvc == false)
                             {
-                                folioSub.Price = priceNet- priceNet * (item.Percentage / 100);
+                                folioSub.Price = priceNet - priceNet * (item.Percentage / 100);
 
                             }
                             else
@@ -2094,7 +2178,7 @@ namespace Billing.Controllers
             {
                 int userID = int.Parse(Request.Form["userID"].ToString());
                 List<BusinessDateModel> businessDateModel = PropertyUtils.ConvertToList<BusinessDateModel>(BusinessDateBO.Instance.FindAll());
-                var model = ShiftBO.GetShiftByUser(businessDateModel[0].BusinessDate,userID);
+                var model = ShiftBO.GetShiftByUser(businessDateModel[0].BusinessDate, userID);
                 return Json(model);
 
             }
@@ -2158,7 +2242,6 @@ namespace Billing.Controllers
             {
                 pt.OpenConnection();
                 pt.BeginTransaction();
-                
                 #region lưu reservation item inventory
                 string itemInventoryString = Request.Form["users"].ToString();
                 List<int> userIDs = new List<int>();
@@ -2177,7 +2260,7 @@ namespace Billing.Controllers
                 string shiftNo = Request.Form["shiftNo"].ToString();
                 string checkNo = Request.Form["checkNo"].ToString();
                 int rsvID = int.Parse(Request.Form["rsvID"].ToString());
-                var result = FolioDetailBO.GetTransactionCodeBySelectOption(fromDate, toDate, groupID, subGroupID, transCodeID, shiftNo, checkNo, rsvID,userIDs);
+                var result = FolioDetailBO.GetTransactionCodeBySelectOption(fromDate, toDate, groupID, subGroupID, transCodeID, shiftNo, checkNo, rsvID, userIDs);
                 #endregion
                 pt.CommitTransaction();
                 return Json(result);
@@ -2195,5 +2278,628 @@ namespace Billing.Controllers
             }
         }
         #endregion
+
+        #region Billing: Posting
+        [HttpGet]
+        public IActionResult GetCurrencies()
+        {
+            try
+            {
+                string sql = "select ID from Currency";
+
+                DataTable dt = TextUtils.Select(sql);
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = r["ID"],
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetTransactionGroups()
+        {
+            try
+            {
+                string sql = "select ID, Description from TransactionGroup where Description like N'%%' and Type != 1 order by Description";
+
+                DataTable dt = TextUtils.Select(sql);
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = r["ID"], 
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetFolioNoByReservationID(int reservationID)
+        {
+            try
+            {
+                string sql = $"select ID,FolioNo, Status from Folio where ReservationID = {reservationID} Order By FolioNo";
+
+                DataTable dt = TextUtils.Select(sql);
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = r["ID"],
+                                  FolioNo = r["FolioNo"],
+                                  Status = r["Status"] != DBNull.Value ? Convert.ToBoolean(r["Status"]) : false
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetTransactionSubGroups(int groupId)
+        {
+            try
+            {
+                string sql = string.Format("select ID, Description from TransactionSubgroup where TransactionGroupID={0} and Description like N'%%' order by Description", groupId);
+
+                DataTable dt = TextUtils.Select(sql);
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  ID = r["ID"],
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : ""
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetTransactions(int groupId, int subGroupId)
+        {
+            try
+            {
+                string sql = string.Format(@"
+            select Code, Description, DefaultPrice 
+            from Transactions 
+            where TransactionGroupID={0} 
+              and TransactionSubGroupID={1} 
+              and (Code like N'%%' or Description like N'%%') 
+              and ((GroupType != 1) AND (ManualPosting = 1)) 
+              and (IsActive = 1) 
+            order by Code", groupId, subGroupId);
+
+
+                DataTable dt = TextUtils.Select(sql);
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(r["Code"].ToString()) ? r["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : "",
+                                  DefaultPrice = dt.Columns.Contains("DefaultPrice") && r["DefaultPrice"] != DBNull.Value ? r["DefaultPrice"] : 0
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult GetArticles(string transactionCode)
+        {
+            try
+            {
+                string safeCode = transactionCode.Replace("'", "''");
+
+                string sql = string.Format(@"
+                    select Code, Description, DefaultPrice 
+                    from Article 
+                    where (Code like N'%%' or Description like N'%%') 
+                      and Code in (select ArticleCode from TransactionArticleLnk where TransactionCode='{0}') 
+                    order by Code", safeCode);
+
+                DataTable dt = TextUtils.Select(sql);
+
+                var result = (from r in dt.AsEnumerable()
+                              select new
+                              {
+                                  Code = !string.IsNullOrEmpty(r["Code"].ToString()) ? r["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(r["Description"].ToString()) ? r["Description"] : "",
+                                  DefaultPrice = r["DefaultPrice"] != DBNull.Value ? r["DefaultPrice"] : 0
+                              }).ToList();
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult CalculatePricePlusPlus(string transactionCode, decimal netPrice)
+        {
+            try
+            {
+                decimal gross = _iPostService.CalculatePriceNet(transactionCode, netPrice);
+                return Json(gross);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult CalculatePriceNet(string transactionCode, decimal grossPrice)
+        {
+            try
+            {
+                decimal net = _iPostService.CalculatePricePlusPlus(transactionCode, grossPrice);
+                return Json(net);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult PostingSave([FromBody] List<FolioDetailModel> models)
+        {
+            ProcessTransactions pt = new ProcessTransactions();
+            try
+            {
+                if (models == null || models.Count == 0) return BadRequest("No data received.");
+
+                pt.OpenConnection();
+                pt.BeginTransaction();
+
+                int nextInvoiceNo = FolioDetailBO.GetTopInvoiceNo() + 1;
+                string batchInvoiceNo = nextInvoiceNo.ToString();
+
+                int nextTransNo = FolioDetailBO.GetTopTransactioNo();
+                int count = 0;
+                DateTime businessDate = TextUtils.GetBusinessDate();
+
+                bool isInvoicePosting = models.Any(m => m.PostType == 3);
+
+                if (isInvoicePosting)
+                {
+                    decimal totalAmount = models.Sum(m => m.Amount);
+                    decimal totalAmountBeforeTax = models.Sum(m => m.AmountBeforeTax);
+                    var firstItem = models.First();
+
+                    string invoiceName = !string.IsNullOrEmpty(firstItem.Description) ? firstItem.Description : "Invoicing Package";
+
+                    string masterTransCode = "8449";
+                    int mGroupId = 0, mSubgroupId = 0;
+                    string mGroupCode = "", mSubgroupCode = "";
+
+                    var masterTransList = TransactionsBO.Instance.FindByAttribute("Code", masterTransCode);
+                    if (masterTransList != null && masterTransList.Count > 0)
+                    {
+                        var tInfo = (TransactionsModel)masterTransList[0];
+                        mGroupId = tInfo.TransactionGroupID;
+                        mGroupCode = tInfo.GroupCode;
+                        mSubgroupId = tInfo.TransactionSubGroupID;
+                        mSubgroupCode = tInfo.SubgroupCode;
+                    }
+
+                    // TẠO DÒNG MASTER INVOICE
+                    FolioDetailModel masterLine = new FolioDetailModel
+                    {
+                        UserID = firstItem.UserID,
+                        UserName = firstItem.UserName,
+                        ShiftID = firstItem.ShiftID,
+                        CashierNo = firstItem.CashierNo,
+                        FolioID = firstItem.FolioID,
+                        OriginFolioID = firstItem.OriginFolioID,
+                        ReservationID = firstItem.ReservationID,
+                        OriginReservationID = firstItem.OriginReservationID,
+                        RoomID = firstItem.RoomID,
+                        RoomType = firstItem.RoomType,
+                        RoomTypeID = firstItem.RoomTypeID,
+
+                        CreateDate = DateTime.Now,
+                        UpdateDate = DateTime.Now,
+                        TransactionDate = businessDate,
+                        InvoiceNo = batchInvoiceNo,
+                        TransactionNo = (nextTransNo + count).ToString(),
+
+                        TransactionCode = masterTransCode,
+                        Description = invoiceName,
+                        TransactionGroupID = mGroupId,
+                        GroupCode = mGroupCode,
+                        TransactionSubgroupID = mSubgroupId,
+                        SubgroupCode = mSubgroupCode,
+
+                        Reference = string.Join(" | ", models
+                        .SelectMany(m => (m.Reference ?? "").Split('|'))
+                        .Select(x => x.Trim())
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Distinct()),
+
+                        Supplement = string.Join(" | ", models
+                        .SelectMany(m => (m.Supplement ?? "").Split('|'))
+                        .Select(x => x.Trim())
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Distinct()),
+                        CheckNo = firstItem.CheckNo,
+
+                        Quantity = 1,
+                        Price = totalAmount,
+                        Amount = totalAmount,
+                        AmountMaster = totalAmount,
+                        AmountGross = totalAmount,
+                        AmountMasterGross = totalAmount,
+                        AmountBeforeTax = totalAmountBeforeTax,
+                        AmountMasterBeforeTax = totalAmountBeforeTax,
+                        CurrencyID = firstItem.CurrencyID,
+                        CurrencyMaster = firstItem.CurrencyMaster,
+
+                        RowState = 1, // MASTER HIỂN THỊ TRÊN BILLING
+                        PostType = 2,
+                        Status = false,
+                        ProfitCenterID = 2,
+                        ProfitCenterCode = "0",
+                        IsTransfer = false,
+                        IsPostedAR = false,
+                        Property = "",
+                        OriginARNo = ""
+                    };
+                    FolioDetailBO.Instance.Insert(masterLine);
+
+                    // History cho Master Line
+                    PostingHistoryModel phMaster = new PostingHistoryModel
+                    {
+                        ActionType = 0,
+                        ActionText = $"[POST_INV_MASTER] - {masterLine.TransactionCode} - {masterLine.Description}",
+                        ActionDate = DateTime.Now,
+                        ActionUser = masterLine.UserName,
+                        Amount = masterLine.Amount,
+                        InvoiceNo = masterLine.InvoiceNo,
+                        Code = masterLine.TransactionCode,
+                        Description = masterLine.Description,
+                        TransactionDate = masterLine.TransactionDate,
+                        Machine = Environment.MachineName,
+                        Action_FolioID = masterLine.FolioID,
+                        AfterAction_FolioID = masterLine.FolioID,
+                        Property = "PMS"
+                    };
+                    PostingHistoryBO.Instance.Insert(phMaster);
+
+                    count++;
+                }
+
+                //CÁC DÒNG CHI TIẾT (Sub-details)
+                foreach (var item in models)
+                {
+                    var transList = TransactionsBO.Instance.FindByAttribute("Code", item.TransactionCode);
+                    if (transList != null && transList.Count > 0)
+                    {
+                        var transInfo = (TransactionsModel)transList[0];
+                        item.TransactionGroupID = transInfo.TransactionGroupID;
+                        item.GroupCode = transInfo.GroupCode;
+                        item.TransactionSubgroupID = transInfo.TransactionSubGroupID;
+                        item.SubgroupCode = transInfo.SubgroupCode;
+                    }
+
+                    var roomTypeList = RoomTypeBO.Instance.FindByAttribute("Code", item.RoomType);
+                    if (roomTypeList != null && roomTypeList.Count > 0)
+                    {
+                        var roomTypeInfo = (RoomTypeModel)roomTypeList[0];
+                        item.RoomTypeID = roomTypeInfo.ID;
+                    }
+
+                    item.CreateDate = DateTime.Now; item.UpdateDate = DateTime.Now; item.TransactionDate = businessDate;
+                    item.InvoiceNo = batchInvoiceNo; item.TransactionNo = (nextTransNo + count).ToString();
+                    count++;
+
+                    item.Status = false; item.ProfitCenterID = 2; item.ProfitCenterCode = "0"; item.OriginARNo = "";
+                    item.RowState = isInvoicePosting ? 2 : 1; // Ẩn Sub-details (RowState = 2) nếu là Package
+                    item.IsPostedAR = false; item.ARTransID = 0; item.IsTransfer = false;
+
+
+                    List<GenerateTransactionModel> generateTransactionCheck = PropertyUtils.ConvertToList<GenerateTransactionModel>(GenerateTransactionBO.Instance.FindByAttribute("TransactionCode", item.TransactionCode));
+                    item.IsSplit = generateTransactionCheck.Count > 0;
+
+                    item.Reference = (item.Reference ?? "")
+                                        .Replace("-DIS(", "DIS-")
+                                        .Replace("+EX(", "EX-")
+                                        .Replace(")", "")
+                                        .Trim();
+
+                    item.Supplement = (item.Supplement ?? "")
+                                        .Replace("-DIS(", "DIS-")
+                                        .Replace("+EX(", "EX-")
+                                        .Replace(")", "")
+                                        .Trim();
+                    FolioDetailBO.Instance.Insert(item);
+
+                    // Lưu Posting history
+                    PostingHistoryModel postingHistory = new PostingHistoryModel
+                    {
+                        ActionType = 0,
+                        ActionText = $"[POST_GEN] - {item.TransactionCode} - {item.Description}",
+                        ActionDate = DateTime.Now,
+                        ActionUser = item.UserName,
+                        Amount = item.Amount,
+                        InvoiceNo = item.InvoiceNo,
+                        Code = item.TransactionCode,
+                        Description = item.Description,
+                        TransactionDate = item.TransactionDate,
+                        Machine = Environment.MachineName,
+                        Action_FolioID = item.FolioID,
+                        AfterAction_FolioID = item.FolioID,
+                        Property = "PMS"
+                    };
+                    PostingHistoryBO.Instance.Insert(postingHistory);
+
+                    #region lưu transaction từ generate transaction và folio detail
+                    List<GenerateTransactionModel> generateTransaction = PropertyUtils.ConvertToList<GenerateTransactionModel>(GenerateTransactionBO.Instance.FindByAttribute("TransactionCode", item.TransactionCode));
+                    if (generateTransaction.Count > 0)
+                    {
+                        bool isVat = false;
+                        bool isSvc = false;
+                        int indexVat = -1;
+                        int indexSvc = -1;
+                        for (int i = 0; i < generateTransaction.Count; i++)
+                        {
+                            if (generateTransaction[i].GroupCode == "Tax" && generateTransaction[i].SubgroupCode == "Tax")
+                            {
+                                isVat = true;
+                                indexVat = i;
+                            }
+                            else if (generateTransaction[i].GroupCode == "Tax" && generateTransaction[i].SubgroupCode == "SVC")
+                            {
+                                isSvc = true;
+                                indexSvc = i;
+                            }
+                        }
+
+                        decimal baseNet = item.AmountMasterBeforeTax;
+
+                        foreach (var genItem in generateTransaction)
+                        {
+                            if (genItem.GroupCode == "Tax" && genItem.SubgroupCode == "Tax")
+                            {
+                                decimal svcAmount = 0;
+                                if (isSvc)
+                                {
+                                    decimal svcPercent = generateTransaction[indexSvc].Percentage / 100m;
+                                    svcAmount = baseNet * svcPercent;
+                                }
+                                decimal taxPercent = genItem.Percentage / 100m;
+                                decimal taxAmount = (baseNet + svcAmount) * taxPercent;
+
+                                FolioDetailModel folioSub = new FolioDetailModel
+                                {
+                                    UserID = item.UserID,
+                                    UserName = item.UserName,
+                                    ShiftID = item.ShiftID,
+                                    CashierNo = item.CashierNo,
+                                    ReservationID = item.ReservationID,
+                                    OriginReservationID = item.OriginReservationID,
+                                    FolioID = item.FolioID,
+                                    OriginFolioID = item.OriginFolioID,
+                                    InvoiceNo = item.InvoiceNo,
+                                    TransactionNo = item.TransactionNo,
+                                    ReceiptNo = "",
+                                    TransactionDate = item.TransactionDate,
+                                    ProfitCenterID = 2,
+                                    ProfitCenterCode = "0",
+                                    TransactionGroupID = genItem.TransactionGroupID,
+                                    TransactionSubgroupID = genItem.TransactionSubGroupID,
+                                    GroupCode = genItem.GroupCode,
+                                    SubgroupCode = genItem.SubgroupCode,
+                                    GroupType = genItem.GroupType,
+                                    TransactionCode = genItem.TransactionCodeDetail,
+                                    ArticleCode = "",
+                                    Status = false,
+                                    RowState = isInvoicePosting ? 3 : 2,
+                                    PostType = 2,
+                                    IsSplit = false,
+                                    Quantity = 1,
+                                    Price = taxAmount,
+                                    Amount = taxAmount, AmountMaster = taxAmount,
+                                    AmountBeforeTax = taxAmount, AmountMasterBeforeTax = taxAmount,
+                                    AmountGross = taxAmount, AmountMasterGross = taxAmount,
+                                    CurrencyID = item.CurrencyID, CurrencyMaster = item.CurrencyMaster,
+                                    Description = genItem.Description,
+                                    Reference = "", Supplement = "",
+                                    RoomType = "", RoomTypeID = 0, RoomID = item.RoomID,
+                                    UserInsertID = item.UserID, UserUpdateID = item.UserID,
+                                    CreateDate = DateTime.Now, UpdateDate = DateTime.Now,
+                                    Property = "", CheckNo = "", OriginARNo = "",
+                                    IsPostedAR = false, ARTransID = 0, IsTransfer = false
+                                };
+                                FolioDetailBO.Instance.Insert(folioSub);
+                            }
+                            else if (genItem.GroupCode == "Tax" && genItem.SubgroupCode == "SVC")
+                            {
+                                decimal svcPercent = genItem.Percentage / 100m;
+                                decimal svcAmount = baseNet * svcPercent;
+                                
+                                FolioDetailModel folioSub = new FolioDetailModel
+                                {
+                                    UserID = item.UserID,
+                                    UserName = item.UserName,
+                                    ShiftID = item.ShiftID,
+                                    CashierNo = item.CashierNo,
+                                    ReservationID = item.ReservationID,
+                                    OriginReservationID = item.OriginReservationID,
+                                    FolioID = item.FolioID,
+                                    OriginFolioID = item.OriginFolioID,
+                                    InvoiceNo = item.InvoiceNo,
+                                    TransactionNo = item.TransactionNo,
+                                    ReceiptNo = "",
+                                    TransactionDate = item.TransactionDate,
+                                    ProfitCenterID = 2,
+                                    ProfitCenterCode = "0",
+                                    TransactionGroupID = genItem.TransactionGroupID,
+                                    TransactionSubgroupID = genItem.TransactionSubGroupID,
+                                    GroupCode = genItem.GroupCode,
+                                    SubgroupCode = genItem.SubgroupCode,
+                                    GroupType = genItem.GroupType,
+                                    TransactionCode = genItem.TransactionCodeDetail,
+                                    ArticleCode = "",
+                                    Status = false,
+                                    RowState = isInvoicePosting ? 3 : 2,
+                                    PostType = 2,
+                                    IsSplit = false,
+                                    Quantity = 1,
+                                    Price = svcAmount,
+                                    Amount = svcAmount, AmountMaster = svcAmount,
+                                    AmountBeforeTax = svcAmount, AmountMasterBeforeTax = svcAmount,
+                                    AmountGross = svcAmount, AmountMasterGross = svcAmount,
+                                    CurrencyID = item.CurrencyID, CurrencyMaster = item.CurrencyMaster,
+                                    Description = genItem.Description,
+                                    Reference = "", Supplement = "",
+                                    RoomType = "", RoomTypeID = 0, RoomID = item.RoomID,
+                                    UserInsertID = item.UserID, UserUpdateID = item.UserID,
+                                    CreateDate = DateTime.Now, UpdateDate = DateTime.Now,
+                                    Property = "", CheckNo = "", OriginARNo = "",
+                                    IsPostedAR = false, ARTransID = 0, IsTransfer = false
+                                };
+                                FolioDetailBO.Instance.Insert(folioSub);
+                            }
+                            else
+                            {
+                                decimal genPercent = genItem.Percentage / 100m;
+                                decimal allocAmount = baseNet * genPercent;
+                                FolioDetailModel folioSub = new FolioDetailModel
+                                {
+                                    UserID = item.UserID,
+                                    UserName = item.UserName,
+                                    ShiftID = item.ShiftID,
+                                    CashierNo = item.CashierNo,
+                                    ReservationID = item.ReservationID,
+                                    OriginReservationID = item.OriginReservationID,
+                                    FolioID = item.FolioID,
+                                    OriginFolioID = item.OriginFolioID,
+                                    InvoiceNo = item.InvoiceNo,
+                                    TransactionNo = item.TransactionNo,
+                                    ReceiptNo = "",
+                                    TransactionDate = item.TransactionDate,
+                                    ProfitCenterID = 2,
+                                    ProfitCenterCode = "0",
+                                    TransactionGroupID = genItem.TransactionGroupID,
+                                    TransactionSubgroupID = genItem.TransactionSubGroupID,
+                                    GroupCode = genItem.GroupCode,
+                                    SubgroupCode = genItem.SubgroupCode,
+                                    GroupType = genItem.GroupType,
+                                    TransactionCode = genItem.TransactionCodeDetail,
+                                    ArticleCode = "",
+                                    Status = false,
+                                    RowState = isInvoicePosting ? 3 : 2,
+                                    PostType = 2,
+                                    IsSplit = false,
+                                    Quantity = 1,
+                                    Price = allocAmount,
+                                    Amount = allocAmount, AmountMaster = allocAmount,
+                                    AmountBeforeTax = allocAmount, AmountMasterBeforeTax = allocAmount,
+                                    AmountGross = allocAmount, AmountMasterGross = allocAmount,
+                                    CurrencyID = item.CurrencyID, CurrencyMaster = item.CurrencyMaster,
+                                    Description = genItem.Description,
+                                    Reference = "", Supplement = "",
+                                    RoomType = "", RoomTypeID = 0, RoomID = item.RoomID,
+                                    UserInsertID = item.UserID, UserUpdateID = item.UserID,
+                                    CreateDate = DateTime.Now, UpdateDate = DateTime.Now,
+                                    Property = "", CheckNo = "", OriginARNo = "",
+                                    IsPostedAR = false, ARTransID = 0, IsTransfer = false
+                                };
+                                FolioDetailBO.Instance.Insert(folioSub);
+                            }
+                        }
+                    }
+                    #endregion
+                }
+
+                // CẬP NHẬT LẠI BALANCE
+                int reservationID = models.First().ReservationID;
+                int folioID = models.First().FolioID;
+                decimal balance = FolioDetailBO.CalculateBalance(reservationID);
+
+                FolioModel currentFolio = (FolioModel)FolioBO.Instance.FindByPrimaryKey(folioID);
+                if (currentFolio != null) { currentFolio.BalanceVND = balance; FolioBO.Instance.Update(currentFolio); }
+
+                ReservationModel res = (ReservationModel)ReservationBO.Instance.FindByPrimaryKey(reservationID);
+                if (res != null) { res.BalanceVND = balance; ReservationBO.Instance.Update(res); }
+
+                // COMMIT GIAO DỊCH
+                pt.CommitTransaction();
+                return Ok(new { success = true, message = "Posting successful!", invoiceNo = batchInvoiceNo });
+            }
+            catch (Exception ex)
+            {
+                pt.RollBack();
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                pt.CloseConnection();
+            }
+        }
+        #endregion
+
+        #region Billing: View Transaction Detail
+        [HttpGet]
+        public IActionResult GetTransactionDetailBreakdown(int invoiceNo)
+        {
+            try
+            {
+                DataTable dataTable = _iPostService.TransactionDetail(invoiceNo);
+                var result = (from d in dataTable.AsEnumerable()
+                              select new
+                              {
+                                  ID = !string.IsNullOrEmpty(d["Index"].ToString()) ? d["Index"] : "",
+                                  GroupCode = !string.IsNullOrEmpty(d["GroupCode"].ToString()) ? d["GroupCode"] : "",
+                                  SubgroupCode = !string.IsNullOrEmpty(d["SubgroupCode"].ToString()) ? d["SubgroupCode"] : "",
+                                  PostType = !string.IsNullOrEmpty(d["PostType"].ToString()) ? d["PostType"] : "",
+                                  RowState = !string.IsNullOrEmpty(d["RowState"].ToString()) ? d["RowState"] : "",
+                                  IsSplit = !string.IsNullOrEmpty(d["IsSplit"].ToString()) ? d["IsSplit"] : "",
+                                  InvoiceNo = !string.IsNullOrEmpty(d["InvoiceNo"].ToString()) ? d["InvoiceNo"] : "",
+                                  TransactionNo = !string.IsNullOrEmpty(d["TransactionNo"].ToString()) ? d["TransactionNo"] : "",
+                                  Date = !string.IsNullOrEmpty(d["Date"].ToString()) ? d["Date"] : "",
+                                  Time = !string.IsNullOrEmpty(d["Time"].ToString()) ? d["Time"] : "",
+                                  IsVisible = !string.IsNullOrEmpty(d["IsVisible"].ToString()) ? d["IsVisible"] : "",
+                                  Code = !string.IsNullOrEmpty(d["Code"].ToString()) ? d["Code"] : "",
+                                  Description = !string.IsNullOrEmpty(d["Description"].ToString()) ? d["Description"] : "",
+                                  VirtualCode = !string.IsNullOrEmpty(d["VirtualCode"].ToString()) ? d["VirtualCode"] : "",
+                                  Amount = !string.IsNullOrEmpty(d["Amount"].ToString()) ? d["Amount"] : "",
+                                  Currency = !string.IsNullOrEmpty(d["Currency"].ToString()) ? d["Currency"] : "",
+                                  Supplement = !string.IsNullOrEmpty(d["Supplement"].ToString()) ? d["Supplement"] : "",
+                                  Reference = !string.IsNullOrEmpty(d["Reference"].ToString()) ? d["Reference"] : "",
+                                  UserName = !string.IsNullOrEmpty(d["UserName"].ToString()) ? d["UserName"] : "",
+                                  ShiftID = !string.IsNullOrEmpty(d["ShiftID"].ToString()) ? d["ShiftID"] : ""
+                              }).ToList();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        #endregion
+
     }
 }

@@ -1,58 +1,65 @@
-﻿
 <div class="modal fade" id="modalPaymentBilling" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content" style="border: 1px solid #bcbcbc">
-            <div class="modal-header">
-                <h5 class="modal-title" id="transactionModalLabel">Payment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-light py-2">
+                <h5 class="modal-title fw-bold" id="transactionModalLabel">Payment</h5>
             </div>
-            <div class="button-group">
-                <button type="button" class="mui-button mui-button-search" onclick="PostingPayment();">Post</button>
-                <button type="button" class="mui-button mui-button-clear" data-bs-dismiss="modal">Close</button>
-            </div>
+
             <div class="modal-body">
-                <div class="row mb-2">
-                    <div class="form-group">
-                        <label for="code" class="form-label">Payment Code</label>
-                        <select type="text" class="form-control" id="paymentCodePaymentBilling" style="margin-left:20px;padding-top:3px"></select>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="code" class="form-label">Currency</label>
-                        <input type="text" class="form-control small-input" id="currencyPaymentBilling" value="VND" readonly>
-                    </div>
-                </div>
-                <hr class="hr">
-                <div class="form-group">
-                    <label for="code" class="form-label">Amount</label>
-                    <input type="text" class="form-control small-input" id="amountPaymentBilling" style="text-align:right">
-                </div>
-                <hr class="hr">
-                <div class="form-group">
-                    <label for="supplement" class="form-label">Supplement</label>
-                    <input type="text" class="form-control" id="supplementPaymentBilling" style="margin-left:20px">
-                </div>
-                <div class="form-group">
-                    <label for="reference" class="form-label">Reference</label>
-                    <input type="text" class="form-control" id="referencePaymentBilling" style="margin-left:20px">
+                <div class="py-2 d-flex gap-2">
+                    <button type="button" class="mui-button mui-button-search" onclick="PostingPayment();">Post</button>
+                    <button type="button" class="mui-button mui-button-clear" data-bs-dismiss="modal">Close</button>
                 </div>
 
-                <hr class="hr">
-                <div class="form-group">
-                    <label for="reference" class="form-label">Credit Card No</label>
-                    <input type="text" class="form-control" id="creditCardNoPaymentBilling" style="margin-left:20px">
-                </div>
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="crashier" class="form-label">Exp Date</label>
-                            <input type="date" class="form-control medium-input" id="expDatePaymentBilling" >
+                <div class="container-fluid px-0">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-12">
+                            <label for="paymentCodePaymentBilling" class="form-label fw-semibold">Payment Code</label>
+                            <select class="form-control" id="paymentCodePaymentBilling" style="padding-top:3px"></select>
+                        </div>
+                        
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="amountPaymentBilling" class="form-label fw-semibold">Amount</label>
+                            <input type="text" class="form-control" id="amountPaymentBilling" style="text-align:right">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="currencyPaymentBilling" class="form-label fw-semibold">Currency</label>
+                            <input type="text" class="form-control bg-light" id="currencyPaymentBilling" value="VND" readonly>
                         </div>
                     </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="winNo" class="form-label">Trans. Date</label>
-                            <input type="date" class="form-control medium-input" id="transDatePaymentBilling">
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="supplementPaymentBilling" class="form-label fw-semibold">Supplement</label>
+                            <input type="text" class="form-control" id="supplementPaymentBilling">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="referencePaymentBilling" class="form-label fw-semibold">Reference</label>
+                            <input type="text" class="form-control" id="referencePaymentBilling">
+                        </div>
+                    </div>
+
+                    <div class="bg-light p-3 rounded border mb-3">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="creditCardNoPaymentBilling" class="form-label fw-semibold">Credit Card No</label>
+                                <input type="text" class="form-control" id="creditCardNoPaymentBilling">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="expDatePaymentBilling" class="form-label fw-semibold">Exp Date</label>
+                                <div data-date-input data-format="DD/MM/YYYY" data-name="expDatePaymentBilling">
+                                    <input type="text" class="date-ui form-control form-control-sm">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="transDatePaymentBilling" class="form-label fw-semibold">Trans. Date</label>
+                                <div data-date-input data-format="DD/MM/YYYY" data-name="transDatePaymentBilling">
+                                    <input type="text" class="date-ui form-control form-control-sm">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -60,6 +67,9 @@
         </div>
     </div>
 </div>
+
+
+
 <script>
     function getPaymentFO() {
 
@@ -89,11 +99,35 @@
 
         });
     }
+    $('#amountPaymentBilling').on('input', function () {
+        let input = this;
+        let rawValue = input.value.replace(/\D/g, ''); // chỉ lấy số
+
+        if (rawValue === '') {
+            input.value = '';
+            return;
+        }
+
+        input.value = formatVND(rawValue);
+    });
+
+    function formatVND(value) {
+        if (value === null || value === undefined || value === '') return '';
+        return Number(value).toLocaleString('vi-VN');
+    }
+
     function openModalPaymentBilling(){
-        getPaymentFO();
-        clearPaymentBilling();
-        $('#amountPaymentBilling').val(totalAmountBilling.toLocaleString('en-US'));
-        $('#modalPaymentBilling').modal('show');
+         localStorage.setItem("currentFromID", "modalPaymentBilling");
+         const crashierLogin = localStorage.getItem("crashierLogin");
+         getPaymentFO();
+         clearPaymentBilling();
+        $('#amountPaymentBilling').val(totalAmountBilling.toLocaleString('vi-VN'));
+        if (crashierLogin == "NotYet") {
+            openModalShilftLogin();
+        } else {
+        
+            $('#modalPaymentBilling').modal('show');
+        }
     }
     
     function closeModalPaymentBilling(){
@@ -115,7 +149,7 @@
         var formData = new FormData();
         formData.append('rsvID', idReservation);
         formData.append('transID', $('#paymentCodePaymentBilling').val());
-        formData.append('amount', parseFloat($('#amountPaymentBilling').val().replace(/,/g, '')));
+        formData.append('amount', parseFloat($('#amountPaymentBilling').val().replace(/\./g, '')));
         formData.append('supplement', $('#supplementPaymentBilling').val());
         formData.append('creditCardNo', $('#referencePaymentBilling').val());
         formData.append('transDate', $('#transDatePaymentBilling').val());
@@ -137,6 +171,7 @@
                     closeModalPaymentBilling();
                     searchFolioDetail(0);
                     showToast('Success', data.msg, true);
+                   GetBalanceVND(idReservation);
                 } else {
                     showToast('Error', data.msg, false);
                 }
@@ -144,6 +179,6 @@
             error: function (xhr, statusText, err) { }
         });
     }
-
+   
 
 </script>
